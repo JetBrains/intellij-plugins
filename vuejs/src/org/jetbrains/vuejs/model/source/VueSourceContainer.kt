@@ -12,10 +12,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
-import org.jetbrains.vuejs.index.LOCAL
-import org.jetbrains.vuejs.index.MIXINS
-import org.jetbrains.vuejs.index.VueMixinBindingIndex
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
 abstract class VueSourceContainer(sourceElement: PsiElement,
@@ -37,9 +34,7 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
     get () {
       return (declaration as? JSObjectLiteralExpression)?.let { declaration ->
         CachedValuesManager.getCachedValue(declaration) {
-          val result = mutableMapOf<String, VueComponent>()
-
-          StreamEx.of(VueComponentOwnDetailsProvider.getLocalComponents(declaration, { _, _ -> true }, true))
+          val result = StreamEx.of(VueComponentOwnDetailsProvider.getLocalComponents(declaration, { _, _ -> true }, true))
             .mapToEntry({ descr -> descr.name }, { descr ->
               descr.element
                 ?.let { VueComponents.meaningfulExpression(it) ?: it }
@@ -52,13 +47,32 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
                 ?.let { VueModelManager.getComponent(it) }
               ?: VueUnresolvedComponent()
             })
-            .into(result)
+            .into(mutableMapOf<String, VueComponent>())
 
           CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
         }
       } ?: emptyMap()
     }
-  override val directives: Map<String, VueDirective> = emptyMap()
+  override val directives: Map<String, VueDirective>
+    get() {
+      return (declaration as? JSObjectLiteralExpression)?.let { declaration ->
+        CachedValuesManager.getCachedValue(declaration) {
+          val directives = findProperty(declaration, DIRECTIVES)
+          val fileScope = VueDirectivesProvider.createContainingFileScope(directives)
+          val result = if (directives != null && fileScope != null) {
+            StreamEx.of(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY))
+              .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
+              .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
+              .into(mutableMapOf<String, VueDirective>())
+          }
+          else {
+            emptyMap<String, VueDirective>()
+          }
+
+          CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+        }
+      } ?: emptyMap()
+    }
   override val filters: Map<String, VueFilter> = emptyMap()
   override val mixins: List<VueMixin>
     get() {

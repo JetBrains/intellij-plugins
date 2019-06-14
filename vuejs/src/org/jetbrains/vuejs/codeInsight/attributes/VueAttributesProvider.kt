@@ -15,11 +15,13 @@ import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider.Companion.isBinding
-import org.jetbrains.vuejs.codeInsight.findScriptWithExport
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueModelProximityVisitor
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
-import org.jetbrains.vuejs.model.source.VueDirectivesProvider
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
@@ -68,13 +70,16 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       result.add(VueAttributeDescriptor(SRC_ATTR))
       result.add(VueAttributeDescriptor(MODULE_ATTR))
     }
-    result.addAll(VueDirectivesProvider.getAttributes(findLocalDescriptor(context), context.project))
+    val contributedDirectives = mutableSetOf<String>()
+    (object : VueModelVisitor {
+      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity): Boolean {
+        if (contributedDirectives.add(name)) {
+          result.add(VueAttributeDescriptor("v-" + fromAsset(name), directive.source, true))
+        }
+        return true
+      }
+    }).visitContextScope(context, VueModelVisitor.Proximity.GLOBAL)
     return result.toTypedArray()
-  }
-
-  private fun findLocalDescriptor(context: XmlTag): JSObjectLiteralExpression? {
-    val scriptWithExport = findScriptWithExport(context.containingFile.originalFile) ?: return null
-    return scriptWithExport.second.stubSafeElement as? JSObjectLiteralExpression
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
@@ -83,13 +88,38 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
         isTopLevelStyleTag(context) && attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR)) {
       return VueAttributeDescriptor(attributeName)
     }
-    val fromDirective = VueDirectivesProvider.resolveAttribute(findLocalDescriptor(context), attributeName, context.project)
-    if (fromDirective != null) return fromDirective
+
+    resolveDirective(attributeName, context)?.let { return it }
+
     val extractedName = VueComponentDetailsProvider.getBoundName(attributeName)
     if (extractedName != null) {
       return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
     }
     return vueAttributeDescriptor(attributeName)
+  }
+
+  private fun resolveDirective(attrName: String, context: XmlTag): VueAttributeDescriptor? {
+    val searchName = attrName.substringAfter("v-", "")
+    if (searchName.isEmpty()) return null
+
+    val directives = mutableListOf<VueDirective>()
+    (object : VueModelProximityVisitor() {
+      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity): Boolean {
+        return visitSameProximity(proximity) {
+          if (fromAsset(name) == searchName) {
+            directives.add(directive)
+            false
+          }
+          else {
+            true
+          }
+        }
+      }
+    }).visitContextScope(context, VueModelVisitor.Proximity.GLOBAL)
+
+    return directives.firstOrNull()?.let {
+      VueAttributeDescriptor("v-" + fromAsset(it.defaultName ?: searchName), it.source, true)
+    }
   }
 
   private fun isTopLevelStyleTag(tag: XmlTag): Boolean = tag.parentTag == null &&

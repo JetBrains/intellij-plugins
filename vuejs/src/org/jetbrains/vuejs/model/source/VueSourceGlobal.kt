@@ -11,10 +11,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.index.GLOBAL
-import org.jetbrains.vuejs.index.VueMixinBindingIndex
-import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 
@@ -24,15 +21,28 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   override val parents: List<VueEntitiesContainer> = emptyList()
   override val global = this
 
-  override val directives: Map<String, VueDirective> = emptyMap()
+  override val directives: Map<String, VueDirective>
+    get() {
+      module.let { module ->
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+
+          val result = StreamEx.of(getForAllKeys(GlobalSearchScope.projectScope(module.project), VueGlobalDirectivesIndex.KEY))
+            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
+            .into(mutableMapOf<String, VueDirective>())
+
+          CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
+        }
+      }
+    }
   override val filters: Map<String, VueFilter> = emptyMap()
 
   override val apps: List<VueApp> = emptyList()
   override val mixins: List<VueMixin>
     get() {
-      val localModule = module
-      return CachedValuesManager.getManager(localModule.project).getCachedValue(localModule) {
-        CachedValueProvider.Result.create(buildMixinsList(module), PsiModificationTracker.MODIFICATION_COUNT)
+      module.let { module ->
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+          CachedValueProvider.Result.create(buildMixinsList(module), PsiModificationTracker.MODIFICATION_COUNT)
+        }
       }
     }
 
@@ -47,37 +57,36 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
     }
 
   fun getComponents(global: Boolean): Map<String, VueComponent> {
-    val localModule = module
-    return CachedValuesManager.getManager(localModule.project).getCachedValue(localModule) {
-      val componentsData = VueComponentsCalculation.calculateScopeComponents(
-        GlobalSearchScope.moduleWithDependenciesScope(localModule), false)
+    module.let { module ->
+      return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+        val componentsData = VueComponentsCalculation.calculateScopeComponents(
+          GlobalSearchScope.moduleWithDependenciesScope(module), false)
 
-      val moduleComponents = componentsData.map
+        val moduleComponents = componentsData.map
 
-      val localComponents: MutableMap<String, VueComponent> = mutableMapOf()
-      EntryStream.of(moduleComponents)
-        .filterValues { !it.second }
-        .mapValues { VueModelManager.getComponent(it.first) }
-        .nonNullValues()
-        .into(localComponents)
+        val localComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
+          .filterValues { !it.second }
+          .mapValues { VueModelManager.getComponent(it.first) }
+          .nonNullValues()
+          .into(mutableMapOf())
 
-      val globalComponents: MutableMap<String, VueComponent> = mutableMapOf()
-      EntryStream.of(moduleComponents)
-        .filterValues { it.second }
-        .mapValues { VueModelManager.getComponent(it.first) }
-        .nonNullValues()
-        .into(globalComponents)
+        val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
+          .filterValues { it.second }
+          .mapValues { VueModelManager.getComponent(it.first) }
+          .nonNullValues()
+          .into(mutableMapOf())
 
-      componentsData.libCompResolveMap.forEach { (alias, target) ->
-        localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
-        globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
-      }
+        componentsData.libCompResolveMap.forEach { (alias, target) ->
+          localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
+          globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
+        }
 
-      CachedValueProvider.Result.create(
-        mapOf(Pair(true, globalComponents),
-              Pair(false, localComponents)),
-        PsiModificationTracker.MODIFICATION_COUNT)
-    }[global] ?: emptyMap()
+        CachedValueProvider.Result.create(
+          mapOf(Pair(true, globalComponents),
+                Pair(false, localComponents)),
+          PsiModificationTracker.MODIFICATION_COUNT)
+      }[global] ?: emptyMap()
+    }
   }
 
   override val unregistered: VueEntitiesContainer = object : VueEntitiesContainer {
