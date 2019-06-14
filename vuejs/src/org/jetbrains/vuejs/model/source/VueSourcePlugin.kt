@@ -29,11 +29,11 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
           val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
           val globalize = VueComponentsCache.PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
 
-          val result: MutableMap<String, VueComponent> = mutableMapOf()
-          EntryStream.of(VueComponentsCalculation.calculateScopeComponents(scope, globalize).map)
+          val result: MutableMap<String, VueComponent> = EntryStream
+            .of(VueComponentsCalculation.calculateScopeComponents(scope, globalize).map)
             .mapValues { VueModelManager.getComponent(it.first) }
             .nonNullValues()
-            .into(result)
+            .into(mutableMapOf())
 
           CachedValueProvider.Result(if (result.isEmpty()) null else VueSourcePlugin(result, psiDirectory),
                                      NodeModulesDirectoryManager.getInstance(psiDirectory.project)

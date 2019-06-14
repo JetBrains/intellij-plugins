@@ -114,21 +114,6 @@ class VueComponentDetailsProvider {
     return holder.get()
   }
 
-  fun processLocalComponents(component: JSObjectLiteralExpression?,
-                             project: Project,
-                             processor: (String?, PsiElement) -> Boolean) {
-    val filter: (String, PsiElement) -> Boolean = { name, element -> !processor(name, element) }
-    if (component != null) {
-      // no need to accumulate the components, it is done in the processor
-      // but we should check if processor already commanded to stop
-      val direct = VueComponentOwnDetailsProvider.getLocalComponents(component, filter, true)
-      if (direct.isNotEmpty()) return
-    }
-    iterateProviders(component, project) { mixedInDescriptor ->
-      VueComponentOwnDetailsProvider.getLocalComponents(mixedInDescriptor, filter, true).isEmpty()
-    }
-  }
-
   private fun iterateProviders(descriptor: JSObjectLiteralExpression?,
                                project: Project,
                                processor: (JSObjectLiteralExpression) -> Boolean) {

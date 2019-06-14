@@ -46,7 +46,7 @@ class VueDirectivesProvider {
       return createDescriptor(element)
     }
 
-    private fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
+    fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
       directives ?: return null
       val file = getContainingXmlFile(directives) ?: return null
       return GlobalSearchScope.fileScope(file.originalFile)

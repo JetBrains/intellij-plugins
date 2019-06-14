@@ -30,6 +30,7 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
@@ -47,26 +48,26 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && isVueContext(tag)) {
       val tagName = fromAsset(tag.name)
 
-      var closest: VueModelVisitor.Proximity? = null
       val components = mutableListOf<VueComponent>()
-      (VueModelManager.findComponent(tag) ?: VueModelManager.getGlobal(tag))
-        ?.visitScope(object : VueModelVisitor {
-          override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
-            if (closest != null && closest!! > proximity) {
-              return false
-            }
+      (object : VueModelProximityVisitor() {
+        override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
+          return visitSameProximity(proximity) {
             if (fromAsset(name) == tagName) {
-              closest = proximity
               components.add(component)
+              false
             }
-            return true
+            else {
+              true
+            }
           }
-        }, VueModelVisitor.Proximity.GLOBAL)
+        }
+      }).visitContextScope(tag, VueModelVisitor.Proximity.GLOBAL)
 
       if (components.isNotEmpty()) return multiDefinitionDescriptor(components.map {
         if (it.source != null) {
           VueModelManager.getComponentImplicitElement(it.source!!) ?: JSImplicitElementImpl(tag.name, it.source)
-        } else {
+        }
+        else {
           JSImplicitElementImpl(tag.name, tag)
         }
       })
@@ -90,7 +91,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       { name -> listOf(fromAsset(name)) }
 
     val providedNames = mutableSetOf<String>()
-    val visitor = object : VueModelVisitor {
+    (object : VueModelVisitor {
       override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
         nameMapper(name).forEach {
           if (providedNames.add(it))
@@ -101,10 +102,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         }
         return true
       }
-    }
-
-    (VueModelManager.findComponent(tag) ?: VueModelManager.getGlobal(tag))
-      ?.visitScope(visitor, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+    }).visitContextScope(tag, VueModelVisitor.Proximity.OUT_OF_SCOPE)
 
     elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
       LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
