@@ -3,8 +3,8 @@ interface ReportAboutUsingInterfaceInNew {}
 }
 
 class Foo {
-    var x = new <error descr="Interface can not be instantiated">ReportAboutUsingInterfaceInNew</error>();
-    var y = new <error descr="Interface can not be instantiated">CCC</error>();
+    var x = new <error descr="Interface cannot be instantiated">ReportAboutUsingInterfaceInNew</error>();
+    var y = new <error descr="Interface cannot be instantiated">CCC</error>();
     function foo() {
         arguments.join(",");
     }
