@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.*
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("type", "name", "description", "doc-url")
-class Argument {
+@JsonPropertyOrder("source-file", "type", "name", "description", "doc-url")
+class Attribute_ {
 
+  @JsonProperty("source-file")
+  @get:JsonProperty("source-file")
+  @set:JsonProperty("source-file")
+  var sourceFile: String? = null
   @JsonProperty("type")
   @get:JsonProperty("type")
   @set:JsonProperty("type")

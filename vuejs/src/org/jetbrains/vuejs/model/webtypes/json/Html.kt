@@ -1,18 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.webtypes.json
 
-import java.util.HashMap
-import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.annotation.*
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("types-syntax", "tags")
+@JsonPropertyOrder("types-syntax", "tags", "attributes")
 class Html {
 
   @JsonProperty("types-syntax")
@@ -22,7 +15,11 @@ class Html {
   @JsonProperty("tags")
   @get:JsonProperty("tags")
   @set:JsonProperty("tags")
-  var tags: List<Tag>? = null
+  var tags: List<Tag> = ArrayList()
+  @JsonProperty("attributes")
+  @get:JsonProperty("attributes")
+  @set:JsonProperty("attributes")
+  var attributes: List<Attribute_> = ArrayList()
   @JsonIgnore
   private val additionalProperties = HashMap<String, Any>()
 
@@ -36,7 +33,7 @@ class Html {
     this.additionalProperties[name] = value
   }
 
-  enum class TypesSyntax private constructor(private val value: String) {
+  enum class TypesSyntax(private val value: String) {
 
     TYPESCRIPT("typescript");
 

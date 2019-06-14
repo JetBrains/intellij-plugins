@@ -10,10 +10,10 @@ class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
   override val source: PsiElement? = null
   override val global: VueGlobal? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
-  override val components: Map<String, VueComponent>
 
+  override val components: Map<String, VueComponent>
   override val directives: Map<String, VueDirective>
-    get() = Collections.emptyMap()
+
   override val filters: Map<String, VueFilter>
     get() = Collections.emptyMap()
   override val mixins: List<VueMixin>
@@ -26,6 +26,12 @@ class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
                    ?.tags
                    ?.filter { it.name != null }
                    ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, this) })
+                 ?: Collections.emptyMap()
+    directives = webTypes.contributions
+                   ?.html
+                   ?.attributes
+                   ?.filter { it.name?.startsWith("v-") ?: false }
+                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, this) })
                  ?: Collections.emptyMap()
   }
 
