@@ -28,7 +28,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureProblemType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -625,7 +625,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
               checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
 
-            if (!SystemInfoRt.isMac) {
+            if (!SystemInfo.isMac) {
               throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.on.mac.only.warning"));
             }
 

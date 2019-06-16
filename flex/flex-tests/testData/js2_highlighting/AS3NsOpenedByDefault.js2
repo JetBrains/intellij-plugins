@@ -5,10 +5,10 @@ package {
       function bar():<warning descr="Vector without type">Vector</warning> {
           foo();
           foo2();
-          var x:<warning descr="Vector without type">Vector</warning> = new <warning descr="Vector without type can not be instantiated">Vector</warning>();
+          var x:<warning descr="Vector without type">Vector</warning> = new <warning descr="Vector without type cannot be instantiated">Vector</warning>();
           var x2:Vector.<Object>;
 
-          var x3:Vector.<AS3NsOpenedByDefault> = <error descr="Initializer type Vector is not assignable to variable type Vector.<AS3NsOpenedByDefault>">new <warning descr="Vector without type can not be instantiated">Vector</warning>()</error>;
+          var x3:Vector.<AS3NsOpenedByDefault> = <error descr="Initializer type Vector is not assignable to variable type Vector.<AS3NsOpenedByDefault>">new <warning descr="Vector without type cannot be instantiated">Vector</warning>()</error>;
       }
   }
 }

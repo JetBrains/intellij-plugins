@@ -28,7 +28,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -191,7 +191,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
       }
     }
     VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
-    if (SystemInfoRt.isWindows) {
+    if (SystemInfo.isWindows) {
       for (VirtualFile root : roots) {
         String key = karmaServer.formatUrlWithoutUrlRoot("/absolute" + root.getName());
         if (mappings.containsKey(key)) {

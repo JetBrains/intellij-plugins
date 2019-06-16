@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.fixes;
 
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiManager;
@@ -73,7 +74,7 @@ public class DartQuickFixSet {
       }
 
       if (fixes == null || fixes.isEmpty()) {
-        if (myErrorCode != null && myFile.getFileType() == DartFileType.INSTANCE) {
+        if (myErrorCode != null && FileTypeRegistry.getInstance().isFileOfType(myFile, DartFileType.INSTANCE)) {
           myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true, false));
           //myQuickFixes.get(1).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true, true));
         }

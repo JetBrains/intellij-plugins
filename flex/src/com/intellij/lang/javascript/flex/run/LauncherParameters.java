@@ -6,7 +6,7 @@ import com.intellij.ide.browsers.WebBrowser;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.ide.browsers.WebBrowserReferenceConverter;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.annotations.OptionTag;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +19,8 @@ public class LauncherParameters implements Cloneable {
 
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
 
-  private @NotNull String myPlayerPath = SystemInfoRt.isMac ? "/Applications/Flash Player Debugger.app"
-                                                            : SystemInfoRt.isWindows ? "FlashPlayerDebugger.exe"
+  private @NotNull String myPlayerPath = SystemInfo.isMac ? "/Applications/Flash Player Debugger.app"
+                                                            : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
                                                                                      : "/usr/bin/flashplayerdebugger";
   private boolean myNewPlayerInstance = false;
 

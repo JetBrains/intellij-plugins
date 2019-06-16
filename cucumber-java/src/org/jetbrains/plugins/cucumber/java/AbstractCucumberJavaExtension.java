@@ -11,8 +11,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
-import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractCucumberExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -42,25 +40,11 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
     return false;
   }
 
+  // ToDo: remove
   @NotNull
   @Override
   public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = new HashSet<>();
-    }
-    final Set<String> glues = gluesFromOtherFiles;
-
-    file.accept(new GherkinRecursiveElementVisitor() {
-      @Override
-      public void visitStep(GherkinStep step) {
-        final String glue = CucumberJavaUtil.getPackageOfStep(step);
-        if (glue != null) {
-          CucumberJavaUtil.addGlue(glue, glues);
-        }
-      }
-    });
-
-    return glues;
+    return Collections.emptyList();
   }
 
   @Override

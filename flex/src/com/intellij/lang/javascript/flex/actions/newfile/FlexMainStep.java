@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.util.ClassLoaderUtil;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.apache.velocity.runtime.parser.ParseException;
@@ -65,14 +64,9 @@ public class FlexMainStep extends MainStep {
     // let's replace parent component only if template contains 'Superclass' macro
     final FileTemplate template;
     try {
-      template = ClassLoaderUtil
-        .runWithClassLoader(ActionScriptCreateClassOrInterfaceFix.class.getClassLoader(),
-                            new ThrowableComputable<FileTemplate, IOException>() {
-                              @Override
-                              public FileTemplate compute() throws IOException {
-                                return FileTemplateManager.getDefaultInstance().getInternalTemplate(myModel.getTemplateName());
-                              }
-                            });
+      template = ClassLoaderUtil.<FileTemplate, IOException>computeWithClassLoader(
+        ActionScriptCreateClassOrInterfaceFix.class.getClassLoader(),
+        () -> FileTemplateManager.getDefaultInstance().getInternalTemplate(myModel.getTemplateName()));
       String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true, myProject);
       if (ArrayUtil.contains(ActionScriptCreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
         myModel.setSuperclassFqn(getSuperclassFqn());

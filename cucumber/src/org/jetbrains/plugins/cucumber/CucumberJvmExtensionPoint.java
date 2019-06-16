@@ -1,15 +1,15 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.Collection;
@@ -53,12 +53,16 @@ public interface CucumberJvmExtensionPoint {
    * @param step to be resolved
    * @return list of elements where step is resolved
    */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   List<PsiElement> resolveStep(@NotNull PsiElement step);
 
   /**
    * Infers all 'glue' parameters for the file which it can find out.
    * @return inferred 'glue' parameters
    */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   @NotNull
   Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles);
 
@@ -80,5 +84,13 @@ public interface CucumberJvmExtensionPoint {
   
   default boolean isGherkin6Supported(@NotNull Module module) {
     return false;
+  }
+  
+  @Nullable
+  default String getStepName(@NotNull PsiElement step) {
+    if (!(step instanceof GherkinStepImpl)) {
+      return null;
+    }
+    return ((GherkinStepImpl)step).getSubstitutedName();
   }
 }

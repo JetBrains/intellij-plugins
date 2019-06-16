@@ -47,11 +47,11 @@ import java.util.regex.Pattern;
 public class FlexSdkUtils {
 
   public static final String ADL_RELATIVE_PATH =
-    File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfoRt.isWindows ? ".exe" : "");
+    File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
 
   static final String AIR_RUNTIME_RELATIVE_PATH =
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
-    (SystemInfoRt.isWindows ? "win" : (SystemInfoRt.isLinux ? "linux" : "mac"));
+    (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
 
   private static final Pattern PLAYER_FOLDER_PATTERN = Pattern.compile("\\d{1,2}(\\.\\d{1,2})?");
 
@@ -358,7 +358,7 @@ public class FlexSdkUtils {
       }
     }
 
-    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfoRt.isWindows ? ".exe" : "")));
+    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 

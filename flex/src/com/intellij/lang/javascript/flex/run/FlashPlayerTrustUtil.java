@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -181,8 +181,8 @@ public class FlashPlayerTrustUtil {
   @Nullable
   private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
-      SystemInfoRt.isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
-      SystemInfoRt.isMac ? MAC_TRUST_DIR_REL_PATH :
+      SystemInfo.isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
+      SystemInfo.isMac ? MAC_TRUST_DIR_REL_PATH :
       UNIX_TRUST_DIR_REL_PATH;
     final File flashPlayerTrustDir = new File(SystemProperties.getUserHome() + flashPlayerTrustDirRelPath);
 
