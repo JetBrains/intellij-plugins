@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
+import com.intellij.ide.script.IdeScriptException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -23,7 +24,6 @@ import com.jetbrains.cidr.xcode.plist.PlistDriver;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.script.IdeScriptException;
 
 import java.io.File;
 import java.util.List;
