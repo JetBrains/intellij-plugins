@@ -29,6 +29,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
+import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
@@ -133,15 +134,17 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
-    addQuickFixActions(group);
+    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
+    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+
+    addQuickFixActions(group, selectedProblem);
+    addDocumentationAction(group, selectedProblem);
 
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
   }
 
-  private void addQuickFixActions(@NotNull final DefaultActionGroup group) {
-    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
-    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable DartProblem selectedProblem) {
     final VirtualFile selectedVFile = selectedProblem != null ? selectedProblem.getFile() : null;
     if (selectedVFile == null) return;
 
@@ -173,6 +176,18 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
         }
       });
     }
+  }
+
+  private static void addDocumentationAction(@NotNull final DefaultActionGroup group, @Nullable DartProblem selectedDartProblem) {
+    final String url = selectedDartProblem != null ? selectedDartProblem.getUrl() : null;
+    if (url == null) return;
+
+    group.add(new AnAction("Documentation") {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        OpenDartObservatoryUrlAction.openUrlInChromeFamilyBrowser(url);
+      }
+    });
   }
 
   @NotNull
