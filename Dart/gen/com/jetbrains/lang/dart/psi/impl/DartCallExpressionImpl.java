@@ -38,6 +38,7 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
     return findChildByClass(DartTypeArguments.class);
   }
 
+  @Override
   @Nullable
   public DartArguments getArguments() {
     return DartPsiImplUtil.getArguments(this);

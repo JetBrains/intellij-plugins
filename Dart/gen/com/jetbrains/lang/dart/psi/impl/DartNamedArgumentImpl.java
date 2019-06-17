@@ -32,10 +32,12 @@ public class DartNamedArgumentImpl extends DartPsiCompositeElementImpl implement
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
+  @Override
   public DartExpression getParameterReferenceExpression() {
     return DartPsiImplUtil.getParameterReferenceExpression(this);
   }
 
+  @Override
   public DartExpression getExpression() {
     return DartPsiImplUtil.getExpression(this);
   }
