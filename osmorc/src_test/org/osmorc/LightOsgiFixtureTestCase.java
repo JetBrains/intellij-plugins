@@ -9,7 +9,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacet;
@@ -21,7 +21,7 @@ import java.io.File;
 import static com.intellij.project.IntelliJProjectConfiguration.getModuleLibrary;
 import static com.intellij.project.IntelliJProjectConfiguration.getProjectLibrary;
 
-public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class LightOsgiFixtureTestCase extends LightJavaCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {

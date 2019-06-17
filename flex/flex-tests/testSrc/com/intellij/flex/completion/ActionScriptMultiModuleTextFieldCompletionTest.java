@@ -2,7 +2,7 @@
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.EditorInfo;
-import com.intellij.codeInsight.completion.CompletionTestCase;
+import com.intellij.codeInsight.completion.JavaCompletionTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -32,7 +32,7 @@ import java.util.Collection;
 
 import static com.intellij.flex.completion.FlexCompletionInTextFieldBase.assertContains;
 
-public class ActionScriptMultiModuleTextFieldCompletionTest extends CompletionTestCase {
+public class ActionScriptMultiModuleTextFieldCompletionTest extends JavaCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
 
   @NotNull

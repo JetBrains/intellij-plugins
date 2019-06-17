@@ -9,13 +9,13 @@ import com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspe
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.json.psi.JsonFile
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.yaml.psi.YAMLFile
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-abstract class BaseInspectionTestCase(val folder: String) : LightCodeInsightFixtureTestCase() {
+abstract class BaseInspectionTestCase(val folder: String) : LightJavaCodeInsightFixtureTestCase() {
   private fun getTestResultContent(psiFile: PsiFile): String {
     val filePath = psiFile.virtualFile.path
     println("Working on $filePath")

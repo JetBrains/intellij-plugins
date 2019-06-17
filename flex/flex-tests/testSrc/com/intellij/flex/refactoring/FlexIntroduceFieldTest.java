@@ -5,12 +5,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings;
 import com.intellij.lang.javascript.refactoring.introduceField.MockJSIntroduceFieldHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightJavaCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldSettings.InitializationPlace.*;
 
-public class FlexIntroduceFieldTest extends LightCodeInsightTestCase {
+public class FlexIntroduceFieldTest extends LightJavaCodeInsightTestCase {
   @Override
   protected void setUp() throws Exception {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "refactoring/introduceField/");

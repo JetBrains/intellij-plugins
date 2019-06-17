@@ -18,7 +18,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.testFramework.ModuleTestCase;
+import com.intellij.testFramework.JavaModuleTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
-public class FlexProjectConfigTest extends ModuleTestCase {
+public class FlexProjectConfigTest extends JavaModuleTestCase {
 
   @Override
   protected void tearDown() throws Exception {

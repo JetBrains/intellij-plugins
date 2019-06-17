@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.flexunit.execution;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
@@ -58,7 +58,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implements FlexUnitLibs {
+public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase implements FlexUnitLibs {
 
   public static class FlexUnitExecutionWebTest extends FlexUnitExecutionTest {
     public FlexUnitExecutionWebTest() {
