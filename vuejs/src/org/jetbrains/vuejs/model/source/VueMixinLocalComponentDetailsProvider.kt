@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.index.LOCAL
-import org.jetbrains.vuejs.index.MIXINS
+import org.jetbrains.vuejs.index.MIXINS_PROP
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.vueMixinDescriptorFinder
@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.model.source.VueComponents.Companion.vueMixinDescript
 class VueMixinLocalComponentDetailsProvider : VueAdvancedComponentDetailsProvider {
   override fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement> {
     if (descriptor == null) return emptyList()
-    val mixinsProperty = findProperty(descriptor, MIXINS) ?: return emptyList()
+    val mixinsProperty = findProperty(descriptor, MIXINS_PROP) ?: return emptyList()
     val elements = resolve(LOCAL, GlobalSearchScope.fileScope(mixinsProperty.containingFile.originalFile), VueMixinBindingIndex.KEY)
                    ?: return emptyList()
     val original = CompletionUtil.getOriginalOrSelf<PsiElement>(mixinsProperty)

@@ -19,7 +19,7 @@ class VueDirectivesProvider {
       val result = mutableListOf<VueAttributeDescriptor>()
       result.addAll(getForAllKeys(createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY).map { createDescriptor(it) })
 
-      val directives = findProperty(descriptor, DIRECTIVES)
+      val directives = findProperty(descriptor, DIRECTIVES_PROP)
       val fileScope = createContainingFileScope(directives)
       if (directives != null && fileScope != null) {
         result.addAll(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY)
@@ -35,7 +35,7 @@ class VueDirectivesProvider {
       val searchScope = createSearchScope(descriptor, project)
       var element = resolve(searchName, searchScope, VueGlobalDirectivesIndex.KEY)?.firstOrNull()
 
-      val directives = findProperty(descriptor, DIRECTIVES)
+      val directives = findProperty(descriptor, DIRECTIVES_PROP)
       val fileScope = createContainingFileScope(directives)
       if (element == null && directives != null && fileScope != null) {
         element = resolve(searchName, fileScope, VueLocalDirectivesIndex.KEY)

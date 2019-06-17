@@ -3,35 +3,56 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.psi.PsiElement
 
-interface VueModelVisitor {
+abstract class VueModelVisitor {
 
-  fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+  open fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
     return true
   }
 
-  fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
+  open fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean {
+    return component.defaultName?.let { visitComponent(it, component, proximity) } ?: true
+  }
+
+  open fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
     return true
   }
 
-  fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+  open fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
     return true
   }
 
-  fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+  open fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
     return true
   }
 
-  fun visitContextScope(context: PsiElement, minimumProximity: Proximity) {
+  open fun visitInputProperty(prop: VueInputProperty): Boolean {
+    return true
+  }
+
+  open fun visitComputedProperty(computedProperty: VueComputedProperty): Boolean {
+    return true
+  }
+
+  open fun visitDataProperty(dataProperty: VueDataProperty): Boolean {
+    return true
+  }
+
+  open fun visitMethod(method: VueMethod): Boolean {
+    return true
+  }
+
+  fun visitAllContextScope(context: PsiElement, minimumProximity: Proximity) {
     (VueModelManager.findComponent(context) ?: VueModelManager.getGlobal(context))
-      ?.visitScope(this, minimumProximity)
+      ?.acceptEntitiesScope(this, minimumProximity)
   }
+
 
   enum class Proximity {
     OUT_OF_SCOPE,
     GLOBAL,
     APP,
     PLUGIN,
-    LOCAL,
+    LOCAL
   }
 
 }

@@ -22,8 +22,6 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.index.isVueContext
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
-import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueTagCompletionContributor : CompletionContributor() {
   init {
@@ -207,10 +205,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
     }
 
-    // see also VueElementDescriptor.getAttributesDescriptors()
-    val jsElement = (attr.parent?.descriptor as? VueElementDescriptor)?.declaration ?: return
-    val obj = VueComponents.findComponentDescriptor(jsElement)
-    for (attribute in VueComponentDetailsProvider.INSTANCE.getAttributes(obj, attr.project, true, xmlContext = true)) {
+    for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
       newResult.addElement(LookupElementBuilder
                              .create(lookupItemPrefix + attribute.name)
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))

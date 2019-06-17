@@ -76,7 +76,7 @@ class VueComponents {
       return null
     }
 
-    private fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueComponentDescriptor? {
+    fun resolveReferenceToVueComponent(element: PsiElement, reference: String): VueComponentDescriptor? {
       val scope = createLocalResolveScope(element)
 
       val resolvedLocally = JSStubBasedPsiTreeUtil.resolveLocally(reference, scope)

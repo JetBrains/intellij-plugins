@@ -10,8 +10,11 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
+import org.jetbrains.vuejs.codeInsight.findScriptWithExport
+import org.jetbrains.vuejs.codeInsight.getNameVariants
+import org.jetbrains.vuejs.codeInsight.toAsset
 import java.util.*
 
 class VueComponentDetailsProvider {
@@ -58,23 +61,20 @@ class VueComponentDetailsProvider {
     }
   }
 
-  fun getAttributes(descriptor: JSObjectLiteralExpression?,
-                    project: Project,
-                    onlyPublic: Boolean,
-                    xmlContext: Boolean): List<VueAttributeDescriptor> {
+  private fun getAttributes(descriptor: JSObjectLiteralExpression?,
+                            project: Project): List<VueAttributeDescriptor> {
     val result: MutableList<VueAttributeDescriptor> = mutableListOf()
     if (descriptor != null) {
-      result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false))
+      result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic = false, onlyFirst = false))
       result.addAll(VueDirectivesProvider.getAttributes(descriptor, descriptor.project))
     }
     iterateProviders(descriptor, project) {
-      result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic, false))
+      result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic = false, onlyFirst = false))
       true
     }
 
     return result.map {
       when {
-        xmlContext -> it.createNameVariant(fromAsset(it.name))
         it.name.contains('-') -> it.createNameVariant(toAsset(it.name))
         else -> it
       }
@@ -86,7 +86,7 @@ class VueComponentDetailsProvider {
     val defaultExport = scriptWithExport.second
     val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression
     val vueVariants = ArrayList<LookupElement>()
-    INSTANCE.getAttributes(obj, location.project, false, xmlContext = false)
+    INSTANCE.getAttributes(obj, location.project)
       // do not suggest directives in injected javascript fragments
       .filter { !it.isDirective() }
       .forEach {

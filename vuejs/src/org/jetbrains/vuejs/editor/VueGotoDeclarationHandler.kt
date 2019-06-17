@@ -9,7 +9,8 @@ import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 
 class VueGotoDeclarationHandler : GotoDeclarationHandler {
   override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
-    val tag = sourceElement?.parent as? XmlTag ?: return null
-    return (tag.descriptor as? VueElementDescriptor)?.variants?.toTypedArray()
+    return ((sourceElement?.parent as? XmlTag)?.descriptor as? VueElementDescriptor)
+      ?.getPsiSources()
+      ?.toTypedArray()
   }
 }

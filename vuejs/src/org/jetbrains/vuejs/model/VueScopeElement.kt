@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.codeInsight.fromAsset
 
 interface VueScopeElement {
 
@@ -14,71 +15,72 @@ interface VueScopeElement {
       return source?.let { VueModelManager.getGlobal(it) }
     }
 
-  fun visitScope(visitor: VueModelVisitor, minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
+  fun acceptEntitiesScope(visitor: VueModelVisitor,
+                          minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
     val visited = mutableSetOf<Pair<String, VueScopeElement>>()
-    val containersQueue = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
+    val containersStack = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
 
     if (minimumProximity <= VueModelVisitor.Proximity.GLOBAL) {
       global?.let {
-        containersQueue.add(Pair(it, VueModelVisitor.Proximity.GLOBAL))
-        it.plugins.forEach { plugin -> containersQueue.add(Pair(plugin, VueModelVisitor.Proximity.GLOBAL)) }
+        containersStack.add(Pair(it, VueModelVisitor.Proximity.GLOBAL))
+        it.plugins.forEach { plugin -> containersStack.add(Pair(plugin, VueModelVisitor.Proximity.GLOBAL)) }
         if (minimumProximity <= VueModelVisitor.Proximity.OUT_OF_SCOPE) {
-          containersQueue.add(Pair(it.unregistered, VueModelVisitor.Proximity.OUT_OF_SCOPE))
+          containersStack.add(Pair(it.unregistered, VueModelVisitor.Proximity.OUT_OF_SCOPE))
         }
       }
     }
 
-    parents.forEach { parent ->
-      when (parent) {
-        is VueApp -> if (minimumProximity <= VueModelVisitor.Proximity.APP)
-          containersQueue.add(Pair(parent, VueModelVisitor.Proximity.APP))
-        is VuePlugin -> if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN)
-          containersQueue.add(Pair(parent, VueModelVisitor.Proximity.PLUGIN))
+    if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN) {
+      parents.forEach { parent ->
+        when (parent) {
+          is VueApp -> if (minimumProximity <= VueModelVisitor.Proximity.APP)
+            containersStack.add(Pair(parent, VueModelVisitor.Proximity.APP))
+          is VuePlugin -> if (minimumProximity <= VueModelVisitor.Proximity.PLUGIN)
+            containersStack.add(Pair(parent, VueModelVisitor.Proximity.PLUGIN))
+        }
       }
     }
 
-    if (this is VueEntitiesContainer
-        && (this is VueMixin || this is VueComponent)) {
-      containersQueue.add(Pair(this, VueModelVisitor.Proximity.LOCAL))
-      if ((this is VueMixin
-           && visited.add(Pair("", this))
-           && !visitor.visitMixin(this, VueModelVisitor.Proximity.LOCAL))
-          || (this is VueComponent
-              && this.defaultName != null
-              && visited.add(Pair(this.defaultName!!, this))
-              && !visitor.visitComponent(this.defaultName!!, this, VueModelVisitor.Proximity.LOCAL))) {
+    if (this is VueEntitiesContainer) {
+      containersStack.add(Pair(this, VueModelVisitor.Proximity.LOCAL))
+    }
+
+    containersStack.sortBy { it.second }
+
+    while (containersStack.isNotEmpty()) {
+      val (container, proximity) = containersStack.removeAt(containersStack.size - 1)
+
+      if (!visited.add(Pair("", container))) continue
+
+      if ((container is VueMixin
+           && !visitor.visitMixin(container, proximity))
+          || (container is VueComponent
+              && !visitor.visitSelfComponent(container, proximity))) {
         return false
       }
-    }
 
-    containersQueue.sortBy { it.second }
-
-    while (containersQueue.isNotEmpty()) {
-      val (container, proximity) = containersQueue.removeAt(containersQueue.size - 1)
+      ((container as? VueContainer)?.extends)?.forEach {
+        containersStack.add(Pair(it, proximity))
+      }
+      container.mixins.forEach { mixin ->
+        containersStack.add(Pair(mixin, proximity))
+      }
       container.components.forEach { (name, component) ->
-        if (visited.add(Pair(name, component))
+        if (visited.add(Pair(fromAsset(name), component))
             && !visitor.visitComponent(name, component, proximity)) {
           return false
         }
       }
       container.directives.forEach { (name, directive) ->
-        if (visited.add(Pair(name, directive))
+        if (visited.add(Pair(fromAsset(name), directive))
             && !visitor.visitDirective(name, directive, proximity)) {
           return false
         }
       }
       container.filters.forEach { (name, filter) ->
-        if (visited.add(Pair(name, filter))
+        if (visited.add(Pair(fromAsset(name), filter))
             && !visitor.visitFilter(name, filter, proximity)) {
           return false
-        }
-      }
-      container.mixins.forEach { mixin ->
-        if (visited.add(Pair("", mixin))) {
-          if (!visitor.visitMixin(mixin, proximity)) {
-            return false
-          }
-          containersQueue.add(Pair(mixin, proximity))
         }
       }
     }

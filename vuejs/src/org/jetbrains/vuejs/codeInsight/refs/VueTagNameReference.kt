@@ -12,11 +12,10 @@ import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 class VueTagNameReference(nameElement: ASTNode, startTagFlag: Boolean) : TagNameReference(nameElement, startTagFlag),
                                                                          PsiPolyVariantReference {
   override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-    val parentTag = nameElement?.treeParent as? XmlTag
-    val descriptor = parentTag?.descriptor as? VueElementDescriptor
-    if (descriptor != null) {
-      return descriptor.variants.map { PsiElementResolveResult(it) }.toTypedArray()
-    }
-    return emptyArray()
+    return ((nameElement?.treeParent as? XmlTag)?.descriptor as? VueElementDescriptor)
+             ?.getPsiSources()
+             ?.map { PsiElementResolveResult(it) as ResolveResult }
+             ?.toTypedArray()
+           ?: emptyArray()
   }
 }
