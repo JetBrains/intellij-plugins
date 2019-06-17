@@ -27,9 +27,9 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class VueRenameTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueRenameTest : BasePlatformTestCase() {
 
   override fun getBasePath(): String {
     return "" // not used

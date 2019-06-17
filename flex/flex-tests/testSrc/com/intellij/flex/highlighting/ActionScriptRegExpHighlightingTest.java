@@ -2,10 +2,10 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionScriptRegExpHighlightingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ActionScriptRegExpHighlightingTest extends BasePlatformTestCase {
 
   public void testLookBehind() {
     myFixture.testHighlighting(getTestName(false) + ".as");

@@ -8,7 +8,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.include.FileIncludeProvider;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 import org.angularjs.codeInsight.refs.AngularJSReferencesContributor;
 
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class RoutingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class RoutingTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "routing";

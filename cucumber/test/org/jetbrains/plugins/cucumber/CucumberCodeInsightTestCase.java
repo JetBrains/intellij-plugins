@@ -20,11 +20,11 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class CucumberCodeInsightTestCase extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class CucumberCodeInsightTestCase extends BasePlatformTestCase {
   @NonNls protected static final String CARET_STR = "<caret>";
 
   protected int findOffsetBySignature(String signature) {

@@ -17,9 +17,9 @@ import com.intellij.lang.javascript.JSBundle
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
 import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class VueCreateTsVariableTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueCreateTsVariableTest : BasePlatformTestCase() {
 
   override fun setUp() {
     super.setUp()

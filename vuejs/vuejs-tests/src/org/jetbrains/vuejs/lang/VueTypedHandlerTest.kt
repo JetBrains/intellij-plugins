@@ -19,12 +19,12 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.Pair
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.editor.VueInterpolationBracesCompleter
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueTypedHandlerTest : BasePlatformTestCase() {
   fun testBracketsClosing() {
     myFixture.configureByText(VueFileType.INSTANCE, "{<caret>")
     myFixture.type("{")

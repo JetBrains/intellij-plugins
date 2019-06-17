@@ -5,12 +5,12 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 
-class VueExtractComponentTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueExtractComponentTest : BasePlatformTestCase() {
   fun testExtractSingleTag() = doExtractTest(
     """<template>
 <selection><p>Paragraph!</p></selection>

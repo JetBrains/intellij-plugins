@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.linter.tslint;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.jetbrains.jsonSchema.impl.inspections.JsonSchemaComplianceInspection;
 
 /**
  * @author Irina.Chernushina on 9/28/2015.
  */
-public class TsLintConfigHighlightingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TsLintConfigHighlightingTest extends BasePlatformTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();

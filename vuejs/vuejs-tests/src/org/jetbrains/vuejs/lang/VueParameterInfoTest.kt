@@ -15,10 +15,10 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.fixtures.EditorHintFixture
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ui.UIUtil
 
-class VueParameterInfoTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueParameterInfoTest : BasePlatformTestCase() {
 
   fun testTypeScriptParametersHint() {
     myFixture.addFileToProject("api.vue", "<script lang='ts'>\n" +

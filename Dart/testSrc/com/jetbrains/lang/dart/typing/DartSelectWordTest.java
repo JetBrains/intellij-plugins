@@ -3,10 +3,10 @@ package com.jetbrains.lang.dart.typing;
 import com.intellij.codeInsight.editorActions.SelectWordHandler;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class DartSelectWordTest extends LightPlatformCodeInsightFixtureTestCase {
+public class DartSelectWordTest extends BasePlatformTestCase {
 
   private void doTest(@NotNull final String before, @NotNull final String... after) {
     myFixture.configureByText("file.dart", before);

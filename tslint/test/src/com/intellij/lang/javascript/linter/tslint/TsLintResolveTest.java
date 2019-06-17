@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class TsLintResolveTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TsLintResolveTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {

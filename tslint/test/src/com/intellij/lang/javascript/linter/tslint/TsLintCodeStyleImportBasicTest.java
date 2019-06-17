@@ -21,12 +21,12 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Consumer;
 import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
 
-public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TsLintCodeStyleImportBasicTest extends BasePlatformTestCase {
   public void testSimpleStringValue() {
     doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }

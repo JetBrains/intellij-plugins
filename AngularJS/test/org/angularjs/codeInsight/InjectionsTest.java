@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.openapi.util.Pair;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class InjectionsTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "injections";

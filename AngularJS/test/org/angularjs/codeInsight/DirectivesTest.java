@@ -7,10 +7,10 @@ import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
-public class DirectivesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class DirectivesTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "directives";

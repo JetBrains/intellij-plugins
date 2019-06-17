@@ -2,10 +2,10 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.application.PathManager
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 
-class VueDocumentationTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueDocumentationTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
   fun testDocumentationFromDefinitions() {

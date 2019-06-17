@@ -10,12 +10,12 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Consumer;
 
 import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 
-public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbStructureViewTest extends BasePlatformTestCase {
 
   private static final String ourTestFileName = "test.hbs";
 

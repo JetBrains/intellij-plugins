@@ -2,10 +2,10 @@ package com.intellij.prettierjs;
 
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.LineSeparator;
 
-public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class PrettierConfigParsingTest extends BasePlatformTestCase {
   
   public void testDefaultConfigs() {
     doTest(PrettierUtil.Config.DEFAULT, "package.json", "{\n" +

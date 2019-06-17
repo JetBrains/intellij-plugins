@@ -1,12 +1,12 @@
 package org.angularjs.refactoring;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
 /**
  * @author Dennis.Ushakov
  */
-public class DirectiveRenameTest extends LightPlatformCodeInsightFixtureTestCase {
+public class DirectiveRenameTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "rename";

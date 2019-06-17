@@ -3,10 +3,11 @@ package com.dmarcotte.handlebars.editor.actions;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.format.FormatterTestSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 
 /**
- * These tests are based on other children of {@link com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase},
+ * These tests are based on other children of {@link BasePlatformTestCase},
  * in particular {@code com.intellij.application.options.codeInsight.editor.quotes.SelectionQuotingTypedHandlerTest}
  */
 public class HbTypedHandlerTest extends HbActionHandlerTest {

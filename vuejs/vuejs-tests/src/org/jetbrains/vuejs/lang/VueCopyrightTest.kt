@@ -1,11 +1,11 @@
 package org.jetbrains.vuejs.lang
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.maddyhome.idea.copyright.CopyrightProfile
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightFactory
 import junit.framework.TestCase
 
-class VueCopyrightTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueCopyrightTest : BasePlatformTestCase() {
   @Throws(Exception::class)
 
   private fun updateCopyright() {
