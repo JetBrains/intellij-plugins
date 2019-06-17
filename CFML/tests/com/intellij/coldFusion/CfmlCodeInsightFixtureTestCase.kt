@@ -16,12 +16,12 @@
 package com.intellij.coldFusion
 
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 /**
  * Created by fedorkorotkov.
  */
-abstract class CfmlCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+abstract class CfmlCodeInsightFixtureTestCase : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = CfmlTestUtil.BASE_TEST_DATA_PATH + basePath
 

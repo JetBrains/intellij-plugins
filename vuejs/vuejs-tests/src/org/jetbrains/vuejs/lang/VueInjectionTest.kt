@@ -8,12 +8,12 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.ParsingTestCase
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
-class VueInjectionTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueInjectionTest : BasePlatformTestCase() {
   private var oldAutoComplete = false
 
   override fun setUp() {

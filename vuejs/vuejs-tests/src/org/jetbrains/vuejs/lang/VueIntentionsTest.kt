@@ -16,11 +16,11 @@ package org.jetbrains.vuejs.lang
 import com.intellij.lang.javascript.JSBundle
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle
 
-class VueIntentionsTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueIntentionsTest : BasePlatformTestCase() {
 
   override fun getBasePath(): String {
     return "" // not used

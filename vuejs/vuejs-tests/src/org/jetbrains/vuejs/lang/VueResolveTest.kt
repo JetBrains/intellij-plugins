@@ -23,12 +23,12 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.expr.VueVForExpression
 
-class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/resolve/"
 
   fun testResolveInjectionToPropInObject() {

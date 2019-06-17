@@ -7,13 +7,13 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.util.Pair;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Dennis.Ushakov
  */
-public class AngularTypedHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AngularTypedHandlerTest extends BasePlatformTestCase {
   public void testBracketsClosing() {
     myFixture.configureByText(HtmlFileType.INSTANCE, "{<caret>");
     myFixture.type("{");

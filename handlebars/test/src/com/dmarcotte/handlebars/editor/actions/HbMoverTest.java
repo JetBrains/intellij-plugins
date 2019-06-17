@@ -2,10 +2,10 @@ package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class HbMoverTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbMoverTest extends BasePlatformTestCase {
   public void testMoveHtmlTextWhenOpenHtmlAsHandlebars() {
     HbTestUtils.setOpenHtmlAsHandlebars(true, getProject(), myFixture.getTestRootDisposable());
     doTest("hbs");

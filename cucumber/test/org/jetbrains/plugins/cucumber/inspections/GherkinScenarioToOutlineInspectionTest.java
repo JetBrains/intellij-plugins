@@ -3,12 +3,12 @@ package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.List;
 
-public class GherkinScenarioToOutlineInspectionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class GherkinScenarioToOutlineInspectionTest extends BasePlatformTestCase {
   public void testScenarioWithExamples() {
     myFixture.enableInspections(GherkinScenarioToScenarioOutlineInspection.class);
 

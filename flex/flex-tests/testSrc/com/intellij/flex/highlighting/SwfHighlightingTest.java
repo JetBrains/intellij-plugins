@@ -7,10 +7,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class SwfHighlightingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class SwfHighlightingTest extends BasePlatformTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {

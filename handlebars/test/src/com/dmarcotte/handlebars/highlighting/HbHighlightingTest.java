@@ -3,13 +3,13 @@ package com.dmarcotte.handlebars.highlighting;
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by fedorkorotkov.
  */
-public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbHighlightingTest extends BasePlatformTestCase {
   @Override
   protected String getBasePath() {
     return "/highlighting";

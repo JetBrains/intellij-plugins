@@ -5,11 +5,11 @@ import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.liveTemplate.*
 
-class VueLiveTemplatesTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueLiveTemplatesTest : BasePlatformTestCase() {
   fun testTopLevelVueApplicable() {
     val cases = listOf(
       Triple(true, "", ".vue"),

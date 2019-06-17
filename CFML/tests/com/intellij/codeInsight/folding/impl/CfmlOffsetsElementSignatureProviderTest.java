@@ -4,9 +4,9 @@ package com.intellij.codeInsight.folding.impl;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class CfmlOffsetsElementSignatureProviderTest extends LightPlatformCodeInsightFixtureTestCase {
+public class CfmlOffsetsElementSignatureProviderTest extends BasePlatformTestCase {
   private final OffsetsElementSignatureProvider myProvider = new OffsetsElementSignatureProvider();
 
   public void testMultiRootFile() {

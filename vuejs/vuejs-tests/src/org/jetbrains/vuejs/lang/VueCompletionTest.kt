@@ -29,12 +29,12 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
 
-class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
 
   fun testCompleteCssClasses() {

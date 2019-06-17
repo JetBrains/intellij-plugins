@@ -3,11 +3,11 @@ package org.jetbrains.plugins.cucumber.refactoring.rename;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.refactoring.RefactoringSettings;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.plugins.cucumber.CucumberTestUtil;
 import org.jetbrains.plugins.cucumber.psi.refactoring.rename.GherkinInplaceRenameHandler;
 
-public class GherkinInplaceRenameTest extends LightPlatformCodeInsightFixtureTestCase {
+public class GherkinInplaceRenameTest extends BasePlatformTestCase {
   private static final String TEST_DATA_PATH = "/refactoring/rename";
 
   public void testRenameStepParameter() {

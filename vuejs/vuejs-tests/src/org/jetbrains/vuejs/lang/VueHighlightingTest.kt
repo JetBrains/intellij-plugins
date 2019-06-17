@@ -13,14 +13,14 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
+class VueHighlightingTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
   override fun setUp() {
