@@ -1,3 +1,3 @@
-class A extends Proce<caret>
+class A extends SynchronousStreamControl<caret>
 
-Process(){} // it's here to test that 'dart.io' will be imported with prefix
+SynchronousStreamController(){} // it's here to test that 'dart.async' will be imported with prefix

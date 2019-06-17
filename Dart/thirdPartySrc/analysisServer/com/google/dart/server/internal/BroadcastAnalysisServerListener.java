@@ -18,8 +18,11 @@ import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class {@code BroadcastAnalysisServerListener} implements {@link AnalysisServerListener} that
@@ -68,7 +71,8 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                 boolean isLast) {
+                                 boolean isLast,
+                                 @Nullable String libraryFile) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedCompletion(
         completionId,
@@ -78,7 +82,8 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
         includedSuggestionSets,
         includedElementKinds,
         includedSuggestionRelevanceTags,
-        isLast);
+        isLast,
+        libraryFile);
     }
   }
 
@@ -204,6 +209,13 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.serverStatus(analysisStatus, pubStatus);
+    }
+  }
+
+  @Override
+  public void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.computedExistingImports(file, existingImports);
     }
   }
 
