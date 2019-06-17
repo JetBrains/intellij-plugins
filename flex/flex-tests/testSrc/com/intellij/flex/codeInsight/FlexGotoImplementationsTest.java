@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.ShowImplementationsTestUtil;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.flex.util.FlexTestUtils;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FlexGotoImplementationsTest extends CodeInsightTestCase {
+public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
 
   private static final String BASE_PATH = "gotoImplementations/";
 

@@ -1,10 +1,10 @@
 package com.intellij.aws.cloudformation.tests
 
-import com.intellij.testFramework.LightCodeInsightTestCase
+import com.intellij.testFramework.LightJavaCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import java.io.File
 
-class ReferencesTest: LightCodeInsightTestCase() {
+class ReferencesTest: LightJavaCodeInsightTestCase() {
   fun testRefRange() {
     configureByFile("refRange.yaml")
     TestUtil.checkContent(

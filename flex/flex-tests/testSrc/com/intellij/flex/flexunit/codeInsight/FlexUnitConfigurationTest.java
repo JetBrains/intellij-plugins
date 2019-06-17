@@ -1,6 +1,6 @@
 package com.intellij.flex.flexunit.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class FlexUnitConfigurationTest extends CodeInsightTestCase implements FlexUnitLibs {
+public class FlexUnitConfigurationTest extends JavaCodeInsightTestCase implements FlexUnitLibs {
 
   private static final String BASE_PATH = "/config/";
 

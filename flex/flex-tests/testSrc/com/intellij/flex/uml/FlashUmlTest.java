@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uml;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
@@ -51,7 +51,7 @@ import java.util.*;
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
 @SkipInHeadlessEnvironment
-public class FlashUmlTest extends CodeInsightTestCase {
+public class FlashUmlTest extends JavaCodeInsightTestCase {
 
   private static final String BASE_PATH = "uml/";
 

@@ -43,7 +43,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.*;
 
-import static com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.JAVA_1_7;
+import static com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase.JAVA_1_7;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
   static final String BASE_PATH = "/flex_completion/";

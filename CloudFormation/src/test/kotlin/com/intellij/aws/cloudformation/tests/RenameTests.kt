@@ -2,10 +2,10 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.refactoring.rename.RenameProcessor
-import com.intellij.testFramework.LightCodeInsightTestCase
+import com.intellij.testFramework.LightJavaCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 
-class RenameTests : LightCodeInsightTestCase() {
+class RenameTests : LightJavaCodeInsightTestCase() {
   fun testSimpleEntity() {
     configureByFile("simpleEntity.template")
     val element = TargetElementUtil.findTargetElement(
