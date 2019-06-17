@@ -20,6 +20,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
+import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
@@ -28,14 +29,8 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.VueComponent
-import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelProximityVisitor
-import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
+import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
-import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isNotInLibrary
 
 private const val LOCAL_PRIORITY = 100.0
 private const val APP_PRIORITY = 90.0
@@ -50,7 +45,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
       val components = mutableListOf<VueComponent>()
       (object : VueModelProximityVisitor() {
-        override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
+        override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
           return visitSameProximity(proximity) {
             if (fromAsset(name) == tagName) {
               components.add(component)
@@ -61,19 +56,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
             }
           }
         }
-      }).visitContextScope(tag, VueModelVisitor.Proximity.GLOBAL)
+      }).visitAllContextScope(tag, VueModelVisitor.Proximity.GLOBAL)
 
-      if (components.isNotEmpty()) return multiDefinitionDescriptor(components.map {
-        if (it.source != null) {
-          VueModelManager.getComponentImplicitElement(it.source!!) ?: JSImplicitElementImpl(tag.name, it.source)
-        }
-        else {
-          JSImplicitElementImpl(tag.name, tag)
-        }
-      })
+      if (components.isNotEmpty()) return VueElementDescriptor(tag, components)
 
       if (VUE_FRAMEWORK_COMPONENTS.contains(tagName)) {
-        return VueElementDescriptor(JSImplicitElementImpl(tagName, tag))
+        return VueElementDescriptor(tag)
       }
     }
     return null
@@ -91,18 +79,18 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       { name -> listOf(fromAsset(name)) }
 
     val providedNames = mutableSetOf<String>()
-    (object : VueModelVisitor {
-      override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
+    (object : VueModelVisitor() {
+      override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
         nameMapper(name).forEach {
           if (providedNames.add(it))
             elements.add(createVueLookup(component.source, it,
-                                         proximity != VueModelVisitor.Proximity.OUT_OF_SCOPE,
+                                         proximity != Proximity.OUT_OF_SCOPE,
                                          scriptLanguage,
                                          priorityOf(proximity)))
         }
         return true
       }
-    }).visitContextScope(tag, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+    }).visitAllContextScope(tag, VueModelVisitor.Proximity.OUT_OF_SCOPE)
 
     elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
       LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
@@ -158,13 +146,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 }
 
-fun multiDefinitionDescriptor(variants: Collection<JSImplicitElement>): VueElementDescriptor {
-  assert(!variants.isEmpty())
-  val sorted = variants.sortedBy { isNotInLibrary(it) }
-  return VueElementDescriptor(sorted[0], sorted)
-}
-
-class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JSImplicitElement> = listOf(element)) : XmlElementDescriptor {
+class VueElementDescriptor(private val tag: XmlTag, private val sources: Collection<Any> = emptyList()) : XmlElementDescriptor {
   companion object {
     // it is better to use default attributes method since it is guaranteed to do not call any extension providers
     fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
@@ -172,7 +154,22 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
          ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
   }
 
-  override fun getDeclaration(): JSImplicitElement = element
+  override fun getDeclaration(): JSImplicitElement {
+    return StreamEx.of(sources)
+      .map {
+        if (it is VueComponent)
+          it.source?.let { source ->
+            VueModelManager.getComponentImplicitElement(source)
+            ?: JSImplicitElementImpl(tag.name, source)
+          }
+        else
+          it
+      }
+      .select(JSImplicitElement::class.java)
+      .findFirst()
+      .orElseGet { JSImplicitElementImpl(tag.name, tag) }
+  }
+
   override fun getName(context: PsiElement?): String = (context as? XmlTag)?.name ?: name
   override fun getName(): String = fromAsset(declaration.name)
   override fun init(element: PsiElement?) {}
@@ -192,32 +189,68 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
     val defaultHtmlAttributes = getDefaultHtmlAttributes(context)
     result.addAll(defaultHtmlAttributes)
     result.addAll(VueAttributesProvider.getDefaultVueAttributes())
-
-    val obj = VueComponents.findComponentDescriptor(declaration)
-    result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, element.project, true, xmlContext = true))
+    result.addAll(getProps())
     return result.toTypedArray()
   }
 
-  override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (attributeName == null) return null
-    if (VueAttributesProvider.DEFAULT.contains(attributeName)) return VueAttributeDescriptor(attributeName)
-    val extractedName = getBoundName(attributeName)
-
-    val obj = VueComponents.findComponentDescriptor(declaration)
-    if (obj != null) {
-      val descriptor = VueComponentDetailsProvider.INSTANCE.resolveAttribute(obj, extractedName ?: attributeName, true)
-      if (descriptor != null) {
-        return descriptor.createNameVariant(extractedName ?: attributeName)
+  fun getPsiSources(): List<PsiElement> {
+    return sources.mapNotNull {
+      when (it) {
+        is VueComponent -> it.source
+        is PsiElement -> it
+        else -> null
       }
-    }
+    }.ifEmpty { listOf(JSImplicitElementImpl(tag.name, tag)) }
+  }
 
-    if (extractedName != null) {
-      return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
+  fun getProps(): List<XmlAttributeDescriptor> {
+    return StreamEx.of(sources)
+      .select(VueContainer::class.java)
+      .flatCollection {
+        val result = mutableListOf<XmlAttributeDescriptor>()
+        it.acceptSelfScope(object : VueModelVisitor() {
+          override fun visitInputProperty(prop: VueInputProperty): Boolean {
+            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source))
+            return true
+          }
+        })
+        result
+      }
+      .toList()
+  }
+
+  override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
+    attributeName ?: return null
+    if (VueAttributesProvider.DEFAULT.contains(attributeName)) {
+      return VueAttributeDescriptor(attributeName)
     }
-    return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context)
+    val extractedName = getBoundName(attributeName)
+    val normalizedName = fromAsset(extractedName ?: attributeName)
+
+    StreamEx.of(sources)
+      .select(VueContainer::class.java)
+      .map {
+        var result: XmlAttributeDescriptor? = null
+        it.acceptSelfScope(object : VueModelVisitor() {
+          override fun visitInputProperty(prop: VueInputProperty): Boolean {
+            if (normalizedName == fromAsset(prop.name)) {
+              result = VueAttributeDescriptor(attributeName, prop.source)
+              return false
+            }
+            return super.visitInputProperty(prop)
+          }
+        })
+        result
+      }
+      .nonNull()
+      .findFirst()
+      .orElse(null)
+      ?.let { return it }
+
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName ?: attributeName, context)
            // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
            // vue allows any non-declared as props attributes to be passed to a component
-           ?: VueAttributeDescriptor(attributeName, isNonProp = true)
+           ?: VueAttributeDescriptor(attributeName, isNonProp = extractedName == null)
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,

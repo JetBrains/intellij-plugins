@@ -15,7 +15,7 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
@@ -54,7 +54,7 @@ class VueXmlExtension : HtmlXmlExtension() {
         return@find false
       }
 
-      return@find fromAsset(VueComponentDetailsProvider.getBoundName(it.name) ?: it.name) == fromAssetName
+      return@find fromAsset(getBoundName(it.name) ?: it.name) == fromAssetName
     } != null
   }
 

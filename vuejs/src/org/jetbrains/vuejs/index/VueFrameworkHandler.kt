@@ -149,7 +149,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
       }
     }
-    if (MIXINS == property.name && property.value is JSArrayLiteralExpression) {
+    if (MIXINS_PROP == property.name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions
         .forEach {
           if (it is JSReferenceExpression) {
@@ -160,10 +160,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           }
         }
     }
-    else if (EXTENDS == property.name && property.value is JSReferenceExpression) {
+    else if (EXTENDS_PROP == property.name && property.value is JSReferenceExpression) {
       recordExtends(out, property, property.value, false)
     }
-    else if (DIRECTIVES == property.name) {
+    else if (DIRECTIVES_PROP == property.name) {
       (property.value as? JSObjectLiteralExpression)?.properties?.forEach { directive ->
         if (!directive.name.isNullOrBlank()) {
           if (directive.value is JSReferenceExpression) {
@@ -176,7 +176,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     //Vuetify typescript components
-    else if (NAME == property.name && property.value is JSLiteralExpression) {
+    else if (NAME_PROP == property.name && property.value is JSLiteralExpression) {
       val componentName = (property.value as JSLiteralExpression).stringValue
       if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
                                                                     true) && obj.containingFile.fileType is TypeScriptFileType) {

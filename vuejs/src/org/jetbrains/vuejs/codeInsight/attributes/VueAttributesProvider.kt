@@ -20,8 +20,8 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
@@ -71,14 +71,14 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       result.add(VueAttributeDescriptor(MODULE_ATTR))
     }
     val contributedDirectives = mutableSetOf<String>()
-    (object : VueModelVisitor {
-      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity): Boolean {
+    (object : VueModelVisitor() {
+      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         if (contributedDirectives.add(name)) {
           result.add(VueAttributeDescriptor("v-" + fromAsset(name), directive.source, true))
         }
         return true
       }
-    }).visitContextScope(context, VueModelVisitor.Proximity.GLOBAL)
+    }).visitAllContextScope(context, VueModelVisitor.Proximity.GLOBAL)
     return result.toTypedArray()
   }
 
@@ -91,7 +91,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
     resolveDirective(attributeName, context)?.let { return it }
 
-    val extractedName = VueComponentDetailsProvider.getBoundName(attributeName)
+    val extractedName = getBoundName(attributeName)
     if (extractedName != null) {
       return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName, context) ?: VueAttributeDescriptor(attributeName)
     }
@@ -104,7 +104,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
     val directives = mutableListOf<VueDirective>()
     (object : VueModelProximityVisitor() {
-      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity): Boolean {
+      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         return visitSameProximity(proximity) {
           if (fromAsset(name) == searchName) {
             directives.add(directive)
@@ -115,7 +115,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
           }
         }
       }
-    }).visitContextScope(context, VueModelVisitor.Proximity.GLOBAL)
+    }).visitAllContextScope(context, VueModelVisitor.Proximity.GLOBAL)
 
     return directives.firstOrNull()?.let {
       VueAttributeDescriptor("v-" + fromAsset(it.defaultName ?: searchName), it.source, true)

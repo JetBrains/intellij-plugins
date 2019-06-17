@@ -3,8 +3,10 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -44,12 +46,24 @@ class VueModelManager {
       val context: PsiElement = getComponentImplicitElement(declaration)?.context ?: declaration
 
       return CachedValuesManager.getCachedValue(context) {
-        val component = findModule(context)
-                          ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-                          ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
-                          ?.obj
-                        ?: context
         val data = getComponentImplicitElement(context)?.let { getVueIndexData(it) }
+        var component: PsiElement = findModule(context)
+                                      ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+                                      ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
+                                      ?.obj
+                                    ?: context
+        if (component is JSImplicitElement) {
+          component = component.context ?: component
+        }
+        if (component is JSProperty) {
+          component = component.parent ?: component
+        }
+        else if (component is JSCallExpression) {
+          data?.descriptorRef
+            ?.let { VueComponents.resolveReferenceToVueComponent(context, it) }
+            ?.obj
+            ?.let { component = it }
+        }
         CachedValueProvider.Result.create(VueSourceComponent(context, component, data), context, component)
       }
     }
