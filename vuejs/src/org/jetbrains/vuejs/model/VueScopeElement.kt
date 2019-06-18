@@ -15,8 +15,8 @@ interface VueScopeElement {
       return source?.let { VueModelManager.getGlobal(it) }
     }
 
-  fun acceptEntitiesScope(visitor: VueModelVisitor,
-                          minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
+  fun acceptEntities(visitor: VueModelVisitor,
+                     minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
     val visited = mutableSetOf<Pair<String, VueScopeElement>>()
     val containersStack = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
 
@@ -85,6 +85,28 @@ interface VueScopeElement {
       }
     }
     return true
+  }
+
+  fun acceptPropertiesAndMethods(visitor: VueModelVisitor, onlyPublic: Boolean = true) {
+    acceptEntities(object : VueModelVisitor() {
+      override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean {
+        return visitor.visitSelfComponent(component, proximity)
+               && if (component is VueContainer) visitContainer(component) else true
+      }
+
+      override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
+        return visitor.visitMixin(mixin, proximity) && visitContainer(mixin)
+      }
+
+      fun visitContainer(container: VueContainer): Boolean {
+        return container.props.all { visitor.visitInputProperty(it) }
+               && (onlyPublic
+                   || (container.data.all { visitor.visitDataProperty(it) }
+                       && container.computed.all { visitor.visitComputedProperty(it) }
+                       && container.methods.all { visitor.visitMethod(it) }
+                      ))
+      }
+    }, VueModelVisitor.Proximity.GLOBAL)
   }
 
 }

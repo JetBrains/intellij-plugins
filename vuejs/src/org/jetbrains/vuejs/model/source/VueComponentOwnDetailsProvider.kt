@@ -30,17 +30,6 @@ class VueComponentOwnDetailsProvider {
       }
       return result
     }
-
-    fun getLocalComponents(descriptor: JSObjectLiteralExpression,
-                           filter: (String, PsiElement) -> Boolean,
-                           onlyFirst: Boolean): List<VueAttributeDescriptor> {
-      val result = mutableListOf<VueAttributeDescriptor>()
-      // since Kotlin "streams" seems to be not lazy
-      val details = CompMember.Components.readMembers(descriptor, filter)
-      if (onlyFirst && details.isNotEmpty()) return details
-      result.addAll((details))
-      return result
-    }
   }
 
   private enum class CompMember(val propertyName: String,

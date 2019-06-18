@@ -18,6 +18,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider.Companio
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
@@ -71,14 +72,14 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       result.add(VueAttributeDescriptor(MODULE_ATTR))
     }
     val contributedDirectives = mutableSetOf<String>()
-    (object : VueModelVisitor() {
+    VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelVisitor() {
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         if (contributedDirectives.add(name)) {
           result.add(VueAttributeDescriptor("v-" + fromAsset(name), directive.source, true))
         }
         return true
       }
-    }).visitAllContextScope(context, VueModelVisitor.Proximity.GLOBAL)
+    }, VueModelVisitor.Proximity.GLOBAL)
     return result.toTypedArray()
   }
 
@@ -103,7 +104,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     if (searchName.isEmpty()) return null
 
     val directives = mutableListOf<VueDirective>()
-    (object : VueModelProximityVisitor() {
+    VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelProximityVisitor() {
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         return visitSameProximity(proximity) {
           if (fromAsset(name) == searchName) {
@@ -115,7 +116,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
           }
         }
       }
-    }).visitAllContextScope(context, VueModelVisitor.Proximity.GLOBAL)
+    }, VueModelVisitor.Proximity.GLOBAL)
 
     return directives.firstOrNull()?.let {
       VueAttributeDescriptor("v-" + fromAsset(it.defaultName ?: searchName), it.source, true)

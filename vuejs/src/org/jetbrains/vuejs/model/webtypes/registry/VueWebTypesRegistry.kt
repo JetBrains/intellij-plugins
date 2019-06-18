@@ -98,7 +98,11 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
             StreamEx.of(
               FilenameIndex.getVirtualFilesByName(module.project, PackageJsonUtil.FILE_NAME,
                                                   GlobalSearchScope.allScope(module.project)))
-              .filter { JSLibraryUtil.isProbableLibraryFile(it) }
+              .filter {
+                JSLibraryUtil.isProbableLibraryFile(it)
+                && PackageJsonUtil.getOrCreateData(it).containsOneOfDependencyOfAnyType(
+                  "vue-loader", "vue-latest", "vue", "vue-template-compiler")
+              }
               .map { getWebTypesPlugin(params.first, it) ?: VueSourcePlugin.create(module, it) }
               .nonNull()
               .toList() as List<VuePlugin>

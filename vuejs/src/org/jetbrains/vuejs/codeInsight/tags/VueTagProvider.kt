@@ -44,7 +44,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val tagName = fromAsset(tag.name)
 
       val components = mutableListOf<VueComponent>()
-      (object : VueModelProximityVisitor() {
+      VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
         override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
           return visitSameProximity(proximity) {
             if (fromAsset(name) == tagName) {
@@ -56,7 +56,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
             }
           }
         }
-      }).visitAllContextScope(tag, VueModelVisitor.Proximity.GLOBAL)
+      }, VueModelVisitor.Proximity.GLOBAL)
 
       if (components.isNotEmpty()) return VueElementDescriptor(tag, components)
 
@@ -79,7 +79,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       { name -> listOf(fromAsset(name)) }
 
     val providedNames = mutableSetOf<String>()
-    (object : VueModelVisitor() {
+    VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelVisitor() {
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
         nameMapper(name).forEach {
           if (providedNames.add(it))
@@ -90,7 +90,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         }
         return true
       }
-    }).visitAllContextScope(tag, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+    }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
 
     elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
       LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
@@ -208,7 +208,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .select(VueContainer::class.java)
       .flatCollection {
         val result = mutableListOf<XmlAttributeDescriptor>()
-        it.acceptSelfScope(object : VueModelVisitor() {
+        it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty): Boolean {
             result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source))
             return true
@@ -231,7 +231,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .select(VueContainer::class.java)
       .map {
         var result: XmlAttributeDescriptor? = null
-        it.acceptSelfScope(object : VueModelVisitor() {
+        it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty): Boolean {
             if (normalizedName == fromAsset(prop.name)) {
               result = VueAttributeDescriptor(attributeName, prop.source)

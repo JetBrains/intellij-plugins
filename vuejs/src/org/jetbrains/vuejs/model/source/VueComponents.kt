@@ -48,15 +48,6 @@ class VueComponents {
       return !JSProjectUtil.isInLibrary(file, element.project) && !JSLibraryUtil.isProbableLibraryFile(file)
     }
 
-    fun findComponentDescriptor(element: JSImplicitElement): JSObjectLiteralExpression? {
-      val parent = element.parent
-      if (parent is JSCallExpression) {
-        val reference = getVueIndexData(element).descriptorRef ?: return null
-        return resolveReferenceToVueComponent(element, reference)?.obj
-      }
-      return (parent as? JSProperty)?.context as? JSObjectLiteralExpression
-    }
-
     fun vueMixinDescriptorFinder(implicitElement: JSImplicitElement): JSObjectLiteralExpression? {
       val typeString = getVueIndexData(implicitElement).descriptorRef
       if (!StringUtil.isEmptyOrSpaces(typeString)) {
