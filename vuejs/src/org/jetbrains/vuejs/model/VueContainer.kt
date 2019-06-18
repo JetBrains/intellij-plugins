@@ -20,20 +20,16 @@ interface VueSlot
 
 interface VueEmitCall
 
-interface VueInputProperty {
+interface VueProperty {
   val name: String
   val source: PsiElement?
 }
 
-interface VueDataProperty {
-  val name: String
-  val source: PsiElement?
-}
+interface VueInputProperty : VueProperty
 
-interface VueComputedProperty {
-  val name: String
-  val source: PsiElement?
-}
+interface VueDataProperty : VueProperty
+
+interface VueComputedProperty : VueProperty
 
 interface VueMethod {
   val name: String

@@ -16,8 +16,6 @@ import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import com.intellij.util.ProcessingContext
-import org.jetbrains.vuejs.codeInsight.VueJSReferenceExpressionResolver
-import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
 

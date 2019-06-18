@@ -1,8 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
@@ -10,9 +8,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
@@ -38,7 +36,14 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
     }
   override val filters: Map<String, VueFilter> = emptyMap()
 
-  override val apps: List<VueApp> = emptyList()
+  override val apps: List<VueApp>
+    get() {
+      module.let { module ->
+        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+          CachedValueProvider.Result.create(buildAppsList(module), PsiModificationTracker.MODIFICATION_COUNT)
+        }
+      }
+    }
   override val mixins: List<VueMixin>
     get() {
       module.let { module ->
@@ -103,23 +108,25 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
     override val parents: List<VueEntitiesContainer> = emptyList()
   }
 
-  fun findComponent(templateElement: PsiElement): VueComponent? {
-    return (findModule(templateElement)
-              ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-              ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
-              ?.obj
-            ?: findScriptWithExport(templateElement)?.second?.stubSafeElement as? JSObjectLiteralExpression
-           )?.let { VueModelManager.getComponent(it) }
-  }
-
   companion object {
     private fun buildMixinsList(module: Module): List<VueMixin> {
-      val elements = resolve(GLOBAL, GlobalSearchScope.projectScope(module.project), VueMixinBindingIndex.KEY) ?: emptyList()
+      val elements = resolve(GLOBAL, GlobalSearchScope.projectScope(module.project), VueMixinBindingIndex.KEY)
+                     ?: return emptyList()
       return StreamEx.of(elements)
         .map { VueComponents.vueMixinDescriptorFinder(it) }
         .nonNull()
         .map { VueModelManager.getMixin(it!!) }
         .nonNull()
+        .toList()
+    }
+
+    private fun buildAppsList(module: Module): List<VueApp> {
+      return StreamEx.of(getForAllKeys(GlobalSearchScope.projectScope(module.project), VueOptionsIndex.KEY))
+        .filter(VueComponents.Companion::isNotInLibrary)
+        .map { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
+        .nonNull()
+        .map { VueSourceApp(it!!) }
+        .filter { it.element != null }
         .toList()
     }
   }

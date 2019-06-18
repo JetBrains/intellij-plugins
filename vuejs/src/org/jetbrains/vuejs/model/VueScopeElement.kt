@@ -55,7 +55,10 @@ interface VueScopeElement {
       if ((container is VueMixin
            && !visitor.visitMixin(container, proximity))
           || (container is VueComponent
-              && !visitor.visitSelfComponent(container, proximity))) {
+              && !visitor.visitSelfComponent(container, proximity))
+          || (container is VueApp
+              && proximity == VueModelVisitor.Proximity.LOCAL
+              && !visitor.visitSelfApplication(container, proximity))) {
         return false
       }
 
@@ -90,20 +93,23 @@ interface VueScopeElement {
   fun acceptPropertiesAndMethods(visitor: VueModelVisitor, onlyPublic: Boolean = true) {
     acceptEntities(object : VueModelVisitor() {
       override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean {
-        return visitor.visitSelfComponent(component, proximity)
-               && if (component is VueContainer) visitContainer(component) else true
+        return if (component is VueContainer) visitContainer(component, proximity) else true
+      }
+
+      override fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean {
+        return visitContainer(application, proximity)
       }
 
       override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
-        return visitor.visitMixin(mixin, proximity) && visitContainer(mixin)
+        return visitContainer(mixin, proximity)
       }
 
-      fun visitContainer(container: VueContainer): Boolean {
-        return container.props.all { visitor.visitInputProperty(it) }
+      fun visitContainer(container: VueContainer, proximity: Proximity): Boolean {
+        return container.props.all { visitor.visitInputProperty(it, proximity) }
                && (onlyPublic
-                   || (container.data.all { visitor.visitDataProperty(it) }
-                       && container.computed.all { visitor.visitComputedProperty(it) }
-                       && container.methods.all { visitor.visitMethod(it) }
+                   || (container.data.all { visitor.visitDataProperty(it, proximity) }
+                       && container.computed.all { visitor.visitComputedProperty(it, proximity) }
+                       && container.methods.all { visitor.visitMethod(it, proximity) }
                       ))
       }
     }, VueModelVisitor.Proximity.GLOBAL)

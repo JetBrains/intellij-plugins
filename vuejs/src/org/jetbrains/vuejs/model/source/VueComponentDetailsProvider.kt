@@ -1,19 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
-import org.jetbrains.vuejs.codeInsight.getNameVariants
-import java.util.*
-
 class VueComponentDetailsProvider {
   companion object {
-    val INSTANCE: VueComponentDetailsProvider = VueComponentDetailsProvider()
-    private val ADVANCED_PROVIDERS = listOf(VueMixinLocalComponentDetailsProvider(), VueGlobalMixinComponentDetailsProvider(),
-                                            VueExtendsLocalComponentDetailsProvider())
     private val BIND_VARIANTS = setOf(".prop", ".camel", ".sync")
     private val ON_VARIANTS = setOf("*")
     private val PREFIX_VARIANTS = mapOf(Pair(":", BIND_VARIANTS),
@@ -43,53 +32,6 @@ class VueComponentDetailsProvider {
              }
              // if just attribute name should be used, return null
              else null
-    }
-
-    fun nameVariantsFilter(attributeName: String): (String, PsiElement) -> Boolean {
-      val prefix = PREFIX_VARIANTS.keys.find { attributeName.startsWith(it) }
-      val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
-      val nameVariants = getNameVariants(normalizedName, true)
-      return { name, _ -> name in nameVariants }
-    }
-  }
-
-  fun resolveAttribute(descriptor: JSObjectLiteralExpression,
-                       attrName: String,
-                       onlyPublic: Boolean): VueAttributeDescriptor? {
-    val filter = nameVariantsFilter(attrName)
-    val direct = VueComponentOwnDetailsProvider.getDetails(descriptor, filter, onlyPublic, true).firstOrNull()
-    if (direct != null) return direct
-    val holder: Ref<VueAttributeDescriptor> = Ref()
-    iterateProviders(descriptor, descriptor.project) {
-      holder.set(VueComponentOwnDetailsProvider.getDetails(it, filter, onlyPublic, true).firstOrNull())
-      holder.isNull
-    }
-    if (holder.isNull) {
-      holder.set(VueDirectivesProvider.resolveAttribute(descriptor, attrName, descriptor.project))
-    }
-    return holder.get()
-  }
-
-  private fun iterateProviders(descriptor: JSObjectLiteralExpression?,
-                               project: Project,
-                               processor: (JSObjectLiteralExpression) -> Boolean) {
-    val visited = mutableSetOf<JSObjectLiteralExpression>()
-    val queue = ArrayDeque<Ref<JSObjectLiteralExpression>>()
-    queue.add(Ref(descriptor))
-    if (descriptor != null) visited.add(descriptor)
-
-    while (queue.isNotEmpty()) {
-      val currentDescriptor = queue.removeFirst()?.get()
-      for (provider in ADVANCED_PROVIDERS) {
-        val finder = provider.getDescriptorFinder()
-        val shouldStop = provider.getIndexedData(currentDescriptor, project).any { implicitElement ->
-          val obj = finder(implicitElement) ?: return@any false
-          if (visited.add(obj)) queue.add(Ref(obj))
-
-          !processor(obj)
-        }
-        if (shouldStop) return
-      }
     }
   }
 }
