@@ -36,8 +36,8 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
             .into(mutableMapOf())
 
           CachedValueProvider.Result(if (result.isEmpty()) null else VueSourcePlugin(result, psiDirectory),
-                                     NodeModulesDirectoryManager.getInstance(psiDirectory.project)
-                                       .nodeModulesDirChangeTracker)
+                                     NodeModulesDirectoryManager.getInstance(psiDirectory.project).nodeModulesDirChangeTracker,
+                                     psiDirectory)
         }
       }
     }

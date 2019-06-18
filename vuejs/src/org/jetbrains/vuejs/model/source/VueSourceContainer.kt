@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
 abstract class VueSourceContainer(sourceElement: PsiElement,
-                                  protected val declaration: PsiElement) : VueContainer {
+                                  protected val declaration: JSObjectLiteralExpression?) : VueContainer {
 
   override val source: PsiElement? = sourceElement
   override val parents: List<VueEntitiesContainer> = emptyList()
@@ -57,14 +57,12 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
 
     open val key: Key<CachedValue<T>> = Key("vuejs.member." + javaClass.name)
 
-    fun get(declaration: PsiElement?): T {
-      return ((if (declaration is JSProperty) declaration.parent else declaration) as? JSObjectLiteralExpression)
-               ?.let {
-                 CachedValuesManager.getCachedValue(it, key) {
-                   CachedValueProvider.Result.create(build(it), PsiModificationTracker.MODIFICATION_COUNT)
-                 }
-               }
-             ?: empty()
+    fun get(declaration: JSObjectLiteralExpression?): T {
+      return if (declaration != null)
+        CachedValuesManager.getCachedValue(declaration, key) {
+          CachedValueProvider.Result.create(build(declaration), PsiModificationTracker.MODIFICATION_COUNT)
+        }
+      else empty()
     }
 
     protected abstract fun build(declaration: JSObjectLiteralExpression): T
