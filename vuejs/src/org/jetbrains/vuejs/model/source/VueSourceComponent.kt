@@ -8,15 +8,14 @@ import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueSourceComponent(sourceElement: PsiElement,
-                         component: PsiElement,
+                         declaration: JSObjectLiteralExpression?,
                          private val indexData: VueIndexData?)
-  : VueSourceContainer(sourceElement, component), VueRegularComponent {
+  : VueSourceContainer(sourceElement, declaration), VueRegularComponent {
 
   override val defaultName: String?
     get() {
       return indexData?.originalName
-             ?: ((declaration as? JSObjectLiteralExpression)
-               ?.findProperty("name")
+             ?: (declaration?.findProperty("name")
                ?.value as? JSLiteralExpression)
                ?.let {
                  if (it.isQuotedLiteral) it.stringValue else null

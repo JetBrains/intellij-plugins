@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.model.webtypes.registry
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
-import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.javascript.nodejs.packageJson.NpmRegistryService
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -20,6 +19,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -104,7 +104,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
               .toList() as List<VuePlugin>
 
           CachedValueProvider.Result.create(result, params.second,
-                                            NodeModulesDirectoryManager.getInstance(module.project).nodeModulesDirChangeTracker)
+                                            VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
         }, false, Pair(state, tracker))
     }
   }

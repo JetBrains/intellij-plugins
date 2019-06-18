@@ -42,29 +42,31 @@ class VueModelManager {
       return (getGlobal(templateElement) as VueSourceGlobal?)?.findComponent(templateElement)
     }
 
-    fun getComponent(declaration: PsiElement): VueComponent? {
-      val context: PsiElement = getComponentImplicitElement(declaration)?.context ?: declaration
-
+    fun getComponent(element: PsiElement): VueComponent? {
+      val context: PsiElement = getComponentImplicitElement(element)?.context ?: element
+      if (!context.isValid)
+        return null
       return CachedValuesManager.getCachedValue(context) {
         val data = getComponentImplicitElement(context)?.let { getVueIndexData(it) }
-        var component: PsiElement = findModule(context)
-                                      ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-                                      ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
-                                      ?.obj
-                                    ?: context
-        if (component is JSImplicitElement) {
-          component = component.context ?: component
+        var declaration: PsiElement = findModule(context)
+                                        ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+                                        ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
+                                        ?.obj
+                                      ?: context
+        if (declaration is JSImplicitElement) {
+          declaration = declaration.context ?: declaration
         }
-        if (component is JSProperty) {
-          component = component.parent ?: component
+        if (declaration is JSProperty) {
+          declaration = declaration.parent ?: declaration
         }
-        else if (component is JSCallExpression) {
+        else if (declaration is JSCallExpression) {
           data?.descriptorRef
             ?.let { VueComponents.resolveReferenceToVueComponent(context, it) }
             ?.obj
-            ?.let { component = it }
+            ?.let { declaration = it }
         }
-        CachedValueProvider.Result.create(VueSourceComponent(context, component, data), context, component)
+        CachedValueProvider.Result.create(VueSourceComponent(context, declaration as? JSObjectLiteralExpression, data), context,
+                                          declaration)
       }
     }
 
