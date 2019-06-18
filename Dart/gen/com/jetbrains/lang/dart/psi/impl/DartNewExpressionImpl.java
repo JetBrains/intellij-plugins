@@ -44,10 +44,12 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
     return findChildByClass(DartTypeArguments.class);
   }
 
+  @Override
   public boolean isConstantObjectExpression() {
     return DartPsiImplUtil.isConstantObjectExpression(this);
   }
 
+  @Override
   @Nullable
   public DartArguments getArguments() {
     return DartPsiImplUtil.getArguments(this);

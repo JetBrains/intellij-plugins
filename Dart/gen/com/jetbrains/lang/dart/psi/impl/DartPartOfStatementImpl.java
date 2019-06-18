@@ -44,6 +44,7 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
     return findChildByClass(DartUriElement.class);
   }
 
+  @Override
   @NotNull
   public String getLibraryName() {
     return DartPsiImplUtil.getLibraryName(this);
