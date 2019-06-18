@@ -9,7 +9,10 @@ import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.VueProperty
 import java.util.*
 
 class VueInsideTemplateCompletionContributor : JSSmartCompletionContributor() {
@@ -19,22 +22,12 @@ class VueInsideTemplateCompletionContributor : JSSmartCompletionContributor() {
     val container = VueModelManager.findEnclosingContainer(location) ?: return basicVariants
     val vueVariants = ArrayList<LookupElement>()
     container.acceptPropertiesAndMethods(object : VueModelVisitor() {
-      override fun visitDataProperty(dataProperty: VueDataProperty): Boolean {
-        add(dataProperty.name, dataProperty.source)
+      override fun visitProperty(property: VueProperty, proximity: Proximity): Boolean {
+        add(property.name, property.source)
         return true
       }
 
-      override fun visitComputedProperty(computedProperty: VueComputedProperty): Boolean {
-        add(computedProperty.name, computedProperty.source)
-        return true
-      }
-
-      override fun visitInputProperty(prop: VueInputProperty): Boolean {
-        add(prop.name, prop.source)
-        return true
-      }
-
-      override fun visitMethod(method: VueMethod): Boolean {
+      override fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
         add(method.name, method.source)
         return true
       }

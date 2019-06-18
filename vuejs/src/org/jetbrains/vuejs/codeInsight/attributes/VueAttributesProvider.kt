@@ -106,14 +106,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     val directives = mutableListOf<VueDirective>()
     VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelProximityVisitor() {
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-        return visitSameProximity(proximity) {
-          if (fromAsset(name) == searchName) {
-            directives.add(directive)
-            false
-          }
-          else {
-            true
-          }
+        return acceptSameProximity(proximity, fromAsset(name) == searchName) {
+          directives.add(directive)
         }
       }
     }, VueModelVisitor.Proximity.GLOBAL)

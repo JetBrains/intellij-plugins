@@ -3,14 +3,15 @@ package org.jetbrains.vuejs.model
 
 abstract class VueModelProximityVisitor : VueModelVisitor() {
 
-  var closest: Proximity? = null
+  private var closest: Proximity? = null
 
-  fun visitSameProximity(proximity: Proximity, call: () -> Boolean): Boolean {
+  fun acceptSameProximity(proximity: Proximity, condition: Boolean, ifTrue: () -> Unit): Boolean {
     if (closest != null && closest!! > proximity) {
       return false
     }
-    if (!call()) {
+    if (condition) {
       closest = proximity
+      ifTrue()
     }
     return true
   }

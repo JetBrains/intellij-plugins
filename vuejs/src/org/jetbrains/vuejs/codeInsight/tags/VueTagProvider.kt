@@ -46,14 +46,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val components = mutableListOf<VueComponent>()
       VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
         override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-          return visitSameProximity(proximity) {
-            if (fromAsset(name) == tagName) {
-              components.add(component)
-              false
-            }
-            else {
-              true
-            }
+          return acceptSameProximity(proximity, fromAsset(name) == tagName) {
+            components.add(component)
           }
         }
       }, VueModelVisitor.Proximity.GLOBAL)
@@ -209,7 +203,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .flatCollection {
         val result = mutableListOf<XmlAttributeDescriptor>()
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitInputProperty(prop: VueInputProperty): Boolean {
+          override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
             result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source))
             return true
           }
@@ -232,12 +226,12 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .map {
         var result: XmlAttributeDescriptor? = null
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
-          override fun visitInputProperty(prop: VueInputProperty): Boolean {
+          override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
             if (normalizedName == fromAsset(prop.name)) {
               result = VueAttributeDescriptor(attributeName, prop.source)
               return false
             }
-            return super.visitInputProperty(prop)
+            return true
           }
         })
         result

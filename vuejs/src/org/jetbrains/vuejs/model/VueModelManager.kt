@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -12,10 +13,17 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.refs.findScriptWithExport
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.getVueIndexData
@@ -32,18 +40,49 @@ class VueModelManager {
       return ModuleUtil.findModuleForPsiElement(context)?.let { getGlobal(it) }
     }
 
-    fun getGlobal(module: Module): VueGlobal? {
+    private fun getGlobal(module: Module): VueGlobal? {
       return CachedValuesManager.getManager(module.project).getCachedValue(module) {
         CachedValueProvider.Result.create(VueSourceGlobal(module), ModificationTracker.NEVER_CHANGED)
       }
     }
 
-    fun findComponent(templateElement: PsiElement): VueComponent? {
-      return (getGlobal(templateElement.originalElement) as VueSourceGlobal?)?.findComponent(templateElement.originalElement)
+    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {
+      return findComponent(templateElement) as? VueEntitiesContainer
+             ?: findVueApp(templateElement)
+             ?: getGlobal(templateElement.originalElement)
     }
 
-    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {
-      return findComponent(templateElement) as? VueEntitiesContainer ?: getGlobal(templateElement.originalElement)
+    private fun findComponent(templateElement: PsiElement): VueComponent? {
+      return (findModule(templateElement)
+                ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+                ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
+                ?.obj
+              ?: findScriptWithExport(templateElement)?.second?.stubSafeElement as? JSObjectLiteralExpression
+             )?.let { getComponent(it) }
+    }
+
+    private fun findVueApp(templateElement: PsiElement): VueApp? {
+      val global = getGlobal(templateElement.originalElement) ?: return null
+      val xmlElement = if (templateElement is XmlElement)
+        templateElement
+      else
+        InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(templateElement)
+        ?: return null
+      var result: VueApp? = null
+      PsiTreeUtil.findFirstParent(xmlElement, Condition {
+        if (it is PsiFile) return@Condition true
+        val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value
+                      ?: return@Condition false
+        if (!StringUtil.isEmptyOrSpaces(idValue)) {
+          val idReference = "#$idValue"
+          global.apps.find { app -> idReference == app.element }?.let { app ->
+            result = app
+            return@Condition true
+          }
+        }
+        false
+      })
+      return result
     }
 
     fun getComponent(element: PsiElement): VueComponent? {

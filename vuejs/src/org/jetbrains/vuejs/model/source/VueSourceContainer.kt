@@ -15,6 +15,7 @@ import com.intellij.psi.util.*
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
@@ -25,7 +26,7 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val template: PsiElement? = null
-  override val element: String? = null
+  override val element: String? get() = getTextIfLiteral(declaration?.findProperty("el")?.value)
 
   override val data: List<VueDataProperty> get() = DATA.get(declaration)
   override val computed: List<VueComputedProperty> get() = COMPUTED.get(declaration)

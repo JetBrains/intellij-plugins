@@ -11,6 +11,10 @@ abstract class VueModelVisitor {
     return component.defaultName?.let { visitComponent(it, component, proximity) } ?: true
   }
 
+  open fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean {
+    return true
+  }
+
   open fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
     return true
   }
@@ -23,19 +27,23 @@ abstract class VueModelVisitor {
     return true
   }
 
-  open fun visitInputProperty(prop: VueInputProperty): Boolean {
+  open fun visitProperty(property: VueProperty, proximity: Proximity): Boolean {
     return true
   }
 
-  open fun visitComputedProperty(computedProperty: VueComputedProperty): Boolean {
-    return true
+  open fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
+    return visitProperty(prop, proximity)
   }
 
-  open fun visitDataProperty(dataProperty: VueDataProperty): Boolean {
-    return true
+  open fun visitComputedProperty(computedProperty: VueComputedProperty, proximity: Proximity): Boolean {
+    return visitProperty(computedProperty, proximity)
   }
 
-  open fun visitMethod(method: VueMethod): Boolean {
+  open fun visitDataProperty(dataProperty: VueDataProperty, proximity: Proximity): Boolean {
+    return visitProperty(dataProperty, proximity)
+  }
+
+  open fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
     return true
   }
 
