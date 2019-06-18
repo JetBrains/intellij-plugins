@@ -68,11 +68,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
-    final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
-    final PsiElementPattern.Capture<PsiElement> inStep = psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP))
-      .andNot(psiElement().inside(psiElement().withElementType(GherkinElementTypes.TABLE)));
+    PsiElementPattern.Capture<PsiElement> inTable = psiElement().inside(psiElement().withElementType(GherkinElementTypes.TABLE));
+    PsiElementPattern.Capture<PsiElement> inScenario =
+      psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS)).andNot(inTable);
+    PsiElementPattern.Capture<PsiElement> inStep =
+      psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP)).andNot(inTable);
 
-    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)), new CompletionProvider<CompletionParameters>() {
+    extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)).andNot(inTable), new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     @NotNull ProcessingContext context,
