@@ -29,10 +29,18 @@ import java.util.List;
 public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
 
   private static final String SMILEY = "<~>";
+  private static final String DOT_DOT_DOT = "...";
+  private static final String BRACE_DOTS = "{...}";
+  private static final String PAREN_DOTS = "(...)";
+  private static final String FILE_HEADER = "/.../";
+  private static final String MULTI_LINE_DOC_COMMENT = "/**...*/";
+  private static final String MULTI_LINE_COMMENT = "/*...*/";
+  private static final String SINGLE_LINE_DOC_COMMENT = "///...";
+  private static final String SINGLE_LINE_COMMENT = "//...";
 
   @Override
-  protected boolean isCustomFoldingRoot(@NotNull ASTNode node) {
-    IElementType type = node.getElementType();
+  protected boolean isCustomFoldingRoot(@NotNull final ASTNode node) {
+    final IElementType type = node.getElementType();
     return type == DartTokenTypesSets.DART_FILE || type == DartTokenTypes.CLASS_BODY || type == DartTokenTypes.FUNCTION_BODY;
   }
 
@@ -72,25 +80,27 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
 
-    if (psiElement instanceof DartFile) return "/.../";                              // 1.   File header
-    if (psiElement instanceof DartImportOrExportStatement) return "...";             // 2.   Import and export statements
-    if (psiElement instanceof DartPartStatement) return "...";                       // 3.   Part statements
-    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return "/**...*/"; // 4.1. Multiline doc comments
-    if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return "/*...*/";      // 4.2. Multiline comments
-    if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) return "///...";  // 4.3. Consequent single line doc comments
-    if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return "//...";       // 4.4. Consequent single line comments
+    if (psiElement instanceof DartFile) return FILE_HEADER;                                      // 1.   File header
+    if (psiElement instanceof DartImportOrExportStatement) return DOT_DOT_DOT;                   // 2.   Import and export statements
+    if (psiElement instanceof DartPartStatement) return DOT_DOT_DOT;                             // 3.   Part statements
+    if (elementType == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT) return MULTI_LINE_DOC_COMMENT; // 4.1. Multiline doc comments
+    if (elementType == DartTokenTypesSets.MULTI_LINE_COMMENT) return MULTI_LINE_COMMENT;         // 4.2. Multiline comments
+    if (elementType == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {
+      return SINGLE_LINE_DOC_COMMENT;                                                            // 4.3. Consequent single line doc comments
+    }
+    if (elementType == DartTokenTypesSets.SINGLE_LINE_COMMENT) return SINGLE_LINE_COMMENT;       // 4.4. Consequent single line comments
     if (psiElement instanceof DartClassBody || psiElement instanceof DartEnumDefinition) {
-      return "{...}";                                                                // 5.   Class body
+      return BRACE_DOTS;                                                                         // 5.   Class body
     }
-    if (psiElement instanceof DartFunctionBody) return "{...}";                      // 6.   Function body
-    if (psiElement instanceof DartTypeArguments) return SMILEY;                      // 7.   Type arguments
+    if (psiElement instanceof DartFunctionBody) return BRACE_DOTS;                               // 6.   Function body
+    if (psiElement instanceof DartTypeArguments) return SMILEY;                                  // 7.   Type arguments
     if (psiElement instanceof DartStringLiteralExpression) {
-      return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
+      return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
     }
-    if (psiElement instanceof DartSetOrMapLiteralExpression) return "{...}";         // 9.   Set or Map literals
-    if (psiElement instanceof DartArguments) return "(...)";                         // 10. Constructor invocations
+    if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
+    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10. Constructor invocations
 
-    return "...";
+    return DOT_DOT_DOT;
   }
 
   @Override
@@ -330,18 +340,18 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   @NotNull
   private static String multilineStringPlaceholder(@NotNull final ASTNode node) {
     ASTNode child = node.getFirstChildNode();
-    if (child == null) return "...";
+    if (child == null) return DOT_DOT_DOT;
     if (child.getElementType() == DartTokenTypes.RAW_TRIPLE_QUOTED_STRING) {
       String text = child.getText();
       String quotes = text.substring(1, 4);
-      return "r" + quotes + "..." + quotes;
+      return "r" + quotes + DOT_DOT_DOT + quotes;
     }
     if (child.getElementType() == DartTokenTypes.OPEN_QUOTE) {
       String text = child.getText();
       String quotes = text.substring(0, 3);
-      return quotes + "..." + quotes;
+      return quotes + DOT_DOT_DOT + quotes;
     }
-    return "...";
+    return DOT_DOT_DOT;
   }
 
   private static void foldSetOrMapLiterals(@NotNull final List<FoldingDescriptor> descriptors,
