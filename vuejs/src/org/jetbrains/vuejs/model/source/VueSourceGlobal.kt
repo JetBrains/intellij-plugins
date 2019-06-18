@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -11,6 +12,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
@@ -102,11 +104,12 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   }
 
   fun findComponent(templateElement: PsiElement): VueComponent? {
-    return findModule(templateElement)
-      ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-      ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
-      ?.obj
-      ?.let { VueModelManager.getComponent(it) }
+    return (findModule(templateElement)
+              ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+              ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
+              ?.obj
+            ?: findScriptWithExport(templateElement)?.second?.stubSafeElement as? JSObjectLiteralExpression
+           )?.let { VueModelManager.getComponent(it) }
   }
 
   companion object {

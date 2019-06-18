@@ -11,23 +11,13 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getContainingXmlFile
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.index.DIRECTIVES_PROP
+import org.jetbrains.vuejs.index.VueGlobalDirectivesIndex
+import org.jetbrains.vuejs.index.VueLocalDirectivesIndex
+import org.jetbrains.vuejs.index.resolve
 
 class VueDirectivesProvider {
   companion object {
-    fun getAttributes(descriptor: JSObjectLiteralExpression?, project: Project): List<VueAttributeDescriptor> {
-      val result = mutableListOf<VueAttributeDescriptor>()
-      result.addAll(getForAllKeys(createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY).map { createDescriptor(it) })
-
-      val directives = findProperty(descriptor, DIRECTIVES_PROP)
-      val fileScope = createContainingFileScope(directives)
-      if (directives != null && fileScope != null) {
-        result.addAll(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY)
-                        .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
-                        .map { createDescriptor(it) })
-      }
-      return result
-    }
 
     fun resolveAttribute(descriptor: JSObjectLiteralExpression?, attrName: String, project: Project): VueAttributeDescriptor? {
       val searchName = attrName.substringAfter("v-", "")

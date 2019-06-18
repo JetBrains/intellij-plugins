@@ -39,7 +39,11 @@ class VueModelManager {
     }
 
     fun findComponent(templateElement: PsiElement): VueComponent? {
-      return (getGlobal(templateElement) as VueSourceGlobal?)?.findComponent(templateElement)
+      return (getGlobal(templateElement.originalElement) as VueSourceGlobal?)?.findComponent(templateElement.originalElement)
+    }
+
+    fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {
+      return findComponent(templateElement) as? VueEntitiesContainer ?: getGlobal(templateElement.originalElement)
     }
 
     fun getComponent(element: PsiElement): VueComponent? {

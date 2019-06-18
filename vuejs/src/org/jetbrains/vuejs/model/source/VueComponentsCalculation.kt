@@ -18,7 +18,7 @@ import java.util.*
 
 class VueComponentsCalculation {
   companion object {
-    fun calculateScopeComponents(scope: GlobalSearchScope, globalize: Boolean): VueComponentsCache.ComponentsData {
+    fun calculateScopeComponents(scope: GlobalSearchScope, globalize: Boolean): ComponentsData {
       val allValues = getForAllKeys(scope, VueComponentsIndex.KEY)
       val libCompResolveMap = mutableMapOf<String, String>()
 
@@ -61,7 +61,7 @@ class VueComponentsCalculation {
       for (entry in componentData) {
         componentsMap[entry.key] = selectComponentDefinition(entry.value)
       }
-      return VueComponentsCache.ComponentsData(componentsMap, libCompResolveMap)
+      return ComponentsData(componentsMap, libCompResolveMap)
     }
 
     private fun findObjectLiteralOfGlobalRegistration(element: JSImplicitElement):
@@ -201,4 +201,7 @@ class VueComponentsCalculation {
       return selected ?: list[0]
     }
   }
+
+  class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>,
+                       val libCompResolveMap: Map<String, String>)
 }

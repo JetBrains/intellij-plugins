@@ -1,20 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.javascript.completion.JSCompletionUtil
-import com.intellij.lang.javascript.completion.JSLookupPriority
-import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
-import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.codeInsight.getNameVariants
-import org.jetbrains.vuejs.codeInsight.toAsset
 import java.util.*
 
 class VueComponentDetailsProvider {
@@ -59,42 +51,6 @@ class VueComponentDetailsProvider {
       val nameVariants = getNameVariants(normalizedName, true)
       return { name, _ -> name in nameVariants }
     }
-  }
-
-  private fun getAttributes(descriptor: JSObjectLiteralExpression?,
-                            project: Project): List<VueAttributeDescriptor> {
-    val result: MutableList<VueAttributeDescriptor> = mutableListOf()
-    if (descriptor != null) {
-      result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic = false, onlyFirst = false))
-      result.addAll(VueDirectivesProvider.getAttributes(descriptor, descriptor.project))
-    }
-    iterateProviders(descriptor, project) {
-      result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic = false, onlyFirst = false))
-      true
-    }
-
-    return result.map {
-      when {
-        it.name.contains('-') -> it.createNameVariant(toAsset(it.name))
-        else -> it
-      }
-    }
-  }
-
-  fun getAttributesAndCreateLookupElements(location: PsiElement, priority: JSLookupPriority): ArrayList<LookupElement>? {
-    val scriptWithExport = findScriptWithExport(location.originalElement) ?: return null
-    val defaultExport = scriptWithExport.second
-    val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression
-    val vueVariants = ArrayList<LookupElement>()
-    INSTANCE.getAttributes(obj, location.project)
-      // do not suggest directives in injected javascript fragments
-      .filter { !it.isDirective() }
-      .forEach {
-        val builder = if (it.declaration == null) LookupElementBuilder.create(it.name)
-        else JSLookupUtilImpl.createLookupElement(it.declaration!!, it.name)
-        vueVariants.add(JSCompletionUtil.withJSLookupPriority(builder, priority))
-      }
-    return vueVariants
   }
 
   fun resolveAttribute(descriptor: JSObjectLiteralExpression,

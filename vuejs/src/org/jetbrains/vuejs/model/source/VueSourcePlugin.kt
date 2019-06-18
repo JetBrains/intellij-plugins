@@ -10,6 +10,9 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import one.util.streamex.EntryStream
+import org.jetbrains.vuejs.index.BOOTSTRAP_VUE
+import org.jetbrains.vuejs.index.SHARDS_VUE
+import org.jetbrains.vuejs.index.VUETIFY
 import org.jetbrains.vuejs.model.*
 
 class VueSourcePlugin private constructor(override val components: Map<String, VueComponent>,
@@ -21,13 +24,15 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
   override val mixins: List<VueMixin> = emptyList()
 
   companion object {
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
+
     fun create(module: Module, packageJsonFile: VirtualFile): VueSourcePlugin? {
       val packageJson = PsiManager.getInstance(module.project).findFile(packageJsonFile)
       return packageJson?.parent?.let { psiDirectory ->
         CachedValuesManager.getCachedValue(psiDirectory) {
           val directoryFile = psiDirectory.virtualFile
           val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
-          val globalize = VueComponentsCache.PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
+          val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
 
           val result: MutableMap<String, VueComponent> = EntryStream
             .of(VueComponentsCalculation.calculateScopeComponents(scope, globalize).map)
