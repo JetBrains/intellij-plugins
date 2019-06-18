@@ -1,9 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.text.BlockSupport;
@@ -243,12 +244,9 @@ public interface DartTokenTypesSets {
     }
 
     @Override
-    public ASTNode parseContents(@NotNull final ASTNode lazyParseableBlock) {
-      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(lazyParseableBlock.getTreeParent().getPsi().getProject(),
-                                                                               lazyParseableBlock,
-                                                                               new DartLexer(),
-                                                                               getLanguage(),
-                                                                               lazyParseableBlock.getChars());
+    protected ASTNode doParseContents(@NotNull ASTNode lazyParseableBlock, @NotNull PsiElement psi) {
+      PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(psi.getProject(), lazyParseableBlock);
+
       if (isSyncOrAsync(lazyParseableBlock)) {
         builder.putUserData(DartGeneratedParserUtilBase.INSIDE_SYNC_OR_ASYNC_FUNCTION, true);
       }
@@ -269,6 +267,13 @@ public interface DartTokenTypesSets {
     }
 
     @Override
+    protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
+      PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(psi.getProject(), chameleon);
+      new DartParser().parseLight(DART_FILE, builder);
+      return builder.getTreeBuilt().getFirstChildNode();
+    }
+
+    @Override
     public FlyweightCapableTreeStructure<LighterASTNode> parseContents(LighterLazyParseableNode chameleon) {
       PsiFile file = chameleon.getContainingFile();
       assert file != null : chameleon;
@@ -277,7 +282,7 @@ public interface DartTokenTypesSets {
 
       final PsiBuilder builder = adapt_builder_(EMBEDDED_CONTENT, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
-      PsiBuilder.Marker marker = enter_section_(builder, 0, _COLLAPSE_, "<code fragment>");
+      PsiBuilder.Marker marker = enter_section_(builder, 0, _COLLAPSE_, "<dart embedded content>");
       boolean result = DartParser.dartUnit(builder, 0);
       exit_section_(builder, 0, marker, EMBEDDED_CONTENT, result, true, TRUE_CONDITION);
       return builder.getLightTree();

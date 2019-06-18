@@ -430,7 +430,7 @@ simpleType ::= simpleQualifiedReferenceExpression typeArguments?
 typeArguments ::= '<' typeList '>'
 typeList ::= type? (',' type)*
 
-block ::= '{' statements '}' {pin=1 implements="com.jetbrains.lang.dart.psi.IDartBlock"}
+block ::= '{' statements '}' {extraRoot=true pin=1 implements="com.jetbrains.lang.dart.psi.IDartBlock"}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement
