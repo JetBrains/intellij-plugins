@@ -92,10 +92,12 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
         String filePath = getFilePath();
         File f = new File(filePath);
-        if (!f.isDirectory()) {
-          f = f.getParentFile();
+        if (f.exists()) {
+          if (!f.isDirectory()) {
+            f = f.getParentFile();
+          }
+          params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
         }
-        params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
         params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
         params.setShortenCommandLine(getShortenCommandLine(), getProject());
@@ -163,8 +165,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     String filePath = getFilePath();
     if (filePath == null) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
-    } else if (!(new File(filePath)).exists()) {
-      throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
     }
 
     String programParameters = getProgramParameters();
