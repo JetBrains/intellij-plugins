@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
@@ -133,23 +134,25 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
-    addQuickFixActions(group);
+    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
+    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+
+    addQuickFixActions(group, selectedProblem);
+    addDocumentationAction(group, selectedProblem);
 
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
   }
 
-  private void addQuickFixActions(@NotNull final DefaultActionGroup group) {
-    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
-    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
-    final VirtualFile selectedVFile = selectedProblem != null ? selectedProblem.getFile() : null;
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
+    final VirtualFile selectedVFile = problem != null ? problem.getFile() : null;
     if (selectedVFile == null) return;
 
     final List<SourceChange> selectedProblemSourceChangeFixes = new SmartList<>();
     DartAnalysisServerService.getInstance(myProject)
-      .askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, selectedProblem.getOffset(), fixes -> {
+      .askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, problem.getOffset(), fixes -> {
         for (AnalysisErrorFixes fix : fixes) {
-          if (fix.getError().getCode().equals(selectedProblem.getCode())) {
+          if (fix.getError().getCode().equals(problem.getCode())) {
             selectedProblemSourceChangeFixes.addAll(fix.getFixes());
           }
         }
@@ -164,8 +167,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
         @Override
         public void actionPerformed(@NotNull final AnActionEvent event) {
-          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile,
-                                                                                       selectedProblem.getOffset()));
+          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile, problem.getOffset()));
           try {
             WriteAction.run(() -> AssistUtils.applySourceChange(myProject, sourceChangeFix, true));
           }
@@ -173,6 +175,19 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
         }
       });
     }
+  }
+
+  private static void addDocumentationAction(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
+    final String url = problem != null ? problem.getUrl() : null;
+    if (url == null) return;
+
+    group.addSeparator();
+    group.add(new DumbAwareAction("Open Documentation", "Open detailed problem description in browser", AllIcons.Ide.External_link_arrow) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        BrowserUtil.browse(url);
+      }
+    });
   }
 
   @NotNull

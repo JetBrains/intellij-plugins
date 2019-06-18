@@ -34,7 +34,8 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final DartProblem problem = (DartProblem)value;
       setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
-      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), problem.getUrl()));
+      // Pass null to the url, mouse movement to the hover makes the tooltip go away, see https://youtrack.jetbrains.com/issue/WEB-39449
+      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), null));
 
       final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
