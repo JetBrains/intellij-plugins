@@ -38,7 +38,6 @@ public class DartPartStatementImpl extends DartPsiCompositeElementImpl implement
     return findNotNullChildByClass(DartUriElement.class);
   }
 
-  @Override
   @NotNull
   public String getUriString() {
     return DartPsiImplUtil.getUriString(this);

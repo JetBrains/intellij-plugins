@@ -68,7 +68,6 @@ public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentIm
     return findChildByClass(DartStringLiteralExpression.class);
   }
 
-  @Override
   @Nullable
   public DartComponentName getComponentName() {
     return DartPsiImplUtil.getComponentName(this);

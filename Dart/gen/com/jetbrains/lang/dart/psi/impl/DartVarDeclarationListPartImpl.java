@@ -38,7 +38,6 @@ public class DartVarDeclarationListPartImpl extends AbstractDartComponentImpl im
     return findChildByClass(DartVarInit.class);
   }
 
-  @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return DartPsiImplUtil.getMetadataList(this);

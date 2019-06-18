@@ -32,7 +32,6 @@ public class DartEnumConstantDeclarationImpl extends AbstractDartComponentImpl i
     return findNotNullChildByClass(DartComponentName.class);
   }
 
-  @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return DartPsiImplUtil.getMetadataList(this);

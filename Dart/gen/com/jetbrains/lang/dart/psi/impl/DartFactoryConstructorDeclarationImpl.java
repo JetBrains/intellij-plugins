@@ -62,7 +62,6 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
     return findChildByClass(DartType.class);
   }
 
-  @Override
   @Nullable
   public DartComponentName getComponentName() {
     return DartPsiImplUtil.getComponentName(this);

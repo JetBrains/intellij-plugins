@@ -32,7 +32,6 @@ public class DartLabelImpl extends AbstractDartComponentImpl implements DartLabe
     return findNotNullChildByClass(DartComponentName.class);
   }
 
-  @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return DartPsiImplUtil.getMetadataList(this);

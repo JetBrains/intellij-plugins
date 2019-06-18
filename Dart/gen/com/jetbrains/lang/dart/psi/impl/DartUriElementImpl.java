@@ -34,7 +34,6 @@ public class DartUriElementImpl extends DartUriElementBase implements DartUriEle
     return findNotNullChildByClass(DartStringLiteralExpression.class);
   }
 
-  @Override
   @NotNull
   public Pair<String, TextRange> getUriStringAndItsRange() {
     return DartPsiImplUtil.getUriStringAndItsRange(this);
