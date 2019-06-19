@@ -107,7 +107,9 @@ public interface DartTokenTypesSets {
                                                   SYNC,
                                                   ASYNC,
                                                   AWAIT,
-                                                  YIELD);
+                                                  YIELD,
+                                                  LATE,
+                                                  REQUIRED);
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,

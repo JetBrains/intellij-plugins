@@ -21,8 +21,8 @@ import static com.jetbrains.lang.dart.lexer.DartLexer.*;
 
     @Override
     public String toString() {
-        return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
-        }
+      return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
+    }
   }
 
   protected final Stack<State> myStateStack = new Stack<>();
@@ -161,11 +161,10 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "true"                 { return TRUE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "try"                  { return TRY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "var"                  { return VAR; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
-// 'void' is not listed as reserved word in spec but it may only be used as the return type of a function
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
 
 // BUILT_IN_IDENTIFIER (can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
@@ -196,6 +195,8 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "native"               { return NATIVE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "show"                 { return SHOW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "hide"                 { return HIDE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "late"                 { return LATE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "required"             { return REQUIRED; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {IDENTIFIER}           { return IDENTIFIER; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "["                { return LBRACKET; }
