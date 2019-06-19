@@ -10,18 +10,8 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/4/2015.
@@ -153,40 +143,6 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testSuppressAllRulesForLineOverwritesExistingSuppressionForRule() {
     doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
-  }
-
-  public void _testAllRulesAreInConfig() throws Exception {
-    myFixture.configureByFile(getTestName(true) + "/tslint.json");
-    final Set<String> fromConfig =
-      Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString()))
-        .collect(Collectors.toSet());
-
-    final Path rulesDir = Paths.get(getNodePackage().getSystemDependentPath()).resolve("lib").resolve("rules");
-    Assert.assertTrue(Files.exists(rulesDir));
-    final Set<String> fromDir = Files.list(rulesDir).map(path -> path.toFile().getName())
-      .filter(name -> name.endsWith("Rule.js"))
-      .map(name -> {
-        name = name.substring(0, name.length() - 7);
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-          final char ch = name.charAt(i);
-          if (Character.isUpperCase(ch)) {
-            sb.append("-").append(Character.toLowerCase(ch));
-          }
-          else {
-            sb.append(ch);
-          }
-        }
-        return sb.toString();
-      })
-      .collect(Collectors.toSet());
-
-    final List<String> outdated = fromConfig.stream().filter(name -> !fromDir.contains(name)).sorted().collect(Collectors.toList());
-    final List<String> newRules = fromDir.stream().filter(name -> !fromConfig.contains(name)).sorted().collect(Collectors.toList());
-
-    if (!outdated.isEmpty() || !newRules.isEmpty()) {
-      Assert.fail(String.format("Outdated: (%d)\n%s\nMissing: (%d)\n%s\n", outdated.size(), outdated, newRules.size(), newRules));
-    }
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {
