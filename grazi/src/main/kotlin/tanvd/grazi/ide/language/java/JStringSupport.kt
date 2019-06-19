@@ -24,7 +24,7 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal
 
         for (str in literals.filterForType(JavaTokenType.STRING_LITERAL).filter { it.innerText != null }) {
             val typos = SanitizingGrammarChecker.default.check(str) { it.innerText!! }.map { typo ->
-                val element = typo.location.element!!
+                val element = typo.location.pointer?.element!!
                 val indexStart = element.text.indexOf((element as PsiLiteralExpressionImpl).innerText!!)
                 typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))
             }
@@ -34,7 +34,7 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal
 
         for (str in literals.filterForType(JavaTokenType.RAW_STRING_LITERAL).filter { it.rawString != null }) {
             val typos = SanitizingGrammarChecker.default.check(str) { it.rawString!! }.map { typo ->
-                val element = typo.location.element!!
+                val element = typo.location.pointer?.element!!
                 val indexStart = element.text.indexOf((element as PsiLiteralExpressionImpl).rawString!!)
                 typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))
             }

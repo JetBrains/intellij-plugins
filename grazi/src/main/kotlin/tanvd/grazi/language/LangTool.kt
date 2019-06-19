@@ -2,11 +2,11 @@ package tanvd.grazi.language
 
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 object LangTool {
-    private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
+    private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
 
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5

@@ -24,7 +24,7 @@ class KConstructsSupport : LanguageSupport() {
             param.text.ifContains(paramName) { index ->
                 addAll(GraziSpellchecker.check(paramName).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            element = param, shouldUseRename = true))
+                            pointer = param.toPointer(), shouldUseRename = true))
                 })
             }
             ProgressManager.checkCanceled()
@@ -37,7 +37,7 @@ class KConstructsSupport : LanguageSupport() {
             ident.text.ifContains(identName) { index ->
                 addAll(GraziSpellchecker.check(identName).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            element = ident, shouldUseRename = true))
+                            pointer = ident.toPointer(), shouldUseRename = true))
                 })
             }
             ProgressManager.checkCanceled()

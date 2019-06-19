@@ -15,7 +15,7 @@ class GraziInspection : LocalInspectionTool() {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 
         private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor {
-            val end = if (fix.location.element!!.textLength >= fix.location.range.endInclusive + 1)
+            val end = if (fix.location.pointer?.element!!.textLength >= fix.location.range.endInclusive + 1)
                 fix.location.range.endInclusive + 1
             else
                 fix.location.range.endInclusive
@@ -36,7 +36,7 @@ class GraziInspection : LocalInspectionTool() {
                 add(GraziDisableRule(fix))
             }
 
-            return manager.createProblemDescriptor(fix.location.element, TextRange.create(fix.location.range.start, end),
+            return manager.createProblemDescriptor(fix.location.pointer.element!!, TextRange.create(fix.location.range.start, end),
                     fix.info.description, fix.info.category.highlight,
                     isOnTheFly, *fixes.toTypedArray())
         }

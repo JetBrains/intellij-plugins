@@ -1,8 +1,7 @@
 package tanvd.grazi.ide.language.python
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.*
 import com.jetbrains.python.psi.PyFile
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
@@ -21,7 +20,7 @@ class PConstructsSupport : LanguageSupport() {
             ident.text.ifContains(identName) { index ->
                 addAll(GraziSpellchecker.check(identName).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            element = ident, shouldUseRename = true))
+                            pointer = ident.toPointer(), shouldUseRename = true))
                 })
             }
             ProgressManager.checkCanceled()

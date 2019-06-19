@@ -11,10 +11,10 @@ fun assertIsEmpty(collection: Collection<*>) {
 }
 
 fun Typo.verify(text: String? = null) {
-    if (location.element != null) word
-    if (location.element != null && text != null) {
+    if (location.pointer != null) word
+    if (location.pointer != null && text != null) {
         //it may work unexpectedly if there is more than one equal element, but it is ok for tests
-        val indexOfElement = text.indexOf(location.element!!.text)
+        val indexOfElement = text.indexOf(location.pointer?.element!!.text)
         assertEquals(word, text.subSequence(location.range.withOffset(indexOfElement)))
     }
 }

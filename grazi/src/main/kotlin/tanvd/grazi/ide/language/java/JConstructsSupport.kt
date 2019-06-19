@@ -19,7 +19,7 @@ class JConstructsSupport : LanguageSupport() {
             method.text.ifContains(methodName) { index ->
                 addAll(GraziSpellchecker.check(methodName).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            element = method, shouldUseRename = true))
+                            pointer = method.toPointer(), shouldUseRename = true))
                 })
             }
             ProgressManager.checkCanceled()
@@ -30,7 +30,7 @@ class JConstructsSupport : LanguageSupport() {
             ident.text.ifContains(identName) { index ->
                 addAll(GraziSpellchecker.check(identName).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            element = ident, shouldUseRename = true))
+                            pointer = ident.toPointer(), shouldUseRename = true))
                 })
             }
             ProgressManager.checkCanceled()

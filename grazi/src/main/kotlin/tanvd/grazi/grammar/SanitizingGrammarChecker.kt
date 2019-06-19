@@ -73,7 +73,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                     val startShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.start }?.second ?: 0
                     val endShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.endInclusive }?.second ?: 0
                     val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
-                    typo.copy(location = typo.location.copy(range = newRange, element = firstToken))
+                    typo.copy(location = typo.location.copy(range = newRange, pointer = firstToken.toPointer()))
                 } else null
             }
         }.toSet()

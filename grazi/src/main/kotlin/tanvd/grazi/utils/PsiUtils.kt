@@ -2,6 +2,7 @@ package tanvd.grazi.utils
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
@@ -22,6 +23,8 @@ fun ASTNode.hasType(tokens: Set<IElementType>) = this.elementType in tokens
 inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType): List<T> = filterFor { token ->
     tokens.contains(token.node.elementType)
 }
+
+fun PsiElement.toPointer() = SmartPointerManager.createPointer(this)
 
 /**
  * Will traverse through PsiElements using [take] function while [cond] is true.

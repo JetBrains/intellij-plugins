@@ -1,6 +1,7 @@
 package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import tanvd.grazi.utils.*
 
 /**
@@ -9,8 +10,8 @@ import tanvd.grazi.utils.*
  * use filter to filter out all typos, which may occurred because of inline elements.
  */
 class IgnoreTokensFilter(private val ignoreSpellcheck: Boolean = false) {
-    private val leftNeighbour = HashSet<PsiElement>()
-    private val rightNeighbour = HashSet<PsiElement>()
+    private val leftNeighbour = HashSet<SmartPsiElementPointer<PsiElement>>()
+    private val rightNeighbour = HashSet<SmartPsiElementPointer<PsiElement>>()
 
     inline fun <T : PsiElement, reified E : PsiElement> populate(elements: Collection<T>, addSiblingIf: (E) -> Boolean) {
         for (element in elements) {
@@ -35,12 +36,12 @@ class IgnoreTokensFilter(private val ignoreSpellcheck: Boolean = false) {
 
     /** Register element as a left neighbour of inline element */
     fun addLeft(element: PsiElement) {
-        leftNeighbour.add(element)
+        leftNeighbour.add(element.toPointer())
     }
 
     /** Register element as a right neighbour of inline element */
     fun addRight(element: PsiElement) {
-        rightNeighbour.add(element)
+        rightNeighbour.add(element.toPointer())
     }
 
     fun filter(typos: Collection<Typo>): Set<Typo> = typos.filterNot { shouldIgnore(it) }.toSet()
@@ -50,8 +51,8 @@ class IgnoreTokensFilter(private val ignoreSpellcheck: Boolean = false) {
             return false
         }
 
-        val leftToken = leftNeighbour.firstOrNull { it == typo.location.element }
-        val rightToken = rightNeighbour.firstOrNull { it == typo.location.element }
+        val leftToken = leftNeighbour.firstOrNull { it == typo.location.pointer }
+        val rightToken = rightNeighbour.firstOrNull { it == typo.location.pointer }
 
         if (leftToken == null && rightToken == null) {
             return false
@@ -71,17 +72,17 @@ class IgnoreTokensFilter(private val ignoreSpellcheck: Boolean = false) {
 
     private fun Typo.isAtStart(): Boolean {
         var start = 0
-        val element = location.element!!
-        while (start < element.text.length && start !in location.range && blankCharRegex.matches(element.text[start])) {
+        val element = location.pointer!!
+        while (start < element.element!!.text.length && start !in location.range && blankCharRegex.matches(element.element!!.text[start])) {
             start++
         }
         return start in location.range
     }
 
     private fun Typo.isAtEnd(): Boolean {
-        val element = location.element!!
-        var start = element.text.length - 1
-        while (start >= 0 && start !in location.range && blankCharRegex.matches(element.text[start])) {
+        val element = location.pointer!!
+        var start = element.element!!.text.length - 1
+        while (start >= 0 && start !in location.range && blankCharRegex.matches(element.element!!.text[start])) {
             start--
         }
         return start in location.range
