@@ -14,7 +14,7 @@ import training.learn.ActionsRecorder
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
-import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonExecutor
 import training.ui.Message
 import training.ui.UiManager
 import training.util.createBalloon
@@ -28,7 +28,7 @@ import java.util.concurrent.Executor
  * Created by karashevich on 18/03/16.
  */
 class LessonManager {
-  private var currentLessonContext: LessonContext? = null
+  private var currentLessonExecutor: LessonExecutor? = null
 
   val testActionsExecutor: Executor by lazy {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
@@ -48,14 +48,14 @@ class LessonManager {
     mouseListenerHolder = null
   }
 
-  internal fun initDslLesson(editor: Editor, cLesson : Lesson, lessonContext: LessonContext) {
+  internal fun initDslLesson(editor: Editor, cLesson : Lesson, lessonExecutor: LessonExecutor) {
     initLesson(editor, cLesson)
-    currentLessonContext = lessonContext
+    currentLessonExecutor = lessonExecutor
   }
 
   @Throws(Exception::class)
   internal fun initLesson(editor: Editor, cLesson : Lesson) {
-    currentLessonContext?.stopLesson()
+    currentLessonExecutor?.stopLesson()
 
     clearAllListeners()
    //remove mouse blocks and action recorders from last editor

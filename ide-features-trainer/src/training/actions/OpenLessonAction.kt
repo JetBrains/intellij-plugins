@@ -36,6 +36,7 @@ import training.learn.lesson.LessonProcessor
 import training.learn.lesson.XmlLesson
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonExecutor
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
 import training.project.ProjectUtils
@@ -204,10 +205,11 @@ class OpenLessonAction : AnAction() {
   }
 
   private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
-    val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson)
-    LessonManager.instance.initDslLesson(textEditor.editor, lesson, lessonContext)
+    val executor = LessonExecutor(lesson, textEditor.editor, projectWhereToStartLesson)
+    val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson, executor)
+    LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
-    lessonContext.processNextTask()
+    executor.processNextTask()
   }
 
   private fun hideOtherViews(project: Project) {
