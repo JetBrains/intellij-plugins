@@ -30,11 +30,6 @@ import java.util.concurrent.Executor
 class LessonManager {
   private var currentLessonContext: LessonContext? = null
 
-  val dslExecutor: Executor by lazy {
-    createNamedSingleThreadExecutor("IdeFeaturesTrainer")
-  }
-
-
   val testActionsExecutor: Executor by lazy {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
   }

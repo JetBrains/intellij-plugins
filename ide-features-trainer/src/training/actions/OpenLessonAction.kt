@@ -206,20 +206,8 @@ class OpenLessonAction : AnAction() {
   private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
     val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, lessonContext)
-    LessonManager.instance.dslExecutor.execute {
-      try {
-        lesson.lessonContent(lessonContext)
-        ApplicationManager.getApplication().invokeLater {
-          lesson.pass()
-          LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
-          LOG.debug("Lesson $lesson has been passed")
-        }
-      }
-      catch (e: LessonScriptStopped) {
-        LOG.debug("Script fo lesson $lesson has been stopped")
-        // do nothing here
-      }
-    }
+    lesson.lessonContent(lessonContext)
+    lessonContext.processNextTask()
   }
 
   private fun hideOtherViews(project: Project) {

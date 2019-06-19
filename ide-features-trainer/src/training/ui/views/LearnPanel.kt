@@ -1,6 +1,5 @@
 package training.ui.views
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.components.labels.LinkLabel
@@ -196,10 +195,8 @@ class LearnPanel : JPanel() {
         lessonPanel!!.revalidate()
         lessonPanel!!.repaint()
         //run to update LessonMessagePane.getMinimumSize and LessonMessagePane.getPreferredSize
-        ApplicationManager.getApplication().invokeLater {
-            lessonPanelBoxLayout!!.invalidateLayout(lessonPanel)
-            lessonPanelBoxLayout!!.layoutContainer(lessonPanel!!)
-        }
+        lessonPanelBoxLayout!!.invalidateLayout(lessonPanel)
+        lessonPanelBoxLayout!!.layoutContainer(lessonPanel!!)
     }
 
     fun setPreviousMessagesPassed() {
