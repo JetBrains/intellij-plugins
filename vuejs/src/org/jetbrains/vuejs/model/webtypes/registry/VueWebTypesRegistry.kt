@@ -48,6 +48,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
     internal val STATE_UPDATE_INTERVAL = TimeUnit.MINUTES.toNanos(10)
 
+    internal val CHECK_TIMEOUT = TimeUnit.MILLISECONDS.toNanos(1)
+
     internal val EDT_TIMEOUT = TimeUnit.MILLISECONDS.toNanos(5)
     internal val EDT_RETRY_INTERVAL = TimeUnit.SECONDS.toNanos(1)
 
@@ -284,7 +286,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   }
 
   class FutureResultProvider<T>(private val operation: Callable<T>) {
-    private var myLock = Object()
+    private val myLock = Object()
     private var myFuture: Future<T>? = null
     private var myRetryTime = 0L
 
@@ -301,12 +303,19 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           future = myFuture!!
         }
         val app = ApplicationManager.getApplication()
-        val edt = app.isReadAccessAllowed && !app.isUnitTestMode
+        val edt = app.isDispatchThread && !app.isUnitTestMode
+        var timeout = if (edt) EDT_TIMEOUT else NON_EDT_TIMEOUT
         try {
-          ProgressManager.checkCanceled()
-          return future.get(if (edt) EDT_TIMEOUT else NON_EDT_TIMEOUT, TimeUnit.NANOSECONDS)
-        }
-        catch (e: TimeoutException) {
+          do {
+            ProgressManager.checkCanceled()
+            try {
+              return future.get(CHECK_TIMEOUT, TimeUnit.NANOSECONDS)
+            }
+            catch (e: TimeoutException) {
+              timeout -= CHECK_TIMEOUT
+            }
+          }
+          while (timeout > 0)
           synchronized(myLock) {
             myRetryTime = max(myRetryTime, System.nanoTime() + (if (edt) EDT_RETRY_INTERVAL else NON_EDT_RETRY_INTERVAL))
           }
