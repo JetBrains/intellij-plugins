@@ -1,16 +1,13 @@
 package tanvd.grazi.ide.notification
 
-import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupActivity
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 
-open class GraziNotificationComponent(private val project: Project) : ProjectComponent {
-    override fun getComponentName(): String {
-        return "GraziNotificationComponent"
-    }
-
-    override fun projectOpened() {
+open class GraziNotificationComponent : StartupActivity, DumbAware {
+    override fun runActivity(project: Project) {
         if (GraziConfig.state.lastSeenVersion == null) {
             GraziConfig.state.lastSeenVersion = GraziPlugin.version
             Notification.showInstallationMessage(project)

@@ -57,14 +57,6 @@
 
     <idea-version since-build="191"/>
 
-
-    <project-components>
-        <component>
-            <implementation-class>tanvd.grazi.ide.notification.GraziNotificationComponent</implementation-class>
-            <implementation-class>tanvd.grazi.ide.init.GraziProjectInit</implementation-class>
-        </component>
-    </project-components>
-
     <application-components>
         <component>
             <implementation-class>tanvd.grazi.GraziPlugin</implementation-class>
@@ -74,6 +66,10 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
+
+        <postStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
+        <postStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
+
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
