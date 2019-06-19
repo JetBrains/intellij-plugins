@@ -3,7 +3,6 @@ package training.learn.lesson.kimpl
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.DocumentReferenceManager
@@ -15,37 +14,22 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
-import org.jetbrains.annotations.CalledInBackground
+import org.jetbrains.annotations.CalledInAwt
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
-import training.learn.exceptons.LessonScriptStopped
 import training.learn.lesson.LessonManager
-import java.util.concurrent.CompletableFuture
 
 class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
-  private var stopMe = false
-  private var currentStep : CompletableFuture<Boolean>? = null
+  private val taskActions: MutableList<() -> Unit> = ArrayList()
 
-  fun stopLesson() {
-    synchronized(this) {
-      stopMe = true
-      currentStep?.complete(false)
-    }
-  }
+  private var currentRecorder: ActionsRecorder? = null
 
-  /**
-   * Start a new task in a lesson context
-   */
-  @CalledInBackground // This code should be called from IdeFeaturesTrainer thread
-  fun task(taskContent: TaskContext.() -> Unit) {
-    checkForStop()
-    lateinit var recorder : ActionsRecorder
-    lateinit var taskContext : TaskContext
-    ApplicationManager.getApplication().invokeAndWait {
-      recorder = ActionsRecorder(project, editor.document)
-      taskContext = TaskContext(lesson, editor, project, recorder)
-      taskContext.apply(taskContent)
-    }
+  private fun processTask(taskContent: TaskContext.() -> Unit) {
+    assert(ApplicationManager.getApplication().isDispatchThread)
+    val recorder = ActionsRecorder(project, editor.document)
+    currentRecorder = recorder
+    val taskContext = TaskContext(lesson, editor, project, recorder)
+    taskContext.apply(taskContent)
 
     if (TaskContext.inTestMode) {
       LessonManager.instance.testActionsExecutor.execute {
@@ -53,20 +37,55 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
       }
     }
 
-    try {
-      taskContext.steps.all {
-        currentStep = it
-        checkForStop()
-        it.get()
+    taskContext.steps.forEach { step ->
+      step.thenAccept {
+        assert(ApplicationManager.getApplication().isDispatchThread)
+        val taskHasBeenDone = taskContext.steps.all { it.isDone }
+        if (taskHasBeenDone) {
+          // Now we are inside some listener registered by recorder
+          ApplicationManager.getApplication().invokeLater {
+            // So better to exit from all callbacks and then clear all related data
+            Disposer.dispose(recorder)
+            currentRecorder = null
+            LessonManager.instance.passExercise()
+
+            processNextTask()
+          }
+        }
       }
-      checkForStop()
     }
-    finally {
-      ApplicationManager.getApplication().invokeAndWait {
-        Disposer.dispose(recorder)
-      }
+  }
+
+  fun processNextTask() {
+    assert(ApplicationManager.getApplication().isDispatchThread)
+    if (taskActions.size == 0) {
+      lesson.pass()
+      LessonManager.instance.passLesson(project, lesson)
+      return
     }
-    LessonManager.instance.passExercise()
+    val content = taskActions[0]
+    taskActions.removeAt(0)
+    content()
+  }
+
+  fun stopLesson() {
+    assert(ApplicationManager.getApplication().isDispatchThread)
+    currentRecorder?.let { Disposer.dispose(it) }
+  }
+
+  private fun addSimpleTaskAction(taskAction: () -> Unit) {
+    taskActions.add {
+      taskAction()
+      processNextTask()
+    }
+  }
+
+  /**
+   * Start a new task in a lesson context
+   */
+  @CalledInAwt
+  fun task(taskContent: TaskContext.() -> Unit) {
+    taskActions.add { processTask(taskContent) }
   }
 
   /** Describe a simple task: just one action required */
@@ -90,7 +109,7 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
 
 
   fun setDocumentCode(code: String) {
-    ApplicationManager.getApplication().invokeAndWait {
+    addSimpleTaskAction {
       val document = editor.document
       DocumentUtil.writeInRunUndoTransparentAction {
         val documentReference = DocumentReferenceManager.getInstance().create(document)
@@ -104,15 +123,15 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
   }
 
   fun caret(offset: Int) {
-    runInEdt { editor.caretModel.moveToOffset(offset) }
+    addSimpleTaskAction { editor.caretModel.moveToOffset(offset) }
   }
 
   fun caret(line: Int, column: Int) {
-    runInEdt { editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1)) }
+    addSimpleTaskAction { editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1)) }
   }
 
   fun caret(text: String) {
-    runInEdt {
+    addSimpleTaskAction {
       val start = getStartOffsetForText(text, editor, project)
       editor.caretModel.moveToOffset(start.startOffset)
     }
@@ -143,27 +162,10 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     editorGutterComponentEx.revalidateMarkup()
   }
 
-  private inline fun runInEdt(crossinline runnable: () -> Unit) {
-    val app = ApplicationManager.getApplication()
-    if (app.isDispatchThread) {
-      runnable()
-    } else {
-      app.invokeLater({ runnable() }, ModalityState.defaultModalityState())
-    }
-  }
-
-  private fun checkForStop() {
-    synchronized(this) {
-      if (stopMe) {
-        throw LessonScriptStopped()
-      }
-    }
-  }
-
   fun prepareSample(sample: LessonSample) {
     setDocumentCode(sample.text)
     if (sample.selection != null) {
-      runInEdt {
+      addSimpleTaskAction {
         editor.selectionModel.setSelection(sample.selection.first, sample.selection.second)
       }
     }
