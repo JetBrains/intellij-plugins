@@ -1,13 +1,15 @@
 package tanvd.grazi.ide.language.python
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.*
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
 import com.jetbrains.python.psi.PyFile
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
+import tanvd.kex.buildSet
 
 class PConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {

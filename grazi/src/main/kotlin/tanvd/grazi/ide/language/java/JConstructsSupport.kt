@@ -7,6 +7,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
+import tanvd.kex.buildSet
 
 class JConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {

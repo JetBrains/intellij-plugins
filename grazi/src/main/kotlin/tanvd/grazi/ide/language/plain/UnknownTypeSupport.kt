@@ -5,7 +5,9 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.filterFor
+import tanvd.grazi.utils.spellcheckOnly
+import tanvd.kex.buildSet
 
 class UnknownTypeSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {

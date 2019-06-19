@@ -11,6 +11,7 @@ import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
 import tanvd.grazi.grammar.*
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
+import tanvd.kex.buildSet
 
 class MarkdownSupport : LanguageSupport() {
     companion object {

@@ -9,9 +9,7 @@ import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 
 class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction {
-    override fun getName(): String {
-        return "Disable rule '${typo.info.rule.description}'"
-    }
+    override fun getName() = "Disable rule '${typo.info.rule.description}'"
 
     override fun getFamilyName(): String = "Disable rule"
 

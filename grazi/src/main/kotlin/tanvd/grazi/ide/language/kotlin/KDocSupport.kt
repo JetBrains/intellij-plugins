@@ -13,6 +13,7 @@ import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
+import tanvd.kex.buildSet
 
 class KDocSupport : LanguageSupport() {
     companion object {

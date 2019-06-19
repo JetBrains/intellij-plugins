@@ -12,6 +12,9 @@ import tanvd.grazi.utils.*
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
     data class Location(val range: IntRange, val pointer: SmartPsiElementPointer<PsiElement>? = null,
                         val shouldUseRename: Boolean = false) {
+        val element: PsiElement?
+            get() = pointer?.element
+
         fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
     }
 

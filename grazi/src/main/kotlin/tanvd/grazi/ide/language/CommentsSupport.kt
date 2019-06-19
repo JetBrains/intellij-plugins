@@ -6,8 +6,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
+import tanvd.kex.buildSet
 
 class CommentsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {

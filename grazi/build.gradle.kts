@@ -17,6 +17,7 @@ plugins {
 repositories {
     mavenCentral()
     jcenter()
+    maven("https://dl.bintray.com/tanvd/tanvd.kex")
 }
 
 intellij {
@@ -65,7 +66,6 @@ val langs = setOf("en", "ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "r
 
 dependencies {
     compileOnly(kotlin("stdlib"))
-    compileOnly(kotlin("reflect"))
 
     compile("org.languagetool", "languagetool-core", Versions.languageTool) {
         exclude("org.slf4j", "slf4j-api")
@@ -78,6 +78,8 @@ dependencies {
 
     compile("org.apache.commons", "commons-lang3", "3.5")
 
+
+    compile("tanvd.kex", "kex", "0.1.0")
     compile("com.beust", "klaxon", "5.0.1")
 
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")

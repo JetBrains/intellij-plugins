@@ -11,13 +11,11 @@ import tanvd.grazi.grammar.Typo
 
 class GraziAddWord(private val typo: Typo) : LocalQuickFix, PriorityAction {
 
-    override fun getName(): String {
-        return "Add '${typo.word}' to global dictionary"
-    }
+    override fun getName() = "Add '${typo.word}' to global dictionary"
 
     override fun getPriority() = PriorityAction.Priority.NORMAL
 
-    override fun getFamilyName(): String = "Add word"
+    override fun getFamilyName() = "Add word"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.state.userWords.add(typo.word.toLowerCase())

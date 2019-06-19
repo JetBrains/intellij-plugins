@@ -9,8 +9,9 @@ import tanvd.grazi.ide.GraziCommitInspection
 
 open class GraziProjectInit : StartupActivity, DumbAware {
     override fun runActivity(project: Project) {
-        val inspectionProfile = CommitMessageInspectionProfile.getInstance(project)
-        inspectionProfile.addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
-        inspectionProfile.enableTool("GraziCommit", project)
+        with(CommitMessageInspectionProfile.getInstance(project)) {
+            addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
+            enableTool("GraziCommit", project)
+        }
     }
 }

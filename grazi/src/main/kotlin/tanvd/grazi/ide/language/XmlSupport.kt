@@ -6,6 +6,7 @@ import com.intellij.psi.xml.XmlText
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.*
+import tanvd.kex.*
 
 class XmlSupport : LanguageSupport() {
     companion object {

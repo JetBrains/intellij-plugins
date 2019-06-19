@@ -2,43 +2,38 @@ package tanvd.grazi.ide
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.spellcheck.IdeaSpellchecker
-import tanvd.grazi.utils.buildList
+import tanvd.grazi.utils.toSelectionRange
+import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
     companion object {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 
-        private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor {
-            val end = if (fix.location.pointer?.element!!.textLength >= fix.location.range.endInclusive + 1)
-                fix.location.range.endInclusive + 1
-            else
-                fix.location.range.endInclusive
-
-            val fixes = buildList<LocalQuickFix> {
-                if (fix.info.rule.isDictionaryBasedSpellingRule) {
-                    add(GraziAddWord(fix))
-                }
-
-                if (fix.fixes.isNotEmpty() && isOnTheFly) {
-                    if (fix.location.shouldUseRename) {
-                        add(GraziRenameTypo(fix))
-                    } else {
-                        add(GraziReplaceTypo(fix))
+        private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor? {
+            return fix.location.element?.let { element ->
+                val fixes = buildList<LocalQuickFix> {
+                    if (fix.info.rule.isDictionaryBasedSpellingRule) {
+                        add(GraziAddWord(fix))
                     }
+
+                    if (fix.fixes.isNotEmpty() && isOnTheFly) {
+                        if (fix.location.shouldUseRename) {
+                            add(GraziRenameTypo(fix))
+                        } else {
+                            add(GraziReplaceTypo(fix))
+                        }
+                    }
+
+                    add(GraziDisableRule(fix))
                 }
 
-                add(GraziDisableRule(fix))
+                manager.createProblemDescriptor(element, fix.toSelectionRange(), fix.info.description, fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
             }
-
-            return manager.createProblemDescriptor(fix.location.pointer.element!!, TextRange.create(fix.location.range.start, end),
-                    fix.info.description, fix.info.category.highlight,
-                    isOnTheFly, *fixes.toTypedArray())
         }
     }
 
@@ -48,7 +43,7 @@ class GraziInspection : LocalInspectionTool() {
         val result = mutableListOf<ProblemDescriptor>()
         for (ext in LanguageSupport.all.filter { it.isSupported(file) }) {
             val typos = ext.getFixes(file)
-            result += typos.map { createProblemDescriptor(it, manager, isOnTheFly) }
+            result += typos.mapNotNull { createProblemDescriptor(it, manager, isOnTheFly) }
         }
         return result.toTypedArray()
     }

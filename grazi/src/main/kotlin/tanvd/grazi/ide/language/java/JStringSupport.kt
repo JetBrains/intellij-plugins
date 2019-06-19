@@ -8,7 +8,9 @@ import tanvd.grazi.GraziBundle
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.filterFor
+import tanvd.grazi.utils.withOffset
+import tanvd.kex.buildSet
 
 class JStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
     companion object {

@@ -2,6 +2,8 @@ package tanvd.grazi.ide.language.python
 
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.utils.*
+import tanvd.kex.ifTrue
+import tanvd.kex.orTrue
 
 object PUtils {
     val python = SanitizingGrammarChecker(

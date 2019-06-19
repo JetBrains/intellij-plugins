@@ -6,6 +6,7 @@ import com.intellij.psi.tree.TokenSet
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 import tanvd.grazi.utils.*
+import tanvd.kex.orTrue
 
 object MarkdownPsiUtils {
     val headerTypes = setOf(MarkdownElementTypes.ATX_1, MarkdownElementTypes.ATX_2, MarkdownElementTypes.ATX_3,

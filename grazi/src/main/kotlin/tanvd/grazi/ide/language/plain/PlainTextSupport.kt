@@ -5,8 +5,8 @@ import com.intellij.psi.*
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
+import tanvd.kex.buildSet
 
 class PlainTextSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {

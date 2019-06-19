@@ -1,5 +1,7 @@
 package tanvd.grazi.utils
 
+import tanvd.kex.buildList
+
 val punctuationChars = listOf('.', ',', ':', ';')
 
 val blankCharRegex = Regex("\\s")

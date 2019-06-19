@@ -9,6 +9,8 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 
+//TODO-tanvd enable once fixed smart-pointers for tests
+@Disabled
 class SanitizingGrammarCheckerTests {
     @BeforeEach
     fun prepare() {
