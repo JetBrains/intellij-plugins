@@ -60,8 +60,8 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
           }
         }
       }
-      val result = template.replace("<name>", replace.get()).replace("<caret>", "")
       task("Do Refactor") {
+        val result = template.replace("<name>", replace.get()).replace("<caret>", "")
         text("In order to be confident about the refactoring, RubyMine lets you preview it before confirming." +
             "Click <strong>$it</strong> to complete the refactoring.")
         stateCheck { editor.document.text == result }

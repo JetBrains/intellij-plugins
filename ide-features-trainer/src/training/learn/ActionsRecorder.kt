@@ -40,12 +40,10 @@ class ActionsRecorder(private val project: Project,
   private val busConnection = ApplicationManager.getApplication().messageBus.connect(this)
 
   /** Currently registered command listener */
-  @Volatile
-  var commandListener: CommandListener? = null
+  private var commandListener: CommandListener? = null
 
   // TODO: I suspect that editor listener could be replaced by command listener. Need to check it
-  @Volatile
-  var editorListener: FileEditorManagerListener? = null
+  private var editorListener: FileEditorManagerListener? = null
 
   init {
     Disposer.register(project, this)
@@ -147,11 +145,9 @@ class ActionsRecorder(private val project: Project,
 
       override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         if (actionId == ActionManager.getInstance().getId(action)) {
-          ApplicationManager.getApplication().invokeLater {
-            val complete = checkComplete()
-            if (!complete) {
-              addSimpleCommandListener { checkComplete() }
-            }
+          val complete = checkComplete()
+          if (!complete) {
+            addSimpleCommandListener { checkComplete() }
           }
         }
       }
@@ -245,7 +241,6 @@ class ActionsRecorder(private val project: Project,
       override fun documentChanged(event: DocumentEvent) {
         if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
           ApplicationManager.getApplication().invokeLater {
-
             if (!disposed && !project.isDisposed) {
               PsiDocumentManager.getInstance(project).commitAndRunReadAction { onDocumentChange() }
             }
@@ -275,7 +270,7 @@ class ActionsRecorder(private val project: Project,
   }
 
 
-  fun removeListeners() {
+  private fun removeListeners() {
     if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
     if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
     actionListeners.clear()
