@@ -210,6 +210,7 @@ public interface DartTokenTypes {
   IElementType INT_DIV = new DartElementType("~/");
   IElementType INT_DIV_EQ = new DartElementType("~/=");
   IElementType IS = new DartElementType("is");
+  IElementType LATE = new DartElementType("late");
   IElementType LBRACE = new DartElementType("{");
   IElementType LBRACKET = new DartElementType("[");
   IElementType LIBRARY = new DartElementType("library");
@@ -255,6 +256,7 @@ public interface DartTokenTypes {
   IElementType REGULAR_STRING_PART = new DartElementType("REGULAR_STRING_PART");
   IElementType REM = new DartElementType("%");
   IElementType REM_EQ = new DartElementType("%=");
+  IElementType REQUIRED = new DartElementType("required");
   IElementType RETHROW = new DartElementType("rethrow");
   IElementType RETURN = new DartElementType("return");
   IElementType RPAREN = new DartElementType(")");
