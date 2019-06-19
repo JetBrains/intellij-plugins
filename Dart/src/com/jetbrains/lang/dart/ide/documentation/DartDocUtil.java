@@ -8,6 +8,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
@@ -67,44 +69,54 @@ public class DartDocUtil {
     return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
-  private static String formatSignature(@NotNull final String signature,
-                                        final int offsetToOpenParen) {
+  private static String formatSignature(@NotNull final String signature) {
+
+    final int offsetToOpenParen = signature.indexOf('(');
+
     // If this signature doesn't have a '(', return
     if (offsetToOpenParen <= 0) {
-      return signature;
+      return StringUtil.escapeXmlEntities(signature);
     }
 
-    // If this signature doesn't have at least 2 parameters, return
-    String[] strings = signature.split(", ");
-    if (strings.length == 1) {
-      return signature;
-    }
-    boolean isInsideGeneric = false;
+    String[] strings = signatureSplit(signature);
     StringBuilder stringBuilder = new StringBuilder();
-    //boolean isFirstLine = true;
+    if (strings.length == 1) {
+      return StringUtil.escapeXmlEntities(signature);
+    }
+
     for (int i = 0; i < strings.length; i++) {
-      String strSeg = strings[i];
-
-      boolean oddNumberOfGenericDelimeters =
-        (StringUtil.getOccurrenceCount(strSeg, LESS_THAN) + StringUtil.getOccurrenceCount(strSeg, GREATER_THAN)) % 2 != 0;
-      if (oddNumberOfGenericDelimeters) {
-        isInsideGeneric = !isInsideGeneric;
-      }
-      if (isInsideGeneric) {
-        stringBuilder.append(strSeg);
-        if (i + 1 != strings.length) {
-          stringBuilder.append(", ");
-        }
-        continue;
-      }
-
-      stringBuilder.append(strSeg);
+      stringBuilder.append(StringUtil.escapeXmlEntities(strings[i]));
       if (i + 1 != strings.length) {
         stringBuilder.append(",<br>");
         stringBuilder.append(StringUtil.repeat(NBSP, offsetToOpenParen + 1));
       }
     }
     return stringBuilder.toString();
+  }
+
+  /**
+   * Split around the ", " pattern, when not in a generic or nested generic pattern.
+   */
+  private static String[] signatureSplit(@NotNull final String str) {
+    List<String> result = new SmartList<>();
+
+    int beginningOffset = 0;
+    int genericDepth = 0;
+    for (int i = 0; i < str.length(); i++) {
+      final char c = str.charAt(i);
+      if (c == '<') {
+        genericDepth++;
+      }
+      else if (c == '>') {
+        genericDepth = Math.max(genericDepth - 1, 0);
+      }
+      else if (genericDepth == 0 && c == ',') {
+        result.add(str.substring(beginningOffset, i));
+        beginningOffset = i + 2;
+      }
+    }
+    result.add(str.substring(beginningOffset));
+    return ArrayUtil.toStringArray(result);
   }
 
   @NotNull
@@ -133,7 +145,7 @@ public class DartDocUtil {
       }
       else {
         builder.append(
-          formatSignature(StringUtil.escapeXmlEntities(signature), signature.indexOf('(')));
+          formatSignature(signature));
       }
       builder.append("<br>");
     }
