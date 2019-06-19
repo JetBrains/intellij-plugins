@@ -1,6 +1,6 @@
 class NAO1 {
   f(x,y,z) {
-    var a = (x)?.y;
+    var a = (x)?.y?.[b];
     var b = x?.y;
     var c = x?.z();
     var e = a ?? b ? y : z;

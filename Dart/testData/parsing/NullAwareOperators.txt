@@ -43,17 +43,24 @@ Dart File
                         PsiElement(IDENTIFIER)('a')
                   VAR_INIT
                     PsiElement(=)('=')
-                    REFERENCE_EXPRESSION
-                      PARENTHESIZED_EXPRESSION
-                        PsiElement(()('(')
+                    ARRAY_ACCESS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PARENTHESIZED_EXPRESSION
+                          PsiElement(()('(')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('x')
+                          PsiElement())(')')
+                        PsiElement(?.)('?.')
                         REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('x')
-                        PsiElement())(')')
+                            PsiElement(IDENTIFIER)('y')
                       PsiElement(?.)('?.')
+                      PsiElement([)('[')
                       REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('y')
+                          PsiElement(IDENTIFIER)('b')
+                      PsiElement(])(']')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
                   VAR_ACCESS_DECLARATION
