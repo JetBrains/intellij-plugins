@@ -13,6 +13,8 @@ class NAO1 {
     a ||= c;
     a &&= c;
     this?.f(e, f, g ?? h);
+
+    aaa!.bcc!()! as CCC ..ddd()!![][]![]!();
   }
 }
 

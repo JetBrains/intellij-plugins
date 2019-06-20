@@ -301,6 +301,56 @@ Dart File
                             PsiElement(IDENTIFIER)('h')
                     PsiElement())(')')
                 PsiElement(;)(';')
+                VALUE_EXPRESSION
+                  AS_EXPRESSION
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('aaa')
+                        PsiElement(!)('!')
+                        PsiElement(.)('.')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('bcc')
+                      PsiElement(!)('!')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                    PsiElement(!)('!')
+                    PsiElement(as)('as')
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('CCC')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      ARRAY_ACCESS_EXPRESSION
+                        ARRAY_ACCESS_EXPRESSION
+                          ARRAY_ACCESS_EXPRESSION
+                            CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('ddd')
+                              ARGUMENTS
+                                PsiElement(()('(')
+                                PsiElement())(')')
+                            PsiElement(!)('!')
+                            PsiElement(!)('!')
+                            PsiElement([)('[')
+                            PsiElement(])(']')
+                          PsiElement([)('[')
+                          PsiElement(])(']')
+                        PsiElement(!)('!')
+                        PsiElement([)('[')
+                        PsiElement(])(']')
+                      PsiElement(!)('!')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
