@@ -67,17 +67,17 @@ main() {
     };
 
   A a = new A(1, 2);
-  a..check(1, 2)
+  a?..check(1, 2)
    ..swap()..check(2, 1)
    ..x = 4..y = 9..check(4, 9)
    ..setX(10)..check(10, 9)
    ..y = 5..check(10, 5)
-   ..swap()()()..check(5, 10)
+   ..swap()()()?..check(5, 10)
    ..check(2, 10)
    ..setX(10).setY(3)..check(10, 3)
    ..setX(7)["swap"]()..check(3, 7)
    ..import()..check(4, 7)
-   ..check(7, 4);
+   ?..check(7, 4);
 }
 
 var BANG = new A()..x = ["foo"..padLeft(1)];

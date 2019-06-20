@@ -700,17 +700,28 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
+  // ('?..' | '..') << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
   public static boolean cascadeReferenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cascadeReferenceExpression")) return false;
-    if (!nextTokenIs(b, DOT_DOT)) return false;
+    if (!nextTokenIs(b, "<cascade reference expression>", DOT_DOT, QUEST_DOT_DOT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, DOT_DOT);
+    Marker m = enter_section_(b, l, _NONE_, CASCADE_REFERENCE_EXPRESSION, "<cascade reference expression>");
+    r = cascadeReferenceExpression_0(b, l + 1);
     r = r && cascadeStopper(b, l + 1);
     r = r && cascadeReferenceExpression_2(b, l + 1);
     r = r && varInitWrapper(b, l + 1);
-    exit_section_(b, m, CASCADE_REFERENCE_EXPRESSION, r);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '?..' | '..'
+  private static boolean cascadeReferenceExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cascadeReferenceExpression_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST_DOT_DOT);
+    if (!r) r = consumeToken(b, DOT_DOT);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1464,7 +1475,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1485,7 +1496,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1523,6 +1534,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, DOT);
     if (!r) r = consumeToken(b, DOT_DOT);
+    if (!r) r = consumeToken(b, QUEST_DOT_DOT);
     if (!r) r = consumeToken(b, DOT_DOT_DOT);
     if (!r) r = consumeToken(b, DOT_DOT_DOT_QUEST);
     if (!r) r = consumeToken(b, DIV);
