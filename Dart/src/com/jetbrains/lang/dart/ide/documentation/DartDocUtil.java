@@ -8,6 +8,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
@@ -25,6 +27,9 @@ import java.util.List;
 public class DartDocUtil {
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
+  private static final String NBSP = "&nbsp;";
+  private static final String GREATER_THAN = "&gt;";
+  private static final String LESS_THAN = "&lt;";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
@@ -64,6 +69,58 @@ public class DartDocUtil {
     return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
+  private static String formatSignature(@NotNull final String signature) {
+    final int offsetToOpenParen = signature.indexOf('(');
+
+    // If this signature doesn't have a '(', return
+    if (offsetToOpenParen <= 0) {
+      return StringUtil.escapeXmlEntities(signature);
+    }
+
+    String[] strings = signatureSplit(signature);
+    if (strings.length == 1) {
+      return StringUtil.escapeXmlEntities(signature);
+    }
+
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < strings.length; i++) {
+      stringBuilder.append(StringUtil.escapeXmlEntities(strings[i]));
+      if (i + 1 != strings.length) {
+        stringBuilder.append(",<br>");
+        stringBuilder.append(StringUtil.repeat(NBSP, offsetToOpenParen + 1));
+      }
+    }
+    return stringBuilder.toString();
+  }
+
+  /**
+   * Split around the ", " pattern, when not in a generic or nested generic pattern.
+   */
+  private static String[] signatureSplit(@NotNull final String str) {
+    List<String> result = new SmartList<>();
+
+    int beginningOffset = 0;
+    int genericDepth = 0;
+    for (int i = 0; i < str.length(); i++) {
+      final char c = str.charAt(i);
+      if (c == '<') {
+        genericDepth++;
+      }
+      else if (c == '>') {
+        genericDepth = Math.max(genericDepth - 1, 0);
+      }
+      else if (genericDepth == 0 && c == ',') {
+        result.add(str.substring(beginningOffset, i));
+        beginningOffset = i + 1;
+        while (beginningOffset + 1 < str.length() && str.charAt(beginningOffset) == ' ') {
+          beginningOffset++;
+        }
+      }
+    }
+    result.add(str.substring(beginningOffset));
+    return ArrayUtil.toStringArray(result);
+  }
+
   @NotNull
   public static String generateDoc(@Nullable final String signature,
                                    final boolean signatureIsHtml,
@@ -89,7 +146,7 @@ public class DartDocUtil {
         builder.append(signature);
       }
       else {
-        builder.append(StringUtil.escapeXmlEntities(signature));
+        builder.append(formatSignature(signature));
       }
       builder.append("<br>");
     }

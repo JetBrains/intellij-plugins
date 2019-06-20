@@ -135,6 +135,36 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br>void x({bool b})<br><br></code>", "void <caret>x({bool b}){};");
   }
 
+  public void testFunctionSig11() {
+    doTest(
+      "<code><b>test.dart</b><br>List&lt;String&gt; x({bool b = true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;String&gt; c})<br><br></code>",
+      "List<String> <caret>x({bool b= true, List<String> c}){}");
+  }
+
+  public void testFunctionSig12() {
+    doTest(
+      "<code><b>test.dart</b><br>List&lt;String&gt; x({bool b = true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; c})<br><br></code>",
+      "List<String> <caret>x({bool b= true, Map<String, String> c}){}");
+  }
+
+  public void testFunctionSig13() {
+    doTest(
+      "<code><b>test.dart</b><br>Map&lt;String, String&gt; x({bool b = true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;String&gt; c})<br><br></code>",
+      "Map<String, String> <caret>x({bool b= true, List<String> c}){}");
+  }
+
+  public void testFunctionSig14() {
+    doTest(
+      "<code><b>test.dart</b><br>Map&lt;String, String&gt; x({bool b = true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; c})<br><br></code>",
+      "Map<String, String> <caret>x({bool b= true, Map<String, String> c}){}");
+  }
+
+  public void testFunctionSig15() {
+    doTest(
+      "<code><b>test.dart</b><br>Map&lt;String, Map&lt;String, String&gt;&gt; x({bool b = true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, Map&lt;String, String&gt;&gt; c})<br><br></code>",
+      "Map<String, Map<String, String>> <caret>x({bool b= true, Map<String, Map<String, String>> c}){}");
+  }
+
   public void testFunctionSig2() {
     doTest("<code><b>test.dart</b><br>dynamic foo([int x = 3])<br><br></code>", "<caret>foo([int x = 3]) { print(x); }");
   }
@@ -144,7 +174,9 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionSig4() {
-    doTest("<code><b>test.dart</b><br>void foo(int x, {int y, int z})<br><br></code>", "void <caret>foo(int x, {int y, int z}) { }");
+    doTest(
+      "<code><b>test.dart</b><br>void foo(int x,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{int y,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int z})<br><br></code>",
+      "void <caret>foo(int x, {int y, int z}) { }");
   }
 
   public void testFunctionSig5() {
