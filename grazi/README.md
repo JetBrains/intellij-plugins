@@ -1,6 +1,11 @@
+<img align="left" width="40" height="40" src="https://plugins.jetbrains.com/files/12175/63853/icon/pluginIcon.svg" alt="Grazi Icon">
+
 # Grazi
 
-[![CircleCI](https://circleci.com/gh/TanVD/Grazi.svg?style=svg)](https://circleci.com/gh/TanVD/Grazi)
+[![JetBrains Plugin](https://img.shields.io/jetbrains/plugin/v/12175-grazi.svg?style=flat-square&label=jetbrains%20plugin)](https://plugins.jetbrains.com/plugin/12175-grazi)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/12175-graz.svg?style=flat-square)](https://plugins.jetbrains.com/plugin/12175-grazi)
+[![CircleCI](https://img.shields.io/circleci/build/github/TanVD/Grazi.svg?style=flat-square)](https://circleci.com/gh/TanVD/Grazi)
+
 
 Grazi is IntelliJ IDEA plugin providing local spell and grammar checking for Markdown, JavaDoc, Plain texts and others.
 
