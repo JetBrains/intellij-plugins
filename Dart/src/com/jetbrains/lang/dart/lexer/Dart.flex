@@ -227,6 +227,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "!="               { return NEQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "."                { return DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ".."               { return DOT_DOT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "?.."              { return QUEST_DOT_DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "..."              { return DOT_DOT_DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "...?"             { return DOT_DOT_DOT_QUEST; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ","                { return COMMA; }

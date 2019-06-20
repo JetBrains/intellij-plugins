@@ -247,6 +247,7 @@ public interface DartTokenTypes {
   IElementType PLUS_PLUS = new DartElementType("++");
   IElementType QUEST = new DartElementType("?");
   IElementType QUEST_DOT = new DartElementType("?.");
+  IElementType QUEST_DOT_DOT = new DartElementType("?..");
   IElementType QUEST_QUEST = new DartElementType("??");
   IElementType QUEST_QUEST_EQ = new DartElementType("??=");
   IElementType RAW_SINGLE_QUOTED_STRING = new DartElementType("RAW_SINGLE_QUOTED_STRING");
