@@ -6,11 +6,7 @@ import tanvd.grazi.GraziConfig
 class GraziConfigurable : ConfigurableBase<GraziSettingsPanel, GraziConfig>(
         "reference.settingsdialog.project.grazi", "Grazi", null) {
 
-    override fun getSettings(): GraziConfig {
-        return GraziConfig.instance
-    }
+    override fun getSettings() = GraziConfig.instance
 
-    override fun createUi(): GraziSettingsPanel {
-        return GraziSettingsPanel()
-    }
+    override fun createUi() = GraziSettingsPanel()
 }

@@ -1,12 +1,12 @@
 package tanvd.grazi.utils
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.PsiElement
-import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import tanvd.grazi.GraziPlugin
 
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
 
@@ -24,7 +24,13 @@ inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IE
     tokens.contains(token.node.elementType)
 }
 
-fun PsiElement.toPointer() = SmartPointerManager.createPointer(this)
+inline fun <reified T: PsiElement> T.toPointer(): SmartPsiElementPointer<T> {
+    return if (GraziPlugin.isTest) {
+        return SmartPointerStub(this)
+    } else {
+        SmartPointerManager.createPointer(this)
+    }
+}
 
 /**
  * Will traverse through PsiElements using [take] function while [cond] is true.

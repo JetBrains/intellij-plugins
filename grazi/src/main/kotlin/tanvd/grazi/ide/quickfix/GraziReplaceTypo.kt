@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.utils.toAbsoluteSelectionRange
 import tanvd.grazi.utils.toSelectionRange
 
 
@@ -21,9 +22,9 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionAction
     override fun getPriority() = PriorityAction.Priority.HIGH
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-        DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
-            if (editor != null) {
-                val selectionRange = typo.toSelectionRange()
+        if (editor != null) {
+            DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
+                val selectionRange = typo.toAbsoluteSelectionRange()
                 editor.selectionModel.setSelection(selectionRange.startOffset, Math.min(selectionRange.endOffset, editor.document.textLength))
 
                 val items = typo.fixes.map { LookupElementBuilder.create(it) }

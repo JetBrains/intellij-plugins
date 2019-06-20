@@ -17,7 +17,6 @@ plugins {
 repositories {
     mavenCentral()
     jcenter()
-    maven("https://dl.bintray.com/tanvd/tanvd.kex")
 }
 
 intellij {

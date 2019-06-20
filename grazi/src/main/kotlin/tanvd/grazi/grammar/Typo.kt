@@ -42,7 +42,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),
 
-        /** Rules about spelling terms as one word or as as separate words.  */
+        /** Rules about spelling terms as one word or as separate words.  */
         COMPOUNDING("COMPOUNDING", "Compounding"),
 
         GRAMMAR("GRAMMAR", "Grammar"),
