@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -8,6 +9,7 @@ public class AirSigningOptions {
 
   public static final String ARCH_ARMV7 = "armv7";
   public static final String ARCH_X86 = "x86";
+  public static final String ARCH_ARM8 = "arm8";
   public static final String ARCH_DEFAULT = ARCH_ARMV7;
 
   @NotNull private String myArch = ARCH_DEFAULT;

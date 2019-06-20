@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -33,6 +34,7 @@ public class SigningOptionsForm {
   private JLabel myTargetArchitectureLabel;
   private JBRadioButton myArchArmv7RadioButton;
   private JBRadioButton myArchX86RadioButton;
+  private JBRadioButton myArchArm8RadioButton;
 
   private JCheckBox myUseTempCertificateCheckBox;
 
@@ -97,6 +99,7 @@ public class SigningOptionsForm {
         myTargetArchitectureLabel.setVisible(false);
         myArchArmv7RadioButton.setVisible(false);
         myArchX86RadioButton.setVisible(false);
+        myArchArm8RadioButton.setVisible(false);
         // no break here
       case Android:
         myProvisioningProfileLabel.setVisible(false);
@@ -110,6 +113,7 @@ public class SigningOptionsForm {
         myTargetArchitectureLabel.setVisible(false);
         myArchArmv7RadioButton.setVisible(false);
         myArchX86RadioButton.setVisible(false);
+        myArchArm8RadioButton.setVisible(false);
         myUseTempCertificateCheckBox.setVisible(false);
         showMoreOptions(false);
         myMoreOptionsHyperlinkLabel.setVisible(false);
@@ -177,12 +181,17 @@ public class SigningOptionsForm {
 
   @NotNull
   private String getArch() {
-    return myArchX86RadioButton.isSelected() ? AirSigningOptions.ARCH_X86 : AirSigningOptions.ARCH_ARMV7;
+    if (myArchX86RadioButton.isSelected()) return AirSigningOptions.ARCH_X86;
+    if (myArchArm8RadioButton.isSelected()) return AirSigningOptions.ARCH_ARM8;
+    return AirSigningOptions.ARCH_ARMV7;
   }
 
   public void resetFrom(final AirSigningOptions signingOptions) {
     if (signingOptions.getArch().equals(AirSigningOptions.ARCH_X86)) {
       myArchX86RadioButton.setSelected(true);
+    }
+    else if (signingOptions.getArch().equals(AirSigningOptions.ARCH_ARM8)) {
+      myArchArm8RadioButton.setSelected(true);
     }
     else {
       myArchArmv7RadioButton.setSelected(true);
