@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.*;
 import org.jetbrains.annotations.Nullable;
@@ -102,6 +103,7 @@ public class CfmlMappingsForm {
     };
     myTableEditor.getEmptyText().setText(CfmlBundle.message("no.mapping"));
 
+    myTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Server mappings:", false, JBUI.insetsTop(8)).setShowLine(false));
     myTablePanel.add(myTableEditor.getContentPane(), BorderLayout.CENTER);
 
     //noinspection SpellCheckingInspection
