@@ -94,13 +94,14 @@ public class DartDocUtil {
   }
 
   /**
-   * Split around the ", " pattern, when not in a generic or nested generic pattern.
+   * Split around the ", " pattern, when not in a generic or function parameter (inside a nested parenthesize.)
    */
   private static String[] signatureSplit(@NotNull final String str) {
     List<String> result = new SmartList<>();
 
     int beginningOffset = 0;
     int genericDepth = 0;
+    int parenDepth = 0;
     for (int i = 0; i < str.length(); i++) {
       final char c = str.charAt(i);
       if (c == '<') {
@@ -109,7 +110,13 @@ public class DartDocUtil {
       else if (c == '>') {
         genericDepth = Math.max(genericDepth - 1, 0);
       }
-      else if (genericDepth == 0 && c == ',') {
+      else if (c == '(') {
+        parenDepth++;
+      }
+      else if (c == ')') {
+        parenDepth = Math.max(parenDepth - 1, 0);
+      }
+      else if (c == ',' && genericDepth == 0 && parenDepth == 1) {
         result.add(str.substring(beginningOffset, i));
         beginningOffset = i + 1;
         while (beginningOffset + 1 < str.length() && str.charAt(beginningOffset) == ' ') {
