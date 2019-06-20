@@ -34,7 +34,7 @@ import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
 public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
-  public boolean isImplicitUsage(PsiElement element) {
+  public boolean isImplicitUsage(@NotNull PsiElement element) {
     if (element instanceof TypeScriptFunction) {
       if (((TypeScriptFunction)element).isSetProperty()
           || ((TypeScriptFunction)element).isGetProperty()) {
@@ -83,12 +83,12 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
   }
 
   @Override
-  public boolean isImplicitRead(PsiElement element) {
+  public boolean isImplicitRead(@NotNull PsiElement element) {
     return false;
   }
 
   @Override
-  public boolean isImplicitWrite(PsiElement element) {
+  public boolean isImplicitWrite(@NotNull PsiElement element) {
     return false;
   }
 }
