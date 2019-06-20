@@ -19,9 +19,14 @@ object MarkdownPsiUtils {
     val codeTypes = setOf(MarkdownElementTypes.CODE_FENCE, MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_SPAN)
     val inlineTypes = linkTypes + codeTypes
 
+    fun isParagraph(element: PsiElement) = element.node.hasType(MarkdownElementTypes.PARAGRAPH)
     fun isHeader(element: PsiElement) = element.node.hasType(headerTypes)
     fun isInline(element: PsiElement) = element.node.hasType(inlineTypes)
     fun isCode(element: PsiElement) = element.node.hasType(codeTypes)
+    fun isOuterListItem(element: PsiElement) = element.node.hasType(MarkdownElementTypes.LIST_ITEM)
+            && element.node.noParentOfTypes(TokenSet.create(MarkdownElementTypes.LIST_ITEM))
+
+
     fun isWhitespace(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.WHITE_SPACE)
     fun isEol(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.EOL)
 
