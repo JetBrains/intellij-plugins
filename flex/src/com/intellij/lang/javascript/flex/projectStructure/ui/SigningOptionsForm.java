@@ -34,7 +34,7 @@ public class SigningOptionsForm {
   private JLabel myTargetArchitectureLabel;
   private JBRadioButton myArchArmv7RadioButton;
   private JBRadioButton myArchX86RadioButton;
-  private JBRadioButton myArchArm8RadioButton;
+  private JBRadioButton myArchArmv8RadioButton;
 
   private JCheckBox myUseTempCertificateCheckBox;
 
@@ -99,7 +99,7 @@ public class SigningOptionsForm {
         myTargetArchitectureLabel.setVisible(false);
         myArchArmv7RadioButton.setVisible(false);
         myArchX86RadioButton.setVisible(false);
-        myArchArm8RadioButton.setVisible(false);
+        myArchArmv8RadioButton.setVisible(false);
         // no break here
       case Android:
         myProvisioningProfileLabel.setVisible(false);
@@ -113,7 +113,7 @@ public class SigningOptionsForm {
         myTargetArchitectureLabel.setVisible(false);
         myArchArmv7RadioButton.setVisible(false);
         myArchX86RadioButton.setVisible(false);
-        myArchArm8RadioButton.setVisible(false);
+        myArchArmv8RadioButton.setVisible(false);
         myUseTempCertificateCheckBox.setVisible(false);
         showMoreOptions(false);
         myMoreOptionsHyperlinkLabel.setVisible(false);
@@ -182,7 +182,7 @@ public class SigningOptionsForm {
   @NotNull
   private String getArch() {
     if (myArchX86RadioButton.isSelected()) return AirSigningOptions.ARCH_X86;
-    if (myArchArm8RadioButton.isSelected()) return AirSigningOptions.ARCH_ARM8;
+    if (myArchArmv8RadioButton.isSelected()) return AirSigningOptions.ARCH_ARMV8;
     return AirSigningOptions.ARCH_ARMV7;
   }
 
@@ -190,8 +190,8 @@ public class SigningOptionsForm {
     if (signingOptions.getArch().equals(AirSigningOptions.ARCH_X86)) {
       myArchX86RadioButton.setSelected(true);
     }
-    else if (signingOptions.getArch().equals(AirSigningOptions.ARCH_ARM8)) {
-      myArchArm8RadioButton.setSelected(true);
+    else if (signingOptions.getArch().equals(AirSigningOptions.ARCH_ARMV8)) {
+      myArchArmv8RadioButton.setSelected(true);
     }
     else {
       myArchArmv7RadioButton.setSelected(true);
