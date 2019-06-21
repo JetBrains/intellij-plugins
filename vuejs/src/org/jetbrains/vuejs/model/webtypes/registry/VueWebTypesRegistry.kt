@@ -27,6 +27,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.ParameterizedCachedValue
 import com.intellij.psi.util.ParameterizedCachedValueProvider
 import com.intellij.util.text.SemVer
+import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
 import org.jdom.Element
 import org.jetbrains.vuejs.model.VuePlugin
@@ -127,7 +128,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       return VueWebTypesPlugin(ObjectMapper().readValue(it, WebTypes::class.java))
     }
 
-    val versions = state.availableVersions["@web-types/" + packageJson.name!!]
+    val webTypesPackageName = packageJson.name!!.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+    val versions = state.availableVersions["@web-types/$webTypesPackageName"]
     if (versions == null || versions.isEmpty()) return null
 
     val pkgVersion = packageJson.version
@@ -225,7 +227,11 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           .get()
       }
       .nonNullValues()
-      .mapValues { it!!.versionUrlMap }
+      .mapValues {
+        EntryStream.of(it!!.versionUrlMap)
+          .filter { (version, _) -> it.deprecationMap[version] == null }
+          .into(TreeMap<SemVer, String>(Comparator.reverseOrder()) as SortedMap<SemVer, String>)
+      }
       .toSortedMap()
     return State(availableVersions)
   }
