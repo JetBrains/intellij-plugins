@@ -13,11 +13,13 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.util.Function
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
@@ -44,8 +46,9 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     "ExtendStandardInterface"
   )
 
-  override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean,
-                                                   checkWeakWarnings: Boolean, vararg fileNames: String?) {
+  override fun doTestFor(checkWeakWarnings: Boolean,
+                         function: Function<MutableCollection<HighlightInfo>, Void>?,
+                         vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
       LOG.info("Skipping muted test")
@@ -61,9 +64,9 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
       return
     }
 
-    super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
+    super.doTestFor(checkWeakWarnings, function, *fileNames)
   }
-
+  
   private fun skipTest() = toFix.contains(getTestName(false))
 
   override fun configureEditorFile(name: String?) {
