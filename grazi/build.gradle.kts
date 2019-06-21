@@ -23,13 +23,15 @@ intellij {
     pluginName = "Grazi"
     version = "2019.1"
     downloadSources = true
+    type = "IC"
 
     updateSinceUntilBuild = false
 
     setPlugins(
             "org.intellij.plugins.markdown:191.5849.16",
             "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2",
-            "PythonCore:2019.1.191.6183.53"
+            "PythonCore:2019.1.191.6183.53",
+            "org.rust.lang:0.2.98.2125-191"
     )
 }
 

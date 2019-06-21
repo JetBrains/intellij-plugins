@@ -1,0 +1,7 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport implementation="tanvd.grazi.ide.language.rust.RsStringSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.rust.RsDocSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.rust.RsConstructsSupport"/>
+    </extensions>
+</idea-plugin>
