@@ -1,19 +1,16 @@
 package tanvd.grazi.ide.language.kotlin
 
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
-import tanvd.kex.buildSet
 
 class KDocSupport : LanguageSupport() {
     companion object {
@@ -25,8 +22,12 @@ class KDocSupport : LanguageSupport() {
         private fun isIdentifier(token: PsiElement) = token.parent.node.elementType == KDocElementTypes.KDOC_NAME
     }
 
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is KtFile
+    override fun isSupported(language: Language): Boolean {
+        return language is KotlinLanguage
+    }
+
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is KDocTag
     }
 
     /**
@@ -38,18 +39,19 @@ class KDocSupport : LanguageSupport() {
      *
      * Note: Tag lines ignores casing.
      */
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        for (doc in file.filterFor<KDocSection>()) {
-            for (tagLine in doc.filterFor<KDocTag> { isTag(it) }) {
-                addAll(SanitizingGrammarChecker.default.check(tagLine.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
+    override fun check(element: PsiElement): Set<Typo> {
+        require(element is KDocTag) { "Got non KDocTag in a KDocSupport" }
+
+        return when {
+            isTag(element) -> {
+                SanitizingGrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
                         .dropFirstIf { isIdentifier(it) })
-                        .filterNot { it.info.category in tagsIgnoredCategories })
+                        .filterNot { it.info.category in tagsIgnoredCategories }
             }
-            for (textBlock in doc.filterFor<KDocTag> { !isTag(it) }) {
-                addAll(SanitizingGrammarChecker.default.check(textBlock.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
-                        .filter { !isInTag(it) && (isBody(it) || isIdentifier(it)) }))
+            else -> {
+                SanitizingGrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
+                        .filter { !isInTag(it) && (isBody(it) || isIdentifier(it)) })
             }
-            ProgressManager.checkCanceled()
-        }
+        }.toSet()
     }
 }

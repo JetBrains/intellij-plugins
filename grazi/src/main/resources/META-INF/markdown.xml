@@ -1,5 +1,5 @@
 <idea-plugin>
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageElementSupport implementation="tanvd.grazi.ide.language.markdown.MarkdownSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.markdown.MarkdownSupport"/>
     </extensions>
 </idea-plugin>

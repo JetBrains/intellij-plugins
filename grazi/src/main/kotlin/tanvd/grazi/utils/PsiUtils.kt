@@ -24,7 +24,7 @@ inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IE
     tokens.contains(token.node.elementType)
 }
 
-inline fun <reified T: PsiElement> T.toPointer(): SmartPsiElementPointer<T> {
+inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> {
     return if (GraziPlugin.isTest) {
         return SmartPointerStub(this)
     } else {

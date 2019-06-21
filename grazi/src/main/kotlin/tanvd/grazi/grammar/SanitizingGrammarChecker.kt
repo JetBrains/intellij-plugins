@@ -23,7 +23,8 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
 
     fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
 
-    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }, indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }): Set<Typo> {
+    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text },
+                               indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }): Set<Typo> {
         if (tokens.isEmpty()) return emptySet()
 
         val indexesShift = HashMap<Int, Int>()

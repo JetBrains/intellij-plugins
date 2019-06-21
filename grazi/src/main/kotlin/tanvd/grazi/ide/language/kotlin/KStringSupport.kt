@@ -1,34 +1,35 @@
 package tanvd.grazi.ide.language.kotlin
 
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiFile
+import com.intellij.lang.Language
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.grammar.*
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
-import tanvd.kex.buildSet
 
 class KStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
-
     companion object {
         fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
     }
 
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is KtFile
+    override fun isSupported(language: Language): Boolean {
+        return language is KotlinLanguage
     }
 
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        for (str in file.filterFor<KtStringTemplateExpression>()) {
-            val ignoreFilter = IgnoreTokensFilter()
-            val entries = str.filterFor<KtLiteralStringTemplateEntry>()
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is KtStringTemplateExpression
+    }
 
-            ignoreFilter.populate<KtLiteralStringTemplateEntry, KtStringTemplateEntry>(entries, addSiblingIf = { isExpressionEntry(it) })
+    override fun check(element: PsiElement): Set<Typo> {
+        require(element is KtStringTemplateExpression) { "Got not KtStringTemplateExpression in a KStringSupport" }
 
-            addAll(ignoreFilter.filter(SanitizingGrammarChecker.default.check(entries)))
+        val ignoreFilter = IgnoreTokensFilter()
+        val entries = element.filterFor<KtLiteralStringTemplateEntry>()
 
-            ProgressManager.checkCanceled()
-        }
+        ignoreFilter.populate<KtLiteralStringTemplateEntry, KtStringTemplateEntry>(entries, addSiblingIf = { isExpressionEntry(it) })
+
+        return ignoreFilter.filter(SanitizingGrammarChecker.default.check(entries))
     }
 }

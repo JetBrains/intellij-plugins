@@ -1,0 +1,18 @@
+package tanvd.grazi.ide.language.comment
+
+
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.PsiCommentImpl
+import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.language.LanguageSupport
+
+class CommentsSupport : LanguageSupport() {
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is PsiCommentImpl
+    }
+
+    override fun check(element: PsiElement): Set<Typo> {
+        return SanitizingGrammarChecker.default.check(element)
+    }
+}

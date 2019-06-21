@@ -1,40 +1,48 @@
 package tanvd.grazi.ide.language.java
 
-import com.intellij.openapi.progress.ProgressManager
+import com.intellij.lang.Language
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
-import tanvd.kex.buildSet
 
 class JConstructsSupport : LanguageSupport() {
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is PsiJavaFile && GraziConfig.state.enabledSpellcheck
+    override fun isSupported(language: Language): Boolean {
+        return language is JavaLanguage && GraziConfig.state.enabledSpellcheck
     }
 
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        for (method in file.filterFor<PsiMethod>()) {
-            val methodName = method.name
-            method.text.ifContains(methodName) { index ->
-                addAll(GraziSpellchecker.check(methodName).map { typo ->
-                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            pointer = method.toPointer(), shouldUseRename = true))
-                })
-            }
-            ProgressManager.checkCanceled()
-        }
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is PsiMethod || element is PsiNamedElement
+    }
 
-        for (ident in file.filterFor<PsiNamedElement>()) {
-            val identName = ident.name ?: continue
-            ident.text.ifContains(identName) { index ->
-                addAll(GraziSpellchecker.check(identName).map { typo ->
-                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            pointer = ident.toPointer(), shouldUseRename = true))
-                })
+    override fun check(element: PsiElement): Set<Typo> {
+        return when (element) {
+            is PsiMethod -> {
+                val methodName = element.name
+                element.text.ifContains(methodName) { index ->
+                    GraziSpellchecker.check(methodName).map { typo ->
+                        typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                                pointer = element.toPointer(), shouldUseRename = true))
+                    }
+                }
+
             }
-            ProgressManager.checkCanceled()
-        }
+            is PsiNamedElement -> {
+                val identName = element.name ?: return emptySet()
+                element.text.ifContains(identName) { index ->
+                    GraziSpellchecker.check(identName).map { typo ->
+                        typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                                pointer = element.toPointer(), shouldUseRename = true))
+                    }
+                }
+
+            }
+            else -> {
+                error("Got non construct element in a JConstructsSupport")
+            }
+        }.orEmpty().toSet()
     }
 }

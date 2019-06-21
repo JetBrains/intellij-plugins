@@ -1,8 +1,10 @@
 package tanvd.grazi.ide.language.java
 
 
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.*
+import com.intellij.lang.Language
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.JavaDocTokenType
+import com.intellij.psi.PsiElement
 import com.intellij.psi.javadoc.*
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
@@ -18,8 +20,13 @@ class JDocSupport : LanguageSupport() {
         private fun isCodeTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text == "@code")
     }
 
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is PsiJavaFile
+
+    override fun isSupported(language: Language): Boolean {
+        return language is JavaLanguage
+    }
+
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is PsiDocComment
     }
 
     /**
@@ -29,15 +36,11 @@ class JDocSupport : LanguageSupport() {
      *
      * Note: Tag lines ignores casing.
      */
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        for (doc in file.filterFor<PsiDocComment>()) {
-            val allDocTokens = doc.filterFor<PsiDocToken> { it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA }
+    override fun check(element: PsiElement) = buildSet<Typo> {
+        val allDocTokens = element.filterFor<PsiDocToken> { it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA }
 
-            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
-            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
-                    .filter { it.info.category !in tagsIgnoredCategories })
-
-            ProgressManager.checkCanceled()
-        }
+        addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
+        addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
+                .filter { it.info.category !in tagsIgnoredCategories })
     }
 }

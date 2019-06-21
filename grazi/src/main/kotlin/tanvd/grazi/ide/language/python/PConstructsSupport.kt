@@ -1,32 +1,35 @@
 package tanvd.grazi.ide.language.python
 
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiFile
+import com.intellij.lang.Language
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import com.jetbrains.python.psi.PyFile
+import com.jetbrains.python.PythonLanguage
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
-import tanvd.kex.buildSet
 
 class PConstructsSupport : LanguageSupport() {
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is PyFile && GraziConfig.state.enabledSpellcheck
+
+    override fun isSupported(language: Language): Boolean {
+        return language is PythonLanguage && GraziConfig.state.enabledSpellcheck
     }
 
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        for (ident in file.filterFor<PsiNamedElement>()) {
-            val identName = ident.name ?: continue
-            ident.text.ifContains(identName) { index ->
-                addAll(GraziSpellchecker.check(identName).map { typo ->
-                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
-                            pointer = ident.toPointer(), shouldUseRename = true))
-                })
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is PsiNamedElement
+    }
+
+    override fun check(element: PsiElement): Set<Typo> {
+        require(element is PsiNamedElement) { "Got non PsiNamedElement in a PConstructsSupport" }
+
+        val identName = element.name ?: return emptySet()
+        return element.text.ifContains(identName) { index ->
+            GraziSpellchecker.check(identName).map { typo ->
+                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                        pointer = element.toPointer(), shouldUseRename = true))
             }
-            ProgressManager.checkCanceled()
-        }
+        }.orEmpty().toSet()
     }
 }
 

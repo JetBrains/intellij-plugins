@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.toAbsoluteSelectionRange
-import tanvd.grazi.utils.toSelectionRange
 
 
 class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionActionOnPsiElement(typo.location.element, typo.location.element), PriorityAction {

@@ -88,15 +88,14 @@
 
     <extensionPoints>
         <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.language.LanguageSupport"/>
-        <extensionPoint qualifiedName="tanvd.grazi.languageElementSupport" interface="tanvd.grazi.ide.language.LanguageElementSupport"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.plain.UnknownTypeSupport"/>
 
-        <languageSupport implementation="tanvd.grazi.ide.language.XmlSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.xml.XmlSupport"/>
 
-        <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.comment.CommentsSupport"/>
     </extensions>
 </idea-plugin>

@@ -1,19 +1,24 @@
 package tanvd.grazi.ide.language.plain
 
 
+import com.intellij.lang.Language
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.psi.*
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
-import tanvd.kex.buildSet
 
 class PlainTextSupport : LanguageSupport() {
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is PsiPlainTextFile && file.name.endsWith(".txt")
+    override fun isSupported(language: Language): Boolean {
+        return language is PlainTextLanguage
     }
 
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        addAll(SanitizingGrammarChecker.default.check(file.filterFor<PsiPlainText>()))
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is PsiPlainTextFile && element.name.endsWith(".txt")
+    }
+
+    override fun check(element: PsiElement): Set<Typo> {
+        return SanitizingGrammarChecker.default.check(element.filterFor<PsiPlainText>())
     }
 }

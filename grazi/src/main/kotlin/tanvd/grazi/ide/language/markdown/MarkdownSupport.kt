@@ -2,16 +2,14 @@ package tanvd.grazi.ide.language.markdown
 
 
 import com.intellij.lang.Language
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.intellij.plugins.markdown.lang.*
 import tanvd.grazi.grammar.*
-import tanvd.grazi.ide.language.LanguageElementSupport
+import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.spellcheckOnly
 import tanvd.grazi.utils.traverse
-import tanvd.kex.buildSet
 
-class MarkdownSupport : LanguageElementSupport() {
+class MarkdownSupport : LanguageSupport() {
     companion object {
         val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
     }
@@ -25,33 +23,21 @@ class MarkdownSupport : LanguageElementSupport() {
                 || MarkdownPsiUtils.isCode(element) || MarkdownPsiUtils.isOuterListItem(element)
     }
 
-    override fun check(element: PsiElement) = buildSet<Typo> {
-        when {
+    override fun check(element: PsiElement): Set<Typo> {
+        return when {
             MarkdownPsiUtils.isHeader(element) -> {
                 val ignoreFilter = IgnoreTokensFilter()
                 val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray())
 
                 ignoreFilter.populateMd(elements)
 
-                addAll(ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements)))
+                ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements))
 
-            }
-            MarkdownPsiUtils.isParagraph(element) -> {
-                val ignoreFilter = IgnoreTokensFilter()
-                val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray(), MarkdownElementTypes.LIST_ITEM)
-
-                ignoreFilter.populateMd(elements)
-
-                addAll(ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements)))
-
-                ProgressManager.checkCanceled()
             }
             MarkdownPsiUtils.isCode(element) -> {
                 val elements = element.filterForTokens<PsiElement>(MarkdownTokenTypes.TEXT)
 
-                addAll(SanitizingGrammarChecker.default.check(elements).spellcheckOnly())
-
-                ProgressManager.checkCanceled()
+                SanitizingGrammarChecker.default.check(elements).spellcheckOnly()
             }
             MarkdownPsiUtils.isOuterListItem(element) -> {
                 val ignoreFilter = IgnoreTokensFilter()
@@ -59,9 +45,20 @@ class MarkdownSupport : LanguageElementSupport() {
 
                 ignoreFilter.populateMd(elements)
 
-                addAll(ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements).filter {
+                ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements).filter {
                     it.info.category !in bulletsIgnoredCategories
-                }))
+                })
+            }
+            MarkdownPsiUtils.isParagraph(element) -> {
+                val ignoreFilter = IgnoreTokensFilter()
+                val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray(), MarkdownElementTypes.LIST_ITEM)
+
+                ignoreFilter.populateMd(elements)
+
+                ignoreFilter.filter(SanitizingGrammarChecker.default.check(elements))
+            }
+            else -> {
+                emptySet()
             }
         }
     }

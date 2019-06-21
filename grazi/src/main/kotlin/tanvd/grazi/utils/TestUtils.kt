@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 
 //For tests, should be fixed once move to IntelliJ Test infra
-class SmartPointerStub<T: PsiElement>(private val myElement: T) : SmartPsiElementPointer<T> {
+class SmartPointerStub<T : PsiElement>(private val myElement: T) : SmartPsiElementPointer<T> {
     override fun getRange(): Segment? {
         throw NotImplementedError()
     }

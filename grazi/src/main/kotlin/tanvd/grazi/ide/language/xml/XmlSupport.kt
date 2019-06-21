@@ -1,12 +1,16 @@
-package tanvd.grazi.ide.language
+package tanvd.grazi.ide.language.xml
 
-import com.intellij.psi.PsiFile
+import com.intellij.lang.Language
+import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlText
+import org.apache.xmlbeans.XmlLanguage
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
-import tanvd.kex.*
+import tanvd.kex.ifTrue
+import tanvd.kex.orTrue
 
 class XmlSupport : LanguageSupport() {
     companion object {
@@ -22,12 +26,16 @@ class XmlSupport : LanguageSupport() {
                 }))
     }
 
-    override fun isSupported(file: PsiFile): Boolean {
-        return file is XmlFile
+    override fun isSupported(language: Language): Boolean {
+        return language is XmlLanguage
     }
 
-    override fun check(file: PsiFile) = buildSet<Typo> {
-        val xmlTexts = file.filterFor<XmlText>()
-        addAll(xmlChecker.check(xmlTexts))
+    override fun isRelevant(element: PsiElement): Boolean {
+        return element is XmlFile
+    }
+
+    override fun check(element: PsiElement): Set<Typo> {
+        val xmlTexts = element.filterFor<XmlText>()
+        return xmlChecker.check(xmlTexts)
     }
 }

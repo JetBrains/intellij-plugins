@@ -1,19 +1,28 @@
 package tanvd.grazi.ide.language
 
-import com.intellij.psi.PsiFile
+import com.intellij.lang.Language
+import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.GraziInspection.Companion.EP_NAME
+import tanvd.grazi.ide.GraziInspection
 
 abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) {
     companion object {
+        private val LANGUAGE_SUPPORT_EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
+
         val all: Set<LanguageSupport>
-            get() = EP_NAME.extensionList.toSet()
+            get() = LANGUAGE_SUPPORT_EP_NAME.extensionList.toSet()
     }
 
-    open fun isSupported(file: PsiFile): Boolean = true
+    open fun isSupported(language: Language): Boolean = true
 
-    fun getFixes(file: PsiFile): Set<Typo> = check(file).filterNot { it.info.rule.id in disabledRules }.toSet()
+    open fun isRelevant(element: PsiElement): Boolean = true
+
+    fun getFixes(element: PsiElement): Set<Typo> = check(element)
+            .filterNot { it.info.rule.id in disabledRules }
+            .filter { it.location.element?.let { gotElement -> gotElement == element || element.isAncestor(gotElement) } ?: false }.toSet()
 
     /** Don't forget to use ProgressManager.checkCancelled() */
-    protected abstract fun check(file: PsiFile): Set<Typo>
+    protected abstract fun check(element: PsiElement): Set<Typo>
 }
