@@ -21,14 +21,10 @@ class GraziInspection : LocalInspectionTool() {
                 <p>${fix.info.rule.description}</p>
                 ${if (!fix.isSpellingTypo) """
                     <p></p>
-                    <p><strong>Incorrect:</strong></p>
-                    <ul>
-                         ${fix.info.rule.incorrectExamples.take(3).joinToString(separator = "") { "<li>${it.example}</li>" }}
-                    </ul>
-                    <p><strong>Correct:</strong></p>
-                    <ul>
-                         ${fix.info.rule.correctExamples.take(3).joinToString(separator = "") { "<li>${it.example}</li>" }}
-                    </ul>
+                    ${if (fix.info.rule.incorrectExamples.isNotEmpty()) """
+                        <p><strong>Incorrect:</strong>&nbsp;${fix.info.rule.incorrectExamples.first().example}</p>""" else ""}
+                    ${if (fix.info.rule.correctExamples.isNotEmpty()) """
+                        <p><strong>Correct:</strong>&nbsp;${fix.info.rule.correctExamples.first().example}</p>""" else ""}    
                 """.trimIndent() else ""}
                 </body>
             </html>
