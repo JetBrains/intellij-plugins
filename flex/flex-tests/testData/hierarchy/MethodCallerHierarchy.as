@@ -30,7 +30,7 @@ public class Class2 extends Class1 {
   }
 
   override public function bar(f:Function) {
-    return super.bar(foo);
+    return super.bar(null);
   }
 
   public static function f():void{
