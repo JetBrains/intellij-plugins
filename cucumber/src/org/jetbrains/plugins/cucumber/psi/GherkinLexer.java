@@ -200,7 +200,15 @@ public class GherkinLexer extends LexerBase {
                 Character.isLetterOrDigit(myBuffer.charAt(myPosition + length))) {
               continue;
             }
+            
+            char followedByChar = myPosition + length < myEndOffset ? myBuffer.charAt(myPosition + length) : 0;
             myCurrentToken = myKeywordProvider.getTokenType(myCurLanguage, keyword);
+            if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD) {
+              boolean followedByWhitespace = Character.isWhitespace(followedByChar) && followedByChar != '\n';
+              if (followedByWhitespace != myKeywordProvider.isSpaceAfterKeyword(myCurLanguage, keyword)) {
+                myCurrentToken = GherkinTokenTypes.TEXT;
+              }
+            }
             myPosition += length;
             if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD || myCurrentToken == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD) {
               myState = STATE_AFTER_KEYWORD_WITH_PARAMETER;
