@@ -11,7 +11,7 @@ fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + o
 fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + offset)
 
 fun <T> String.ifContains(value: String, body: (Int) -> T): T? {
-    val index = value.indexOf(this)
+    val index = indexOf(value)
     if (index != -1) {
         return body(index)
     }
