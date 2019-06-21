@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.util.ui.tree.WideSelectionTreeUI;
 import jetbrains.communicator.commands.SendMessageCommand;
@@ -28,8 +27,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import static com.intellij.util.ui.UIUtil.isUnderAquaLookAndFeel;
 
 /**
  * @author Kir
@@ -69,10 +66,7 @@ public class UserTree extends KirTree {
   }
 
   private static MyTreeUI createUI() {
-    if (SystemInfo.isMac && isUnderAquaLookAndFeel()) {
-      return new MyWideSelectionTreeUIImpl();
-    }
-    return new MyBasicTreeUIImpl();
+    return new MyWideSelectionTreeUIImpl();
   }
 
   @Override
