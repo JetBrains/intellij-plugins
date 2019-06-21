@@ -132,7 +132,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getDirectory().getVirtualFile().getPath();
 
-      WriteCommandAction.runWriteCommandAction(project,
+      WriteCommandAction.runWriteCommandAction(project, "Create Step Definition", null, 
         () -> CommandProcessor.getInstance().executeCommand(project, () -> {
           try {
             VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
