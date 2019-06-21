@@ -1,18 +1,39 @@
 package tanvd.grazi.ide
 
 import com.intellij.codeInspection.*
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.spellcheck.IdeaSpellchecker
+import tanvd.grazi.utils.isSpellingTypo
 import tanvd.grazi.utils.toSelectionRange
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
     companion object {
+        private fun getProblemMessage(fix: Typo): String {
+            //language=HTML
+            return """
+            <html>
+                <body>
+                <p>${fix.info.rule.description}</p>
+                ${if (!fix.isSpellingTypo) """
+                    <p></p>
+                    <p><strong>Incorrect:</strong></p>
+                    <ul>
+                         ${fix.info.rule.incorrectExamples.take(3).joinToString(separator = "") { "<li>${it.example}</li>" }}
+                    </ul>
+                    <p><strong>Correct:</strong></p>
+                    <ul>
+                         ${fix.info.rule.correctExamples.take(3).joinToString(separator = "") { "<li>${it.example}</li>" }}
+                    </ul>
+                """.trimIndent() else ""}
+                </body>
+            </html>
+            """.trimIndent()
+        }
 
         private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor? {
             return fix.location.element?.let { element ->
@@ -32,7 +53,8 @@ class GraziInspection : LocalInspectionTool() {
                     add(GraziDisableRule(fix))
                 }
 
-                manager.createProblemDescriptor(element, fix.toSelectionRange(), fix.info.description, fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
+                manager.createProblemDescriptor(element, fix.toSelectionRange(), getProblemMessage(fix),
+                        fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
             }
         }
     }

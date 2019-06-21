@@ -19,7 +19,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
     }
 
 
-    data class Info(val lang: Lang, val rule: Rule, val category: Category) {
+    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category) {
         val description: String
             get() {
                 val description = rule.description
@@ -35,7 +35,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
 
     constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
             Location(match.toIntRange().withOffset(offset)),
-            Info(lang, match.rule, match.typoCategory), match.suggestedReplacements)
+            Info(lang, match.rule, match, match.typoCategory), match.suggestedReplacements)
 
 
     enum class Category(val value: String, val description: String) : ProblemGroup {

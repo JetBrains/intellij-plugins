@@ -35,6 +35,7 @@
     <h4>2019.1-3</h4>
     <ul>
         <li>Huge performance improvements for almost all languages</li>
+        <li>Reworked inspection tooltips - examples, full error description</li>\
         <li>Fix bug with languages injection in literals</li>
         <li>Support JSON</li>
     </ul>
