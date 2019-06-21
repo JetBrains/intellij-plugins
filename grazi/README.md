@@ -3,22 +3,20 @@
 [![JetBrains Plugin](https://img.shields.io/jetbrains/plugin/v/12175-grazi.svg?style=flat-square&label=jetbrains%20plugin)](https://plugins.jetbrains.com/plugin/12175-grazi)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/12175-graz.svg?style=flat-square)](https://plugins.jetbrains.com/plugin/12175-grazi)
 [![CircleCI](https://img.shields.io/circleci/build/github/TanVD/Grazi.svg?style=flat-square)](https://circleci.com/gh/TanVD/Grazi)
+[![Gitter](https://img.shields.io/gitter/room/grazi-intellij-plugin/community.svg?style=flat-square)](https://gitter.im/grazi-intellij-plugin/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
 
-Grazi is IntelliJ IDEA plugin providing local spell and grammar checking for Markdown, JavaDoc, Plain texts and others.
+Grazi is an IntelliJ IDEA plugin providing local spell and grammar checking for Markdown, JavaDoc, Plain texts, and others.
 
 It uses one of the leading proofreaders - [LanguageTool](https://github.com/languagetool-org/languagetool)
 under the hood, so it supports over 15 languages and provides the best performance and 
 accuracy among free (and even non-free) alternatives.
 
-Basically, *Grazi is a Grammarly inside your IDE*. 
+In general, *Grazi is a Grammarly inside your IDE*. 
 
 ## What's inside
 
-Grazi consists of two parts - grammar checker, backed by LanguageTool, and spellchecker backed by
-LanguageTool dictionaries and IDEA built-in spellcheck. When it is sensible, Grazi will use full
-checking pipeline (proofreading and spellchecking), but in some cases (e.g. in code) it will 
-use only spellcheck.
+Grazi consists of two parts - grammar checker, backed by LanguageTool, and spellchecker backed by LanguageTool dictionaries and IDEA built-in spellcheck. When it is sensible, Grazi will use full checking pipeline (proofreading and spellchecking), but in some cases (e.g., in code) it will use just spellcheck.
 
 Right now Grazi supports following natural language sources:
 * Java code - string literals, javadocs and language constructs (methods names etc.)
@@ -48,9 +46,7 @@ As for languages, Grazi supports (including dialects):
 * Spanish
 * Ukrainian
 
-Moreover, Grazi supports *native language based* inspections. It means, that if you will specify
-your native language, Grazi will provide you with additional inspections for language you are
-writing on.
+Moreover, Grazi supports *native language based* inspections. It means that if you specify your native language, Grazi will provide you with additional inspections for the language you are writing on.
 
 ## Setup
 
