@@ -1,11 +1,13 @@
 package tanvd.grazi.utils
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parents
 import tanvd.grazi.GraziPlugin
 
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
@@ -30,6 +32,15 @@ inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> {
     } else {
         SmartPointerManager.createPointer(this)
     }
+}
+
+fun PsiElement.isInjectedFragment(): Boolean {
+    val host = this.parents().filter { it is PsiLanguageInjectionHost }.firstOrNull() as? PsiLanguageInjectionHost ?: return false
+    var isInjected = false
+    InjectedLanguageManager.getInstance(project).enumerate(host, { _, _ ->
+        isInjected = true
+    })
+    return isInjected
 }
 
 /**

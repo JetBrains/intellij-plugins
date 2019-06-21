@@ -5,7 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.GraziInspection
+import tanvd.grazi.utils.isInjectedFragment
 
 abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) {
     companion object {
@@ -20,8 +20,13 @@ abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet
     open fun isRelevant(element: PsiElement): Boolean = true
 
     fun getFixes(element: PsiElement): Set<Typo> = check(element)
+            .asSequence()
             .filterNot { it.info.rule.id in disabledRules }
-            .filter { it.location.element?.let { gotElement -> gotElement == element || element.isAncestor(gotElement) } ?: false }.toSet()
+            .filter {
+                it.location.element?.let { gotElement ->
+                    !gotElement.isInjectedFragment() && (gotElement == element || element.isAncestor(gotElement))
+                } ?: false
+            }.toSet()
 
     /** Don't forget to use ProgressManager.checkCancelled() */
     protected abstract fun check(element: PsiElement): Set<Typo>
