@@ -8,7 +8,7 @@ class FieldParameterSyntax {
 class WithNamedArguments {
   void m1([int foo([int i])]) {}
   void m2([int foo([int i]), int bar([int i])]) {}
-  void m3([int foo([int i, int i]), int bar([int i, int i])]) {}
+  void m3([int foo([int i, int i])?, int bar([int i, int i])]) {}
 
   void test() {
     foo(x, n1:x);

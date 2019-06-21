@@ -970,7 +970,9 @@ Dart File
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('T')
+                  PsiElement(?)('?')
             PsiElement(>)('>')
+          PsiElement(?)('?')
         ID
           PsiElement(IDENTIFIER)('Function')
         PARAMETER_TYPE_LIST
@@ -981,6 +983,7 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('int')
+                PsiElement(?)('?')
             ID
               PsiElement(IDENTIFIER)('x0')
           PsiElement(,)(',')
@@ -1010,16 +1013,20 @@ Dart File
                             REFERENCE_EXPRESSION
                               ID
                                 PsiElement(IDENTIFIER)('int')
+                          PsiElement(?)('?')
                     PsiElement(>)('>')
+                  PsiElement(?)('?')
               ID
                 PsiElement(IDENTIFIER)('x')
             PsiElement(])(']')
           PsiElement())(')')
+        PsiElement(?)('?')
       ID
         PsiElement(IDENTIFIER)('Function')
       PARAMETER_TYPE_LIST
         PsiElement(()('(')
         PsiElement())(')')
+      PsiElement(?)('?')
     PsiElement(;)(';')
   FUNCTION_TYPE_ALIAS
     PsiElement(typedef)('typedef')
@@ -2616,6 +2623,7 @@ Dart File
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('bool')
+                PsiElement(?)('?')
             COMPONENT_NAME
               ID
                 PsiElement(IDENTIFIER)('tIsBool')
@@ -5001,6 +5009,13 @@ Dart File
               PsiElement(null)('null')
             PsiElement(;)(';')
         METHOD_DECLARATION
+          RETURN_TYPE
+            TYPE
+              SIMPLE_TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('int')
+                PsiElement(?)('?')
           COMPONENT_NAME
             ID
               PsiElement(IDENTIFIER)('runTests')

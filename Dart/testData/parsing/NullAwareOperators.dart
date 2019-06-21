@@ -21,7 +21,14 @@ class NAO1 {
 fnao1(x) => x?.op();
 fnao2(x) => x ?? "other";
 fnao3(x) {
+  b? c;
+  b? c = d;
+  b? c:d;
+  e = f ? g : h;
+
   var y;
   y ??= x;
   return y;
 }
+
+static final Map<String?, Map<int?, bool?>?>? a;

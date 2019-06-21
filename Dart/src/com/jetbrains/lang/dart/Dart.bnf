@@ -229,7 +229,7 @@ varAccessDeclaration ::= metadata* 'static'? ('covariant'? 'late'? finalOrConst 
                                               'covariant'  'late'               type !asExpression componentName |
                                               'covariant'                       type !asExpression componentName |
                                                            'late'               type !asExpression componentName |
-                                                                                type !asExpression componentName) !'.'
+                                                                                type !asExpression componentName) !'.' !':'
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private finalOrConst ::= 'final' | 'const'
 private varDeclarationListWithSemicolon ::= varDeclarationList ';'{pin=1}
@@ -394,6 +394,7 @@ private incorrectNormalFormalParameter ::= '<' + <<nonStrictID>> + '>' <<nonStri
 functionFormalParameter ::= !functionTypeWrapper (metadata*                         componentName typeParameters? formalParameterList |
                                                   metadata* 'covariant'? returnType componentName typeParameters? formalParameterList |
                                                   metadata* 'covariant'             componentName typeParameters? formalParameterList)
+                            '?'?
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 simpleFormalParameter ::= declaredIdentifier | metadata* componentName | metadata* 'covariant' componentName
@@ -425,12 +426,12 @@ type ::= 'void' !untypedFunctionType | functionTypeWrapper | simpleType  {
   ]
 }
 
-untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList
+untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
 private functionTypeWrapper ::= (voidTypeFunctionType | untypedFunctionType | simpleType) typedFunctionType+ | untypedFunctionType
-left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList
+left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
 
 voidTypeFunctionType ::= 'void'
-simpleType ::= simpleQualifiedReferenceExpression typeArguments?
+simpleType ::= simpleQualifiedReferenceExpression typeArguments? '?'?
 
 typeArguments ::= '<' typeList '>'
 typeList ::= type? (',' type)*

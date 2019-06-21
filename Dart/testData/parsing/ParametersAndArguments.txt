@@ -312,6 +312,7 @@ Dart File
                                   PsiElement(IDENTIFIER)('i')
                         PsiElement(])(']')
                       PsiElement())(')')
+                    PsiElement(?)('?')
               PsiElement(,)(',')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER

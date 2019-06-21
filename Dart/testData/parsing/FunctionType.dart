@@ -25,7 +25,7 @@ typedef F1100<T> = List<Function> Function(int y, [List<T> x]) Function();
 typedef F1200<T> = core.List<core.int> Function([Function x1]) Function();
 typedef F1300<T> = core.List<core.int> Function({core.List<core.int> x}) Function();
 typedef F1400<T> = List<T> Function(int y, {int x}) Function();
-typedef F1500<T> = List<T> Function(int x0, [core.List<core.int> x]) Function();
+typedef F1500<T> = List<T?>? Function(int?  x0, [core.List<core.int?>? x])? Function()?;
 typedef F1600<T> = Function(int x0) Function();
 typedef F1700<T> = Function(int x, [List<Function> x2]) Function();
 typedef F1800<T> = Function(int y, {List<T> x}) Function();
@@ -63,7 +63,7 @@ void Function<A>(core.List<core.int> x) f2300() => null;
 
 
 class U0<T> {
-  final bool tIsBool;
+  final bool? tIsBool;
   final bool tIsInt;
   final bool tIsDynamic;
 
@@ -122,7 +122,7 @@ class U0<T> {
   void Function<A>(core.List<core.int> x) m2300() => null;
 
 
-  runTests() {
+  int? runTests() {
     testF0();
     testF100();
     testF200();
