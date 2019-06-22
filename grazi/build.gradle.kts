@@ -11,7 +11,7 @@ plugins {
     id("tanvd.kosogor") version "1.0.6" apply true
     id("io.gitlab.arturbosch.detekt") version ("1.0.0-RC14") apply true
     id("org.jetbrains.intellij") version "0.4.9" apply true
-    kotlin("jvm") version "1.3.31" apply true
+    kotlin("jvm") version "1.3.40" apply true
 }
 
 repositories {
@@ -23,7 +23,7 @@ intellij {
     pluginName = "Grazi"
     version = "2019.1"
     downloadSources = true
-    type = "IC"
+    type = "IU"
 
     updateSinceUntilBuild = false
 
@@ -31,7 +31,8 @@ intellij {
             "org.intellij.plugins.markdown:191.5849.16",
             "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2",
             "PythonCore:2019.1.191.6183.53",
-            "org.rust.lang:0.2.98.2125-191"
+            "org.rust.lang:0.2.98.2125-191",
+            "JavaScriptLanguage"
     )
 }
 
