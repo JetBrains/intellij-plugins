@@ -21,7 +21,7 @@ repositories {
 
 intellij {
     pluginName = "Grazi"
-    version = "2019.1.2"
+    version = "2019.1.3"
     downloadSources = true
     type = "IU"
 
