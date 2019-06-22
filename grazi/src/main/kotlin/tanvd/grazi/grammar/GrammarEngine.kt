@@ -5,7 +5,8 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.LangDetector
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.isBlankWithNewLines
+import tanvd.grazi.utils.splitWithRanges
 import tanvd.kex.buildSet
 import tanvd.kex.tryRun
 
@@ -29,12 +30,12 @@ object GrammarEngine {
             return@buildSet
         }
 
+        val head = seps.first()
+        val tail = seps.drop(1)
 
-        val curSeparator = seps.first()
-
-        for ((range, sentence) in str.splitWithRanges(curSeparator)) {
-            val stringFixes = if (isBig(sentence) && seps.isNotEmpty()) {
-                getFixes(sentence, seps.dropFirst())
+        for ((range, sentence) in str.splitWithRanges(head)) {
+            val stringFixes = if (isBig(sentence) && tail.isNotEmpty()) {
+                getFixes(sentence, tail)
             } else {
                 getFixesSmall(sentence)
             }.map {

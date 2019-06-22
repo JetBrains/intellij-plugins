@@ -1,10 +1,6 @@
 package tanvd.grazi.utils
 
 import org.languagetool.rules.RuleMatch
-import tanvd.grazi.grammar.Typo
-
-val RuleMatch.typoCategory: Typo.Category
-    get() = Typo.Category[rule.category.id.toString()]
 
 fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
@@ -18,7 +14,5 @@ fun <T> String.ifContains(value: String, body: (Int) -> T): T? {
     return null
 }
 
-fun <T> List<T>.dropFirst() = this.drop(1)
-
-fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.getOrNull(0)?.let { if (body(it)) dropFirst() else this } ?: this
+fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.getOrNull(0)?.let { if (body(it)) drop(1) else this } ?: this
 

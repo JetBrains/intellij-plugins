@@ -12,7 +12,6 @@ import tanvd.grazi.GraziPlugin
 
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
 
-
 fun ASTNode.noParentOfTypes(vararg tokens: IElementType) = noParentOfTypes(TokenSet.create(*tokens))
 fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) == null
 
