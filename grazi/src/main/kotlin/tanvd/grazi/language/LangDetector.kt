@@ -16,7 +16,7 @@ object LangDetector {
     fun getLang(str: String, enabledLangs: List<Lang>): Lang? {
         return detector.getProbabilities(str.take(charsForLangDetection))
                 .filter { it.locale.language in enabledLangs.map { it.shortCode } }
-                .sortedByDescending { it.probability }.firstOrNull()
+                .maxBy { it.probability }
                 ?.let { Lang[it.locale.language] } ?: enabledLangs.firstOrNull()
     }
 

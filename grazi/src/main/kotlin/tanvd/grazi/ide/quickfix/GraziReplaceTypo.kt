@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.toAbsoluteSelectionRange
+import kotlin.math.min
 
 
 class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionActionOnPsiElement(typo.location.element, typo.location.element), PriorityAction {
@@ -24,7 +25,7 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionAction
         if (editor != null) {
             DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
                 val selectionRange = typo.toAbsoluteSelectionRange()
-                editor.selectionModel.setSelection(selectionRange.startOffset, Math.min(selectionRange.endOffset, editor.document.textLength))
+                editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
 
                 val items = typo.fixes.map { LookupElementBuilder.create(it) }
                 LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
