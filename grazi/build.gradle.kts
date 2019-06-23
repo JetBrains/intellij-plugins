@@ -4,7 +4,7 @@ import tanvd.grazi.Versions
 import tanvd.grazi.channel
 
 group = "tanvd.grazi"
-version = "2019.1-2.$channel"
+version = "2019.1-3.$channel"
 
 
 plugins {
