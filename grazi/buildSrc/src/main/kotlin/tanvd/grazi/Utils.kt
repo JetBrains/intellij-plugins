@@ -20,7 +20,7 @@ val Project.channel: String
             branch.startsWith("dev") -> {
                 "dev"
             }
-            branch == "master" -> {
+            branch.startsWith("master") -> {
                 "nightly"
             }
             else -> {
