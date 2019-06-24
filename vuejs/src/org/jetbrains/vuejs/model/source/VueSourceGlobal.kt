@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.getScopeAndCacheHolder
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
@@ -23,11 +24,13 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
 
   override val directives: Map<String, VueDirective>
     get() {
-      module.let { module ->
-        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
-
-          val result = StreamEx.of(getForAllKeys(GlobalSearchScope.projectScope(module.project), VueGlobalDirectivesIndex.KEY))
-            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
+      getScopeAndCacheHolder(module).let { (scope, holder) ->
+        return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
+          val result = StreamEx.of(getForAllKeys(scope, VueGlobalDirectivesIndex.KEY))
+            .mapToEntry({ it.name }, {
+              @Suppress("USELESS_CAST")
+              VueSourceDirective(it.name, it.parent) as VueDirective
+            })
             .into(mutableMapOf<String, VueDirective>())
 
           CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
@@ -38,17 +41,17 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
 
   override val apps: List<VueApp>
     get() {
-      module.let { module ->
-        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
-          CachedValueProvider.Result.create(buildAppsList(module), PsiModificationTracker.MODIFICATION_COUNT)
+      getScopeAndCacheHolder(module).let { (scope, holder) ->
+        return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
+          CachedValueProvider.Result.create(buildAppsList(scope), PsiModificationTracker.MODIFICATION_COUNT)
         }
       }
     }
   override val mixins: List<VueMixin>
     get() {
-      module.let { module ->
-        return CachedValuesManager.getManager(module.project).getCachedValue(module) {
-          CachedValueProvider.Result.create(buildMixinsList(module), PsiModificationTracker.MODIFICATION_COUNT)
+      getScopeAndCacheHolder(module).let { (scope, holder) ->
+        return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
+          CachedValueProvider.Result.create(buildMixinsList(scope), PsiModificationTracker.MODIFICATION_COUNT)
         }
       }
     }
@@ -64,10 +67,9 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
     }
 
   fun getComponents(global: Boolean): Map<String, VueComponent> {
-    module.let { module ->
-      return CachedValuesManager.getManager(module.project).getCachedValue(module) {
-        val componentsData = VueComponentsCalculation.calculateScopeComponents(
-          GlobalSearchScope.moduleWithDependenciesScope(module), false)
+    getScopeAndCacheHolder(module).let { (scope, holder) ->
+      return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
+        val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
 
         val moduleComponents = componentsData.map
 
@@ -109,9 +111,8 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   }
 
   companion object {
-    private fun buildMixinsList(module: Module): List<VueMixin> {
-      val elements = resolve(GLOBAL, GlobalSearchScope.projectScope(module.project), VueMixinBindingIndex.KEY)
-                     ?: return emptyList()
+    private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> {
+      val elements = resolve(GLOBAL, scope, VueMixinBindingIndex.KEY) ?: return emptyList()
       return StreamEx.of(elements)
         .map { VueComponents.vueMixinDescriptorFinder(it) }
         .nonNull()
@@ -120,8 +121,8 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
         .toList()
     }
 
-    private fun buildAppsList(module: Module): List<VueApp> {
-      return StreamEx.of(getForAllKeys(GlobalSearchScope.projectScope(module.project), VueOptionsIndex.KEY))
+    private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> {
+      return StreamEx.of(getForAllKeys(scope, VueOptionsIndex.KEY))
         .filter(VueComponents.Companion::isNotInLibrary)
         .map { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
         .nonNull()
