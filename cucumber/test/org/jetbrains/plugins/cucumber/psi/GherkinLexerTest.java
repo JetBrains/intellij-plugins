@@ -78,7 +78,7 @@ public class GherkinLexerTest extends TestCase {
   }
 
   public void testAsteriskKeyword() {
-    doTest("Feature:\n  Background:\n    *", "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-11", "BACKGROUND_KEYWORD:11-21", "COLON:21-22", "WHITE_SPACE:22-27", "TEXT:27-28");
+    doTest("Feature:\n  Background:\n    * step text", "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-11", "BACKGROUND_KEYWORD:11-21", "COLON:21-22", "WHITE_SPACE:22-27", "STEP_KEYWORD:27-28", "WHITE_SPACE:28-29", "TEXT:29-38");
   }
 
   public void testNewStyleSpaceAfterKeyword() {
