@@ -59,6 +59,6 @@ For local development and testing Gradle is used:
 ## Special thanks
 Special thanks goes to:
 * Alexandra Pavlova (aka sunalex) for our beautiful icon
-* Alexandra Sadovnikov and Nikita Sokolov as one of initial developers of plugin
+* Alexandr Sadovnikov and Nikita Sokolov as one of initial developers of plugin
 
 
