@@ -118,10 +118,10 @@ class VueModelManager {
         declaration
       else if (declaration is JSObjectLiteralExpression)
         declaration.findProperty("name")?.let { getComponentImplicitElement(it) } ?: declaration.firstProperty?.let {
-          JSImplicitElementImpl("<anonymous>", it)
+          JSImplicitElementImpl(JSImplicitElementImpl.Builder("<anonymous>", it).forbidAstAccess())
         }
       else if (declaration is TypeScriptClassExpression)
-        JSImplicitElementImpl("<anonymous>", declaration)
+        JSImplicitElementImpl(JSImplicitElementImpl.Builder("<anonymous>", declaration).forbidAstAccess())
       else
         (declaration as? JSImplicitElementProvider)?.indexingData?.implicitElements?.find {
           it.userString == VueComponentsIndex.JS_KEY
