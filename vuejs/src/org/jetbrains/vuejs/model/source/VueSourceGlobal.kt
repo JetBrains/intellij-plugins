@@ -27,10 +27,7 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
       getScopeAndCacheHolder(module).let { (scope, holder) ->
         return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
           val result = StreamEx.of(getForAllKeys(scope, VueGlobalDirectivesIndex.KEY))
-            .mapToEntry({ it.name }, {
-              @Suppress("USELESS_CAST")
-              VueSourceDirective(it.name, it.parent) as VueDirective
-            })
+            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
             .into(mutableMapOf<String, VueDirective>())
 
           CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
