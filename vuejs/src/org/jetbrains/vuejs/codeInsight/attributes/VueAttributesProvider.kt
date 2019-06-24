@@ -34,12 +34,14 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
     // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
     val DEFAULT: Set<String> = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
-                                     "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
+                                     "v-bind", "v-model", "v-pre", "v-cloak", "v-once", "v-slot",
                                      "slot", "ref", "slot-scope")
     val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR, FUNCTIONAL_ATTR)
 
     fun isInjectJS(attrName: String): Boolean {
-      if (attrName == "slot" || attrName == "ref") return false
+      if (attrName == "slot"
+          || attrName == "ref"
+          || isVSlot(attrName)) return false
       if (DEFAULT.contains(attrName)) return true
       if (attrName.startsWith("@") || attrName.startsWith("v-on:") ||
           attrName.startsWith(":") || attrName.startsWith("v-bind:")) {
@@ -56,6 +58,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
     fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
+
+    fun isVSlot(name: String): Boolean = name == "v-slot" || name.startsWith("v-slot:")
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
