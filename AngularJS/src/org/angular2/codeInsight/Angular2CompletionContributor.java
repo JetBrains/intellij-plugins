@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser.FunctionTypeWithKind;
+import com.intellij.lang.javascript.ecmascript6.types.OverloadStrictness;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
@@ -155,7 +156,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
             });
             List<FunctionTypeWithKind> resolveResults = new JSTypeSignatureChooser(
               parameters.getPosition(), Collections.singletonList(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
-            ).chooseOverload(converted2Original.keySet(), true);
+            ).chooseOverload(converted2Original.keySet(), OverloadStrictness.FULL);
             for (FunctionTypeWithKind resolved : resolveResults) {
               if (resolved.getOverloadType().isAssignable()) {
                 JSFunctionType f = resolved.getJsFunction();
