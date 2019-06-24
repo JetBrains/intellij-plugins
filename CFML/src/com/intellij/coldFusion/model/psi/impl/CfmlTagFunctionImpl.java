@@ -5,7 +5,6 @@ import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiType;
@@ -52,24 +51,22 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
       return METHOD_ICON;
     }
     access = StringUtil.toLowerCase(access);
-    if (Registry.is("ide.completion.show.visibility.icon")) {
-      RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
-      baseIcon.setIcon(METHOD_ICON, 0);
-      if ("private".equals(access)) {
-        baseIcon.setIcon(PRIVATE_ICON, 1);
-      }
-      else if ("package".equals(access)) {
-        baseIcon.setIcon(PACKAGE_LOCAL_ICON, 1);
-      }
-      else if ("public".equals(access)) {
-        baseIcon.setIcon(PUBLIC_ICON, 1);
-      }
-      else if ("remote".equals(access)) {
-        baseIcon.setIcon(CFMLIcons.Remote_access, 1);
-      }
-      return baseIcon;
+
+    RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
+    baseIcon.setIcon(METHOD_ICON, 0);
+    if ("private".equals(access)) {
+      baseIcon.setIcon(PRIVATE_ICON, 1);
     }
-    else return METHOD_ICON;
+    else if ("package".equals(access)) {
+      baseIcon.setIcon(PACKAGE_LOCAL_ICON, 1);
+    }
+    else if ("public".equals(access)) {
+      baseIcon.setIcon(PUBLIC_ICON, 1);
+    }
+    else if ("remote".equals(access)) {
+      baseIcon.setIcon(CFMLIcons.Remote_access, 1);
+    }
+    return baseIcon;
   }
 
   @NotNull
