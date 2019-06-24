@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xml.util.CheckEmptyTagInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
@@ -38,6 +38,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
                                 ThisExpressionReferencesGlobalObjectJSInspection(),
                                 JSValidateTypesInspection(),
                                 TypeScriptValidateTypesInspection(),
+                                XmlUnboundNsPrefixInspection(),
                                 CheckEmptyTagInspection())
   }
 
@@ -1134,6 +1135,26 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
 """)
     myFixture.checkHighlighting(false, true, true)
   }
+
+  fun testVSlotSyntax() {
+    myFixture.configureByText("c-component.vue", """
+<template>
+  <div>
+    <div v-slot:name="propName"></div>
+    <div v-slot:name></div>
+    <div v-slot="propName"></div>
+    <div v-slot></div>
+    
+    <div <error descr="Namespace 'v-slots' is not bound">v-slots</error>:name="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
+    <div <warning descr="Wrong attribute value"><error descr="Namespace 'v-slots' is not bound">v-slots</error>:name</warning>></div>
+    <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
+    <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
+  </div>
+</template>
+    """)
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
