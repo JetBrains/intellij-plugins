@@ -121,7 +121,7 @@ public class DartInlineHandler extends InlineActionHandler {
   }
 
   @Nullable
-  static private InlineRefactoringContext findContext(@Nullable Editor editor) {
+  public static InlineRefactoringContext findContext(@Nullable Editor editor) {
     if (editor == null) {
       return null;
     }

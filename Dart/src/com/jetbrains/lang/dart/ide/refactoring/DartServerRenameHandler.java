@@ -25,11 +25,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
+import org.dartlang.analysis.server.protocol.ElementKind;
 import org.jetbrains.annotations.NotNull;
 
 // todo implement ContextAwareActionHandler?
@@ -41,7 +44,21 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext context) {
-    showRenameDialog(project, editor, context);
+    if (editor == null) {
+      return;
+    }
+
+    PsiElement element = getElementForDataContext(context);
+    InlineRefactoringContext refactoringContext = DartInlineHandler.findContext(editor);
+    if (!refactoringContext.kind.equals(ElementKind.LOCAL_VARIABLE)) {
+      showRenameDialog(project, editor, context);
+      return;
+    }
+
+    final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
+                                             (PsiNameIdentifierOwner) element :
+                                             PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
+    new DartVariableInplaceRenamer(nameOwner, editor).performInplaceRename();
   }
 
   @Override
@@ -51,22 +68,30 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
   @Override
   public boolean isAvailableOnDataContext(@NotNull final DataContext dataContext) {
-    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    if (editor == null) return false;
-
-    final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
-
-    final PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (psiElement != null) {
-      return psiElement.getLanguage() == DartLanguage.INSTANCE && !(psiElement instanceof PsiFile);
+    if (getElementForDataContext(dataContext) != null) {
+      return true;
     }
 
     // in case of comment (that also may contain reference that is valid to rename) psiElement is null
+    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
     final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(editor.getCaretModel().getOffset());
+    return elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
+  }
 
-    return elementAtOffset != null && elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
+  private PsiElement getElementForDataContext(DataContext dataContext) {
+    final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+    if (editor == null) return null;
+
+    final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
+    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return null;
+
+    final PsiElement psiElement = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
+    if (psiElement == null || psiElement.getLanguage() != DartLanguage.INSTANCE || psiElement instanceof PsiFile) {
+      return null;
+    }
+
+    return psiElement;
   }
 
   @Override
