@@ -154,14 +154,14 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         if (it is VueComponent)
           it.source?.let { source ->
             VueModelManager.getComponentImplicitElement(source)
-            ?: JSImplicitElementImpl(tag.name, source)
+            ?: JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, source).forbidAstAccess())
           }
         else
           it
       }
       .select(JSImplicitElement::class.java)
       .findFirst()
-      .orElseGet { JSImplicitElementImpl(tag.name, tag) }
+      .orElseGet { JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess()) }
   }
 
   override fun getName(context: PsiElement?): String = (context as? XmlTag)?.name ?: name
@@ -194,7 +194,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         is PsiElement -> it
         else -> null
       }
-    }.ifEmpty { listOf(JSImplicitElementImpl(tag.name, tag)) }
+    }.ifEmpty { listOf(JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess())) }
   }
 
   fun getProps(): List<XmlAttributeDescriptor> {
