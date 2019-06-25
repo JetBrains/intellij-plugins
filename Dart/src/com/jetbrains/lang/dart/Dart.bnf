@@ -662,7 +662,7 @@ listLiteralExpression ::= 'const'? typeArguments? '[' elements? ']'
 setOrMapLiteralExpression ::= 'const'? typeArguments? '{' elements? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-private elements ::= element (',' element)* ','? ;
+private elements ::= element (','? element)* ','? ;
 element ::= spreadElement | ifElement | forElement | mapEntry | expression
 
 mapEntry ::= expression ':' expression {pin=2};
