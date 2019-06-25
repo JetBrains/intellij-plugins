@@ -50,7 +50,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
     PsiElement element = getElementForDataContext(context);
     InlineRefactoringContext refactoringContext = DartInlineHandler.findContext(editor);
-    if (!refactoringContext.kind.equals(ElementKind.LOCAL_VARIABLE)) {
+    if (!refactoringContext.kind.equals(ElementKind.LOCAL_VARIABLE) || !editor.getSettings().isVariableInplaceRenameEnabled()) {
       showRenameDialog(project, editor, context);
       return;
     }
