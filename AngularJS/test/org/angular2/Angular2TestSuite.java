@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2;
 
+import org.angular2.cli.AngularCliConfigLoaderTest;
 import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
 import org.angular2.css.CssClassTest;
@@ -81,6 +82,7 @@ import org.junit.runners.Suite;
   CssCompletionTest.class,
   CssInspectionsTest.class,
   Angular2ReSharperTestSuite.class,
+  AngularCliConfigLoaderTest.class
 })
 public class Angular2TestSuite {
 }
