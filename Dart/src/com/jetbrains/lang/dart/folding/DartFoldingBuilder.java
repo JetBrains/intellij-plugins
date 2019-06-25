@@ -56,7 +56,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         DartStringLiteralExpression.class,
         DartSetOrMapLiteralExpression.class,
         DartNewExpression.class,
-        DartCallExpression.class});
+        DartCallExpression.class,
+        DartAssertStatement.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
@@ -64,6 +65,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
     foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
+    foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
   }
 
   @Override
@@ -313,6 +315,23 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         if (StringUtil.isCapitalized(methodName)) {
           foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
         }
+      }
+    }
+  }
+
+  /**
+   * Dart documentation on assert statements: https://dart.dev/guides/language/language-tour#assert
+   */
+  private static void foldAssertExpressions(@NotNull final List<FoldingDescriptor> descriptors,
+                                            @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartAssertStatement) {
+        final DartAssertStatement dartAssertStatement = (DartAssertStatement)psiElement;
+        final PsiElement openParenElt = dartAssertStatement.getFirstChild().getNextSibling();
+        final PsiElement closeParenElt = dartAssertStatement.getLastChild();
+        final int startOffset = openParenElt.getTextOffset() + openParenElt.getTextLength();
+        final int endOffset = closeParenElt.getTextOffset();
+        descriptors.add(new FoldingDescriptor(dartAssertStatement, TextRange.create(startOffset, endOffset)));
       }
     }
   }
