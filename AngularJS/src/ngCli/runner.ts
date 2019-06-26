@@ -18,7 +18,9 @@ function rerouteModulesToProject(...modulePrefixes: string[]) {
         for (const prefix of modulePrefixes) {
             if (request.startsWith(prefix)) {
                 const projectNodeModules = path.resolve(projectLocation, "node_modules");
-                return newReturn ? [projectNodeModules] : [result[0], [projectNodeModules]];
+                return newReturn || result.length > 2 || (result.length === 2 && !Array.isArray(result[1]))
+                  ? [projectNodeModules]
+                  : [result[0], [projectNodeModules]];
             }
         }
         return result;
