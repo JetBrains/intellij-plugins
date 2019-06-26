@@ -1033,4 +1033,10 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "bar", "test", "[test]");
     assertDoesntContain(myFixture.getLookupElementStrings(), "[bar]", "foo", "[foo]");
   }
+
+  public void testNgNonBindable() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("ngNonBindable.html", "package.json");
+    myFixture.checkHighlighting();
+  }
 }

@@ -49,6 +49,7 @@ import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
 
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
+  @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull BiFunction<? super XmlTag, ? super Predicate<String>, XmlAttributeDescriptor[]> attrDescrProvider) {
@@ -83,7 +84,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return CUSTOM_NG_ATTRS;
   }
 
-  @NonNls private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
+  @NonNls private static final List<String> CUSTOM_NG_ATTRS =
+    ContainerUtil.immutableList("i18n", NG_NON_BINDABLE_ATTR, "ngProjectAs");
   @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 
