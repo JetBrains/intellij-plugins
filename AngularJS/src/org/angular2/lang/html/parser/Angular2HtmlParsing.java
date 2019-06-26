@@ -10,6 +10,7 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTokenType;
+import com.intellij.util.containers.Stack;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.NG_NON_BINDABLE_ATTR;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -26,6 +28,8 @@ public class Angular2HtmlParsing extends HtmlParsing {
                                                                  XML_DATA_CHARACTERS, XML_COMMA);
 
   private static final TokenSet DATA_TOKENS = TokenSet.create(XML_COMMA, XML_DATA_CHARACTERS);
+
+  private final Stack<PsiBuilder.Marker> ngNonBindableTags = new Stack<>();
 
   public Angular2HtmlParsing(@NotNull PsiBuilder builder) {
     super(builder);
@@ -105,18 +109,32 @@ public class Angular2HtmlParsing extends HtmlParsing {
   protected PsiBuilder.Marker parseCustomTagContent(PsiBuilder.Marker xmlText) {
     final IElementType tt = token();
     if (tt == INTERPOLATION_START) {
-      xmlText = terminateText(xmlText);
+      if (ngNonBindableTags.isEmpty()) {
+        xmlText = terminateText(xmlText);
+      }
+      else {
+        xmlText = startText(xmlText);
+      }
       final PsiBuilder.Marker interpolation = mark();
       advance();
       if (token() == INTERPOLATION_EXPR) {
         advance();
       }
-      if (token() == INTERPOLATION_END) {
-        advance();
-        interpolation.drop();
+
+      if (ngNonBindableTags.isEmpty()) {
+        if (token() == INTERPOLATION_END) {
+          advance();
+          interpolation.drop();
+        }
+        else {
+          interpolation.error(Angular2Bundle.message("angular.parse.template.unterminated-interpolation"));
+        }
       }
       else {
-        interpolation.error(Angular2Bundle.message("angular.parse.template.unterminated-interpolation"));
+        if (token() == INTERPOLATION_END) {
+          advance();
+        }
+        interpolation.collapse(XML_DATA_CHARACTERS);
       }
     }
     else if (tt == EXPANSION_FORM_START) {
@@ -147,12 +165,28 @@ public class Angular2HtmlParsing extends HtmlParsing {
   }
 
   @Override
+  protected PsiBuilder.Marker closeTag() {
+    if (!ngNonBindableTags.isEmpty()
+        && ngNonBindableTags.peek() == peekTagMarker()) {
+      ngNonBindableTags.pop();
+    }
+    return super.closeTag();
+  }
+
+  @Override
   protected void parseAttribute() {
     assert token() == XML_NAME;
     PsiBuilder.Marker att = mark();
     String tagName = XmlUtil.findLocalNameByQualifiedName(peekTagName());
+    String attributeName = getBuilder().getTokenText();
+    if (NG_NON_BINDABLE_ATTR.equals(attributeName)) {
+      if (ngNonBindableTags.isEmpty()
+          || ngNonBindableTags.peek() != peekTagMarker()) {
+        ngNonBindableTags.push(peekTagMarker());
+      }
+    }
     final AttributeInfo attributeInfo = Angular2AttributeNameParser.parse(
-      Objects.requireNonNull(getBuilder().getTokenText()), tagName);
+      Objects.requireNonNull(attributeName), tagName);
 
     if (attributeInfo.error != null) {
       PsiBuilder.Marker attrName = mark();
