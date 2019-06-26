@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -41,6 +42,9 @@ fun load(project: Project, context: VirtualFile): AngularCliConfig {
       try {
         AngularCliJsonFileConfig(
           angularCliJson, cachedDocument?.charsSequence ?: VfsUtilCore.loadText(angularCliJson))
+      }
+      catch (e: ProcessCanceledException) {
+        throw e
       }
       catch (e: Exception) {
         LOG.warn("Cannot load " + angularCliJson.name + ": " + e.message, e)
