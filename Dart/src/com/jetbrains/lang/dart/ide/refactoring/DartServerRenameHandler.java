@@ -50,14 +50,17 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
 
     PsiElement element = getElementForDataContext(context);
     InlineRefactoringContext refactoringContext = DartInlineHandler.findContext(editor);
-    if (!refactoringContext.kind.equals(ElementKind.LOCAL_VARIABLE) || !editor.getSettings().isVariableInplaceRenameEnabled()) {
+    final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
+                                             (PsiNameIdentifierOwner) element :
+                                             PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
+    if (nameOwner == null ||
+        refactoringContext == null ||
+        !refactoringContext.kind.equals(ElementKind.LOCAL_VARIABLE) ||
+        !editor.getSettings().isVariableInplaceRenameEnabled()) {
       showRenameDialog(project, editor, context);
       return;
     }
 
-    final PsiNameIdentifierOwner nameOwner = element instanceof PsiNameIdentifierOwner ?
-                                             (PsiNameIdentifierOwner) element :
-                                             PsiTreeUtil.getParentOfType(element, PsiNameIdentifierOwner.class, true);
     new DartVariableInplaceRenamer(nameOwner, editor).performInplaceRename();
   }
 
@@ -76,10 +79,10 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(dataContext);
     final PsiElement elementAtOffset = psiFile == null ? null : psiFile.findElementAt(editor.getCaretModel().getOffset());
-    return elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
+    return elementAtOffset != null && elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
   }
 
-  private PsiElement getElementForDataContext(DataContext dataContext) {
+  private static PsiElement getElementForDataContext(DataContext dataContext) {
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor == null) return null;
 

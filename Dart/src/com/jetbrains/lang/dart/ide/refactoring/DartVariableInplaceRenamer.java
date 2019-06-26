@@ -4,8 +4,6 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
@@ -14,12 +12,10 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
-import com.jetbrains.lang.dart.DartElementType;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 
 public class DartVariableInplaceRenamer extends VariableInplaceRenamer {
   public DartVariableInplaceRenamer(@NotNull PsiNamedElement elementToRename,
@@ -43,7 +39,10 @@ public class DartVariableInplaceRenamer extends VariableInplaceRenamer {
     options.isSearchForTextOccurrences = false;
     findUsages.processElementUsages(myElementToRename, processor, options);
     for (UsageInfo usageInfo : processor.getResults()) {
-      referenceProcessor.process(usageInfo.getElement().getReference());
+      PsiElement element = usageInfo.getElement();
+      if (element != null) {
+        referenceProcessor.process(element.getReference());
+      }
     }
 
     return referenceProcessor.getResults();
