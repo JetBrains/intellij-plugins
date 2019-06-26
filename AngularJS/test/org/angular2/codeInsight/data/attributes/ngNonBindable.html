@@ -1,0 +1,10 @@
+<div <warning descr="Attribute ngNnBindable is not allowed here">ngNnBindable</warning>>
+  <a ngNonBindable>
+    {{foo}}
+    <span ngNonBindable>
+      {{bar}}
+    </span>
+  </a>
+  {{<error descr="Unresolved variable or type bar">bar</error>}}
+</div>
+{{<error descr="Unresolved variable or type foo">foo</error>}}
