@@ -14,14 +14,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SimpleModificationTracker;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
@@ -36,10 +35,9 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.*;
-
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.notNull;
+import java.util.function.Supplier;
 
 public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematicsRegistryService {
 
@@ -51,9 +49,9 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   private static final int CACHE_EXPIRY = 25 * 60 * 1000; //25 mins
   @NonNls private static final ExecutorService ourExecutorService =
     AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5);
-  @NonNls private static final Key<com.intellij.psi.util.CachedValue<List<Schematic>>> SCHEMATICS_PUBLIC =
+  @NonNls private static final Key<CachedSchematics> SCHEMATICS_PUBLIC =
     new Key<>("angular.cli.schematics.public");
-  @NonNls private static final Key<com.intellij.psi.util.CachedValue<List<Schematic>>> SCHEMATICS_ALL =
+  @NonNls private static final Key<CachedSchematics> SCHEMATICS_ALL =
     new Key<>("angular.cli.schematics.all");
   private static final SimpleModificationTracker SCHEMATICS_CACHE_TRACKER = new SimpleModificationTracker();
   @NonNls private static final String NG_PACKAGES_JSON_PATH = "../../angularjs/cli/ng-packages.json";
@@ -119,13 +117,16 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
                                        @NotNull VirtualFile cliFolder,
                                        boolean includeHidden,
                                        boolean logErrors) {
-    return notNull(doIfNotNull(
-      ReadAction.compute(() -> PsiManager.getInstance(project).findDirectory(cliFolder)),
-      cliDir -> CachedValuesManager.getCachedValue(cliDir, includeHidden ? SCHEMATICS_ALL : SCHEMATICS_PUBLIC, () ->
-        CachedValueProvider.Result.create(
-          SchematicsLoaderKt.doLoad(cliDir.getProject(), cliDir.getVirtualFile(), includeHidden, logErrors),
-          NodeModulesDirectoryManager.getInstance(cliDir.getProject()).getNodeModulesDirChangeTracker(),
-          SCHEMATICS_CACHE_TRACKER))), Collections.emptyList());
+    return Optional.ofNullable(AngularCliUtil.findCliJson(cliFolder))
+      .map(angularJson -> ReadAction.compute(() -> PsiManager.getInstance(project).findFile(angularJson)))
+      .map(angularJson -> getCachedSchematics(angularJson, includeHidden ? SCHEMATICS_ALL : SCHEMATICS_PUBLIC).getUpToDateOrCompute(
+        () -> CachedValueProvider.Result.create(
+          SchematicsLoaderKt.doLoad(angularJson.getProject(),
+                                    angularJson.getVirtualFile().getParent(), includeHidden, logErrors),
+          NodeModulesDirectoryManager.getInstance(angularJson.getProject()).getNodeModulesDirChangeTracker(),
+          SCHEMATICS_CACHE_TRACKER,
+          angularJson)))
+      .orElseGet(Collections::emptyList);
   }
 
   @Override
@@ -227,6 +228,49 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   private static String getKey(@NotNull String packageName,
                                @NotNull String version) {
     return packageName + "@" + version;
+  }
+
+  @NotNull
+  private static CachedSchematics getCachedSchematics(@NotNull UserDataHolder dataHolder, @NotNull Key<CachedSchematics> key) {
+    CachedSchematics result = dataHolder.getUserData(key);
+    if (result != null) {
+      return result;
+    }
+
+    if (dataHolder instanceof UserDataHolderEx) {
+      return ((UserDataHolderEx)dataHolder).putUserDataIfAbsent(key, new CachedSchematics());
+    }
+    result = new CachedSchematics();
+    dataHolder.putUserData(key, result);
+    return result;
+  }
+
+  private static class CachedSchematics {
+    private List<Schematic> mySchematics;
+    private List<Pair<Object, Long>> myTrackers;
+
+    public synchronized List<Schematic> getUpToDateOrCompute(Supplier<CachedValueProvider.Result<List<Schematic>>> provider) {
+      if (mySchematics != null && myTrackers != null && ContainerUtil.all(myTrackers, pair -> getTimestamp(pair.first) == pair.second)) {
+        return mySchematics;
+      }
+      CachedValueProvider.Result<List<Schematic>> schematics = provider.get();
+      mySchematics = Collections.unmodifiableList(schematics.getValue());
+      myTrackers = ContainerUtil.map(schematics.getDependencyItems(), obj -> Pair.pair(obj, getTimestamp(obj)));
+      return mySchematics;
+    }
+
+    private static long getTimestamp(Object dependency) {
+      if (dependency instanceof ModificationTracker) {
+        return ((ModificationTracker)dependency).getModificationCount();
+      }
+      if (dependency instanceof PsiElement) {
+        PsiElement element = (PsiElement)dependency;
+        if (!element.isValid()) return -1;
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile != null) return containingFile.getModificationStamp();
+      }
+      throw new UnsupportedOperationException(dependency.getClass().toString());
+    }
   }
 
   private static class CachedValue<T> {
