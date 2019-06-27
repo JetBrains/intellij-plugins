@@ -4414,46 +4414,62 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' typedIdentifier (',' typedIdentifier)* ','? '}'
+  // '{' 'required'? typedIdentifier (',' 'required'? typedIdentifier)* ','? '}'
   static boolean namedParameterTypes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes")) return false;
     if (!nextTokenIs(b, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, LBRACE);
+    r = r && namedParameterTypes_1(b, l + 1);
     r = r && typedIdentifier(b, l + 1);
-    r = r && namedParameterTypes_2(b, l + 1);
     r = r && namedParameterTypes_3(b, l + 1);
+    r = r && namedParameterTypes_4(b, l + 1);
     r = r && consumeToken(b, RBRACE);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // (',' typedIdentifier)*
-  private static boolean namedParameterTypes_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_2")) return false;
+  // 'required'?
+  private static boolean namedParameterTypes_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
+  // (',' 'required'? typedIdentifier)*
+  private static boolean namedParameterTypes_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!namedParameterTypes_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "namedParameterTypes_2", c)) break;
+      if (!namedParameterTypes_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "namedParameterTypes_3", c)) break;
     }
     return true;
   }
 
-  // ',' typedIdentifier
-  private static boolean namedParameterTypes_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_2_0")) return false;
+  // ',' 'required'? typedIdentifier
+  private static boolean namedParameterTypes_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
+    r = r && namedParameterTypes_3_0_1(b, l + 1);
     r = r && typedIdentifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // 'required'?
+  private static boolean namedParameterTypes_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3_0_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
   // ','?
-  private static boolean namedParameterTypes_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_3")) return false;
+  private static boolean namedParameterTypes_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_4")) return false;
     consumeToken(b, COMMA);
     return true;
   }
