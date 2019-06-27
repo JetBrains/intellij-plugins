@@ -4,6 +4,8 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.typescript.inspections.*;
@@ -35,6 +37,8 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       ThisExpressionReferencesGlobalObjectJSInspection.class,
       JSUnusedGlobalSymbolsInspection.class,
       JSUnusedLocalSymbolsInspection.class,
+      JSUnresolvedVariableInspection.class,
+      JSUnresolvedFunctionInspection.class,
 
       HtmlUnknownAttributeInspection.class,
       HtmlUnknownTagInspection.class,
