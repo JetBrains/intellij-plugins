@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.icons.AllIcons;
@@ -42,7 +43,8 @@ public enum DartComponentType {
       return component.isAbstract() ? AllIcons.Nodes.AbstractMethod : getIcon();
     }
   },
-  VARIABLE(AllIcons.Nodes.Variable),
+  LOCAL_VARIABLE(AllIcons.Nodes.Variable),
+  GLOBAL_VARIABLE(AllIcons.Nodes.Variable),
   FIELD(AllIcons.Nodes.Field),
   PARAMETER(AllIcons.Nodes.Parameter),
   TYPEDEF(AllIcons.Nodes.Annotationtype),
@@ -115,13 +117,16 @@ public enum DartComponentType {
       final String dartClassName = dartClass != null ? dartClass.getName() : null;
       return dartClassName != null && dartClassName.equals(((DartComponent)element).getName()) ? CONSTRUCTOR : METHOD;
     }
-    if (element instanceof DartVarAccessDeclaration
-        || element instanceof DartVarDeclarationListPart) {
-      return PsiTreeUtil.getParentOfType(element, DartComponent.class) instanceof DartClass ? FIELD : VARIABLE;
+    if (element instanceof DartVarAccessDeclaration || element instanceof DartVarDeclarationListPart) {
+      DartComponent parentComponent = PsiTreeUtil.getParentOfType(element, DartComponent.class);
+      DartComponentType parentType = typeOf(parentComponent);
+      if (parentType == CLASS) return FIELD;
+      if (parentType == CONSTRUCTOR || parentType == METHOD || parentType == FUNCTION || parentType == OPERATOR) return LOCAL_VARIABLE;
+      return GLOBAL_VARIABLE;
     }
 
     if (element instanceof DartForInPart) {
-      return VARIABLE;
+      return LOCAL_VARIABLE;
     }
 
     if (element instanceof DartLabel) {
@@ -130,5 +135,4 @@ public enum DartComponentType {
 
     return null;
   }
-
 }
