@@ -1,0 +1,10 @@
+<h1>Webstorm2019.1 Angular Template engine with generics</h1>
+<h2>Wrapped Person Object</h2>
+<p>{{wrappedProperties.firstName.value}}</p>
+<p>{{wrappedProperties.age.value}}</p>
+
+<h2>Person Form State</h2>
+<p>{{personFormState.fields.firstName.value}}</p>
+<p>{{personFormState.fields.age.value}}</p>
+<p>{{personFormState.fields.age.<error descr="Unresolved variable foo">foo</error>}}</p>
+<p>{{personFormState.fields.<error descr="Unresolved variable foo">foo</error>.value}}</p>
