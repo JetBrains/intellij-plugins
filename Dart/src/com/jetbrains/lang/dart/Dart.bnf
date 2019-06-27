@@ -343,7 +343,7 @@ private typedIdentifier ::= type <<nonStrictID>>
 
 optionalParameterTypes ::= optionalPositionalParameterTypes | namedParameterTypes
 private optionalPositionalParameterTypes ::= '[' normalParameterTypes ','? ']'
-private namedParameterTypes ::= '{' typedIdentifier (',' typedIdentifier)* ','? '}'
+private namedParameterTypes ::= '{' 'required'? typedIdentifier (',' 'required'? typedIdentifier)* ','? '}'
 
 factoryConstructorDeclaration ::= metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent" methods = [getComponentName]}

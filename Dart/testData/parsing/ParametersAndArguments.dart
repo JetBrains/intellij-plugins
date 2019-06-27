@@ -58,3 +58,6 @@ class WithNamedArguments {
   final required;
   final covariant;
 }
+
+void Function({required int a}) g() => throw '';
+void Function({required int a, required b c}) h() => throw '';
