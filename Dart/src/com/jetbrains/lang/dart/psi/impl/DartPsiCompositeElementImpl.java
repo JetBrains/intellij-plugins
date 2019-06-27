@@ -7,9 +7,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartControlFlowUtil;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +40,13 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
   @NotNull
   @Override
   public SearchScope getUseScope() {
+    // LocalSearchScope enables in-place rename. See DartRefactoringSupportProvider.isInplaceRenameAvailable() and its usages.
+    DartComponentType type = DartComponentType.typeOf(this);
+    if (type == DartComponentType.PARAMETER || type == DartComponentType.LOCAL_VARIABLE) {
+      // this -> name, parent -> component, but we need next component up the tree.
+      DartComponent parentComponent = PsiTreeUtil.getParentOfType(getParent(), DartComponent.class);
+      return new LocalSearchScope(parentComponent != null ? parentComponent : getContainingFile());
+    }
     // too large scope doesn't affect performance (usages are searched via Analysis Server) but helps to solve corner cases
     return GlobalSearchScope.allScope(getProject());
   }
