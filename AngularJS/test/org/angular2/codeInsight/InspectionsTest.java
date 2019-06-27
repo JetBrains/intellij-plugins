@@ -84,4 +84,11 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("top-level-this.html", "top-level-this.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testComplexGenerics() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("complex-generics.html", "complex-generics.ts","package.json");
+    myFixture.checkHighlighting();
+  }
+
 }

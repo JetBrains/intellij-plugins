@@ -22,10 +22,11 @@ public class Angular2TypeEvaluationHelper extends TypeScriptTypeEvaluationHelper
                                      @Nullable JSType type,
                                      @Nullable PsiElement resolvedElement) {
     // Angular template syntax doesn't support type guards, so we need to remove strictness from union types
-    type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
-    if (type instanceof JSUnionType) {
-      return type.copyWithStrict(false);
+    JSType optimized = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
+    if (optimized instanceof JSUnionType) {
+      return optimized.copyWithStrict(false);
     }
+    // WEB-39538: Optimization changes type source making it impossible to evaluate generics in some cases
     return type;
   }
 }
