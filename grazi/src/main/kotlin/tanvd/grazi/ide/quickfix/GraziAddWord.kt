@@ -4,14 +4,18 @@ import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Iconable
+import icons.SpellcheckerIcons
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
+import javax.swing.Icon
 
 
-class GraziAddWord(private val typo: Typo) : LocalQuickFix, PriorityAction {
+class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
+    override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Dictionary
 
-    override fun getName() = "Add '${typo.word}' to global dictionary"
+    override fun getName() = "Add '${typo.word}' to Grazi"
 
     override fun getPriority() = PriorityAction.Priority.NORMAL
 

@@ -7,15 +7,21 @@ import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
 import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import icons.SpellcheckerIcons
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.toAbsoluteSelectionRange
+import javax.swing.Icon
 import kotlin.math.min
 
 
-class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionActionOnPsiElement(typo.location.element, typo.location.element), PriorityAction {
-    override fun getText() = "Fix ${typo.info.category.description}"
+class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionActionOnPsiElement(typo.location.element,
+        typo.location.element), PriorityAction, Iconable {
+    override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
+
+    override fun getText() =  "Fix ${typo.info.match.shortMessage.toLowerCase()}"
 
     override fun getFamilyName() = "Fix mistake with replace"
 

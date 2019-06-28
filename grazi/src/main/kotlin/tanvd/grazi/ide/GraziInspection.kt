@@ -7,8 +7,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.spellcheck.IdeaSpellchecker
-import tanvd.grazi.utils.isSpellingTypo
-import tanvd.grazi.utils.toSelectionRange
+import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
@@ -18,14 +17,25 @@ class GraziInspection : LocalInspectionTool() {
             return """
             <html>
                 <body>
-                <p>${fix.info.rule.description}</p>
-                ${if (!fix.isSpellingTypo) """
-                    <p></p>
-                    ${if (fix.info.rule.incorrectExamples.isNotEmpty()) """
-                        <p><strong>Incorrect:</strong>&nbsp;${fix.info.rule.incorrectExamples.first().example}</p>""" else ""}
-                    ${if (fix.info.rule.correctExamples.isNotEmpty()) """
-                        <p><strong>Correct:</strong>&nbsp;${fix.info.rule.correctExamples.first().example}</p>""" else ""}    
-                """.trimIndent() else ""}
+                    ${if (!fix.isSpellingTypo) 
+                        """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>"""
+                        else ""}
+                    <br/>
+                    <p>${fix.info.rule.description}</p>
+                    ${if (!fix.isSpellingTypo) """
+                    <br/>
+                    <table>
+                        ${fix.info.rule.incorrectExamples.minBy { it.example.length }?.let{ example -> """
+                        <tr>
+                            <td style='vertical-align: top; color: gray;'>Incorrect:</td>
+                            <td>${example.toIncorrectHtml()}</td>
+                        </tr>
+                        <tr>
+                            <td style='vertical-align: top; color: gray;'>Correct:</td>
+                            <td>${example.toCorrectHtml()}</td>
+                        </tr>""" } ?: ""}
+                    </table>
+                        """.trimIndent() else ""}
                 </body>
             </html>
             """.trimIndent()

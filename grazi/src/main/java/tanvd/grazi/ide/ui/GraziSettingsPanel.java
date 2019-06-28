@@ -34,8 +34,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
         boolean sameLanguagesEnabled = Arrays.stream(Lang.values()).allMatch(lang -> settings.getState().getEnabledLanguages().contains(lang) == enabledLanguages.isItemSelected(lang.name()));
         boolean sameNativeLanguage = settings.getState().getNativeLanguage().equals(nativeLanguage.getSelectedItem());
         boolean sameSpellCheck = settings.getState().getEnabledSpellcheck() == enableGraziSpellcheckCheckBox.isSelected();
-        boolean sameIDEASpellCheck = settings.getState().getDisableIdeaSpellcheck() == disableIDEABuiltInCheckBox.isSelected();
-        return !sameLanguagesEnabled || !sameNativeLanguage || !sameSpellCheck || !sameIDEASpellCheck;
+        return !sameLanguagesEnabled || !sameNativeLanguage || !sameSpellCheck;
     }
 
 
@@ -53,7 +52,6 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
         }
 
         settings.getState().setEnabledSpellcheck(enableGraziSpellcheckCheckBox.isSelected());
-        settings.getState().setDisableIdeaSpellcheck(disableIDEABuiltInCheckBox.isSelected());
 
         GraziPlugin.Companion.reinit();
     }
@@ -71,6 +69,5 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
         }
 
         enableGraziSpellcheckCheckBox.setSelected(settings.getState().getEnabledSpellcheck());
-        disableIDEABuiltInCheckBox.setSelected(settings.getState().getDisableIdeaSpellcheck());
     }
 }

@@ -18,7 +18,7 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             enableTool("GraziCommit", project)
         }
 
-        if (GraziConfig.state.disableIdeaSpellcheck) {
+        if (GraziConfig.state.enabledSpellcheck) {
             modifyAndCommitProjectProfile(project, Consumer {
                 it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
             })
