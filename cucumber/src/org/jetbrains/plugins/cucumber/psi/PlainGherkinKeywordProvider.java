@@ -51,7 +51,7 @@ public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
   }
 
   @Override
-  public boolean isSpaceAfterKeyword(String language, String keyword) {
+  public boolean isSpaceRequiredAfterKeyword(String language, String keyword) {
     return !ourKeywordsWithNoSpaceAfter.contains(keyword);
   }
 
