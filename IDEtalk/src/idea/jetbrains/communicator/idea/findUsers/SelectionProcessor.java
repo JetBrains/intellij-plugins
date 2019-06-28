@@ -14,6 +14,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.*;
 
+import static com.intellij.util.ui.tree.TreeUtil.collectSelectedPaths;
+
 /**
  * @author Kir
  */
@@ -86,10 +88,8 @@ class SelectionProcessor {
   }
 
   public Set<User> getSelectedUsers() {
-    TreePath[] selectionPaths = myUserTree.getSelectionPaths();
-    if (selectionPaths == null) selectionPaths = new TreePath[0];
     Set<User> result = new HashSet<>();
-    for (TreePath selectionPath : selectionPaths) {
+    for (TreePath selectionPath : collectSelectedPaths(myUserTree)) {
       Object userObject = TreeUtils.getUserObject(selectionPath);
       if (userObject instanceof User) {
         result.add((User) userObject);
