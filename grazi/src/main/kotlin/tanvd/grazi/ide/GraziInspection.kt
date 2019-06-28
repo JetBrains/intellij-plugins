@@ -18,9 +18,10 @@ class GraziInspection : LocalInspectionTool() {
             <html>
                 <body>
                     ${if (!fix.isSpellingTypo) 
-                        """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>"""
+                        """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>
+                           <br/>
+                        """
                         else ""}
-                    <br/>
                     <p>${fix.info.rule.description}</p>
                     ${if (!fix.isSpellingTypo) """
                     <br/>

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile
 import icons.SpellcheckerIcons
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.toAbsoluteSelectionRange
+import tanvd.kex.trimToNull
 import javax.swing.Icon
 import kotlin.math.min
 
@@ -21,7 +22,8 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionAction
         typo.location.element), PriorityAction, Iconable {
     override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
-    override fun getText() =  "Fix ${typo.info.match.shortMessage.toLowerCase()}"
+    override fun getText() = "Fix ${(typo.info.match.shortMessage.trimToNull()
+            ?: typo.info.category.description).toLowerCase()}"
 
     override fun getFamilyName() = "Fix mistake with replace"
 

@@ -14,13 +14,15 @@ import com.intellij.refactoring.rename.RenameHandlerRegistry
 import icons.SpellcheckerIcons
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.spellcheck.SpellCheckSuggestions
+import tanvd.kex.trimToNull
 import tanvd.kex.untilNotNull
 import javax.swing.Icon
 
 open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
-    override fun getName() = "Fix ${typo.info.match.shortMessage.toLowerCase()}"
+    override fun getName() = "Fix ${(typo.info.match.shortMessage.trimToNull()
+            ?: typo.info.category.description).toLowerCase()}"
 
     override fun getFamilyName() = "Fix mistake with rename"
 
