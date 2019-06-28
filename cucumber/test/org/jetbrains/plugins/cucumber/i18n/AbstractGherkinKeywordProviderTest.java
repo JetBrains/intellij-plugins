@@ -71,8 +71,8 @@ public abstract class AbstractGherkinKeywordProviderTest extends TestCase {
   }
 
   public void testSpaceAfterKeyword() {
-    assertTrue(myKeywordProvider.isSpaceAfterKeyword("en", "Given"));
-    assertFalse(myKeywordProvider.isSpaceAfterKeyword("fr", "Lorsqu'"));
+    assertTrue(myKeywordProvider.isSpaceRequiredAfterKeyword("en", "Given"));
+    assertFalse(myKeywordProvider.isSpaceRequiredAfterKeyword("fr", "Lorsqu'"));
   }
 
   public void testNonKeywords() {
