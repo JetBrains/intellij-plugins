@@ -35,7 +35,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
@@ -176,7 +175,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     else {
       Document document = editor.getDocument();
-      EditorScrollingPositionKeeper.ForDocument scrollingPositionKeeper = new EditorScrollingPositionKeeper.ForDocument(document);
       CharSequence textBefore = document.getImmutableCharSequence();
       String newContent = result.result;
       /*
@@ -187,14 +185,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       String newDocumentContent = StringUtil.convertLineSeparators(newContent);
 
       Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
-      runWriteCommandAction(project, () -> {
-        if (!StringUtil.equals(textBefore, newContent)) {
-          document.setText(newDocumentContent);
-          scrollingPositionKeeper.restorePosition(true);
-        }
-        lineSeparatorUpdated.set(setDetectedLineSeparator(project, vFile, newLineSeparator));
+      EditorScrollingPositionKeeper.perform(editor, true, () -> {
+        runWriteCommandAction(project, () -> {
+          if (!StringUtil.equals(textBefore, newContent)) {
+            document.setText(newDocumentContent);
+          }
+          lineSeparatorUpdated.set(setDetectedLineSeparator(project, vFile, newLineSeparator));
+        });
       });
-      Disposer.dispose(scrollingPositionKeeper);
 
       showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated.get()), false, null);
     }
