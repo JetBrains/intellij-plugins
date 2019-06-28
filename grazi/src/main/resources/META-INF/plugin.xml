@@ -84,8 +84,8 @@
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
 
 
-        <localInspection displayName="Grazi Commit proofreading inspection" groupName="Grazi" enabledByDefault="true"
-                         shortName="GraziCommitInspection" implementationClass="tanvd.grazi.ide.GraziCommitInspection" level="TYPO"/>
+        <localInspection displayName="GraziCommit proofreading inspection" groupName="Grazi" enabledByDefault="true"
+                         shortName="GraziCommitInspection" implementationClass="tanvd.grazi.ide.GraziCommitInspection"/>
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
                                  id="reference.settingsdialog.project.grazi"
