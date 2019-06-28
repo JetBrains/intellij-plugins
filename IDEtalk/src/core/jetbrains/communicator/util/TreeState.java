@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.intellij.util.ui.tree.TreeUtil.EMPTY_TREE_PATH;
+
 /**
  * @author Kir Maximov
  */
@@ -82,8 +84,7 @@ public class TreeState {
         selectedPaths.add(TreeUtils.getPathFromRoot(node));
       }
     }
-
-    tree.setSelectionPaths(selectedPaths.toArray(new TreePath[0]));
+    tree.setSelectionPaths(selectedPaths.toArray(EMPTY_TREE_PATH));
   }
 
   private Object getObject(TreePath path) {
