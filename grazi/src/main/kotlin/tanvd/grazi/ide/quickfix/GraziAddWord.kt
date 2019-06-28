@@ -15,11 +15,11 @@ import javax.swing.Icon
 class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Dictionary
 
-    override fun getName() = "Add '${typo.word}' to Grazi"
+    override fun getName() = "Save '${typo.word}' to dictionary"
 
     override fun getPriority() = PriorityAction.Priority.NORMAL
 
-    override fun getFamilyName() = "Add word"
+    override fun getFamilyName() = "Save word"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.state.userWords.add(typo.word.toLowerCase())

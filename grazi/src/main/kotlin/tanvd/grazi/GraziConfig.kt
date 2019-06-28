@@ -9,7 +9,7 @@ import tanvd.grazi.language.Lang
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                      @Property var nativeLanguage: Lang = enabledLanguages.first(),
-                     @Property var enabledSpellcheck: Boolean = false,
+                     @Property var enabledSpellcheck: Boolean = true,
                      @Property val userWords: MutableSet<String> = HashSet(),
                      @Property val userDisabledRules: MutableSet<String> = HashSet(),
                      @Property var lastSeenVersion: String? = null)
