@@ -47,13 +47,13 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     ProgressManager.checkCanceled();
     super.visitElement(element);
 
-    boolean testInsideScenario =
+    boolean textInsideScenario =
       PsiUtilCore.getElementType(element) == GherkinTokenTypes.TEXT && element.getParent() instanceof GherkinStepsHolder;
-    if (testInsideScenario && hasStepsBefore(element)) {
+    if (textInsideScenario && hasStepsBefore(element)) {
       myHolder.createErrorAnnotation(element, "Unexpected element");
     }
   }
-  
+
   private static boolean hasStepsBefore(@NotNull PsiElement element) {
     element = element.getPrevSibling();
     while (element != null && (!(element instanceof GherkinStep))) {
@@ -82,8 +82,6 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
       highlightOutlineParams(step, reference);
     }
   }
-  
-  
 
   @Override
   public void visitScenarioOutline(GherkinScenarioOutline outline) {
@@ -121,7 +119,6 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
       highlight(cell, GherkinHighlighter.TABLE_HEADER_CELL);
     }
   }
-
 
   private void highlightOutlineParams(@NotNull final GherkinStep step, @NotNull final CucumberStepReference reference) {
     final List<String> realSubstitutions = getRealSubstitutions(step);

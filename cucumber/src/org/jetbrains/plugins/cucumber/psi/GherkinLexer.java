@@ -195,7 +195,7 @@ public class GherkinLexer extends LexerBase {
         for (String keyword : myKeywords) {
           int length = keyword.length();
           if (isStringAtPosition(keyword)) {
-            if (myKeywordProvider.isSpaceAfterKeyword(myCurLanguage, keyword) &&
+            if (myKeywordProvider.isSpaceRequiredAfterKeyword(myCurLanguage, keyword) &&
                 myEndOffset - myPosition > length &&
                 Character.isLetterOrDigit(myBuffer.charAt(myPosition + length))) {
               continue;
@@ -205,7 +205,7 @@ public class GherkinLexer extends LexerBase {
             myCurrentToken = myKeywordProvider.getTokenType(myCurLanguage, keyword);
             if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD) {
               boolean followedByWhitespace = Character.isWhitespace(followedByChar) && followedByChar != '\n';
-              if (followedByWhitespace != myKeywordProvider.isSpaceAfterKeyword(myCurLanguage, keyword)) {
+              if (followedByWhitespace != myKeywordProvider.isSpaceRequiredAfterKeyword(myCurLanguage, keyword)) {
                 myCurrentToken = GherkinTokenTypes.TEXT;
               }
             }
