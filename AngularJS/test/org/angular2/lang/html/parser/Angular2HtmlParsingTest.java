@@ -323,4 +323,24 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "</style>\n" +
                "<div></div>");
   }
+
+  public void testNgContentSelect() throws Exception {
+    doTestHtml("<div><ng-content select='foo,bar'></ng-content></div>");
+  }
+
+  public void testNgNonBindable() throws Exception {
+    doTestHtml("<div><span ngNonBindable>f{{bar}}a</span>f{{foo}}a</div>");
+  }
+
+  public void testNgNonBindable2() throws Exception {
+    doTestHtml("<div><span ngNonBindable ngNonBindable>s{{bar}}e</span>s{{foo}}e</div>");
+  }
+
+  public void testNgNonBindable3() throws Exception {
+    doTestHtml("<div><span ngNonBindable ngNonBindable>{{bar}}<b ngNonBindable>{{boo}}</b></span>{{foo}}</div>");
+  }
+
+  public void testNgNonBindable4() throws Exception {
+    doTestHtml("<p ngNonBindable>{{foo}}<p>{{bar}}");
+  }
 }

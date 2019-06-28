@@ -1,5 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
 
@@ -212,6 +210,7 @@ public interface DartTokenTypes {
   IElementType INT_DIV = new DartElementType("~/");
   IElementType INT_DIV_EQ = new DartElementType("~/=");
   IElementType IS = new DartElementType("is");
+  IElementType LATE = new DartElementType("late");
   IElementType LBRACE = new DartElementType("{");
   IElementType LBRACKET = new DartElementType("[");
   IElementType LIBRARY = new DartElementType("library");
@@ -248,6 +247,7 @@ public interface DartTokenTypes {
   IElementType PLUS_PLUS = new DartElementType("++");
   IElementType QUEST = new DartElementType("?");
   IElementType QUEST_DOT = new DartElementType("?.");
+  IElementType QUEST_DOT_DOT = new DartElementType("?..");
   IElementType QUEST_QUEST = new DartElementType("??");
   IElementType QUEST_QUEST_EQ = new DartElementType("??=");
   IElementType RAW_SINGLE_QUOTED_STRING = new DartElementType("RAW_SINGLE_QUOTED_STRING");
@@ -257,6 +257,7 @@ public interface DartTokenTypes {
   IElementType REGULAR_STRING_PART = new DartElementType("REGULAR_STRING_PART");
   IElementType REM = new DartElementType("%");
   IElementType REM_EQ = new DartElementType("%=");
+  IElementType REQUIRED = new DartElementType("required");
   IElementType RETHROW = new DartElementType("rethrow");
   IElementType RETURN = new DartElementType("return");
   IElementType RPAREN = new DartElementType(")");

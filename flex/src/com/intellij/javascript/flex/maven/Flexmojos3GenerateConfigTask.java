@@ -14,11 +14,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import com.intellij.openapi.vcs.changes.IgnoredFileBean;
@@ -197,10 +197,10 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(mainClassFile, sourceRoot, '/');
       final String mainClass = relativePath == null
                                ? mainClassFile.getNameWithoutExtension()
-                               : FileUtil.getNameWithoutExtension(relativePath).replace('/', '.');
+                               : FileUtilRt.getNameWithoutExtension(relativePath).replace('/', '.');
 
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      final LibraryTable.ModifiableModel librariesModel = ProjectLibraryTable.getInstance(module.getProject()).getModifiableModel();
+      final LibraryTable.ModifiableModel librariesModel = LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject()).getModifiableModel();
       final FlexProjectConfigurationEditor flexEditor = FlexProjectConfigurationEditor
         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
 

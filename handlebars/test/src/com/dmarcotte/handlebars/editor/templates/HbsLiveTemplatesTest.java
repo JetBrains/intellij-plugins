@@ -6,11 +6,11 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.actionSystem.EditorAction;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 
-public class HbsLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbsLiveTemplatesTest extends BasePlatformTestCase {
 
   @NotNull
   @Override

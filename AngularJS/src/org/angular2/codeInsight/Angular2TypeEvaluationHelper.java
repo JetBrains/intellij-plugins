@@ -4,7 +4,7 @@ package org.angular2.codeInsight;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSUnionType;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.typescript.resolve.TypeScriptTypeEvaluationHelper;
 import com.intellij.psi.PsiElement;
@@ -22,10 +22,11 @@ public class Angular2TypeEvaluationHelper extends TypeScriptTypeEvaluationHelper
                                      @Nullable JSType type,
                                      @Nullable PsiElement resolvedElement) {
     // Angular template syntax doesn't support type guards, so we need to remove strictness from union types
-    type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
-    if (type instanceof JSCompositeTypeImpl) {
-      return type.copyWithStrict(false);
+    JSType optimized = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
+    if (optimized instanceof JSUnionType) {
+      return optimized.copyWithStrict(false);
     }
+    // WEB-39538: Optimization changes type source making it impossible to evaluate generics in some cases
     return type;
   }
 }

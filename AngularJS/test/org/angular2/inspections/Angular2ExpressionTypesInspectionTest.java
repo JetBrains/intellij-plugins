@@ -72,4 +72,10 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.configureByFiles("query-list-test.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testInputValue() {
+    myFixture.configureByFiles("inputValue.html","inputValue.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }

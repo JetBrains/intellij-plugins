@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
-import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -25,12 +24,11 @@ class DartContributedReference implements PsiPolyVariantReference {
   @NotNull private final String myRefText;
 
   DartContributedReference(@NotNull final PsiElement element,
-                                  @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
+                           final int elementStartOffsetInHost,
+                           @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
     myElement = element;
     myNavigationRegion = navigationRegion;
-    final int startOffset =
-      InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextRange().getStartOffset());
-    myRefRange = TextRange.from(navigationRegion.getOffset() - startOffset, navigationRegion.getLength());
+    myRefRange = TextRange.from(navigationRegion.getOffset() - elementStartOffsetInHost, navigationRegion.getLength());
     myRefText = element.getText().substring(myRefRange.getStartOffset(), myRefRange.getEndOffset());
   }
 

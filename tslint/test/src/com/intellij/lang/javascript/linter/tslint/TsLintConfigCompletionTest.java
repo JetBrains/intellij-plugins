@@ -1,13 +1,13 @@
 package com.intellij.lang.javascript.linter.tslint;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import java.util.List;
 
 /**
  * @author Irina.Chernushina on 10/1/2015.
  */
-public class TsLintConfigCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TsLintConfigCompletionTest extends BasePlatformTestCase {
 
 
   @Override

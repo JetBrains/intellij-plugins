@@ -36,7 +36,6 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -452,7 +451,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       Document document;
       if (mySourceClass instanceof XmlBackedJSClassImpl) {
         VirtualFile vFile = sourceFile.getVirtualFile();
-        vFile.rename(this, FileUtil.getNameWithoutExtension(vFile.getName()) +
+        vFile.rename(this, FileUtilRt.getNameWithoutExtension(vFile.getName()) +
                            "." + JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION);
         document = FileDocumentManager.getInstance().getDocument(vFile);
       }

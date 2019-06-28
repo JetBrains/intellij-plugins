@@ -1,13 +1,18 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import gnu.trove.THashSet;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
@@ -478,9 +483,9 @@ class Abc {
       int base;
       TIntArrayList genericIndices;
     }
-    
+
     final List<TypeNameInfo> typeNameInfos = new ArrayList<>();
-    
+
     for (i = 1; i < n; i++) {
       switch (data.readByte()) {
         case CONSTANT_Qname:
@@ -540,7 +545,7 @@ class Abc {
 
     boolean hasSomething = false;
     boolean doneSomething = false;
-    
+
     do {
       NextType:
       for (TypeNameInfo tni : typeNameInfos) {
@@ -549,18 +554,18 @@ class Abc {
           hasSomething = true;
           continue;
         }
-        
+
         String nsName = names[tni.base].toString();
-  
+
         if (tni.genericIndices != null) {
           nsName += ".<";
           for (int k = 0; k < tni.genericIndices.size(); k++) {
             if (k != 0) nsName += ",";
-  
+
             final Multiname typeArgName = names[tni.genericIndices.get(k)];
             if (typeArgName == null) continue NextType;
             String typeArgNameString;
-  
+
             if (processor instanceof AS3InterfaceDumper) {
               boolean hasNotEmptyNs = typeArgName.hasNotEmptyNs();
               final boolean vector = hasNotEmptyNs && typeArgName.nsset[0].equals("__AS3__.vec");
@@ -573,12 +578,12 @@ class Abc {
             }
             nsName += typeArgNameString;
           }
-  
+
           nsName += ">";
         }
-  
+
         final int index = nsName.indexOf("::");
-  
+
         names[tni.index] =
           new Multiname(index != -1 ? new String[]{nsName.substring(0, index)}:PUBLIC_NS_SET, index != -1 ? nsName.substring(index + 2) : nsName);
         doneSomething = true;
@@ -659,7 +664,7 @@ class Abc {
             m.paramNames[k] = StringUtil.isJavaIdentifier(name) && usedNames.add(name) ? name : "_" + k;
           }
         } else {
-          m.paramNames = ArrayUtil.EMPTY_STRING_ARRAY;
+          m.paramNames = ArrayUtilRt.EMPTY_STRING_ARRAY;
         }
       }
 

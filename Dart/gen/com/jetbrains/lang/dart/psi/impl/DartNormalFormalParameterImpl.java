@@ -44,6 +44,7 @@ public class DartNormalFormalParameterImpl extends DartPsiCompositeElementImpl i
     return findChildByClass(DartSimpleFormalParameter.class);
   }
 
+  @Override
   @Nullable
   public DartComponentName findComponentName() {
     return DartPsiImplUtil.findComponentName(this);

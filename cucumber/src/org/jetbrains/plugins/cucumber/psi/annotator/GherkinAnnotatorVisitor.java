@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -44,8 +45,21 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
   @Override
   public void visitElement(final PsiElement element) {
     ProgressManager.checkCanceled();
-
     super.visitElement(element);
+
+    boolean testInsideScenario =
+      PsiUtilCore.getElementType(element) == GherkinTokenTypes.TEXT && element.getParent() instanceof GherkinStepsHolder;
+    if (testInsideScenario && hasStepsBefore(element)) {
+      myHolder.createErrorAnnotation(element, "Unexpected element");
+    }
+  }
+  
+  private static boolean hasStepsBefore(@NotNull PsiElement element) {
+    element = element.getPrevSibling();
+    while (element != null && (!(element instanceof GherkinStep))) {
+      element = element.getPrevSibling();
+    }
+    return element != null;
   }
 
   @Override
@@ -68,6 +82,8 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
       highlightOutlineParams(step, reference);
     }
   }
+  
+  
 
   @Override
   public void visitScenarioOutline(GherkinScenarioOutline outline) {

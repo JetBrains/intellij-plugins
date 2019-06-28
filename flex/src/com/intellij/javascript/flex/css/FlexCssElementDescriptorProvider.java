@@ -24,6 +24,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -53,7 +54,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -424,7 +425,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
     if (module == null) {
-      return ArrayUtil.EMPTY_STRING_ARRAY;
+      return ArrayUtilRt.EMPTY_STRING_ARRAY;
     }
     CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
     XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();
@@ -677,7 +678,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
-    if (vFile == null || !(vFile.getFileType() == CssFileType.INSTANCE)) {
+    if (vFile == null || !(FileTypeRegistry.getInstance().isFileOfType(vFile, CssFileType.INSTANCE))) {
       return null;
     }
 

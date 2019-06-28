@@ -100,11 +100,6 @@ var TSLintPlugin = /** @class */ (function () {
         }
         return configurationResult;
     };
-    TSLintPlugin.prototype.hasJSRules = function (config) {
-        return this.linterApi.version.major && this.linterApi.version.major >= 5
-            ? config.jsRules.size > 0
-            : Object.keys(config.jsRules).length > 0;
-    };
     return TSLintPlugin;
 }());
 exports.TSLintPlugin = TSLintPlugin;

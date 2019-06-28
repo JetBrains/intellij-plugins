@@ -3,7 +3,7 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.xml.util.CheckValidXmlInScriptBodyInspection;
 import org.angularjs.AngularTestUtil;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TagsTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "tags";

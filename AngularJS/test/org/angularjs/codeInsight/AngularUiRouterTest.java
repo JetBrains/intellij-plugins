@@ -8,7 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * @author Irina.Chernushina on 2/12/2016.
  */
-public class AngularUiRouterTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AngularUiRouterTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "uiRouter";

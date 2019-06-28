@@ -4,10 +4,10 @@ import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import java.util.Arrays
 
-class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
+class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
   val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
   private fun Array<String>.withQuotes(quote: String): Array<String> = this.map { "$quote$it$quote" }.toTypedArray()
 

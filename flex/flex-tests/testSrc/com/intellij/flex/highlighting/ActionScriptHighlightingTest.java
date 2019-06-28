@@ -80,6 +80,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
+  @Override
+  protected boolean isIconRequired() {
+    return true;
+  }
+
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 
   private Runnable myAfterCommitRunnable = null;
@@ -138,19 +143,19 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCreateParameter() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_2() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_3() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter2() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testReferencingPrivatesAndIncludeMembers() {
@@ -953,27 +958,27 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testUnusedParameterHasCreateFieldQuickFix() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field 'xxx'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "xxx"));
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_2() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_bar'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "_bar"));
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_3() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field 'value'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "value"));
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_4() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_value'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "_value"));
   }
 
   public void testUnusedParameterHasCreateFieldQuickFix_5() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create Field '_bar'");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "_bar"));
   }
 
   public void testUnusedParameterHasAssignToFieldQuickFix() throws Exception {
@@ -1201,7 +1206,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testCreateClassOrInterfaceAction11() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Abc", false);
   }
-  
+
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testCreateClassOrInterfaceAction12() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Foo", true);
@@ -1565,7 +1570,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testNonImplementedInterface() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(false);
-    findAndInvokeIntentionAction(infoCollection, "Implement Methods", myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, JSBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
     checkResultByFile(BASE_PATH + getTestName(false) + "_after.js2");
     JSTestUtils.initJSIndexes(getProject());
 
@@ -1932,18 +1937,18 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testNoTypeGuessFromAsdoc() throws Exception {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create Field 'aa'", "as", infos);
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.create.field.intention.name", "aa"), "as", infos);
   }
 
   public void testNoTypeGuessFromAsdoc2() throws Exception {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create Field 'aa'", "as", infos);
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.create.field.intention.name", "aa"), "as", infos);
   }
 
   public void testCreateFieldInOtherFile() throws Exception {
     final String testName = getTestName(false);
     final Collection<HighlightInfo> infos = doTestFor(true, testName + ".as", testName + "_other.as");
-    findAndInvokeIntentionAction(infos, "Create Field 'zzz'", myEditor, myFile);
+    findAndInvokeIntentionAction(infos, JSBundle.message("javascript.create.field.intention.name", "zzz"), myEditor, myFile);
     setActiveEditor(createEditor(myFile.getVirtualFile().findFileByRelativePath("../" + getTestName(false) + "_other.as")));
     checkResultByFile(BASE_PATH + getTestName(false) + "_other_after.as");
   }
@@ -2024,7 +2029,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoCreateFieldInSdkClass() {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create field 'foo'");
+    assertInaccessible(infos, JSBundle.message("javascript.create.field.intention.name", "foo"));
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
@@ -2032,12 +2037,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     myAfterCommitRunnable =
       () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create Method 'bar'");
+    assertInaccessible(infos, JSBundle.message("javascript.create.method.intention.name", "bar"));
   }
 
   public void testInternalClassFromFileLocal() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create Method 'z'");
+    assertInaccessible(infos, JSBundle.message("javascript.create.method.intention.name", "z"));
     findAndInvokeActionWithExpectedCheck("Make method 'z' public", "as", infos);
   }
 
@@ -2048,14 +2053,14 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testRelaxVisibilityFix() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create Field 'v'");
-    assertInaccessible(infos, "Create Constant Field 'v'");
+    assertInaccessible(infos, JSBundle.message("javascript.create.field.intention.name", "v"));
+    assertInaccessible(infos, JSBundle.message("javascript.create.constant.field.intention.name", "v"));
     findAndInvokeActionWithExpectedCheck("Make field 'v' internal", "as", infos);
   }
 
   public void testRelaxVisibilityFix2() throws Exception {
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    assertInaccessible(infos, "Create Method 'foo'");
+    assertInaccessible(infos, JSBundle.message("javascript.create.method.intention.name", "foo"));
     findAndInvokeActionWithExpectedCheck("Make method 'foo' public", "as", infos);
   }
 
@@ -2289,7 +2294,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testNonExistingMethodAfterNew() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Create Method 'zzz'", "js2");
+    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.method.intention.name", "zzz"), "js2");
   }
 
   public void testCorrectScopeForSuperclassCheck2() { //
@@ -2388,13 +2393,13 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testCreateVarOfArrayType() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create Variable 'x'", "as", infoCollection);
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.create.variable.intention.name", "x"), "as", infoCollection);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testCreateObjectVar() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
-    findAndInvokeActionWithExpectedCheck("Create Variable 'foo'", "as", infoCollection);
+    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.create.variable.intention.name", "foo"), "as", infoCollection);
   }
 
   public void testVectorWithSdk() {

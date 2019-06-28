@@ -9,7 +9,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -144,7 +144,7 @@ public class FlexBuilderUtils {
         }
 
         final String mainClass = StringUtil.notNullize(info.getMainClass(bc.getModule()), bc.getMainClass());
-        final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer,
+        final String fixedText = replaceMacros(wrapperText, FileUtilRt.getNameWithoutExtension(outputFileName), targetPlayer,
                                                FlexCommonUtils.getPathToMainClassFile(mainClass, bc.getModule()));
         final String wrapperFileName = FlexCommonUtils.getWrapperFileName(bc);
         try {
@@ -359,7 +359,7 @@ public class FlexBuilderUtils {
       ContainerUtil.addIfNotNull(result, extensionId);
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @Nullable

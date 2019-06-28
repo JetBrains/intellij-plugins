@@ -13,9 +13,9 @@
 // limitations under the License.
 package org.jetbrains.plugins.cucumber;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class GherkinTypingTest extends LightPlatformCodeInsightFixtureTestCase {
+public class GherkinTypingTest extends BasePlatformTestCase {
   public void testEnterAfterComment() {
     myFixture.configureByText("test.feature",
                               "Feature: two\n" +

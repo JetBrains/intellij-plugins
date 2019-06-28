@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.execution.RunManager;
@@ -25,7 +26,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor;
 import com.intellij.refactoring.move.moveClassesOrPackages.SingleSourceRootMoveDestination;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -200,12 +201,12 @@ public class FlexMoveTest extends JSMoveTestBase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testMoveClasses1() {
-    doTest(new String[]{"a.MyClass", "a.MyFunc", "a.MyNs", "a.MyVar", "a.MyConst"}, "b", ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest(new String[]{"a.MyClass", "a.MyFunc", "a.MyNs", "a.MyVar", "a.MyConst"}, "b", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testImportForConstuctorUsage() {
-    doTest(new String[]{"from.Test"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest(new String[]{"from.Test"}, "to", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -225,11 +226,11 @@ public class FlexMoveTest extends JSMoveTestBase {
   }
 
   public void testStarImport() {
-    doTest(new String[]{"from.Foo"}, "to", ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest(new String[]{"from.Foo"}, "to", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   public void testNoWhitespaceForPackage() {
-    doTest(new String[]{"Test", "Test2"}, "com", ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest(new String[]{"Test", "Test2"}, "com", ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   private void doTestDirectoryWithClasses(final String[] toMove, final String target, final boolean justRename) {

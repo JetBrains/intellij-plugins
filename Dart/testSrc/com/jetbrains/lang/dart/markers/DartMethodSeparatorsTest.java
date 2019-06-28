@@ -2,9 +2,9 @@
 package com.jetbrains.lang.dart.markers;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class DartMethodSeparatorsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class DartMethodSeparatorsTest extends BasePlatformTestCase {
 
   protected void doTest(String fileText) {
     DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true;

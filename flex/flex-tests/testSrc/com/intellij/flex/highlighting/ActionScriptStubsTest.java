@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -129,7 +130,8 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     doTest(() -> {
       final IntentionAction action =
         LightQuickFixTestCase
-          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), "Create Field 'myfield'");
+          .findActionWithText(LightQuickFixTestCase.getAvailableActions(myEditor, myFile), JSBundle
+            .message("javascript.create.field.intention.name", "myfield"));
       CommandProcessor.getInstance().executeCommand(getProject(), () -> action.invoke(myProject, myEditor, myFile), "Create field", null);
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
     }, getTestName(false) + ".as", "restparam.swc");

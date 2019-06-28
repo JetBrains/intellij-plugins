@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.xml;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ public class DartHtmlAttributeDescriptor extends DartHtmlDescriptorBase implemen
   @Nullable
   @Override
   public String[] getEnumeratedValues() {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Nullable

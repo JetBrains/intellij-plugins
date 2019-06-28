@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -18,6 +6,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
@@ -85,7 +74,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
         final String mainClassRelativePath = moduleElement.getChildTextNormalize("sourceFile", moduleElement.getNamespace());
         final String finalName = moduleElement.getChildTextNormalize("finalName", moduleElement.getNamespace());
         final String destinationPath = moduleElement.getChildTextNormalize("destinationPath", moduleElement.getNamespace());
-        final String mainClass = FileUtil.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
+        final String mainClass = FileUtilRt.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
         final String rlmName = StringUtil.notNullize(finalName, StringUtil.getShortName(mainClass));
         // indeed, rlmName.toLowerCase() is specific to flexmojos 4
         final String outputFileName = finalName != null ? finalName + ".swf"
@@ -99,7 +88,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
         final String path = moduleElement.getTextNormalize();
         if (path.endsWith(".mxml") || path.endsWith(".as")) {
           final String mainClassRelativePath = FileUtil.toSystemIndependentName(path);
-          final String mainClass = FileUtil.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
+          final String mainClass = FileUtilRt.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
           final String rlmName = StringUtil.getShortName(mainClass);
           // indeed, rlmName.toLowerCase() is specific to flexmojos 4
           final String outputFileName = myMavenProject.getFinalName() + "-" + StringUtil.toLowerCase(rlmName) + ".swf";

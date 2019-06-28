@@ -111,12 +111,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     CucumberStepsIndex index = CucumberStepsIndex.getInstance(featureFile.getProject());
     final Set<CucumberStepDefinitionCreationContext> result = index.getStepDefinitionContainers(featureFile);
-    for (CucumberStepDefinitionCreationContext item : result) {
-      if (index.getExtensionMap().get(item.getFrameworkType()) == null) {
-        result.remove(item);
-      }
-    }
-
+    result.removeIf(e -> index.getExtensionMap().get(e.getFrameworkType()) == null);
     return result;
   }
 
@@ -137,7 +132,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
       final String parentDirPath = model.getDirectory().getVirtualFile().getPath();
 
-      WriteCommandAction.runWriteCommandAction(project,
+      WriteCommandAction.runWriteCommandAction(project, "Create Step Definition", null, 
         () -> CommandProcessor.getInstance().executeCommand(project, () -> {
           try {
             VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);

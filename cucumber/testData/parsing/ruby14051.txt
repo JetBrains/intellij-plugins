@@ -20,14 +20,11 @@ GherkinFile:ruby14051.feature
       PsiWhiteSpace(' ')
       PsiElement(TEXT)('scenario 1')
       PsiWhiteSpace('\n\n    ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('Given')
+      PsiElement(TEXT)('Given')
       PsiWhiteSpace('\n    ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('And')
+      PsiElement(TEXT)('And')
       PsiWhiteSpace('\n    ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('Then')
+      PsiElement(TEXT)('Then')
     PsiWhiteSpace('\n\n\n  ')
     GherkinScenario:scenario 2.
       GherkinTag:@s
@@ -44,11 +41,8 @@ GherkinFile:ruby14051.feature
       PsiWhiteSpace(' ')
       PsiElement(TEXT)('scenario 2.')
       PsiWhiteSpace('\n\n  ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('Given')
+      PsiElement(TEXT)('Given')
       PsiWhiteSpace('\n  ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('And')
+      PsiElement(TEXT)('And')
       PsiWhiteSpace('\n  ')
-      GherkinStep:
-        PsiElement(STEP_KEYWORD)('Then')
+      PsiElement(TEXT)('Then')

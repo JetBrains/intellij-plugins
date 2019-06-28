@@ -26,6 +26,7 @@ public class DartFunctionBodyImpl extends DartPsiCompositeElementImpl implements
     else super.accept(visitor);
   }
 
+  @Override
   @Nullable
   public IDartBlock getBlock() {
     return DartPsiImplUtil.getBlock(this);

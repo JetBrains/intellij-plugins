@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.components.*;
@@ -17,9 +18,9 @@ import org.jetbrains.annotations.NotNull;
 public class AirPackageProjectParameters implements PersistentStateComponent<AirPackageProjectParameters> {
   private static final String NATIVE_INSTALLER_EXTENSION =
     SystemInfo.isWindows ? ".exe"
-                         : SystemInfo.isMac ? ".dmg"
-                                            : StringUtil.toLowerCase(SystemInfo.OS_NAME).contains("ubuntu") ? ".deb"
-                                                                                                            : ".rpm";
+                           : SystemInfo.isMac ? ".dmg"
+                                              : StringUtil.toLowerCase(SystemInfo.OS_NAME).contains("ubuntu") ? ".deb"
+                                                                                                                : ".rpm";
 
   public enum DesktopPackageType {
     AirInstaller("installer (*.air)", ".air"),

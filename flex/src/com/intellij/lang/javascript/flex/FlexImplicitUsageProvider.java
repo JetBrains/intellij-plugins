@@ -26,10 +26,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
   @Override
-  public boolean isImplicitUsage(PsiElement element) {
+  public boolean isImplicitUsage(@NotNull PsiElement element) {
     if (element instanceof XmlAttribute &&
         ((XmlAttribute)element).isNamespaceDeclaration() &&
         JavaScriptSupportLoader.isLanguageNamespace(((XmlAttribute)element).getValue())) {
@@ -98,12 +99,12 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
   }
 
   @Override
-  public boolean isImplicitRead(PsiElement element) {
+  public boolean isImplicitRead(@NotNull PsiElement element) {
     return false;
   }
 
   @Override
-  public boolean isImplicitWrite(PsiElement element) {
+  public boolean isImplicitWrite(@NotNull PsiElement element) {
     return false;
   }
 

@@ -4,7 +4,7 @@ package com.jetbrains.lang.dart.dart_style;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
@@ -1471,7 +1471,7 @@ public abstract class DartStyleTest extends FormatterTestCase {
       }
 
       found = true;
-      String[] lines = ArrayUtil.toStringArray(FileUtil.loadLines(entry, "UTF-8"));
+      String[] lines = ArrayUtilRt.toStringArray(FileUtil.loadLines(entry, "UTF-8"));
       boolean isCompilationUnit = entry.getName().endsWith(".unit");
 
       // The first line may have a "|" to indicate the page width.

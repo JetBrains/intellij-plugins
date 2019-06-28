@@ -16,28 +16,30 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
-  private NullableComputable<String> glueInitializer = null;
+  private volatile CucumberGlueProvider myCucumberGlueProvider = null;
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
@@ -90,10 +92,12 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
         String filePath = getFilePath();
         File f = new File(filePath);
-        if (!f.isDirectory()) {
-          f = f.getParentFile();
+        if (f.exists()) {
+          if (!f.isDirectory()) {
+            f = f.getParentFile();
+          }
+          params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
         }
-        params.getVMParametersList().addParametersString("-Dorg.jetbrains.run.directory=\"" + f.getAbsolutePath() + "\"");
 
         params.getProgramParametersList().addParametersString("\"" + filePath + "\"");
         params.setShortenCommandLine(getShortenCommandLine(), getProject());
@@ -153,7 +157,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @Override
@@ -161,11 +165,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     String filePath = getFilePath();
     if (filePath == null) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
-    } else if (!(new File(filePath)).exists()) {
-      throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
-    }
-    else if (StringUtil.isEmpty(getGlue())) {
-      throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.must.not.be.empty"));
     }
 
     String programParameters = getProgramParameters();
@@ -184,20 +183,66 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Nullable
   public String getGlue() {
-    if (glueInitializer != null) {
-      setGlue(glueInitializer.compute());
+    if (myCucumberGlueProvider != null) {
+      //noinspection SynchronizeOnThis
+      synchronized (this) {
+        if (myCucumberGlueProvider != null) {
+          Set<String> glues = new HashSet<>();
+          if (ApplicationManager.getApplication().isDispatchThread()) {
+            Task.Modal task = new Task.Modal(getProject(), CucumberJavaBundle.message("cucumber.java.glue.calculation.title"), true) {
+              @Override
+              public void run(@NotNull ProgressIndicator indicator) {
+                indicator.setText(CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.message", "-"));
+                indicator.setText2(CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.template.message"));
+                Consumer<String> consumer = glue -> {
+                  if (CucumberJavaUtil.addGlue(glue, glues)) {
+                    String gluePresentation = null;
+                    if (glues.size() < 15) {
+                      gluePresentation = StringUtil.join(glues, " ");
+                      if (gluePresentation.length() > 30) {
+                        gluePresentation = null;
+                      }
+                    }
+                    if (gluePresentation == null) {
+                      gluePresentation = String.valueOf(glues.size());
+                    }
+
+                    String message = CucumberJavaBundle.message("cucumber.java.glue.calculation.glues.message", gluePresentation);
+                    indicator.setText(message);
+                  }
+                };
+
+                ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(consumer));
+              }
+            };
+            task.setCancelText(CucumberJavaBundle.message("cucumber.java.glue.calculation.stop.title"));
+
+            ProgressManager.getInstance().run(task);
+          }
+          else {
+            ApplicationManager.getApplication().runReadAction(() -> myCucumberGlueProvider.calculateGlue(glue -> CucumberJavaUtil.addGlue(glue, glues)));
+          }
+          getOptions().setGlue(StringUtil.join(glues, " "));
+          myCucumberGlueProvider = null;
+        }
+      }
     }
 
     return getOptions().getGlue();
   }
 
-  public void setGlue(String value) {
-    getOptions().setGlue(value);
-    glueInitializer = null;
+  @Nullable
+  public String getPrecalculatedGlue() {
+    return getOptions().getGlue();
   }
 
-  public void setGlue(NullableComputable<String> value) {
-    glueInitializer = value;
+  public synchronized void setGlue(String value) {
+    getOptions().setGlue(value);
+    myCucumberGlueProvider = null;
+  }
+
+  public synchronized void setGlueProvider(@Nullable CucumberGlueProvider cucumberGlueProvider) {
+    myCucumberGlueProvider = cucumberGlueProvider;
   }
 
   public String getFilePath() {

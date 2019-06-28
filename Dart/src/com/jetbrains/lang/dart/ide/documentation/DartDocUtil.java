@@ -8,6 +8,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
@@ -25,6 +27,9 @@ import java.util.List;
 public class DartDocUtil {
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
+  private static final String NBSP = "&nbsp;";
+  private static final String GREATER_THAN = "&gt;";
+  private static final String LESS_THAN = "&lt;";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
@@ -61,7 +66,66 @@ public class DartDocUtil {
     }
 
     final String docText = getDocumentationText(namedComponent);
-    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, null, false);
+    return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
+  }
+
+  private static String formatSignature(@NotNull final String signature) {
+    final int offsetToOpenParen = signature.indexOf('(');
+
+    // If this signature doesn't have a '(', return
+    if (offsetToOpenParen <= 0) {
+      return StringUtil.escapeXmlEntities(signature);
+    }
+
+    String[] strings = signatureSplit(signature);
+    if (strings.length == 1) {
+      return StringUtil.escapeXmlEntities(signature);
+    }
+
+    StringBuilder stringBuilder = new StringBuilder();
+    for (int i = 0; i < strings.length; i++) {
+      stringBuilder.append(StringUtil.escapeXmlEntities(strings[i]));
+      if (i + 1 != strings.length) {
+        stringBuilder.append(",<br>");
+        stringBuilder.append(StringUtil.repeat(NBSP, offsetToOpenParen + 1));
+      }
+    }
+    return stringBuilder.toString();
+  }
+
+  /**
+   * Split around the ", " pattern, when not in a generic or function parameter (inside a nested parenthesize.)
+   */
+  private static String[] signatureSplit(@NotNull final String str) {
+    List<String> result = new SmartList<>();
+
+    int beginningOffset = 0;
+    int genericDepth = 0;
+    int parenDepth = 0;
+    for (int i = 0; i < str.length(); i++) {
+      final char c = str.charAt(i);
+      if (c == '<') {
+        genericDepth++;
+      }
+      else if (c == '>') {
+        genericDepth = Math.max(genericDepth - 1, 0);
+      }
+      else if (c == '(') {
+        parenDepth++;
+      }
+      else if (c == ')') {
+        parenDepth = Math.max(parenDepth - 1, 0);
+      }
+      else if (c == ',' && genericDepth == 0 && parenDepth == 1) {
+        result.add(str.substring(beginningOffset, i));
+        beginningOffset = i + 1;
+        while (beginningOffset + 1 < str.length() && str.charAt(beginningOffset) == ' ') {
+          beginningOffset++;
+        }
+      }
+    }
+    result.add(str.substring(beginningOffset));
+    return ArrayUtil.toStringArray(result);
   }
 
   @NotNull
@@ -71,53 +135,43 @@ public class DartDocUtil {
                                    @Nullable final String containingLibraryName,
                                    @Nullable final String containingClassDescription,
                                    @Nullable final String staticType,
-                                   @Nullable final String propagatedType,
                                    final boolean compactPresentation) {
-    final boolean hasContainingLibraryName = !StringUtil.isEmpty(containingLibraryName);
-    final boolean hasContainingClassDescription = !StringUtil.isEmpty(containingClassDescription);
-    final boolean hasStaticType = !StringUtil.isEmpty(staticType);
-    final boolean hasPropagatedType = !StringUtil.isEmpty(propagatedType);
+    final boolean hasContainingLibraryName = StringUtil.isNotEmpty(containingLibraryName);
+    final boolean hasContainingClassDescription = StringUtil.isNotEmpty(containingClassDescription);
+    final boolean hasStaticType = StringUtil.isNotEmpty(staticType);
     // generate
     final StringBuilder builder = new StringBuilder();
     builder.append("<code>");
+    if (hasContainingLibraryName) {
+      builder.append("<b>");
+      builder.append(StringUtil.escapeXmlEntities(containingLibraryName));
+      builder.append("</b>");
+      builder.append("<br>");
+    }
     if (signature != null) {
       if (signatureIsHtml) {
         builder.append(signature);
       }
       else {
-        builder.append(StringUtil.escapeXmlEntities(signature));
+        builder.append(formatSignature(signature));
       }
       builder.append("<br>");
     }
-    if (hasContainingLibraryName || hasContainingClassDescription) {
+    if (hasContainingClassDescription) {
       builder.append("<br>");
-      if (hasContainingLibraryName) {
-        builder.append("<b>Containing library:</b> ");
-        builder.append(StringUtil.escapeXmlEntities(containingLibraryName));
-        builder.append("<br>");
-      }
-      if (hasContainingClassDescription) {
-        builder.append("<b>Containing class:</b> ");
-        builder.append(StringUtil.escapeXmlEntities(containingClassDescription));
-        builder.append("<br>");
-      }
+      builder.append("<b>Containing class:</b> ");
+      builder.append(StringUtil.escapeXmlEntities(containingClassDescription));
+      builder.append("<br>");
     }
-    if (hasStaticType || hasPropagatedType) {
+    if (hasStaticType) {
       if (!compactPresentation) {
         builder.append("<br>");
       }
-
-      if (hasStaticType) {
-        builder.append("<b>Static type:</b> ");
-        builder.append(StringUtil.escapeXmlEntities(staticType));
-        builder.append("<br>");
-      }
-      if (hasPropagatedType) {
-        builder.append("<b>Propagated type:</b> ");
-        builder.append(StringUtil.escapeXmlEntities(propagatedType));
-        builder.append("<br>");
-      }
+      builder.append("<b>Type:</b> ");
+      builder.append(StringUtil.escapeXmlEntities(staticType));
+      builder.append("<br>");
     }
+    builder.append("<br>");
     builder.append("</code>\n");
     if (docText != null) {
       final MarkdownProcessor processor = new MarkdownProcessor();

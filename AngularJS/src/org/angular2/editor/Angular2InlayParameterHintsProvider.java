@@ -33,7 +33,7 @@ public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParamete
   @NotNull
   @Override
   public List<Option> getSupportedOptions() {
-    return Arrays.asList(getShowNameForAllArgsOption(), getShowNameForTaggedOption(), NAMES_FOR_PIPES);
+    return Arrays.asList(getShowNameForAllArgsOption(), NAMES_FOR_PIPES);
   }
 
   @Override

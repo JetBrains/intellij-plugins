@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -98,7 +99,7 @@ public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider imp
   }
 
   private static boolean isApplicable(@NotNull final VirtualFile file) {
-    return file.getFileType() == ActionScriptFileType.INSTANCE || file.getFileType() == FlexApplicationComponent.MXML ||
-           file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE || JavaScriptSupportLoader.isFlexMxmFile(file);
+    return FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE) || FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.MXML) ||
+           FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) || JavaScriptSupportLoader.isFlexMxmFile(file);
   }
 }

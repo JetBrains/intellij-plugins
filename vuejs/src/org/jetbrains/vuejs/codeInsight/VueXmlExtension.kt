@@ -12,13 +12,19 @@ import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
-import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
+import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
+import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
-    if (namespacePrefix != null && (namespacePrefix == "v-bind" || namespacePrefix == "v-on" || namespacePrefix.startsWith("@"))) {
+    if (namespacePrefix != null && (namespacePrefix == "v-bind"
+                                    || namespacePrefix == "v-on"
+                                    || namespacePrefix.startsWith("@")
+                                    || namespacePrefix == "v-slot")) {
       val schemaPrefix = findAttributeSchema(context, namespacePrefix, 0)
       if (schemaPrefix != null) return schemaPrefix
     }
@@ -51,7 +57,7 @@ class VueXmlExtension : HtmlXmlExtension() {
         return@find false
       }
 
-      return@find fromAsset(VueComponentDetailsProvider.getBoundName(it.name) ?: it.name) == fromAssetName
+      return@find fromAsset(getBoundName(it.name) ?: it.name) == fromAssetName
     } != null
   }
 

@@ -28,6 +28,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.impl.ConvertContextFactory;
 import org.jetbrains.annotations.NotNull;
@@ -101,12 +102,12 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   @SuppressWarnings({"unchecked"})
   public Object[] getVariants() {
     if (elementConverterPair == null) {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
+      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
     final Converter converter = elementConverterPair.second;
     if (!(converter instanceof ResolvingConverter)) {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
+      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
 
     final ResolvingConverter resolvingConverter = (ResolvingConverter) converter;

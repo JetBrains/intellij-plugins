@@ -790,7 +790,7 @@ Dart File
               ID
                 PsiElement(IDENTIFIER)('a')
             CASCADE_REFERENCE_EXPRESSION
-              PsiElement(..)('..')
+              PsiElement(?..)('?..')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   ID
@@ -930,7 +930,7 @@ Dart File
                   PsiElement(()('(')
                   PsiElement())(')')
             CASCADE_REFERENCE_EXPRESSION
-              PsiElement(..)('..')
+              PsiElement(?..)('?..')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   ID
@@ -1061,7 +1061,7 @@ Dart File
                       PsiElement(NUMBER)('7')
                   PsiElement())(')')
             CASCADE_REFERENCE_EXPRESSION
-              PsiElement(..)('..')
+              PsiElement(?..)('?..')
               CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   ID

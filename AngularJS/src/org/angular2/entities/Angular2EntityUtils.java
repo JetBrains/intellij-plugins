@@ -156,6 +156,11 @@ public class Angular2EntityUtils {
       result.append(">")
         .append(": selector=")
         .append(directive.getSelector().getText());
+      if (directive instanceof Angular2Component
+          && !((Angular2Component)directive).getNgContentSelectors().isEmpty()) {
+        result.append("; ngContentSelectors=");
+        result.append(((Angular2Component)directive).getNgContentSelectors());
+      }
       if (!directive.getExportAsList().isEmpty()) {
         result.append("; exportAs=")
           .append(StringUtil.join(directive.getExportAsList(), ","));
@@ -166,6 +171,12 @@ public class Angular2EntityUtils {
         .append(directive.getOutputs().toString())
         .append("; inOuts=")
         .append(directive.getInOuts().toString());
+
+      if (!directive.getAttributes().isEmpty()) {
+        result.append("; attributes=")
+          .append(directive.getAttributes());
+      }
+
       return result.toString();
     }
     else if (element instanceof Angular2Pipe) {
@@ -173,6 +184,9 @@ public class Angular2EntityUtils {
     }
     else if (element instanceof Angular2DirectiveProperty) {
       return ((Angular2DirectiveProperty)element).getName();
+    }
+    else if (element instanceof Angular2DirectiveAttribute) {
+      return ((Angular2DirectiveAttribute)element).getName();
     }
     else if (element instanceof Angular2Module) {
       Angular2Module module = (Angular2Module)element;

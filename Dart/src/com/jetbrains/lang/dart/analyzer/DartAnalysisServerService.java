@@ -32,6 +32,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -93,6 +94,7 @@ import java.util.concurrent.TimeUnit;
 public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
+  private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
 
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
@@ -103,8 +105,10 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
+  private static final long GET_FIXES_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
@@ -201,6 +205,11 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void computedExistingImports(@NotNull String filePathSD, @NotNull Map<String, Map<String, Set<String>>> existingImports) {
+      myServerData.computedExistingImports(filePathSD, existingImports);
+    }
+
+    @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
       final String fileName = PathUtil.getFileName(filePathSD);
 
@@ -293,10 +302,11 @@ public class DartAnalysisServerService implements Disposable {
                                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                                    @NotNull final List<String> includedElementKinds,
                                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                   final boolean isLast) {
+                                   final boolean isLast,
+                                   @Nullable final String libraryFilePathSD) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
-                                                 includedElementKinds, includedSuggestionRelevanceTags, isLast));
+                                                 includedElementKinds, includedSuggestionRelevanceTags, isLast, libraryFilePathSD));
         myCompletionInfos.notifyAll();
       }
     }
@@ -458,6 +468,10 @@ public class DartAnalysisServerService implements Disposable {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
+  public static boolean isDartSdkVersionForMoveFileRefactoring(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
+  }
+
   public void addCompletions(@NotNull final VirtualFile file,
                              @NotNull final String completionId,
                              @NotNull final CompletionSuggestionConsumer consumer,
@@ -473,8 +487,7 @@ public class DartAnalysisServerService implements Disposable {
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
             final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
-            final int convertedReplacementLength = getConvertedOffset(file, completionInfo.myOriginalReplacementLength);
-            consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
+            consumer.consumeCompletionSuggestion(convertedReplacementOffset, completionInfo.myReplacementLength, completion);
           }
 
           final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
@@ -483,7 +496,7 @@ public class DartAnalysisServerService implements Disposable {
             includedRelevanceTags.put(includedRelevanceTag.getTag(), includedRelevanceTag);
           }
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
-            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags);
+            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags, completionInfo.myLibraryFilePathSD);
           }
           return;
         }
@@ -707,7 +720,8 @@ public class DartAnalysisServerService implements Disposable {
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
+        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) ||
+            FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
           DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
         }
 
@@ -800,6 +814,11 @@ public class DartAnalysisServerService implements Disposable {
     return myServerData.getAvailableSuggestionSet(id);
   }
 
+  @Nullable
+  public Map<String, Map<String, Set<String>>> getExistingImports(@Nullable String filePathSD) {
+    return myServerData.getExistingImports(filePathSD);
+  }
+
   @NotNull
   public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
     return myServerData.getErrors(file);
@@ -889,7 +908,7 @@ public class DartAnalysisServerService implements Disposable {
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
     if (file != null && file.isInLocalFileSystem()) {
-      return file.getFileType() == DartFileType.INSTANCE ||
+      return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) ||
              HtmlUtil.isHtmlFile(file) ||
              file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
              file.getName().equals("analysis_options.yaml") ||
@@ -1151,7 +1170,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_ASSISTS_TIMEOUT_EDT : GET_ASSISTS_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
     return results;
   }
 
@@ -1281,7 +1301,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * If server responds in less than {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
+   * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
    * {@code consumer} is already notified. Otherwise this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
@@ -1308,7 +1328,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_FIXES_TIMEOUT_EDT : GET_FIXES_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
@@ -2232,7 +2253,8 @@ public class DartAnalysisServerService implements Disposable {
   public interface CompletionLibraryRefConsumer {
     void consumeLibraryRef(@NotNull IncludedSuggestionSet includedSet,
                            @NotNull Set<String> includedKinds,
-                           @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags);
+                           @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags,
+                           @Nullable String libraryFilePathSD);
   }
 
   private static class CompletionInfo {
@@ -2241,32 +2263,32 @@ public class DartAnalysisServerService implements Disposable {
      * must be converted before any usage
      */
     private final int myOriginalReplacementOffset;
-    /**
-     * must be converted before any usage
-     */
-    private final int myOriginalReplacementLength;
+    private final int myReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
     @NotNull private final List<String> myIncludedElementKinds;
     @NotNull private final List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
     private final boolean isLast;
+    @Nullable private final String myLibraryFilePathSD;
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
-                   int originalReplacementLength,
+                   int replacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                   boolean isLast) {
+                   boolean isLast,
+                   @Nullable String libraryFilePathSD) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
-      this.myOriginalReplacementLength = originalReplacementLength;
+      this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
       this.myIncludedElementKinds = includedElementKinds;
       this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
+      this.myLibraryFilePathSD = libraryFilePathSD;
     }
   }
 

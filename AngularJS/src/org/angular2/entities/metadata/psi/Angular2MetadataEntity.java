@@ -57,7 +57,7 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
     while (!resolveQueue.empty()) {
       ProgressManager.checkCanceled();
       PsiElement element = resolveQueue.pop();
-      if (!visited.add(element)) {
+      if (element != null && !visited.add(element)) {
         // Protect against cyclic references or visiting same thing several times
         continue;
       }
@@ -72,6 +72,9 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
       }
       else if (element instanceof Angular2MetadataCall) {
         resolveQueue.push(((Angular2MetadataCall)element).getValue());
+      }
+      else if (element instanceof Angular2MetadataSpread) {
+        resolveQueue.push(((Angular2MetadataSpread)element).getExpression());
       }
       else {
         consumer.consume(element);

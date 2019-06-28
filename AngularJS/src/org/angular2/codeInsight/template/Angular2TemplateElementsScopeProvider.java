@@ -41,6 +41,10 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
 
   @NonNls private static final String LEGACY_TEMPLATE_TAG = "template";
 
+  public static boolean isTemplateTag(@Nullable XmlTag tag) {
+    return tag != null && isTemplateTag(tag.getLocalName());
+  }
+
   public static boolean isTemplateTag(@Nullable String tagName) {
     return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
            || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
@@ -167,7 +171,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     @Override
     public void visitXmlTag(XmlTag tag) {
       boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
-                              || isTemplateTag(tag.getName());
+                              || isTemplateTag(tag);
       if (isTemplateTag) {
         pushScope(tag);
       }
@@ -186,7 +190,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     public void visitReference(Angular2HtmlReference reference) {
       JSVariable var = reference.getVariable();
       if (var != null) {
-        if (isTemplateTag(reference.getParent().getName())) {
+        if (isTemplateTag(reference.getParent())) {
           // References on ng-template are visible within parent scope
           prevScope().add(var);
         }
@@ -222,7 +226,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
       boolean isTemplateTag = StreamEx.of(tag.getChildren())
                                 .select(XmlAttribute.class)
                                 .anyMatch(attr -> attr.getName().startsWith("*"))
-                              || isTemplateTag(tag.getName());
+                              || isTemplateTag(tag);
       if (isTemplateTag) {
         pushScope(tag);
       }
@@ -237,12 +241,11 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
       if (attribute.getParent() == null) {
         return;
       }
-      boolean isTemplateTag = isTemplateTag(attribute.getParent().getName());
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
-        attribute.getName(), isTemplateTag);
+        attribute.getName(), attribute.getParent());
       switch (info.type) {
         case REFERENCE:
-          addReference(attribute, info, isTemplateTag);
+          addReference(attribute, info, isTemplateTag(attribute.getParent()));
           break;
         case VARIABLE:
           addVariable(attribute, info);

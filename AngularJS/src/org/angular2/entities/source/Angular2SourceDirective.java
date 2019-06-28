@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
@@ -74,7 +75,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
                                                        () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, null),
                                                getDecorator());
     });
   }
@@ -112,6 +113,15 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @Override
   public Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return getCachedProperties().second;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+    return getCachedValue(
+      () -> Result.create(getAttributeParameters(),
+                          getClassModificationDependencies())
+    );
   }
 
   @NotNull
@@ -215,6 +225,33 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     if (bindingName != null) {
       result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(property, bindingName));
     }
+  }
+
+  @NotNull
+  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
+    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+    return constructors.length == 1
+           ? processCtorParameters(constructors[0])
+           : Arrays.stream(constructors)
+             .filter(TypeScriptFunction::isOverloadImplementation)
+             .findFirst()
+             .map(Angular2SourceDirective::processCtorParameters)
+             .orElse(Collections.emptyList());
+  }
+
+  @NotNull
+  private static Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+    return StreamEx.of(ctor.getParameterVariables())
+      .mapToEntry(JSParameter::getAttributeList)
+      .nonNullValues()
+      .flatMapValues(a -> Arrays.stream(a.getDecorators()))
+      .filterValues(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
+      .mapValues(Angular2SourceDirective::getStringParamValue)
+      .filterValues(v -> v != null && !v.trim().isEmpty())
+      .distinctValues()
+      .mapToValue(Angular2SourceDirectiveAttribute::new)
+      .values()
+      .toList();
   }
 
   @Nullable

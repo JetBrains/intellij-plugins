@@ -15,6 +15,7 @@ import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -294,7 +295,7 @@ class DescriptorUtil {
     }
     final List<Mixin> result = new ArrayList<>();
     String value = mixinsAttribute.getValue();
-    final String[] components = value != null ? value.split(",") : ArrayUtil.EMPTY_STRING_ARRAY;
+    final String[] components = value != null ? value.split(",") : ArrayUtilRt.EMPTY_STRING_ARRAY;
     for (String mixinName : components) {
       final Mixin mixin = tapestryProject.findMixin(mixinName);
       if (mixin != null) {

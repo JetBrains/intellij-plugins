@@ -15,6 +15,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -97,8 +98,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     @Override
     public FileReference createFileReference(TextRange range, int index, String text) {
       return Angular2LangUtil.isAngular2Context(getElement())
-             ? new Angular2FileReference(text, index, range, this, ArrayUtil.EMPTY_STRING_ARRAY)
-             : new JSFileReference(text, index, range, this, ArrayUtil.EMPTY_STRING_ARRAY);
+             ? new Angular2FileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY)
+             : new JSFileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY);
     }
 
     private static void visitFile(@Nullable PsiFile file, @NotNull Consumer<Angular2SoftFileReferenceSet> action) {

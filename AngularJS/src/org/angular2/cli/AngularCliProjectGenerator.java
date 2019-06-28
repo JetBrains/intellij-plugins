@@ -13,16 +13,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TextAccessor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
-import com.intellij.util.gist.GistManager;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
@@ -43,10 +41,6 @@ import java.util.regex.Pattern;
 
 import static com.intellij.util.containers.ContainerUtil.exists;
 
-/**
- * @author Dennis.Ushakov
- */
-@SuppressWarnings("MethodDoesntCallSuperMethod")
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   @NonNls public static final String PACKAGE_NAME = "@angular/cli";
@@ -85,7 +79,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
@@ -101,13 +95,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       result.add(tokenizer.nextToken());
     }
 
-    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0)) {
-      if (!exists(result, param -> param.startsWith("--defaults"))) {
+    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
+      if (!exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
         result.add("--defaults");
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @SuppressWarnings("SameParameterValue")
@@ -209,28 +203,24 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     private TextAccessor myContentRoot;
 
     private SchematicOptionsTextField myOptionsTextField;
+    private JCheckBox myUseDefaults;
 
     @Override
     protected JPanel createPanel() {
       final JPanel panel = super.createPanel();
-      @NonNls ComboBox<String> schematicsCollectionCombo = new ComboBox<>(new String[]{"default", "@ngrx/schematics"});
-
-      LabeledComponent component = LabeledComponent.create(
-        schematicsCollectionCombo, Angular2Bundle.message("angular.action.new-project.label-schematics-collection"));
-      component.setAnchor((JComponent)panel.getComponent(0));
-      component.setLabelLocation(BorderLayout.WEST);
-      panel.add(component);
 
       myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
                                                          Collections.emptyList());
-      myOptionsTextField.setEnabled(true);
       myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
 
-      component = LabeledComponent.create(
+      LabeledComponent component = LabeledComponent.create(
         myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"));
       component.setAnchor((JComponent)panel.getComponent(0));
       component.setLabelLocation(BorderLayout.WEST);
       panel.add(component);
+
+      myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
+      panel.add(myUseDefaults);
 
       return panel;
     }
@@ -253,9 +243,9 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
           }
         };
       }
-      GistManager.getInstance().invalidateData();
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
         Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField);
+      settingsStep.addSettingsComponent(myUseDefaults);
       getPackageField().addSelectionListener(this::nodePackageChanged);
       nodePackageChanged(getPackageField().getSelected());
     }
@@ -263,7 +253,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @NotNull
     @Override
     public Settings getSettings() {
-      return new AngularCLIProjectSettings(super.getSettings(), myOptionsTextField.getText());
+      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.isSelected(), myOptionsTextField.getText());
     }
 
     @Nullable
@@ -329,10 +319,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
     @NotNull
     public final String myOptions;
+    public final boolean myUseDefaults;
 
     AngularCLIProjectSettings(@NotNull Settings settings,
+                              boolean useDefaults,
                               @NotNull String options) {
       super(settings.myInterpreterRef, settings.myPackage);
+      myUseDefaults = useDefaults;
       myOptions = options;
     }
   }

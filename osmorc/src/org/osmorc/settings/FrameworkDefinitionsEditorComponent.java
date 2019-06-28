@@ -33,10 +33,12 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.DoubleClickListener;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.messages.MessageBus;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -63,6 +65,7 @@ public class FrameworkDefinitionsEditorComponent {
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;
   private JLabel myVersion;
+  private JPanel myContentPanel;
   private final DefaultListModel<FrameworkInstanceDefinition> myModel;
   private final MessageBus myBus;
   private final List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> myModified;
@@ -71,6 +74,8 @@ public class FrameworkDefinitionsEditorComponent {
     myModel = new DefaultListModel<>();
     myBus = ApplicationManager.getApplication().getMessageBus();
     myModified = new ArrayList<>();
+
+    myContentPanel.setBorder(IdeBorderFactory.createTitledBorder("Framework instances:", false, JBUI.insetsTop(8)).setShowLine(false));
 
     myFrameworkInstances = new JBList(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));

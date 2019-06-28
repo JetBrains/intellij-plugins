@@ -13,6 +13,7 @@
 // limitations under the License.
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
@@ -29,6 +30,6 @@ public class DartLineBreakpointType extends XLineBreakpointTypeBase {
 
   @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull final Project project) {
-    return DartFileType.INSTANCE.equals(file.getFileType());
+    return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE);
   }
 }

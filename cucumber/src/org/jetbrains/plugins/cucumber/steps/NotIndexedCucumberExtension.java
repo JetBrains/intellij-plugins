@@ -294,39 +294,6 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     }
   }
 
-  protected static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<? super PsiDirectory> newStepDefinitionsRoots,
-                                                @NotNull final Set<String> processedStepDirectories,
-                                                @NotNull final Project project) {
-    if (root == null || !root.isValid()) {
-      return;
-    }
-    final String path = root.getPath();
-    if (processedStepDirectories.contains(path)) {
-      return;
-    }
-
-    final PsiDirectory rootPathDir = PsiManager.getInstance(project).findDirectory(root);
-    if (rootPathDir != null && rootPathDir.isValid()) {
-      if (!newStepDefinitionsRoots.contains(rootPathDir)) {
-        newStepDefinitionsRoots.add(rootPathDir);
-      }
-    }
-  }
-
-  @Nullable
-  protected static VirtualFile findContentRoot(final Module module, final VirtualFile file) {
-    if (file == null || module == null) return null;
-
-    final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-    for (VirtualFile root : contentRoots) {
-      if (VfsUtilCore.isAncestor(root, file, false)) {
-        return root;
-      }
-    }
-    return null;
-  }
-
   protected abstract void loadStepDefinitionRootsFromLibraries(Module module, List<PsiDirectory> roots, Set<String> directories);
 
   protected abstract Collection<AbstractStepDefinition> getStepDefinitions(@NotNull final PsiFile file);

@@ -1,5 +1,5 @@
-import 'dart:io' as prefix0;
+import 'dart:async' as prefix0;
 
-class A extends prefix0.Process
+class A extends prefix0.SynchronousStreamController<caret>
 
-Process(){} // it's here to test that 'dart.io' will be imported with prefix
+SynchronousStreamController(){} // it's here to test that 'dart.async' will be imported with prefix

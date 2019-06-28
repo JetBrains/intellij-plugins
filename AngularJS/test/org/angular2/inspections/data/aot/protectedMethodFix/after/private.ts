@@ -35,11 +35,10 @@ export class MyComponent {
   private privateUsedFun() {}
   private privateUnusedFun() {}
 
-    /**
-     * My document comment
-     * @return something
-     * @internal
-     */
+  /**
+   * My document comment
+   * @return something
+   */
   protectedUsedFun() {}
   protected protectedUnusedFun() {}
 

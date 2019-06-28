@@ -41,7 +41,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
                                        @NotNull XmlAttribute attribute,
                                        @NotNull Angular2AttributeDescriptor descriptor) {
     AttributeInfo info = descriptor.getInfo();
-    boolean templateTag = isTemplateTag(attribute.getParent().getName());
+    boolean templateTag = isTemplateTag(attribute.getParent());
     if (info.type == TEMPLATE_BINDINGS) {
       if (templateTag) {
         return;

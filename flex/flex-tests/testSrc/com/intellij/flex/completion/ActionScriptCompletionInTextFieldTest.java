@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
@@ -31,6 +32,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
   private static final LightProjectDescriptor DESCRIPTOR = new FlexProjectDescriptor();
@@ -163,7 +165,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     PsiFile fragment =
       ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
     String[] included = new String[]{"Inner"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtil.EMPTY_STRING_ARRAY, "Inner",
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtilRt.EMPTY_STRING_ARRAY, "Inner",
                              getTestName(false) + ".txt");
   }
 

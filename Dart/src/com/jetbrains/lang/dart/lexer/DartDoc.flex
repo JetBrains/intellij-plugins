@@ -4,13 +4,11 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-@SuppressWarnings("ALL")
 %%
 
 %{
-
-  public _DartDocLexer() {
-    this((java.io.Reader)null);
+  _DartDocLexer() {
+    this(null);
   }
 %}
 

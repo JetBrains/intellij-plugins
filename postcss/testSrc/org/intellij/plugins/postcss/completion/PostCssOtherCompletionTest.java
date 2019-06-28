@@ -11,7 +11,8 @@ public class PostCssOtherCompletionTest extends PostCssCompletionTest {
   }
 
   public void testSimpleVarAsPropertyValue() {
-    doTestCompletionVariants("foo", "bar", "baz");
+    myFixture.copyFileToProject(getTestName(true) + "_imported.pcss");
+    doTestCompletionVariants("foo", "bar", "baz", "in_imported");
   }
 
   public void testSimpleVarInterpolationStart() {

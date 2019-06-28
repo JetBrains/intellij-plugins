@@ -9,8 +9,7 @@ import {Component} from "@angular/core"
   `
 })
 export class MyComponent {
-    /** @internal */
-    privateUsed: string;
+  privateUsed: string;
   private privateUnused: string;
 
   protected protectedUsed: string;

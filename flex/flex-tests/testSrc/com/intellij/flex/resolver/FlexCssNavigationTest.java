@@ -1,6 +1,6 @@
 package com.intellij.flex.resolver;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class FlexCssNavigationTest extends CodeInsightTestCase {
+public class FlexCssNavigationTest extends JavaCodeInsightTestCase {
   private static final @NonNls String BASE_PATH = "/flex_css_navigation/";
 
   @NotNull

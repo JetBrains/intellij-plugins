@@ -3,10 +3,10 @@ package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class HbInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbInspectionsTest extends BasePlatformTestCase {
 
   public void testEmptyBlock() {
     doTest();

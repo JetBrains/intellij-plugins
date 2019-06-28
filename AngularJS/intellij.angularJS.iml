@@ -54,5 +54,7 @@
     <orderEntry type="module" module-name="intellij.xml.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.resharper.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
+    <orderEntry type="library" name="jackson" level="project" />
+    <orderEntry type="library" name="jackson-databind" level="project" />
   </component>
 </module>

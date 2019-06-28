@@ -11,7 +11,7 @@ import com.intellij.openapi.editor.actionSystem.TypedAction;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * Optionally, a chunk of the given text may be marked with "&lt;selection&gt;SELECTED TEXT&lt;/selection&gt;"
  * to indicate a selection.
  */
-public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class HbActionHandlerTest extends BasePlatformTestCase {
   private void performWriteAction(final Project project, final Runnable action) {
     ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance().executeCommand(project, action, "test command", null));
   }

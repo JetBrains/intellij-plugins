@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -196,6 +197,6 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.moveFile("web/src/bar.dart", "web");
 
     myFixture.openFileInEditor(fooFile.getVirtualFile());
-    myFixture.checkResult("import \"../bar.dart\";");
+    myFixture.checkResult("import \'../bar.dart\';");
   }
 }

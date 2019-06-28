@@ -75,6 +75,35 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
     );
   }
 
+  public void testFindUsagesInOtherFiles() {
+    // 4 usages in one.pcss
+    myFixture.addFileToProject("one.pcss",
+                               "$foo: 0;\n" +
+                               ".bar {\n" +
+                               "  x: $foo $foo $(foo) $(foo);\n" +
+                               "}");
+    // 8 usages in two.pcss.
+    myFixture.addFileToProject("two.pcss",
+                               "@import 'one.pcss';\n" +
+                               ".bar {\n" +
+                               "  x: $foo $foo $foo $foo $foo $foo $foo $foo;\n" +
+                               "}");
+    // three.pcss doesn't import one.pcss, so no usages here
+    myFixture.addFileToProject("three.pcss",
+                               ".bar {\n" +
+                               "  x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);\n" +
+                               "  x: $foo $foo $foo $foo $(foo) $(foo) $(foo) $(foo);\n" +
+                               "}");
+
+    // 6 usages in this file
+    doTestFindUsages("@import 'one.pcss';\n" +
+                     ".bar {\n" +
+                     "  x: $<caret>foo $foo $foo $(foo) $(foo) $(foo);\n" +
+                     "}",
+                     18
+    );
+  }
+
   public void testRename() {
     myFixture.configureByText("foo.pcss",
                               "$foo: 10px;\n" +

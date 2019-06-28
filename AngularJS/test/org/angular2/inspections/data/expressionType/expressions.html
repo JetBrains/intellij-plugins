@@ -44,8 +44,8 @@
 ></my-comp>
 
 <my-comp
-    [dependency]="'foo' | <error descr="Argument types do not match parameters">async</error>"
-    [model]="'foo' | <error descr="Argument types do not match parameters">async</error>"
+    [dependency]="<error>'foo'</error> | async"
+    [model]="<error>'foo'</error> | async"
 ></my-comp>
 
 <my-comp

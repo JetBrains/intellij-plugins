@@ -102,7 +102,7 @@ public class FlexUtils {
                               final String sampleFileName,
                               final TargetPlatform platform,
                               final boolean isFlex4) throws IOException {
-    final String sampleClassName = FileUtil.getNameWithoutExtension(sampleFileName);
+    final String sampleClassName = FileUtilRt.getNameWithoutExtension(sampleFileName);
     final String extension = FileUtilRt.getExtension(sampleFileName);
     final String sampleTechnology = platform == TargetPlatform.Mobile ? "AIRMobile" : platform == TargetPlatform.Desktop ? "AIR" : "Flex";
 

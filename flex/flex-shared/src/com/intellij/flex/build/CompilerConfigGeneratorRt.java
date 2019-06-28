@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -11,6 +12,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.Processor;
@@ -791,7 +793,7 @@ public class CompilerConfigGeneratorRt {
           if (packageRelativePath.equals(".")) packageRelativePath = "";
 
           final String packageName = packageRelativePath.replace(File.separatorChar, '.');
-          final String qName = StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file));
+          final String qName = StringUtil.getQualifiedName(packageName, FileUtilRt.getNameWithoutExtension(file.getName()));
 
           if (isSourceFileWithPublicDeclaration(file)) {
             addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);

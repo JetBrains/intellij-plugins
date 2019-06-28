@@ -1,6 +1,6 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
@@ -22,7 +22,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexIntroduceConstantTest extends CodeInsightTestCase {
+public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
 
   @NotNull
   @Override

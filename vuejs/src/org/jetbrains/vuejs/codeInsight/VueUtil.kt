@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.index.findScriptTag
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
@@ -69,4 +73,13 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   val xmlFile = file as? XmlFile ?: return null
   val scriptTag = findScriptTag(xmlFile) ?: return null
   return detectLanguage(scriptTag)
+}
+
+fun getScopeAndCacheHolder(module: Module, includeLibraries: Boolean = false): Pair<GlobalSearchScope, UserDataHolder> {
+  // TODO improve behaviour in multi module setup
+  return Pair(if (includeLibraries)
+                GlobalSearchScope.allScope(module.project)
+              else
+                GlobalSearchScope.projectScope(module.project),
+              module.project)
 }

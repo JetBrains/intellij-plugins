@@ -4,11 +4,11 @@ import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspecti
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.testFramework.InspectionTestCase;
+import com.intellij.testFramework.JavaInspectionTestCase;
 
 import java.util.List;
 
-public class GlobalFlexHighlightingTest extends InspectionTestCase {
+public class GlobalFlexHighlightingTest extends JavaInspectionTestCase {
   @Override
   protected void setUp() throws Exception {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "global_inspections");

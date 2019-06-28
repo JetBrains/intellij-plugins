@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -21,11 +22,16 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
     return FlexTestUtils.getTestDataPath("");
   }
 
-  private static CommonCodeStyleSettings getCommonJSSettings() {
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH;
+  }
+
+  private CommonCodeStyleSettings getCommonJSSettings() {
     return CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
   }
 
-  private static CommonCodeStyleSettings getEcma4Settings() {
+  private CommonCodeStyleSettings getEcma4Settings() {
     return CodeStyleSettingsManager.getSettings(getProject()).getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
   }
 
@@ -425,12 +431,13 @@ public class ActionScriptFormatterTest extends JavaScriptFormatterTestBase {
 
   private void doFileTest(String ext, String fileExt) {
     doTestFromFile(getTestName(false) + ext, fileExt);
-    configureByFile(BASE_PATH + getTestName(false) + ext + "." + fileExt);
+    myFixture.configureByFile(BASE_PATH + getTestName(false) + ext + "." + fileExt);
+    CommandProcessor.getInstance().executeCommand(getProject(),() ->
     ApplicationManager.getApplication().runWriteAction(() -> {
       CodeStyleManager.getInstance(getProject()).reformat(getFile());
-    });
+    }), null, null);
 
-    checkResultByFile(BASE_PATH + getTestName(false) + ext + "_after." + fileExt);
+    myFixture.checkResultByFile(BASE_PATH + getTestName(false) + ext + "_after." + fileExt);
   }
 
   public void testJSON() {

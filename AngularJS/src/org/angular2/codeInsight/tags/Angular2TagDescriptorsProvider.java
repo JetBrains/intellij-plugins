@@ -6,7 +6,6 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -26,6 +25,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,6 +69,15 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
         addLookupItem(language, elements, el, name, list, scope);
       }
     });
+
+    Angular2CodeInsightUtils.getAvailableNgContentSelectorsStream(xmlTag, scope)
+      .map(SimpleSelectorWithPsi::getElement)
+      .nonNull()
+      .forEach(element -> {
+        if (names.add(element.getName())) {
+          addLookupItem(language, elements, element, element.getName(), null, null);
+        }
+      });
   }
 
   private static void addLookupItem(@NotNull Language language, @NotNull List<? super LookupElement> elements, @NotNull String name) {
@@ -111,20 +120,30 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
       return getWrappedDescriptorFromNamespace(xmlTag);
     }
-    String tagName = XmlUtil.findLocalNameByQualifiedName(xmlTag.getName());
-    if (NG_SPECIAL_TAGS.contains(StringUtil.toLowerCase(tagName))) {
-      return new Angular2TagDescriptor(xmlTag, tagName, Collections.singleton(createDirective(xmlTag, tagName)),
-                                       !NG_CONTENT.equals(tagName));
+    String tagName = StringUtil.toLowerCase(xmlTag.getLocalName());
+    if (NG_CONTENT.equals(tagName)) {
+      return new Angular2NgContentDescriptor(xmlTag);
+    }
+    if (NG_SPECIAL_TAGS.contains(tagName)) {
+      return new Angular2TagDescriptor(xmlTag);
     }
 
     Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);
-    if (provider.getCandidates().isEmpty()) {
-      return null;
+    Collection<?> sources = provider.getMatched();
+    boolean implied = false;
+    if (sources.isEmpty()) {
+      sources = Angular2CodeInsightUtils.getAvailableNgContentSelectorsStream(xmlTag, new Angular2DeclarationsScope(xmlTag))
+        .map(SimpleSelectorWithPsi::getElement)
+        .nonNull()
+        .filter(el -> StringUtil.toLowerCase(el.getName()).equals(tagName))
+        .toList();
+      implied = !sources.isEmpty();
     }
-    return new Angular2TagDescriptor(xmlTag, tagName,
-                                     provider.getMatched().isEmpty() ? provider.getCandidates()
-                                                                     : provider.getMatched(),
-                                     true);
+    if (sources.isEmpty()) {
+      sources = provider.getCandidates();
+    }
+    return !sources.isEmpty() ? new Angular2TagDescriptor(xmlTag, implied, sources)
+                              : null;
   }
 
   private static XmlElementDescriptor getWrappedDescriptorFromNamespace(@NotNull XmlTag xmlTag) {
@@ -139,11 +158,5 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     return elementDescriptor instanceof HtmlElementDescriptorImpl
            ? new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor)
            : null;
-  }
-
-  @NotNull
-  private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag, @NotNull String name) {
-    //noinspection HardCodedStringLiteral
-    return new JSImplicitElementImpl.Builder(name, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }

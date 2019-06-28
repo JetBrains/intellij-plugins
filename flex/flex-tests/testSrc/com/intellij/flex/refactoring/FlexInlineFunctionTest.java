@@ -99,11 +99,11 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testConstructor() {
-    shouldFail("Can not inline constructor");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   public void testConstructor2() {
-    shouldFail("Can not inline constructor");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   private void shouldFail(String reason) {
@@ -111,7 +111,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodInHierarchy() {
-    String reason = "Can not inline method that participates in hierarchy";
+    String reason = JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method");
     doTestFailure(getTestName(false) + 1, "js2", reason);
     doTestFailure(getTestName(false) + 2, "js2", reason);
     doTestFailure(getTestName(false) + 3, "js2", reason);
@@ -120,18 +120,18 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMethodInHierarchyMxml() {
     doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
-                  "Can not inline method that participates in hierarchy");
+                  JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
   }
 
   public void testInterfaceMethod() {
-    shouldFail("Can not inline interface method");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.interface.method"));
   }
 
   public void testMethodFromExternalLibrary() {
     FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
     Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
 
-    shouldFail("Can not inline function defined in external library");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.function.defined.in.library"));
   }
 
   public void testNonCallUsage() {

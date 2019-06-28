@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -15,7 +16,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,7 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ public class BCUtils {
   }
 
   public static String getWrapperFileName(final FlexBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
   public static String getGeneratedAirDescriptorName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
@@ -59,7 +60,7 @@ public class BCUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   @Nullable
@@ -145,7 +146,7 @@ public class BCUtils {
         });
 
         final Object selectedItem = targetPlayerCombo.getSelectedItem();
-        final String[] availablePlayersArray = ArrayUtil.toStringArray(availablePlayers);
+        final String[] availablePlayersArray = ArrayUtilRt.toStringArray(availablePlayers);
         targetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayersArray));
         //noinspection SuspiciousMethodCalls
         if (selectedItem != null && availablePlayers.contains(selectedItem)) {
@@ -157,7 +158,7 @@ public class BCUtils {
       }
     }
     else {
-      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.EMPTY_STRING_ARRAY));
+      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtilRt.EMPTY_STRING_ARRAY));
     }
   }
 

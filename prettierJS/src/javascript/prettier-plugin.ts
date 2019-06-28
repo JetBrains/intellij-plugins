@@ -1,6 +1,5 @@
 import * as prettier from "prettier";
 
-declare var require: any;
 type PrettierApi = typeof prettier & { path: string }
 
 interface FormatResponse {

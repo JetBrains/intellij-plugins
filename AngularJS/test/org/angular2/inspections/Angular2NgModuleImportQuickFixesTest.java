@@ -91,18 +91,18 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testUndeclaredDirectiveCompletion() {
-    doTagCompletionTest("test.html", "MyModule - ( module.ts )");
+    doTagCompletionTest("test.html", "MyModule - (module.ts)");
   }
 
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
-                    "Module2 - ( module2.ts )");
+                    "Module2 - (module2.ts)");
   }
 
   public void testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
-                        "Module2 - ( module2.ts )");
+                        "Module2 - (module2.ts)");
   }
 
   public void testNotExportedDirectiveNoModuleImport() {
@@ -140,7 +140,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testInlineTemplateCompletion() {
-    doTagCompletionTest("component.ts", "MyModule - ( module.ts )");
+    doTagCompletionTest("component.ts", "MyModule - (module.ts)");
   }
 
   public void testFormsModule1() {

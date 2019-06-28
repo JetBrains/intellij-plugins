@@ -7,9 +7,9 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
-public class HbsEmmetTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbsEmmetTest extends BasePlatformTestCase {
 
   public void testSimpleTags() {
     myFixture.configureByText(HbFileType.INSTANCE, "div>span<caret>");

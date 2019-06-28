@@ -14,7 +14,6 @@ import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
 import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
@@ -30,12 +29,13 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ex.util.CaretVisualPositionKeeper;
+import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
@@ -81,8 +81,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    e.getPresentation().setEnabledAndVisible(nodePackage != null && !nodePackage.isEmptyPath()
-                                             && isAcceptableFileContext(e));
+    e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
   }
 
   private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {
@@ -112,7 +111,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
 
     NodePackage nodePackage = configuration.getPackage();
-    if (nodePackage == null || nodePackage.isEmptyPath()) {
+    if (nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project));
       return;
@@ -177,7 +176,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     else {
       Document document = editor.getDocument();
-      CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
+      EditorScrollingPositionKeeper.ForDocument scrollingPositionKeeper = new EditorScrollingPositionKeeper.ForDocument(document);
       CharSequence textBefore = document.getImmutableCharSequence();
       String newContent = result.result;
       /*
@@ -191,10 +190,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       runWriteCommandAction(project, () -> {
         if (!StringUtil.equals(textBefore, newContent)) {
           document.setText(newDocumentContent);
-          caretVisualPositionKeeper.restoreOriginalLocation(true);
+          scrollingPositionKeeper.restorePosition(true);
         }
         lineSeparatorUpdated.set(setDetectedLineSeparator(project, vFile, newLineSeparator));
       });
+      Disposer.dispose(scrollingPositionKeeper);
+
       showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated.get()), false, null);
     }
   }
@@ -299,7 +300,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     VirtualFile currentVFile = currentFile.getVirtualFile();
     String filePath = currentVFile.getPath();
-    String text = JSLinterUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
+    String text = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
     VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
     String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
     return JSLanguageServiceUtil.awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
@@ -338,7 +339,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void installPackage(@NotNull Project project) {
-    final VirtualFile packageJson = project.getBaseDir().findChild(PackageJsonUtil.FILE_NAME);
+    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(project.getBaseDir());
     if (packageJson != null) {
       InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson);
     }

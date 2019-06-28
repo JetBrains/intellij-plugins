@@ -6,9 +6,9 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.resolve
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 object VueRefactoringUtils {
   fun getComponent(element: PsiElement): JSImplicitElement? {

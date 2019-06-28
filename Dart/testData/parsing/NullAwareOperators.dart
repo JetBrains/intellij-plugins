@@ -1,6 +1,6 @@
 class NAO1 {
   f(x,y,z) {
-    var a = (x)?.y;
+    var a = (x)?.y?.[b];
     var b = x?.y;
     var c = x?.z();
     var e = a ?? b ? y : z;
@@ -13,13 +13,22 @@ class NAO1 {
     a ||= c;
     a &&= c;
     this?.f(e, f, g ?? h);
+
+    aaa!.bcc!()! as CCC ..ddd()!![][]![]!();
   }
 }
 
 fnao1(x) => x?.op();
 fnao2(x) => x ?? "other";
 fnao3(x) {
+  b? c;
+  b? c = d;
+  b? c:d;
+  e = f ? g : h;
+
   var y;
   y ??= x;
   return y;
 }
+
+static final Map<String?, Map<int?, bool?>?>? a;

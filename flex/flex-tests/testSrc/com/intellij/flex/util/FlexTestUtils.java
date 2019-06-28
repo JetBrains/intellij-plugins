@@ -45,9 +45,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -309,11 +307,11 @@ public class FlexTestUtils {
 
       private LibraryTable getLibrariesTable(final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-          return ApplicationLibraryTable.getApplicationTable();
+          return LibraryTablesRegistrar.getInstance().getLibraryTable();
         }
         else {
           assert LibraryTablesRegistrar.PROJECT_LEVEL.equals(level);
-          return ProjectLibraryTable.getInstance(modules[0].getProject());
+          return LibraryTablesRegistrar.getInstance().getLibraryTable(modules[0].getProject());
         }
       }
     });
@@ -361,7 +359,7 @@ public class FlexTestUtils {
         // first let's create Flex library
         final LibraryTable libraryTable;
         if (isProjectLibrary) {
-          libraryTable = ProjectLibraryTable.getInstance(module.getProject());
+          libraryTable = com.intellij.openapi.roots.libraries.LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject());
         }
         else {
           libraryTable = moduleModifiableModel.getModuleLibraryTable();
@@ -393,7 +391,7 @@ public class FlexTestUtils {
         final String committedLibraryId;
         if (isProjectLibrary) {
           committedLibraryId =
-            FlexProjectRootsUtil.getLibraryId(ProjectLibraryTable.getInstance(module.getProject()).getLibraryByName(libraryName));
+            FlexProjectRootsUtil.getLibraryId(com.intellij.openapi.roots.libraries.LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject()).getLibraryByName(libraryName));
         }
         else {
           final OrderEntry

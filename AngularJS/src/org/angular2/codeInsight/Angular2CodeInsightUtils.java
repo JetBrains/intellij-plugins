@@ -12,8 +12,12 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
 import one.util.streamex.StreamEx;
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
+import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2Declaration;
+import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2Module;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -77,5 +81,15 @@ public class Angular2CodeInsightUtils {
         Angular2FixesFactory.ensureDeclarationResolvedAfterCodeCompletion(element, context.getEditor());
       }
     });
+  }
+
+  public static StreamEx<Angular2DirectiveSelector.SimpleSelectorWithPsi> getAvailableNgContentSelectorsStream(@NotNull XmlTag xmlTag,
+                                                                                                               @NotNull Angular2DeclarationsScope scope) {
+    return StreamEx.ofNullable(xmlTag.getParentTag())
+      .flatCollection(tag -> new Angular2ApplicableDirectivesProvider(tag).getMatched())
+      .select(Angular2Component.class)
+      .filter(scope::contains)
+      .flatCollection(c -> c.getNgContentSelectors())
+      .flatCollection(Angular2DirectiveSelector::getSimpleSelectorsWithPsi);
   }
 }

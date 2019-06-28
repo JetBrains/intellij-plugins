@@ -5,7 +5,7 @@ import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +122,7 @@ public class OsgiBuildSession implements Reporter {
         }
       }
     }
-    myClasses = classes.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : classes.toArray(new File[0]);
+    myClasses = classes.isEmpty() ? ArrayUtilRt.EMPTY_FILE_ARRAY : classes.toArray(new File[0]);
 
     List<File> sources = ContainerUtil.newSmartList();
     for (JpsModuleSourceRoot sourceRoot : myModule.getSourceRoots()) {
@@ -131,7 +131,7 @@ public class OsgiBuildSession implements Reporter {
         sources.add(sourceDir);
       }
     }
-    mySources = sources.isEmpty() ? ArrayUtil.EMPTY_FILE_ARRAY : sources.toArray(new File[0]);
+    mySources = sources.isEmpty() ? ArrayUtilRt.EMPTY_FILE_ARRAY : sources.toArray(new File[0]);
 
     myBndWrapper = new BndWrapper(this);
   }

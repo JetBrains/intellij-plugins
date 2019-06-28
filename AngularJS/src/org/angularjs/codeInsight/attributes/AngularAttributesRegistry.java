@@ -7,7 +7,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularControllerIndex;
-import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,37 +52,5 @@ public class AngularAttributesRegistry {
       return args != null && args.length > 2 ? args[2] : "";
     }
     return "";
-  }
-
-  /**
-   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
-   */
-  @Deprecated
-  public static boolean isEventAttribute(String name, Project project) {
-    return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
-  }
-
-  /**
-   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
-   */
-  @Deprecated
-  public static boolean isTagReferenceAttribute(String name, Project project) {
-    return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
-  }
-
-  /**
-   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
-   */
-  @Deprecated
-  public static boolean isVariableAttribute(String name, Project project) {
-    return name.startsWith("let-") && AngularIndexUtil.hasAngularJS2(project);
-  }
-
-  /**
-   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
-   */
-  @Deprecated
-  public static boolean isBindingAttribute(String name, Project project) {
-    return name.startsWith("[") && name.endsWith("]") && AngularIndexUtil.hasAngularJS2(project);
   }
 }

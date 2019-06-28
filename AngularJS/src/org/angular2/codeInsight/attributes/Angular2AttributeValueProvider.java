@@ -29,7 +29,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
   @NonNls public static final String NG_CLASS_ATTR = "ngClass";
 
   public static boolean isNgClassAttribute(@Nullable XmlAttribute attribute) {
-    return attribute != null && (isNgClassAttribute(parse(attribute.getName(), false)));
+    return attribute != null && (isNgClassAttribute(parse(attribute.getName(), attribute.getParent())));
   }
 
   public static boolean isNgClassAttribute(@NotNull AttributeInfo info) {
@@ -61,7 +61,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
         return null;
       }
       else {
-        AttributeInfo info = parse(attributeName, false);
+        AttributeInfo info = parse(attributeName, tag);
         if (isNgClassAttribute(info)) {
           XmlAttribute attribute = tag.getAttribute(attributeName);
           if (attribute instanceof Angular2HtmlPropertyBinding) {

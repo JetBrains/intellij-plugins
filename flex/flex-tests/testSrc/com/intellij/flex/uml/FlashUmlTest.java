@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uml;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
@@ -38,7 +38,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
 import com.intellij.uml.core.actions.ShowDiagramBase;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
@@ -51,7 +51,7 @@ import java.util.*;
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
 @SkipInHeadlessEnvironment
-public class FlashUmlTest extends CodeInsightTestCase {
+public class FlashUmlTest extends JavaCodeInsightTestCase {
 
   private static final String BASE_PATH = "uml/";
 
@@ -91,7 +91,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void doTest(String file) throws Exception {
-    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
+    doTest(new String[]{file}, ArrayUtilRt.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
   }
 
 
@@ -319,7 +319,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
     String[] files = {getTestName(false) + "/com/test/MyButton.mxml"};
 
     DiagramBuilder builder = doTestImpl(projectRoot, files,
-                                        ArrayUtil.EMPTY_STRING_ARRAY,
+                                        ArrayUtilRt.EMPTY_STRING_ARRAY,
                                         moduleScopeProvider(), EnumSet.allOf(FlashUmlDependenciesSettingsOption.class),
                                         null);
     String originQName = "com.test.MyButton";

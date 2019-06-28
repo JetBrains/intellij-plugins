@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.ContainerUtil
 import java.util.*
@@ -16,7 +16,7 @@ import java.util.*
  *
  * @author Sergey Karashevich
  */
-class CfmlSqlInjectionCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
+class CfmlSqlInjectionCompletionTest : BasePlatformTestCase() {
 
   val CFML_QUERY_TEMPLATE = "<cfquery><insert></cfquery>"
 
@@ -84,16 +84,16 @@ fun CodeInsightTestFixture.testVariantsInner(
   variants: Array<out String>) {
   complete(type, count)
   val stringList = lookupElementStrings
-  LightPlatformCodeInsightFixtureTestCase.assertNotNull(stringList)
+  BasePlatformTestCase.assertNotNull(stringList)
   if (contains) {
     val missing = ArrayList(Arrays.asList(*variants))
     missing.removeAll(stringList!!)
-    LightPlatformCodeInsightFixtureTestCase.assertTrue(
+    BasePlatformTestCase.assertTrue(
       "Missing variants: " + missing + "\nTop 10:\n" + ContainerUtil.getFirstItems(stringList, 10), missing.isEmpty())
   }
   else {
     val missing = ArrayList(Arrays.asList(*variants))
     missing.retainAll(stringList!!)
-    LightPlatformCodeInsightFixtureTestCase.assertTrue("Present variants: $missing", missing.isEmpty())
+    BasePlatformTestCase.assertTrue("Present variants: $missing", missing.isEmpty())
   }
 }

@@ -5,7 +5,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceOperation;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public abstract class DartIntroduceTestBase extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class DartIntroduceTestBase extends BasePlatformTestCase {
   protected void doTestSuggestions(Class<? extends DartExpression> parentClass, String... expectedNames) {
     final Collection<String> names = buildSuggestions(parentClass);
     for (String expectedName : expectedNames) {

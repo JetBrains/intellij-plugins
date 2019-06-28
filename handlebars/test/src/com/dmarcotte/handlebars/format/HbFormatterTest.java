@@ -18,7 +18,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 
@@ -27,7 +27,7 @@ import java.io.File;
 /**
  * Base class for Handlebars formatter tests.  Based on com.intellij.psi.formatter.java.AbstractJavaFormatterTest.
  */
-public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTestCase implements HbFormattingModelBuilderTest {
+public abstract class HbFormatterTest extends BasePlatformTestCase implements HbFormattingModelBuilderTest {
   private static final String TEST_DATA_PATH = new File(HbTestUtils.BASE_TEST_DATA_PATH, "formatter").getAbsolutePath();
 
   protected FormatterTestSettings formatterTestSettings;

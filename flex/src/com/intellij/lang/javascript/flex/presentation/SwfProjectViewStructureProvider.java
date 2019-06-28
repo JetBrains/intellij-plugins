@@ -29,6 +29,7 @@ import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -207,7 +208,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
   private static boolean isTooManySWFs(final VirtualFile folder) {
     int size = 0;
     for (VirtualFile file : folder.getChildren()) {
-      if (file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE) {
+      if (FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE)) {
         size += file.getLength();
         if (size > MAX_TOTAL_SWFS_SIZE_IN_FOLDER_TO_SHOW_STRUCTURE) {
           return true;

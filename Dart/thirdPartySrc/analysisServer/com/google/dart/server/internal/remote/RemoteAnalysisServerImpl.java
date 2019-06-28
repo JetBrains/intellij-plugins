@@ -76,6 +76,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Code Completion domain
   private static final String COMPLETION_AVAILABLE_SUGGESTIONS = "completion.availableSuggestions";
+  private static final String COMPLETION_EXISTING_IMPORTS = "completion.existingImports";
   private static final String COMPLETION_NOTIFICATION_RESULTS = "completion.results";
 
   // Search domain
@@ -669,6 +670,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       // completion.results
       new NotificationCompletionAvailableSuggestionsProcessor(listener).process(response);
     }
+    else if (event.equals(COMPLETION_EXISTING_IMPORTS)) {
+      // completion.existingImports
+      new NotificationCompletionExistingImportsProcessor(listener).process(response);
+    }
     else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
       // completion.results
       new NotificationCompletionResultsProcessor(listener).process(response);
@@ -874,7 +879,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    */
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
-    notifyRequestListeners(request);
   }
 
   /**
@@ -885,6 +889,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param consumer the {@link Consumer} to process a response
    */
   public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
+    notifyRequestListeners(request);
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }

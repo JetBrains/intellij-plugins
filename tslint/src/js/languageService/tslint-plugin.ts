@@ -111,12 +111,6 @@ export class TSLintPlugin implements LanguagePlugin {
         }
         return (<IConfigurationFile>configurationResult)
     }
-
-    private hasJSRules(config: IConfigurationFile): boolean {
-        return this.linterApi.version.major && this.linterApi.version.major >= 5
-            ? config.jsRules.size > 0
-            : Object.keys((<{}>config.jsRules)).length > 0;
-    }
 }
 
 function resolveTsLint(packagePath: string): LinterApi {

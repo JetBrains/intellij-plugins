@@ -59,7 +59,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
@@ -384,7 +384,7 @@ public class FlexDebugProcess extends XDebugProcess {
     myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand,
                                          s -> s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s, " ");
 
-    final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
+    final Process process = Runtime.getRuntime().exec(ArrayUtilRt.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
     return process;
   }

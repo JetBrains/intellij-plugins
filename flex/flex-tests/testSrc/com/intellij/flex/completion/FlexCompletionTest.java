@@ -43,7 +43,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.*;
 
-import static com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.JAVA_1_7;
+import static com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase.JAVA_1_7;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
   static final String BASE_PATH = "/flex_completion/";
@@ -99,12 +99,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected void complete() {
+  protected LookupElement[] complete() {
     if (myCompletionPerformer != null) {
       myCompletionPerformer.run();
     }
+    
+    return myFixture.getLookupElements();
   }
-
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {
     return createMultiCompletionPerformerWithVariantsCheck(true);
@@ -1337,7 +1338,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     });
     final LookupElement[] elements = doTest("", "as");
     assertStartsWith(elements, "concat", "every", "filter");
-    assertTrue(getBoldStatus(elements[0]));
+    assertTrue(isStrictMatched(elements[0]));
   }
 
   public void testCompletionPerformance() {

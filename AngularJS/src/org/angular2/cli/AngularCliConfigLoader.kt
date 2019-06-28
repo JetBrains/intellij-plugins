@@ -3,11 +3,18 @@
 
 package org.angular2.cli
 
-import com.google.gson.GsonBuilder
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonAlias
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.JsonToken
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -18,29 +25,33 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.text.CharSequenceReader
+import java.io.IOException
+
 
 private val ANGULAR_CLI_CONFIG_KEY = Key.create<CachedValue<AngularCliConfig>>("ANGULAR_CLI_CONFIG_KEY")
 private val LOG = Logger.getInstance("#org.angularjs.cli.AngularCliConfigLoader")
 
 fun load(project: Project, context: VirtualFile): AngularCliConfig {
-  val angularCliFolder = AngularCliUtil.findAngularCliFolder(project, context)
-                         ?: return AngularCliEmptyConfig()
-  val angularCliJson = AngularCliUtil.findCliJson(angularCliFolder) ?: return AngularCliEmptyConfig()
-  try {
-    return CachedValuesManager.getManager(project).getCachedValue(
-      PsiManager.getInstance(project).findFile(angularCliJson)!!, ANGULAR_CLI_CONFIG_KEY,
-      {
-        val cachedDocument = FileDocumentManager.getInstance().getCachedDocument(angularCliJson)
-        CachedValueProvider.Result.create(
-          AngularCliJsonFileConfig(
-            angularCliJson, cachedDocument?.charsSequence ?: VfsUtilCore.loadText(angularCliJson)),
-          cachedDocument ?: angularCliJson)
-      }, false)
-  }
-  catch (e: Exception) {
-    LOG.info(e)
-  }
-  return AngularCliEmptyConfig()
+  val angularCliJson = AngularCliUtil.findAngularCliFolder(project, context)?.let {
+    AngularCliUtil.findCliJson(it)
+  } ?: return AngularCliEmptyConfig()
+  val psiFile = PsiManager.getInstance(project).findFile(angularCliJson) ?: return AngularCliEmptyConfig()
+  return CachedValuesManager.getManager(project).getCachedValue(psiFile, ANGULAR_CLI_CONFIG_KEY, {
+    val cachedDocument = FileDocumentManager.getInstance().getCachedDocument(angularCliJson)
+    val config =
+      try {
+        AngularCliJsonFileConfig(
+          angularCliJson, cachedDocument?.charsSequence ?: VfsUtilCore.loadText(angularCliJson))
+      }
+      catch (e: ProcessCanceledException) {
+        throw e
+      }
+      catch (e: Exception) {
+        LOG.warn("Cannot load " + angularCliJson.name + ": " + e.message, e)
+        AngularCliEmptyConfig()
+      }
+    CachedValueProvider.Result.create(config, cachedDocument ?: angularCliJson)
+  }, false)
 }
 
 interface AngularCliConfig {
@@ -95,7 +106,9 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
   private val myStyles: List<String>?
 
   init {
-    val ngCliConfig = GsonBuilder().setLenient().create().fromJson(CharSequenceReader(text), AngularCli::class.java)
+    val mapper = ObjectMapper()
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    val ngCliConfig = mapper.readValue(CharSequenceReader(text), AngularCli::class.java)
     val allProjects = ContainerUtil.concat(ngCliConfig.apps, ngCliConfig.projects.values.toList())
     myRootPaths = allProjects.mapNotNull { it.rootPath }.fold(ArrayList()) { acc, root -> acc.add(root); acc; }
     myStylePreprocessorIncludePaths = allProjects.mapNotNull {
@@ -149,91 +162,107 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
 }
 
 private class AngularCli {
-  @SerializedName("apps")
-  @Expose
+  @JsonProperty("apps")
   val apps: List<AngularCliProject> = ArrayList()
 
-  @SerializedName("projects")
-  @Expose
+  @JsonProperty("projects")
   val projects: Map<String, AngularCliProject> = HashMap()
 }
 
 private open class AngularCliBuildOptionsBase {
 
-  @SerializedName("stylePreprocessorOptions")
-  @Expose
+  @JsonProperty("stylePreprocessorOptions")
   val stylePreprocessorOptions: AngularCliStylePreprocessorOptions? = null
 
-  @SerializedName("index")
-  @Expose
+  @JsonProperty("index")
   val index: String? = null
 
-  @SerializedName("styles")
-  @Expose
+  @JsonProperty("styles")
+  @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
   val styles: List<String>? = null
 
 }
 
 private class AngularCliProject : AngularCliBuildOptionsBase() {
-  @SerializedName("root")
-  @Expose
+  @JsonProperty("root")
   val rootPath: String? = null
 
-  @SerializedName("targets", alternate = ["architect"])
-  @Expose
+  @JsonProperty("targets")
+  @JsonAlias(value = ["architect"])
   val targets: AngularCliTargets? = null
 
 }
 
 private class AngularCliTargets {
-  @SerializedName("build")
-  @Expose
+  @JsonProperty("build")
   val build: AngularCliBuild? = null
 
-  @SerializedName("test")
-  @Expose
+  @JsonProperty("test")
   val test: AngularCliTest? = null
 
-  @SerializedName("e2e")
-  @Expose
+  @JsonProperty("e2e")
   val e2e: AngularCliE2E? = null
 }
 
 private class AngularCliE2E {
-  @SerializedName("options")
-  @Expose
+  @JsonProperty("options")
   val options: AngularCliE2EOptions? = null
 }
 
 private class AngularCliE2EOptions {
-  @SerializedName("protractorConfig")
-  @Expose
+  @JsonProperty("protractorConfig")
   val protractorConfig: String? = null
 }
 
 private class AngularCliTest {
-  @SerializedName("options")
-  @Expose
+  @JsonProperty("options")
   val options: AngularCliTestOptions? = null
 }
 
 private class AngularCliTestOptions {
-  @SerializedName("karmaConfig")
-  @Expose
+  @JsonProperty("karmaConfig")
   val karmaConfig: String? = null
 }
 
 private class AngularCliBuild {
-  @SerializedName("options")
-  @Expose
+  @JsonProperty("options")
   val options: AngularCliBuildOptions? = null
 }
 
 private class AngularCliBuildOptions : AngularCliBuildOptionsBase()
 
 private class AngularCliStylePreprocessorOptions {
-  @SerializedName("includePaths")
-  @Expose
+  @JsonProperty("includePaths")
   val includePaths: List<String> = ArrayList()
 }
 
+private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String>>() {
+
+  @Throws(IOException::class)
+  override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): List<String> {
+    val files = mutableListOf<String>()
+    if (jsonParser.currentToken === JsonToken.START_ARRAY) {
+      while (jsonParser.nextToken() !== JsonToken.END_ARRAY) {
+        when (jsonParser.currentToken) {
+          JsonToken.START_OBJECT -> while (jsonParser.nextToken() !== JsonToken.END_OBJECT) {
+            assert(jsonParser.currentToken === JsonToken.FIELD_NAME)
+            val propName = jsonParser.currentName
+            jsonParser.nextToken()
+            if (propName == "input") {
+              files.add(jsonParser.valueAsString)
+            }
+            else {
+              jsonParser.skipChildren()
+            }
+          }
+          JsonToken.VALUE_STRING -> files.add(jsonParser.valueAsString)
+          else -> deserializationContext.handleUnexpectedToken(String::class.java, jsonParser)
+        }
+      }
+    }
+    else {
+      deserializationContext.handleUnexpectedToken(List::class.java, jsonParser)
+    }
+    return files
+  }
+}

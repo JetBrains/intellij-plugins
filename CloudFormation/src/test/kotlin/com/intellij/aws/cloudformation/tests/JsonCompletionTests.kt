@@ -4,10 +4,10 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.util.BuildNumber
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import java.util.Arrays
 
-class JsonCompletionTests : LightCodeInsightFixtureTestCase() {
+class JsonCompletionTests : LightJavaCodeInsightFixtureTestCase() {
   fun testResourceType1() {
     myFixture.configureByFiles("ResourceType1.template")
     myFixture.complete(CompletionType.BASIC, 1)

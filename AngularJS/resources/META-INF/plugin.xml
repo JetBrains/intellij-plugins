@@ -121,9 +121,6 @@
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection"
                      displayName="Incorrect component template definition"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
-                     displayName="Missing or invalid selector"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection"
                      displayName="Missing or invalid component, directive or pipe declaration in a module"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
@@ -139,6 +136,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidEntryComponentInspection"
                      displayName="Invalid entry component"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
+                     displayName="Missing or invalid selector"
+                     groupName="Angular" enabledByDefault="true" level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
                      displayName="Inaccessible component member in AOT mode"
                      groupName="Angular" enabledByDefault="false" level="WARNING"/>
@@ -166,7 +166,7 @@
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
 
     <!-- Angular 2 HTML template contributions -->
-    <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
+    <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector" id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
@@ -274,6 +274,7 @@
   <extensions defaultExtensionNs="org.angular2">
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2NgContentSelectorAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
 
     <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>

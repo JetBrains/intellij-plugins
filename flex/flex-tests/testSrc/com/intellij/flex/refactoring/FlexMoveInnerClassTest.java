@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.codeInsight.EditorInfo;
@@ -24,7 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.MultiFileTestCase;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -132,7 +133,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testClass() {
-    doTest("/From.as", "Foo2", "com.foo", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/From.as", "Foo2", "com.foo", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   // IDEA-66103
@@ -141,15 +142,15 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   //}
 
   public void testFunction() {
-    doTest("/a/From.as", "bar", "a", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/a/From.as", "bar", "a", false, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   public void testVariable() {
-    doTest("/a/From.as", "myVar", "a", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/a/From.as", "myVar", "a", false, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   public void testFunction2() {
-    doTest("/a/From.as", "bar", "b", false, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/a/From.as", "bar", "b", false, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   public void testConflicts1() {
@@ -160,20 +161,20 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   }
 
   public void testClass2() {
-    doTest("/A.as", "B", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/A.as", "B", "", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   public void testNoPackageStatement() {
-    doTest("/A.as", "my", "foo", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/A.as", "my", "foo", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testGenericVectorCreation() {
-    doTest("/Z1.as", "Cell", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/Z1.as", "Cell", "", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testClassFromDefaultPackageConstructorCall() {
-    doTest("/Z1.as", "Foo", "", true, false, ArrayUtil.EMPTY_STRING_ARRAY);
+    doTest("/Z1.as", "Foo", "", true, false, ArrayUtilRt.EMPTY_STRING_ARRAY);
   }
 }

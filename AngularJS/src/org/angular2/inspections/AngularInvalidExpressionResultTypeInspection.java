@@ -7,6 +7,7 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator;
 import com.intellij.openapi.util.Pair;
@@ -81,7 +82,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
         if (expectedType == null || expression == null) {
           return;
         }
-        JSType actualType = TypeScriptGenericTypesEvaluator.getParameterExpressionType(expression, true);
+        JSType actualType = JSResolveUtil.getElementJSType(expression, true);
         if (actualType != null
             && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
           holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.template.type-not-assignable",

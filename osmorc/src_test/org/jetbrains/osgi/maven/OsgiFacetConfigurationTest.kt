@@ -17,13 +17,13 @@ package org.jetbrains.osgi.maven
 
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.assertj.core.api.Assertions.assertThat
 import org.jdom.Element
 import org.osmorc.facet.OsmorcFacet
 import org.osmorc.facet.OsmorcFacetConfiguration
 
-class OsgiFacetConfigurationTest : LightCodeInsightFixtureTestCase() {
+class OsgiFacetConfigurationTest : LightJavaCodeInsightFixtureTestCase() {
   private lateinit var config: OsmorcFacetConfiguration
 
   override fun setUp() {

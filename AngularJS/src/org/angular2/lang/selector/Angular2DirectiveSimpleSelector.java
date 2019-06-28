@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 
 public class Angular2DirectiveSimpleSelector {
 
@@ -157,10 +156,9 @@ public class Angular2DirectiveSimpleSelector {
 
     cssSelector.setElement(elNameNoNs);
 
-    boolean isTemplateTag = isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag);
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, element);
       if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
           || info.type == Angular2AttributeType.VARIABLE
           || info.type == Angular2AttributeType.REFERENCE) {

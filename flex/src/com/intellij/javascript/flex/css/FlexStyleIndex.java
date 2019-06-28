@@ -14,7 +14,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSClassStub;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -112,7 +112,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   @NotNull
   private static String getQualifiedNameByMxmlFile(@NotNull VirtualFile file, @NotNull Project project) {
-    String name = FileUtil.getNameWithoutExtension(file.getName());
+    String name = FileUtilRt.getNameWithoutExtension(file.getName());
     final String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file, project);
     if (packageName != null && packageName.length() > 0) {
       return packageName + "." + name;

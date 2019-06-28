@@ -18,10 +18,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.PairConsumer;
-import com.intellij.util.PathUtilRt;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -366,7 +363,7 @@ public class FlexCommonUtils {
       return playerFolder.list((dir, name) -> new File(playerFolder, name + "/playerglobal.swc").isFile());
     }
 
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   /**
@@ -828,7 +825,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = getD32IfNeed(customJavaHomeSet, javaHome);
+    final String d32 = getD32IfNeeded(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<>();
 
@@ -863,7 +860,7 @@ public class FlexCommonUtils {
     return result;
   }
 
-  public static String getD32IfNeed(boolean customJavaHomeSet, String javaHome) {
+  public static String getD32IfNeeded(boolean customJavaHomeSet, String javaHome) {
     return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
@@ -889,7 +886,7 @@ public class FlexCommonUtils {
   }
 
   public static String getWrapperFileName(final JpsFlexBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
 
@@ -898,7 +895,7 @@ public class FlexCommonUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof JpsAndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                    : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   public static String replace(final String text, final Map<String, String> replacementMap) {

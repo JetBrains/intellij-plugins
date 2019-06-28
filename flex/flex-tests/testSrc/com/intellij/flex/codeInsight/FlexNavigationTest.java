@@ -1,6 +1,6 @@
 package com.intellij.flex.codeInsight;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
+import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @SuppressWarnings({"ConstantConditions"})
-public class FlexNavigationTest extends CodeInsightTestCase {
+public class FlexNavigationTest extends JavaCodeInsightTestCase {
   private static final String BASE_PATH = "/flex_navigation/";
 
   protected Runnable myAfterCommitRunnable = null;
