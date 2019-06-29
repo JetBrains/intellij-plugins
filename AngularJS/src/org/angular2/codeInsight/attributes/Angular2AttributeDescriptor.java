@@ -192,7 +192,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                              sources, myImplied || ngOther.myImplied);
     }
     else {
-      assert other.getName().equals(myAttributeName);
+      assert other.getName().equalsIgnoreCase(myAttributeName)
+        : "Cannot merge attributes with different names: " + myAttributeName + " != " + other.getName();
       Set<Object> elements = new HashSet<>(myResolver.getSources());
       elements.addAll(other.getDeclarations());
       return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, elements, true);
