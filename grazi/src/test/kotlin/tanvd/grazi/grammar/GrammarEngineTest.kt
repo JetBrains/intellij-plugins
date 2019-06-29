@@ -54,10 +54,10 @@ class GrammarEngineTest : GraziTestBase(true) {
         val text = """
             |Hello world!
             |This is the start of a message.
-            |The end is also here wrld
+            |It is a the friend
         """.trimMargin()
         val fixes = GrammarEngine.getFixes(text)
-        fixes.single().assertTypoIs(Typo.Category.TYPOS, IntRange(66, 69), listOf("world"), text)
+        fixes.single().assertTypoIs(Typo.Category.GRAMMAR, IntRange(51, 55), listOf("a", "the"), text)
     }
 
     @Test

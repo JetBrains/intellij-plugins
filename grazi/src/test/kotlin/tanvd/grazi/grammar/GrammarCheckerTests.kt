@@ -49,10 +49,10 @@ class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test few lines of text with typo on last line`() {
-        val text = listOf("Hello world!\n", "This is the start of a message.\n", "The end is also here wrld\n")
+        val text = listOf("Hello world!\n", "This is the start of a message.\n", "It is a the friend\n")
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens)
-        fixes.single().assertTypoIs(Typo.Category.TYPOS, IntRange(21, 24), listOf("world"), text[2])
+        fixes.single().assertTypoIs(Typo.Category.GRAMMAR, IntRange(6, 10), listOf("a", "the"), text[2])
     }
 
     @Test

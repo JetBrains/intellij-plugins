@@ -80,11 +80,11 @@
         <postStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
 
 
-        <localInspection groupName="Grazi" enabledByDefault="true"
+        <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
 
 
-        <localInspection groupName="Grazi" enabledByDefault="true"
+        <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection for VCS"
                          shortName="GraziCommitInspection" implementationClass="tanvd.grazi.ide.GraziCommitInspection"/>
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
