@@ -32,6 +32,7 @@ intellij {
             "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2",
             "PythonCore:2019.1.191.6183.53",
             "org.rust.lang:0.2.98.2125-191",
+            "CSS",
             "JavaScriptLanguage"
     )
 }
@@ -80,16 +81,11 @@ dependencies {
 
     compile("org.apache.commons", "commons-lang3", "3.5")
 
-
     compile("tanvd.kex", "kex", "0.1.0")
-    compile("com.beust", "klaxon", "5.0.1")
-
-    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnit()
 
     testLogging {
         events("passed", "skipped", "failed")

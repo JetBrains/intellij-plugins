@@ -9,6 +9,7 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.CommitMessageInspectionProfile
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.GraziCommitInspection
 
 open class GraziProjectInit : StartupActivity, DumbAware {
@@ -18,7 +19,7 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             enableTool("GraziCommit", project)
         }
 
-        if (GraziConfig.state.enabledSpellcheck) {
+        if (GraziConfig.state.enabledSpellcheck && !GraziPlugin.isTest) {
             modifyAndCommitProjectProfile(project, Consumer {
                 it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
             })

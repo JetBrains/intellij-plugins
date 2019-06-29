@@ -9,7 +9,7 @@ import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
-class JsDocSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
+class JsDocSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     override fun isSupported(language: Language): Boolean {
         return language is JSLanguageDialect
     }

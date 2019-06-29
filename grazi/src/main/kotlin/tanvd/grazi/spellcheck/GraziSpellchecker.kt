@@ -27,7 +27,7 @@ object GraziSpellchecker {
 
     private fun createChecker(): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-        return JLanguageTool(checkerLang.jlanguage, GraziConfig.state.nativeLanguage.jlanguage,
+        return JLanguageTool(checkerLang.jLanguage, GraziConfig.state.nativeLanguage.jLanguage,
                 cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
             disableRules(allActiveRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
         }

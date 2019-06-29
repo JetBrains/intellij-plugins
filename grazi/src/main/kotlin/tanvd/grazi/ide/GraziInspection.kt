@@ -84,4 +84,8 @@ class GraziInspection : LocalInspectionTool() {
             }
         }
     }
+
+    override fun getDisplayName(): String {
+        return "Grazi proofreading inspection"
+    }
 }

@@ -14,7 +14,7 @@ object LangTool {
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-            JLanguageTool(lang.jlanguage, GraziConfig.state.nativeLanguage.jlanguage,
+            JLanguageTool(lang.jLanguage, GraziConfig.state.nativeLanguage.jLanguage,
                     cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
                 lang.configure(this)
                 disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })

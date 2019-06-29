@@ -25,20 +25,14 @@ inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IE
     tokens.contains(token.node.elementType)
 }
 
-inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> {
-    return if (GraziPlugin.isTest) {
-        return SmartPointerStub(this)
-    } else {
-        SmartPointerManager.createPointer(this)
-    }
-}
+inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> = SmartPointerManager.createPointer(this)
 
 fun PsiElement.isInjectedFragment(): Boolean {
     val host = this.parents().filter { it is PsiLanguageInjectionHost }.firstOrNull() as? PsiLanguageInjectionHost ?: return false
     var isInjected = false
-    InjectedLanguageManager.getInstance(project).enumerate(host, { _, _ ->
+    InjectedLanguageManager.getInstance(project).enumerate(host) { _, _ ->
         isInjected = true
-    })
+    }
     return isInjected
 }
 

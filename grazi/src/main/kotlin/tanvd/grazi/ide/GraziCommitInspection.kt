@@ -19,6 +19,6 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
     }
 
     override fun getDisplayName(): String {
-        return "Grazi Commit proofreading inspection"
+        return "Grazi proofreading inspection for VCS"
     }
 }

@@ -9,9 +9,9 @@ import tanvd.grazi.grammar.*
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
 
-class KStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
+class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     companion object {
-        fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
+        fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateExpression
     }
 
     override fun isSupported(language: Language): Boolean {

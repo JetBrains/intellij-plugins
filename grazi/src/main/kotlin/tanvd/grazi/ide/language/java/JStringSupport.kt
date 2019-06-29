@@ -11,7 +11,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.withOffset
 
-class JStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
+class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     override fun isSupported(language: Language): Boolean {
         return language is JavaLanguage
     }

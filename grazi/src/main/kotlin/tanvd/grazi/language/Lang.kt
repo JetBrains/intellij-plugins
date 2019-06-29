@@ -5,13 +5,13 @@ import org.languagetool.Language
 import org.languagetool.language.*
 import tanvd.grazi.GraziBundle
 
-enum class Lang(val jlanguage: Language,
+enum class Lang(val jLanguage: Language,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet()) {
-    BRITISH_ENGLISH(BritishEnglish(), GraziBundle.langConfigSet<String>("en.enabled"), GraziBundle.langConfigSet<String>("en.disabled")),
-    AMERICAN_ENGLISH(AmericanEnglish(), GraziBundle.langConfigSet<String>("en.enabled"), GraziBundle.langConfigSet<String>("en.disabled")),
-    CANADIAN_ENGLISH(CanadianEnglish(), GraziBundle.langConfigSet<String>("en.enabled"), GraziBundle.langConfigSet<String>("en.disabled")),
-    RUSSIAN(Russian(), GraziBundle.langConfigSet<String>("ru.enabled")),
+    BRITISH_ENGLISH(BritishEnglish(), GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
+    AMERICAN_ENGLISH(AmericanEnglish(), GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
+    CANADIAN_ENGLISH(CanadianEnglish(), GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
+    RUSSIAN(Russian(), GraziBundle.langConfig("ru.enabled")),
     PERSIAN(Persian()),
     FRENCH(French()),
     GERMANY_GERMAN(GermanyGerman()),
@@ -36,9 +36,9 @@ enum class Lang(val jlanguage: Language,
         val sortedValues = Lang.values().sortedBy { it.displayName }
     }
 
-    val shortCode = jlanguage.shortCode!!
+    val shortCode = jLanguage.shortCode!!
 
-    val displayName = jlanguage.name!!
+    val displayName = jLanguage.name!!
 
     fun isEnglish() = this.shortCode == "en"
 

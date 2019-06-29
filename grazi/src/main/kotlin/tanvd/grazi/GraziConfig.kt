@@ -15,7 +15,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property var lastSeenVersion: String? = null)
 
     companion object {
-        val instance: GraziConfig by lazy { if (GraziPlugin.isTest) GraziConfig() else ServiceManager.getService(GraziConfig::class.java) }
+        val instance: GraziConfig by lazy { ServiceManager.getService(GraziConfig::class.java) }
 
         val state: State
             get() = instance.state

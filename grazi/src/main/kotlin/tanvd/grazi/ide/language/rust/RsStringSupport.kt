@@ -14,7 +14,7 @@ import tanvd.grazi.utils.*
 import tanvd.kex.ifTrue
 import tanvd.kex.orTrue
 
-class RsStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal_string.disabled")) {
+class RsStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     companion object {
         val rust = SanitizingGrammarChecker(
                 ignore = listOf({ str, cur ->

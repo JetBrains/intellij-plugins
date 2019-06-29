@@ -1,7 +1,5 @@
 package tanvd.grazi.grammar
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.tree.PsiPlainTextImpl
 import tanvd.grazi.utils.withOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -27,11 +25,4 @@ fun Typo.assertTypoIs(category: Typo.Category, range: IntRange, fixes: List<Stri
     verify(text)
 }
 
-class TestPlainText(text: String) : PsiPlainTextImpl(text)
-
-fun plain(vararg texts: String) = plain(texts.toList())
-
-fun plain(texts: List<String>): Collection<PsiElement> {
-    return texts.map { TestPlainText(it) as PsiElement }
-}
 

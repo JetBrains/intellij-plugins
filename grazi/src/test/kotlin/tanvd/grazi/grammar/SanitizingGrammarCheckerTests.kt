@@ -1,42 +1,30 @@
 package tanvd.grazi.grammar
 
 import org.junit.Assert
-import org.junit.jupiter.api.*
-import tanvd.grazi.GraziConfig
-import tanvd.grazi.GraziPlugin
-import tanvd.grazi.spellcheck.IdeaSpellchecker
-import java.io.File
+import org.junit.Test
+import tanvd.grazi.GraziTestBase
+import tanvd.kex.Resources
 import kotlin.system.measureTimeMillis
 
 
-class SanitizingGrammarCheckerTests {
-    @BeforeEach
-    fun prepare() {
-        GraziPlugin.isTest = true
-        GraziPlugin.invalidateCaches()
-        GraziConfig.state.enabledSpellcheck = true
-
-        IdeaSpellchecker.init { true }
-
-        GraziPlugin.init()
-    }
+class SanitizingGrammarCheckerTests : GraziTestBase(true) {
 
     @Test
-    fun check_emptyText_noTypos() {
+    fun `test empty text`() {
         val token = plain("")
         val fixes = SanitizingGrammarChecker.default.check(token)
         assertIsEmpty(fixes)
     }
 
     @Test
-    fun check_correctText_noTypos() {
+    fun `test correct text`() {
         val token = plain("Hello world")
         val fixes = SanitizingGrammarChecker.default.check(token)
         assertIsEmpty(fixes)
     }
 
     @Test
-    fun check_correctTextFewLines_noTypos() {
+    fun `test few lines of correct text`() {
         val tokens = plain("Hello world!\n", "This is the start of a message.\n", "The end is also here.")
         val fixes = SanitizingGrammarChecker.default.check(tokens)
         assertIsEmpty(fixes)
@@ -44,7 +32,7 @@ class SanitizingGrammarCheckerTests {
 
 
     @Test
-    fun check_oneLine_oneTypo() {
+    fun `test one line of text with one typo`() {
         val text = "hello world, my dear friend"
         val tokens = plain(text).toList()
         val fixes = SanitizingGrammarChecker.default.check(tokens)
@@ -52,7 +40,7 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_typoOnAFirstLine_oneTypo() {
+    fun `test few lines of text with typo on first line`() {
         val text = listOf("hello world!\n", "This is the start of a message.\n", "The end is also here world\n")
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens)
@@ -60,7 +48,7 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_typoOnALastLine_oneTypo() {
+    fun `test few lines of text with typo on last line`() {
         val text = listOf("Hello world!\n", "This is the start of a message.\n", "The end is also here wrld\n")
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens)
@@ -68,7 +56,7 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_oneLine_fewTypos() {
+    fun `test one line of text with multiple typos`() {
         val text = "Hello. world,, tot he"
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
@@ -79,7 +67,7 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_fewLines_fewTypos() {
+    fun `test few lines of text with few typos`() {
         val text = listOf("Hello. world,, tot he.\n", "This are my friend.")
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
@@ -92,7 +80,7 @@ class SanitizingGrammarCheckerTests {
 
 
     @Test
-    fun check_javaDocFewLines_fewTypos() {
+    fun `test javadoc-like text with few typos`() {
         val text = listOf("* Hello. world,, tot he.\n", "* * This is the next Javadoc string.\n", " * This are my friend.")
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
@@ -104,7 +92,7 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_whiteSpacesFewLines_fewTypos() {
+    fun `test pretty formatted text with few typos`() {
         val text = listOf("  Hello.    world,, tot    he.  \n  ", "     This   is the     next Javadoc string.   \n",
                 "    This are my friend.    ")
         val tokens = plain(text)
@@ -117,8 +105,8 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_performance_middleSize() {
-        val text = File("src/test/resources/sonnet_10.txt").readText()
+    fun `test performance for 10 sonnets`() {
+        val text = Resources.getText("grammar/sonnet_10.txt")
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
@@ -130,8 +118,8 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_performance_bigSize() {
-        val text = File("src/test/resources/sonnet_50.txt").readText()
+    fun `test performance for 50 sonnets`() {
+        val text = Resources.getText("grammar/sonnet_50.txt")
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
@@ -140,17 +128,5 @@ class SanitizingGrammarCheckerTests {
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 500)
         assert(totalTime < 20_000)
-    }
-
-    @Disabled
-    @Test
-    fun check_performance_veryBigSize() {
-        val tokens = plain(File("src/test/resources/pride_and_prejudice.txt").readText().split("\n").map { it + "\n" })
-        var fixes: List<Typo> = emptyList()
-        val totalTime = measureTimeMillis {
-            fixes = SanitizingGrammarChecker.default.check(tokens).toList()
-        }
-        fixes.forEach { it.verify() }
-        assert(totalTime < 180_000)
     }
 }
