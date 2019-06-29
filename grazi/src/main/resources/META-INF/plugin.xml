@@ -64,7 +64,7 @@
     <depends optional="true" config-file="javascript.xml">JavaScript</depends>
     <depends optional="true" config-file="rust.xml">org.rust.lang</depends>
 
-    <idea-version since-build="191"/>
+    <idea-version since-build="191" until-build="191.*"/>
 
     <application-components>
         <component>
