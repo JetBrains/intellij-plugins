@@ -27,8 +27,10 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
       getScopeAndCacheHolder(module).let { (scope, holder) ->
         return CachedValuesManager.getManager(scope.project!!).getCachedValue(holder) {
           val result = StreamEx.of(getForAllKeys(scope, VueGlobalDirectivesIndex.KEY))
-            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
-            .into(mutableMapOf<String, VueDirective>())
+            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) })
+            // TODO properly support multiple directives with the same name
+            .distinctKeys()
+            .toMap()
 
           CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
         }
@@ -74,12 +76,16 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
           .filterValues { !it.second }
           .mapValues { VueModelManager.getComponent(it.first) }
           .nonNullValues()
+          // TODO properly support multiple components with the same name
+          .distinctKeys()
           .into(mutableMapOf())
 
         val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
           .filterValues { it.second }
           .mapValues { VueModelManager.getComponent(it.first) }
           .nonNullValues()
+          // TODO properly support multiple components with the same name
+          .distinctKeys()
           .into(mutableMapOf())
 
         componentsData.libCompResolveMap.forEach { (alias, target) ->
