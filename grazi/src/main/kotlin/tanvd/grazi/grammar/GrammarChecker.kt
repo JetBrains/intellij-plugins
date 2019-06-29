@@ -4,12 +4,12 @@ import com.intellij.psi.PsiElement
 import tanvd.grazi.utils.*
 import tanvd.kex.*
 
-class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
-                               private val replace: List<(CharSequence, Char) -> Char?>,
-                               private val ignoreToken: List<(String) -> Boolean>) {
+class GrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
+                     private val replace: List<(CharSequence, Char) -> Char?>,
+                     private val ignoreToken: List<(String) -> Boolean>) {
 
     companion object {
-        val default = SanitizingGrammarChecker(
+        val default = GrammarChecker(
                 ignore = listOf({ str, cur ->
                     str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
                 }, { _, cur -> cur == '*' || cur == '`' }),

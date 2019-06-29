@@ -4,10 +4,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.refactoring.rename.PreferrableNameSuggestionProvider
+import tanvd.grazi.utils.blankCharRegex
+import tanvd.grazi.utils.withOffset
 
-class SpellCheckSuggestions : PreferrableNameSuggestionProvider() {
+class SpellCheckRenameSuggestions : PreferrableNameSuggestionProvider() {
     var active: Boolean = false
-
 
     override fun shouldCheckOthers(): Boolean {
         return !active
@@ -17,17 +18,17 @@ class SpellCheckSuggestions : PreferrableNameSuggestionProvider() {
         if (!active || nameSuggestionContext == null) {
             return null
         }
-        var text: String? = nameSuggestionContext.text
-        if (nameSuggestionContext is PsiNamedElement) {
-            text = (element as PsiNamedElement).name
-        }
-        if (text == null) {
-            return null
-        }
+        val text: String = if (element is PsiNamedElement) {
+            element.name
+        } else {
+            element.text
+        } ?: return null
 
-        GraziSpellchecker.check(text).forEach { typo ->
-            typo.fixes.forEach {
-                result.add(text.replaceRange(typo.location.range, it))
+        val indexInName = element.text.indexOf(text)
+
+        GraziSpellchecker.getFixes(element).forEach { typo ->
+            typo.fixes.filterNot { it.contains(blankCharRegex) }.forEach {
+                result.add(text.replaceRange(typo.location.range.withOffset(-indexInName), it))
             }
         }
 

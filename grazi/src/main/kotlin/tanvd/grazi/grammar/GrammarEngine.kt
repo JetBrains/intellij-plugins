@@ -4,7 +4,6 @@ import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.LangDetector
 import tanvd.grazi.language.LangTool
-import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.isBlankWithNewLines
 import tanvd.grazi.utils.splitWithRanges
 import tanvd.kex.buildSet
@@ -26,7 +25,6 @@ object GrammarEngine {
         if (str.isBlankWithNewLines()) return@buildSet
 
         if (str.split(Regex("\\s+")).size < minNumberOfWords) {
-            addAll(GraziSpellchecker.check(str))
             return@buildSet
         }
 
@@ -59,14 +57,7 @@ object GrammarEngine {
         ProgressManager.checkCanceled()
 
         val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }.toSet()
-        val verifiedTypos = allFixes.filter { it.info.rule.isDictionaryBasedSpellingRule }.filter {
-            !lang.isEnglish() || str.subSequence(it.location.range).split(Regex("\\s")).flatMap { part -> GraziSpellchecker.check(part) }.isNotEmpty()
-        }.toSet()
 
-        if (GraziConfig.state.enabledSpellcheck) {
-            addAll(withoutTypos + verifiedTypos)
-        } else {
-            addAll(withoutTypos)
-        }
+        addAll(withoutTypos)
     }
 }

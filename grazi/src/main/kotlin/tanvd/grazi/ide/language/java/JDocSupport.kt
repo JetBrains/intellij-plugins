@@ -6,7 +6,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.JavaDocTokenType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.javadoc.*
-import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
@@ -39,8 +39,8 @@ class JDocSupport : LanguageSupport() {
     override fun check(element: PsiElement) = buildSet<Typo> {
         val allDocTokens = element.filterFor<PsiDocToken> { it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA }
 
-        addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
-        addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
+        addAll(GrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
+        addAll(GrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
                 .filter { it.info.category !in tagsIgnoredCategories })
     }
 }

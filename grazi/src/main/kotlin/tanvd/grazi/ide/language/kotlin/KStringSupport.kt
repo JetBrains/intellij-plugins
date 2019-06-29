@@ -25,11 +25,11 @@ class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
     override fun check(element: PsiElement): Set<Typo> {
         require(element is KtStringTemplateExpression) { "Got not KtStringTemplateExpression in a KStringSupport" }
 
-        val ignoreFilter = IgnoreTokensFilter()
+        val ignoreFilter = TokensFilter()
         val entries = element.filterFor<KtLiteralStringTemplateEntry>()
 
         ignoreFilter.populate<KtLiteralStringTemplateEntry, KtStringTemplateEntry>(entries, addSiblingIf = { isExpressionEntry(it) })
 
-        return ignoreFilter.filter(SanitizingGrammarChecker.default.check(entries))
+        return ignoreFilter.filter(GrammarChecker.default.check(entries))
     }
 }

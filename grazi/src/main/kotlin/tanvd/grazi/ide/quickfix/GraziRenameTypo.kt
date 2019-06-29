@@ -13,7 +13,7 @@ import com.intellij.refactoring.rename.NameSuggestionProvider
 import com.intellij.refactoring.rename.RenameHandlerRegistry
 import icons.SpellcheckerIcons
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.spellcheck.SpellCheckSuggestions
+import tanvd.grazi.spellcheck.SpellCheckRenameSuggestions
 import tanvd.kex.trimToNull
 import tanvd.kex.untilNotNull
 import javax.swing.Icon
@@ -31,7 +31,7 @@ open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, Iconable, Pr
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement ?: return
 
-        val provider = NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckSuggestions }
+        val provider = NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckRenameSuggestions }
         try {
             provider?.active = true
 

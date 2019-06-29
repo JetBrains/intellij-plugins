@@ -3,9 +3,11 @@ package tanvd.grazi.ide
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
+import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.spellcheck.IdeaSpellchecker
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList
@@ -17,16 +19,17 @@ class GraziInspection : LocalInspectionTool() {
             return """
             <html>
                 <body>
-                    ${if (!fix.isSpellingTypo) 
-                        """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>
+                    ${if (!fix.isSpellingTypo)
+                """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>
                            <br/>
                         """
-                        else ""}
+            else ""}
                     <p>${fix.info.rule.description}</p>
                     ${if (!fix.isSpellingTypo) """
                     <br/>
                     <table>
-                        ${fix.info.rule.incorrectExamples.minBy { it.example.length }?.let{ example -> """
+                        ${fix.info.rule.incorrectExamples.minBy { it.example.length }?.let { example ->
+                """
                         <tr>
                             <td style='vertical-align: top; color: gray;'>Incorrect:</td>
                             <td>${example.toIncorrectHtml()}</td>
@@ -34,7 +37,8 @@ class GraziInspection : LocalInspectionTool() {
                         <tr>
                             <td style='vertical-align: top; color: gray;'>Correct:</td>
                             <td>${example.toCorrectHtml()}</td>
-                        </tr>""" } ?: ""}
+                        </tr>"""
+            } ?: ""}
                     </table>
                         """.trimIndent() else ""}
                 </body>
@@ -72,12 +76,19 @@ class GraziInspection : LocalInspectionTool() {
                 element ?: return
                 IdeaSpellchecker.init(element.project)
 
+                val typos = HashSet<Typo>()
+
                 for (ext in LanguageSupport.all.filter { it.isSupported(element.language) && it.isRelevant(element) }) {
-                    val typos = ext.getFixes(element)
-                    val problems = typos.mapNotNull { createProblemDescriptor(it, holder.manager, isOnTheFly) }
-                    problems.forEach {
-                        holder.registerProblem(it)
-                    }
+                    typos.addAll(ext.getFixes(element))
+                }
+
+                if (GraziConfig.state.enabledSpellcheck) {
+                    typos.addAll(GraziSpellchecker.getFixes(element))
+                }
+
+
+                typos.mapNotNull { createProblemDescriptor(it, holder.manager, isOnTheFly) }.forEach {
+                    holder.registerProblem(it)
                 }
 
                 super.visitElement(element)

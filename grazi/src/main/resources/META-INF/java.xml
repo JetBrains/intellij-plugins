@@ -2,7 +2,6 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.java.JDocSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.java.JStringSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JConstructsSupport"/>
     </extensions>
 </idea-plugin>
 

@@ -8,7 +8,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parents
-import tanvd.grazi.GraziPlugin
 
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
 
@@ -38,7 +37,7 @@ fun PsiElement.isInjectedFragment(): Boolean {
 
 /**
  * Will traverse through PsiElements using [take] function while [cond] is true.
- * Starts on `take(this)` element
+ * Starts with [take(this)] element
  */
 fun <T : PsiElement> T.traverse(take: (T) -> T?, cond: (T) -> Boolean): PsiElement? {
     var current: T? = take(this)

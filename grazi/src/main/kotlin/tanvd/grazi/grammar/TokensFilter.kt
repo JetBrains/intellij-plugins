@@ -9,7 +9,7 @@ import tanvd.grazi.utils.*
  * Just use [populate] to add neighbours of inline elements to mask and then
  * use filter to filter out all typos, which may occurred because of inline elements.
  */
-class IgnoreTokensFilter(private val ignoreSpellcheck: Boolean = false) {
+class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
     private val leftNeighbour = HashSet<SmartPsiElementPointer<PsiElement>>()
     private val rightNeighbour = HashSet<SmartPsiElementPointer<PsiElement>>()
 

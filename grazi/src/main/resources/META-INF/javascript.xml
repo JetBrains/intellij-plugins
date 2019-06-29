@@ -2,6 +2,5 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.javascript.JsStringSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.javascript.JsDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.javascript.JsConstructsSupport"/>
     </extensions>
 </idea-plugin>

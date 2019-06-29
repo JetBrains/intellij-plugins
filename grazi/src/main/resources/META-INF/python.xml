@@ -2,7 +2,6 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.python.PStringSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.python.PDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.python.PConstructsSupport"/>
     </extensions>
 </idea-plugin>
 

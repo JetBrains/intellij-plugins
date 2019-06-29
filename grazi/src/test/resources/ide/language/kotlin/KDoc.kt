@@ -1,4 +1,5 @@
-@file:Suppress("unused", "MayBeConstant", "UNUSED_PARAMETER")
+@file:Suppress("unused", "MayBeConstant", "UNUSED_PARAMETER", "SpellCheckingInspection")
+
 package ide.language.kotlin
 
 /**
@@ -25,13 +26,13 @@ class ExampleClassWithNoTypos<T>(val name: String) {
  *
  * <warning>This guy have</warning> no useful logic; it's just a documentation example.
  *
- * @param T the <warning>type of a</warning> member in this group.
+ * @param T the <warning>type of a</warning> <warning>membr</warning> in this group.
  * @property name the <warning>name which</warning> group
  * @constructor Creates an empty group.
  */
 class ExampleClassWithTypos<T>(val name: String) {
     /**
-     * It <warning>add</warning> a [member] to this group.
+     * It <warning>add</warning> a [member] to this <warning>grooup</warning>.
      * @return the new size of <warning>a the</warning> group.
      */
     fun badFunction(member: T): Int {

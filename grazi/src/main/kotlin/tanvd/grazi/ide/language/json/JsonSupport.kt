@@ -4,7 +4,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.json.psi.JsonStringLiteral
 import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
@@ -15,7 +15,7 @@ class JsonSupport : LanguageSupport() {
     companion object {
         val tagsIgnoredCategories = listOf(Typo.Category.CASING)
 
-        val json = SanitizingGrammarChecker(
+        val json = GrammarChecker(
                 ignore = listOf({ str, cur ->
                     str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
                 }, { _, cur -> cur == '\"' }),

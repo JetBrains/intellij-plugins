@@ -7,26 +7,26 @@ import tanvd.kex.Resources
 import kotlin.system.measureTimeMillis
 
 
-class SanitizingGrammarCheckerTests : GraziTestBase(true) {
+class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test empty text`() {
         val token = plain("")
-        val fixes = SanitizingGrammarChecker.default.check(token)
+        val fixes = GrammarChecker.default.check(token)
         assertIsEmpty(fixes)
     }
 
     @Test
     fun `test correct text`() {
         val token = plain("Hello world")
-        val fixes = SanitizingGrammarChecker.default.check(token)
+        val fixes = GrammarChecker.default.check(token)
         assertIsEmpty(fixes)
     }
 
     @Test
     fun `test few lines of correct text`() {
         val tokens = plain("Hello world!\n", "This is the start of a message.\n", "The end is also here.")
-        val fixes = SanitizingGrammarChecker.default.check(tokens)
+        val fixes = GrammarChecker.default.check(tokens)
         assertIsEmpty(fixes)
     }
 
@@ -35,7 +35,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test one line of text with one typo`() {
         val text = "hello world, my dear friend"
         val tokens = plain(text).toList()
-        val fixes = SanitizingGrammarChecker.default.check(tokens)
+        val fixes = GrammarChecker.default.check(tokens)
         fixes.single().assertTypoIs(Typo.Category.CASING, IntRange(0, 4), listOf("Hello"), text)
     }
 
@@ -43,7 +43,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test few lines of text with typo on first line`() {
         val text = listOf("hello world!\n", "This is the start of a message.\n", "The end is also here world\n")
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens)
+        val fixes = GrammarChecker.default.check(tokens)
         fixes.single().assertTypoIs(Typo.Category.CASING, IntRange(0, 4), listOf("Hello"), text[0])
     }
 
@@ -51,7 +51,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test few lines of text with typo on last line`() {
         val text = listOf("Hello world!\n", "This is the start of a message.\n", "The end is also here wrld\n")
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens)
+        val fixes = GrammarChecker.default.check(tokens)
         fixes.single().assertTypoIs(Typo.Category.TYPOS, IntRange(21, 24), listOf("world"), text[2])
     }
 
@@ -59,7 +59,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test one line of text with multiple typos`() {
         val text = "Hello. world,, tot he"
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        val fixes = GrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(3, fixes.size)
         fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(7, 11), listOf("World"), text)
         fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text)
@@ -70,7 +70,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test few lines of text with few typos`() {
         val text = listOf("Hello. world,, tot he.\n", "This are my friend.")
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        val fixes = GrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(4, fixes.size)
         fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(7, 11), listOf("World"), text[0])
         fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text[0])
@@ -83,7 +83,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
     fun `test javadoc-like text with few typos`() {
         val text = listOf("* Hello. world,, tot he.\n", "* * This is the next Javadoc string.\n", " * This are my friend.")
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        val fixes = GrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(4, fixes.size)
         fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(9, 13), listOf("World"), text[0])
         fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(14, 15), listOf(","), text[0])
@@ -96,7 +96,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
         val text = listOf("  Hello.    world,, tot    he.  \n  ", "     This   is the     next Javadoc string.   \n",
                 "    This are my friend.    ")
         val tokens = plain(text)
-        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        val fixes = GrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(4, fixes.size)
         fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(12, 16), listOf("World"), text[0])
         fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(17, 18), listOf(","), text[0])
@@ -110,7 +110,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+            fixes = GrammarChecker.default.check(tokens).toList()
         }
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 50)
@@ -123,7 +123,7 @@ class SanitizingGrammarCheckerTests : GraziTestBase(true) {
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+            fixes = GrammarChecker.default.check(tokens).toList()
         }
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 500)

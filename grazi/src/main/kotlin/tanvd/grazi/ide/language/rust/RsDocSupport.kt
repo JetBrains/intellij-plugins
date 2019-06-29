@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 import org.rust.ide.injected.findDoctestInjectableRanges
 import org.rust.lang.RsLanguage
 import org.rust.lang.core.psi.RsDocCommentImpl
-import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.*
@@ -15,7 +15,7 @@ import tanvd.kex.orTrue
 class RsDocSupport : LanguageSupport() {
     companion object {
         //TODO-tanvd@undin Poor solution, but for better need support of Rust team
-        val rust = SanitizingGrammarChecker(
+        val rust = GrammarChecker(
                 ignore = listOf({ str, cur ->
                     (str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue()
                             && blankOrNewLineCharRegex.matches(cur))

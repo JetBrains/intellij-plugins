@@ -4,7 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.psi.*
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
@@ -20,6 +20,6 @@ class UnknownTypeSupport : LanguageSupport() {
     }
 
     override fun check(element: PsiElement): Set<Typo> {
-        return SanitizingGrammarChecker.default.check(element.filterFor<PsiPlainText>()).spellcheckOnly()
+        return GrammarChecker.default.check(element.filterFor<PsiPlainText>()).spellcheckOnly()
     }
 }

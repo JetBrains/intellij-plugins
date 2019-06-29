@@ -3,7 +3,6 @@ package tanvd.grazi.grammar
 import org.junit.Test
 import tanvd.grazi.GraziTestBase
 import tanvd.kex.Resources
-import java.io.File
 import kotlin.system.measureTimeMillis
 
 class GrammarEngineTest : GraziTestBase(true) {

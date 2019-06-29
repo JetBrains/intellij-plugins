@@ -33,7 +33,7 @@ enum class Lang(val jLanguage: Language,
         operator fun get(lang: Language): Lang? = values().find { it.shortCode == lang.shortCode }
         operator fun get(code: String): Lang? = values().find { it.shortCode == code }
 
-        val sortedValues = Lang.values().sortedBy { it.displayName }
+        val sortedValues = values().sortedBy { it.displayName }
     }
 
     val shortCode = jLanguage.shortCode!!
