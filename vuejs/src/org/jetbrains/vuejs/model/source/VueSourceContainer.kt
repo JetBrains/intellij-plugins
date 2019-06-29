@@ -112,6 +112,8 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
         StreamEx.of(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY))
           .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
           .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
+          // TODO properly support multiple directives with the same name
+          .distinctKeys()
           .into(mutableMapOf<String, VueDirective>())
       }
       else {
@@ -135,6 +137,8 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
             ?.let { VueModelManager.getComponent(it) }
           ?: VueUnresolvedComponent()
         }
+        // TODO properly support multiple components with the same name
+        .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
     }
   }

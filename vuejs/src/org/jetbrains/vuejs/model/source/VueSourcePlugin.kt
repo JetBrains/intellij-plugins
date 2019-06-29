@@ -38,6 +38,8 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
             .of(VueComponentsCalculation.calculateScopeComponents(scope, globalize).map)
             .mapValues { VueModelManager.getComponent(it.first) }
             .nonNullValues()
+            // TODO properly support multiple components with the same name
+            .distinctKeys()
             .into(mutableMapOf())
 
           CachedValueProvider.Result(if (result.isEmpty()) null else VueSourcePlugin(result, psiDirectory),
