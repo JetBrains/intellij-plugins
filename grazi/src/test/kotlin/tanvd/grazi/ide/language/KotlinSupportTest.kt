@@ -4,7 +4,11 @@ import tanvd.grazi.GraziTestBase
 
 
 class KotlinSupportTest : GraziTestBase(false) {
-    fun `test string literals support`() {
+    fun `test grammar check in string literals`() {
         runHighlightTestForFile("ide/language/kotlin/StringLiteral.kt")
+    }
+
+    fun `test grammar check in kdoc`() {
+        runHighlightTestForFile("ide/language/kotlin/KDoc.kt")
     }
 }

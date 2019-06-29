@@ -1,3 +1,5 @@
+@file:Suppress("unused", "MayBeConstant", "UNUSED_PARAMETER")
+
 package ide.language.kotlin
 
 object OneLine {
