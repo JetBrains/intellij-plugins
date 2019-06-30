@@ -14,7 +14,7 @@ import tanvd.grazi.utils.*
 
 class KDocSupport : LanguageSupport() {
     companion object {
-        val tagsIgnoredCategories = listOf(Typo.Category.CASING)
+        private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
 
         private fun isInTag(token: PsiElement) = token.node.hasParentOfTypes(KDocElementTypes.KDOC_TAG)
         private fun isTag(token: PsiElement) = token.node.elementType == KDocElementTypes.KDOC_TAG

@@ -11,7 +11,7 @@ import tanvd.grazi.utils.filterFor
 
 class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     companion object {
-        fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
+        private fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
     }
 
     override fun isSupported(language: Language): Boolean {

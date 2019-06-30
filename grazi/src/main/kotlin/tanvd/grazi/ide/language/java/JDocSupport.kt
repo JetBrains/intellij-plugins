@@ -14,7 +14,7 @@ import tanvd.kex.buildSet
 
 class JDocSupport : LanguageSupport() {
     companion object {
-        val tagsIgnoredCategories = listOf(Typo.Category.CASING)
+        private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
 
         private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
         private fun isCodeTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text == "@code")

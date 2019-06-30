@@ -2,11 +2,20 @@ package tanvd.grazi.utils
 
 import tanvd.kex.buildList
 
+object Text {
+    private val blankCharRegex = Regex("\\s")
+    private val newLineCharRegex = Regex("\\n")
+    private val blankOrNewLineCharRegex = Regex("[\\n\\s]")
+
+    fun containsBlank(str: String) = str.contains(blankCharRegex)
+
+    fun isNewline(char: Char) = newLineCharRegex.matches(char)
+    fun isBlank(char: Char) = blankCharRegex.matches(char)
+    fun isNewlineOrBlank(char: Char) = blankOrNewLineCharRegex.matches(char)
+}
+
 val punctuationChars = listOf('.', ',', ':', ';')
 
-val blankCharRegex = Regex("\\s")
-val newLineCharRegex = Regex("\\n")
-val blankOrNewLineCharRegex = Regex("[\\n\\s]")
 
 val blankWithNewLinesOrEmpty = Regex("[\\n\\s]*")
 /** Considers whitespaces, tabs and newlines */

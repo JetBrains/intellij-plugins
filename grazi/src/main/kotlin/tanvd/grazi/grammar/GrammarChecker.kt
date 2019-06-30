@@ -1,24 +1,37 @@
 package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.Text
+import tanvd.grazi.utils.toPointer
 import tanvd.kex.*
 
-class GrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
-                     private val replace: List<(CharSequence, Char) -> Char?>,
-                     private val ignoreToken: List<(String) -> Boolean>) {
+class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+                     private val replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
+                     private val ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet()) {
+
+    constructor(checker: GrammarChecker, ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+                replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
+                ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet())
+            : this(LinkedSet(checker.ignoreChar + ignoreChar), LinkedSet(checker.replaceChar + replaceChar), LinkedSet(checker.ignoreToken + ignoreToken))
 
     companion object {
-        val default = GrammarChecker(
-                ignore = listOf({ str, cur ->
-                    str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
-                }, { _, cur -> cur == '*' || cur == '`' }),
-                replace = listOf({ _, cur ->
-                    newLineCharRegex.matches(cur).ifTrue { ' ' }
-                }),
-                ignoreToken = listOf({ str ->
-                    str.all { !it.isLetter() }
-                }))
+        object Rules {
+            val deduplicateBlanks: (CharSequence, Char) -> Boolean = { str, cur ->
+                str.lastOrNull()?.let { Text.isNewlineOrBlank(it) }.orTrue() && Text.isNewlineOrBlank(cur)
+            }
+            //TODO probably we need to flat them only if previous char is not end of sentence punctuation mark
+            val flatNewlines: (CharSequence, Char) -> Char? = { _, cur ->
+                Text.isNewline(cur).ifTrue { ' ' }
+            }
+
+            val ignoreQuotesAtBorders: (CharSequence, Char) -> Boolean = { prev, cur ->
+                (cur == '\'' || cur == '\"') && (prev.isEmpty() || prev.last() == cur)
+            }
+        }
+
+        val default = GrammarChecker(ignoreChar = linkedSetOf(Rules.deduplicateBlanks), replaceChar = linkedSetOf(Rules.flatNewlines))
+        val ignoringQuotes = GrammarChecker(default, ignoreChar = linkedSetOf(Rules.ignoreQuotesAtBorders))
+
     }
 
     fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
@@ -40,11 +53,10 @@ class GrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                 indexesShift[index] = totalExcluded
                 for ((tokenIndex, char) in getText(token).withIndex()) {
                     //perform replacing of chan (depending on already seen string)
-                    @Suppress("NAME_SHADOWING")
-                    val char = replace.untilNotNull { it(this, char) } ?: char
+                    @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignore.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
+                    if (ignoreChar.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
                         indexesShift[index] = ++totalExcluded
                         continue
                     }
@@ -57,7 +69,7 @@ class GrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                     tokenMapping[IntRange(tokenStartIndex, index - 1)] = token
                 }
 
-                if (!lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue()) {
+                if (!lastOrNull()?.let { Text.isBlank(it) }.orTrue()) {
                     append(' ')
                     index++
                 }

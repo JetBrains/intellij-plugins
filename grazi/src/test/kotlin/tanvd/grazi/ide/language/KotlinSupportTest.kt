@@ -8,7 +8,7 @@ class KotlinSupportTest : GraziTestBase(false) {
         runHighlightTestForFile("ide/language/kotlin/StringLiteral.kt")
     }
 
-    fun `test grammar check in kdoc`() {
+    fun `test grammar check in kDoc`() {
         runHighlightTestForFile("ide/language/kotlin/KDoc.kt")
     }
 

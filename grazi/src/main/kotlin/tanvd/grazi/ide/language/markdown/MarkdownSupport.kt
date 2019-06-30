@@ -11,7 +11,7 @@ import tanvd.grazi.utils.traverse
 
 class MarkdownSupport : LanguageSupport() {
     companion object {
-        val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
+        private val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
     }
 
     override fun isSupported(language: Language): Boolean {
@@ -66,11 +66,11 @@ class MarkdownSupport : LanguageSupport() {
     private fun TokensFilter.populateMd(elements: Collection<PsiElement>) {
         populate(elements, addAsLeftIf = {
             val nextElement = it.traverse(take = { it.nextSibling ?: it.parent.firstChild },
-                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEol(it) })
+                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEOL(it) })
             nextElement != null && MarkdownPsiUtils.isInline(nextElement)
         }, addAsRightIf = {
             val nextElement = it.traverse(take = { it.prevSibling ?: it.parent.lastChild },
-                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEol(it) })
+                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEOL(it) })
             nextElement != null && MarkdownPsiUtils.isInline(nextElement)
         })
     }

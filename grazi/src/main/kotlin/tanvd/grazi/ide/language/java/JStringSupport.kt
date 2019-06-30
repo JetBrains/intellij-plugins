@@ -24,6 +24,7 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is PsiLiteralExpressionImpl) { "Got non PsiLiteralExpressionImpl in JStringSupport" }
+
         return when (element.literalElementType) {
             JavaTokenType.STRING_LITERAL -> {
                 GrammarChecker.default.check(element) { it.innerText!! }.map { typo ->

@@ -8,24 +8,9 @@ import org.apache.xmlbeans.XmlLanguage
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.*
-import tanvd.kex.ifTrue
-import tanvd.kex.orTrue
+import tanvd.grazi.utils.filterFor
 
 class XmlSupport : LanguageSupport() {
-    companion object {
-        val xmlChecker = GrammarChecker(
-                ignore = listOf({ str, cur ->
-                    str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
-                }),
-                replace = listOf({ _, cur ->
-                    newLineCharRegex.matches(cur).ifTrue { ' ' }
-                }),
-                ignoreToken = listOf({ str ->
-                    str.all { !it.isLetter() && it !in punctuationChars }
-                }))
-    }
-
     override fun isSupported(language: Language): Boolean {
         return language is XmlLanguage
     }
@@ -36,6 +21,6 @@ class XmlSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         val xmlTexts = element.filterFor<XmlText>()
-        return xmlChecker.check(xmlTexts)
+        return GrammarChecker.default.check(xmlTexts)
     }
 }

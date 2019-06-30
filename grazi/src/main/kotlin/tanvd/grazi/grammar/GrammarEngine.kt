@@ -1,13 +1,11 @@
 package tanvd.grazi.grammar
 
-import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.LangDetector
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.isBlankWithNewLines
 import tanvd.grazi.utils.splitWithRanges
-import tanvd.kex.buildSet
-import tanvd.kex.tryRun
+import tanvd.kex.*
 
 object GrammarEngine {
     private const val maxChars = 10_000
@@ -43,21 +41,15 @@ object GrammarEngine {
         }
     }
 
-    private fun getFixesSmall(str: String) = buildSet<Typo> {
-        if (isSmall(str)) return@buildSet
+    private fun getFixesSmall(str: String): LinkedSet<Typo> {
+        if (isSmall(str)) return LinkedSet()
 
-        val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList()) ?: return@buildSet
+        val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList()) ?: return LinkedSet()
 
-        val allFixes = tryRun { LangTool[lang].check(str) }
+        return tryRun { LangTool[lang].check(str) }
                 .orEmpty()
                 .filterNotNull()
                 .map { Typo(it, lang) }
                 .let { LinkedHashSet(it) }
-
-        ProgressManager.checkCanceled()
-
-        val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }.toSet()
-
-        addAll(withoutTypos)
     }
 }

@@ -28,7 +28,7 @@ object MarkdownPsiUtils {
 
 
     fun isWhitespace(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.WHITE_SPACE)
-    fun isEol(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.EOL)
+    fun isEOL(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.EOL)
 
 
 }

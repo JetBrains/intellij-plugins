@@ -7,25 +7,10 @@ import com.intellij.psi.PsiElement
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.*
-import tanvd.kex.ifTrue
-import tanvd.kex.orTrue
 
 class JsonSupport : LanguageSupport() {
     companion object {
-        val tagsIgnoredCategories = listOf(Typo.Category.CASING)
-
-        val json = GrammarChecker(
-                ignore = listOf({ str, cur ->
-                    str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
-                }, { _, cur -> cur == '\"' }),
-                replace = listOf({ _, cur ->
-                    newLineCharRegex.matches(cur).ifTrue { ' ' }
-                }),
-                ignoreToken = listOf({ str ->
-                    str.all { !it.isLetter() }
-                }))
-
+        private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
     }
 
     override fun isSupported(language: Language): Boolean {
@@ -38,6 +23,6 @@ class JsonSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is JsonStringLiteral) { "Got non JsonStringLiteral in JsonSupport" }
-        return json.check(element).filterNot { it.info.category in tagsIgnoredCategories }.toSet()
+        return GrammarChecker.ignoringQuotes.check(element).filterNot { it.info.category in tagsIgnoredCategories }.toSet()
     }
 }
