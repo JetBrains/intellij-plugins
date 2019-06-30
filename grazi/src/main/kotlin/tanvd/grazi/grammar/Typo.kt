@@ -19,17 +19,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
     }
 
 
-    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category) {
-        val description: String
-            get() {
-                val description = rule.description
-                if (description.isBlank())
-                    return category.description
-                if (description.contains(":"))
-                    return description
-                return "${category.description}: $description"
-            }
-    }
+    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category)
 
     val word by lazy { location.pointer?.element!!.text.subSequence(location.range).toString() }
 
