@@ -30,14 +30,13 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFixAndIntentionAction
     override fun getPriority() = PriorityAction.Priority.HIGH
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
-        if (editor != null) {
-            DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
-                val selectionRange = typo.toAbsoluteSelectionRange()
-                editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
+        editor ?: return
+        DataManager.getInstance().dataContextFromFocusAsync.onSuccess {
+            val selectionRange = typo.toAbsoluteSelectionRange()
+            editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
 
-                val items = typo.fixes.map { LookupElementBuilder.create(it) }
-                LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
-            }
+            val items = typo.fixes.map { LookupElementBuilder.create(it) }
+            LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
         }
     }
 }

@@ -23,5 +23,4 @@ object GraziBundle {
     fun langConfig(key: String): Set<String> {
         return json.readValue(langConfigs.getProperty(key)!!, setTypeRef)
     }
-
 }

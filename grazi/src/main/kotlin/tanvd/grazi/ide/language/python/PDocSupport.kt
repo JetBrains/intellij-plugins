@@ -18,7 +18,7 @@ class PDocSupport : LanguageSupport() {
     }
 
     override fun check(element: PsiElement): Set<Typo> {
-        require(element is PyStringLiteralExpression) { "Got non doc PyStringLiteralExpression in a PDocSupport" }
+        require(element is PyStringLiteralExpression) { "Got the non doc PyStringLiteralExpression in a PDocSupport" }
         return PUtils.python.check(element.stringElements, indexBasedIgnore = { token, index ->
             when (token) {
                 is PyFormattedStringElement -> token.literalPartRanges.all { index !in it }
