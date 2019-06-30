@@ -1,5 +1,7 @@
 package tanvd.grazi.spellcheck
 
+import com.intellij.lang.Language
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.spellchecker.inspections.Splitter
@@ -31,7 +33,7 @@ object GraziSpellchecker {
 
     private var checker: JLanguageTool = createChecker()
 
-    private class GraziTokenConsumer : TokenConsumer() {
+    private class GraziTokenConsumer(val project: Project, val language: Language) : TokenConsumer() {
         val result = HashSet<Typo>()
 
         override fun consumeToken(element: PsiElement, text: String, useRename: Boolean,
@@ -40,7 +42,7 @@ object GraziSpellchecker {
                 if (partRange != null) {
                     val part = partRange.substring(text)
                     if (!ignorePatters.any { it(part) }) {
-                        val typos = check(part)
+                        val typos = check(part, project, language)
                         result.addAll(typos.map { typo ->
                             typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(offset + partRange.startOffset),
                                     pointer = element.toPointer(), shouldUseRename = useRename))
@@ -54,7 +56,7 @@ object GraziSpellchecker {
     fun getFixes(element: PsiElement): Set<Typo> {
         val strategy = IdeaSpellchecker.getSpellcheckingStrategy(element)
         if (strategy != null) {
-            val consumer = GraziTokenConsumer()
+            val consumer = GraziTokenConsumer(element.project, element.language)
             strategy.getTokenizer(element).tokenize(element, consumer)
             return consumer.result
         }
@@ -69,9 +71,9 @@ object GraziSpellchecker {
      *
      * Note, that casing typos (suggestion includes the same word but in different casing) are ignored.
      */
-    private fun check(word: String) = buildSet<Typo> {
+    private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
         val typo = tryRun { checker.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
-        if (typo != null && IdeaSpellchecker.hasProblem(word) && !isCasingProblem(word, typo)) {
+        if (typo != null && IdeaSpellchecker.hasProblem(word, project, language) && !isCasingProblem(word, typo)) {
             add(typo)
         }
     }

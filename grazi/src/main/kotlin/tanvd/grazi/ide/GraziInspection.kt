@@ -112,7 +112,6 @@ class GraziInspection : LocalInspectionTool() {
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement?) {
                 element ?: return
-                IdeaSpellchecker.init(element.project)
 
                 val typos = HashSet<Typo>()
 

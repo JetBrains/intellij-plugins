@@ -3,7 +3,7 @@ package tanvd.grazi.ide.language
 import tanvd.grazi.GraziTestBase
 
 
-class KotlinSupportTest : GraziTestBase(false) {
+class KotlinSupportTest : GraziTestBase(true) {
     fun `test grammar check in string literals`() {
         runHighlightTestForFile("ide/language/kotlin/StringLiteral.kt")
     }

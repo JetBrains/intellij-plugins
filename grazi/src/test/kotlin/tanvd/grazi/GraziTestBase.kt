@@ -26,10 +26,7 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
         super.setUp()
         myFixture.enableInspections(*inspectionTools)
 
-        if (withSpellcheck) {
-            GraziConfig.state.enabledSpellcheck = true
-            IdeaSpellchecker.init(myFixture.project)
-        }
+        GraziConfig.state.enabledSpellcheck = withSpellcheck
     }
 
     protected fun runHighlightTestForFile(file: String) {

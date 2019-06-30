@@ -13,11 +13,11 @@ object LangDetector {
             .withProfiles(profiles)
             .build()
 
-    fun getLang(str: String, enabledLangs: List<Lang>): Lang? {
+    fun getLang(str: String, enabledLanguages: List<Lang>): Lang? {
         return detector.getProbabilities(str.take(charsForLangDetection))
-                .filter { it.locale.language in enabledLangs.map { it.shortCode } }
+                .filter { it.locale.language in enabledLanguages.map { it.shortCode } }
                 .maxBy { it.probability }
-                ?.let { Lang[it.locale.language] } ?: enabledLangs.firstOrNull()
+                ?.let { Lang[it.locale.language] } ?: enabledLanguages.firstOrNull()
     }
 
 

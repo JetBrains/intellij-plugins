@@ -51,7 +51,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                 var totalExcluded = 0
                 indexesShift[index] = totalExcluded
                 for ((tokenIndex, char) in getText(token).withIndex()) {
-                    //perform replacing of chan (depending on already seen string)
+                    //perform replacing of char (depending on already seen string)
                     @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
