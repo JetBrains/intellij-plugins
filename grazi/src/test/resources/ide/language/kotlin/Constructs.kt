@@ -4,7 +4,7 @@ package ide.language.kotlin
 
 val hello<warning>Giiiil</warning> = "123"
 
-fun <warning> hllo</warning>Jerry() {}
+fun <warning>hllo</warning>Jerry() {}
 
 object HelloMy<warning>Frinds</warning>
 

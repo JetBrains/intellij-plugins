@@ -43,7 +43,7 @@ class GrammarEngineTest : GraziTestBase(true) {
         val text = """
             |hello world!
             |This is the start of a message.
-            |The end is also here world
+            |The end is also here world.
         """.trimMargin()
         val fixes = GrammarEngine.getFixes(text)
         fixes.single().assertTypoIs(Typo.Category.CASING, IntRange(0, 4), listOf("Hello"), text)
@@ -54,7 +54,7 @@ class GrammarEngineTest : GraziTestBase(true) {
         val text = """
             |Hello world!
             |This is the start of a message.
-            |It is a the friend
+            |It is a the friend.
         """.trimMargin()
         val fixes = GrammarEngine.getFixes(text)
         fixes.single().assertTypoIs(Typo.Category.GRAMMAR, IntRange(51, 55), listOf("a", "the"), text)
@@ -74,7 +74,7 @@ class GrammarEngineTest : GraziTestBase(true) {
     fun `test few lines text with few typos`() {
         val text = """
             |Hello. world,, tot he.
-            |This are my friend""".trimMargin()
+            |This are my friend.""".trimMargin()
         val fixes = GrammarEngine.getFixes(text).toList()
         assertEquals(4, fixes.size)
         fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(7, 11), listOf("World"), text)
@@ -91,7 +91,7 @@ class GrammarEngineTest : GraziTestBase(true) {
             fixes = GrammarEngine.getFixes(text).toList()
         }
         fixes.forEach { it.verify(text) }
-        assert(fixes.size > 100)
+        assert(fixes.size > 30)
         assert(totalTime < 10_000)
     }
 
@@ -103,7 +103,7 @@ class GrammarEngineTest : GraziTestBase(true) {
             fixes = GrammarEngine.getFixes(text).toList()
         }
         fixes.forEach { it.verify(text) }
-        assert(fixes.size > 500)
+        assert(fixes.size > 200)
         assert(totalTime < 20_000)
     }
 }
