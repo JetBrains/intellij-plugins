@@ -2,7 +2,8 @@ package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.isSpellingTypo
+import tanvd.grazi.utils.toPointer
 
 /**
  * Helper to set up masks to ignore inline elements in sequences of tokens.
@@ -73,7 +74,7 @@ class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
     private fun Typo.isAtStart(): Boolean {
         var start = 0
         val element = location.pointer!!
-        while (start < element.element!!.text.length && start !in location.range && Text.isBlank(element.element!!.text[start])) {
+        while (start < element.element!!.text.length && start !in location.range && element.element!!.text[start].isWhitespace()) {
             start++
         }
         return start in location.range
@@ -82,7 +83,7 @@ class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
     private fun Typo.isAtEnd(): Boolean {
         val element = location.pointer!!
         var start = element.element!!.text.length - 1
-        while (start >= 0 && start !in location.range && Text.isBlank(element.element!!.text[start])) {
+        while (start >= 0 && start !in location.range && element.element!!.text[start].isWhitespace()) {
             start--
         }
         return start in location.range

@@ -19,11 +19,7 @@ object GraziSpellchecker {
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
 
-    private val ignorePatters: List<(String) -> Boolean> = listOf(
-            { it -> it.startsWith(".") },
-            { it -> it.isUrl() },
-            { it -> it.isHtmlPlainTextTag() },
-            { it -> it.isFilePath() })
+    private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
     private fun createChecker(): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)

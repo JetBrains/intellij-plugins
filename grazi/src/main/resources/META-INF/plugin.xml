@@ -101,7 +101,6 @@
 
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.plain.UnknownTypeSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.xml.XmlSupport"/>
 

@@ -17,7 +17,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
     companion object {
         object Rules {
             val deduplicateBlanks: (CharSequence, Char) -> Boolean = { str, cur ->
-                str.lastOrNull()?.let { Text.isNewlineOrBlank(it) }.orTrue() && Text.isNewlineOrBlank(cur)
+                str.lastOrNull()?.isWhitespace().orTrue() && cur.isWhitespace()
             }
             //TODO probably we need to flat them only if previous char is not end of sentence punctuation mark
             val flatNewlines: (CharSequence, Char) -> Char? = { _, cur ->
@@ -69,7 +69,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                     tokenMapping[IntRange(tokenStartIndex, index - 1)] = token
                 }
 
-                if (!lastOrNull()?.let { Text.isBlank(it) }.orTrue()) {
+                if (!lastOrNull()?.isWhitespace().orTrue()) {
                     append(' ')
                     index++
                 }
