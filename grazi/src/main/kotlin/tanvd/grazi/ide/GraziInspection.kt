@@ -14,36 +14,74 @@ import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
     companion object {
+
+
         private fun getProblemMessage(fix: Typo): String {
-            //language=HTML
-            return """
-            <html>
-                <body>
-                    ${if (!fix.isSpellingTypo)
-                """<p>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</p>
-                           <br/>
-                        """
-            else ""}
-                    <p>${fix.info.rule.description}</p>
-                    ${if (!fix.isSpellingTypo) """
-                    <br/>
-                    <table>
-                        ${fix.info.rule.incorrectExamples.minBy { it.example.length }?.let { example ->
+            val message = if (fix.isSpellingTypo) {
+                //language=HTML
                 """
-                        <tr>
-                            <td style='vertical-align: top; color: gray;'>Incorrect:</td>
-                            <td>${example.toIncorrectHtml()}</td>
-                        </tr>
-                        <tr>
-                            <td style='vertical-align: top; color: gray;'>Correct:</td>
-                            <td>${example.toCorrectHtml()}</td>
-                        </tr>"""
-            } ?: ""}
-                    </table>
-                        """.trimIndent() else ""}
-                </body>
-            </html>
-            """.trimIndent()
+                    <html>
+                        <body>
+                            <div>
+                                <p>${fix.info.rule.description}</p>
+                            </div>
+                        </body>
+                    </html>
+                """.trimIndent()
+            } else {
+                val examples = fix.info.incorrectExample?.let {
+                    if (it.corrections.isEmpty()) {
+                        //language=HTML
+                        """
+                            <tr style='padding-top: 5px;'>
+                                <td style='vertical-align: top; color: gray;'>Incorrect:</td>
+                                <td>${it.toIncorrectHtml()}</td>
+                            </tr>
+                        """.trimIndent()
+
+                    } else {
+                        //language=HTML
+                        """
+                            <tr style='padding-top: 5px;'>
+                                <td style='vertical-align: top; color: gray;'>Incorrect:</td>
+                                <td style='text-align: left'>${it.toIncorrectHtml()}</td>
+                            </tr>
+                            <tr>
+                                <td style='vertical-align: top; color: gray;'>Correct:</td>
+                                <td style='text-align: left'>${it.toCorrectHtml()}</td>
+                            </tr>
+                        """.trimIndent()
+                    }
+                } ?: ""
+
+                val fixes = if (fix.fixes.isNotEmpty()) {
+                    //language=HTML
+                    """
+                        <tr><td colspan='2' style='padding-bottom: 3px;'>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</td></tr>
+                    """
+                } else ""
+
+                //language=HTML
+                """
+                    <html>
+                        <body>
+                            <div>
+                                <table>
+                                $fixes
+                                <tr><td colspan='2'>${fix.info.rule.description}</td></tr>
+                                </table>
+                                <table>
+                                $examples
+                                </table>
+                            </div>
+                        </body>
+                    </html>
+                """.trimIndent()
+            }
+            if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
+                return message.replaceFirst("<div>", "<div style='width: 300px;'>")
+            }
+            return message
         }
 
         private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor? {

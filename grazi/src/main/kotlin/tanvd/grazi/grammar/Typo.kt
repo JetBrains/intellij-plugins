@@ -4,8 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
-import org.languagetool.rules.Rule
-import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.*
 import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
 
@@ -19,7 +18,13 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
     }
 
 
-    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category)
+    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category) {
+        val incorrectExample: IncorrectExample?
+            get() {
+                val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }
+                return (withCorrections.takeIf { it.isNotEmpty() } ?: rule.incorrectExamples).minBy { it.example.length }
+            }
+    }
 
     val word by lazy { location.pointer?.element!!.text.subSequence(location.range).toString() }
 

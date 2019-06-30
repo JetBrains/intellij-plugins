@@ -29,20 +29,21 @@ object GrammarEngine {
             return@buildSet
         }
 
-        val head = seps.first()
-        val tail = seps.drop(1)
+        if (!isBig(str)) {
+            addAll(getFixesSmall(str).map {
+                Typo(it.location, it.info, it.fixes)
+            })
+        } else {
+            val head = seps.first()
+            val tail = seps.drop(1)
 
-        str.splitWithRanges(head) { range, sentence ->
-            val stringFixes = if (isBig(sentence) && tail.isNotEmpty()) {
-                getFixes(sentence, tail)
-            } else {
-                getFixesSmall(sentence)
-            }.map {
-                Typo(it.location.withOffset(range.start), it.info, it.fixes)
+            str.splitWithRanges(head) { range, sentence ->
+                addAll(getFixes(sentence, tail).map {
+                    Typo(it.location.withOffset(range.start), it.info, it.fixes)
+                })
+
+                ProgressManager.checkCanceled()
             }
-            addAll(stringFixes)
-
-            ProgressManager.checkCanceled()
         }
     }
 
