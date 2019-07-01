@@ -1,15 +1,13 @@
-class <warning > Vehicl < / warning >:
+
+class <warning>Vehicl</warning>:
 
     def __init__(self):
         pass
 
 
-def get_<
+def get_<warning>spreadshet</warning>_cols(<warning>fiile</warning>_loc, print_cols = False):
 
+    <warning>daata</warning> = pd.read_excel(fiile_loc)
+    col_headers = list(file_data.columns.values)
 
-    warning > spreadshet < / warning > _cols( < warning > fiile < / warning > _loc, print_cols = False):
-
-< warning > daata < / warning > = pd.read_excel(fiile_loc)
-col_headers = list(file_data.columns.values)
-
-return col_headers
+    return col_headers
