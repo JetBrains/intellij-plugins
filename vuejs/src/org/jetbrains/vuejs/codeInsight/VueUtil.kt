@@ -2,8 +2,10 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.types.JSTypeContext
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.UserDataHolder
@@ -82,4 +84,13 @@ fun getScopeAndCacheHolder(module: Module, includeLibraries: Boolean = false): P
               else
                 GlobalSearchScope.projectScope(module.project),
               module.project)
+}
+
+val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
+
+fun getJSTypeFromVueType(expression: JSExpression?): JSType? {
+  return (expression as? JSReferenceExpression)
+    ?.referenceName
+    // TODO support other types here
+    ?.let { name -> if (name == "Boolean") BOOLEAN_TYPE else null }
 }

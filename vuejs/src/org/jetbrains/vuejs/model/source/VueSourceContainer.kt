@@ -14,6 +14,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.*
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
+import org.jetbrains.vuejs.codeInsight.getJSTypeFromVueType
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.*
@@ -37,7 +38,7 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
   override val slots: List<VueSlot> = emptyList()
 
   override val extends: List<VueContainer> get() = EXTENDS.get(declaration)
-  override val components: Map<String, VueComponent> get () = COMPONENTS.get(declaration)
+  override val components: Map<String, VueComponent> get() = COMPONENTS.get(declaration)
   override val directives: Map<String, VueDirective> get() = DIRECTIVES.get(declaration)
   override val mixins: List<VueMixin> get() = MIXINS.get(declaration)
   override val filters: Map<String, VueFilter> = emptyMap()
@@ -223,7 +224,9 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
 }
 
 class VueSourceInputProperty(override val name: String,
-                             override val source: PsiElement?) : VueInputProperty
+                             override val source: PsiElement?) : VueInputProperty {
+  override val jsType: JSType? get() = getJSTypeFromVueType((source as? JSProperty)?.value)
+}
 
 
 class VueSourceDataProperty(override val name: String,
@@ -234,3 +237,4 @@ class VueSourceComputedProperty(override val name: String,
 
 class VueSourceMethod(override val name: String,
                       override val source: PsiElement?) : VueMethod
+
