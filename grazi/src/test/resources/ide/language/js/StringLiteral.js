@@ -19,5 +19,3 @@ console.log("It is <warning>frend</warning> of human");
 console.log("It <warning>are</warning> working for <warning>much</warning> warnings");
 console.log("It is ${fewTypos} friend");
 console.log("It is <warning>friend</warning>. <warning>But</warning> I have a ${1} here");
-
-
