@@ -2,11 +2,9 @@ package tanvd.grazi
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPlainText
-import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.junit.Before
 import tanvd.grazi.ide.GraziInspection
-import tanvd.grazi.spellcheck.IdeaSpellchecker
 import tanvd.grazi.utils.filterFor
 import java.io.File
 
@@ -42,6 +40,6 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
 
 
     companion object {
-        private val inspectionTools by lazy { arrayOf(GraziInspection(), SpellCheckingInspection()) }
+        private val inspectionTools by lazy { arrayOf(GraziInspection()) }
     }
 }

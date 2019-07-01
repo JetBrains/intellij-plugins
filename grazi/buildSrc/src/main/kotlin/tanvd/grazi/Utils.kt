@@ -24,7 +24,7 @@ val Project.channel: String
                 "nightly"
             }
             else -> {
-                error("Branch $branch can not be casted to channel name")
+                "feature"
             }
         }
     }
