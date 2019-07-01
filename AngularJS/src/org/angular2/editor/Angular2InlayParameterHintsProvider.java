@@ -2,6 +2,7 @@
 package org.angular2.editor;
 
 import com.intellij.codeInsight.hints.Option;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSCallLikeExpression;
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider;
 import org.angular2.lang.Angular2Bundle;
@@ -14,20 +15,13 @@ import java.util.List;
 
 public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
   public static final Option NAMES_FOR_ALL_ARGS = new Option(
-    "angular.show.names.for.all.args", Angular2Bundle.message("angular.inlay.params.option.all.arguments"), false);
-  public static final Option NAMES_FOR_TAGGED_TEMPLATES = new Option(
-    "angular.show.names.for.tagged", Angular2Bundle.message("angular.inlay.params.option.tagged.template.arguments"), true);
+    "angular.show.names.for.all.args", JSBundle.message("js.param.hints.show.names.for.all.args"), false);
   public static final Option NAMES_FOR_PIPES = new Option(
     "angular.show.names.for.pipes", Angular2Bundle.message("angular.inlay.params.option.pipe.arguments"), true);
 
   @Override
   protected Option getShowNameForAllArgsOption() {
     return NAMES_FOR_ALL_ARGS;
-  }
-
-  @Override
-  protected Option getShowNameForTaggedOption() {
-    return NAMES_FOR_TAGGED_TEMPLATES;
   }
 
   @NotNull
