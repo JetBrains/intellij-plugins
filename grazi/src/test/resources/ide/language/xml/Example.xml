@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shiporder orderid="889923"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="Example.xsd">
+    <orderperson> <warning>john</warning> Smith</orderperson>
+    <shipto>
+        <name>it <warning>an</warning> friend</name>
+        <address>Some street 23</address>
+        <city>4000 City</city>
+        <country>Norway</country>
+    </shipto>
+    <item>
+        <title>Empire Burlesque</title>
+        <note><warning>Specal</warning> Edition</note>
+        <quantity>1</quantity>
+        <price>10.90</price>
+    </item>
+    <item>
+        <title>Hide your heart</title>
+        <quantity>1</quantity>
+        <price>9.90</price>
+    </item>
+</shiporder>

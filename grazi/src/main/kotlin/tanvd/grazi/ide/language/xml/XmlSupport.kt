@@ -1,10 +1,10 @@
 package tanvd.grazi.ide.language.xml
 
 import com.intellij.lang.Language
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlText
-import org.apache.xmlbeans.XmlLanguage
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
@@ -12,7 +12,7 @@ import tanvd.grazi.utils.filterFor
 
 class XmlSupport : LanguageSupport() {
     override fun isSupported(language: Language): Boolean {
-        return language is XmlLanguage
+        return language is XMLLanguage
     }
 
     override fun isRelevant(element: PsiElement): Boolean {
