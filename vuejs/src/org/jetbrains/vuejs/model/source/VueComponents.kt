@@ -5,10 +5,12 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -16,7 +18,10 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 
 /**
@@ -118,20 +123,27 @@ class VueComponents {
     }
 
     fun getExportedDescriptor(defaultExport: JSExportAssignment): VueComponentDescriptor? {
-      val exportedObjectLiteral = defaultExport.stubSafeElement as? JSObjectLiteralExpression
-      if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)
+      when (val exportedElement = defaultExport.stubSafeElement) {
+        // export default {...}
+        is JSObjectLiteralExpression -> return VueComponentDescriptor(exportedElement)
 
-      // export default MyComponent;  const MyComponent = {...}
-      val resolve = (defaultExport.stubSafeElement as? JSReferenceExpression)?.resolve()
-      val objLiteral = if (resolve == null) null else VueComponentsCalculation.getObjectLiteralFromResolve(listOf(resolve))
-      if (objLiteral != null) return VueComponentDescriptor(objLiteral)
+        // export default MyComponent;  const MyComponent = {...}
+        is JSReferenceExpression -> exportedElement.resolve()
+          ?.let { VueComponentsCalculation.getObjectLiteralFromResolve(listOf(it)) }
+          ?.let { return VueComponentDescriptor(it) }
 
-      val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
-      val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
-      val objectDescriptor = getDescriptorFromDecorator(decorator)
-      val classDescriptor = defaultExport.stubSafeElement as? JSClassExpression<*>
-      if (objectDescriptor == null && classDescriptor == null) return null
-      return VueComponentDescriptor(objectDescriptor, classDescriptor)
+        // export default Vue.extend({...})
+        is JSCallExpression ->
+          if (isExtendVueCall(exportedElement))
+            PsiTreeUtil.getStubChildOfType(exportedElement.argumentList!!, JSObjectLiteralExpression::class.java)
+              ?.let { return VueComponentDescriptor(it) }
+
+        // export default @Component({...}) class MyComponent {...}
+        is JSClassExpression<*> -> findDecorator(exportedElement, "Component")
+          ?.let { getObjectLiteralInitializer(it) }
+          ?.let { return VueComponentDescriptor(it, exportedElement) }
+      }
+      return null
     }
 
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
@@ -143,6 +155,50 @@ class VueComponents {
         return arguments[0] as? JSObjectLiteralExpression
       }
       return null
+    }
+
+    //TODO remove duplication with Angular code
+    @StubSafe
+    fun findDecorator(attributeListOwner: JSAttributeListOwner, name: String): ES6Decorator? {
+      val list = attributeListOwner.attributeList ?: return null
+      for (decorator in getStubChildrenOfTypeAsList(list, ES6Decorator::class.java)) {
+        if (name == decorator.decoratorName) {
+          return decorator
+        }
+      }
+      return null
+    }
+
+    //TODO remove duplication with Angular code
+    @StubSafe
+    fun getObjectLiteralInitializer(decorator: ES6Decorator?): JSObjectLiteralExpression? {
+      for (child in getStubChildrenOfTypeAsList(decorator, PsiElement::class.java)) {
+        if (child is JSCallExpression) {
+          val callStub = if (child is StubBasedPsiElement<*>) (child as StubBasedPsiElement<*>).stub else null
+          if (callStub != null) {
+            for (callChildStub in callStub.childrenStubs) {
+              val callChild = callChildStub.psi
+              if (callChild is JSObjectLiteralExpression) {
+                return callChild
+              }
+            }
+          }
+          else {
+            return child.arguments.firstOrNull() as? JSObjectLiteralExpression
+          }
+          break
+        }
+        else if (child is JSObjectLiteralExpression) {
+          return child
+        }
+      }
+      return null
+    }
+
+    @StubUnsafe
+    private fun isExtendVueCall(callExpression: JSCallExpression): Boolean {
+      return JSSymbolUtil.isAccurateReferenceExpressionName(
+        callExpression.methodExpression as? JSReferenceExpression, VueFrameworkHandler.VUE, "extend")
     }
   }
 }

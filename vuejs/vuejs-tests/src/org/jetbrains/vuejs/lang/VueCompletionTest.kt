@@ -28,8 +28,8 @@ import com.intellij.openapi.application.WriteAction.run
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -1470,6 +1470,29 @@ $script""")
 
     assertDoesntContainVueLifecycleHooks()
   }
+
+  fun testVueCompletionWithExtend() {
+    myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <HW <caret>/>
+      </template>
+      <script>
+        import Vue from "vue"
+        import HW from './a-component.vue'
+        
+        export default Vue.extend({
+            name: 'app',
+            components: {
+                HW
+            },
+        });
+      </script>
+    """)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "msg")
+  }
+
 
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
