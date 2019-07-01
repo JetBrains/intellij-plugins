@@ -134,14 +134,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 open class VueAttributeDescriptor(name: String,
                                   element: PsiElement? = null,
                                   isDirective: Boolean = false,
-                                  isNonProp: Boolean = false) :
-  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isDirective, isNonProp) {
-
-  fun createNameVariant(newName: String): VueAttributeDescriptor {
-    if (newName == name) return this
-    return VueAttributeDescriptor(newName, element)
-  }
-}
+                                  acceptsNoValue: Boolean = false) :
+  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isDirective, acceptsNoValue)
 
 // This class is the original `VueAttributeDescriptor` class,
 // but it's renamed to allow instanceof check through deprecated class from 'codeInsight' package
@@ -150,7 +144,7 @@ open class VueAttributeDescriptor(name: String,
 open class _VueAttributeDescriptor(private val name: String,
                                    internal val element: PsiElement? = null,
                                    private val isDirective: Boolean = false,
-                                   private val isNonProp: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+                                   private val acceptsNoValue: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName(): String = name
   override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}
@@ -164,12 +158,17 @@ open class _VueAttributeDescriptor(private val name: String,
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
-    return if (isEnumerated) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
+    return if (isEnumerated)
+      xmlElement
+    else if (value == null || value.isEmpty())
+      null
+    else
+      super.getEnumeratedValueDeclaration(xmlElement, value)
   }
 
   override fun hasIdRefType(): Boolean = false
   override fun getDefaultValue(): Nothing? = null
-  override fun isEnumerated(): Boolean = isDirective || isNonProp ||
+  override fun isEnumerated(): Boolean = isDirective || acceptsNoValue ||
                                          VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
 
   override fun getEnumeratedValues(): Array<out String> {

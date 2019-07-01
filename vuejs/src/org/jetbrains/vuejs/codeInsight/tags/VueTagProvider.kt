@@ -21,6 +21,7 @@ import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
@@ -146,6 +147,10 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
     fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
       ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
          ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
+
+    fun isBooleanProp(prop: VueInputProperty): Boolean {
+      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
+    }
   }
 
   override fun getDeclaration(): JSImplicitElement {
@@ -204,7 +209,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         val result = mutableListOf<XmlAttributeDescriptor>()
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source))
+            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source, acceptsNoValue = isBooleanProp(prop)))
             return true
           }
         })
@@ -228,7 +233,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
             if (normalizedName == fromAsset(prop.name)) {
-              result = VueAttributeDescriptor(attributeName, prop.source)
+              result = VueAttributeDescriptor(attributeName, prop.source, acceptsNoValue = isBooleanProp(prop))
               return false
             }
             return true
@@ -244,7 +249,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName ?: attributeName, context)
            // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
            // vue allows any non-declared as props attributes to be passed to a component
-           ?: VueAttributeDescriptor(attributeName, isNonProp = extractedName == null)
+           ?: VueAttributeDescriptor(attributeName, acceptsNoValue = extractedName == null)
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,

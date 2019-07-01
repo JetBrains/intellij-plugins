@@ -1064,6 +1064,37 @@ import BComponent from 'b-component'
     myFixture.checkHighlighting()
   }
 
+  fun testBooleanProps() {
+    myFixture.configureByText("a-component.vue", """
+      <script>
+         export default {
+            props: {
+              foo: Boolean,
+              bar: String
+            }
+         }
+      </script>
+    """)
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <div>
+          <A foo <warning descr="Wrong attribute value">bar</warning> unknown></A>
+        </div>
+      </template>
+      
+      <script>
+          import A from 'a-component'
+          export default {
+              components: {
+                A
+              }
+          }
+      </script>
+    """)
+    myFixture.checkHighlighting()
+
+  }
+
   fun testRecursiveMixedMixins() {
     defineRecursiveMixedMixins(myFixture)
     myFixture.configureByText("RecursiveMixedMixins.vue", """
@@ -1177,6 +1208,40 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     myFixture.checkHighlighting()
   }
 
+  fun testBootstrapVue() {
+    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
+    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <b-alert show>Foo</b-alert>
+        <b-container>
+          <b-jumbotron header="BootstrapVue" lead="Bootstrap v4 Components for Vue.js 2">
+            <p>For more information visit our website</p>
+            <b-btn variant="primary" href="https://bootstrap-vue.js.org/">More Info</b-btn>
+          </b-jumbotron>
+  
+          <b-form-group
+            horizontal
+            :label-cols="4"
+            description="Let us know your name."
+            label="Enter your name"
+          >
+            <b-form-input v-model.trim="name"></b-form-input>
+          </b-form-group>
+  
+          <b-alert variant="success" :show="<weak_warning descr="Unresolved variable or type showAlert">showAlert</weak_warning>">Hello {{ name }}</b-alert>
+        </b-container>
+      </template>
+      <script>
+        export default {
+            name: 'app',
+            components: {
+            },
+        };
+      </script>
+    """)
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
