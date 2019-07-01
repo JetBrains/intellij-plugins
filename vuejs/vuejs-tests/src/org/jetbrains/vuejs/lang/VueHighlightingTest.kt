@@ -1164,10 +1164,9 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
         <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/></warning>
       </template>
       <script>
-        import Vue from "vue"
         import HW from './a-component.vue'
         
-        export default Vue.extend({
+        export default <weak_warning descr="Unresolved variable or type Vue">Vue</weak_warning>.extend({
             name: 'app',
             components: {
                 HW
