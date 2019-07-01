@@ -647,7 +647,8 @@ Vue.component('global-comp-literal', {
 {{ <caret>someNonExistingReference2389 }}
 </template>
 """)
-    val intentions = myFixture.filterAvailableIntentions(JSBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
+    val intentions = myFixture.filterAvailableIntentions(
+      JSBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -1151,6 +1152,28 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
   </div>
 </template>
+    """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testVueExtendSyntax() {
+    myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <HW msg="foo"/>
+        <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/></warning>
+      </template>
+      <script>
+        import Vue from "vue"
+        import HW from './a-component.vue'
+        
+        export default Vue.extend({
+            name: 'app',
+            components: {
+                HW
+            },
+        });
+      </script>
     """)
     myFixture.checkHighlighting()
   }
