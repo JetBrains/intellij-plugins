@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.ES6QualifiedNameResolver
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -18,9 +17,7 @@ import com.intellij.lang.javascript.psi.util.JSProjectUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 
@@ -139,9 +136,9 @@ class VueComponents {
               ?.let { return VueComponentDescriptor(it) }
 
         // export default @Component({...}) class MyComponent {...}
-        is JSClassExpression<*> -> findDecorator(exportedElement, "Component")
-          ?.let { getObjectLiteralInitializer(it) }
-          ?.let { return VueComponentDescriptor(it, exportedElement) }
+        is JSClassExpression<*> ->
+          return VueComponentDescriptor(getElementComponentDecorator(defaultExport)?.let { getDescriptorFromDecorator(it) },
+                                        exportedElement)
       }
       return null
     }
@@ -153,44 +150,6 @@ class VueComponents {
       val arguments = callExpression.arguments
       if (arguments.size == 1) {
         return arguments[0] as? JSObjectLiteralExpression
-      }
-      return null
-    }
-
-    //TODO remove duplication with Angular code
-    @StubSafe
-    fun findDecorator(attributeListOwner: JSAttributeListOwner, name: String): ES6Decorator? {
-      val list = attributeListOwner.attributeList ?: return null
-      for (decorator in getStubChildrenOfTypeAsList(list, ES6Decorator::class.java)) {
-        if (name == decorator.decoratorName) {
-          return decorator
-        }
-      }
-      return null
-    }
-
-    //TODO remove duplication with Angular code
-    @StubSafe
-    fun getObjectLiteralInitializer(decorator: ES6Decorator?): JSObjectLiteralExpression? {
-      for (child in getStubChildrenOfTypeAsList(decorator, PsiElement::class.java)) {
-        if (child is JSCallExpression) {
-          val callStub = if (child is StubBasedPsiElement<*>) (child as StubBasedPsiElement<*>).stub else null
-          if (callStub != null) {
-            for (callChildStub in callStub.childrenStubs) {
-              val callChild = callChildStub.psi
-              if (callChild is JSObjectLiteralExpression) {
-                return callChild
-              }
-            }
-          }
-          else {
-            return child.arguments.firstOrNull() as? JSObjectLiteralExpression
-          }
-          break
-        }
-        else if (child is JSObjectLiteralExpression) {
-          return child
-        }
       }
       return null
     }
