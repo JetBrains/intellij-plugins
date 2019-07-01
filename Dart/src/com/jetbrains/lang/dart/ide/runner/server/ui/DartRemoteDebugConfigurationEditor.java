@@ -88,7 +88,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
     );
 
-    myCopyButton.setSize(22);
+    myCopyButton.setSize(ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
     myCopyButton.setIcon(PlatformIcons.COPY_ICON);
     myCopyButton.addActionListener(e -> CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim())));
   }
