@@ -263,7 +263,7 @@ public class DartAnnotator implements Annotator {
 
     final String severity = error.getSeverity();
     final String message = error.getMessage();
-    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(message);
+    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
     final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
     final HighlightSeverity annotationSeverity;
     final TextAttributesKey textAttributesKey;
@@ -295,19 +295,22 @@ public class DartAnnotator implements Annotator {
   }
 
   @Nullable
-  private static ProblemHighlightType getSpecialHighlightType(@NotNull final String errorMessage) {
+  private static ProblemHighlightType getSpecialHighlightType(@NotNull final DartServerData.DartError error) {
     // see [Dart repo]/pkg/analyzer/lib/src/generated/error.dart
-    // todo it is now possible to switch to checking error code instead of error message
+    final String code = error.getCode();
+    if (code == null) return null;
 
-    if (errorMessage.startsWith("Unused import") ||
-        errorMessage.startsWith("Duplicate import") ||
-        errorMessage.contains(" is not used") ||
-        errorMessage.contains(" isn't used") ||
-        errorMessage.startsWith("Dead code")) {
+    if (StringUtil.equals(code, "dead_code") ||
+        StringUtil.equals(code, "duplicate_import")) {
       return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
     }
 
-    if (errorMessage.contains(" is deprecated")) {
+    if (code.startsWith("unused_")) {
+      return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
+    }
+
+    // deprecated_member_use, deprecated_member_use_from_same_package
+    if (code.startsWith("deprecated_member_use")) {
       return ProblemHighlightType.LIKE_DEPRECATED;
     }
 
