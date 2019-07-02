@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.javascript.ui.NodeModuleNamesUtil
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -28,8 +28,8 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
   companion object {
     private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
 
-    fun create(module: Module, packageJsonFile: VirtualFile): VueSourcePlugin? {
-      val packageJson = PsiManager.getInstance(module.project).findFile(packageJsonFile)
+    fun create(project: Project, packageJsonFile: VirtualFile): VueSourcePlugin? {
+      val packageJson = PsiManager.getInstance(project).findFile(packageJsonFile)
       return packageJson?.parent?.let { psiDirectory ->
         CachedValuesManager.getCachedValue(psiDirectory) {
           val directoryFile = psiDirectory.virtualFile
@@ -46,7 +46,7 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
 
           CachedValueProvider.Result(if (result.isEmpty()) null
                                      else VueSourcePlugin(result, psiDirectory,
-                                                          NodeModuleNamesUtil.getModule(directoryFile.path)),
+                                                          NodeModuleNamesUtil.getModule(directoryFile.path + "/")),
                                      NodeModulesDirectoryManager.getInstance(psiDirectory.project).nodeModulesDirChangeTracker,
                                      psiDirectory)
         }

@@ -7,8 +7,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -77,13 +76,12 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   return detectLanguage(scriptTag)
 }
 
-fun getScopeAndCacheHolder(module: Module, includeLibraries: Boolean = false): Pair<GlobalSearchScope, UserDataHolder> {
-  // TODO improve behaviour in multi module setup
-  return Pair(if (includeLibraries)
-                GlobalSearchScope.allScope(module.project)
-              else
-                GlobalSearchScope.projectScope(module.project),
-              module.project)
+fun getSearchScope(project: Project, includeLibraries: Boolean = false): GlobalSearchScope {
+  // TODO support multi module setup
+  return if (includeLibraries)
+    GlobalSearchScope.allScope(project)
+  else
+    GlobalSearchScope.projectScope(project)
 }
 
 val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)

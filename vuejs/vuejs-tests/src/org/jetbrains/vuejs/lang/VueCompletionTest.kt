@@ -35,7 +35,7 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueCompletionTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/completion/"
 
   fun testCompleteCssClasses() {
     myFixture.configureByText("a.css", ".externalClass {}")
@@ -47,6 +47,7 @@ class VueCompletionTest : BasePlatformTestCase() {
   fun testCompleteAttributesWithVueInPackageJson() {
     try {
       run<Throwable> {
+        @Suppress("DEPRECATION")
         val packageJson = myFixture.project.baseDir.createChildData(this, PackageJsonUtil.FILE_NAME)
         VfsUtil.saveText(packageJson, "{\"name\": \"id\", \"version\": \"1.0.0\", \"dependencies\": {\"vue\": \"2.4.1\"}}")
       }
@@ -55,6 +56,7 @@ class VueCompletionTest : BasePlatformTestCase() {
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
     }
     finally {
+      @Suppress("DEPRECATION")
       val packageJson = myFixture.project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
       run<Throwable> { packageJson?.delete(this) }
     }
@@ -595,13 +597,13 @@ export default {
 </script>
 """)
     noAutoComplete(Runnable {
-        myFixture.completeBasic()
-        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
-        UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                           "Hi2dden", "interestingProp", "InterestingProp",
-                                           "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
-                                           "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
-      })
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
+      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                         "Hi2dden", "interestingProp", "InterestingProp",
+                                         "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
+                                         "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
+    })
   }
 
   fun testNoCompletionInVueAttributes() {
@@ -770,7 +772,7 @@ $script""")
 
   private fun configureVueDefinitions() {
     createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
   }
 
   fun testNoDoubleCompletionForLocalComponent() {
@@ -952,16 +954,16 @@ $script""")
   }
 
   fun testClassComponentCompletion() {
-      createTwoClassComponents(myFixture)
-      myFixture.configureByText("ClassComponentCompletion.vue",
-                                """
+    createTwoClassComponents(myFixture)
+    myFixture.configureByText("ClassComponentCompletion.vue",
+                              """
 <template>
   <<caret>
 </template>
 """)
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                            listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                          listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
   }
 
   fun testClassComponentCompletionTs() {
@@ -1493,6 +1495,21 @@ $script""")
     assertContainsElements(myFixture.lookupElementStrings!!, "msg")
   }
 
+  fun testCompletionPriorityAndHints() {
+    myFixture.copyDirectoryToProject("hierarchy", ".")
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/shards-vue/node_modules", "./node_modules")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    assertEquals(listOf("!HW#null#100", "DCardHeader#shards-vue#80", "HelloApp#null#90", "HelloWorld#null#50", "HeyWorld#null#80",
+                        "VBottomSheet#vuetify#80", "VBottomSheetTransition#vuetify#80", "VCheckbox#vuetify#80", "VChip#vuetify#80",
+                        "VDatePickerHeader#vuetify#80", "VDatePickerMonthTable#vuetify#80", "VHover#vuetify#80",
+                        "VStepperHeader#vuetify#80", "VSubheader#vuetify#80", "VSwitch#vuetify#80"),
+                 renderLookupItems(myFixture, renderPriority = true, renderTypeText = true)
+                   .filter { !it.contains("html") }
+                   .sorted())
+  }
+
 
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
@@ -1514,6 +1531,7 @@ fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
   }
   """)
 }
+
 private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
   //grid components
   "v-flex",
@@ -1564,6 +1582,6 @@ private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
   "v-toolbar-title"
 )
 private val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS,
-                                                                                                   VUETIFY_UNRESOLVED_COMPONENTS.map {
-                                                                                                     toAsset(it).capitalize()
-                                                                                                   })
+                                                                                                           VUETIFY_UNRESOLVED_COMPONENTS.map {
+                                                                                                             toAsset(it).capitalize()
+                                                                                                           })
