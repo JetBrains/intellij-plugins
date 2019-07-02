@@ -17,7 +17,7 @@ class ExampleClassWithNoTypos<T>(val name: String) {
      * @return the new size of the group.
      */
     fun goodFunction(member: T): Int {
-        return 1
+        return 1 // no error comment
     }
 }
 
@@ -36,6 +36,6 @@ class ExampleClassWithTypos<T>(val name: String) {
      * @return the new size of <warning>a the</warning> group.
      */
     fun badFunction(member: T): Int {
-        return 1
+        return 1 // <warning>eror</warning> comment
     }
 }

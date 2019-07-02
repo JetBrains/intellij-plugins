@@ -5,12 +5,6 @@
     <xs:element name="order_person" type="xs:string"/>
     <xs:element name="name" type="xs:string"/>
     <xs:element name="<warning>adress</warning>" type="xs:string"/>
-    <xs:element name="city" type="xs:string"/>
-    <xs:element name="country" type="xs:string"/>
-    <xs:element name="title" type="xs:string"/>
-    <xs:element name="note" type="xs:string"/>
-    <xs:element name="quantity" type="xs:positiveInteger"/>
-    <xs:element name="price" type="xs:decimal"/>
 
     <!-- definition of <warning>attributejhgs</warning> -->
     <xs:attribute name="order_id" type="xs:string"/>
@@ -20,19 +14,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="name"/>
-                <xs:element ref="city"/>
-                <xs:element ref="country"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="item">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="title"/>
-                <xs:element ref="note" minOccurs="0"/>
-                <xs:element ref="quantity"/>
-                <xs:element ref="price"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -42,7 +23,6 @@
             <xs:sequence>
                 <xs:element ref="order_person"/>
                 <xs:element ref="ship_to"/>
-                <xs:element ref="item" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute ref="order_id" use="required"/>
         </xs:complexType>

@@ -1,13 +1,10 @@
+var variableWith<warning>Eror</warning> = "error";
 
-var some_<warning>constnt</warning> = "1";
+function <warning>eror</warning>Function(<warning>eror</warning>) { }
 
-class Some<warning>Classs</warning> {
-
-    constructor(config) {
-        this.member_varibleleel = config; // TODO Check member names
-    }
-
-    some_<warning>metod</warning>() {
-        console.log(this.member_varibleleel);
+class ClassWith<warning>Eror</warning> {
+    constructor() {
+        this.memberWithEror = "error"; // NOTE Idea doesn't check members name
     }
 }
+

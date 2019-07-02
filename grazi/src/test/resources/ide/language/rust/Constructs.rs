@@ -1,23 +1,17 @@
-
-pub struct <warning>Peerson</warning> {
-    <warning>naame</warning>: String,
+fn main() {
+    let variableWith<warning>Eror</warning> = "error";
 }
 
-impl Peerson {
+pub struct ClassWith<warning>Eror</warning> {
+    <warning>eror</warning>: String,
+}
 
-    pub fn new(<warning>naame</warning>: &str) -> Peerson {
-        Peerson {
-            naame: name.to_string(),
+impl ClassWithEror {
+    pub fn new(<warning>eror</warning>: &str) -> ClassWithEror {
+        ClassWithEror {
+            eror: eror.to_string(),
         }
     }
 
-    pub fn <warning>helllo</warning>(& self) {
-        println!("Hello, {}!", self.name);
-    }
-}
-
-fn main() {
-    let <warning>johnnn</warning> = Peerson::new("John");
-
-    john.helllo();
+    pub fn <warning>eror</warning>Function(& self) { }
 }

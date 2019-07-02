@@ -2,10 +2,10 @@
 
 package ide.language.kotlin
 
-val hello<warning>Giiiil</warning> = "123"
+val variableWith<warning>Eror</warning> = "error"
 
-fun <warning>hllo</warning>Jerry() {}
+fun <warning>eror</warning>Function(<warning>eror</warning>: Int) {}
 
-object HelloMy<warning>Frinds</warning>
+object ObjectWith<warning>Eror</warning>
 
-class HelloNew<warning>Yooooork</warning>
+class ClassWith<warning>Eror</warning>
