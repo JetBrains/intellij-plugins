@@ -33,18 +33,18 @@ class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test one line of text with one typo`() {
-        val text = "hello world, my dear friend"
+        val text = "Tot he world, my dear friend"
         val tokens = plain(text).toList()
         val fixes = GrammarChecker.default.check(tokens)
-        fixes.single().assertTypoIs(Typo.Category.CASING, IntRange(0, 4), listOf("Hello"), text)
+        fixes.single().assertTypoIs(Typo.Category.TYPOS, IntRange(0, 5), listOf("To the"), text)
     }
 
     @Test
     fun `test few lines of text with typo on first line`() {
-        val text = listOf("hello world!\n", "This is the start of a message.\n", "The end is also here world\n")
+        val text = listOf("Tot he world!\n", "This is the start of a message.\n", "The end is also here world\n")
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens)
-        fixes.single().assertTypoIs(Typo.Category.CASING, IntRange(0, 4), listOf("Hello"), text[0])
+        fixes.single().assertTypoIs(Typo.Category.TYPOS, IntRange(0, 5), listOf("To the"), text[0])
     }
 
     @Test
@@ -60,10 +60,9 @@ class GrammarCheckerTests : GraziTestBase(true) {
         val text = "Hello. world,, tot he"
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens).toList()
-        Assert.assertEquals(3, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(7, 11), listOf("World"), text)
-        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text)
-        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text)
+        Assert.assertEquals(2, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text)
+        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text)
     }
 
     @Test
@@ -71,11 +70,10 @@ class GrammarCheckerTests : GraziTestBase(true) {
         val text = listOf("Hello. world,, tot he.\n", "This are my friend.")
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens).toList()
-        Assert.assertEquals(4, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(7, 11), listOf("World"), text[0])
-        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text[0])
-        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text[0])
-        fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(0, 7), listOf("This is"), text[1])
+        Assert.assertEquals(3, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text[0])
+        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text[0])
+        fixes[2].assertTypoIs(Typo.Category.GRAMMAR, IntRange(0, 7), listOf("This is"), text[1])
     }
 
 
@@ -84,11 +82,10 @@ class GrammarCheckerTests : GraziTestBase(true) {
         val text = listOf("* Hello. world,, tot he.\n", "* * This is the next Javadoc string.\n", " * This are my friend.")
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens).toList()
-        Assert.assertEquals(4, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(9, 13), listOf("World"), text[0])
-        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(14, 15), listOf(","), text[0])
-        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(17, 22), listOf("to the"), text[0])
-        fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(3, 10), listOf("This is"), text[2])
+        Assert.assertEquals(3, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(14, 15), listOf(","), text[0])
+        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(17, 22), listOf("to the"), text[0])
+        fixes[2].assertTypoIs(Typo.Category.GRAMMAR, IntRange(3, 10), listOf("This is"), text[2])
     }
 
     @Test
@@ -97,11 +94,10 @@ class GrammarCheckerTests : GraziTestBase(true) {
                 "    This are my friend.    ")
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens).toList()
-        Assert.assertEquals(4, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(12, 16), listOf("World"), text[0])
-        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(17, 18), listOf(","), text[0])
-        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(20, 28), listOf("to the"), text[0])
-        fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(4, 11), listOf("This is"), text[2])
+        Assert.assertEquals(3, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(17, 18), listOf(","), text[0])
+        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(20, 28), listOf("to the"), text[0])
+        fixes[2].assertTypoIs(Typo.Category.GRAMMAR, IntRange(4, 11), listOf("This is"), text[2])
     }
 
     @Test
