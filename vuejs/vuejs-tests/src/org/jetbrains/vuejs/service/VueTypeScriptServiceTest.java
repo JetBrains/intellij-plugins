@@ -66,7 +66,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     checkBaseStringQualifiedCompletionWithTemplates(() -> {
       doTestWithCopyDirectory();
       return myFixture.complete(CompletionType.BASIC);
-    });
+    }, true);
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
