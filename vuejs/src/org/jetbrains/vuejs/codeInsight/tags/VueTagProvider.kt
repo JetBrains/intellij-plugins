@@ -76,12 +76,17 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val providedNames = mutableSetOf<String>()
     VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelVisitor() {
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+        val moduleName: String? = if (component.parents.size == 1) {
+          (component.parents.first() as? VuePlugin)?.moduleName
+        } else null
         nameMapper(name).forEach {
-          if (providedNames.add(it))
+          if (providedNames.add(it)) {
             elements.add(createVueLookup(component.source, it,
                                          proximity != Proximity.OUT_OF_SCOPE,
                                          scriptLanguage,
-                                         priorityOf(proximity)))
+                                         priorityOf(proximity),
+                                         moduleName))
+          }
         }
         return true
       }
@@ -106,11 +111,15 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
                               name: String,
                               shouldNotBeImported: Boolean,
                               scriptLanguage: String?,
-                              priority: Double): LookupElement {
+                              priority: Double,
+                              moduleName: String? = null): LookupElement {
     var builder = (if (element != null) LookupElementBuilder.create(element, name) else LookupElementBuilder.create(name))
       .withIcon(VuejsIcons.Vue)
     if (priority == LOCAL_PRIORITY) {
       builder = builder.bold()
+    }
+    if (moduleName != null) {
+      builder = builder.withTypeText(moduleName, true)
     }
     if (!shouldNotBeImported && element != null) {
       val settings = JSApplicationSettings.getInstance()
