@@ -1,7 +1,6 @@
 package tanvd.grazi.utils
 
-import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.*
 import tanvd.grazi.grammar.Typo
 
 fun Iterable<Typo>.spellcheckOnly(): Set<Typo> = filter { it.isSpellingTypo }.toSet()
@@ -10,6 +9,8 @@ val Typo.isSpellingTypo: Boolean
 
 val RuleMatch.typoCategory: Typo.Category
     get() = Typo.Category[rule.category.id.toString()]
+
+fun Rule.toDescriptionSanitized() = this.description.replace("**", "")
 
 fun IncorrectExample.toIncorrectHtml() = this.example.replace("marker", "strong")
 fun IncorrectExample.toCorrectHtml() = this.example.replace(Regex("<marker.*marker>"),

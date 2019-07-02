@@ -1,4 +1,5 @@
 import org.jetbrains.intellij.tasks.PublishTask
+import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import tanvd.grazi.Versions
 import tanvd.grazi.channel
@@ -45,6 +46,10 @@ tasks.withType<KotlinJvmCompile> {
     }
 }
 
+tasks.withType<RunIdeTask> {
+    jvmArgs("-Xmx1g")
+}
+
 tasks.withType<PublishTask> {
     username(System.getenv("publish_username"))
     token(System.getenv("publish_token"))
@@ -81,7 +86,7 @@ dependencies {
 
     compile("org.apache.commons", "commons-lang3", "3.5")
 
-    compile("tanvd.kex", "kex", "0.1.0")
+    compile("tanvd.kex", "kex", "0.1.1")
 }
 
 tasks.withType<Test> {

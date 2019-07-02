@@ -12,10 +12,7 @@ import tanvd.grazi.ide.quickfix.GraziDisableRule
 import tanvd.grazi.ide.quickfix.GraziRenameTypo
 import tanvd.grazi.ide.quickfix.GraziReplaceTypo
 import tanvd.grazi.spellcheck.GraziSpellchecker
-import tanvd.grazi.utils.isSpellingTypo
-import tanvd.grazi.utils.toCorrectHtml
-import tanvd.grazi.utils.toIncorrectHtml
-import tanvd.grazi.utils.toSelectionRange
+import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
@@ -31,18 +28,19 @@ class GraziInspection : LocalInspectionTool() {
                     <html>
                         <body>
                             <div>
-                                <p>${fix.info.rule.description}</p>
+                                <p>${fix.info.rule.toDescriptionSanitized()}</p>
                             </div>
                         </body>
                     </html>
                 """.trimIndent()
             } else {
                 val examples = fix.info.incorrectExample?.let {
-                    if (it.corrections.isEmpty()) {
+                    val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
+                    if (corrections.isEmpty()) {
                         //language=HTML
                         """
                             <tr style='padding-top: 5px;'>
-                                <td style='vertical-align: top; color: gray;'>Incorrect:</td>
+                                <td valign='top' style='color: gray;'>Incorrect:</td>
                                 <td>${it.toIncorrectHtml()}</td>
                             </tr>
                         """.trimIndent()
@@ -51,11 +49,11 @@ class GraziInspection : LocalInspectionTool() {
                         //language=HTML
                         """
                             <tr style='padding-top: 5px;'>
-                                <td style='vertical-align: top; color: gray;'>Incorrect:</td>
+                                <td valign='top'  style='color: gray;'>Incorrect:</td>
                                 <td style='text-align: left'>${it.toIncorrectHtml()}</td>
                             </tr>
                             <tr>
-                                <td style='vertical-align: top; color: gray;'>Correct:</td>
+                                <td valign='top'  style='color: gray;'>Correct:</td>
                                 <td style='text-align: left'>${it.toCorrectHtml()}</td>
                             </tr>
                         """.trimIndent()
@@ -65,7 +63,7 @@ class GraziInspection : LocalInspectionTool() {
                 val fixes = if (fix.fixes.isNotEmpty()) {
                     //language=HTML
                     """
-                        <tr><td colspan='2' style='padding-bottom: 3px;'>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = ", ")}</td></tr>
+                        <tr><td colspan='2' style='padding-bottom: 3px;'>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}</td></tr>
                     """
                 } else ""
 
@@ -76,7 +74,7 @@ class GraziInspection : LocalInspectionTool() {
                             <div>
                                 <table>
                                 $fixes
-                                <tr><td colspan='2'>${fix.info.rule.description}</td></tr>
+                                <tr><td colspan='2'>${fix.info.rule.toDescriptionSanitized()}</td></tr>
                                 </table>
                                 <table>
                                 $examples

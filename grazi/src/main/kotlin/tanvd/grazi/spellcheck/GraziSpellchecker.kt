@@ -27,7 +27,7 @@ object GraziSpellchecker {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
         return JLanguageTool(checkerLang.jLanguage, GraziConfig.state.nativeLanguage.jLanguage,
                 cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
-            disableRules(allActiveRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
+            disableRules(allRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
         }
     }
 
@@ -58,7 +58,7 @@ object GraziSpellchecker {
         if (strategy != null) {
             val consumer = GraziTokenConsumer(element.project, element.language)
             strategy.getTokenizer(element).tokenize(element, consumer)
-            return consumer.result
+            return consumer.result.spellcheckOnly()
         }
         return emptySet()
     }
