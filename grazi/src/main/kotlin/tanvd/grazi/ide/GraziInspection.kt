@@ -86,7 +86,7 @@ class GraziInspection : LocalInspectionTool() {
                     </html>
                 """.trimIndent()
             }
-            if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
+            if (fix.info.rule.description.length > 50 || (!fix.isSpellingTypo && fix.info.incorrectExample?.example?.length ?: 0 > 50)) {
                 return message.replaceFirst("<div>", "<div style='width: 300px;'>")
             }
             return message
