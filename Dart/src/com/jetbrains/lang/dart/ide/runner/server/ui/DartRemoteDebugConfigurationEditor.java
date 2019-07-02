@@ -23,7 +23,6 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugParameters;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,13 +45,9 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   private PortField myPortField;
   private ComboboxWithBrowseButton myDartProjectCombo;
 
-  @Nullable private final DartSdk mySdk;
-
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
-    mySdk = DartSdk.getDartSdk(project);
-
     myHostField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
