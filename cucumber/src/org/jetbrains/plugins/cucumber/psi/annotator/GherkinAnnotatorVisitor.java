@@ -13,6 +13,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -50,7 +51,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     boolean textInsideScenario =
       PsiUtilCore.getElementType(element) == GherkinTokenTypes.TEXT && element.getParent() instanceof GherkinStepsHolder;
     if (textInsideScenario && hasStepsBefore(element)) {
-      myHolder.createErrorAnnotation(element, "Unexpected element");
+      myHolder.createErrorAnnotation(element, CucumberBundle.message("gherkin.lexer.unexpected.element"));
     }
   }
 
