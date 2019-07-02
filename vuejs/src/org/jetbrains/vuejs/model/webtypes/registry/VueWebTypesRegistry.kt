@@ -14,6 +14,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -34,6 +35,7 @@ import org.jetbrains.vuejs.model.VuePlugin
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
 import org.jetbrains.vuejs.model.webtypes.VueWebTypesPlugin
 import org.jetbrains.vuejs.model.webtypes.json.WebTypes
+import java.io.IOException
 import java.util.*
 import java.util.Collections.emptySortedMap
 import java.util.concurrent.*
@@ -293,18 +295,26 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   class FutureResultProvider<T>(private val operation: Callable<T>) {
     private val myLock = Object()
-    private var myFuture: Future<T>? = null
+    private var myFuture: Future<*>? = null
     private var myRetryTime = 0L
 
     val result: T?
       get() {
-        val future: Future<T>
+        val future: Future<*>
         synchronized(myLock) {
           if (myRetryTime > System.nanoTime()) {
             return null
           }
           if (myFuture == null) {
-            myFuture = ApplicationManager.getApplication().executeOnPooledThread(operation)
+            myFuture = ApplicationManager.getApplication().executeOnPooledThread(Callable {
+              try {
+                operation.call()
+              }
+              catch (e: Exception) {
+                // we need to catch the exception and process on the main thread
+                e
+              }
+            })
           }
           future = myFuture!!
         }
@@ -315,7 +325,21 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           do {
             ProgressManager.checkCanceled()
             try {
-              return future.get(CHECK_TIMEOUT, TimeUnit.NANOSECONDS)
+              val result = future.get(CHECK_TIMEOUT, TimeUnit.NANOSECONDS)
+              if (result is ProcessCanceledException) {
+                // retry at the next occasion without waiting
+                synchronized(myLock) {
+                  myFuture = null
+                }
+                return null
+              }
+              else if (result is Exception) {
+                // wrap it and pass to the exception catch block below
+                throw ExecutionException(result)
+              }
+              // future returns either T or Exception, so result must be T at this point
+              @Suppress("UNCHECKED_CAST")
+              return result as T
             }
             catch (e: TimeoutException) {
               timeout -= CHECK_TIMEOUT
@@ -327,7 +351,12 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           }
         }
         catch (e: ExecutionException) {
-          LOG.warn(e)
+          // Do not log IOExceptions as errors, since they can appear because of HTTP communication
+          if (e.cause is IOException) {
+            LOG.warn(e)
+          } else {
+            LOG.error(e)
+          }
           synchronized(myLock) {
             myRetryTime = max(myRetryTime, System.nanoTime() + NON_EDT_RETRY_INTERVAL)
             myFuture = null
