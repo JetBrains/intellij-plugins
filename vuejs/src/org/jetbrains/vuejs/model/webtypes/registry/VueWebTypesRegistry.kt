@@ -14,8 +14,8 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
@@ -92,21 +92,21 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     }
   }
 
-  fun getVuePlugins(module: Module): List<VuePlugin> {
+  fun getVuePlugins(project: Project): List<VuePlugin> {
     return processState { state, tracker ->
-      CachedValuesManager.getManager(module.project)
-        .getParameterizedCachedValue(module, PLUGINS_CACHE_KEY, ParameterizedCachedValueProvider { params ->
+      CachedValuesManager.getManager(project)
+        .getParameterizedCachedValue(project, PLUGINS_CACHE_KEY, ParameterizedCachedValueProvider { params ->
           @Suppress("UNCHECKED_CAST")
           val result: List<VuePlugin> =
             StreamEx.of(
-              FilenameIndex.getVirtualFilesByName(module.project, PackageJsonUtil.FILE_NAME,
-                                                  GlobalSearchScope.allScope(module.project)))
+              FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME,
+                                                  GlobalSearchScope.allScope(project)))
               .filter {
                 JSLibraryUtil.isProbableLibraryFile(it)
                 && PackageJsonUtil.getOrCreateData(it).containsOneOfDependencyOfAnyType(
                   "vue-loader", "vue-latest", "vue", "vue-template-compiler")
               }
-              .map { getWebTypesPlugin(params.first, it) ?: VueSourcePlugin.create(module, it) }
+              .map { getWebTypesPlugin(params.first, it) ?: VueSourcePlugin.create(project, it) }
               .nonNull()
               .toList() as List<VuePlugin>
 
