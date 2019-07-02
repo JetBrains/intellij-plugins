@@ -11,8 +11,7 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtil
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.text.StringUtil
@@ -37,32 +36,34 @@ class VueModelManager {
   companion object {
 
     fun getGlobal(context: PsiElement): VueGlobal? {
-      return ModuleUtil.findModuleForPsiElement(context)?.let { getGlobal(it) }
+      return getGlobal(context.project)
     }
 
-    private fun getGlobal(module: Module): VueGlobal? {
-      return CachedValuesManager.getManager(module.project).getCachedValue(module) {
-        CachedValueProvider.Result.create(VueSourceGlobal(module), ModificationTracker.NEVER_CHANGED)
+    fun getGlobal(project: Project): VueGlobal? {
+      return CachedValuesManager.getManager(project).getCachedValue(project) {
+        CachedValueProvider.Result.create(VueSourceGlobal(project), ModificationTracker.NEVER_CHANGED)
       }
     }
 
     fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {
       return findComponent(templateElement) as? VueEntitiesContainer
              ?: findVueApp(templateElement)
-             ?: getGlobal(templateElement.originalElement)
+             ?: getGlobal(templateElement)
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
-      return (findModule(templateElement)
-                ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-                ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
-                ?.obj
-              ?: findScriptWithExport(templateElement)?.second?.stubSafeElement as? JSObjectLiteralExpression
-             )?.let { getComponent(it) }
+      return templateElement.containingFile.originalFile.let { templateFile ->
+        (findModule(templateFile)
+           ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+           ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
+           ?.obj
+         ?: findScriptWithExport(templateFile)?.second?.stubSafeElement as? JSObjectLiteralExpression
+        )?.let { getComponent(it) }
+      }
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
-      val global = getGlobal(templateElement.originalElement) ?: return null
+      val global = getGlobal(templateElement) ?: return null
       val xmlElement = if (templateElement is XmlElement)
         templateElement
       else

@@ -24,7 +24,7 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
                                   protected val declaration: JSObjectLiteralExpression?) : VueContainer {
 
   override val source: PsiElement? = sourceElement
-  override val parents: List<VueEntitiesContainer> = emptyList()
+  override val parents: List<VueEntitiesContainer> get() = VueSourceGlobal.getParents(this)
 
   override val template: PsiElement? = null
   override val element: String? get() = getTextIfLiteral(declaration?.findProperty("el")?.value)
