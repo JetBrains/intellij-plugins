@@ -15,6 +15,7 @@ class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
   override val source: PsiElement? = null
   override val global: VueGlobal? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
+  override val moduleName: String? = webTypes.name
 
   override val components: Map<String, VueComponent>
   override val directives: Map<String, VueDirective>
@@ -31,7 +32,7 @@ class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
       if (webTypes.contributions?.html?.typesSyntax == Html.TypesSyntax.TYPESCRIPT)
         TypeScriptTypeProvider()::getType
       else
-        { type: Any? -> null }
+        { _: Any? -> null }
 
     components = webTypes.contributions
                    ?.html
