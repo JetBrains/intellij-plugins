@@ -1498,10 +1498,10 @@ $script""")
   fun testCompletionPriorityAndHints() {
     myFixture.copyDirectoryToProject("hierarchy", ".")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
-    myFixture.copyDirectoryToProject("../libs/shards-vue/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/shards-vue/node_modules/shards-vue", "./node_modules/@shards/vue")
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    assertEquals(listOf("!HW#null#100", "DCardHeader#shards-vue#80", "HelloApp#null#90", "HelloWorld#null#50", "HeyWorld#null#80",
+    assertEquals(listOf("!HW#null#100", "DCardHeader#@shards/vue#80", "HelloApp#null#90", "HelloWorld#null#50", "HeyWorld#null#80",
                         "VBottomSheet#vuetify#80", "VBottomSheetTransition#vuetify#80", "VCheckbox#vuetify#80", "VChip#vuetify#80",
                         "VDatePickerHeader#vuetify#80", "VDatePickerMonthTable#vuetify#80", "VHover#vuetify#80",
                         "VStepperHeader#vuetify#80", "VSubheader#vuetify#80", "VSwitch#vuetify#80"),
