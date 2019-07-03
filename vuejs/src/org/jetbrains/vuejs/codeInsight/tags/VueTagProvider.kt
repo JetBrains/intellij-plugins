@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
@@ -152,12 +151,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
 class VueElementDescriptor(private val tag: XmlTag, private val sources: Collection<Any> = emptyList()) : XmlElementDescriptor {
   companion object {
-    // it is better to use default attributes method since it is guaranteed to do not call any extension providers
-    fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
-      ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
-         ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
-
-    fun isBooleanProp(prop: VueInputProperty): Boolean {
+    private fun isBooleanProp(prop: VueInputProperty): Boolean {
       return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
     }
   }
