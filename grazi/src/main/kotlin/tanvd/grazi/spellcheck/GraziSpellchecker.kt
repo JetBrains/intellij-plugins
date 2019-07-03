@@ -9,14 +9,16 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.GraziLifecycle
 import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
 import tanvd.kex.buildSet
 import tanvd.kex.tryRun
 import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 
 
-object GraziSpellchecker {
+object GraziSpellchecker : GraziLifecycle {
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
@@ -31,7 +33,7 @@ object GraziSpellchecker {
         }
     }
 
-    private var checker: JLanguageTool = createChecker()
+    private var checker: JLanguageTool by Delegates.notNull()
 
     private class GraziTokenConsumer(val project: Project, val language: Language) : TokenConsumer() {
         val result = HashSet<Typo>()
@@ -72,7 +74,7 @@ object GraziSpellchecker {
      * Note, that casing typos (suggestion includes the same word but in different casing) are ignored.
      */
     private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
-        val typo = tryRun { checker.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
+        val typo = tryRun { checker!!.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
         if (typo != null && IdeaSpellchecker.hasProblem(word, project, language) && !isCasingProblem(word, typo)) {
             add(typo)
         }
@@ -82,7 +84,11 @@ object GraziSpellchecker {
         return typo.fixes.any { it.toLowerCase() == word.toLowerCase() }
     }
 
-    fun reset() {
+    override fun init() {
         checker = createChecker()
     }
+
+    override fun reset() = init()
+
+    override fun reInit() = init()
 }

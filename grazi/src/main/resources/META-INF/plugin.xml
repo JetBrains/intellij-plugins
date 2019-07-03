@@ -68,7 +68,7 @@
 
     <application-components>
         <component>
-            <implementation-class>tanvd.grazi.GraziPlugin</implementation-class>
+            <implementation-class>tanvd.grazi.ide.init.GraziAppInit</implementation-class>
         </component>
     </application-components>
 

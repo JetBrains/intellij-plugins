@@ -2,10 +2,11 @@ package tanvd.grazi.language
 
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.GraziLifecycle
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
-object LangTool {
+object LangTool : GraziLifecycle {
     private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
 
     private const val cacheMaxSize = 25_000L
@@ -24,13 +25,13 @@ object LangTool {
         }
     }
 
-    fun reset() {
-        langs.clear()
-    }
-
-    fun init(enabledLangs: Collection<Lang>) {
-        for (lang in enabledLangs) {
+    override fun init() {
+        for (lang in GraziConfig.state.enabledLanguages) {
             get(lang)
         }
+    }
+
+    override fun reset() {
+        langs.clear()
     }
 }
