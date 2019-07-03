@@ -194,9 +194,8 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
 
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
-    val defaultHtmlAttributes = getDefaultHtmlAttributes(context)
-    result.addAll(defaultHtmlAttributes)
-    result.addAll(VueAttributesProvider.getDefaultVueAttributes())
+    val commonHtmlAttributes = HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
+    result.addAll(commonHtmlAttributes)
     result.addAll(getProps())
     return result.toTypedArray()
   }
