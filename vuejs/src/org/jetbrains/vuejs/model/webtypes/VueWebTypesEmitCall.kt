@@ -5,5 +5,5 @@ import org.jetbrains.vuejs.model.VueEmitCall
 import org.jetbrains.vuejs.model.webtypes.json.Event
 
 class VueWebTypesEmitCall(it: Event) : VueEmitCall {
-
+  override val name: String = it.name!!
 }

@@ -219,6 +219,13 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .toList()
   }
 
+  fun getEmitCalls(): List<VueEmitCall> {
+    return StreamEx.of(sources)
+      .select(VueContainer::class.java)
+      .flatCollection { it.emits }
+      .toList()
+  }
+
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     attributeName ?: return null
     if (VueAttributesProvider.DEFAULT.contains(attributeName)) {

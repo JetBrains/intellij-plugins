@@ -19,7 +19,9 @@ interface VueContainer : VueEntitiesContainer {
 
 interface VueSlot
 
-interface VueEmitCall
+interface VueEmitCall {
+  val name: String
+}
 
 interface VueProperty {
   val name: String
