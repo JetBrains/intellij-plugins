@@ -118,15 +118,14 @@ class GraziInspection : LocalInspectionTool() {
 
                 val typos = HashSet<Typo>()
 
-                for (ext in LanguageSupport.all.filter { it.isSupported(element.language) && it.isRelevant(element) }) {
+                for (ext in LanguageSupport.allForLanguage(element.language).filter { it.isRelevant(element) }) {
                     typos.addAll(ext.getTypos(element))
                 }
 
                 if (GraziConfig.state.enabledSpellcheck) {
                     typos.addAll(GraziSpellchecker.getTypos(element))
                 }
-
-
+                
                 typos.mapNotNull { createProblemDescriptor(it, holder.manager, isOnTheFly) }.forEach {
                     holder.registerProblem(it)
                 }

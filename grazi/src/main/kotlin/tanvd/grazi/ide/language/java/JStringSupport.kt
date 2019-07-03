@@ -1,7 +1,5 @@
 package tanvd.grazi.ide.language.java
 
-import com.intellij.lang.Language
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.JavaTokenType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
@@ -12,10 +10,6 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.withOffset
 
 class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
-    override fun isSupported(language: Language): Boolean {
-        return language is JavaLanguage
-    }
-
     override fun isRelevant(element: PsiElement): Boolean {
         return element is PsiLiteralExpressionImpl &&
                 ((element.literalElementType == JavaTokenType.STRING_LITERAL && element.innerText != null) ||

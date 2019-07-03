@@ -1,8 +1,6 @@
 package tanvd.grazi.ide.language.kotlin
 
-import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.grammar.*
@@ -12,10 +10,6 @@ import tanvd.grazi.utils.filterFor
 class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     companion object {
         private fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
-    }
-
-    override fun isSupported(language: Language): Boolean {
-        return language is KotlinLanguage
     }
 
     override fun isRelevant(element: PsiElement): Boolean {

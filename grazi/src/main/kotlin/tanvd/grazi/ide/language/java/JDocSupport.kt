@@ -1,8 +1,6 @@
 package tanvd.grazi.ide.language.java
 
 
-import com.intellij.lang.Language
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.JavaDocTokenType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.javadoc.*
@@ -18,11 +16,6 @@ class JDocSupport : LanguageSupport() {
 
         private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
         private fun isCodeTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text == "@code")
-    }
-
-
-    override fun isSupported(language: Language): Boolean {
-        return language is JavaLanguage
     }
 
     override fun isRelevant(element: PsiElement): Boolean {

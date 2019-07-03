@@ -92,16 +92,18 @@
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.language.LanguageSupport"/>
+        <extensionPoint name="languageSupport" beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="tanvd.grazi.ide.language.LanguageSupport"/>
+        </extensionPoint>
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
+        <languageSupport language="TEXT" implementationClass="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
 
-        <languageSupport implementation="tanvd.grazi.ide.language.xml.XmlSupport"/>
+        <languageSupport language="XML" implementationClass="tanvd.grazi.ide.language.xml.XmlSupport" />
 
-        <languageSupport implementation="tanvd.grazi.ide.language.json.JsonSupport"/>
+        <languageSupport language="JSON" implementationClass="tanvd.grazi.ide.language.json.JsonSupport"/>
 
-        <languageSupport implementation="tanvd.grazi.ide.language.comment.CommentsSupport"/>
+        <languageSupport language="" implementationClass="tanvd.grazi.ide.language.comment.CommentsSupport"/>
     </extensions>
 </idea-plugin>

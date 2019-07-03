@@ -1,6 +1,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.language.javascript.JsStringSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.javascript.JsDocSupport"/>
+        <languageSupport language="JavaScript" implementationClass="tanvd.grazi.ide.language.javascript.JsStringSupport"/>
+        <languageSupport language="JavaScript" implementationClass="tanvd.grazi.ide.language.javascript.JsDocSupport"/>
     </extensions>
 </idea-plugin>

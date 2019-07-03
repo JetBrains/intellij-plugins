@@ -1,9 +1,9 @@
 package tanvd.grazi.ide.language.markdown
 
 
-import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import org.intellij.plugins.markdown.lang.*
+import org.intellij.plugins.markdown.lang.MarkdownElementTypes
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 import tanvd.grazi.grammar.*
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.spellcheckOnly
@@ -12,10 +12,6 @@ import tanvd.grazi.utils.traverse
 class MarkdownSupport : LanguageSupport() {
     companion object {
         private val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
-    }
-
-    override fun isSupported(language: Language): Boolean {
-        return language is MarkdownLanguage
     }
 
     override fun isRelevant(element: PsiElement): Boolean {

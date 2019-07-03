@@ -1,8 +1,6 @@
 package tanvd.grazi.ide.language.kotlin
 
-import com.intellij.lang.Language
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
@@ -20,10 +18,6 @@ class KDocSupport : LanguageSupport() {
         private fun isTag(token: PsiElement) = token.node.elementType == KDocElementTypes.KDOC_TAG
         private fun isBody(token: PsiElement) = !isTag(token) && !isInTag(token) && token.parent.node.elementType == KDocElementTypes.KDOC_SECTION
         private fun isIdentifier(token: PsiElement) = token.parent.node.elementType == KDocElementTypes.KDOC_NAME
-    }
-
-    override fun isSupported(language: Language): Boolean {
-        return language is KotlinLanguage
     }
 
     override fun isRelevant(element: PsiElement): Boolean {

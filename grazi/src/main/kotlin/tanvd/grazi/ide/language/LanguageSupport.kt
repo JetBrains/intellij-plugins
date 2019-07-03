@@ -1,21 +1,14 @@
 package tanvd.grazi.ide.language
 
-import com.intellij.lang.Language
-import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.lang.LanguageExtension
+import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.isInjectedFragment
 
-abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) {
-    companion object {
-        private val LANGUAGE_SUPPORT_EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
-
-        val all: Set<LanguageSupport>
-            get() = LANGUAGE_SUPPORT_EP_NAME.extensionList.toSet()
-    }
-
-    open fun isSupported(language: Language): Boolean = true
+abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()): LanguageExtensionPoint<LanguageSupport>() {
+    companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")
 
     open fun isRelevant(element: PsiElement): Boolean = true
 
