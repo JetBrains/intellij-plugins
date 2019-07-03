@@ -133,6 +133,12 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
   }
 
   private fun addEventCompletions(tag: XmlTag?, result: CompletionResultSet, prefix: String) {
+    (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
+      result.addElement(LookupElementBuilder
+                          .create(prefix + emit.name)
+                          .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
+    }
+
     val descriptor = tag?.descriptor as? HtmlElementDescriptorImpl ?: HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag) ?: return
     for (attrDescriptor in descriptor.getAttributesDescriptors(tag)) {
       val name = attrDescriptor.name
