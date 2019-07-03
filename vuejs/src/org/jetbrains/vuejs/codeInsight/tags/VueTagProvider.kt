@@ -77,7 +77,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
         val moduleName: String? = if (component.parents.size == 1) {
           (component.parents.first() as? VuePlugin)?.moduleName
-        } else null
+        }
+        else null
         nameMapper(name).forEach {
           if (providedNames.add(it)) {
             elements.add(createVueLookup(component.source, it,
@@ -149,7 +150,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   }
 }
 
-class VueElementDescriptor(private val tag: XmlTag, private val sources: Collection<Any> = emptyList()) : XmlElementDescriptor {
+class VueElementDescriptor(private val tag: XmlTag, private val sources: Collection<VueComponent> = emptyList()) : XmlElementDescriptor {
   companion object {
     private fun isBooleanProp(prop: VueInputProperty): Boolean {
       return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
@@ -159,13 +160,10 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   override fun getDeclaration(): JSImplicitElement {
     return StreamEx.of(sources)
       .map {
-        if (it is VueComponent)
-          it.source?.let { source ->
-            VueModelManager.getComponentImplicitElement(source)
-            ?: JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, source).forbidAstAccess())
-          }
-        else
-          it
+        it.source?.let { source ->
+          VueModelManager.getComponentImplicitElement(source)
+          ?: JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, source).forbidAstAccess())
+        }
       }
       .select(JSImplicitElement::class.java)
       .findFirst()
@@ -195,18 +193,12 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   }
 
   fun getPsiSources(): List<PsiElement> {
-    return sources.mapNotNull {
-      when (it) {
-        is VueComponent -> it.source
-        is PsiElement -> it
-        else -> null
-      }
-    }.ifEmpty { listOf(JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess())) }
+    return sources.mapNotNull { it.source }
+      .ifEmpty { listOf(JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess())) }
   }
 
   fun getProps(): List<XmlAttributeDescriptor> {
     return StreamEx.of(sources)
-      .select(VueContainer::class.java)
       .flatCollection {
         val result = mutableListOf<XmlAttributeDescriptor>()
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
@@ -229,7 +221,6 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
     val normalizedName = fromAsset(extractedName ?: attributeName)
 
     StreamEx.of(sources)
-      .select(VueContainer::class.java)
       .map {
         var result: XmlAttributeDescriptor? = null
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
