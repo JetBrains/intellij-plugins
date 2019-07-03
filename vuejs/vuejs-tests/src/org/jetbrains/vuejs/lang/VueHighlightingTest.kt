@@ -1188,6 +1188,7 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
   }
 
   fun testVueExtendSyntax() {
+    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1196,8 +1197,9 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
       </template>
       <script>
         import HW from './a-component.vue'
+        import Vue from 'vue'
         
-        export default <weak_warning descr="Unresolved variable or type Vue">Vue</weak_warning>.extend({
+        export default Vue.extend({
             name: 'app',
             components: {
                 HW
