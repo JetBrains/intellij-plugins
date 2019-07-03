@@ -8,4 +8,4 @@ fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + o
 
 fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.getOrNull(0)?.let { if (body(it)) drop(1) else this } ?: this
 
-fun String.safeSubstring(startIndex: Int) = if (this.length <= startIndex) "" else substring(startIndex)
+fun String.filterOutNewLines() = this.replace("\n", "")
