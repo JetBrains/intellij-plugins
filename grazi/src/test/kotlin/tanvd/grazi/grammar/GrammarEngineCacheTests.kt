@@ -9,11 +9,11 @@ class GrammarEngineCacheTests : GraziTestBase(true) {
     @Test
     fun `test cache performance for 10 sonnets`() {
         val text = Resources.getText("grammar/sonnet_10.txt")
-        val fixes1 = GrammarEngine.getFixes(text).toList()
+        val fixes1 = GrammarEngine.getTypos(text).toList()
 
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = GrammarEngine.getFixes(text).toList()
+            fixes2 = GrammarEngine.getTypos(text).toList()
         }
         assertEquals(fixes1, fixes2)
         assert(totalTime < 500)
@@ -23,10 +23,10 @@ class GrammarEngineCacheTests : GraziTestBase(true) {
     fun `test cache performance for 50 sonnets`() {
         val text = Resources.getText("grammar/sonnet_50.txt")
 
-        val fixes1 = GrammarEngine.getFixes(text).toList()
+        val fixes1 = GrammarEngine.getTypos(text).toList()
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = GrammarEngine.getFixes(text).toList()
+            fixes2 = GrammarEngine.getTypos(text).toList()
         }
         assertEquals(fixes1, fixes2)
         assert(totalTime < 1000)

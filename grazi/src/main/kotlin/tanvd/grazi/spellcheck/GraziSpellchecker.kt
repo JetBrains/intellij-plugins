@@ -53,7 +53,7 @@ object GraziSpellchecker {
         }
     }
 
-    fun getFixes(element: PsiElement): Set<Typo> {
+    fun getTypos(element: PsiElement): Set<Typo> {
         val strategy = IdeaSpellchecker.getSpellcheckingStrategy(element)
         if (strategy != null) {
             val consumer = GraziTokenConsumer(element.project, element.language)

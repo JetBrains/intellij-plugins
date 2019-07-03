@@ -75,11 +75,11 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
             }
         }
 
-        val fixes = GrammarEngine.getFixes(resultText)
+        val typos = GrammarEngine.getTypos(resultText)
 
         val sortedIndexesShift = indexesShift.toList().sortedBy { it.first }
 
-        return fixes.mapNotNull { typo ->
+        return typos.mapNotNull { typo ->
             tokenMapping.filter { typo.location.range.start in it.key }.entries.firstOrNull()?.let { (range, firstToken) ->
                 val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
                 if (firstToken == secondToken) {

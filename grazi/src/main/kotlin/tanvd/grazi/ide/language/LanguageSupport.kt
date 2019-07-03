@@ -19,7 +19,7 @@ abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet
 
     open fun isRelevant(element: PsiElement): Boolean = true
 
-    fun getFixes(element: PsiElement): Set<Typo> = check(element)
+    fun getTypos(element: PsiElement): Set<Typo> = check(element)
             .asSequence()
             .filterNot { it.info.rule.id in disabledRules }
             .filter {

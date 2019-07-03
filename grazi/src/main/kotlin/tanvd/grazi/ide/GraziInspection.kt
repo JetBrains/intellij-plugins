@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
@@ -120,11 +119,11 @@ class GraziInspection : LocalInspectionTool() {
                 val typos = HashSet<Typo>()
 
                 for (ext in LanguageSupport.all.filter { it.isSupported(element.language) && it.isRelevant(element) }) {
-                    typos.addAll(ext.getFixes(element))
+                    typos.addAll(ext.getTypos(element))
                 }
 
                 if (GraziConfig.state.enabledSpellcheck) {
-                    typos.addAll(GraziSpellchecker.getFixes(element))
+                    typos.addAll(GraziSpellchecker.getTypos(element))
                 }
 
 

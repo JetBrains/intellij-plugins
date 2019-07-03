@@ -22,7 +22,7 @@ object GrammarEngine {
     private fun isBig(str: String) = str.length > maxChars
     private fun isTooBig(str: String) = str.length > tooBigChars
 
-    fun getFixes(str: String, seps: List<Char> = separators.filter { it in str }): Set<Typo> = buildSet {
+    fun getTypos(str: String, seps: List<Char> = separators.filter { it in str }): Set<Typo> = buildSet {
         if (str.isBlank() || isTooBig(str)) return@buildSet
 
         if (str.split(Regex("\\s+")).size < minNumberOfWords) {
@@ -30,7 +30,7 @@ object GrammarEngine {
         }
 
         if (!isBig(str)) {
-            addAll(getFixesSmall(str).map {
+            addAll(getTyposSmall(str).map {
                 Typo(it.location, it.info, it.fixes)
             })
         } else {
@@ -38,7 +38,7 @@ object GrammarEngine {
             val tail = seps.drop(1)
 
             str.splitWithRanges(head) { range, sentence ->
-                addAll(getFixes(sentence, tail).map {
+                addAll(getTypos(sentence, tail).map {
                     Typo(it.location.withOffset(range.start), it.info, it.fixes)
                 })
 
@@ -47,7 +47,7 @@ object GrammarEngine {
         }
     }
 
-    private fun getFixesSmall(str: String): LinkedSet<Typo> {
+    private fun getTyposSmall(str: String): LinkedSet<Typo> {
         if (isSmall(str)) return LinkedSet()
 
         val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList()) ?: return LinkedSet()
