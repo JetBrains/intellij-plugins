@@ -1,17 +1,12 @@
 package tanvd.grazi
 
 import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPlainText
-import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.util.lang.JavaVersion
-import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.junit.Before
 import tanvd.grazi.ide.GraziInspection
 import tanvd.grazi.utils.filterFor
@@ -28,8 +23,6 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
     }
 
     override fun setUp() {
-        GraziPlugin.isTest = true
-
         super.setUp()
         myFixture.enableInspections(*inspectionTools)
 

@@ -1,6 +1,7 @@
 package tanvd.grazi.ide
 
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import tanvd.grazi.GraziConfig
@@ -17,7 +18,7 @@ class GraziInspection : LocalInspectionTool() {
 
 
         private fun getProblemMessage(fix: Typo): String {
-            if (GraziPlugin.isTest) return ""
+            if (ApplicationManager.getApplication().isUnitTestMode) return ""
 
             val message = if (fix.isSpellingTypo) {
                 //language=HTML
