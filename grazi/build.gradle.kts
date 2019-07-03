@@ -9,7 +9,7 @@ version = "2019.1-3.4.$channel"
 
 
 plugins {
-    id("tanvd.kosogor") version "1.0.6" apply true
+    id("tanvd.kosogor") version "1.0.7" apply true
     id("io.gitlab.arturbosch.detekt") version ("1.0.0-RC14") apply true
     id("org.jetbrains.intellij") version "0.4.9" apply true
     kotlin("jvm") version "1.3.40" apply true
@@ -29,8 +29,8 @@ intellij {
     updateSinceUntilBuild = false
 
     setPlugins(
-            "org.intellij.plugins.markdown:191.5849.16",
-            "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2",
+            "markdown",
+            "Kotlin",
             "PythonCore:2019.1.191.6183.53",
             "org.rust.lang:0.2.98.2125-191",
             "CSS",
