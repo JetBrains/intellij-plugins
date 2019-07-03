@@ -55,7 +55,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       return null
     }
 
-    fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
+    private fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
     fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
 

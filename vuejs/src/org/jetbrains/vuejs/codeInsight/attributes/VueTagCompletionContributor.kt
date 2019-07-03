@@ -18,6 +18,7 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.xml.XmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
@@ -90,6 +91,10 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
                                        "drop")
     // https://vuejs.org/v2/guide/events.html#Event-Modifiers
     private val EVENT_MODIFIERS = arrayOf("stop", "prevent", "capture", "self", "once", "passive", "native")
+
+    private fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
+      ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
+         ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
   }
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -205,7 +210,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     newResult.addElement(LookupElementBuilder.create(lookupItemPrefix + "key").withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
 
     // v-bind:any-standard-attribute support
-    for (attribute in VueElementDescriptor.getDefaultHtmlAttributes(attr.parent)) {
+    for (attribute in getDefaultHtmlAttributes(attr.parent)) {
       newResult.addElement(LookupElementBuilder
                              .create(lookupItemPrefix + attribute.name)
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))
