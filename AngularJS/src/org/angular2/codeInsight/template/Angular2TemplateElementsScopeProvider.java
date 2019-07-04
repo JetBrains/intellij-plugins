@@ -54,9 +54,10 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
   public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     final PsiFile hostFile = CompletionUtil.getOriginalOrSelf(notNull(hostElement, element)).getContainingFile();
 
+    boolean isInjected = hostElement != null;
     final Angular2TemplateElementScope templateRootScope = CachedValuesManager.getCachedValue(hostFile, () -> {
       final Angular2TemplateElementScope result;
-      if (hostElement == null) {
+      if (!isInjected) {
         result = new Angular2TemplateScopeBuilder(hostFile).getTopLevelScope();
       }
       else {
