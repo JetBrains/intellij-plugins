@@ -34,6 +34,7 @@ import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
+import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
 import org.angular2.entities.*;
@@ -536,6 +537,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     private final Predicate<String> myShouldIncludeOneTimeBinding;
     private final XmlTag myTag;
     private List<Angular2AttributeDescriptor> myResult;
+    private Function<String, String> myOneTimeBindingNameHack;
 
     DirectiveAttributesProvider(@NotNull XmlTag tag,
                                 @NotNull Angular2Directive directive,
@@ -543,6 +545,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       myTag = tag;
       myDirective = directive;
       myShouldIncludeOneTimeBinding = shouldIncludeOneTimeBinding;
+      myOneTimeBindingNameHack = Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive);
     }
 
     public List<Angular2AttributeDescriptor> get() {
@@ -581,9 +584,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     @Nullable
     private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
-      return myShouldIncludeOneTimeBinding.test(info.getName())
+      String attributeName = myOneTimeBindingNameHack.apply(info.getName());
+      return myShouldIncludeOneTimeBinding.test(attributeName)
              && isOneTimeBindingProperty(info)
-             ? new Angular2AttributeDescriptor(myTag, info.getName(), AttributePriority.HIGH,
+             ? new Angular2AttributeDescriptor(myTag, attributeName, AttributePriority.HIGH,
                                                singletonList(myDirective),
                                                false)
              : null;

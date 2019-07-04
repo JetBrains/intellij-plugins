@@ -1039,4 +1039,12 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("ngNonBindable.html", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testIonicAttributes() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    configureWithMetadataFiles(myFixture, "ionic4.1");
+    myFixture.configureByFiles("ionicAttributes.html");
+    myFixture.checkHighlighting();
+  }
+
 }
