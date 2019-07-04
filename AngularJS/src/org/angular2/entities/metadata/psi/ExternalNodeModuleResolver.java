@@ -85,13 +85,12 @@ public class ExternalNodeModuleResolver {
     if (candidates.size() > 1) {
       retainPackageTypingRoots(candidates);
     }
-    if (candidates.size() > 1 && ourReportedErrors.add(myModuleName + "/" + myMemberName)) {
-      LOG.error("Ambiguous resolution for import '" + myModuleName + "/" + myMemberName
-                + "' in module '" + doIfNotNull(mySource.getNodeModule(), Angular2MetadataNodeModule::getName) + "'; candidates: " +
-                StreamEx.of(candidates.values())
-                  .map(ExternalNodeModuleResolver::renderFileName)
-                  .sorted()
-                  .joining(", "));
+    if (candidates.size() > 1) {
+      //noinspection OptionalGetWithoutIsPresent
+      return StreamEx.of(candidates.keySet())
+        // in case of multiple candidates, ensure deterministic outcome by using file path with lowest lexical order
+        .min(Comparator.comparing(candidate -> candidate.getContainingFile().getVirtualFile().getPath()))
+        .get();
     }
     return ContainerUtil.getFirstItem(candidates.keySet());
   }
