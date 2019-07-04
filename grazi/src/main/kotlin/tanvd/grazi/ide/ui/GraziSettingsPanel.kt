@@ -10,7 +10,8 @@ import tanvd.grazi.*
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Font
-import javax.swing.*
+import javax.swing.BoxLayout
+import javax.swing.JComponent
 
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig> {
@@ -58,31 +59,30 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig> {
         return panel {
             tabs {
                 tab(GraziBundle.message("grazi.ui.settings.config.text")) {
-                    panel(VerticalLayout(0), VerticalLayout.FILL_HORIZONTAL) {
-                        layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-                        border = border(GraziBundle.message("grazi.ui.settings.spellcheck.text"))
+                    panel(VerticalLayout(0)) {
+                        panel(BorderLayout(0, 0), VerticalLayout.FILL_HORIZONTAL) {
+                            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+                            border = border(GraziBundle.message("grazi.ui.settings.spellcheck.text"))
 
-                        add(cbEnableGraziSpellcheck)
+                            add(cbEnableGraziSpellcheck)
 
-                        label(GraziBundle.message("grazi.ui.settings.enable.note")).apply {
-                            font = font.deriveFont(Font.ITALIC)
+                            label(GraziBundle.message("grazi.ui.settings.enable.note")) {
+                                font = font.deriveFont(Font.ITALIC)
+                            }
                         }
                     }
                 }
 
                 tab(GraziBundle.message("grazi.ui.settings.languages.text")) {
                     panel {
-                        panel(vertical = BorderLayout.PAGE_START) {
-
+                        panel(BorderLayout(0, 0), BorderLayout.PAGE_START) {
                             border = border(GraziBundle.message("grazi.ui.settings.languages.native.text"))
-
                             add(cmbNativeLanguage)
                         }
 
 
-                        panel(vertical = BorderLayout.CENTER) {
+                        panel(BorderLayout(0, 0), BorderLayout.CENTER) {
                             border = border(GraziBundle.message("grazi.ui.settings.languages.text"))
-
                             add(JBScrollPane(cblEnabledLanguages))
                         }
                     }
