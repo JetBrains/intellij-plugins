@@ -45,7 +45,7 @@ public class Angular2PropertyImpl extends JSPropertyImpl {
       return PsiReference.EMPTY_ARRAY;
     }
     else if (getNameIdentifier() != null) {
-      PsiReference[] result = ReferenceProvidersRegistry.getReferencesFromProviders(getNameIdentifier());
+      PsiReference[] result = ReferenceProvidersRegistry.getReferencesFromProviders(this);
       if (result.length > 0) {
         return result;
       }
