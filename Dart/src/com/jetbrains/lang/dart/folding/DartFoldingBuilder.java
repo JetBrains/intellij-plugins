@@ -343,7 +343,11 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
         final int startOffset = openParenNode.getStartOffset() + openParenNode.getTextLength();
         final int endOffset = closeParenElt.getTextRange().getStartOffset();
-        descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(startOffset, endOffset)));
+        final String text = psiElement.getText().substring(startOffset - psiElement.getTextRange().getStartOffset(),
+                                                           endOffset - psiElement.getTextRange().getStartOffset());
+        if (text.contains("\n")) {
+          descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(startOffset, endOffset)));
+        }
       }
     }
   }
