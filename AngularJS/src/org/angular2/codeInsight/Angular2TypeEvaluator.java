@@ -147,13 +147,16 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType(), resolveResult.getElement(), false);
       return true;
     }
-    return super.addTypeFromResolveResult(referenceName, resolveResult);
+    super.addTypeFromResolveResult(referenceName, resolveResult);
+    return true;
   }
 
   @Override
   protected boolean processFunction(@NotNull JSFunction function) {
-    return Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)
-           || super.processFunction(function);
+    if (!Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)) {
+      super.processFunction(function);
+    }
+    return true;
   }
 
   @Override

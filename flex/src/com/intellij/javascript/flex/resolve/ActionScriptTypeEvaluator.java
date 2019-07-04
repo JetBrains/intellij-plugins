@@ -118,7 +118,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
   
   @Override
-  protected boolean addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
+  protected void addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
       resolveResult = ((JSOffsetBasedImplicitElement)resolveResult).getElementAtOffset();
     }
@@ -156,10 +156,10 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             }
         }
       }
-      return true;
+      return;
     }
 
-    return super.addTypeFromElementResolveResult(resolveResult);
+    super.addTypeFromElementResolveResult(resolveResult);
   }
 
   private static boolean isInsideRepeaterTag(@NotNull final XmlTag xmlTag) {
