@@ -4,8 +4,6 @@ package org.angular2.metadata;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -15,7 +13,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
-import com.intellij.testFramework.LoggedErrorProcessor;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
@@ -211,20 +208,8 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
       assert reference1.resolve() != null : check;
       assertEquals(check.toString(), "foo1.metadata.json", reference1.resolve().getContainingFile().getName());
     }
-    Disposable loggerDisposable = Disposer.newDisposable();
-    try {
-      LoggedErrorProcessor.getInstance().disableStderrDumping(loggerDisposable);
-      ((Angular2MetadataReference)nodeModule.findMember("Test4")).resolve();
-      fail("Should have thrown assertion error");
-    }
-    catch (AssertionError error) {
-      assertEquals(
-        "Ambiguous resolution for import 'test/Class4' in module 'modules-test'; candidates: /bar/node_modules/test/bar1.metadata.json, /bar/node_modules/test/bar2.metadata.json",
-        error.getMessage());
-    }
-    finally {
-      Disposer.dispose(loggerDisposable);
-    }
+    // Should resolve to lexically first file
+    assertEquals("bar1.metadata.json", ((Angular2MetadataReference)nodeModule.findMember("Test4")).resolve().getContainingFile().getName());
   }
 
   private void testMetadataStubBuilding(String metadataJson) {
