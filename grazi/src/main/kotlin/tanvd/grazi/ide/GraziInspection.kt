@@ -7,10 +7,7 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.ide.quickfix.GraziAddWord
-import tanvd.grazi.ide.quickfix.GraziDisableRule
-import tanvd.grazi.ide.quickfix.GraziRenameTypo
-import tanvd.grazi.ide.quickfix.GraziReplaceTypo
+import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList
