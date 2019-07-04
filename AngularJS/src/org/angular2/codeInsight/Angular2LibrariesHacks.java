@@ -18,6 +18,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
@@ -29,8 +30,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
@@ -71,7 +74,7 @@ public class Angular2LibrariesHacks {
    * Hack for WEB-37838
    */
   public static void hackIonicComponentOutputs(@NotNull Angular2MetadataDirectiveBase directive, @NotNull Map<String, String> outputs) {
-    if (!IONIC_ANGULAR_PACKAGE.equals(doIfNotNull(directive.getNodeModule(), Angular2MetadataNodeModule::getName))) {
+    if (!isIonicDirective(directive)) {
       return;
     }
     TypeScriptClass cls = directive.getTypeScriptClass();
@@ -92,6 +95,27 @@ public class Angular2LibrariesHacks {
         //getTypeText may throw IllegalArgumentException - ignore it
       }
     });
+  }
+
+  /**
+   * Hack for WEB-39722
+   */
+  @NotNull
+  public static Function<String, String> hackIonicComponentAttributeNames(@NotNull Angular2Directive directive) {
+    if (!isIonicDirective(directive)) {
+      return Function.identity();
+    }
+    // Convert to kebab case - Ionic uses CamelCase for inputs and kebab for attributes - not an Angular way
+    return (@NonNls String propertyName) -> propertyName.replaceAll("([A-Z])", "-$1")
+      .toLowerCase(Locale.ENGLISH);
+  }
+
+  private static boolean isIonicDirective(Angular2Directive directive) {
+    return Optional.ofNullable(tryCast(directive, Angular2MetadataDirectiveBase.class))
+      .map(Angular2MetadataDirectiveBase::getNodeModule)
+      .map(Angular2MetadataNodeModule::getName)
+      .map(name -> IONIC_ANGULAR_PACKAGE.equals(name))
+      .orElse(Boolean.FALSE);
   }
 
   /**
