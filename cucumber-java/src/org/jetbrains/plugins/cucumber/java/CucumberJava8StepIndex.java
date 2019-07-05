@@ -23,7 +23,7 @@ import java.util.*;
 
 import static com.intellij.psi.impl.source.tree.JavaElementType.*;
 
-public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> implements PsiDependentIndex {
+public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");
   private static final String JAVA_8_PACKAGE = "cucumber.api.java8.";
 
