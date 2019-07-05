@@ -59,11 +59,9 @@ import com.intellij.util.*;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
@@ -881,7 +879,7 @@ public class DartAnalysisServerService implements Disposable {
     return null;
   }
 
-  void updateVisibleFiles() {
+  public void updateVisibleFiles() {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
     synchronized (myLock) {
@@ -908,14 +906,22 @@ public class DartAnalysisServerService implements Disposable {
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
     if (file != null && file.isInLocalFileSystem()) {
-      return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) ||
-             HtmlUtil.isHtmlFile(file) ||
-             file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
-             file.getName().equals("analysis_options.yaml") ||
-             file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS) ||
-             file.getName().equals("AndroidManifest.xml");
+      return isFileNameRespectedByAnalysisServer(file.getName());
     }
     return false;
+  }
+
+  public static boolean isFileNameRespectedByAnalysisServer(@NotNull String _fileName) {
+    // see https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/src/generated/engine.dart (class AnalysisEngine)
+    // and AbstractAnalysisServer.analyzableFilePatterns
+    String fileName = _fileName.toLowerCase(Locale.US);
+    return fileName.endsWith(".dart") ||
+           fileName.endsWith(".htm") ||
+           fileName.endsWith(".html") ||
+           fileName.equals(".analysis_options") ||
+           fileName.equals("analysis_options.yaml") ||
+           fileName.equals("pubspec.yaml") ||
+           fileName.equals("AndroidManifest.xml");
   }
 
   public void updateFilesContent() {
