@@ -40,6 +40,30 @@ class VueJSLanguage : org.jetbrains.vuejs.language.VueJSLanguage() {
       }
     }
 
+    private fun parseVForLoopVariableStatement(): Boolean {
+      val statement = builder.mark()
+      if (parseVForLoopVariable()) {
+        statement.done(JSStubElementTypes.VAR_STATEMENT)
+        return true
+      }
+      else {
+        statement.drop()
+        return false
+      }
+    }
+
+    private fun parseVForLoopVariable(): Boolean {
+      if (isIdentifierToken(builder.tokenType)) {
+        buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
+        return true
+      }
+      else if (myFunctionParser.willParseDestructuringAssignment()) {
+        myExpressionParser.parseDestructuringElement(VueElementTypes.V_FOR_VARIABLE, false, false)
+        return true
+      }
+      return false
+    }
+
     private fun parseVForContents(): Boolean {
       val vForExpr = builder.mark()
       if (builder.tokenType == JSTokenTypes.LPAR) {
@@ -48,17 +72,7 @@ class VueJSLanguage : org.jetbrains.vuejs.language.VueJSLanguage() {
           return false
         }
       }
-      else if (isIdentifierToken(builder.tokenType)) {
-        val statement = builder.mark()
-        buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
-        statement.done(JSStubElementTypes.VAR_STATEMENT)
-      }
-      else if (myFunctionParser.willParseDestructuringAssignment()) {
-        val statement = builder.mark()
-        myExpressionParser.parseDestructuringElement(VueElementTypes.V_FOR_VARIABLE, false, false)
-        statement.done(JSStubElementTypes.VAR_STATEMENT)
-      }
-      else {
+      else if (!parseVForLoopVariableStatement()) {
         builder.error("identifier(s) expected")
         builder.advanceLexer()
       }
@@ -83,13 +97,12 @@ class VueJSLanguage : org.jetbrains.vuejs.language.VueJSLanguage() {
       val parenthesis = builder.mark()
       builder.advanceLexer() //LPAR
       val varStatement = builder.mark()
-      var cnt = 3
-      while (isIdentifierToken(builder.tokenType) && cnt > 0) {
-        buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
-        --cnt
-        if (cnt == 0 || builder.tokenType != JSTokenTypes.COMMA) break
-        else {
+      if (parseVForLoopVariable()) {
+        if (builder.tokenType == JSTokenTypes.COMMA) {
           builder.advanceLexer()
+          if (isIdentifierToken(builder.tokenType)) {
+            buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
+          }
         }
       }
       if (builder.tokenType != JSTokenTypes.RPAR) {
