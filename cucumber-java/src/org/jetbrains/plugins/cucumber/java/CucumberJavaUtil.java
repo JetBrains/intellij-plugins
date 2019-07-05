@@ -42,11 +42,9 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_ANNOTATION_NAMES;
+import static org.jetbrains.plugins.cucumber.java.steps.AnnotationPackageProvider.CUCUMBER_ANNOTATION_PACKAGES;
 
 public class CucumberJavaUtil {
-  public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
-  public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
-
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
@@ -99,14 +97,12 @@ public class CucumberJavaUtil {
   }
 
   private static String getCucumberAnnotationSuffix(@NotNull String name) {
-    if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0)) {
-      return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0.length());
+    for (String pkg : CUCUMBER_ANNOTATION_PACKAGES) {
+      if (name.startsWith(pkg)) {
+        return name.substring(pkg.length());
+      }
     }
-    else if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1)) {
-      return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1.length());
-    } else {
-      return "";
-    }
+    return "";
   }
 
   public static String getCucumberPendingExceptionFqn(@NotNull final PsiElement context) {

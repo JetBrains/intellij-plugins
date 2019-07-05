@@ -9,6 +9,10 @@ import static java.lang.String.format;
 public class AnnotationPackageProvider {
   private static final String CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE = "cucumber.api.java";
   private static final String CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE = "cucumber.annotation";
+  private static final String CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE = "io.cucumber.java";
+
+  public static final String[] CUCUMBER_ANNOTATION_PACKAGES =
+    {CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE, CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE, CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE};
 
   public AnnotationPackageProvider() {
     this(new CucumberVersionProvider());
@@ -34,6 +38,9 @@ public class AnnotationPackageProvider {
     if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) < 0) {
       return CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE;
     }
-    return CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE;
+    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_4_5) < 0) {
+      return CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE;
+    }
+    return CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE;
   }
 }

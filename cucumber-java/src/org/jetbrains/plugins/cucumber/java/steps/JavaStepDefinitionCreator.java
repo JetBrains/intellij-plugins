@@ -119,10 +119,10 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
                              firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
     }
 
-    Template template = builder.buildInlineTemplate();
-
-    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
     documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
+
+    Template template = builder.buildInlineTemplate();
 
     editor.getCaretModel().moveToOffset(addedElement.getTextRange().getStartOffset());
     TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
