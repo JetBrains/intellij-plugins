@@ -298,7 +298,7 @@ public class DartAnnotator implements Annotator {
   private static ProblemHighlightType getSpecialHighlightType(@NotNull final DartServerData.DartError error) {
     final String code = error.getCode();
     if (code != null) {
-      // See [Dart repo]/pkg/analyzer/lib/error/error.dart
+      // See https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/error/error.dart
       if (StringUtil.equals(code, "duplicate_import") ||
           code.startsWith("dead_") ||
           code.startsWith("unused_")) {
@@ -313,7 +313,7 @@ public class DartAnnotator implements Annotator {
       return null;
     }
 
-    // Old SDK. See old version of [Dart repo]/pkg/analyzer/lib/src/generated/error.dart
+    // Old SDK. See old version of https://github.com/dart-lang/sdk/blob/e976e692be5fcd33a69d11269d9b0d59f14d2838/pkg/analyzer/lib/src/generated/error.dart
     String errorMessage = error.getMessage();
     if (errorMessage.startsWith("Unused import") ||
         errorMessage.startsWith("Duplicate import") ||
