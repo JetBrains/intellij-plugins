@@ -71,11 +71,12 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testChangeParam1() {
-    doTest("renamed", JSAttributeList.AccessType.PACKAGE_LOCAL, "Boolean",
-           new JSParameterInfo("i2", "Number", "", "", 1),
-           new JSParameterInfo("sss", "String", "\"abc\"", "", 0),
-           new JSParameterInfo("o", "flash.events.EventDispatcher", "FOO", "", 2),
-           new JSParameterInfo("rest2", "...", "", "", 3, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
+    withRefactorBaseMethod(() -> doTest("renamed", JSAttributeList.AccessType.PACKAGE_LOCAL, "Boolean",
+                                        new JSParameterInfo("i2", "Number", "", "", 1),
+                                        new JSParameterInfo("sss", "String", "\"abc\"", "", 0),
+                                        new JSParameterInfo("o", "flash.events.EventDispatcher", "FOO", "", 2),
+                                        new JSParameterInfo("rest2", "...", "", "", 3, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER)),
+                           false);
   }
 
 
