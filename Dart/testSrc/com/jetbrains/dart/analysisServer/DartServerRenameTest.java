@@ -187,6 +187,18 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.checkResult("export 'renamed.dart';");
   }
 
+  public void testFileMove() {
+    final PsiFile fooFile = myFixture.addFileToProject("web/src/foo.dart", "import \"bar.dart\";");
+    myFixture.addFileToProject("web/src/bar.dart", "");
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.doHighlighting(); // warm up
+
+    myFixture.moveFile("web/src/foo.dart", "web");
+
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.checkResult("import \'src/bar.dart\';");
+  }
+
   public void testTargetFileMove() {
     final PsiFile fooFile = myFixture.addFileToProject("web/src/foo.dart", "import \"bar.dart\";");
     myFixture.addFileToProject("web/src/bar.dart", "");
