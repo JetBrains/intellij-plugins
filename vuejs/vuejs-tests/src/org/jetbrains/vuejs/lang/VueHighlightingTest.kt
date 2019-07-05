@@ -1244,6 +1244,38 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     """)
     myFixture.checkHighlighting()
   }
+
+  fun testDestructuringPatternsInVFor() {
+    myFixture.configureByText("HelloWorld.vue", """
+      <template>
+          <div class="hello">
+              <h1>{{ msg }}</h1>
+              <ul>
+                  <li v-for="({name, price}, i) in list"> {{ i }}:{{ name }} - {{ price }}</li>
+                  <li v-for="{name, price} in list"> {{ 111 }}:{{ name }} - {{ price }}</li>
+              </ul>
+          </div>
+      </template> 
+      <script>
+        export default {
+          name: 'HelloWorld',
+          data: function () {
+            return {
+              list: [
+                {name: 'Product 1', price: 300},
+                {name: 'Product 2', price: 100},
+                {name: 'Product 3', price: 200}
+              ]
+            }
+          },
+          props: {
+            msg: String
+          }
+        };
+      </script>
+    """)
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

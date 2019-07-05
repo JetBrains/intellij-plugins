@@ -40,6 +40,10 @@ class VueIntentionsTest : BasePlatformTestCase() {
     doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
+  fun testPropagateToDestructuringWhenWithIndexer() {
+    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+  }
+
   fun testDepropagateFromDestructuring() {
     doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.depropagate"))
   }
