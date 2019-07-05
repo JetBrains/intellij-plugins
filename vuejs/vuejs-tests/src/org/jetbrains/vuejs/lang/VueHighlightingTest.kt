@@ -1253,6 +1253,9 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
               <ul>
                   <li v-for="({name, price}, i) in list"> {{ i }}:{{ name }} - {{ price }}</li>
                   <li v-for="{name, price} in list"> {{ 111 }}:{{ name }} - {{ price }}</li>
+                  <li v-for="(x, k, i) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr="closing parenthesis expected"> </error>in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr="closing parenthesis expected">,</error> j) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
               </ul>
           </div>
       </template> 

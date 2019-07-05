@@ -67,10 +67,7 @@ class VueJSLanguage : org.jetbrains.vuejs.language.VueJSLanguage() {
     private fun parseVForContents(): Boolean {
       val vForExpr = builder.mark()
       if (builder.tokenType == JSTokenTypes.LPAR) {
-        if (!parseVForVariables()) {
-          vForExpr.rollbackTo()
-          return false
-        }
+        parseVForVariables()
       }
       else if (!parseVForLoopVariableStatement()) {
         builder.error("identifier(s) expected")
@@ -93,16 +90,19 @@ class VueJSLanguage : org.jetbrains.vuejs.language.VueJSLanguage() {
       return true
     }
 
+    private val EXTRA_VAR_COUNT = 2;
     private fun parseVForVariables(): Boolean {
       val parenthesis = builder.mark()
       builder.advanceLexer() //LPAR
       val varStatement = builder.mark()
       if (parseVForLoopVariable()) {
-        if (builder.tokenType == JSTokenTypes.COMMA) {
+        var i = 0
+        while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
           builder.advanceLexer()
           if (isIdentifierToken(builder.tokenType)) {
             buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
           }
+          i++
         }
       }
       if (builder.tokenType != JSTokenTypes.RPAR) {
