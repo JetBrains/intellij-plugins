@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core.model;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import org.testng.annotations.Test;
@@ -14,7 +13,7 @@ import static org.easymock.EasyMock.*;
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
  */
-public class LibraryTest {
+public class LibraryModelTest {
 
     @Test
     public void constructor() {
