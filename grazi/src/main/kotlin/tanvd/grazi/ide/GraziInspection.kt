@@ -17,7 +17,7 @@ class GraziInspection : LocalInspectionTool() {
 
 
         private fun getProblemMessage(fix: Typo): String {
-            if (ApplicationManager.getApplication().isUnitTestMode) return ""
+            if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
 
             val message = if (fix.isSpellingTypo) {
                 //language=HTML
