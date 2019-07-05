@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.model.externalizable.documentation.generationchain;
 
 import com.intellij.tapestry.core.model.externalizable.documentation.wrapper.PresentationElementDocumentationWrapper;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.util.VelocityProcessor;
 import org.apache.commons.chain.Context;
 
@@ -19,10 +19,10 @@ public class ComponentDocumentationGenerator extends PresentationElementDocument
         if (!super.execute(context))
             return false;
 
-        if (!(getElement() instanceof Component))
+        if (!(getElement() instanceof TapestryComponent))
             return false;
 
-        Component component = (Component) getElement();
+        TapestryComponent component = (TapestryComponent) getElement();
 
         Map<String, Object> velocityContext = buildVelocityContext();
 

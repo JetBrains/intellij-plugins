@@ -17,7 +17,7 @@ public class LibraryModelTest {
 
     @Test
     public void constructor() {
-        Library library = new Library("id", "basepackage", null);
+        TapestryLibrary library = new TapestryLibrary("id", "basepackage", null);
 
         assert library.getId().equals("id");
         assert library.getBasePackage().equals("basepackage");
@@ -25,9 +25,9 @@ public class LibraryModelTest {
 
     @Test
     public void compareTo() {
-        Library library1 = new Library("application", "1", null);
-        Library library11 = new Library("application", "1", null);
-        Library library2 = new Library("application", "2", null);
+        TapestryLibrary library1 = new TapestryLibrary("application", "1", null);
+        TapestryLibrary library11 = new TapestryLibrary("application", "1", null);
+        TapestryLibrary library2 = new TapestryLibrary("application", "2", null);
 
         assert library1.compareTo(library11) == 0;
 
@@ -48,7 +48,7 @@ public class LibraryModelTest {
         org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
         org.easymock.EasyMock.replay(tapestryProjectMock);
 
-        Library library = new Library(null, "com.app", tapestryProjectMock);
+        TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getComponents().size() == 1;
     }
 
@@ -66,7 +66,7 @@ public class LibraryModelTest {
         org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
         org.easymock.EasyMock.replay(tapestryProjectMock);
 
-        Library library = new Library(null, "com.app", tapestryProjectMock);
+        TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getPages().size() == 1;
     }
 
@@ -84,15 +84,15 @@ public class LibraryModelTest {
         org.easymock.EasyMock.expect(tapestryProjectMock.getJavaTypeFinder()).andReturn(javaTypeFinderMock);
         org.easymock.EasyMock.replay(tapestryProjectMock);
 
-        Library library = new Library(null, "com.app", tapestryProjectMock);
+        TapestryLibrary library = new TapestryLibrary(null, "com.app", tapestryProjectMock);
         assert library.getMixins().size() == 1;
     }
 
     @Test
     public void equals() {
-        Library library1 = new Library(null, "com.app1", null);
-        Library library2 = new Library(null, "com.app2", null);
-        Library library3 = new Library(null, "com.app1", null);
+        TapestryLibrary library1 = new TapestryLibrary(null, "com.app1", null);
+        TapestryLibrary library2 = new TapestryLibrary(null, "com.app2", null);
+        TapestryLibrary library3 = new TapestryLibrary(null, "com.app1", null);
 
         assert !library1.equals(null);
 
@@ -105,7 +105,7 @@ public class LibraryModelTest {
 
     @Test
     public void hashCode_test() {
-        Library library1 = new Library(null, "com.app1", null);
+        TapestryLibrary library1 = new TapestryLibrary(null, "com.app1", null);
 
         assert library1.hashCode() == "com.app1".hashCode();
     }

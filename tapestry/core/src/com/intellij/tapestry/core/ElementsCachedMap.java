@@ -3,7 +3,7 @@ package com.intellij.tapestry.core;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.CachedUserDataCache;
@@ -45,7 +45,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     Map<String, PresentationLibraryElement> map = new THashMap<>();
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     assert project != null;
-    for (Library library : project.getLibraries()) {
+    for (TapestryLibrary library : project.getLibraries()) {
       if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values(), library.getShortName());
       if (myCacheAbstractComponents) computeKeyAndAddAll(map, library.getAbstractComponents().values(), library.getShortName());
       if (myCachePages) computeKeyAndAddAll(map, library.getPages().values(), library.getShortName());

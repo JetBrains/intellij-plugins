@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Represents a Tapestry library.
  */
-public class Library implements Comparable {
+public class TapestryLibrary implements Comparable {
 
   private final String _id;
   private final String _basePackage;
@@ -23,11 +23,11 @@ public class Library implements Comparable {
   @Nullable
   private final String myShortName;
 
-  public Library(String id, String basePackage, TapestryProject project) {
+  public TapestryLibrary(String id, String basePackage, TapestryProject project) {
     this(id, basePackage, project, null);
   }
 
-  public Library(String id, String basePackage, TapestryProject project, @Nullable String libraryShortName) {
+  public TapestryLibrary(String id, String basePackage, TapestryProject project, @Nullable String libraryShortName) {
     _id = id;
     _basePackage = basePackage;
     _project = project;
@@ -112,14 +112,14 @@ public class Library implements Comparable {
    */
   @Override
   public int compareTo(Object object) {
-    return getBasePackage().compareTo(((Library)object).getBasePackage());
+    return getBasePackage().compareTo(((TapestryLibrary)object).getBasePackage());
   }
 
   /**
    * {@inheritDoc}
    */
   public boolean equals(Object object) {
-    return object instanceof Library && getBasePackage().equals(((Library)object).getBasePackage());
+    return object instanceof TapestryLibrary && getBasePackage().equals(((TapestryLibrary)object).getBasePackage());
   }
 
   /**

@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.java.coercion.TypeCoercionValidator;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.AbstractValueResolver;
@@ -64,7 +64,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
         annotateTapestryAttribute(attr);
       }
 
-      Component component = TapestryUtils.getTypeOfTag(tag);
+      TapestryComponent component = TapestryUtils.getTypeOfTag(tag);
 
       if (component != null) {
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);

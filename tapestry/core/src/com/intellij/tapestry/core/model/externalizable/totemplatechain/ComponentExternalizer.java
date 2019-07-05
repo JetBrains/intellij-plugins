@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.model.externalizable.totemplatechain;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.util.PathUtils;
 import org.apache.commons.chain.Context;
@@ -18,10 +18,10 @@ public class ComponentExternalizer extends ToTemplateExternalizer {
         if (!super.execute(context))
             return false;
 
-        if (!(getContext().getElement() instanceof Component))
+        if (!(getContext().getElement() instanceof TapestryComponent))
             return false;
 
-        Component component = (Component) getContext().getElement();
+        TapestryComponent component = (TapestryComponent) getContext().getElement();
 
         String componentName;
         if (component.getLibrary().getId().equals(TapestryProject.APPLICATION_LIBRARY_ID) || component.getLibrary().getId().equals(TapestryProject.CORE_LIBRARY_ID)) {

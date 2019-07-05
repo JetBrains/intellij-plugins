@@ -3,7 +3,7 @@ package com.intellij.tapestry.core.model.presentation;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.mocks.*;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
 import org.testng.annotations.Test;
 
@@ -12,7 +12,7 @@ public class InjectedElementTest {
     @Test
     public void constructor_with_field() {
         JavaFieldMock fieldMock = null;
-        Component componentMock = null;
+        TapestryComponent componentMock = null;
 
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
 
@@ -24,7 +24,7 @@ public class InjectedElementTest {
     @Test
     public void constructor_with_tag() {
         XmlTag tag = null;
-        Component componentMock = null;
+        TapestryComponent componentMock = null;
 
         InjectedElement injectedElement = new InjectedElement(tag, componentMock);
 
@@ -37,7 +37,7 @@ public class InjectedElementTest {
     public void getElementId_component_without_id_and_tag_null() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION));
 
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
 
         assert injectedElement.getElementId().equals("field1");
@@ -49,9 +49,9 @@ public class InjectedElementTest {
 
         JavaClassTypeMock componentClassMock = new JavaClassTypeMock("com.app.components.SomeComponent").setPublic(true).setDefaultConstructor(true);
         TapestryProject tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        Library libraryMock = new Library("id", "com.app", tapestryProjectMock);
+        TapestryLibrary libraryMock = new TapestryLibrary("id", "com.app", tapestryProjectMock);
 
-        Component componentMock = new Component(libraryMock, componentClassMock, tapestryProjectMock);
+        TapestryComponent componentMock = new TapestryComponent(libraryMock, componentClassMock, tapestryProjectMock);
 
         InjectedElement injectedElement = new InjectedElement(tagMock, componentMock);
 
@@ -68,7 +68,7 @@ public class InjectedElementTest {
     public void getElementId_component_with_id_and_field_null() {
         XmlTagMock tagMock = new XmlTagMock("tag1").addAttribute(new XmlAttributeMock("id", "tag2"));
 
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
         InjectedElement injectedElement = new InjectedElement(tagMock, componentMock);
 
         assert injectedElement.getElementId().equals("tag2");
@@ -78,7 +78,7 @@ public class InjectedElementTest {
     public void getElementId_component_with_id_and_tag_null() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION).addParameter("id", new String[]{"field2"}));
 
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
 
         assert injectedElement.getElementId().equals("field2");
@@ -87,7 +87,7 @@ public class InjectedElementTest {
     @Test
     public void getElementId_null_values() {
         JavaFieldMock fieldMock = null;
-        Component componentMock = null;
+        TapestryComponent componentMock = null;
         XmlTagMock tagMock = null;
 
         InjectedElement injectedElementWithField = new InjectedElement(fieldMock, componentMock);
@@ -103,7 +103,7 @@ public class InjectedElementTest {
     public void getParameters_with_null_values() {
         JavaFieldMock fieldMock = null;
         XmlTagMock tagMock = null;
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
 
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
         assert injectedElement.getParameters().size() == 0;
@@ -118,7 +118,7 @@ public class InjectedElementTest {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock(TapestryConstants.COMPONENT_ANNOTATION).addParameter("parameters", values));
 
         XmlTagMock tagMock = new XmlTagMock("tag1").addAttribute(new XmlAttributeMock("id", "tag2"));
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
 
         InjectedElement injectedElement = new InjectedElement(fieldMock, componentMock);
         assert injectedElement.getParameters().size() == 1;
@@ -131,7 +131,7 @@ public class InjectedElementTest {
     public void compareTo() {
         JavaFieldMock fieldMock = new JavaFieldMock("field1", true);
         JavaFieldMock fieldMock2 = new JavaFieldMock("field2", true);
-        Component componentMock = org.easymock.EasyMock.createMock(Component.class);
+        TapestryComponent componentMock = org.easymock.EasyMock.createMock(TapestryComponent.class);
 
         assert new InjectedElement(fieldMock, componentMock).compareTo(new InjectedElement(fieldMock, componentMock)) == 0;
 

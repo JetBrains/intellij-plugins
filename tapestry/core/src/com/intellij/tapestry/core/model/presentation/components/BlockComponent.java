@@ -3,7 +3,7 @@ package com.intellij.tapestry.core.model.presentation.components;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * The built-in Block element.
  */
-public class BlockComponent extends Component {
+public class BlockComponent extends TapestryComponent {
 
   private final Map<String, TapestryParameter> myParameters = new HashMap<>();
 

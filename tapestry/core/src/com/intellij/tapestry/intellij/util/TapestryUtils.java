@@ -14,7 +14,7 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
@@ -289,15 +289,15 @@ public class TapestryUtils {
    * @return the component that the given tag represents.
    */
   @Nullable
-  public static Component getTypeOfTag(XmlTag tag) {
+  public static TapestryComponent getTypeOfTag(XmlTag tag) {
     return outTagToComponentMap.get(tag);
   }
 
-  private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
-    new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
+  private static final PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag> outTagToComponentMap =
+    new PsiElementBasedCachedUserDataCache<TapestryComponent, XmlTag>("TapestryTagToComponentMap") {
       @Override
       @Nullable
-      protected Component computeValue(XmlTag tag) {
+      protected TapestryComponent computeValue(XmlTag tag) {
         Module module = ModuleUtilCore.findModuleForPsiElement(tag);
         return module == null ? null : getTypeOfTag(module, tag);
       }
@@ -311,7 +311,7 @@ public class TapestryUtils {
    * @return the component that the given tag represents.
    */
   @Nullable
-  private static Component getTypeOfTag(@NotNull Module module, @NotNull XmlTag tag) {
+  private static TapestryComponent getTypeOfTag(@NotNull Module module, @NotNull XmlTag tag) {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
     if (tapestryProject == null) return null;
     XmlElement identifier = getComponentIdentifier(tag);
@@ -329,7 +329,7 @@ public class TapestryUtils {
         if (element != null) {
           for (TemplateElement embeddedComponent : element.getEmbeddedComponents()) {
             final InjectedElement element1 = embeddedComponent.getElement();
-            if (attrValue.equals(element1.getElementId())) return (Component)element1.getElement();
+            if (attrValue.equals(element1.getElementId())) return (TapestryComponent)element1.getElement();
           }
         }
       }

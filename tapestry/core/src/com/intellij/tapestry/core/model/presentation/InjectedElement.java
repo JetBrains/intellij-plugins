@@ -86,12 +86,12 @@ public class InjectedElement implements Comparable {
     }
 
     if (_field != null) {
-      if (_element instanceof Component) return getFieldId();
+      if (_element instanceof TapestryComponent) return getFieldId();
     }
 
     if (_tag != null) {
 
-      if (_element instanceof Component && getParameters() != null && getParameters().containsKey("id")) return getParameters().get("id");
+      if (_element instanceof TapestryComponent && getParameters() != null && getParameters().containsKey("id")) return getParameters().get("id");
 
       if (!(StringUtil.toUpperCase(_tag.getLocalName()).equals(StringUtil.toUpperCase(_element.getName())))) return getElement().getName();
 

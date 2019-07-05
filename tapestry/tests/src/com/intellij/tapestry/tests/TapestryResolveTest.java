@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.MappingDataCache;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
@@ -104,10 +104,10 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
   public void testTmlMapping3() {
     myFixture.configureByFile("TmlMapping3.java");
     final TapestryModuleSupportLoader moduleSupportLoader = TapestryModuleSupportLoader.getInstance(myModule);
-    final Collection<Library> libraries = moduleSupportLoader.getTapestryProject().getLibraries();
-    Library libraryOfInterest = null;
+    final Collection<TapestryLibrary> libraries = moduleSupportLoader.getTapestryProject().getLibraries();
+    TapestryLibrary libraryOfInterest = null;
 
-    for(Library library:libraries) {
+    for(TapestryLibrary library:libraries) {
       if ("dk.nesluop.librarymapping.framework".equals(library.getBasePackage())) {
         libraryOfInterest = library;
         break;

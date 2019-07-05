@@ -4,7 +4,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
@@ -17,10 +17,10 @@ import org.jetbrains.annotations.Nullable;
  * @author: Fedor.Korotkov
  */
 public class TapestryParameterDescriptor extends BasicTapestryTagDescriptor {
-  private final Component myComponent;
+  private final TapestryComponent myComponent;
   private final TapestryParameter myParameter;
 
-  public TapestryParameterDescriptor(Component component,
+  public TapestryParameterDescriptor(TapestryComponent component,
                                      @NotNull TapestryParameter parameter,
                                      @Nullable String namespacePrefix,
                                      TapestryNamespaceDescriptor descriptor) {

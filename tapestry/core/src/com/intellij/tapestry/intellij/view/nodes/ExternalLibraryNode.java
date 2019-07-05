@@ -7,7 +7,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.ui.treeStructure.SimpleNode;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ExternalLibraryNode extends TapestryNode {
 
-    public ExternalLibraryNode(Library library, Module module, AbstractTreeBuilder treeBuilder) {
+    public ExternalLibraryNode(TapestryLibrary library, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
         init(library, new PresentationData(library.getId(), library.getId(), AllIcons.Modules.Library, null));
@@ -30,7 +30,7 @@ public class ExternalLibraryNode extends TapestryNode {
     public SimpleNode[] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 
-        Library library = ((Library) getElement());
+        TapestryLibrary library = ((TapestryLibrary) getElement());
 
         if (library.getPages().size() > 0) {
             children.add(

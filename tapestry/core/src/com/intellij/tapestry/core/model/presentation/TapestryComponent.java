@@ -4,7 +4,7 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToTemplate;
 import com.intellij.tapestry.core.model.externalizable.totemplatechain.ExternalizeToTemplateChain;
 import com.intellij.tapestry.core.resource.IResource;
@@ -16,16 +16,16 @@ import java.util.Collection;
 /**
  * A Tapestry component.
  */
-public class Component extends ParameterReceiverElement implements ExternalizableToTemplate {
+public class TapestryComponent extends ParameterReceiverElement implements ExternalizableToTemplate {
 
   private IResource[] _templateCache;
 
-  protected Component(@NotNull Library library, @NotNull IJavaClassType componentClass, @NotNull TapestryProject project)
+  protected TapestryComponent(@NotNull TapestryLibrary library, @NotNull IJavaClassType componentClass, @NotNull TapestryProject project)
     throws NotTapestryElementException {
     super(library, componentClass, project);
   }
 
-  protected Component(@NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
+  protected TapestryComponent(@NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
     super(null, componentClass, project);
   }
 

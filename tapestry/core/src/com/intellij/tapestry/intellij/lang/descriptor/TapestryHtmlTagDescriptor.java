@@ -4,7 +4,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -28,11 +28,11 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   private final TapestryNamespaceDescriptor myNamespaceDescriptor;
   private final XmlElementDescriptor myHtmlDelegate;
   @Nullable
-  private final Component myComponent;
+  private final TapestryComponent myComponent;
   private final List<Mixin> myMixins;
 
   public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate,
-                                   @Nullable Component component,
+                                   @Nullable TapestryComponent component,
                                    List<Mixin> mixins,
                                    TapestryNamespaceDescriptor descriptor) {
     myHtmlDelegate = htmlDelegate;

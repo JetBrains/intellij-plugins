@@ -11,8 +11,8 @@ import com.intellij.tapestry.core.events.TapestryEventsManager;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
-import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.TapestryLibrary;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
@@ -51,10 +51,10 @@ public class TapestryProject {
    */
   public static final String CORE_LIBRARY_ID = "core";
 
-  private final Library myCoreLibrary = new Library(CORE_LIBRARY_ID, TapestryConstants.CORE_LIBRARY_PACKAGE, this);
+  private final TapestryLibrary myCoreLibrary = new TapestryLibrary(CORE_LIBRARY_ID, TapestryConstants.CORE_LIBRARY_PACKAGE, this);
   private final Module myModule;
   private final IResourceFinder myResourceFinder;
-  private Collection<Library> myCachedLibraries;
+  private Collection<TapestryLibrary> myCachedLibraries;
   private Map<String, List<String>> myCachedLibraryMapping;
   private volatile String myLastApplicationPackage;
   private String myLastApplicationFilterName;
@@ -135,7 +135,7 @@ public class TapestryProject {
    * @return a collection of all the available libraries to this project.
    */
   @NotNull
-  public Collection<Library> getLibraries() {
+  public Collection<TapestryLibrary> getLibraries() {
 
     String applicationRootPackage = getApplicationRootPackage();
     String applicationFilterName = getApplicationFilterName();
@@ -150,16 +150,16 @@ public class TapestryProject {
       }
     }
 
-    List<Library> cachedLibraries = new ArrayList<>();
+    List<TapestryLibrary> cachedLibraries = new ArrayList<>();
 
-    cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
-    cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
+    cachedLibraries.add(new TapestryLibrary(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
+    cachedLibraries.add(new TapestryLibrary(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
     cachedLibraries.add(myCoreLibrary);
 
     for (String libraryShortName : libraryMapping.keySet()) {
       for(String baseProject:libraryMapping.get(libraryShortName)) {
         final boolean coreLibrary = CORE_LIBRARY_ID.equals(libraryShortName);
-        cachedLibraries.add(new Library(
+        cachedLibraries.add(new TapestryLibrary(
           APPLICATION_LIBRARY_ID, baseProject, this, coreLibrary ? null : libraryShortName
         ));
       }
@@ -179,8 +179,8 @@ public class TapestryProject {
    * @return the application library.
    */
   @Nullable
-  public Library getApplicationLibrary() {
-    Collection<Library> libraries = getLibraries();
+  public TapestryLibrary getApplicationLibrary() {
+    Collection<TapestryLibrary> libraries = getLibraries();
     return libraries.size() == 0 ? null : libraries.iterator().next();
   }
 
@@ -234,8 +234,8 @@ public class TapestryProject {
    * @return the component with the given name, or {@code null} if the component isn't found.
    */
   @Nullable
-  public Component findComponent(@NotNull String componentName) {
-    return (Component)ourNameToComponentMap.get(myModule).get(StringUtil.toLowerCase(componentName));
+  public TapestryComponent findComponent(@NotNull String componentName) {
+    return (TapestryComponent)ourNameToComponentMap.get(myModule).get(StringUtil.toLowerCase(componentName));
   }
 
   /**
@@ -322,7 +322,7 @@ public class TapestryProject {
    */
   @Nullable
   public PresentationLibraryElement findElement(@NotNull IJavaClassType elementClass) {
-    Component component = findComponent(elementClass);
+    TapestryComponent component = findComponent(elementClass);
     return component != null ? component : findPage(elementClass);
   }
 
@@ -333,8 +333,8 @@ public class TapestryProject {
    * @return the component of the given class, or {@code null} if the component isn't found.
    */
   @Nullable
-  public Component findComponent(@NotNull IJavaClassType componentClass) {
-    return (Component)ourFqnToComponentMap.get(myModule).get(componentClass.getFullyQualifiedName());
+  public TapestryComponent findComponent(@NotNull IJavaClassType componentClass) {
+    return (TapestryComponent)ourFqnToComponentMap.get(myModule).get(componentClass.getFullyQualifiedName());
   }
 
   private static final ElementsCachedMap ourFqnToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false, false) {

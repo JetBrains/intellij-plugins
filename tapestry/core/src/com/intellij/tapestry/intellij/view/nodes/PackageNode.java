@@ -8,7 +8,7 @@ import com.intellij.psi.*;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
@@ -24,9 +24,9 @@ import java.util.TreeSet;
 
 public class PackageNode extends TapestryNode {
 
-    private final Library _library;
+    private final TapestryLibrary _library;
 
-    public PackageNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
+    public PackageNode(TapestryLibrary library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
         _library = library;
 

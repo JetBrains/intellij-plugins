@@ -4,7 +4,7 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToTemplate;
 import com.intellij.tapestry.core.model.externalizable.totemplatechain.ExternalizeToTemplateChain;
 import com.intellij.tapestry.core.resource.IResource;
@@ -21,7 +21,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
 
     private IResource[] _templateCache;
 
-    Page(Library library, IJavaClassType pageClass, TapestryProject project) throws NotTapestryElementException {
+    Page(TapestryLibrary library, IJavaClassType pageClass, TapestryProject project) throws NotTapestryElementException {
         super(library, pageClass, project);
     }
 

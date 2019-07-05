@@ -12,7 +12,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -40,7 +40,7 @@ public class TagDocumentationNavigation extends AnAction {
     if (project == null) return;
     Module module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
 
-    Component component = getTapestryComponent(event);
+    TapestryComponent component = getTapestryComponent(event);
     if (component == null) return;
 
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryToolWindowFactory.TAPESTRY_TOOLWINDOW_ID);
@@ -54,7 +54,7 @@ public class TagDocumentationNavigation extends AnAction {
   }
 
   @Nullable
-  private static Component getTapestryComponent(AnActionEvent event) {
+  private static TapestryComponent getTapestryComponent(AnActionEvent event) {
     Editor editor = (Editor)event.getDataContext().getData(CommonDataKeys.EDITOR.getName());
     PsiFile psiFile = ((PsiFile)event.getDataContext().getData(CommonDataKeys.PSI_FILE.getName()));
 

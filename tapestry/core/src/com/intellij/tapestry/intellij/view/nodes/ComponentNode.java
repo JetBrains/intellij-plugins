@@ -4,7 +4,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClassOwner;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
@@ -34,7 +34,7 @@ public class ComponentNode extends TapestryNode {
     @NotNull
     @Override
     public SimpleNode[] getChildren() {
-        Component component = (Component) getElement();
+        TapestryComponent component = (TapestryComponent) getElement();
         List<SimpleNode> children = new ArrayList<>();
 
         ClassNode classNode = new ClassNode((PsiClassOwner) ((IntellijJavaClassType) component.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder);

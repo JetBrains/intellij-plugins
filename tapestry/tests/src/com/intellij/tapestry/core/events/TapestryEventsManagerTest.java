@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.events;
 
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.TestableResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -19,7 +19,7 @@ public class TapestryEventsManagerTest {
 
     @BeforeMethod
     public void initMocks() {
-        Library applicationLibraryMock = org.easymock.EasyMock.createMock(Library.class);
+        TapestryLibrary applicationLibraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(applicationLibraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.replay(applicationLibraryMock);
 
