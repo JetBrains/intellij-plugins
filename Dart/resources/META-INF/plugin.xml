@@ -217,7 +217,7 @@
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
 
     <applicationService serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
-    <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
+    <codeCompletionConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
