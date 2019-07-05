@@ -15,7 +15,7 @@ import javax.swing.JComponent
 
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig> {
-    private val cbEnableGraziSpellcheck = JBCheckBox(GraziBundle.message("grazi.ui.settings.enable.text"))
+    private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
     private val cmbNativeLanguage = ComboBox<Lang>()
     private val cblEnabledLanguages = CheckBoxList<String>()
 
@@ -58,31 +58,31 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig> {
 
         return panel {
             tabs {
-                tab(GraziBundle.message("grazi.ui.settings.config.text")) {
+                tab(msg("grazi.ui.settings.config.text")) {
                     panel(VerticalLayout(0)) {
                         panel(BorderLayout(0, 0), VerticalLayout.FILL_HORIZONTAL) {
                             layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-                            border = border(GraziBundle.message("grazi.ui.settings.spellcheck.text"))
+                            border = border(msg("grazi.ui.settings.spellcheck.text"))
 
                             add(cbEnableGraziSpellcheck)
 
-                            label(GraziBundle.message("grazi.ui.settings.enable.note")) {
+                            label(msg("grazi.ui.settings.enable.note")) {
                                 font = font.deriveFont(Font.ITALIC)
                             }
                         }
                     }
                 }
 
-                tab(GraziBundle.message("grazi.ui.settings.languages.text")) {
+                tab(msg("grazi.ui.settings.languages.text")) {
                     panel {
                         panel(BorderLayout(0, 0), BorderLayout.PAGE_START) {
-                            border = border(GraziBundle.message("grazi.ui.settings.languages.native.text"))
+                            border = border(msg("grazi.ui.settings.languages.native.text"))
                             add(cmbNativeLanguage)
                         }
 
 
                         panel(BorderLayout(0, 0), BorderLayout.CENTER) {
-                            border = border(GraziBundle.message("grazi.ui.settings.languages.text"))
+                            border = border(msg("grazi.ui.settings.languages.text"))
                             add(JBScrollPane(cblEnabledLanguages))
                         }
                     }

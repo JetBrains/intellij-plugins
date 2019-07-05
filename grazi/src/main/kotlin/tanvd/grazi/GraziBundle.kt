@@ -10,7 +10,7 @@ object GraziBundle {
     private val json = ObjectMapper()
     private val setTypeRef = object : TypeReference<Set<String>>() {}
 
-    private const val bundleName = "messages.GraziBundle"
+    const val bundleName = "messages.GraziBundle"
 
     private val bundle by lazy { ResourceBundle.getBundle(bundleName) }
 

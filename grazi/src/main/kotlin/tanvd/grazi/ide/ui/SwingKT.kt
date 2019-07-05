@@ -1,9 +1,10 @@
 package tanvd.grazi.ide.ui
 
 import com.intellij.ui.components.JBTabbedPane
+import org.jetbrains.annotations.PropertyKey
+import tanvd.grazi.GraziBundle
 import java.awt.*
 import javax.swing.*
-import javax.swing.border.Border
 import javax.swing.border.CompoundBorder
 
 fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)
@@ -21,3 +22,5 @@ fun Container.label(text: String, configure: JLabel.() -> Unit = {}) = JLabel(te
 
 fun border(text: String): CompoundBorder = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(text),
         BorderFactory.createEmptyBorder(3, 5, 5, 5))
+
+fun msg(@PropertyKey(resourceBundle = GraziBundle.bundleName) key: String, vararg params: String): String = GraziBundle.message(key, *params)
