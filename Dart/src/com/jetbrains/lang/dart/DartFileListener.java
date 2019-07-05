@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,8 +24,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -47,14 +49,15 @@ public class DartFileListener implements VirtualFileListener {
   }
 
   @Override
-  public void beforePropertyChange(@NotNull VirtualFilePropertyEvent event) {
-    propertyChanged(event);
-  }
-
-  @Override
   public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
     if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
       fileChanged(myProject, event.getFile());
+
+      if (event.getFile().isInLocalFileSystem() &&
+          (DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getOldValue().toString()) ||
+           DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getFileName()))) {
+        updateVisibleFilesIfNeeded();
+      }
     }
   }
 
@@ -76,11 +79,23 @@ public class DartFileListener implements VirtualFileListener {
   @Override
   public void fileMoved(@NotNull VirtualFileMoveEvent event) {
     fileChanged(myProject, event.getFile());
+
+    if (DartAnalysisServerService.isLocalAnalyzableFile(event.getFile())) {
+      updateVisibleFilesIfNeeded();
+    }
   }
 
   @Override
   public void fileCopied(@NotNull VirtualFileCopyEvent event) {
     fileChanged(myProject, event.getFile());
+  }
+
+  private void updateVisibleFilesIfNeeded() {
+    // Checking sdk here is for quick exit: no need to create DartAnalysisServerService instance for projects without Dart at all
+    if (DartSdk.getDartSdk(myProject) != null &&
+        DartAnalysisServerService.getInstance(myProject).isServerProcessActive()) {
+      DartAnalysisServerService.getInstance(myProject).updateVisibleFiles();
+    }
   }
 
   private static void fileChanged(@NotNull final Project project, @NotNull final VirtualFile file) {
