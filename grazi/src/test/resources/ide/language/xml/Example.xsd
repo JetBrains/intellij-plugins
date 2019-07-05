@@ -4,9 +4,9 @@
     <!-- definition of simple elements -->
     <xs:element name="order_person" type="xs:string"/>
     <xs:element name="name" type="xs:string"/>
-    <xs:element name="<warning>adress</warning>" type="xs:string"/>
+    <xs:element name="<warning descr="MORFOLOGIK_RULE_EN_US">adress</warning>" type="xs:string"/>
 
-    <!-- definition of <warning>attributejhgs</warning> -->
+    <!-- definition of <warning descr="MORFOLOGIK_RULE_EN_US">attributejhgs</warning> -->
     <xs:attribute name="order_id" type="xs:string"/>
 
     <!-- definition of complex elements -->

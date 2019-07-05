@@ -30,11 +30,11 @@ class ExampleClassWithNoTypos<T> {
 }
 
 /**
- * It is <warning>friend</warning>
+ * It is <warning descr="ARTICLE_MISSING">friend</warning>
  *
- * <warning>This guy have</warning> no useful logic; it's just a documentation example.
+ * <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
  *
- * @param T the <warning>type of a</warning> <warning>membr</warning> in this group.
+ * @param T the <warning descr="KIND_OF_A">type of a</warning> <warning descr="MORFOLOGIK_RULE_EN_US">membr</warning> in this group.
  */
 class ExampleClassWithTypos<T> {
 
@@ -43,19 +43,19 @@ class ExampleClassWithTypos<T> {
     /**
      * Creates an empty group.
      *
-     * @param name the <warning>name which</warning> group
+     * @param name the <warning descr="COMMA_WHICH">name which</warning> group
      */
     public ExampleClassWithTypos(String name) {
         this.name = name;
     }
 
     /**
-     * It <warning>add</warning> a [member] to this <warning>grooup</warning>.
+     * It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
      *
      * @param member member to add
-     * @return the new size of <warning>a the</warning> group.
+     * @return the new size of <warning descr="DT_DT">a the</warning> group.
      */
     Integer badFunction(T member) {
-        return 1; // <warning>eror</warning> comment
+        return 1; // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }

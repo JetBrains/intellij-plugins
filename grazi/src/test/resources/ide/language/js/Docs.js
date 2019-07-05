@@ -1,5 +1,5 @@
 /**
- * Module description <warning>eror</warning>
+ * Module description <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>
  * @module ExampleClassWithNoTypos
  */
 
@@ -29,14 +29,14 @@ class ExampleClassWithNoTypos {
 }
 
 /**
- * It is <warning>friend</warning>
+ * It is <warning descr="ARTICLE_MISSING">friend</warning>
  *
- * <warning>This guy have</warning> no useful logic; it's just a documentation example.
+ * <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
  */
 class ExampleClassWithTypos {
     /**
      * Creates an empty group
-     * @param  {String} name the <warning>name which</warning> group
+     * @param  {String} name the <warning descr="COMMA_WHICH">name which</warning> group
      */
     constructor(name) {
         /** @private */
@@ -44,12 +44,12 @@ class ExampleClassWithTypos {
     }
 
     /**
-     * It <warning>add</warning> a [member] to this <warning>grooup</warning>.
+     * It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
      * @param {String} member member to add
-     * @return {Number} the new size <warning>a the</warning> group.
+     * @return {Number} the new size <warning descr="DT_DT">a the</warning> group.
      */
     badFunction(member) {
-        return 1; // <warning>eror</warning> comment
+        return 1; // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }
 

@@ -2,10 +2,10 @@
 
 package ide.language.kotlin
 
-val variableWith<warning>Eror</warning> = "error"
+val variableWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning> = "error"
 
-fun <warning>eror</warning>Function(<warning>eror</warning>: Int) {}
+fun <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>Function(<warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>: Int) {}
 
-object ObjectWith<warning>Eror</warning>
+object ObjectWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning>
 
-class ClassWith<warning>Eror</warning>
+class ClassWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning>

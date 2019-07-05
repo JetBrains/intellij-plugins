@@ -22,20 +22,20 @@ class ExampleClassWithNoTypos<T>(val name: String) {
 }
 
 /**
- * It is <warning>friend</warning>
+ * It is <warning descr="ARTICLE_MISSING">friend</warning>
  *
- * <warning>This guy have</warning> no useful logic; it's just a documentation example.
+ * <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
  *
- * @param T the <warning>type of a</warning> <warning>membr</warning> in this group.
- * @property name the <warning>name which</warning> group
+ * @param T the <warning descr="KIND_OF_A">type of a</warning> <warning descr="MORFOLOGIK_RULE_EN_US">membr</warning> in this group.
+ * @property name the <warning descr="COMMA_WHICH">name which</warning> group
  * @constructor Creates an empty group.
  */
 class ExampleClassWithTypos<T>(val name: String) {
     /**
-     * It <warning>add</warning> a [member] to this <warning>grooup</warning>.
-     * @return the new size of <warning>a the</warning> group.
+     * It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
+     * @return the new size of <warning descr="DT_DT">a the</warning> group.
      */
     fun badFunction(member: T): Int {
-        return 1 // <warning>eror</warning> comment
+        return 1 // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }

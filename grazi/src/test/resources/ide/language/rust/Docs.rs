@@ -35,8 +35,8 @@ impl ExampleClassWithNoTypos {
     }
 }
 
-/// It is <warning>friend</warning>
-/// <warning>This guy have</warning> no useful logic; it's just a documentation example.
+/// It is <warning descr="ARTICLE_MISSING">friend</warning>
+/// <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
 pub struct ExampleClassWithTypos {
     /// Name of the group
     name: String,
@@ -47,7 +47,7 @@ impl ExampleClassWithTypos {
     ///
     /// # Argument
     ///
-    /// * `name` -- the <warning>name which</warning> group
+    /// * `name` -- the <warning descr="COMMA_WHICH">name which</warning> group
     ///
     pub fn new(name: &str) -> Person {
         Person {
@@ -55,7 +55,7 @@ impl ExampleClassWithTypos {
         }
     }
 
-    /// It <warning>add</warning> a [member] to this <warning>grooup</warning>.
+    /// It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
     ///
     /// # Argument
     ///
@@ -63,9 +63,9 @@ impl ExampleClassWithTypos {
     ///
     /// # Returns
     ///
-    /// Int -- the new size <warning>a the</warning> group.
+    /// Int -- the new size <warning descr="DT_DT">a the</warning> group.
     ///
     pub fn good_function(member: &str) -> Int {
-        return 1 // <warning>eror</warning> comment
+        return 1 // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }

@@ -1,4 +1,4 @@
-"""Module description <warning>eror</warning>"""
+"""Module description <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>"""
 
 
 class ExampleClassWithNoTypos:
@@ -32,15 +32,15 @@ class ExampleClassWithNoTypos:
 
 
 class ExampleClassWithTypos:
-    """It is <warning>friend</warning>
+    """It is <warning descr="ARTICLE_MISSING">friend</warning>
 
-    <warning>This guy have</warning> no useful logic; it's just a documentation example.
+    <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
 
     Args:
-        name (str): the <warning>name which</warning> group
+        name (str): the <warning descr="COMMA_WHICH">name which</warning> group
 
     Attributes:
-        name (str): the <warning>name which</warning> group
+        name (str): the <warning descr="COMMA_WHICH">name which</warning> group
 
     """
 
@@ -49,13 +49,13 @@ class ExampleClassWithTypos:
 
     def bad_function(self, member):
         """
-        It <warning>add</warning> a [member] to this <warning>grooup</warning>.
+        It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
 
         Args:
             member (str): member to add to the group.
 
         Returns:
-            int: the new size of <warning>a the</warning> group.
+            int: the new size of <warning descr="DT_DT">a the</warning> group.
 
         """
-        return 1  # <warning>eror</warning> comment
+        return 1  # <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment

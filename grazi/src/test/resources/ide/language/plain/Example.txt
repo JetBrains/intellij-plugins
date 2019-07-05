@@ -1,3 +1,3 @@
-It is <warning>friend</warning> of human
-It is <warning>frend</warning> of human
-It <warning>are</warning> working for <warning>much</warning> warnings
+It is <warning descr="ARTICLE_MISSING">friend</warning> of human
+It is <warning descr="MORFOLOGIK_RULE_EN_US">frend</warning> of human
+It <warning descr="IT_VBZ">are</warning> working for <warning descr="MUCH_COUNTABLE">much</warning> warnings

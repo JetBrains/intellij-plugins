@@ -3,13 +3,13 @@
     "id": "file",
     "value": "File",
     "popup": {
-      "menuitem": [
+      "menu_item": [
         {
-          "<warning>valu</warning>": "New",
+          "<warning descr="MORFOLOGIK_RULE_EN_US">valu</warning>": "New",
           "onclick": "CreateNewDoc()"
         },
         {
-          "value": "There are <warning>document</warning>",
+          "value": "There are <warning descr="THERE_RE_MANY">document</warning>",
           "onclick": "OpenDoc()"
         },
         {

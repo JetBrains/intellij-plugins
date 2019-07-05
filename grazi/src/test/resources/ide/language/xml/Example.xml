@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shiporder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:noNamespaceSchemaLocation="Example.xsd">
-    <orderperson><warning>johnn</warning> Smith</orderperson>
+    <orderperson><warning descr="MORFOLOGIK_RULE_EN_US">johnn</warning> Smith</orderperson>
     <shipto>
-        <name>it <warning>an</warning> friend</name>
+        <name>it <warning descr="EN_A_VS_AN">an</warning> friend</name>
         <address>Some street 23</address>
     </shipto>
 </shiporder>

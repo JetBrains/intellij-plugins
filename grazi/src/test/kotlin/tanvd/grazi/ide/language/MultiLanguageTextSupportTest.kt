@@ -24,6 +24,6 @@ class MultiLanguageTextSupportTest : GraziTestBase(true) {
     @Test
     fun `test grammar check in file`() {
         // NOTE: lost one mistake in russian (к друг)
-        runHighlightTestForFile("ide/language/plain/ExampleMultiLang.md")
+        runHighlightTestForFile("ide/language/markdown/ExampleMultiLang.md")
     }
 }
