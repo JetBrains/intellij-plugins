@@ -20,7 +20,7 @@ object LangTool : GraziLifecycle {
                 lang.configure(this)
                 disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })
                 //Spellcheck will be done by Grazi spellchecker
-                if (lang == Lang.AMERICAN_ENGLISH) {
+                if (arrayOf(Lang.AMERICAN_ENGLISH, Lang.BRITISH_ENGLISH).any { it == lang }) {
                     disableRules(allActiveRules.filter { it.isDictionaryBasedSpellingRule }.map { it.id })
                 }
             }
