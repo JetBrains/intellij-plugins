@@ -537,7 +537,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     private final Predicate<String> myShouldIncludeOneTimeBinding;
     private final XmlTag myTag;
     private List<Angular2AttributeDescriptor> myResult;
-    private Function<String, String> myOneTimeBindingNameHack;
 
     DirectiveAttributesProvider(@NotNull XmlTag tag,
                                 @NotNull Angular2Directive directive,
@@ -545,7 +544,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       myTag = tag;
       myDirective = directive;
       myShouldIncludeOneTimeBinding = shouldIncludeOneTimeBinding;
-      myOneTimeBindingNameHack = Angular2LibrariesHacks.hackIonicComponentAttributeNames(directive);
     }
 
     public List<Angular2AttributeDescriptor> get() {
@@ -555,8 +553,12 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       collectDirectiveDescriptors(myDirective.getOutputs(), this::createEventHandler);
       collectDirectiveDescriptors(myDirective.getInputs(), this::createOneTimeBinding);
       collectDirectiveDescriptors(myDirective.getAttributes(), this::createAttributeBinding);
+      //noinspection unchecked
+      Optional.ofNullable(Angular2LibrariesHacks.hackIonicComponentAttributeNames(myDirective, this::createOneTimeBinding))
+        .ifPresent(creator -> collectDirectiveDescriptors((Collection<Angular2DirectiveProperty>)myDirective.getInputs(), creator));
       return myResult;
     }
+
 
     private <T> void collectDirectiveDescriptors(
       @NotNull Collection<T> list,
@@ -584,7 +586,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     @Nullable
     private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
-      String attributeName = myOneTimeBindingNameHack.apply(info.getName());
+      return createOneTimeBinding(info, info.getName());
+    }
+
+    @Nullable
+    private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info, String attributeName) {
       return myShouldIncludeOneTimeBinding.test(attributeName)
              && isOneTimeBindingProperty(info)
              ? new Angular2AttributeDescriptor(myTag, attributeName, AttributePriority.HIGH,

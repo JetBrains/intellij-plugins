@@ -18,7 +18,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
@@ -33,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
@@ -100,14 +103,16 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-39722
    */
-  @NotNull
-  public static Function<String, String> hackIonicComponentAttributeNames(@NotNull Angular2Directive directive) {
+  @Nullable
+  public static Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
+    @NotNull Angular2Directive directive,
+    BiFunction<? super Angular2DirectiveProperty, ? super String, Angular2AttributeDescriptor> oneTimeBindingCreator) {
     if (!isIonicDirective(directive)) {
-      return Function.identity();
+      return null;
     }
-    // Convert to kebab case - Ionic uses CamelCase for inputs and kebab for attributes - not an Angular way
-    return (@NonNls String propertyName) -> propertyName.replaceAll("([A-Z])", "-$1")
-      .toLowerCase(Locale.ENGLISH);
+    // Add kebab case version of attribute - Ionic takes these directly from element bypassing Angular
+    return (@NonNls Angular2DirectiveProperty property) -> oneTimeBindingCreator.apply(
+      property, property.getName().replaceAll("([A-Z])", "-$1").toLowerCase(Locale.ENGLISH));
   }
 
   private static boolean isIonicDirective(Angular2Directive directive) {
