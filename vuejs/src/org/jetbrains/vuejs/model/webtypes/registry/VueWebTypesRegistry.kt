@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.webtypes.registry
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
@@ -163,7 +164,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   private fun buildPlugin(tarballUrl: String?): VuePlugin? {
     tarballUrl ?: return null
-    val webTypesJson = ObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
+    val webTypesJson = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
     synchronized(myStateLock) {
       myStateVersion++
     }
