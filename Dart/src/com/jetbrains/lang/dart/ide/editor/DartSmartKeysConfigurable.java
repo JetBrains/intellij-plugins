@@ -16,15 +16,15 @@
 package com.jetbrains.lang.dart.ide.editor;
 
 
+import com.intellij.application.options.CodeCompletionOptionsCustomSection;
 import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.ui.IdeBorderFactory;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 
 import javax.swing.*;
 
-public class DartSmartKeysConfigurable extends BeanConfigurable<DartCodeInsightSettings> implements UnnamedConfigurable {
+public class DartSmartKeysConfigurable extends BeanConfigurable<DartCodeInsightSettings> implements CodeCompletionOptionsCustomSection {
   public DartSmartKeysConfigurable() {
     super(DartCodeInsightSettings.getInstance());
     DartCodeInsightSettings settings = getInstance();
