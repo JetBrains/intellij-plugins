@@ -19,5 +19,5 @@ fun JTabbedPane.tab(name: String, body: JTabbedPane.() -> Component) = body().al
 fun label(text: String, configure: JLabel.() -> Unit = {}) = JLabel(text).apply(configure)
 fun Container.label(text: String, configure: JLabel.() -> Unit = {}) = JLabel(text).apply(configure).also { add(it) }
 
-private val panelEmptyBorder: Border = BorderFactory.createEmptyBorder(3, 5, 5, 5)
-fun border(text: String): CompoundBorder = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(text), panelEmptyBorder)
+fun border(text: String): CompoundBorder = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(text),
+        BorderFactory.createEmptyBorder(3, 5, 5, 5))
