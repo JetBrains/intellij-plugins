@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlighting;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -8,9 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
@@ -75,7 +73,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.enableInspections(HtmlUnknownTargetInspection.class);
     myFixture.addFileToProject("pubspec.yaml", "name: ProjectName");
     myFixture.addFileToProject("local_package/lib/src/localPackageFile.html", "");
-    myFixture.addFileToProject(".packages","PathPackage:local_package/lib/");
+    myFixture.addFileToProject(".packages", "PathPackage:local_package/lib/");
     myFixture.configureByText("foo.html", "<link href=\"packages/PathPackage/src/localPackageFile.html\">\n" +
                                           "<link href=\"packages/PathPackage/src/<warning descr=\"Cannot resolve file 'incorrect.html'\">incorrect.html</warning> \">");
     myFixture.checkHighlighting(true, false, true);
@@ -139,43 +137,6 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     finally {
       unexcludeFolder("other_project");
     }
-  }
-
-  public void _testRenameImportedFile() {
-    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
-    final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
-    final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '''../libFile.dart''';\n" +
-                                                                                 "import '''package:ProjectName/libFile.dart''';");
-    final PsiFile libFile3 = myFixture.addFileToProject("lib/libFile3.dart", "part '../lib/libFile.dart';\n" +
-                                                                             "part 'package:ProjectName/sub/../libFile.dart';");
-    final PsiFile webFile = myFixture.addFileToProject("web/webFile.dart", "import r'../lib/libFile.dart'\n" +
-                                                                           "import r'package:ProjectName/libFile.dart'");
-
-    myFixture.renameElement(libFile, "renamed.dart");
-
-    myFixture.openFileInEditor(libFile2.getVirtualFile());
-    myFixture.checkResult("import '''../renamed.dart''';\n" +
-                          "import '''package:ProjectName/renamed.dart''';");
-
-    myFixture.openFileInEditor(libFile3.getVirtualFile());
-    myFixture.checkResult("part 'renamed.dart';\n" +
-                          "part 'package:ProjectName/renamed.dart';");
-
-    myFixture.openFileInEditor(webFile.getVirtualFile());
-    myFixture.checkResult("import r'../lib/renamed.dart'\n" +
-                          "import r'package:ProjectName/renamed.dart'");
-  }
-
-  public void _testUpdateImportsOnFileMove() {
-    myFixture.addFileToProject("pubspec.yaml", "name: ProjectName\n");
-    final PsiFile libFile = myFixture.addFileToProject("lib/libFile.dart", "");
-    final PsiFile libFile2 = myFixture.addFileToProject("lib/sub/libFile2.dart", "import '../libFile.dart';\n" +
-                                                                                 "import 'package:ProjectName/libFile.dart';");
-    new MoveFilesOrDirectoriesProcessor(getProject(), new PsiElement[]{libFile2}, libFile.getParent(), true, true, true, null, null).run();
-
-    myFixture.openFileInEditor(libFile2.getVirtualFile());
-    myFixture.checkResult("import 'libFile.dart';\n" +
-                          "import 'package:ProjectName/libFile.dart';");
   }
 
   public void testUriInPartOf() {
