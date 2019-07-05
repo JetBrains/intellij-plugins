@@ -100,7 +100,7 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport language="TEXT" implementationClass="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
 
-        <languageSupport language="XML" implementationClass="tanvd.grazi.ide.language.xml.XmlSupport" />
+        <languageSupport language="XML" implementationClass="tanvd.grazi.ide.language.xml.XmlSupport"/>
 
         <languageSupport language="JSON" implementationClass="tanvd.grazi.ide.language.json.JsonSupport"/>
 

@@ -20,6 +20,5 @@ object IdeaSpellchecker {
         val spellchecker = SpellCheckerManager.getInstance(project)
         val keyworder = LanguageNamesValidation.INSTANCE.forLanguage(language)
         return !keyworder.isKeyword(word, project) && spellchecker.hasProblem(word)
-
     }
 }

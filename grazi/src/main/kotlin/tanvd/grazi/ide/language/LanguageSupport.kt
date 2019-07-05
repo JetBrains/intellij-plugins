@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.isInjectedFragment
 
-abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()): LanguageExtensionPoint<LanguageSupport>() {
+abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) : LanguageExtensionPoint<LanguageSupport>() {
     companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")
 
     open fun isRelevant(element: PsiElement): Boolean = true

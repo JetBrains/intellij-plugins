@@ -1,11 +1,11 @@
 package tanvd.grazi.ide
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInspection.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import kotlinx.html.*
-import kotlinx.html.stream.createHTML
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
@@ -15,90 +15,76 @@ import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
-    companion object {
+    companion object : GraziLifecycle {
         private fun getProblemMessage(fix: Typo): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
-            return createHTML(false).html {
-                body {
-                    div {
-                        style = "margin-bottom: 5px;"
-                        if (fix.isSpellingTypo) {
-                            div {
-                                if (fix.info.rule.description.length > 50) {
-                                    style = "width: 300px;"
-                                }
 
-                                p { unsafe { +fix.info.rule.toDescriptionSanitized() } }
-                            }
-                        } else {
-                            div {
-                                if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
-                                    style = "width: 300px;"
-                                }
+            val message = if (fix.isSpellingTypo) {
+                //language=HTML
+                """
+                    <html>
+                        <body>
+                            <div>
+                                <p>${fix.info.rule.toDescriptionSanitized()}</p>
+                            </div>
+                        </body>
+                    </html>
+                """.trimIndent()
+            } else {
+                val examples = fix.info.incorrectExample?.let {
+                    val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
+                    if (corrections.isEmpty()) {
+                        //language=HTML
+                        """
+                            <tr style='padding-top: 5px;'>
+                                <td style='color: gray;'>Incorrect:</td>
+                                <td>${it.toIncorrectHtml()}</td>
+                            </tr>
+                        """.trimIndent()
 
-                                table {
-                                    if (fix.fixes.isNotEmpty()) {
-                                        tr {
-                                            td {
-                                                colSpan = "2"
-                                                style = "padding-bottom: 3px;"
-                                                unsafe { +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}" }
-                                            }
-                                        }
-                                    }
-
-                                    tr {
-                                        td {
-                                            colSpan = "2"
-                                            unsafe { +fix.info.rule.toDescriptionSanitized() }
-                                        }
-                                    }
-                                }
-
-                                table {
-                                    fix.info.incorrectExample?.let {
-                                        val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
-                                        if (corrections.isEmpty()) {
-                                            tr {
-                                                style = "padding-top: 5px;"
-                                                td {
-                                                    style = "color: gray;"
-                                                    +"Incorrect:"
-                                                }
-                                                td { unsafe { +it.toIncorrectHtml() } }
-                                            }
-                                        } else {
-                                            tr {
-                                                style = "padding-top: 5px;"
-                                                td {
-                                                    style = "color: gray;"
-                                                    +"Incorrect:"
-                                                }
-                                                td {
-                                                    style = "text-align: left"
-                                                    unsafe { +it.toIncorrectHtml() }
-                                                }
-                                            }
-
-                                            tr {
-                                                style = "padding-top: 5px;"
-                                                td {
-                                                    style = "color: gray;"
-                                                    +"Correct:"
-                                                }
-                                                td {
-                                                    style = "text-align: left"
-                                                    unsafe { +it.toCorrectHtml() }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    } else {
+                        //language=HTML
+                        """
+                            <tr style='padding-top: 5px;'>
+                                <td style='color: gray;'>Incorrect:</td>
+                                <td style='text-align: left'>${it.toIncorrectHtml()}</td>
+                            </tr>
+                            <tr>
+                                <td style='color: gray;'>Correct:</td>
+                                <td style='text-align: left'>${it.toCorrectHtml()}</td>
+                            </tr>
+                        """.trimIndent()
                     }
-                }
+                } ?: ""
+
+                val fixes = if (fix.fixes.isNotEmpty()) {
+                    //language=HTML
+                    """
+                        <tr><td colspan='2' style='padding-bottom: 3px;'>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}</td></tr>
+                    """
+                } else ""
+
+                //language=HTML
+                """
+                    <html>
+                        <body>
+                            <div>
+                                <table>
+                                $fixes
+                                <tr><td colspan='2'>${fix.info.rule.toDescriptionSanitized()}</td></tr>
+                                </table>
+                                <table>
+                                $examples
+                                </table>
+                            </div>
+                        </body>
+                    </html>
+                """.trimIndent()
             }
+            if (fix.info.rule.description.length > 50 || (!fix.isSpellingTypo && fix.info.incorrectExample?.example?.length ?: 0 > 50)) {
+                return message.replaceFirst("<div>", "<div style='width: 300px;'>")
+            }
+            return message
         }
 
         private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor? {
@@ -121,6 +107,12 @@ class GraziInspection : LocalInspectionTool() {
 
                 manager.createProblemDescriptor(element, fix.toSelectionRange(), getProblemMessage(fix),
                         fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
+            }
+        }
+
+        override fun reset() {
+            ProjectManager.getInstance().openProjects.forEach {
+                DaemonCodeAnalyzer.getInstance(it).restart()
             }
         }
     }

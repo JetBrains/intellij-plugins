@@ -74,14 +74,19 @@ object GraziSpellchecker : GraziLifecycle {
      * Note, that casing typos (suggestion includes the same word but in different casing) are ignored.
      */
     private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
-        val typo = tryRun { checker!!.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
-        if (typo != null && IdeaSpellchecker.hasProblem(word, project, language) && !isCasingProblem(word, typo)) {
+        val typo = tryRun { checker.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
+        if (typo != null && IdeaSpellchecker.hasProblem(word, project, language)
+                && !isCasingProblem(word, typo) && !isPluralProblem(word, typo)) {
             add(typo)
         }
     }
 
     private fun isCasingProblem(word: String, typo: Typo): Boolean {
         return typo.fixes.any { it.toLowerCase() == word.toLowerCase() }
+    }
+
+    private fun isPluralProblem(word: String, typo: Typo): Boolean {
+        return typo.fixes.any { "${it.toLowerCase()}s" == word.toLowerCase() }
     }
 
     override fun init() {
