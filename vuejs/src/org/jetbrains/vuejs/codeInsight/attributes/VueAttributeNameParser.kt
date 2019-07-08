@@ -64,7 +64,7 @@ class VueAttributeNameParser {
           paramsPos = attributeName.length
         }
       }
-      return VueDirectiveInfo(name, kind, arguments, parseModifiers(attributeName, paramsPos))
+      return VueDirectiveInfo(name, kind, if (arguments.isEmpty()) null else arguments, parseModifiers(attributeName, paramsPos))
     }
 
     private fun parseModifiers(modifiers: String, startPos: Int): Set<String> {
@@ -76,11 +76,15 @@ class VueAttributeNameParser {
       var prevDot = startPos
       while (++currentIndex < modifiers.length) {
         if (modifiers[currentIndex] == '.') {
-          result.add(modifiers.substring(prevDot + 1, currentIndex))
+          if (prevDot + 1 < currentIndex) {
+            result.add(modifiers.substring(prevDot + 1, currentIndex))
+          }
           prevDot = currentIndex
         }
       }
-      result.add(modifiers.substring(prevDot + 1))
+      if (prevDot + 1 < modifiers.length) {
+        result.add(modifiers.substring(prevDot + 1))
+      }
       return result
     }
 

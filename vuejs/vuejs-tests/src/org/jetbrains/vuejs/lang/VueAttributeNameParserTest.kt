@@ -19,6 +19,8 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("foo-bar", "foo-bar", PLAIN, injectJS = false, requiresAttributeValue = true)
     expect("foo-bar.a", "foo-bar", PLAIN, setOf("a"), injectJS = false, requiresAttributeValue = false)
     expect("foo-bar.", "foo-bar", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("foo-bar..", "foo-bar", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("foo-bar..a...b..", "foo-bar", PLAIN, setOf("a","b"), injectJS = false, requiresAttributeValue = false)
 
     // special attributes
     expect("slot", "slot", SLOT, injectJS = false, requiresAttributeValue = true)
@@ -39,6 +41,12 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("v-foo:[arg.a].b", "foo", "[arg.a]", CUSTOM, setOf("b"), injectJS = true, requiresAttributeValue = false)
     expect("v-foo:[arg[a.b].c].d.e", "foo", "[arg[a.b].c]", CUSTOM, setOf("d", "e"), injectJS = true, requiresAttributeValue = false)
     expect("v-foo:[{a: b}].c", "foo", "[{a: b}]", CUSTOM, setOf("c"), injectJS = true, requiresAttributeValue = false)
+
+    expect("v-foo-bar:", "foo-bar", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
+    expect("v-foo-bar:.a", "foo-bar", null, CUSTOM, setOf("a"), injectJS = true, requiresAttributeValue = false)
+    expect("v-foo-bar.a", "foo-bar", null, CUSTOM, setOf("a"), injectJS = true, requiresAttributeValue = false)
+    expect("v-foo-bar:..", "foo-bar", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
+    expect("v-foo:bar..a...b..", "foo", "bar", CUSTOM, setOf("a","b"), injectJS = true, requiresAttributeValue = false)
 
     expect("v-@foo", "@foo", null, CUSTOM, injectJS = true, requiresAttributeValue = false)
     expect("v-:foo", "", "foo", CUSTOM, injectJS = true, requiresAttributeValue = false)
