@@ -11,16 +11,16 @@ class VueAttributeNameParser {
       if (attributeName.isEmpty()) return VueAttributeInfo("", VueAttributeKind.PLAIN)
       val name: String
       val kind: VueDirectiveKind
-      var params: String
+      var paramsPos: Int
       if (attributeName.startsWith('@')) {
         name = "on"
         kind = VueDirectiveKind.ON
-        params = attributeName.substring(1)
+        paramsPos = 1
       }
       else if (attributeName.startsWith(':')) {
         name = "bind"
         kind = VueDirectiveKind.BIND
-        params = attributeName.substring(1)
+        paramsPos = 1
       }
       else if (attributeName.startsWith("v-") && attributeName.length > 2) {
         var nameEnd = attributeName.indexOfFirst { it == '.' || it == ':' }
@@ -29,9 +29,9 @@ class VueAttributeNameParser {
         }
         name = attributeName.substring(2, nameEnd)
         kind = directiveKindMap[name] ?: VueDirectiveKind.CUSTOM
-        params = attributeName.substring(nameEnd)
-        if (params.startsWith(":"))
-          params = params.substring(1)
+        paramsPos = nameEnd
+        if (paramsPos < attributeName.length && attributeName[paramsPos] == ':')
+          paramsPos++
       }
       else {
         var nameEnd = attributeName.indexOf('.')
@@ -41,46 +41,46 @@ class VueAttributeNameParser {
         name = attributeName.substring(0, nameEnd)
         val attributeKind = attributeKindMap[name]?.let { if (it.isValidIn(context)) it else VueAttributeKind.PLAIN }
                             ?: VueAttributeKind.PLAIN
-        return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName.substring(nameEnd)))
+        return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
-      if (params.isEmpty()) {
+      if (paramsPos >= attributeName.length) {
         return VueDirectiveInfo(name, kind)
       }
 
       val arguments: String?
-      val lastBracket = params.lastIndexOf(']')
-      if (params.startsWith('[') && lastBracket > 0) {
-        arguments = params.substring(0, lastBracket + 1)
-        params = params.substring(lastBracket + 1)
+      val lastBracket = attributeName.lastIndexOf(']')
+      if (attributeName[paramsPos] == '[' && lastBracket > 0) {
+        arguments = attributeName.substring(paramsPos, lastBracket + 1)
+        paramsPos = lastBracket + 1
       }
       else {
-        val firstDot = params.indexOf('.')
+        val firstDot = attributeName.indexOf('.', paramsPos)
         if (firstDot > 0) {
-          arguments = params.substring(0, firstDot)
-          params = params.substring(firstDot)
+          arguments = attributeName.substring(paramsPos, firstDot)
+          paramsPos = firstDot
         }
         else {
-          arguments = params
-          params = ""
+          arguments = attributeName.substring(paramsPos)
+          paramsPos = attributeName.length
         }
       }
-      return VueDirectiveInfo(name, kind, arguments, parseModifiers(params))
+      return VueDirectiveInfo(name, kind, arguments, parseModifiers(attributeName, paramsPos))
     }
 
-    private fun parseModifiers(modifiers: String): Set<String> {
-      if (modifiers.length <= 2 || !modifiers.startsWith('.')) {
+    private fun parseModifiers(modifiers: String, startPos: Int): Set<String> {
+      if (startPos + 1 >= modifiers.length || modifiers[startPos] != '.') {
         return emptySet()
       }
       val result = mutableSetOf<String>()
-      var lastDot = 1
-      while (lastDot + 1 < modifiers.length) {
-        var nextDot = modifiers.indexOf('.', lastDot + 1)
-        if (nextDot < 0) {
-          nextDot = modifiers.length
+      var currentIndex = startPos
+      var prevDot = startPos
+      while (++currentIndex < modifiers.length) {
+        if (modifiers[currentIndex] == '.') {
+          result.add(modifiers.substring(prevDot + 1, currentIndex))
+          prevDot = currentIndex
         }
-        result.add(modifiers.substring(lastDot + 1, nextDot))
-        lastDot = nextDot + 1
       }
+      result.add(modifiers.substring(prevDot + 1))
       return result
     }
 
@@ -154,15 +154,15 @@ class VueAttributeNameParser {
     CUSTOM(hasName = false, requiresValue = false),
     BIND,
     ON,
-    CLOAK(requiresValue = false),
-    ELSE(requiresValue = false),
+    CLOAK(injectJS = false, requiresValue = false),
+    ELSE(injectJS = false, requiresValue = false),
     ELSE_IF,
     FOR,
     HTML,
     IF,
     MODEL,
-    ONCE(requiresValue = false),
-    PRE(requiresValue = false),
+    ONCE(injectJS = false, requiresValue = false),
+    PRE(injectJS = false, requiresValue = false),
     SHOW,
     SLOT(requiresValue = false, injectJS = false /* until supports for slots is done */),
     TEXT;

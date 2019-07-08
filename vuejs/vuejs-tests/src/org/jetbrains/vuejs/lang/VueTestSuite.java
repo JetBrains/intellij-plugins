@@ -21,7 +21,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   VueTypedHandlerTest.class,
-  VueTypeScriptHighlightingTest.class,
+  VueAttributeNameParserTest.class,
   VueResolveTest.class,
   VueRenameTest.class,
   VueParameterInfoTest.class,
@@ -40,7 +40,8 @@ import org.junit.runners.Suite;
   VueHighlightingLexerTest.class,
   VueLexerTest.class,
   VueEmmetTest.class,
-  VueModuleImportTest.class
+  VueModuleImportTest.class,
+  VueTypeScriptHighlightingTest.class,
 })
 public class VueTestSuite {
 }
