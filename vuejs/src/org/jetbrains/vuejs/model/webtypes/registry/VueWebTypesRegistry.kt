@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
+import com.intellij.javaee.ExternalResourceManager
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.javascript.nodejs.packageJson.NpmRegistryService
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
@@ -91,7 +92,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   override fun loadState(stateElement: Element) {
     synchronized(myStateLock) {
       myState = State(stateElement)
-      myStateVersion++
+      incStateVersion()
     }
   }
 
@@ -167,9 +168,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   private fun buildPlugin(tarballUrl: String?): VuePlugin? {
     tarballUrl ?: return null
     val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
-    synchronized(myStateLock) {
-      myStateVersion++
-    }
+    incStateVersion()
     return VueWebTypesPlugin(webTypesJson)
   }
 
@@ -199,7 +198,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           val state = createNewState()
           synchronized(myStateLock) {
             myState = state
-            myStateVersion++
+            incStateVersion()
             myStateTimestamp = System.nanoTime()
           }
           true
@@ -241,6 +240,14 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       }
       .toSortedMap()
     return State(availableVersions)
+  }
+
+  private fun incStateVersion() {
+    synchronized(myStateLock) {
+      myStateVersion++
+      // Inform that external resource has changed to reload XmlElement/AttributeDescriptors
+      ExternalResourceManager.getInstance().incModificationCount()
+    }
   }
 
   private class State {
