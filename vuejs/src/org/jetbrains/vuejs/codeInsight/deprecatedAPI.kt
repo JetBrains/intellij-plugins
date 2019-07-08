@@ -14,6 +14,7 @@ import org.jetbrains.vuejs.codeInsight.attributes._VueAttributeDescriptor
 @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
 open class VueAttributeDescriptor(name: String,
                                   element: PsiElement? = null,
+                                  isDirective: Boolean = false,
                                   isNonProp: Boolean = false) :
   _VueAttributeDescriptor(name, element, isNonProp)
 
