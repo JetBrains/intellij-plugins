@@ -1,0 +1,157 @@
+{
+  "$schema": "../../schema/web-types.schema.json",
+  "framework": "vue",
+  "name": "vue",
+  "version": "2.5.0",
+  "contributions": {
+    "html": {
+      "types-syntax": "typescript",
+      "tags": [
+        {
+          "name": "KeepAlive",
+          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "attributes": [
+            {
+              "name": "exclude"
+            },
+            {
+              "name": "include"
+            },
+            {
+              "name": "max"
+            }
+          ],
+          "slots": [
+            {
+              "name": "default"
+            }
+          ]
+        },
+        {
+          "name": "Transition",
+          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "attributes": [
+            {
+              "name": "appear"
+            },
+            {
+              "name": "appearActiveClass"
+            },
+            {
+              "name": "appearClass"
+            },
+            {
+              "name": "appearToClass"
+            },
+            {
+              "name": "css"
+            },
+            {
+              "name": "duration"
+            },
+            {
+              "name": "enterActiveClass"
+            },
+            {
+              "name": "enterClass"
+            },
+            {
+              "name": "enterToClass"
+            },
+            {
+              "name": "leaveActiveClass"
+            },
+            {
+              "name": "leaveClass"
+            },
+            {
+              "name": "leaveToClass"
+            },
+            {
+              "name": "mode"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "type"
+            }
+          ],
+          "slots": [
+            {
+              "name": "default"
+            }
+          ]
+        },
+        {
+          "name": "TransitionGroup",
+          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "attributes": [
+            {
+              "name": "appear"
+            },
+            {
+              "name": "appearActiveClass"
+            },
+            {
+              "name": "appearClass"
+            },
+            {
+              "name": "appearToClass"
+            },
+            {
+              "name": "css"
+            },
+            {
+              "name": "duration"
+            },
+            {
+              "name": "enterActiveClass"
+            },
+            {
+              "name": "enterClass"
+            },
+            {
+              "name": "enterToClass"
+            },
+            {
+              "name": "leaveActiveClass"
+            },
+            {
+              "name": "leaveClass"
+            },
+            {
+              "name": "leaveToClass"
+            },
+            {
+              "name": "moveClass"
+            },
+            {
+              "name": "name"
+            },
+            {
+              "name": "tag"
+            },
+            {
+              "name": "type"
+            }
+          ],
+          "slots": [
+            {
+              "name": "default"
+            }
+          ]
+        }
+      ],
+      "attributes": [
+        {
+          "name": "v-model"
+        },
+        {
+          "name": "v-show",
+          "source-file": "./node_modules/vue/dist/vue.esm.js"
+        }
+      ]
+    }
+  }
+}

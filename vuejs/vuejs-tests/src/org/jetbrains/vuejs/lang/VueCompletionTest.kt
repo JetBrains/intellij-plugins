@@ -1501,6 +1501,21 @@ $script""")
                    .sorted())
   }
 
+  fun testCompletionPriorityAndHintsBuiltInTags() {
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <<caret>
+      <template>
+    """)
+    myFixture.completeBasic()
+    assertEquals(listOf("KeepAlive#vue#80", "Transition#vue#80", "TransitionGroup#vue#80", "component#vue#0",
+                        "keep-alive#vue#80", "slot#vue#0", "transition#vue#80", "transition-group#vue#80"),
+                 renderLookupItems(myFixture, renderPriority = true, renderTypeText = true)
+                   .filter { !it.contains("http://www.w3.org") }
+                   .sorted())
+  }
+
   fun testDirectiveCompletionOnComponent() {
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_137/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """
@@ -1518,6 +1533,18 @@ $script""")
     """)
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "v-ripple", "v-resize", "v-scroll")
+  }
+
+  fun testBuiltInTagsAttributeCompletion() {
+    createPackageJsonWithVueDependency(myFixture,"")
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureByText("a-component.vue", """
+      <template>
+        <transition <caret>>
+      </template>
+    """)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "appear-active-class", "css", "leave-class")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
