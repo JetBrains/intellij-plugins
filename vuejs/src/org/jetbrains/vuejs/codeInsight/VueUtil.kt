@@ -15,6 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
 import org.jetbrains.vuejs.index.findScriptTag
 
 fun fromAsset(text: String): String {
@@ -91,4 +92,10 @@ fun getJSTypeFromVueType(expression: JSExpression?): JSType? {
     ?.referenceName
     // TODO support other types here
     ?.let { name -> if (name == "Boolean") BOOLEAN_TYPE else null }
+}
+
+fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
+  directives ?: return null
+  val file = getContainingXmlFile(directives) ?: return null
+  return GlobalSearchScope.fileScope(file.originalFile)
 }

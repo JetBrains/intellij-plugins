@@ -22,7 +22,7 @@ import icons.VuejsIcons
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -30,7 +30,6 @@ import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 
 private const val LOCAL_PRIORITY = 100.0
 private const val APP_PRIORITY = 90.0
@@ -220,19 +219,35 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    attributeName ?: return null
-    if (VueAttributesProvider.DEFAULT.contains(attributeName)) {
-      return VueAttributeDescriptor(attributeName)
-    }
-    val extractedName = getBoundName(attributeName)
-    val normalizedName = fromAsset(extractedName ?: attributeName)
+    val info = VueAttributeNameParser.parse(attributeName ?: return null, context)
 
-    StreamEx.of(sources)
+    if (info is VueAttributeNameParser.VueDirectiveInfo && info.arguments != null) {
+      if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND) {
+        return resolveToProp(info.arguments, attributeName) ?: VueAttributeDescriptor(attributeName, acceptsNoValue = false)
+      }
+      // TODO resolve component events
+    }
+    if (info.kind === VueAttributeNameParser.VueAttributeKind.PLAIN) {
+      resolveToProp(info.name, attributeName)?.let { return it }
+    }
+
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context)
+           // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
+           // vue allows any non-declared as props attributes to be passed to a component
+           ?: VueAttributeDescriptor(attributeName, acceptsNoValue = !info.requiresValue
+                                                                     || info.kind === VueAttributeNameParser.VueAttributeKind.PLAIN
+                                                                     || (info is VueAttributeNameParser.VueDirectiveInfo
+                                                                         && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.CUSTOM))
+  }
+
+  private fun resolveToProp(propName: String, attributeName: String): XmlAttributeDescriptor? {
+    val propFromAsset = fromAsset(propName)
+    return StreamEx.of(sources)
       .map {
         var result: XmlAttributeDescriptor? = null
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            if (normalizedName == fromAsset(prop.name)) {
+            if (propFromAsset == fromAsset(prop.name)) {
               result = VueAttributeDescriptor(attributeName, prop.source, acceptsNoValue = isBooleanProp(prop))
               return false
             }
@@ -244,12 +259,6 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .nonNull()
       .findFirst()
       .orElse(null)
-      ?.let { return it }
-
-    return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(extractedName ?: attributeName, context)
-           // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
-           // vue allows any non-declared as props attributes to be passed to a component
-           ?: VueAttributeDescriptor(attributeName, acceptsNoValue = extractedName == null)
   }
 
   override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,

@@ -1142,7 +1142,7 @@ import BComponent from 'b-component'
     myFixture.configureByText("foo.vue", """
       |<template>
       |  <div @update:property=''></div>
-      |  <div <error descr="Namespace 'update' is not bound">update</error>:property=''></div>
+      |  <div <warning descr="Attribute update:property is not allowed here"><error descr="Namespace 'update' is not bound">update</error>:property</warning>=''></div>
       |</template>""".trimMargin())
     myFixture.checkHighlighting()
   }
@@ -1177,8 +1177,8 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     <div v-slot="propName"></div>
     <div v-slot></div>
     
-    <div <error descr="Namespace 'v-slots' is not bound">v-slots</error>:name="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
-    <div <warning descr="Wrong attribute value"><error descr="Namespace 'v-slots' is not bound">v-slots</error>:name</warning>></div>
+    <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
+    <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
   </div>
@@ -1276,6 +1276,44 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
           }
         };
       </script>
+    """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testDirectivesWithParameters() {
+    myFixture.configureByText("a-component.vue","""
+      <template>
+          <div>
+              <a href="#" 
+                 v-clipboard:copy='code'
+                 <warning descr="Attribute v-unknown:foo is not allowed here">v-unknown:foo</warning>='<weak_warning descr="Unresolved variable or type bar">bar</weak_warning>'
+                 <warning descr="Attribute foo:bar is not allowed here"><error descr="Namespace 'foo' is not bound">foo</error>:bar</warning>="test">
+              </a>
+          </div>
+      </template>
+      
+      <script>
+          export default {
+            directives: {
+              clipboard: function() {}
+            }
+          }
+      </script>
+    """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testDirectiveWithModifiers() {
+    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
+    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureByText("a-component.vue", """
+      <template>
+        <div>
+          <b-button v-b-modal></b-button>
+          <b-button v-b-modal.myModal></b-button>
+          <b-button v-b-modal="<weak_warning descr="Unresolved variable or type myModal">myModal</weak_warning>"></b-button>
+        </div>
+      </template>
     """)
     myFixture.checkHighlighting()
   }

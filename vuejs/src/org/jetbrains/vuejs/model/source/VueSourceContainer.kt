@@ -14,6 +14,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.*
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
+import org.jetbrains.vuejs.codeInsight.createContainingFileScope
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromVueType
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -108,7 +109,7 @@ abstract class VueSourceContainer(sourceElement: PsiElement,
   private class DirectivesAccessor : MapAccessor<VueDirective>() {
     override fun build(declaration: JSObjectLiteralExpression): Map<String, VueDirective> {
       val directives = findProperty(declaration, DIRECTIVES_PROP)
-      val fileScope = VueDirectivesProvider.createContainingFileScope(directives)
+      val fileScope = createContainingFileScope(directives)
       return if (directives != null && fileScope != null) {
         StreamEx.of(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY))
           .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
