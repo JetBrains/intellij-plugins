@@ -756,7 +756,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   private static String getQName(LookupElement item) {
-    return ((JSQualifiedNamedElement)item.getObject()).getQualifiedName();
+    return ((JSQualifiedNamedElement)item.getPsiElement()).getQualifiedName();
   }
 
   public final void testMoveCursorInsideConstructor() {
