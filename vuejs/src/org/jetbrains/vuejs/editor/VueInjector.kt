@@ -25,7 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
@@ -87,7 +87,7 @@ class VueInjector : MultiHostInjector {
 
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl && !context.value.isBlank() && context.parent is XmlAttribute
-        && VueAttributesProvider.isInjectJS((context.parent as XmlAttribute).name)) {
+        && VueAttributeNameParser.parse((context.parent as XmlAttribute).name, null).injectJS) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
         val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)

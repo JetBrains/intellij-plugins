@@ -3,17 +3,15 @@ package org.jetbrains.vuejs.lang.html.lexer
 
 import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider.Companion.isVSlot
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 
 class VueAttributesHandler : BaseHtmlLexer.TokenHandler {
   override fun handleElement(lexer: Lexer?) {
     val handled = lexer as VueHandledLexer
     if (!handled.inTagState()) {
       val text = lexer.tokenText
-      handled.setSeenVueAttribute((text.startsWith(":")
-                                   || text.startsWith("@")
-                                   || text.startsWith("v-"))
-                                  && !isVSlot(text))
+      val info = VueAttributeNameParser.parse(text, null)
+      handled.setSeenVueAttribute(info.injectJS)
     }
   }
 }

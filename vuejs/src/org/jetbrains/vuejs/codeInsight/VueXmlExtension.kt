@@ -12,30 +12,27 @@ import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
-    if (namespacePrefix != null && (namespacePrefix == "v-bind"
-                                    || namespacePrefix == "v-on"
-                                    || namespacePrefix.startsWith("@")
-                                    || namespacePrefix == "v-slot")) {
-      val schemaPrefix = findAttributeSchema(context, namespacePrefix, 0)
-      if (schemaPrefix != null) return schemaPrefix
+    if (namespacePrefix != null && (namespacePrefix.startsWith("v-")
+                                    || namespacePrefix.startsWith("@"))) {
+      findAttributeSchema(context, namespacePrefix)
+        ?.let { return it }
     }
     return super.getPrefixDeclaration(context, namespacePrefix)
   }
 
-  private fun findAttributeSchema(context: XmlTag, namespacePrefix: String, offset: Int): SchemaPrefix? {
-    context.attributes
-      .filter { it.name.startsWith(namespacePrefix) }
-      .forEach { return SchemaPrefix(it, TextRange.create(offset, namespacePrefix.length), namespacePrefix.substring(offset)) }
-    return null
+  private fun findAttributeSchema(context: XmlTag, namespacePrefix: String): SchemaPrefix? {
+    return context.attributes
+      .find { it.name.startsWith("$namespacePrefix:") }
+      ?.let { SchemaPrefix(it, TextRange.create(0, namespacePrefix.length), namespacePrefix) }
   }
 
   override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
@@ -56,8 +53,12 @@ class VueXmlExtension : HtmlXmlExtension() {
         }
         return@find false
       }
-
-      return@find fromAsset(getBoundName(it.name) ?: it.name) == fromAssetName
+      val info = VueAttributeNameParser.parse(it.name, null)
+      return@find fromAsset(if (info is VueAttributeNameParser.VueDirectiveInfo
+                                && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
+                                && info.arguments != null)
+                              info.arguments
+                            else info.name) == fromAssetName
     } != null
   }
 
