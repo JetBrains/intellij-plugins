@@ -141,10 +141,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   companion object {
     private val VUE_FRAMEWORK_COMPONENTS = setOf(
       "component",
-      "keep-alive",
-      "slot",
-      "transition",
-      "transition-group"
+      "slot"
     )
   }
 }

@@ -104,11 +104,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
             StreamEx.of(
               FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME,
                                                   GlobalSearchScope.allScope(project)))
-              .filter {
-                JSLibraryUtil.isProbableLibraryFile(it)
-                && PackageJsonUtil.getOrCreateData(it).containsOneOfDependencyOfAnyType(
-                  "vue-loader", "vue-latest", "vue", "vue-template-compiler")
-              }
+              .filter { JSLibraryUtil.isProbableLibraryFile(it) && isVueLibrary(it) }
               .map { getWebTypesPlugin(params.first, it) ?: VueSourcePlugin.create(project, it) }
               .nonNull()
               .toList() as List<VuePlugin>
@@ -117,6 +113,12 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
                                             VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
         }, false, Pair(state, tracker))
     }
+  }
+
+  private fun isVueLibrary(it: VirtualFile): Boolean {
+    val data = PackageJsonUtil.getOrCreateData(it)
+    return data.name == "vue"
+           || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
   }
 
   private fun getWebTypesPlugin(state: State, packageJsonFile: VirtualFile): VuePlugin? {
@@ -128,7 +130,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     packageJson.webTypes?.let {
       packageJsonFile.parent?.findFileByRelativePath(it)
     }?.inputStream?.let {
-      return VueWebTypesPlugin(ObjectMapper().readValue(it, WebTypes::class.java))
+      return VueWebTypesPlugin(createObjectMapper().readValue(it, WebTypes::class.java))
     }
 
     val webTypesPackageName = packageJson.name!!.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
@@ -164,13 +166,14 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   private fun buildPlugin(tarballUrl: String?): VuePlugin? {
     tarballUrl ?: return null
-    val webTypesJson = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-      .readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
+    val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
     synchronized(myStateLock) {
       myStateVersion++
     }
     return VueWebTypesPlugin(webTypesJson)
   }
+
+  private fun createObjectMapper() = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
   private fun <T> processState(processor: (State, ModificationTracker) -> T): T {
     val state: State
@@ -356,7 +359,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           // Do not log IOExceptions as errors, since they can appear because of HTTP communication
           if (e.cause is IOException) {
             LOG.warn(e)
-          } else {
+          }
+          else {
             LOG.error(e)
           }
           synchronized(myLock) {
@@ -367,5 +371,4 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         return null
       }
   }
-
 }
