@@ -107,7 +107,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 open class VueAttributeDescriptor(name: String,
                                   element: PsiElement? = null,
                                   acceptsNoValue: Boolean = false) :
-  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, acceptsNoValue)
+  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isNonProp = acceptsNoValue)
 
 // This class is the original `VueAttributeDescriptor` class,
 // but it's renamed to allow instanceof check through deprecated class from 'codeInsight' package
