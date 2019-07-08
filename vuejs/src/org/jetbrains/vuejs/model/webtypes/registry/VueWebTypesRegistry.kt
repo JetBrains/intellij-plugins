@@ -291,7 +291,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   inner class StateModificationTracker(private val stateVersion: Int) : ModificationTracker {
     override fun getModificationCount(): Long {
-      return if (stateVersion != myStateVersion) 1 else 0
+      return if (stateVersion != myStateVersion) -1 else 0
     }
   }
 
