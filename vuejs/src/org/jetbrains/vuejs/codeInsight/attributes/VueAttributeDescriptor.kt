@@ -9,7 +9,6 @@ import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
@@ -54,7 +53,7 @@ open class _VueAttributeDescriptor(private val name: String,
     if (name.startsWith(":") || name.startsWith("v-bind:")) return false
     // TODO use input prop definition model
     val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
-    val literal = findProperty(initializer, "required")?.literalExpressionInitializer
+    val literal = initializer.findProperty("required")?.literalExpressionInitializer
     return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
   }
 
