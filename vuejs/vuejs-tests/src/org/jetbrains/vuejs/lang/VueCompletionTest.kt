@@ -678,8 +678,8 @@ export default {
 </template>
 $script""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":hidden", ":onclick", ":onchange")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me")
+    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":hidden")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":onclick", ":onchange")
 
     myFixture.configureByText("CompleteVBind.vue", """
 <template>
@@ -687,8 +687,9 @@ $script""")
 </template>
 $script""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "hidden", "onclick", "onchange", "key", "is")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words", "use-me", "two-words")
+    assertContainsElements(myFixture.lookupElementStrings!!, "hidden", "key", "is")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                       ":use-me", ":two-words", "use-me", "two-words", "onclick", "onchange")
 
     myFixture.configureByText("User.vue", """
 <template>
@@ -702,8 +703,8 @@ $script""")
 </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":onclick", ":onchange")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":v-for", ":v-bind")
+    assertContainsElements(myFixture.lookupElementStrings!!, ":two-words", ":about")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":v-for", ":v-bind", ":onclick", ":onchange")
   }
 
   fun testVueOutObjectLiteralCompletion() {
@@ -919,8 +920,9 @@ $script""")
 
     myFixture.type(":")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss", "v-bind", "v-bind:", "v-on:")
+    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                       "aaa", "v-for", "ddd", "sss", "v-bind", "v-bind:", "v-on:", ":onclick")
 
     myFixture.type("a")
     myFixture.completeBasic()
@@ -1545,6 +1547,48 @@ $script""")
     """)
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "appear-active-class", "css", "leave-class")
+  }
+
+  fun testBindProposalsPriority() {
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <v-alert v-bind:<caret>
+      <template>
+    """)
+    myFixture.completeBasic()
+    assertEquals(
+      listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100", "!type#100",
+             "!value#100", "about#25", "accesskey#25", "align#25", "autocapitalize#25", "base#25", "class#25", "content#25",
+             "contenteditable#25", "datafld#25", "dataformatas#25", "datasrc#25", "datatype#25", "dir#25", "draggable#25", "hidden#25",
+             "id#25", "inlist#25", "is#50", "itemid#25", "itemprop#25", "itemref#25", "itemscope#25", "itemtype#25", "key#50", "lang#25",
+             "prefix#25", "property#25", "rel#25", "resource#25", "rev#25", "role#25", "slot#25", "space#25", "spellcheck#25", "style#25",
+             "tabindex#25", "title#25", "translate#25", "typeof#25", "vocab#25"),
+      renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
+        .filter { !it.contains("aria-") }
+        .sorted())
+  }
+
+  fun testAttributeNamePriority() {
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <v-alert <caret>
+      <template>
+    """)
+    myFixture.completeBasic()
+    assertEquals(
+      listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100", "!type#100",
+             "!value#100", "about#0", "accesskey#0", "align#0", "autocapitalize#0", "class#0", "content#0", "contenteditable#0",
+             "datafld#0", "dataformatas#0", "datasrc#0", "datatype#0", "dir#0", "draggable#0", "hidden#0", "id#0", "inlist#0", "is#0",
+             "itemid#0", "itemprop#0", "itemref#0", "itemscope#0", "itemtype#0", "prefix#0", "property#0", "ref#25", "rel#0",
+             "resource#0", "rev#0", "role#0", "slot#0", "slot-scope#0", "spellcheck#0", "style#0", "tabindex#0", "title#0", "translate#0",
+             "typeof#0", "v-bind#25", "v-bind:#25", "v-cloak#25", "v-else#25", "v-else-if#25", "v-for#25", "v-html#25", "v-if#25",
+             "v-model#25", "v-on:#25", "v-once#25", "v-pre#25", "v-show#25", "v-slot#25", "v-text#25", "vocab#0", "xml:base#0",
+             "xml:lang#0", "xml:space#0"),
+      renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
+        .filter { !it.contains("aria-") && !it.startsWith("on") }
+        .sorted())
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
