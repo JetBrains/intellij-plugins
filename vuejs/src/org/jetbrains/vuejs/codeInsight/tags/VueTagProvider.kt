@@ -22,6 +22,8 @@ import icons.VuejsIcons
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.HIGH
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.LOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
@@ -199,7 +201,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         val result = mutableListOf<XmlAttributeDescriptor>()
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source, acceptsNoValue = isBooleanProp(prop)))
+            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop.source, acceptsNoValue = isBooleanProp(prop), priority = HIGH))
             return true
           }
         })
@@ -220,7 +222,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
 
     if (info is VueAttributeNameParser.VueDirectiveInfo && info.arguments != null) {
       if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND) {
-        return resolveToProp(info.arguments, attributeName) ?: VueAttributeDescriptor(attributeName, acceptsNoValue = false)
+        return resolveToProp(info.arguments, attributeName) ?: VueAttributeDescriptor(attributeName, acceptsNoValue = false, priority = LOW)
       }
       // TODO resolve component events
     }
@@ -234,7 +236,8 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
            ?: VueAttributeDescriptor(attributeName, acceptsNoValue = !info.requiresValue
                                                                      || info.kind === VueAttributeNameParser.VueAttributeKind.PLAIN
                                                                      || (info is VueAttributeNameParser.VueDirectiveInfo
-                                                                         && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.CUSTOM))
+                                                                         && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.CUSTOM),
+                                     priority = LOW)
   }
 
   private fun resolveToProp(propName: String, attributeName: String): XmlAttributeDescriptor? {
@@ -245,7 +248,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
             if (propFromAsset == fromAsset(prop.name)) {
-              result = VueAttributeDescriptor(attributeName, prop.source, acceptsNoValue = isBooleanProp(prop))
+              result = VueAttributeDescriptor(attributeName, prop.source, acceptsNoValue = isBooleanProp(prop), priority = HIGH)
               return false
             }
             return true

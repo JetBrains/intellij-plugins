@@ -15,12 +15,12 @@ class VueAttributeNameParser {
       if (attributeName.startsWith('@')) {
         name = "on"
         kind = VueDirectiveKind.ON
-        paramsPos = 1
+        paramsPos = 0
       }
       else if (attributeName.startsWith(':')) {
         name = "bind"
         kind = VueDirectiveKind.BIND
-        paramsPos = 1
+        paramsPos = 0
       }
       else if (attributeName.startsWith("v-") && attributeName.length > 2) {
         var nameEnd = attributeName.indexOfFirst { it == '.' || it == ':' }
@@ -30,8 +30,6 @@ class VueAttributeNameParser {
         name = attributeName.substring(2, nameEnd)
         kind = directiveKindMap[name] ?: VueDirectiveKind.CUSTOM
         paramsPos = nameEnd
-        if (paramsPos < attributeName.length && attributeName[paramsPos] == ':')
-          paramsPos++
       }
       else {
         var nameEnd = attributeName.indexOf('.')
@@ -43,13 +41,22 @@ class VueAttributeNameParser {
                             ?: VueAttributeKind.PLAIN
         return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
-      if (paramsPos >= attributeName.length) {
+      if (paramsPos >= attributeName.length
+          || (attributeName[paramsPos] != '@'
+              && attributeName[paramsPos] != ':'
+              && attributeName[paramsPos] != '.')) {
         return VueDirectiveInfo(name, kind)
       }
 
       val arguments: String?
+      if (attributeName[paramsPos] == '.') {
+        return VueDirectiveInfo(name, kind, null, parseModifiers(attributeName, paramsPos))
+      }
+      else {
+        paramsPos++
+      }
       val lastBracket = attributeName.lastIndexOf(']')
-      if (attributeName[paramsPos] == '[' && lastBracket > 0) {
+      if (lastBracket >= paramsPos && attributeName[paramsPos] == '[') {
         arguments = attributeName.substring(paramsPos, lastBracket + 1)
         paramsPos = lastBracket + 1
       }
@@ -64,11 +71,11 @@ class VueAttributeNameParser {
           paramsPos = attributeName.length
         }
       }
-      return VueDirectiveInfo(name, kind, if (arguments.isEmpty()) null else arguments, parseModifiers(attributeName, paramsPos))
+      return VueDirectiveInfo(name, kind, arguments, parseModifiers(attributeName, paramsPos))
     }
 
     private fun parseModifiers(modifiers: String, startPos: Int): Set<String> {
-      if (startPos + 1 >= modifiers.length || modifiers[startPos] != '.') {
+      if (startPos >= modifiers.length || modifiers[startPos] != '.') {
         return emptySet()
       }
       val result = mutableSetOf<String>()
@@ -76,13 +83,13 @@ class VueAttributeNameParser {
       var prevDot = startPos
       while (++currentIndex < modifiers.length) {
         if (modifiers[currentIndex] == '.') {
-          if (prevDot + 1 < currentIndex) {
+          if (prevDot < currentIndex) {
             result.add(modifiers.substring(prevDot + 1, currentIndex))
           }
           prevDot = currentIndex
         }
       }
-      if (prevDot + 1 < modifiers.length) {
+      if (prevDot < modifiers.length) {
         result.add(modifiers.substring(prevDot + 1))
       }
       return result
@@ -125,12 +132,13 @@ class VueAttributeNameParser {
 
   enum class VueAttributeKind(val attributeName: String?,
                               val injectJS: Boolean = false,
-                              val requiresValue: Boolean = true) {
+                              val requiresValue: Boolean = true,
+                              val deprecated: Boolean = false) {
     PLAIN(null, requiresValue = true),
     DIRECTIVE(null),
-    SLOT("slot"),
+    SLOT("slot", deprecated = true),
     REF("ref"),
-    SLOT_SCOPE("slot-scope", injectJS = true),
+    SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
     STYLE_SCOPED("scoped", requiresValue = false),
     STYLE_MODULE("module", requiresValue = false),
     STYLE_SRC("src"),

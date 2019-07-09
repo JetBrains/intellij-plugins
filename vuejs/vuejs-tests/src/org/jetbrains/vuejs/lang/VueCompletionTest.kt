@@ -1178,10 +1178,10 @@ $script""")
     myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
     myFixture.configureByText("foo.vue", "<template> <BAlert @<caret> </template>")
     myFixture.completeBasic()
-    myFixture.assertPreferredCompletionItems(0, "@abort", "@autocomplete", "@autocompleteerror", "@blur", "@cancel", "@canplay",
-                                             "@canplaythrough", "@change", "@click", "@close", "@contextmenu", "@cuechange", "@dblclick",
-      // these 2 items come from the bootstrap-vue module
-                                             "@dismiss-count-down", "@dismissed")
+    myFixture.assertPreferredCompletionItems(0, // first 3 items come from the BAlert component
+                                             "@dismiss-count-down", "@dismissed", "@input",
+                                             "@abort", "@autocomplete", "@autocompleteerror", "@blur", "@cancel", "@canplay",
+                                             "@canplaythrough", "@change", "@click", "@close", "@contextmenu", "@cuechange", "@dblclick")
 
     myFixture.configureByText("foo.vue", "<template> <div @c<caret> </template>")
     myFixture.completeBasic()
@@ -1536,7 +1536,7 @@ $script""")
   }
 
   fun testBuiltInTagsAttributeCompletion() {
-    createPackageJsonWithVueDependency(myFixture,"")
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """
       <template>
