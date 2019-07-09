@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport language="Latex" implementationClass="tanvd.grazi.ide.language.latex.LatexSupport"/>
+    </extensions>
+</idea-plugin>

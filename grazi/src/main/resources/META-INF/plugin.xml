@@ -63,6 +63,8 @@
     <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="javascript.xml">JavaScript</depends>
     <depends optional="true" config-file="rust.xml">org.rust.lang</depends>
+    <depends optional="true" config-file="latex.xml">nl.rubensten.texifyidea</depends>
+
 
     <idea-version since-build="191" until-build="191.*"/>
 
