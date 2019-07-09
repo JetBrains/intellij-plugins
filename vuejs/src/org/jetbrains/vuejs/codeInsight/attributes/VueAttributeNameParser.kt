@@ -138,6 +138,7 @@ class VueAttributeNameParser {
     DIRECTIVE(null),
     SLOT("slot", deprecated = true),
     REF("ref"),
+    IS("is"),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
     STYLE_SCOPED("scoped", requiresValue = false),
     STYLE_MODULE("module", requiresValue = false),

@@ -166,9 +166,8 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val newResult = if (prefix == "v-bind:") result.withPrefixMatcher("") else result
     val lookupItemPrefix = if (prefix.startsWith(":")) ":" else ""
 
-    // special bindings
-    newResult.addElement(lookupElement(lookupItemPrefix + "is"))
-    newResult.addElement(lookupElement(lookupItemPrefix + "key"))
+    // special binding
+    newResult.addElement(lookupElement(lookupItemPrefix + "key", priority = LOW))
 
     // v-bind:any-standard-attribute support
     for (attribute in getDefaultHtmlAttributes(attr.parent)) {

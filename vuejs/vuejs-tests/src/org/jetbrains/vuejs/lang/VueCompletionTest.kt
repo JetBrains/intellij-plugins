@@ -1561,7 +1561,7 @@ $script""")
       listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100", "!type#100",
              "!value#100", "about#25", "accesskey#25", "align#25", "autocapitalize#25", "base#25", "class#25", "content#25",
              "contenteditable#25", "datafld#25", "dataformatas#25", "datasrc#25", "datatype#25", "dir#25", "draggable#25", "hidden#25",
-             "id#25", "inlist#25", "is#50", "itemid#25", "itemprop#25", "itemref#25", "itemscope#25", "itemtype#25", "key#50", "lang#25",
+             "id#25", "inlist#25", "is#25", "itemid#25", "itemprop#25", "itemref#25", "itemscope#25", "itemtype#25", "key#25", "lang#25",
              "prefix#25", "property#25", "rel#25", "resource#25", "rev#25", "role#25", "slot#25", "space#25", "spellcheck#25", "style#25",
              "tabindex#25", "title#25", "translate#25", "typeof#25", "vocab#25"),
       renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
@@ -1580,7 +1580,7 @@ $script""")
     assertEquals(
       listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100", "!type#100",
              "!value#100", "about#0", "accesskey#0", "align#0", "autocapitalize#0", "class#0", "content#0", "contenteditable#0",
-             "datafld#0", "dataformatas#0", "datasrc#0", "datatype#0", "dir#0", "draggable#0", "hidden#0", "id#0", "inlist#0", "is#0",
+             "datafld#0", "dataformatas#0", "datasrc#0", "datatype#0", "dir#0", "draggable#0", "hidden#0", "id#0", "inlist#0", "is#25",
              "itemid#0", "itemprop#0", "itemref#0", "itemscope#0", "itemtype#0", "prefix#0", "property#0", "ref#25", "rel#0",
              "resource#0", "rev#0", "role#0", "slot#0", "slot-scope#0", "spellcheck#0", "style#0", "tabindex#0", "title#0", "translate#0",
              "typeof#0", "v-bind#25", "v-bind:#25", "v-cloak#25", "v-else#25", "v-else-if#25", "v-for#25", "v-html#25", "v-if#25",

@@ -1317,6 +1317,17 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
     """)
     myFixture.checkHighlighting()
   }
+
+  fun testIsAttributeSupport() {
+    myFixture.configureByText("a-component.vue", """
+      <table>
+        <tr is="blog-post-row"></tr>
+        <tr is></tr>
+        <tr :is="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></tr>
+      </table>
+    """)
+    myFixture.checkHighlighting()
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
