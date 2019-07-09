@@ -100,13 +100,13 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
     return inputData -> {
       StringSearcher searcher = new StringSearcher(JAVA_8_PACKAGE, true, true);
       CharSequence text = inputData.getContentAsText();
-      LighterAST lighterAst = ((PsiDependentFileContent)inputData).getLighterAST();
       if (!isCucumberStepDefinitionFile(searcher, text)) {
         return Collections.emptyMap();
       }
 
+      LighterAST lighterAst = ((PsiDependentFileContent)inputData).getLighterAST();
       List<Integer> result = getAllStepDefinitionCalls(lighterAst, text);
-      HashMap<Boolean, List<Integer>> resultMap = new HashMap<>();
+      Map<Boolean, List<Integer>> resultMap = new HashMap<>();
       resultMap.put(true, result);
       return resultMap;
     };
