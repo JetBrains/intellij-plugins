@@ -7,9 +7,9 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import static java.lang.String.format;
 
 public class AnnotationPackageProvider {
-  private static final String CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE = "cucumber.api.java";
-  private static final String CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE = "cucumber.annotation";
-  private static final String CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE = "io.cucumber.java";
+  private static final String CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE = "cucumber.api.java.";
+  private static final String CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE = "cucumber.annotation.";
+  private static final String CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE = "io.cucumber.java.";
 
   public static final String[] CUCUMBER_ANNOTATION_PACKAGES =
     {CUCUMBER_1_1_ANNOTATION_BASE_PACKAGE, CUCUMBER_1_0_ANNOTATION_BASE_PACKAGE, CUCUMBER_4_5_ANNOTATION_BASE_PACKAGE};
@@ -23,7 +23,7 @@ public class AnnotationPackageProvider {
   }
 
   public String getAnnotationPackageFor(GherkinStep step) {
-    return format("%s.%s", annotationBasePackage(step), locale(step));
+    return format("%s%s", annotationBasePackage(step), locale(step));
   }
 
   private static String locale(GherkinStep step) {
