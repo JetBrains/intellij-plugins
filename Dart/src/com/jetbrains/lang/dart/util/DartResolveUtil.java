@@ -827,6 +827,10 @@ public class DartResolveUtil {
       assert prevSibling != null;
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();
+      // If the last child is a comma, then the index needs to be decremented
+      if (!prevSibling.getLastChild().getText().equals(",")) {
+        parameterIndex--;
+      }
     }
     else if (DartParameterInfoHandler.findElementForParameterInfo(place) != null) {
       // foo(<caret>), new Foo(<caret>) or @Foo(<caret>)

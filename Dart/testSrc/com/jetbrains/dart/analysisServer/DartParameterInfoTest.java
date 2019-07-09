@@ -35,7 +35,7 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     assertNotNull(elt);
     parameterInfoHandler.showParameterInfo(elt, createContext);
     Object[] items = createContext.getItemsToShow();
-    assertTrue(items != null);
+    assertNotNull(items);
     assertTrue(items.length > 0);
     MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
@@ -125,6 +125,30 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
 
   public void testParamInfo18() {
     doTest("[String s = 'foo']", 0, 1, 17);
+  }
+
+  public void _testParamInfo19() {
+    doTest("[String str]", 0);
+  }
+
+  public void _testParamInfo20() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo21() {
+    doTest("[String str]", 0);
+  }
+
+  public void _testParamInfo22() {
+    doTest("{String str}", 0);
+  }
+
+  public void _testParamInfo23() {
+    doTest("{String str}", 0);
+  }
+
+  public void testParamInfo24() {
+    doTest("{String str}", 0);
   }
 
   public void testParamInfo_call_localVariable() {
