@@ -9,10 +9,11 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ResolveTestCase
 import org.junit.Assert
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : ResolveTestCase() {
   protected val NotResolved = Object()
@@ -20,7 +21,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
     FileUtil.copy(File(testDataPath, testName), File(myProject.basePath, testName))
 
-    val vFile = myProject.baseDir.findChild(testName)!!
+    val vFile = PlatformTestUtil.getOrCreateProjectTestBaseDir(myProject).findChild(testName)!!
 
     var fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile))
 
@@ -28,7 +29,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
 
     val offsets = ArrayList<Int>()
     while (true) {
-      val offset = fileText.indexOf(ResolveTestCase.MARKER)
+      val offset = fileText.indexOf(MARKER)
       if (offset < 0) {
         break
       }
@@ -37,7 +38,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
       offsets.add(offset)
     }
 
-    Assert.assertTrue("Test input must contain one or more " + ResolveTestCase.MARKER + "markers", offsets.size > 0)
+    Assert.assertTrue("Test input must contain one or more " + MARKER + "markers", offsets.size > 0)
     Assert.assertEquals("Number of assertions and markers differs", entityNames.size.toLong(), offsets.size.toLong())
 
     myFile = createFile(myModule, fileName, fileText)
@@ -50,7 +51,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
 
       val ref: PsiReference
       if (rawRef is PsiMultiReference) {
-        ref = rawRef.references.filter { it is CloudFormationReferenceBase }.single()
+        ref = rawRef.references.filterIsInstance<CloudFormationReferenceBase>().single()
       } else {
         ref = rawRef
       }
