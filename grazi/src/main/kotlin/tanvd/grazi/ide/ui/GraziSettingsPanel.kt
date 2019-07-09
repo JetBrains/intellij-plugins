@@ -9,7 +9,6 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.html.*
-import kotlinx.html.stream.createHTML
 import org.apache.commons.text.similarity.LevenshteinDistance
 import org.languagetool.rules.Category
 import org.languagetool.rules.Rule
@@ -17,16 +16,9 @@ import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.GraziLifecycle
 import tanvd.grazi.language.Lang
-import tanvd.grazi.utils.toCorrectHtml
-import tanvd.grazi.utils.toIncorrectHtml
-import java.awt.BorderLayout
-import java.awt.Desktop
-import java.awt.Font
-import java.awt.GridLayout
-import javax.swing.BorderFactory
-import javax.swing.BoxLayout
-import javax.swing.JComponent
-import javax.swing.JEditorPane
+import tanvd.grazi.utils.*
+import java.awt.*
+import javax.swing.*
 import javax.swing.event.HyperlinkEvent
 
 
@@ -50,69 +42,67 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val rulesTree = GraziRulesTree {
         descriptionPane.text = when (it) {
-            is Rule -> createHTML(false).html {
-                body {
-                    p {
-                        unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
-                    }
+            is Rule -> html {
+                p {
+                    unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
+                }
 
-                    it.url?.let {
-                        br
-                        p {
-                            +msg("grazi.ui.settings.rules.rule.description")
-                            +" "
-                            a(it.toString()) {
-                                unsafe { +it.toString() }
-                            }
+                it.url?.let {
+                    br
+                    p {
+                        +msg("grazi.ui.settings.rules.rule.description")
+                        +" "
+                        a(it.toString()) {
+                            unsafe { +it.toString() }
                         }
                     }
+                }
 
-                    br
+                br
 
-                    p {
-                        it.incorrectExamples?.let { examples ->
-                            if (examples.isNotEmpty()) {
-                                i {
-                                    +msg("grazi.ui.settings.rules.rule.examples")
-                                }
+                p {
+                    it.incorrectExamples?.let { examples ->
+                        if (examples.isNotEmpty()) {
+                            i {
+                                +msg("grazi.ui.settings.rules.rule.examples")
+                            }
 
-                                table {
-                                    val accepted = ArrayList<String>()
-                                    examples.forEach {
-                                        // remove very similar examples
-                                        if (!accepted.any { example -> LevenshteinDistance().apply(it.example, example).toDouble() / it.example.length < 0.2 }) {
-                                            accepted.add(it.example)
-                                            val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
-                                            if (corrections.isEmpty()) {
-                                                tr {
-                                                    style = "padding-top: 5px;"
-                                                    td {
-                                                        style = "color: gray;"
-                                                        +msg("grazi.ui.settings.rules.rule.incorrect")
-                                                    }
-                                                    td { toIncorrectHtml(it) }
+                            table {
+                                val accepted = ArrayList<String>()
+                                examples.forEach {
+                                    // remove very similar examples
+                                    if (!accepted.any { example -> LevenshteinDistance().apply(it.example, example).toDouble() / it.example.length < 0.2 }) {
+                                        accepted.add(it.example)
+                                        val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
+                                        if (corrections.isEmpty()) {
+                                            tr {
+                                                style = "padding-top: 5px;"
+                                                td {
+                                                    style = "color: gray;"
+                                                    +msg("grazi.ui.settings.rules.rule.incorrect")
                                                 }
-                                            } else {
-                                                tr {
-                                                    td {
-                                                        style = "color: gray;"
-                                                        +msg("grazi.ui.settings.rules.rule.incorrect")
-                                                    }
-                                                    td {
-                                                        style = "text-align: left; width:99.9%"
-                                                        toIncorrectHtml(it)
-                                                    }
+                                                td { toIncorrectHtml(it) }
+                                            }
+                                        } else {
+                                            tr {
+                                                td {
+                                                    style = "color: gray;"
+                                                    +msg("grazi.ui.settings.rules.rule.incorrect")
                                                 }
+                                                td {
+                                                    style = "text-align: left; width:99.9%"
+                                                    toIncorrectHtml(it)
+                                                }
+                                            }
 
-                                                tr {
-                                                    td {
-                                                        style = "color: gray;"
-                                                        +msg("grazi.ui.settings.rules.rule.correct")
-                                                    }
-                                                    td {
-                                                        style = "text-align: left"
-                                                        toCorrectHtml(it)
-                                                    }
+                                            tr {
+                                                td {
+                                                    style = "color: gray;"
+                                                    +msg("grazi.ui.settings.rules.rule.correct")
+                                                }
+                                                td {
+                                                    style = "text-align: left"
+                                                    toCorrectHtml(it)
                                                 }
                                             }
                                         }
@@ -123,15 +113,11 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     }
                 }
             }
-            is Lang -> createHTML(false).html {
-                body {
-                    unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
-                }
+            is Lang -> html {
+                unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
             }
-            is Category -> createHTML(false).html {
-                body {
-                    unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
-                }
+            is Category -> html {
+                unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
             }
             else -> ""
         }
