@@ -27,7 +27,6 @@ import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
-import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.isVueContext
@@ -53,9 +52,9 @@ class VueInjector : MultiHostInjector {
       val obj = element as? JSObjectLiteralExpression
                 ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
                 ?: return null
-      val property = findProperty(obj, "delimiters") ?: return null
-      val delimiter = getDelimiterValue(property, key) ?: return null
-      return Pair.create(delimiter, element)
+      return obj.findProperty("delimiters")
+        ?.let { getDelimiterValue(it, key) }
+        ?.let { Pair.create(it, element) }
     }
 
     private fun calculateDelimitersFromAssignment(project: Project, key: String): Pair<String, PsiElement>? {
