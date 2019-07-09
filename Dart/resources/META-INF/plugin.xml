@@ -103,6 +103,7 @@
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
 
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
+    <testFinder implementation="com.jetbrains.lang.dart.ide.testIntegration.DartTestFinder"/>
     <definitionsScopedSearch implementation="com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher"/>
 
     <codeInsight.overrideMethod language="Dart"
