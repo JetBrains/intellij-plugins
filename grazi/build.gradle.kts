@@ -35,7 +35,8 @@ intellij {
             "org.rust.lang:0.2.98.2125-191",
             "nl.rubensten.texifyidea:0.6.6",
             "CSS",
-            "JavaScriptLanguage"
+            "JavaScriptLanguage",
+            "properties"
     )
 }
 

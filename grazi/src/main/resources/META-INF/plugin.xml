@@ -108,6 +108,8 @@
 
         <languageSupport language="JSON" implementationClass="tanvd.grazi.ide.language.json.JsonSupport"/>
 
+        <languageSupport language="Properties" implementationClass="tanvd.grazi.ide.language.props.PropsSupport"/>
+
         <languageSupport language="" implementationClass="tanvd.grazi.ide.language.comment.CommentsSupport"/>
     </extensions>
 </idea-plugin>
