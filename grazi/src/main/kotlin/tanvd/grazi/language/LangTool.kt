@@ -18,7 +18,12 @@ object LangTool : GraziLifecycle {
             JLanguageTool(lang.jLanguage, GraziConfig.state.nativeLanguage.jLanguage,
                     cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
                 lang.configure(this)
-                disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })
+
+                allRules.forEach { rule ->
+                    if (rule.id in GraziConfig.state.userDisabledRules) disableRule(rule.id)
+                    if (rule.id in GraziConfig.state.userEnabledRules) enableRule(rule.id)
+                }
+
                 //Spellcheck will be done by Grazi spellchecker
                 if (lang.isEnglish()) {
                     disableRules(allActiveRules.filter { it.isDictionaryBasedSpellingRule }.map { it.id })

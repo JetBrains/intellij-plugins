@@ -1,11 +1,12 @@
 package tanvd.grazi.ide.ui
 
+import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBTabbedPane
 import org.jetbrains.annotations.PropertyKey
 import tanvd.grazi.GraziBundle
 import java.awt.*
 import javax.swing.*
-import javax.swing.border.CompoundBorder
+import javax.swing.border.Border
 
 fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)
 fun JTabbedPane.panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)
@@ -20,7 +21,7 @@ fun JTabbedPane.tab(name: String, body: JTabbedPane.() -> Component) = body().al
 fun label(text: String, configure: JLabel.() -> Unit = {}) = JLabel(text).apply(configure)
 fun Container.label(text: String, configure: JLabel.() -> Unit = {}) = JLabel(text).apply(configure).also { add(it) }
 
-fun border(text: String): CompoundBorder = BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(text),
-        BorderFactory.createEmptyBorder(3, 5, 5, 5))
+fun border(text: String, hasIndent: Boolean = false): Border = IdeBorderFactory.createTitledBorder(text, hasIndent).setShowLine(true)
+fun border(text: String, hasIndent: Boolean, insets: Insets): Border = IdeBorderFactory.createTitledBorder(text, hasIndent, insets).setShowLine(true)
 
 fun msg(@PropertyKey(resourceBundle = GraziBundle.bundleName) key: String, vararg params: String): String = GraziBundle.message(key, *params)

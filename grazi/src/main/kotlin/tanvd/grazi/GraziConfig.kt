@@ -13,6 +13,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property var enabledSpellcheck: Boolean = true,
                      @Property val userWords: MutableSet<String> = HashSet(),
                      @Property val userDisabledRules: MutableSet<String> = HashSet(),
+                     @Property val userEnabledRules: MutableSet<String> = HashSet(),
                      @Property var lastSeenVersion: String? = null)
 
     companion object {
