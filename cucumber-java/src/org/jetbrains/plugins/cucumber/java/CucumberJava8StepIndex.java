@@ -126,7 +126,12 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
 
   @Override
   public int getVersion() {
-    return 0;
+    return 1;
+  }
+
+  @Override
+  public boolean hasSnapshotMapping() {
+    return true;
   }
 
   @NotNull
