@@ -26,8 +26,8 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.es6Unquote
+import org.jetbrains.vuejs.codeInsight.findProperty
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.isVueContext

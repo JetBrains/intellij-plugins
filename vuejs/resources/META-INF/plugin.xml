@@ -98,7 +98,10 @@ Vue components defined using separate .html, .js, and .css files are not support
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
     <renamePsiElementProcessor implementation="org.jetbrains.vuejs.refactoring.VueJSComponentRenameProcessor"/>
     <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.attributes.VueTagCompletionContributor"/>
+    <completion.contributor language="HTML"
+                            implementationClass="org.jetbrains.vuejs.codeInsight.VueHtmlCompletionContributor"
+                            id="VueCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
     <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
 

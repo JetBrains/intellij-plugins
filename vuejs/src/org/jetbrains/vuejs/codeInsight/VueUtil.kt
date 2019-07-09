@@ -99,3 +99,5 @@ fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
   val file = getContainingXmlFile(directives) ?: return null
   return GlobalSearchScope.fileScope(file.originalFile)
 }
+
+fun findProperty(obj: JSObjectLiteralExpression?, name: String): JSProperty? = obj?.properties?.find { it.name == name }
