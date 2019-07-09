@@ -57,7 +57,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
           return null
         }
         return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(info.name, context)
-               ?: VueAttributeDescriptor(info.name, acceptsNoValue = true, priority = LOW)
+               ?: VueAttributeDescriptor(info.name, acceptsNoValue = !info.requiresValue, priority = LOW)
       }
       info is VueAttributeNameParser.VueDirectiveInfo -> {
         return when {
