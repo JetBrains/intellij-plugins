@@ -28,13 +28,7 @@ class GraziConfigurable : ConfigurableBase<GraziSettingsPanel, GraziConfig>(
 
     override fun getSettings() = GraziConfig.instance
 
+    override fun createUi(): GraziSettingsPanel = GraziSettingsPanel().also { ui = it }
 
-    override fun createUi(): GraziSettingsPanel {
-        ui = GraziSettingsPanel()
-        return ui
-    }
-
-    override fun enableSearch(option: String?): Runnable? {
-        return ui.showOption(option)
-    }
+    override fun enableSearch(option: String?) = ui.showOption(option)
 }
