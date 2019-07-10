@@ -27,8 +27,7 @@ package org.osmorc.run;
 import org.junit.Test;
 import org.osmorc.run.ui.SelectedBundle;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -37,20 +36,20 @@ public class SelectedBundleTest {
   @Test
   public void testToString() {
     SelectedBundle testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", "/test/path");
-    assertThat(testObject.toString(), equalTo("testName (path)"));
+    assertEquals("testName (path)", testObject.toString());
     testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", null);
-    assertThat(testObject.toString(), equalTo("testName"));
+    assertEquals("testName", testObject.toString());
   }
 
   @Test
   public void testEquals() {
     SelectedBundle testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", "/test/path");
-    assertThat(testObject, equalTo(testObject));
+    assertEquals(testObject, testObject);
     testObject = new SelectedBundle(SelectedBundle.BundleType.Module, "testName", null);
-    assertThat(testObject, equalTo(testObject));
+    assertEquals(testObject, testObject);
     testObject = new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "testName", "/test/path");
-    assertThat(testObject, equalTo(testObject));
+    assertEquals(testObject, testObject);
     testObject = new SelectedBundle(SelectedBundle.BundleType.PlainLibrary, "testName", null);
-    assertThat(testObject, equalTo(testObject));
+    assertEquals(testObject, testObject);
   }
 }
