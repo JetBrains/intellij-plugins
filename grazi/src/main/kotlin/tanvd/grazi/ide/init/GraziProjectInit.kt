@@ -19,7 +19,6 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
             enableTool("GraziCommit", project)
 
-            println(getTool(CommitMessageSpellCheckingInspection::class.java).shortName)
             if (GraziConfig.state.enabledSpellcheck) {
                 disableToolByDefault(listOf(getTool(CommitMessageSpellCheckingInspection::class.java).shortName), project)
             } else {
