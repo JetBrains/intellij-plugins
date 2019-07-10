@@ -79,12 +79,12 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("int x, int y", 1);
   }
 
-  public void _testParamInfo6() {
-    doTest("int x, int y = 239", 1);
+  public void testParamInfo6() {
+    doTest("int x, {int y: 239}", 1);
   }
 
-  public void _testParamInfo7() {
-    doTest("int x, int y = 239", 0);
+  public void testParamInfo7() {
+    doTest("int x, {int y: 239}", 0);
   }
 
   public void testParamInfo8() {
