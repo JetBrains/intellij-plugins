@@ -89,6 +89,8 @@
 
         <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckRenameSuggestions" order="first"/>
 
+        <search.optionContributor implementation="tanvd.grazi.ide.ui.GraziSearchableOptionContributor"/>
+
     </extensions>
 
     <extensionPoints>
