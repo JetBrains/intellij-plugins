@@ -184,12 +184,17 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
                 GraziConfig.state.userDisabledRules.add(rule.rule.id)
             }
         }
+
+        state.clear()
     }
 
     private fun resetCheckMark(root: CheckedTreeNode): Boolean {
         val meta = root.userObject
         if (meta is RuleWithLang) {
-            root.isChecked = !LangTool[meta.lang].disabledRules.contains(meta.rule.id)
+            root.isChecked = when(val rule = state[meta.rule.id]) {
+                is RuleWithLang -> rule.state
+                else -> !LangTool[meta.lang].disabledRules.contains(meta.rule.id)
+            }
         } else {
             root.isChecked = false
             visit(root) { if (resetCheckMark(it)) root.isChecked = true }
@@ -229,12 +234,11 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     }
 
     fun reset() {
+        state.clear()
         reset(LangTool.allRulesWithLangs())
     }
 
     private fun reset(rules: RulesMap) {
-        state.clear()
-
         val root = CheckedTreeNode()
         val model = tree.model as DefaultTreeModel
 
