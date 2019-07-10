@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport language="JSON" implementationClass="tanvd.grazi.ide.language.json.JsonSupport"/>
+    </extensions>
+</idea-plugin>

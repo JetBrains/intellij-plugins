@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport language="XML" implementationClass="tanvd.grazi.ide.language.xml.XmlSupport"/>
+    </extensions>
+</idea-plugin>

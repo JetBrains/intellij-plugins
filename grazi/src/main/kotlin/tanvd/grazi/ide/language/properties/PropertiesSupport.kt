@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.language.props
+package tanvd.grazi.ide.language.properties
 
 import com.intellij.lang.properties.psi.impl.PropertyValueImpl
 import com.intellij.psi.PsiElement
@@ -6,7 +6,7 @@ import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
-class PropsSupport : LanguageSupport() {
+class PropertiesSupport : LanguageSupport() {
     companion object {
         private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
     }
