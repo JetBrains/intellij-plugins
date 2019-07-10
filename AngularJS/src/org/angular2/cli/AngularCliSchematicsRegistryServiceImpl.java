@@ -250,7 +250,9 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     private List<Pair<Object, Long>> myTrackers;
 
     public synchronized List<Schematic> getUpToDateOrCompute(Supplier<CachedValueProvider.Result<List<Schematic>>> provider) {
-      if (mySchematics != null && myTrackers != null && ContainerUtil.all(myTrackers, pair -> getTimestamp(pair.first) == pair.second)) {
+      if (mySchematics != null
+          && myTrackers != null
+          && ContainerUtil.all(myTrackers, pair -> getTimestamp(pair.first) == pair.second && pair.second >= 0)) {
         return mySchematics;
       }
       CachedValueProvider.Result<List<Schematic>> schematics = provider.get();
@@ -267,7 +269,10 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
         PsiElement element = (PsiElement)dependency;
         if (!element.isValid()) return -1;
         PsiFile containingFile = element.getContainingFile();
-        if (containingFile != null) return containingFile.getModificationStamp();
+        if (containingFile != null) {
+          return containingFile.getVirtualFile().getModificationStamp();
+        }
+        return -1;
       }
       throw new UnsupportedOperationException(dependency.getClass().toString());
     }
