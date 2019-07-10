@@ -15,6 +15,7 @@ package org.jetbrains.vuejs.lang;
 
 import org.jetbrains.vuejs.lang.parser.VueHighlightingLexerTest;
 import org.jetbrains.vuejs.lang.parser.VueLexerTest;
+import org.jetbrains.vuejs.lang.parser.VueParserTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -39,6 +40,7 @@ import org.junit.runners.Suite;
   VueAutoPopupTest.class,
   VueHighlightingLexerTest.class,
   VueLexerTest.class,
+  VueParserTest.class,
   VueEmmetTest.class,
   VueModuleImportTest.class,
   VueTypeScriptHighlightingTest.class,
