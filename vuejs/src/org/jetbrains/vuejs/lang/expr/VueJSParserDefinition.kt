@@ -11,7 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
 
 class VueJSParserDefinition : JavascriptParserDefinition() {
-  private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
+  companion object {
+    private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
+  }
 
   override fun createParser(project: Project?): PsiParser {
     return PsiParser { root, builder ->

@@ -27,4 +27,17 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
            "\n" +
            "</script>", "vue")
   }
+
+  fun testScriptTagWithinTemplateTag() {
+    doTest("""<template><script type="text/template"><div>
+          </div>
+</script></template>""",
+           """<template>
+    <script type="text/template">
+        <div>
+        </div>
+    </script>
+</template>""", "vue")
+  }
+
 }
