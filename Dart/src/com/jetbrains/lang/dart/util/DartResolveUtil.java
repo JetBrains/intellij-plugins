@@ -814,7 +814,10 @@ public class DartResolveUtil {
       parameterIndex = functionDescription == null ? -1 : functionDescription.getParameters().length - 1;
     }
     else if (argumentList != null) {
-      for (DartExpression expression : argumentList.getExpressionList()) {
+      final SmartList<DartPsiCompositeElement> allArguments = new SmartList<>();
+      allArguments.addAll(argumentList.getExpressionList());
+      allArguments.addAll(argumentList.getNamedArgumentList());
+      for (DartPsiCompositeElement expression : allArguments) {
         ++parameterIndex;
         if (expression.getTextRange().getEndOffset() >= place.getTextRange().getStartOffset()) {
           break;

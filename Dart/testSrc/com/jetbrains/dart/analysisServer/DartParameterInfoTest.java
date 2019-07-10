@@ -127,11 +127,11 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("[String s = 'foo']", 0, 1, 17);
   }
 
-  public void _testParamInfo19() {
+  public void testParamInfo19() {
     doTest("[String str]", 0);
   }
 
-  public void _testParamInfo20() {
+  public void testParamInfo20() {
     doTest("[String str]", 0);
   }
 
@@ -139,16 +139,20 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("[String str]", 0);
   }
 
-  public void _testParamInfo22() {
+  public void testParamInfo22() {
     doTest("{String str}", 0);
   }
 
-  public void _testParamInfo23() {
+  public void testParamInfo23() {
     doTest("{String str}", 0);
   }
 
   public void testParamInfo24() {
     doTest("{String str}", 0);
+  }
+
+  public void _testParamInfo25() {
+    doTest("{String str1: '1', String str2: '2'}", 1);
   }
 
   public void testParamInfo_call_localVariable() {
