@@ -21,76 +21,72 @@ class GraziInspection : LocalInspectionTool() {
         private fun getProblemMessage(fix: Typo): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
             return html {
-                div {
-                    style = "margin-bottom: 5px;"
-                    if (fix.isSpellingTypo) {
-                        div {
-                            if (fix.info.rule.description.length > 50) {
-                                style = "width: 300px;"
-                            }
+                if (fix.isSpellingTypo) {
+                    if (fix.info.rule.description.length > 50) {
+                        style = "width: 300px;"
+                    }
 
-                            p { +fix.info.rule.toDescriptionSanitized() }
+                    +fix.info.rule.toDescriptionSanitized()
+                } else {
+                    div {
+                        style = "margin-bottom: 3px;"
+                        if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
+                            style += "width: 300px;"
                         }
-                    } else {
-                        div {
-                            if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
-                                style = "width: 300px;"
-                            }
 
-                            table {
-                                if (fix.fixes.isNotEmpty()) {
-                                    tr {
-                                        td {
-                                            colSpan = "2"
-                                            style = "padding-bottom: 3px;"
-                                            +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
-                                        }
-                                    }
-                                }
-
+                        table {
+                            if (fix.fixes.isNotEmpty()) {
                                 tr {
                                     td {
                                         colSpan = "2"
-                                        +fix.info.rule.toDescriptionSanitized()
+                                        style = "padding-bottom: 3px;"
+                                        +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
                                     }
                                 }
                             }
 
-                            table {
-                                fix.info.incorrectExample?.let {
-                                    val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
-                                    if (corrections.isEmpty()) {
-                                        tr {
-                                            style = "padding-top: 5px;"
-                                            td {
-                                                style = "color: gray;"
-                                                +msg("grazi.ui.settings.rules.rule.incorrect")
-                                            }
-                                            td { toIncorrectHtml(it) }
-                                        }
-                                    } else {
-                                        tr {
-                                            style = "padding-top: 5px;"
-                                            td {
-                                                style = "color: gray;"
-                                                +msg("grazi.ui.settings.rules.rule.incorrect")
-                                            }
-                                            td {
-                                                style = "text-align: left"
-                                                toIncorrectHtml(it)
-                                            }
-                                        }
+                            tr {
+                                td {
+                                    colSpan = "2"
+                                    +fix.info.rule.toDescriptionSanitized()
+                                }
+                            }
+                        }
 
-                                        tr {
-                                            style = "padding-top: 5px;"
-                                            td {
-                                                style = "color: gray;"
-                                                +msg("grazi.ui.settings.rules.rule.correct")
-                                            }
-                                            td {
-                                                style = "text-align: left"
-                                                toCorrectHtml(it)
-                                            }
+                        table {
+                            fix.info.incorrectExample?.let {
+                                val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
+                                if (corrections.isEmpty()) {
+                                    tr {
+                                        style = "padding-top: 5px;"
+                                        td {
+                                            style = "color: gray;"
+                                            +msg("grazi.ui.settings.rules.rule.incorrect")
+                                        }
+                                        td { toIncorrectHtml(it) }
+                                    }
+                                } else {
+                                    tr {
+                                        style = "padding-top: 5px;"
+                                        td {
+                                            style = "color: gray;"
+                                            +msg("grazi.ui.settings.rules.rule.incorrect")
+                                        }
+                                        td {
+                                            style = "text-align: left"
+                                            toIncorrectHtml(it)
+                                        }
+                                    }
+
+                                    tr {
+                                        style = "padding-top: 5px;"
+                                        td {
+                                            style = "color: gray;"
+                                            +msg("grazi.ui.settings.rules.rule.correct")
+                                        }
+                                        td {
+                                            style = "text-align: left"
+                                            toCorrectHtml(it)
                                         }
                                     }
                                 }
