@@ -9,6 +9,7 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.CommitMessageInspectionProfile
+import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.GraziCommitInspection
 
@@ -17,11 +18,22 @@ open class GraziProjectInit : StartupActivity, DumbAware {
         with(CommitMessageInspectionProfile.getInstance(project)) {
             addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
             enableTool("GraziCommit", project)
+
+            println(getTool(CommitMessageSpellCheckingInspection::class.java).shortName)
+            if (GraziConfig.state.enabledSpellcheck) {
+                disableToolByDefault(listOf(getTool(CommitMessageSpellCheckingInspection::class.java).shortName), project)
+            } else {
+                enableToolsByDefault(listOf(getTool(CommitMessageSpellCheckingInspection::class.java).shortName), project)
+            }
         }
 
-        if (GraziConfig.state.enabledSpellcheck && !ApplicationManager.getApplication().isUnitTestMode) {
+        if (!ApplicationManager.getApplication().isUnitTestMode) {
             modifyAndCommitProjectProfile(project, Consumer {
-                it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
+                if (GraziConfig.state.enabledSpellcheck) {
+                    it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
+                } else {
+                    it.enableToolsByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
+                }
             })
         }
     }
