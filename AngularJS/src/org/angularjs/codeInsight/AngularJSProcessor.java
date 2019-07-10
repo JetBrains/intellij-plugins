@@ -172,7 +172,7 @@ public class AngularJSProcessor {
       JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
-          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true));
+          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true, false));
         }
       }
     }
@@ -220,7 +220,7 @@ public class AngularJSProcessor {
           .filter(el -> el.getName() != null)
           .map(el -> new JSRecordTypeImpl.PropertySignatureImpl(
             el.getName(), JSResolveUtil.getElementJSType(el),
-            true, el))
+            true, false, el))
           .forEach(processor);
       }
     }
