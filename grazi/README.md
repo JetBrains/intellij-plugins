@@ -9,7 +9,7 @@
 Grazi is an IntelliJ IDEA plugin providing local spell and grammar checking for Markdown, JavaDoc, Plain texts, and others.
 
 It uses one of the leading proofreaders - [LanguageTool](https://github.com/languagetool-org/languagetool)
-under the bonnet, so it supports over 15 languages and provides the best performance and 
+under the hood, so it supports over 15 languages and provides the best performance and 
 accuracy among free (and even non-free) alternatives.
 
 In general, *Grazi is a Grammarly inside your IDE*. 
@@ -24,10 +24,12 @@ Right now Grazi supports following natural language sources:
 * Python code - string literals (formatted and non-formatted), python docs and language constructs
 * JavaScript code - string literals, docs and language constructs
 * Rust code - string literals, docs and language constructs
+* Latex - (via TeXiFy IDEA plugin) text, spellcheck
 * Markdown - all the text (for code Grazi will use spellcheck only)
 * Plaintext - all the text if extension is *.txt*, otherwise Grazi will use spellcheck only
 * XML - all the text elements
 * JSON - string literals
+* Properties - string literals
 * Comments - any comments in almost any code 
 * Commit messages - commits made via standard IDEA VCS support
 
