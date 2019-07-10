@@ -35,7 +35,7 @@
     <lang.substitutor language="CSS" implementationClass="org.intellij.plugins.postcss.PostCssLanguageSubstitutor"/>
     <embeddedTokenTypesProvider implementation="org.intellij.plugins.postcss.PostCssEmbeddedTokenTypesProvider"/>
     <embeddedTokenHighlighter implementation="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
-    <fileTypeFactory implementation="org.intellij.plugins.postcss.PostCssFileTypeFactory"/>
+    <fileType language="PostCSS" extensions="pcss" fieldName="POST_CSS" name="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssFileType"/>
     <lang.parserDefinition language="PostCSS" implementationClass="org.intellij.plugins.postcss.parser.PostCssParserDefinition"/>
     <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
     <lang.commenter language="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssCommenter"/>
