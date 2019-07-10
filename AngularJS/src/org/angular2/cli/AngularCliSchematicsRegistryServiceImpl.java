@@ -252,7 +252,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     public synchronized List<Schematic> getUpToDateOrCompute(Supplier<CachedValueProvider.Result<List<Schematic>>> provider) {
       if (mySchematics != null
           && myTrackers != null
-          && ContainerUtil.all(myTrackers, pair -> getTimestamp(pair.first) == pair.second && pair.second >= 0)) {
+          && ContainerUtil.all(myTrackers, pair -> pair.second >= 0 && getTimestamp(pair.first) == pair.second)) {
         return mySchematics;
       }
       CachedValueProvider.Result<List<Schematic>> schematics = provider.get();
