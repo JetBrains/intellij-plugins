@@ -1,0 +1,16 @@
+import xxx.Vector2;
+
+package xxx {
+  class Vector2 {
+    function doMyWay() {}
+  }
+}
+
+class Vector {
+  function doIt() {}
+}
+
+var a:Vector.<Vector2.<int>>;
+
+var created:Vector2.<int> = a[1];
+created.doMyWay()

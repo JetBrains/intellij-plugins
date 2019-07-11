@@ -1,0 +1,15 @@
+import xxx.Vector2;
+
+package xxx {
+  class Vector2 {
+    function doMyWay() {}
+  }
+}
+
+class Vector {
+  function doIt() {}
+}
+
+var a:Vector.<Vector2.<int>>;
+
+<selection>a[1]</selection>.doMyWay()

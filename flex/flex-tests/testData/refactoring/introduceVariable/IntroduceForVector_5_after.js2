@@ -1,0 +1,13 @@
+package {
+public class IntroduceForVector_5 {
+    function reverse():Vector$object {}
+}
+}
+
+package com {
+  public class MyClass {}
+}
+
+import com.MyClass;
+var x:Vector.<MyClass>()
+var myClass:MyClass = x[0];

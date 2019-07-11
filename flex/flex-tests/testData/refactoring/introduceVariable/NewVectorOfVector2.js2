@@ -1,0 +1,9 @@
+package {
+
+class Test {
+    public function Untitled() {
+        new <caret>Vector.<Vector.<Vector.<int>>>( 30, true );
+    }
+}
+
+}

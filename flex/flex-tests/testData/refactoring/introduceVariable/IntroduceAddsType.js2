@@ -1,0 +1,4 @@
+for (var i = 0; i < this.entryCount; i++)
+        this.index==i ?
+          <selection>Element.addClassName(this.getEntry(i),"selected")</selection> :
+          Element.removeClassName(this.getEntry(i),"selected");

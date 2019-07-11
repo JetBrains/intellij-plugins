@@ -1,0 +1,5 @@
+class Something {
+    public function f():Vector.<String> {}
+}
+var a:Something;
+<selection>a.f()</selection>

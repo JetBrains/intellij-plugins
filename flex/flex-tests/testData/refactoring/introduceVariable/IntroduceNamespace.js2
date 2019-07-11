@@ -1,0 +1,1 @@
+default xml namespace = <selection>new Namespace("test")</selection>;

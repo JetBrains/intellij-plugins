@@ -1,0 +1,4 @@
+class C {}
+var x:C
+var x2:Array
+var created:C = x = x2[0];

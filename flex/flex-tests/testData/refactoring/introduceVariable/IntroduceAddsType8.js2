@@ -1,0 +1,12 @@
+class C {
+  function a():void {
+    f(<selection>function():void {
+        // ...
+    }</selection>);
+}
+
+function f(processor:Function): Boolean {
+    processor();
+    return false;
+}
+}

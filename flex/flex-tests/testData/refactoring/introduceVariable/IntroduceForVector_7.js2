@@ -1,0 +1,11 @@
+package {
+public class Vector$object {
+    function reverse():Vector$object {}
+}
+}
+
+function produceList():Vector.<String> {
+    return null;
+}
+
+<selection>produceList().reverse()</selection>

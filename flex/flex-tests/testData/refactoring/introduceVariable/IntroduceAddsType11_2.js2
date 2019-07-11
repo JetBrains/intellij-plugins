@@ -1,0 +1,9 @@
+package {
+class Vector {}
+class Vector$object {}
+}
+class Something {
+    public function f():Vector.<String> {}
+}
+var a:Something;
+<selection>a.f()</selection>

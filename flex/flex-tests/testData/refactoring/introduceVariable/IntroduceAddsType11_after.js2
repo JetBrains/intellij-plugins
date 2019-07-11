@@ -1,0 +1,5 @@
+class Something {
+    public function f():Vector.<String> {}
+}
+var a:Something;
+var created:Vector.<String> = a.f();

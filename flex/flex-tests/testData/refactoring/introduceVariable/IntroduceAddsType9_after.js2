@@ -1,0 +1,20 @@
+package foo {
+public class Target {
+    function Target() {
+    }
+}
+}
+
+import bar.Caller;
+
+import foo.Target;
+
+package bar {
+import foo.*;
+
+public class Caller {
+    public static function xxx():Target {}
+}
+}
+
+var created:Target = Caller.xxx();

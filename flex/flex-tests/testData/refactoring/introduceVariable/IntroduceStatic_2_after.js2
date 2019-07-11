@@ -1,0 +1,6 @@
+class A {
+  static function foo() {
+      var created:int = 1;
+      var a = created;
+  }
+}

@@ -1,0 +1,2 @@
+var x:Array
+<selection>new x[1]</selection>

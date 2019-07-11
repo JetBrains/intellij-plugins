@@ -1,0 +1,3 @@
+var n1:String = "";
+var u1:uint = 123;
+var created:String = n1 + u1;

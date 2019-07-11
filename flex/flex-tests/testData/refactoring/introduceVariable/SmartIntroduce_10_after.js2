@@ -1,0 +1,2 @@
+var xxx:int = 123;
+var x:Array = [xxx,456,789];

@@ -1,0 +1,1 @@
+var created:Boolean = 1 > 1;

@@ -1,0 +1,1 @@
+ba.writeInt(0x1234<caret>);

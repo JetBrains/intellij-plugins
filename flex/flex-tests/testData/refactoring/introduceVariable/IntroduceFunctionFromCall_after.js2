@@ -1,0 +1,4 @@
+function foo() {}
+
+var fun:Function = foo;
+fun()

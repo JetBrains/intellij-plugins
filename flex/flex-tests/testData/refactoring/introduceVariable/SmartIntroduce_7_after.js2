@@ -1,0 +1,6 @@
+public function f() {
+    var x:int = 123;
+    var y:int = 456;
+    var xxx:Point = new Point(x, y);
+    return xxx;
+}

@@ -1,0 +1,7 @@
+package foo {
+  import <selection>com</selection>.Bar;
+}
+
+package com {
+  public class Bar {}
+}

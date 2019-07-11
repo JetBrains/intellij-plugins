@@ -111,6 +111,7 @@ public class FlexTestSuite {
     testSuite.addTestSuite(FlexProjectViewTest.class);
 
     //com.intellij.flex.refactoring.*
+    testSuite.addTestSuite(ActionScriptIntroduceVariableTest.class);
     testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
     testSuite.addTestSuite(FlexChangeSignatureTest.class);
     testSuite.addTestSuite(FlexExtractFunctionTest.class);
