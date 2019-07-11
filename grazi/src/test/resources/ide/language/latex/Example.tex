@@ -4,11 +4,41 @@
 
 % It are not working in comnts
 
-%\begin{document} FIXME begin document crash test environment
+\begin{frame} % FIXME \begin{document} crash test environment
     \begin{itemize}
         \item $It are not checked in <warning descr="MORFOLOGIK_RULE_EN_US">formuls</warning>$
         \item It is <warning descr="ARTICLE_MISSING">friend</warning> of human.
         \item It is <warning descr="MORFOLOGIK_RULE_EN_US">frend</warning> of human
         \item It <warning descr="IT_VBZ">are</warning> working for <warning descr="MUCH_COUNTABLE">much</warning> warnings
     \end{itemize}
-%\end{document}
+
+    Our goal was to minimize the code length, it <warning descr="IT_VBZ">are</warning> natural to compare the result with other methods.
+    We have used arithmetic coding (AC) as an entropy encoder. It
+
+    \begin{itemize}
+        \item are not bad
+        \item two
+        \item three
+    \end{itemize}
+
+    \begin{tikzpicture}
+        \begin{axis}[
+        mbarplot,
+        symbolic x coords={DOI,FASTQ},
+        xtick=data,
+        xtick align=inside,
+        enlarge x limits={abs=2.5cm},
+        xlabel={It <warning descr="IT_VBZ">are</warning> error},
+        ylabel={Compration rate, \%},
+        width=\textwidth,
+        ymin=0,
+        height=6cm,
+        ]
+            \addplot table[x=Collection,y=gzip]{\mycompressiondata};
+            \addplot table[x=Collection,y=bzip2]{\mycompressiondata};
+
+            \legend{gzip, bzip2, v-grams+AC}
+
+        \end{axis}
+    \end{tikzpicture}
+\end{frame}
