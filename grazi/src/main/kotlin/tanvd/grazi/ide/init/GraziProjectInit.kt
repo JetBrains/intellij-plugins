@@ -12,8 +12,20 @@ import com.intellij.vcs.commit.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.GraziCommitInspection
+import tanvd.grazi.ide.GraziLifecycle
 
 open class GraziProjectInit : StartupActivity, DumbAware {
+
+    companion object : GraziLifecycle {
+        override fun init() {
+            super.init()
+        }
+
+        override fun reset() {
+            super.reset()
+        }
+    }
+
     override fun runActivity(project: Project) {
         with(CommitMessageInspectionProfile.getInstance(project)) {
             addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
@@ -26,13 +38,9 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             }
         }
 
-        if (!ApplicationManager.getApplication().isUnitTestMode) {
+        if (!ApplicationManager.getApplication().isUnitTestMode && GraziConfig.state.enabledSpellcheck) {
             modifyAndCommitProjectProfile(project, Consumer {
-                if (GraziConfig.state.enabledSpellcheck) {
-                    it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
-                } else {
-                    it.enableToolsByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
-                }
+                it.disableToolByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
             })
         }
     }
