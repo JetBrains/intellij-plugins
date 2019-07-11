@@ -43,7 +43,7 @@ private fun LangTool.allRulesWithLangs(): RulesMap {
         val usedRules = HashSet<String>() // prevent subrules with same ids
 
         this[lang].allRules.forEach {rule ->
-            if (rule.id !in usedRules) {
+            if (rule.id !in usedRules && !rule.isDictionaryBasedSpellingRule) {
                 usedRules.add(rule.id)
                 if (rule in activeRules) {
                     categories.getOrPut(rule.category, ::LinkedList).add(RuleWithLang(rule, lang, enabled = true, state = true))
