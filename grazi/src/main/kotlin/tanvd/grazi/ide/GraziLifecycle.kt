@@ -1,7 +1,9 @@
 package tanvd.grazi.ide
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
+import tanvd.grazi.GraziConfig
 
 interface GraziLifecycle {
     companion object {
@@ -21,4 +23,7 @@ interface GraziLifecycle {
         reset()
         init()
     }
+
+    /** Update state of object. In case prevState is null - object is initialized first time */
+    fun update(prevState: GraziConfig.State?, newState: GraziConfig.State, project: Project) {}
 }

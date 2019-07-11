@@ -1,11 +1,17 @@
 package tanvd.grazi.spellcheck
 
+import com.intellij.codeInspection.ex.modifyAndCommitProjectProfile
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.spellchecker.inspections.Splitter
 import com.intellij.spellchecker.tokenizer.TokenConsumer
+import com.intellij.util.Consumer
+import com.intellij.vcs.commit.CommitMessageInspectionProfile
+import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
@@ -96,4 +102,30 @@ object GraziSpellchecker : GraziLifecycle {
     override fun reset() = init()
 
     override fun reInit() = init()
+
+    override fun update(prevState: GraziConfig.State?, newState: GraziConfig.State, project: Project) {
+        if (prevState?.enabledSpellcheck == newState.enabledSpellcheck) return
+
+        if (newState.enabledSpellcheck) {
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                modifyAndCommitProjectProfile(project, Consumer {
+                    it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
+                })
+            }
+            with(CommitMessageInspectionProfile.getInstance(project)) {
+                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
+            }
+        } else {
+            with(CommitMessageInspectionProfile.getInstance(project)) {
+                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = true
+            }
+        }
+
+        //enable back built-in spellcheck if it is not initialization, previous state was `enabled` and new is `disabled`
+        if ((prevState?.enabledSpellcheck == true && !newState.enabledSpellcheck) && !ApplicationManager.getApplication().isUnitTestMode) {
+            modifyAndCommitProjectProfile(project, Consumer {
+                it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = true
+            })
+        }
+    }
 }

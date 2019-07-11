@@ -1,6 +1,7 @@
 package tanvd.grazi
 
 import com.intellij.openapi.components.*
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.ide.GraziLifecycle
 import tanvd.grazi.language.Lang
@@ -10,7 +11,7 @@ import tanvd.grazi.language.Lang
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                      @Property var nativeLanguage: Lang = enabledLanguages.first(),
-                     @Property var enabledSpellcheck: Boolean = true,
+                     @Property var enabledSpellcheck: Boolean = false,
                      @Property val userWords: MutableSet<String> = HashSet(),
                      @Property val userDisabledRules: MutableSet<String> = HashSet(),
                      @Property val userEnabledRules: MutableSet<String> = HashSet(),
@@ -36,6 +37,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
 
         if (prevState != myState) {
             GraziLifecycle.publisher.reInit()
+            ProjectManager.getInstance().openProjects.forEach { GraziLifecycle.publisher.update(prevState, myState, it) }
         }
     }
 }
