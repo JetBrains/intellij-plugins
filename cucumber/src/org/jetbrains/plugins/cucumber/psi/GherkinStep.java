@@ -37,6 +37,7 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
    * Deprecated
    * Use getName() instead
    */
+  @Deprecated
   String getStepName();
 
   @Nullable
