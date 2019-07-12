@@ -17,6 +17,7 @@ import org.languagetool.rules.Rule
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.Lang
+import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.html
 import tanvd.grazi.utils.toCorrectHtml
 import tanvd.grazi.utils.toIncorrectHtml
@@ -74,6 +75,24 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                         +" "
                         a(it.toString()) {
                             unsafe { +it.toString() }
+                        }
+                    }
+                }
+
+                LangTool.getRuleLanguages(it.id)?.let { languages ->
+                    if (languages.size > 1) {
+                        br
+                        p {
+                            +msg("grazi.ui.settings.rules.rule.multilanguage.start")
+                            +" "
+                            strong {
+                                +languages.first().displayName
+                                languages.drop(1).forEach {
+                                    +", ${it.displayName}"
+                                }
+                            }
+                            +" "
+                            +msg("grazi.ui.settings.rules.rule.multilanguage.end")
                         }
                     }
                 }
@@ -146,7 +165,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     override fun apply(settings: GraziConfig) {
-        val state = settings.state.copy()
+        val state = settings.state.clone()
 
         Lang.values().forEach {
             if (cblEnabledLanguages.isItemSelected(it.name)) {

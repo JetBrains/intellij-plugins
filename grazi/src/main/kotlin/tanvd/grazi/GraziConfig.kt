@@ -1,6 +1,9 @@
 package tanvd.grazi
 
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.ide.msg.GraziAppLifecycle
@@ -16,7 +19,13 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property val userWords: MutableSet<String> = HashSet(),
                      @Property val userDisabledRules: MutableSet<String> = HashSet(),
                      @Property val userEnabledRules: MutableSet<String> = HashSet(),
-                     @Property var lastSeenVersion: String? = null)
+                     @Property var lastSeenVersion: String? = null) {
+
+        fun clone(): State {
+            return State(enabledLanguages.toMutableSet(), nativeLanguage, enabledSpellcheck, userWords.toMutableSet(),
+                    userDisabledRules.toMutableSet(), userEnabledRules.toMutableSet(), lastSeenVersion)
+        }
+    }
 
     companion object {
         val instance: GraziConfig by lazy { ServiceManager.getService(GraziConfig::class.java) }

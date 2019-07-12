@@ -13,11 +13,10 @@ import tanvd.grazi.spellcheck.GraziSpellchecker
 class GraziAppInit : BaseComponent, DumbAware {
     override fun initComponent() {
         GraziAppLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
-        GraziAppLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
         GraziAppLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
-
         GraziAppLifecycle.publisher.init()
 
+        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
     }
 }
