@@ -62,7 +62,7 @@ end
           }
         }
       }
-      Thread.sleep(500)
+      waitBeforeContinue(500)
       prepareSample(sample2)
       task("CodeCompletion") {
         text("To activate Basic Completion explicitly, press ${action(it)}. " +

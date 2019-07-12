@@ -99,6 +99,14 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     editorGutterComponentEx.revalidateMarkup()
   }
 
+  /**
+   * There will not be any freeze in GUI thread.
+   * The continue of the script will be scheduled with the [delayMillis]
+   */
+  fun waitBeforeContinue(delayMillis: Int) {
+    executor.waitBeforeContinue(delayMillis)
+  }
+
   fun prepareSample(sample: LessonSample) {
     setDocumentCode(sample.text)
     if (sample.selection != null) {
