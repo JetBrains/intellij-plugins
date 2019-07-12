@@ -12,13 +12,18 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
-import org.languagetool.*
+import org.languagetool.JLanguageTool
+import org.languagetool.ResultCache
+import org.languagetool.UserConfig
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziAppLifecycle
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.Text
+import tanvd.grazi.utils.spellcheckOnly
+import tanvd.grazi.utils.toPointer
+import tanvd.grazi.utils.withOffset
 import tanvd.kex.buildSet
 import tanvd.kex.tryRun
 import java.util.concurrent.TimeUnit
@@ -110,6 +115,7 @@ object GraziSpellchecker : GraziAppLifecycle, GraziStateLifecycle {
         modifyAndCommitProjectProfile(project, Consumer {
             it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
         })
+
         with(CommitMessageInspectionProfile.getInstance(project)) {
             getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
         }
@@ -120,22 +126,21 @@ object GraziSpellchecker : GraziAppLifecycle, GraziStateLifecycle {
         if (prevState.enabledSpellcheck == newState.enabledSpellcheck || ApplicationManager.getApplication().isUnitTestMode) return
 
         if (newState.enabledSpellcheck) {
-            if (!ApplicationManager.getApplication().isUnitTestMode) {
-                modifyAndCommitProjectProfile(project, Consumer {
-                    it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
-                })
-            }
+            modifyAndCommitProjectProfile(project, Consumer {
+                it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
+            })
+
             with(CommitMessageInspectionProfile.getInstance(project)) {
                 getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
             }
         } else {
-            with(CommitMessageInspectionProfile.getInstance(project)) {
-                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = true
-            }
-
             modifyAndCommitProjectProfile(project, Consumer {
                 it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = true
             })
+
+            with(CommitMessageInspectionProfile.getInstance(project)) {
+                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = true
+            }
         }
     }
 }

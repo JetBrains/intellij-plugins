@@ -15,6 +15,6 @@ interface GraziStateLifecycle {
     /** Initialize Grazi with passed state */
     fun init(state: GraziConfig.State, project: Project) {}
 
-    /** Update state of object. In case prevState is null - object is initialized first time */
+    /** Update state of object */
     fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {}
 }
