@@ -1,5 +1,6 @@
 package tanvd.grazi.ide.ui
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.options.ConfigurableBase
 import tanvd.grazi.GraziConfig
 
@@ -8,7 +9,7 @@ class GraziConfigurable : ConfigurableBase<GraziSettingsPanel, GraziConfig>(
 
     private lateinit var ui: GraziSettingsPanel
 
-    override fun getSettings() = GraziConfig.instance
+    override fun getSettings(): GraziConfig = ServiceManager.getService(GraziConfig::class.java)
 
     override fun createUi(): GraziSettingsPanel = GraziSettingsPanel().also { ui = it }
 

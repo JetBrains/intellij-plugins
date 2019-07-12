@@ -24,7 +24,6 @@ import tanvd.grazi.utils.toCorrectHtml
 import tanvd.grazi.utils.toIncorrectHtml
 import java.awt.BorderLayout
 import java.awt.Desktop
-import java.awt.Font
 import java.awt.GridLayout
 import javax.swing.BorderFactory
 import javax.swing.BoxLayout
@@ -166,24 +165,25 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     override fun apply(settings: GraziConfig) {
-        val state = settings.state.clone()
+        val enabledLanguages = settings.state.enabledLanguages.toMutableSet()
 
         Lang.values().forEach {
             if (cblEnabledLanguages.isItemSelected(it.name)) {
-                state.enabledLanguages.add(it)
+                enabledLanguages.add(it)
             } else {
-                state.enabledLanguages.remove(it)
+                enabledLanguages.remove(it)
             }
         }
 
-        state.nativeLanguage = cmbNativeLanguage.selectedItem as Lang
-        state.enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
+        var state = settings.state.copy(enabledLanguages = enabledLanguages, nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
+                enabledSpellcheck = cbEnableGraziSpellcheck.isSelected)
+
         with(rulesTree) {
-            apply(state)
+            state = apply(state)
             reset()
         }
 
-        GraziConfig.instance.loadState(state)
+        GraziConfig.update(state)
     }
 
     override fun reset(settings: GraziConfig) {
@@ -214,10 +214,6 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
                             add(cbEnableGraziSpellcheck)
                             add(ComponentPanelBuilder.createCommentComponent(msg("grazi.ui.settings.enable.note"), true))
-
-//                            label(msg("grazi.ui.settings.enable.note")) {
-//                                font = font.deriveFont(Font.ITALIC)
-//                            }
                         }
 
                         panel(GridLayout(1, 2), BorderLayout.CENTER) {

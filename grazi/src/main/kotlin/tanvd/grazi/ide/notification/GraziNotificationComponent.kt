@@ -8,11 +8,13 @@ import tanvd.grazi.GraziPlugin
 
 open class GraziNotificationComponent : StartupActivity, DumbAware {
     override fun runActivity(project: Project) {
-        if (GraziConfig.state.lastSeenVersion == null) {
-            GraziConfig.state.lastSeenVersion = GraziPlugin.version
+        val state = GraziConfig.get()
+
+        if (state.lastSeenVersion == null) {
+            GraziConfig.update(state.copy(lastSeenVersion = GraziPlugin.version))
             Notification.showInstallationMessage(project)
-        } else if (GraziPlugin.version != GraziConfig.state.lastSeenVersion) {
-            GraziConfig.state.lastSeenVersion = GraziPlugin.version
+        } else if (GraziPlugin.version != state.lastSeenVersion) {
+            GraziConfig.update(state.copy(lastSeenVersion = GraziPlugin.version))
             Notification.showUpdateMessage(project)
         }
     }

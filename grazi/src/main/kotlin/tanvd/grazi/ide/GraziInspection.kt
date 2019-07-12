@@ -129,7 +129,7 @@ class GraziInspection : LocalInspectionTool() {
                     typos.addAll(ext.getTypos(element))
                 }
 
-                if (GraziConfig.state.enabledSpellcheck) {
+                if (GraziConfig.get().enabledSpellcheck) {
                     typos.addAll(GraziSpellchecker.getTypos(element))
                 }
 

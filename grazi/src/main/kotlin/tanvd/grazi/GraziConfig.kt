@@ -13,32 +13,35 @@ import tanvd.grazi.language.Lang
 
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
-    data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
-                     @Property var nativeLanguage: Lang = enabledLanguages.first(),
-                     @Property var enabledSpellcheck: Boolean = false,
-                     @Property val userWords: MutableSet<String> = HashSet(),
-                     @Property val userDisabledRules: MutableSet<String> = HashSet(),
-                     @Property val userEnabledRules: MutableSet<String> = HashSet(),
-                     @Property var lastSeenVersion: String? = null) {
+    data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
+                     @Property val nativeLanguage: Lang = enabledLanguages.first(),
+                     @Property val enabledSpellcheck: Boolean = false,
+                     @Property val userWords: Set<String> = HashSet(),
+                     @Property val userDisabledRules: Set<String> = HashSet(),
+                     @Property val userEnabledRules: Set<String> = HashSet(),
+                     @Property val lastSeenVersion: String? = null) {
 
-        fun clone(): State {
-            return State(enabledLanguages.toMutableSet(), nativeLanguage, enabledSpellcheck, userWords.toMutableSet(),
-                    userDisabledRules.toMutableSet(), userEnabledRules.toMutableSet(), lastSeenVersion)
-        }
+        fun clone() = State(
+                enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
+                userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
+                lastSeenVersion = lastSeenVersion)
     }
 
     companion object {
-        val instance: GraziConfig by lazy { ServiceManager.getService(GraziConfig::class.java) }
+        private val instance: GraziConfig by lazy { ServiceManager.getService(GraziConfig::class.java) }
 
-        val state: State
-            get() = instance.state
+        /** Get copy of Grazi config state */
+        fun get() = instance.state
+
+        /** Update Grazi config state */
+        @Synchronized
+        fun update(state: State) = instance.loadState(state)
     }
-
 
     private var myState = State()
 
     override fun getState(): State {
-        return myState
+        return myState.clone()
     }
 
     override fun loadState(state: State) {

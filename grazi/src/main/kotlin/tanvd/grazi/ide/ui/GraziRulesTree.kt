@@ -35,7 +35,7 @@ private typealias RulesMap = List<Pair<Lang, List<Pair<Category, List<RuleWithLa
 
 private fun LangTool.allRulesWithLangs(): RulesMap {
     val result = TreeMap<Lang, SortedMap<Category, MutableList<RuleWithLang>>>()
-    GraziConfig.state.enabledLanguages.forEach { lang ->
+    GraziConfig.get().enabledLanguages.forEach { lang ->
         val categories = TreeMap<Category, MutableList<RuleWithLang>>(Comparator.comparing(Category::getName))
 
         with(get(lang)) {
@@ -170,20 +170,24 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    fun apply(config: GraziConfig.State) {
+    fun apply(config: GraziConfig.State): GraziConfig.State {
+        val userDisabledRules = config.userDisabledRules.toMutableSet()
+        val userEnabledRules = config.userEnabledRules.toMutableSet()
         state.values.forEach { rule ->
             if (rule.enabledInTree) {
                 LangTool[rule.lang].enableRule(rule.rule.id)
-                config.userDisabledRules.remove(rule.rule.id)
-                config.userEnabledRules.add(rule.rule.id)
+                userDisabledRules.remove(rule.rule.id)
+                userEnabledRules.add(rule.rule.id)
             } else {
                 LangTool[rule.lang].disableRule(rule.rule.id)
-                config.userEnabledRules.remove(rule.rule.id)
-                config.userDisabledRules.add(rule.rule.id)
+                userEnabledRules.remove(rule.rule.id)
+                userDisabledRules.add(rule.rule.id)
             }
         }
 
         state.clear()
+
+        return config.copy(userEnabledRules = userEnabledRules, userDisabledRules = userDisabledRules)
     }
 
     private fun resetCheckMark(root: CheckedTreeNode): Boolean {

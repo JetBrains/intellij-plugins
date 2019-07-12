@@ -21,7 +21,8 @@ class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction, 
     override fun getPriority() = PriorityAction.Priority.LOW
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        GraziConfig.state.userDisabledRules.add(typo.info.rule.id)
+        val state = GraziConfig.get()
+        GraziConfig.update(state.copy(userDisabledRules = state.userDisabledRules + typo.info.rule.id))
 
         GraziAppLifecycle.publisher.reset()
     }

@@ -16,6 +16,6 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             enableTool("GraziCommit", project)
         }
 
-        GraziStateLifecycle.publisher.init(GraziConfig.state, project)
+        GraziStateLifecycle.publisher.init(GraziConfig.get(), project)
     }
 }

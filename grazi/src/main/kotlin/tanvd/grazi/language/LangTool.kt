@@ -20,11 +20,16 @@ object LangTool : GraziStateLifecycle {
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-            JLanguageTool(lang.jLanguage, GraziConfig.state.nativeLanguage.jLanguage,
-                    cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
+            JLanguageTool(lang.jLanguage, GraziConfig.get().nativeLanguage.jLanguage,
+                    cache, UserConfig(GraziConfig.get().userWords.toList())).apply {
                 lang.configure(this)
-                disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })
-                //In case of English spellcheck will be done by Grazi spellchecker
+
+                allRules.forEach { rule ->
+                    if (rule.id in GraziConfig.get().userDisabledRules) disableRule(rule.id)
+                    if (rule.id in GraziConfig.get().userEnabledRules) enableRule(rule.id)
+                }
+
+                // In case of English spellcheck will be done by Grazi spellchecker
                 if (lang.isEnglish()) {
                     disableRules(allActiveRules.filter { it.isDictionaryBasedSpellingRule }.map { it.id })
                 }
