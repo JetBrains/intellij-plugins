@@ -63,10 +63,10 @@ class PythonLangSupport : AbstractLangSupport() {
     val model = ProjectSdksModel()
     model.reset(null)
     val sdkHomes = ArrayList<String>()
-    sdkHomes.addAll(VirtualEnvSdkFlavor.INSTANCE.suggestHomePaths())
+    sdkHomes.addAll(VirtualEnvSdkFlavor.INSTANCE.suggestHomePaths(null))
     PythonSdkFlavor.getApplicableFlavors()
         .filter { it !is VirtualEnvSdkFlavor }
-        .forEach { sdkHomes.addAll(it.suggestHomePaths()) }
+        .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
     Collections.sort(sdkHomes)
     return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks).mapTo(ArrayList(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
   }
