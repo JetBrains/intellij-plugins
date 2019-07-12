@@ -2,5 +2,6 @@
 <module name="Refactorings" version="0.3" id="ruby.refactoring" fileType="PROJECT" description="Rename, extract, and other refactorings">
     <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson"/>
     <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRenameLesson"/>
+    <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyExtractVariableLesson"/>
     <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyExtractMethodLesson"/>
 </module>
