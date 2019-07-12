@@ -121,7 +121,7 @@ export type OneListing = VehicleListing | DroidListing;
             <span *ngSwitchCase="DroidType.ASSASSIN"> Weapons: {{ listing.product.numberOfToolsCarried }} </span>
   
             <span *ngSwitchCase="DroidType.ASTROMECH"> Number of tools: {{ listing.product.numberOfToolsCarried }} </span>
-            <span *ngSwitchCase="DroidType.ASTROMECH"> Number of tools: {{ listing.product.<error descr="Unresolved variable numberOfToolsCard">numberOfToolsCard</error> }} </span>
+            <span *ngSwitchCase="DroidType.ASTROMECH"> Number of tools: {{ listing.product.<weak_warning descr="Unresolved variable numberOfToolsCard">numberOfToolsCard</weak_warning> }} </span>
           </span>
         </span>
       </p>
