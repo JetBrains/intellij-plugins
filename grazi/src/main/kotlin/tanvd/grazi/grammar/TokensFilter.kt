@@ -62,11 +62,11 @@ class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
         var shouldIgnore = false
 
         if (leftToken != null) {
-            shouldIgnore = shouldIgnore || typo.isAtEnd()
+            shouldIgnore = shouldIgnore || typo.location.isAtEnd()
         }
 
         if (rightToken != null) {
-            shouldIgnore = shouldIgnore || typo.isAtStart()
+            shouldIgnore = shouldIgnore || typo.location.isAtStart()
         }
         return shouldIgnore
     }
