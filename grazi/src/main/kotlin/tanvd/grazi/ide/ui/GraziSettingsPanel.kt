@@ -2,6 +2,7 @@ package tanvd.grazi.ide.ui
 
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.components.JBCheckBox
@@ -210,11 +211,13 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                             border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
                             //border = border(msg("grazi.ui.settings.spellcheck.text"), true)
 
-                            add(cbEnableGraziSpellcheck)
 
-                            label(msg("grazi.ui.settings.enable.note")) {
-                                font = font.deriveFont(Font.ITALIC)
-                            }
+                            add(cbEnableGraziSpellcheck)
+                            add(ComponentPanelBuilder.createCommentComponent(msg("grazi.ui.settings.enable.note"), true))
+
+//                            label(msg("grazi.ui.settings.enable.note")) {
+//                                font = font.deriveFont(Font.ITALIC)
+//                            }
                         }
 
                         panel(GridLayout(1, 2), BorderLayout.CENTER) {
