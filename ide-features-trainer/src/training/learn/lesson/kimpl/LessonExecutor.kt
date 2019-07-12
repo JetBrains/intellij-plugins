@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.Alarm
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
@@ -25,6 +26,16 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     else {
       // allow some simple tasks like caret move and so on...
       taskAction()
+    }
+  }
+
+  fun waitBeforeContinue(delayMillis: Int) {
+    if(isUnderTaskProcessing) {
+      throw IllegalStateException("Delay should be specified between tasks!")
+    }
+
+    taskActions.add {
+      Alarm().addRequest({ processNextTask() }, delayMillis)
     }
   }
 
