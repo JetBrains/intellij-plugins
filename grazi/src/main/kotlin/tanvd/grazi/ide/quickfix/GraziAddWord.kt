@@ -8,7 +8,7 @@ import com.intellij.openapi.util.Iconable
 import icons.SpellcheckerIcons
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.GraziLifecycle
+import tanvd.grazi.ide.msg.GraziAppLifecycle
 import javax.swing.Icon
 
 
@@ -24,6 +24,6 @@ class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAc
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.state.userWords.add(typo.word.toLowerCase())
 
-        GraziLifecycle.publisher.reset()
+        GraziAppLifecycle.publisher.reset()
     }
 }

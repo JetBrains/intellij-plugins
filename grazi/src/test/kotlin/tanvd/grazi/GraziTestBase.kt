@@ -9,7 +9,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.junit.Before
 import tanvd.grazi.ide.GraziInspection
-import tanvd.grazi.ide.GraziLifecycle
+import tanvd.grazi.ide.msg.GraziAppLifecycle
 import tanvd.grazi.utils.filterFor
 import java.io.File
 
@@ -20,7 +20,7 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
 
     @Before
     fun beforeEach() {
-        GraziLifecycle.publisher.reset()
+        GraziAppLifecycle.publisher.reset()
     }
 
     override fun setUp() {

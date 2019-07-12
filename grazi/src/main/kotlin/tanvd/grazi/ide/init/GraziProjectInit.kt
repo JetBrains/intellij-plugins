@@ -7,7 +7,7 @@ import com.intellij.openapi.startup.StartupActivity
 import com.intellij.vcs.commit.CommitMessageInspectionProfile
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.GraziCommitInspection
-import tanvd.grazi.ide.GraziLifecycle
+import tanvd.grazi.ide.msg.GraziStateLifecycle
 
 open class GraziProjectInit : StartupActivity, DumbAware {
     override fun runActivity(project: Project) {
@@ -16,6 +16,6 @@ open class GraziProjectInit : StartupActivity, DumbAware {
             enableTool("GraziCommit", project)
         }
 
-        GraziLifecycle.publisher.update(null, GraziConfig.state, project)
+        GraziStateLifecycle.publisher.init(GraziConfig.state, project)
     }
 }

@@ -3,7 +3,7 @@ package tanvd.grazi.ide.language.latex
 import com.intellij.psi.PsiElement
 import nl.hannahsten.texifyidea.psi.LatexMathEnvironment
 import nl.hannahsten.texifyidea.psi.LatexNormalText
-import nl.hannahsten.texifyidea.psi.LatexTypes.*
+import nl.hannahsten.texifyidea.psi.LatexTypes.NORMAL_TEXT_WORD
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo

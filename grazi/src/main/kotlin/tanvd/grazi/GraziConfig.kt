@@ -3,7 +3,8 @@ package tanvd.grazi
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
-import tanvd.grazi.ide.GraziLifecycle
+import tanvd.grazi.ide.msg.GraziAppLifecycle
+import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 
 
@@ -32,12 +33,11 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     }
 
     override fun loadState(state: State) {
-        val prevState = myState
-        myState = state
+        if (myState != state) {
+            ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(myState, state, it) }
 
-        if (prevState != myState) {
-            GraziLifecycle.publisher.reInit()
-            ProjectManager.getInstance().openProjects.forEach { GraziLifecycle.publisher.update(prevState, myState, it) }
+            myState = state
+            GraziAppLifecycle.publisher.reInit()
         }
     }
 }

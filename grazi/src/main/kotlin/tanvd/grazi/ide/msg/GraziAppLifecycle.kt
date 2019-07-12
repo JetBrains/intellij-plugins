@@ -1,14 +1,12 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.msg
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
-import tanvd.grazi.GraziConfig
 
-interface GraziLifecycle {
+interface GraziAppLifecycle {
     companion object {
-        val topic = Topic.create("grazi_lifecycle_topic", GraziLifecycle::class.java)
-        val publisher: GraziLifecycle
+        val topic = Topic.create("grazi_app_lifecycle_topic", GraziAppLifecycle::class.java)
+        val publisher: GraziAppLifecycle
             get() = ApplicationManager.getApplication().messageBus.syncPublisher(topic)
     }
 
@@ -23,7 +21,4 @@ interface GraziLifecycle {
         reset()
         init()
     }
-
-    /** Update state of object. In case prevState is null - object is initialized first time */
-    fun update(prevState: GraziConfig.State?, newState: GraziConfig.State, project: Project) {}
 }
