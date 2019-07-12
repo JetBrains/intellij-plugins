@@ -56,29 +56,19 @@ class GraziInspection : LocalInspectionTool() {
 
                         table {
                             fix.info.incorrectExample?.let {
-                                val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
-                                if (corrections.isEmpty()) {
-                                    tr {
-                                        style = "padding-top: 5px;"
-                                        td {
-                                            style = "color: gray;"
-                                            +msg("grazi.ui.settings.rules.rule.incorrect")
-                                        }
-                                        td { toIncorrectHtml(it) }
+                                tr {
+                                    style = "padding-top: 5px;"
+                                    td {
+                                        style = "color: gray;"
+                                        +msg("grazi.ui.settings.rules.rule.incorrect")
                                     }
-                                } else {
-                                    tr {
-                                        style = "padding-top: 5px;"
-                                        td {
-                                            style = "color: gray;"
-                                            +msg("grazi.ui.settings.rules.rule.incorrect")
-                                        }
-                                        td {
-                                            style = "text-align: left"
-                                            toIncorrectHtml(it)
-                                        }
+                                    td {
+                                        style = "text-align: left"
+                                        toIncorrectHtml(it)
                                     }
+                                }
 
+                                if (it.corrections.any { !it.isNullOrBlank() }) {
                                     tr {
                                         style = "padding-top: 5px;"
                                         td {

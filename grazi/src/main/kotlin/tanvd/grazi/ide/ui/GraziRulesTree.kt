@@ -26,42 +26,34 @@ import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import kotlin.Comparator
-import kotlin.collections.HashSet
 
-private data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, var state: Boolean) {
-    val category: Category
-        get() = rule.category
+private data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, var enabledInTree: Boolean) {
+    val category: Category = rule.category
 }
 
-private typealias RulesMap = SortedMap<Lang, SortedMap<Category, MutableList<RuleWithLang>>>
+private typealias RulesMap = List<Pair<Lang, List<Pair<Category, List<RuleWithLang>>>>>
 
 private fun LangTool.allRulesWithLangs(): RulesMap {
     val result = TreeMap<Lang, SortedMap<Category, MutableList<RuleWithLang>>>()
     GraziConfig.state.enabledLanguages.forEach { lang ->
-        val categories = TreeMap<Category, MutableList<RuleWithLang>>(Comparator<Category> { o1, o2 -> o1!!.name.compareTo(o2!!.name) })
-        val activeRules = this[lang].allActiveRules.toHashSet()
-        val usedRules = HashSet<String>() // prevent subrules with same ids
+        val categories = TreeMap<Category, MutableList<RuleWithLang>>(Comparator.comparing(Category::getName))
 
-        this[lang].allRules.forEach {rule ->
-            if (rule.id !in usedRules && !rule.isDictionaryBasedSpellingRule) {
-                usedRules.add(rule.id)
-                if (rule in activeRules) {
-                    categories.getOrPut(rule.category, ::LinkedList).add(RuleWithLang(rule, lang, enabled = true, state = true))
-                } else {
-                    categories.getOrPut(rule.category, ::LinkedList).add(RuleWithLang(rule, lang, enabled = false, state = false))
-                }
-            }
+        with(get(lang)) {
+            val activeRules = allActiveRules.toSet()
+            val (enabled, disabled) = allRules.distinctBy { it.id }.partition { it in activeRules }
+            enabled.forEach { categories.getOrPut(it.category, ::LinkedList).add(RuleWithLang(it, lang, enabled = true, enabledInTree = true)) }
+            disabled.forEach { categories.getOrPut(it.category, ::LinkedList).add(RuleWithLang(it, lang, enabled = false, enabledInTree = false)) }
+
+            if (categories.isNotEmpty()) result[lang] = categories
         }
-
-        if (categories.isNotEmpty()) result[lang] = categories
     }
 
-    return result
+    return result.map { (lang, categories) -> lang to categories.map { (category, rules) -> category to rules }.toList() }.toList()
 }
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val state = HashMap<String, RuleWithLang>()
-    val panel = JPanel(BorderLayout())
+    val panel: JPanel
 
     private val tree: CheckboxTree = CheckboxTree(object : CheckboxTree.CheckboxTreeCellRenderer(true) {
 
@@ -129,8 +121,8 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
             override fun nodeStateChanged(node: CheckedTreeNode) {
                 val meta = node.userObject
                 if (meta is RuleWithLang) {
-                    meta.state = node.isChecked
-                    if (meta.enabled == meta.state) {
+                    meta.enabledInTree = node.isChecked
+                    if (meta.enabled == meta.enabledInTree) {
                         state.remove(meta.rule.id)
                     } else {
                         state[meta.rule.id] = meta
@@ -139,20 +131,26 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
             }
         })
 
-        val scrollPane = ScrollPaneFactory.createScrollPane(tree)
-        val filterPanel = JPanel(BorderLayout())
-        filterPanel.add(filter, BorderLayout.CENTER)
-        filterPanel.border = JBUI.Borders.emptyBottom(2)
+        panel = panel {
+            panel(constraint = BorderLayout.NORTH) {
+                border = JBUI.Borders.emptyBottom(2)
 
-        val group = DefaultActionGroup()
-        val actionManager = CommonActionsManager.getInstance()
-        val treeExpander = DefaultTreeExpander(tree)
-        group.add(actionManager.createExpandAllAction(treeExpander, tree))
-        group.add(actionManager.createCollapseAllAction(treeExpander, tree))
-        filterPanel.add(ActionManager.getInstance().createActionToolbar("GraziRulesTree", group, true).component, BorderLayout.WEST)
+                with(DefaultActionGroup()) {
+                    val actionManager = CommonActionsManager.getInstance()
+                    val treeExpander = DefaultTreeExpander(tree)
+                    add(actionManager.createExpandAllAction(treeExpander, tree))
+                    add(actionManager.createCollapseAllAction(treeExpander, tree))
 
-        panel.add(filterPanel, BorderLayout.NORTH)
-        panel.add(scrollPane, BorderLayout.CENTER)
+                    add(ActionManager.getInstance().createActionToolbar("GraziRulesTree", this, true).component, BorderLayout.WEST)
+                }
+
+                add(filter, BorderLayout.CENTER)
+            }
+
+            panel(constraint = BorderLayout.CENTER) {
+                add(ScrollPaneFactory.createScrollPane(tree))
+            }
+        }
 
         filter.reset()
     }
@@ -162,7 +160,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
             is RuleWithLang -> meta.rule.description
             is Category -> meta.name
             is Lang -> meta.displayName
-            else -> "???"
+            else -> ""
         }
     }
 
@@ -174,7 +172,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
     fun apply() {
         state.values.forEach { rule ->
-            if (rule.state) {
+            if (rule.enabledInTree) {
                 LangTool[rule.lang].enableRule(rule.rule.id)
                 GraziConfig.state.userDisabledRules.remove(rule.rule.id)
                 GraziConfig.state.userEnabledRules.add(rule.rule.id)
@@ -191,8 +189,8 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private fun resetCheckMark(root: CheckedTreeNode): Boolean {
         val meta = root.userObject
         if (meta is RuleWithLang) {
-            root.isChecked = when(val rule = state[meta.rule.id]) {
-                is RuleWithLang -> rule.state
+            root.isChecked = when (val rule = state[meta.rule.id]) {
+                is RuleWithLang -> rule.enabledInTree
                 else -> !LangTool[meta.lang].disabledRules.contains(meta.rule.id)
             }
         } else {
@@ -204,33 +202,15 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     }
 
     fun filter(filterString: String?) {
-
-        val filteredRules = LangTool.allRulesWithLangs()
         if (!filterString.isNullOrBlank()) {
-            val iterator = filteredRules.iterator()
-            while (iterator.hasNext()) {
-                val (lang, categories) = iterator.next()
-                if (!lang.displayName.contains(filterString, true)) {
-                    val categoryIterator = categories.iterator()
-                    while (categoryIterator.hasNext()) {
-                        val (category, rules) = categoryIterator.next()
-                        if (!category.name.contains(filterString, true)) {
-                            val ruleIterator = rules.listIterator()
-                            while (ruleIterator.hasNext()) {
-                                val rule = ruleIterator.next()
-                                if (!rule.rule.description.contains(filterString, true)) ruleIterator.remove()
-                            }
-                        }
-
-                        if (rules.isEmpty()) categoryIterator.remove()
-                    }
-                }
-
-                if (categories.isEmpty()) iterator.remove()
-            }
+            reset(LangTool.allRulesWithLangs().asSequence().map { (lang, categories) ->
+                lang to categories.map { (category, rules) ->
+                    category to rules.filter { it.rule.description.contains(filterString, true) }
+                }.filter { it.second.isNotEmpty() }
+            }.filter { it.second.isNotEmpty() }.toList())
+        } else {
+            reset(LangTool.allRulesWithLangs())
         }
-
-        reset(filteredRules)
     }
 
     fun reset() {
