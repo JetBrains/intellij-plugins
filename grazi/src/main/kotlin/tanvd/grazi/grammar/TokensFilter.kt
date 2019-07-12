@@ -70,22 +70,4 @@ class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
         }
         return shouldIgnore
     }
-
-    private fun Typo.isAtStart(): Boolean {
-        var start = 0
-        val element = location.pointer!!
-        while (start < element.element!!.text.length && start !in location.range && element.element!!.text[start].isWhitespace()) {
-            start++
-        }
-        return start in location.range
-    }
-
-    private fun Typo.isAtEnd(): Boolean {
-        val element = location.pointer!!
-        var start = element.element!!.text.length - 1
-        while (start >= 0 && start !in location.range && element.element!!.text[start].isWhitespace()) {
-            start--
-        }
-        return start in location.range
-    }
 }
