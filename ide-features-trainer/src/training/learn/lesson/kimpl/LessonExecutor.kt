@@ -1,10 +1,20 @@
 package training.learn.lesson.kimpl
 
+import com.intellij.find.FindManager
+import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.command.undo.BasicUndoableAction
+import com.intellij.openapi.command.undo.DocumentReferenceManager
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
+import com.intellij.util.DocumentUtil
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
@@ -14,20 +24,6 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private val taskActions: MutableList<() -> Unit> = ArrayList()
 
   private var currentRecorder: ActionsRecorder? = null
-
-  fun addSimpleTaskAction(taskAction: () -> Unit) {
-    assert(ApplicationManager.getApplication().isDispatchThread)
-    if (!isUnderTaskProcessing) {
-      taskActions.add {
-        taskAction()
-        processNextTask()
-      }
-    }
-    else {
-      // allow some simple tasks like caret move and so on...
-      taskAction()
-    }
-  }
 
   fun waitBeforeContinue(delayMillis: Int) {
     if(isUnderTaskProcessing) {
@@ -51,6 +47,29 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   fun stopLesson() {
     assert(ApplicationManager.getApplication().isDispatchThread)
     currentRecorder?.let { Disposer.dispose(it) }
+  }
+
+  fun prepareSample(sample: LessonSample) {
+    addSimpleTaskAction {
+      setSample(sample)
+    }
+  }
+
+  fun caret(offset: Int) {
+    addSimpleTaskAction { editor.caretModel.moveToOffset(offset) }
+  }
+
+  fun caret(line: Int, column: Int) {
+    addSimpleTaskAction {
+      editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1))
+    }
+  }
+
+  fun caret(text: String) {
+    addSimpleTaskAction {
+      val start = getStartOffsetForText(text, editor, project)
+      editor.caretModel.moveToOffset(start.startOffset)
+    }
   }
 
   fun processNextTask() {
@@ -85,6 +104,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return
     }
 
+    chainNextTask(taskContext, recorder)
+  }
+
+  private fun chainNextTask(taskContext: TaskContext, recorder: ActionsRecorder) {
     taskContext.steps.forEach { step ->
       step.thenAccept {
         assert(ApplicationManager.getApplication().isDispatchThread)
@@ -102,5 +125,62 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
         }
       }
     }
+  }
+
+  private fun addSimpleTaskAction(taskAction: () -> Unit) {
+    assert(ApplicationManager.getApplication().isDispatchThread)
+    if (!isUnderTaskProcessing) {
+      taskActions.add {
+        taskAction()
+        processNextTask()
+      }
+    }
+    else {
+      // allow some simple tasks like caret move and so on...
+      taskAction()
+    }
+  }
+
+  private fun setSample(sample: LessonSample) {
+    setDocumentCode(sample.text)
+    sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
+    editor.caretModel.moveToOffset(sample.startOffset)
+  }
+
+  private fun setDocumentCode(code: String) {
+    val document = editor.document
+    DocumentUtil.writeInRunUndoTransparentAction {
+      val documentReference = DocumentReferenceManager.getInstance().create(document)
+      UndoManager.getInstance(project).nonundoableActionPerformed(documentReference, false)
+      document.replaceString(0, document.textLength, code)
+    }
+    PsiDocumentManager.getInstance(project).commitDocument(document)
+    doUndoableAction(project)
+    updateGutter(editor)
+  }
+
+  private fun getStartOffsetForText(text: String, editor: Editor, project: Project): FindResult {
+    val document = editor.document
+
+    val findManager = FindManager.getInstance(project)
+    val model = findManager.findInFileModel.clone()
+    model.isGlobal = false
+    model.isReplaceState = false
+    model.stringToFind = text
+    return FindManager.getInstance(project).findString(document.charsSequence, 0, model)
+  }
+
+  private fun doUndoableAction(project: Project) {
+    CommandProcessor.getInstance().executeCommand(project, {
+      UndoManager.getInstance(project).undoableActionPerformed(object : BasicUndoableAction() {
+        override fun undo() {}
+        override fun redo() {}
+      })
+    }, null, null)
+  }
+
+  private fun updateGutter(editor: Editor) {
+    val editorGutterComponentEx = editor.gutter as EditorGutterComponentEx
+    editorGutterComponentEx.revalidateMarkup()
   }
 }
