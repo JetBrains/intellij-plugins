@@ -179,7 +179,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         state.nativeLanguage = cmbNativeLanguage.selectedItem as Lang
         state.enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
         with(rulesTree) {
-            apply()
+            apply(state)
             reset()
         }
 

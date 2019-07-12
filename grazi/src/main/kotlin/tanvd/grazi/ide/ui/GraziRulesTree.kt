@@ -170,16 +170,16 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    fun apply() {
+    fun apply(config: GraziConfig.State) {
         state.values.forEach { rule ->
             if (rule.enabledInTree) {
                 LangTool[rule.lang].enableRule(rule.rule.id)
-                GraziConfig.state.userDisabledRules.remove(rule.rule.id)
-                GraziConfig.state.userEnabledRules.add(rule.rule.id)
+                config.userDisabledRules.remove(rule.rule.id)
+                config.userEnabledRules.add(rule.rule.id)
             } else {
                 LangTool[rule.lang].disableRule(rule.rule.id)
-                GraziConfig.state.userEnabledRules.remove(rule.rule.id)
-                GraziConfig.state.userDisabledRules.add(rule.rule.id)
+                config.userEnabledRules.remove(rule.rule.id)
+                config.userDisabledRules.add(rule.rule.id)
             }
         }
 
