@@ -80,6 +80,11 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       }
     }
 
+    if (taskContext.steps.isEmpty()) {
+      processNextTask()
+      return
+    }
+
     taskContext.steps.forEach { step ->
       step.thenAccept {
         assert(ApplicationManager.getApplication().isDispatchThread)
