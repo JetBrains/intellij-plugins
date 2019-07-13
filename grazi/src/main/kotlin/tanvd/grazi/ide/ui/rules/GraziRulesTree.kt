@@ -186,7 +186,6 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
             for (child in children()) {
                 if (child is CheckedTreeNode && child.resetMark()) {
                     isChecked = true
-                    break
                 }
             }
         }

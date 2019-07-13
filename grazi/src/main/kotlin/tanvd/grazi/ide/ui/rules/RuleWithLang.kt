@@ -24,7 +24,8 @@ fun LangTool.allRulesWithLangs(): RulesMap {
         with(get(lang)) {
             val activeRules = allActiveRules.toSet()
 
-            fun Rule.isActive() = id in state.userEnabledRules || (id !in state.userDisabledRules && this in activeRules)
+            fun Rule.isActive() = (id in state.userEnabledRules && id !in state.userDisabledRules)
+                    || (id !in state.userDisabledRules && id !in state.userEnabledRules && this in activeRules)
 
             allRules.distinctBy { it.id }.forEach {
                 categories.getOrPut(it.category, ::LinkedList).add(RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
