@@ -1,9 +1,6 @@
 package tanvd.grazi
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.ide.msg.GraziAppLifecycle
@@ -40,16 +37,15 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
 
     private var myState = State()
 
-    override fun getState(): State {
-        return myState.clone()
-    }
+    override fun getState() = myState.clone()
 
     override fun loadState(state: State) {
-        if (myState != state) {
-            ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(myState, state, it) }
+        val prevState = myState
+        myState = state
 
-            myState = state
+        if (prevState != myState) {
             GraziAppLifecycle.publisher.reInit()
+            ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(prevState, myState, it) }
         }
     }
 }

@@ -8,9 +8,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
 class JsDocSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is JSDocComment
-    }
+    override fun isRelevant(element: PsiElement) = element is JSDocComment
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is JSDocComment) { "Got not JSDocComment in a JsDocSupport" }

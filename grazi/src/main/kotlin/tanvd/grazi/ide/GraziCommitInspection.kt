@@ -18,7 +18,5 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
         return graziInspection.buildVisitor(holder, isOnTheFly)
     }
 
-    override fun getDisplayName(): String {
-        return "Grazi proofreading inspection for VCS"
-    }
+    override fun getDisplayName() = "Grazi proofreading inspection for VCS"
 }

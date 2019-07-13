@@ -8,9 +8,7 @@ import tanvd.grazi.ide.language.LanguageSupport
 
 
 class PDocSupport : LanguageSupport() {
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is PyStringLiteralExpression && element.isDocString
-    }
+    override fun isRelevant(element: PsiElement) = element is PyStringLiteralExpression && element.isDocString
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is PyStringLiteralExpression) { "Got the non doc PyStringLiteralExpression in a PDocSupport" }

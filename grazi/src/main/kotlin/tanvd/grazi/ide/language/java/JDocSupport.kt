@@ -18,9 +18,7 @@ class JDocSupport : LanguageSupport() {
         private fun isCodeTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text == "@code")
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is PsiDocComment
-    }
+    override fun isRelevant(element: PsiElement) = element is PsiDocComment
 
     /**
      * Checks:

@@ -21,8 +21,7 @@ import javax.swing.Icon
 open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
-    override fun getName() = "Fix ${(typo.info.match.shortMessage.trimToNull()
-            ?: typo.info.category.description).toLowerCase()}"
+    override fun getName() = "Fix ${(typo.info.match.shortMessage.trimToNull() ?: typo.info.category.description).toLowerCase()}"
 
     override fun getFamilyName() = "Fix mistake with rename"
 

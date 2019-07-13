@@ -8,10 +8,9 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
 
+//TODO-fatall rework using XmlText (similar to latex)
 class XmlSupport : LanguageSupport() {
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is XmlFile
-    }
+    override fun isRelevant(element: PsiElement) = element is XmlFile
 
     override fun check(element: PsiElement): Set<Typo> {
         val xmlTexts = element.filterFor<XmlText>()

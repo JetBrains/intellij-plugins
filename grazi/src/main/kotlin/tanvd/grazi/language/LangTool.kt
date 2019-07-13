@@ -1,10 +1,7 @@
 package tanvd.grazi.language
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.languagetool.JLanguageTool
-import org.languagetool.ResultCache
-import org.languagetool.UserConfig
+import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import java.util.concurrent.ConcurrentHashMap
@@ -15,7 +12,7 @@ object LangTool : GraziStateLifecycle {
 
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
-    private val rulesInLanguages = HashMap<String, MutableSet<Lang>>()
+    private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
@@ -40,17 +37,17 @@ object LangTool : GraziStateLifecycle {
     override fun init(state: GraziConfig.State, project: Project) {
         for (lang in state.enabledLanguages) {
             get(lang).allRules.distinctBy { it.id }.forEach { rule ->
-                rulesInLanguages.getOrPut(rule.id, ::IdentitySet).add(lang)
+                rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
             }
         }
     }
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
         langs.clear()
-        rulesInLanguages.clear()
+        rulesToLanguages.clear()
 
         init(newState, project)
     }
 
-    fun getRuleLanguages(ruleId: String) = rulesInLanguages[ruleId]
+    fun getRuleLanguages(ruleId: String) = rulesToLanguages[ruleId]
 }

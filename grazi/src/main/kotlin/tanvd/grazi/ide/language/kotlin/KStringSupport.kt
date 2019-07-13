@@ -12,9 +12,7 @@ class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
         private fun isExpressionEntry(entry: KtStringTemplateEntry) = entry is KtStringTemplateEntryWithExpression || entry is KtSimpleNameStringTemplateEntry
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is KtStringTemplateExpression
-    }
+    override fun isRelevant(element: PsiElement) = element is KtStringTemplateExpression
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is KtStringTemplateExpression) { "Got not KtStringTemplateExpression in a KStringSupport" }

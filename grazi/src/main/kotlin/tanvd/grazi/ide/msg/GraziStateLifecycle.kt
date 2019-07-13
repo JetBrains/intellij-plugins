@@ -8,8 +8,7 @@ import tanvd.grazi.GraziConfig
 interface GraziStateLifecycle {
     companion object {
         val topic = Topic.create("grazi_state_lifecycle_topic", GraziStateLifecycle::class.java)
-        val publisher: GraziStateLifecycle
-            get() = ApplicationManager.getApplication().messageBus.syncPublisher(topic)
+        val publisher by lazy { ApplicationManager.getApplication().messageBus.syncPublisher(topic) }
     }
 
     /** Initialize Grazi with passed state */

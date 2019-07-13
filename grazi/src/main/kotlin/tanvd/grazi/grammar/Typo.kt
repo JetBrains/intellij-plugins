@@ -32,7 +32,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
             Location(match.toIntRange().withOffset(offset)),
             Info(lang, match.rule, match, match.typoCategory), match.suggestedReplacements)
 
-
+    @Suppress("unused")
     enum class Category(val value: String, val description: String) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),

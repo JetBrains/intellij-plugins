@@ -6,8 +6,7 @@ import com.intellij.util.messages.Topic
 interface GraziAppLifecycle {
     companion object {
         val topic = Topic.create("grazi_app_lifecycle_topic", GraziAppLifecycle::class.java)
-        val publisher: GraziAppLifecycle
-            get() = ApplicationManager.getApplication().messageBus.syncPublisher(topic)
+        val publisher by lazy { ApplicationManager.getApplication().messageBus.syncPublisher(topic) }
     }
 
     /** Initialize Grazi engine eagerly */

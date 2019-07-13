@@ -11,9 +11,7 @@ class PropertiesSupport : LanguageSupport() {
         private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is PropertyValueImpl
-    }
+    override fun isRelevant(element: PsiElement) = element is PropertyValueImpl
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is PropertyValueImpl) { "Got non PropertyValueImpl in PropsSupport" }

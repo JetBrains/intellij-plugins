@@ -3,30 +3,23 @@ package tanvd.grazi.ide.ui
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder
-import com.intellij.ui.CheckBoxList
-import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.*
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import kotlinx.html.*
 import org.apache.commons.text.similarity.LevenshteinDistance
-import org.languagetool.rules.Category
-import org.languagetool.rules.ExampleSentence
-import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.Rule
+import org.jdesktop.swingx.HorizontalLayout
+import org.jdesktop.swingx.VerticalLayout
+import org.languagetool.rules.*
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.ui.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
-import tanvd.grazi.utils.html
-import tanvd.grazi.utils.toCorrectHtml
-import tanvd.grazi.utils.toIncorrectHtml
-import java.awt.BorderLayout
+import tanvd.grazi.utils.*
 import java.awt.Desktop
-import java.awt.GridLayout
-import javax.swing.BorderFactory
-import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JEditorPane
 import javax.swing.event.HyperlinkEvent
@@ -51,8 +44,9 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val descriptionPane = JEditorPane().apply {
         editorKit = UIUtil.getHTMLEditorKit()
         isEditable = false
-        isOpaque = false
-        border = JBUI.Borders.empty(UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_HGAP)
+        isOpaque = true
+        border = null
+        background = null
     }.apply {
         addHyperlinkListener { event ->
             if (event?.eventType == HyperlinkEvent.EventType.ACTIVATED) {
@@ -61,81 +55,83 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         }
     }
 
-    private val rulesTree = GraziRulesTree {
-        descriptionPane.text = when (it) {
-            is Rule -> html {
-                p {
-                    unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
-                }
-
-                it.url?.let {
-                    br
+    private val rulesTree by lazy {
+        GraziRulesTree {
+            descriptionPane.text = when (it) {
+                is Rule -> html {
                     p {
-                        +msg("grazi.ui.settings.rules.rule.description")
-                        +" "
-                        a(it.toString()) {
-                            unsafe { +it.toString() }
-                        }
+                        unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
                     }
-                }
 
-                LangTool.getRuleLanguages(it.id)?.let { languages ->
-                    if (languages.size > 1) {
+                    it.url?.let {
                         br
                         p {
-                            +msg("grazi.ui.settings.rules.rule.multilanguage.start")
+                            +msg("grazi.ui.settings.rules.rule.description")
                             +" "
-                            strong {
-                                +languages.first().displayName
-                                languages.drop(1).forEach {
-                                    +", ${it.displayName}"
-                                }
+                            a(it.toString()) {
+                                unsafe { +it.toString() }
                             }
-                            +" "
-                            +msg("grazi.ui.settings.rules.rule.multilanguage.end")
                         }
                     }
-                }
 
-                br
-
-                p {
-                    it.incorrectExamples?.let { examples ->
-                        if (examples.isNotEmpty()) {
-                            i {
-                                +msg("grazi.ui.settings.rules.rule.examples")
-                            }
-
-                            table {
-                                val accepted = ArrayList<IncorrectExample>()
-                                // remove very similar examples
-                                examples.forEach { example ->
-                                    if (accepted.none { it.text.isSimilarTo(example.text) }) {
-                                        accepted.add(example)
+                    LangTool.getRuleLanguages(it.id)?.let { languages ->
+                        if (languages.size > 1) {
+                            br
+                            p {
+                                +msg("grazi.ui.settings.rules.rule.multilanguage.start")
+                                +" "
+                                strong {
+                                    +languages.first().displayName
+                                    languages.drop(1).forEach {
+                                        +", ${it.displayName}"
                                     }
                                 }
+                                +" "
+                                +msg("grazi.ui.settings.rules.rule.multilanguage.end")
+                            }
+                        }
+                    }
 
-                                accepted.forEach { example ->
-                                    tr {
-                                        td {
-                                            style = "color: gray;"
-                                            +msg("grazi.ui.settings.rules.rule.incorrect")
-                                        }
-                                        td {
-                                            style = "text-align: left;"
-                                            toIncorrectHtml(example)
+                    br
+
+                    p {
+                        it.incorrectExamples?.let { examples ->
+                            if (examples.isNotEmpty()) {
+                                i {
+                                    +msg("grazi.ui.settings.rules.rule.examples")
+                                }
+
+                                table {
+                                    val accepted = ArrayList<IncorrectExample>()
+                                    // remove very similar examples
+                                    examples.forEach { example ->
+                                        if (accepted.none { it.text.isSimilarTo(example.text) }) {
+                                            accepted.add(example)
                                         }
                                     }
 
-                                    if (example.corrections.any { it.isNotBlank() }) {
+                                    accepted.forEach { example ->
                                         tr {
                                             td {
                                                 style = "color: gray;"
-                                                +msg("grazi.ui.settings.rules.rule.correct")
+                                                +msg("grazi.ui.settings.rules.rule.incorrect")
                                             }
                                             td {
-                                                style = "text-align: left"
-                                                toCorrectHtml(example)
+                                                style = "text-align: left;"
+                                                toIncorrectHtml(example)
+                                            }
+                                        }
+
+                                        if (example.corrections.any { it.isNotBlank() }) {
+                                            tr {
+                                                td {
+                                                    style = "color: gray;"
+                                                    +msg("grazi.ui.settings.rules.rule.correct")
+                                                }
+                                                td {
+                                                    style = "text-align: left"
+                                                    toCorrectHtml(example)
+                                                }
                                             }
                                         }
                                     }
@@ -144,14 +140,14 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                         }
                     }
                 }
+                is Lang -> html {
+                    unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
+                }
+                is Category -> html {
+                    unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
+                }
+                else -> ""
             }
-            is Lang -> html {
-                unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
-            }
-            is Category -> html {
-                unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
-            }
-            else -> ""
         }
     }
 
@@ -161,32 +157,45 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         }
                 .and(settings.state.nativeLanguage == cmbNativeLanguage.selectedItem)
                 .and(settings.state.enabledSpellcheck == cbEnableGraziSpellcheck.isSelected)
-                .and(!rulesTree.isModified())
+                .and(!rulesTree.isModified)
     }
 
     override fun apply(settings: GraziConfig) {
-        val enabledLanguages = settings.state.enabledLanguages.toMutableSet()
+        GraziConfig.update { state ->
+            val enabledLanguages = state.enabledLanguages.toMutableSet()
+            val userDisabledRules = state.userDisabledRules.toMutableSet()
+            val userEnabledRules = state.userEnabledRules.toMutableSet()
 
-        Lang.values().forEach {
-            if (cblEnabledLanguages.isItemSelected(it.name)) {
-                enabledLanguages.add(it)
-            } else {
-                enabledLanguages.remove(it)
+            Lang.values().forEach {
+                if (cblEnabledLanguages.isItemSelected(it.name)) {
+                    enabledLanguages.add(it)
+                } else {
+                    enabledLanguages.remove(it)
+                }
             }
-        }
 
-        GraziConfig.update {
-            var state = settings.state.copy(enabledLanguages = enabledLanguages,
+            val (enabledRules, disabledRules) = rulesTree.state()
+
+            enabledRules.forEach { id ->
+                userDisabledRules.remove(id)
+                userEnabledRules.add(id)
+            }
+
+            disabledRules.forEach { id ->
+                userDisabledRules.add(id)
+                userEnabledRules.remove(id)
+            }
+
+
+            state.copy(
+                    enabledLanguages = enabledLanguages,
+                    userEnabledRules = userEnabledRules,
+                    userDisabledRules = userDisabledRules,
                     nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
-                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected)
-
-            with(rulesTree) {
-                state = apply(state)
-                reset()
-            }
-
-            state
+                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
+            )
         }
+        rulesTree.reset()
     }
 
     override fun reset(settings: GraziConfig) {
@@ -205,56 +214,58 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
             cblEnabledLanguages.addItem(it.name, it.displayName, false)
         }
 
-        return panel {
-            tabs {
-                tab(msg("grazi.ui.settings.config.text")) {
-                    panel(BorderLayout()) {
-                        panel(BorderLayout(0, 0), BorderLayout.PAGE_START) {
-                            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-                            border = BorderFactory.createEmptyBorder(0, 0, 10, 0)
-                            //border = border(msg("grazi.ui.settings.spellcheck.text"), true)
+        return panelGridBag {
+            panel(grid(rows = 1, cols = 2), gridBagConstraint(gridx = 0, gridy = 0, weightx = 1.0, weighty = 0.25, gridheight = 1)) {
+                border = border(msg("grazi.ui.settings.languages.text"), false, JBUI.insetsBottom(10))
 
-
-                            add(cbEnableGraziSpellcheck)
-                            add(ComponentPanelBuilder.createCommentComponent(msg("grazi.ui.settings.enable.note"), true))
-                        }
-
-                        panel(GridLayout(1, 2), BorderLayout.CENTER) {
-                            border = border(msg("grazi.ui.settings.rules.configuration.text"), false, JBUI.emptyInsets())
-
-                            add(rulesTree.panel)
-                            add(panel {
-                                add(ScrollPaneFactory.createScrollPane(descriptionPane))
-                                border = border(msg("grazi.ui.settings.config.description"),
-                                        false, JBUI.insets(6, 15, 0, 0))
-
-                            })
-                        }
-                    }
+                panel {
+                    border = padding(JBUI.insetsRight(10))
+                    add(JBScrollPane(cblEnabledLanguages))
                 }
 
-                tab(msg("grazi.ui.settings.languages.text")) {
-                    panel {
-                        panel(BorderLayout(0, 0), BorderLayout.PAGE_START) {
-                            border = border(msg("grazi.ui.settings.languages.native.text"))
-                            add(cmbNativeLanguage)
-                        }
+                panel(VerticalLayout()) {
+                    border = padding(JBUI.insetsLeft(10))
 
-                        panel(BorderLayout(0, 0), BorderLayout.CENTER) {
-                            border = border(msg("grazi.ui.settings.languages.text"), false, JBUI.emptyInsets())
-                            add(JBScrollPane(cblEnabledLanguages))
+                    panel(HorizontalLayout()) {
+                        border = padding(JBUI.insetsBottom(10))
+                        panel(VerticalLayout()) {
+                            border = padding(JBUI.insetsTop(5))
+                            label(msg("grazi.ui.settings.languages.native.text"))
+                        }
+                        panel(VerticalLayout()) {
+                            border = padding(JBUI.insetsLeft(5))
+                            add(cmbNativeLanguage)
+                            comment(msg("grazi.ui.settings.languages.native.tooltip"))
                         }
                     }
+
+                    panel(VerticalLayout()) {
+                        border = padding(JBUI.insetsTop(10))
+
+                        add(cbEnableGraziSpellcheck)
+                        add(ComponentPanelBuilder.createCommentComponent(msg("grazi.ui.settings.enable.note"), true))
+                    }
+                }
+            }
+
+            panel(grid(rows = 1, cols = 2), gridBagConstraint(gridx = 0, gridy = 1, weightx = 1.0, weighty = 1.0, gridheight = 2)) {
+                border = border(msg("grazi.ui.settings.rules.configuration.text"), false, JBUI.insetsTop(10))
+
+                panel {
+                    border = padding(JBUI.insetsRight(10))
+                    add(rulesTree.panel)
+                }
+                panel {
+                    border = padding(JBUI.insets(30, 10, 0, 0))
+                    add(ScrollPaneFactory.createScrollPane(descriptionPane, SideBorder.NONE))
                 }
             }
         }
     }
 
-    fun showOption(option: String?): Runnable {
-        return Runnable {
-            rulesTree.filter(option)
-            rulesTree.setFilter(option)
-        }
+    fun showOption(option: String?) = Runnable {
+        rulesTree.filterTree(option)
+        rulesTree.filter = option
     }
 
     override fun dispose() {

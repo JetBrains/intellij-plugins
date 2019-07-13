@@ -10,9 +10,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
 class RsStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is RsLitExpr && element.stubKind is RsStubLiteralKind.String
-    }
+    override fun isRelevant(element: PsiElement) = element is RsLitExpr && element.stubKind is RsStubLiteralKind.String
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is RsLitExpr) { "Got not RsLitExpr in a RsStringSupport" }

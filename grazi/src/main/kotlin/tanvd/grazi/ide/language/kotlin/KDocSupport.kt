@@ -20,9 +20,7 @@ class KDocSupport : LanguageSupport() {
         private fun isIdentifier(token: PsiElement) = token.parent.node.elementType == KDocElementTypes.KDOC_NAME
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is KDocTag
-    }
+    override fun isRelevant(element: PsiElement) = element is KDocTag
 
     /**
      * Checks:

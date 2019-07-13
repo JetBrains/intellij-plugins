@@ -123,6 +123,6 @@ class GrammarCheckerTests : GraziTestBase(true) {
         }
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 500)
-        assert(totalTime < 20_000)
+        assert(totalTime < 50_000)
     }
 }

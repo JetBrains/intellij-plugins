@@ -56,6 +56,6 @@ object GrammarEngine {
                 .orEmpty()
                 .filterNotNull()
                 .map { Typo(it, lang) }
-                .let { LinkedHashSet(it) }
+                .let { LinkedSet(it) }
     }
 }

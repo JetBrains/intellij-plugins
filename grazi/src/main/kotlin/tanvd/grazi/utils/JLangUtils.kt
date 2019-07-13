@@ -1,6 +1,7 @@
 package tanvd.grazi.utils
 
-import kotlinx.html.*
+import kotlinx.html.FlowOrPhrasingContent
+import kotlinx.html.strong
 import org.languagetool.rules.*
 import tanvd.grazi.grammar.Typo
 
