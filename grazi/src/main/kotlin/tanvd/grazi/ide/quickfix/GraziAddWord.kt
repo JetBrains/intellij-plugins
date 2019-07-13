@@ -22,8 +22,9 @@ class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAc
     override fun getFamilyName() = "Save word"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val state = GraziConfig.get()
-        GraziConfig.update(state.copy(userWords = state.userWords + typo.word.toLowerCase()))
+        GraziConfig.update {
+            it.copy(userWords = it.userWords + typo.word.toLowerCase())
+        }
 
         GraziAppLifecycle.publisher.reset()
     }

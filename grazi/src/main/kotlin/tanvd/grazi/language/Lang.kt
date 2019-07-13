@@ -5,6 +5,7 @@ import org.languagetool.Language
 import org.languagetool.language.*
 import tanvd.grazi.GraziBundle
 
+@Suppress("unused")
 enum class Lang(val jLanguage: Language,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet()) {

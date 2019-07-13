@@ -11,15 +11,13 @@ class MultiLanguageTextSupportTest : GraziTestBase(true) {
 
     override fun setUp() {
         super.setUp()
-        val state = GraziConfig.get()
-        GraziConfig.update(state.copy(enabledLanguages = state.enabledLanguages + Lang.RUSSIAN))
+        GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages + Lang.RUSSIAN) }
         GraziAppLifecycle.publisher.reInit()
     }
 
     override fun tearDown() {
         super.tearDown()
-        val state = GraziConfig.get()
-        GraziConfig.update(state.copy(enabledLanguages = state.enabledLanguages - Lang.RUSSIAN))
+        GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages - Lang.RUSSIAN) }
         GraziAppLifecycle.publisher.reInit()
     }
 

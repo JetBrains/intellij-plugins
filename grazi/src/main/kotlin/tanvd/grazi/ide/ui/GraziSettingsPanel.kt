@@ -175,15 +175,18 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
             }
         }
 
-        var state = settings.state.copy(enabledLanguages = enabledLanguages, nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
-                enabledSpellcheck = cbEnableGraziSpellcheck.isSelected)
+        GraziConfig.update {
+            var state = settings.state.copy(enabledLanguages = enabledLanguages,
+                    nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
+                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected)
 
-        with(rulesTree) {
-            state = apply(state)
-            reset()
+            with(rulesTree) {
+                state = apply(state)
+                reset()
+            }
+
+            state
         }
-
-        GraziConfig.update(state)
     }
 
     override fun reset(settings: GraziConfig) {

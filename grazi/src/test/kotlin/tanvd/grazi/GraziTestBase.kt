@@ -27,7 +27,7 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
         super.setUp()
         myFixture.enableInspections(*inspectionTools)
 
-        GraziConfig.update(GraziConfig.get().copy(enabledSpellcheck = withSpellcheck))
+        GraziConfig.update{ it.copy(enabledSpellcheck = withSpellcheck) }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

@@ -13,7 +13,7 @@ class GraziSearchableOptionContributor : SearchableOptionContributor() {
     }
 
     override fun processOptions(processor: SearchableOptionProcessor) {
-        with (processor) {
+        with(processor) {
             addOptions(msg("grazi.ui.settings.enable.text"), msg("grazi.ui.settings.config.text"))
             addOptions(msg("grazi.ui.settings.rules.configuration.text"), msg("grazi.ui.settings.config.text"))
             addOptions(msg("grazi.ui.settings.languages.native.text"), msg("grazi.ui.settings.languages.text"))

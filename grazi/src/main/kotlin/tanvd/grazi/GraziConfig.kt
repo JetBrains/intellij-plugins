@@ -35,7 +35,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
 
         /** Update Grazi config state */
         @Synchronized
-        fun update(state: State) = instance.loadState(state)
+        fun update(change: (State) -> State) = instance.loadState(change(get()))
     }
 
     private var myState = State()
