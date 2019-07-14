@@ -3,7 +3,6 @@ package tanvd.grazi
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
-import tanvd.grazi.ide.msg.GraziAppLifecycle
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 
@@ -44,7 +43,6 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
         myState = state
 
         if (prevState != myState) {
-            GraziAppLifecycle.publisher.reInit()
             ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(prevState, myState, it) }
         }
     }

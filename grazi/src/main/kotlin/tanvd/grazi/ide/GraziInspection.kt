@@ -3,6 +3,7 @@ package tanvd.grazi.ide
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInspection.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -10,7 +11,7 @@ import kotlinx.html.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.ide.msg.GraziAppLifecycle
+import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.ide.ui.msg
 import tanvd.grazi.spellcheck.GraziSpellchecker
@@ -18,7 +19,7 @@ import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
-    companion object : GraziAppLifecycle {
+    companion object : GraziStateLifecycle {
         private fun getProblemMessage(fix: Typo): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
             return html {
@@ -111,7 +112,9 @@ class GraziInspection : LocalInspectionTool() {
             }
         }
 
-        override fun reset() {
+        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
+            if (prevState == newState) return
+
             ProjectManager.getInstance().openProjects.forEach {
                 DaemonCodeAnalyzer.getInstance(it).restart()
             }

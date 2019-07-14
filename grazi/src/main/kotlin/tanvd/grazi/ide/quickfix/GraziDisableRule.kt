@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.msg.GraziAppLifecycle
 import javax.swing.Icon
 
 class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction, Iconable {
@@ -22,10 +21,8 @@ class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction, 
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.update {
-            it.copy(userDisabledRules = it.userDisabledRules + typo.info.rule.id)
+            it.copy(userEnabledRules = it.userEnabledRules - typo.info.rule.id, userDisabledRules = it.userDisabledRules + typo.info.rule.id)
         }
-
-        GraziAppLifecycle.publisher.reset()
     }
 }
 

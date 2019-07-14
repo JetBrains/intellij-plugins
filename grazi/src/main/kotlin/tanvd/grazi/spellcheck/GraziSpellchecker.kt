@@ -15,7 +15,6 @@ import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.msg.GraziAppLifecycle
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
@@ -25,17 +24,17 @@ import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 
-object GraziSpellchecker : GraziAppLifecycle, GraziStateLifecycle {
+object GraziSpellchecker : GraziStateLifecycle {
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
-    private fun createChecker(): JLanguageTool {
+    private fun createChecker(state: GraziConfig.State): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-        return JLanguageTool(checkerLang.jLanguage, GraziConfig.get().nativeLanguage.jLanguage,
-                cache, UserConfig(GraziConfig.get().userWords.toList())).apply {
+        return JLanguageTool(checkerLang.jLanguage, state.nativeLanguage.jLanguage,
+                cache, UserConfig(state.userWords.toList())).apply {
             disableRules(allRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
         }
     }
@@ -96,15 +95,9 @@ object GraziSpellchecker : GraziAppLifecycle, GraziStateLifecycle {
         return typo.fixes.any { "${it.toLowerCase()}s" == word.toLowerCase() }
     }
 
-    override fun init() {
-        checker = createChecker()
-    }
-
-    override fun reset() = init()
-
-    override fun reInit() = init()
-
     override fun init(state: GraziConfig.State, project: Project) {
+        checker = createChecker(state)
+
         if (ApplicationManager.getApplication().isUnitTestMode || !state.enabledSpellcheck) return
 
         modifyAndCommitProjectProfile(project, Consumer {
@@ -118,7 +111,9 @@ object GraziSpellchecker : GraziAppLifecycle, GraziStateLifecycle {
 
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
-        if (prevState.enabledSpellcheck == newState.enabledSpellcheck || ApplicationManager.getApplication().isUnitTestMode) return
+        checker = createChecker(newState)
+
+        if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck != newState.enabledSpellcheck) return
 
         if (newState.enabledSpellcheck) {
             modifyAndCommitProjectProfile(project, Consumer {

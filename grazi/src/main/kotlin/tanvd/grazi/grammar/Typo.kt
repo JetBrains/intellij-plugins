@@ -4,13 +4,9 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
-import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.Rule
-import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.*
 import tanvd.grazi.language.Lang
-import tanvd.grazi.utils.toIntRange
-import tanvd.grazi.utils.typoCategory
-import tanvd.grazi.utils.withOffset
+import tanvd.grazi.utils.*
 
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
     data class Location(val range: IntRange, val pointer: SmartPsiElementPointer<PsiElement>? = null,
