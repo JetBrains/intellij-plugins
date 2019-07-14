@@ -77,7 +77,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
                 SwingUtilities.invokeLater { tree.setSelectionRow(0) }
 
-                TreeUtil.expandAll(tree)
+                TreeUtil.collapseAll(tree, 1)
                 if (filter.isNullOrBlank()) {
                     TreeUtil.collapseAll(tree, 0)
                     expansionMonitor.restore()
@@ -170,7 +170,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
             model.nodeChanged(this)
         }
 
-        TreeUtil.expandAll(tree)
+        TreeUtil.collapseAll(tree, 1)
         tree.setSelectionRow(0)
     }
 
