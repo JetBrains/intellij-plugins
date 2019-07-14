@@ -22,7 +22,7 @@ import com.google.gson.JsonObject;
  * location. As such, it is meant to approximate the final location of the breakpoint but it is not
  * exact.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class UnresolvedSourceLocation extends Response {
 
   public UnresolvedSourceLocation(JsonObject json) {
@@ -55,7 +55,14 @@ public class UnresolvedSourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public ScriptRef getScript() {
-    return json.get("script") == null ? null : new ScriptRef((JsonObject) json.get("script"));
+    JsonObject obj = (JsonObject) json.get("script");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ScriptRef(obj);
   }
 
   /**

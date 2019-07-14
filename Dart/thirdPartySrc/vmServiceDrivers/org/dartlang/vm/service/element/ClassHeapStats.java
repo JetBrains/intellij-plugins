@@ -18,15 +18,47 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonObject;
 import java.util.List;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ClassHeapStats extends Response {
 
   public ClassHeapStats(JsonObject json) {
     super(json);
   }
 
+  /**
+   * The number of bytes allocated for instances of class since the accumulator was last reset.
+   */
+  public int getAccumulatedSize() {
+    return json.get("accumulatedSize") == null ? -1 : json.get("accumulatedSize").getAsInt();
+  }
+
+  /**
+   * The number of bytes currently allocated for instances of class.
+   */
+  public int getBytesCurrent() {
+    return json.get("bytesCurrent") == null ? -1 : json.get("bytesCurrent").getAsInt();
+  }
+
+  /**
+   * The class for which this memory information is associated.
+   */
   public ClassRef getClassRef() {
     return new ClassRef((JsonObject) json.get("class"));
+  }
+
+  /**
+   * The number of instances of class which have been allocated since the accumulator was last
+   * reset.
+   */
+  public int getInstancesAccumulated() {
+    return json.get("instancesAccumulated") == null ? -1 : json.get("instancesAccumulated").getAsInt();
+  }
+
+  /**
+   * The number of instances of class which are currently alive.
+   */
+  public int getInstancesCurrent() {
+    return json.get("instancesCurrent") == null ? -1 : json.get("instancesCurrent").getAsInt();
   }
 
   public List<Integer> getNew() {

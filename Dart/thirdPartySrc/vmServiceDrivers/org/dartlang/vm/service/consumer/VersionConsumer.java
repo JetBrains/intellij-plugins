@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.Version;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface VersionConsumer extends Consumer {
 
-  public void received(Version response);
+  void received(Version response);
 }

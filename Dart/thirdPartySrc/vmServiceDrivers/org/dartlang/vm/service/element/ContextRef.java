@@ -17,7 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ContextRef extends ObjRef {
 
   public ContextRef(JsonObject json) {

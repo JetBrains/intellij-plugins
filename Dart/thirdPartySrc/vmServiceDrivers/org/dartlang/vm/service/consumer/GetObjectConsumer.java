@@ -18,10 +18,10 @@ package org.dartlang.vm.service.consumer;
 import org.dartlang.vm.service.element.Obj;
 import org.dartlang.vm.service.element.Sentinel;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface GetObjectConsumer extends Consumer {
 
-  public void received(Obj response);
+  void received(Obj response);
 
-  public void received(Sentinel response);
+  void received(Sentinel response);
 }

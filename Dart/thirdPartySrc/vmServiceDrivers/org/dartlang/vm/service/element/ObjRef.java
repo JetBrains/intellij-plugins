@@ -20,11 +20,21 @@ import com.google.gson.JsonObject;
 /**
  * {@link ObjRef} is a reference to a {@link Obj}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ObjRef extends Response {
 
   public ObjRef(JsonObject json) {
     super(json);
+  }
+
+  /**
+   * Provided and set to true if the id of an Object is fixed. If true, the id of an Object is
+   * guaranteed not to change or expire. The object may, however, still be _Collected_.
+   *
+   * Can return <code>null</code>.
+   */
+  public boolean getFixedId() {
+    return json.get("fixedId") == null ? false : json.get("fixedId").getAsBoolean();
   }
 
   /**

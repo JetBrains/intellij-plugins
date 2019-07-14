@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.AllocationProfile;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface AllocationProfileConsumer extends Consumer {
 
-  public void received(AllocationProfile response);
+  void received(AllocationProfile response);
 }

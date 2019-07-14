@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link ErrorRef} is a reference to an {@link ErrorObj}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ErrorRef extends ObjRef {
 
   public ErrorRef(JsonObject json) {
@@ -32,7 +32,7 @@ public class ErrorRef extends ObjRef {
    * What kind of error is this?
    */
   public ErrorKind getKind() {
-    JsonElement value = json.get("kind");
+    final JsonElement value = json.get("kind");
     try {
       return value == null ? ErrorKind.Unknown : ErrorKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {

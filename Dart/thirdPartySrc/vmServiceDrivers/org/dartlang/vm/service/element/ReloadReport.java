@@ -17,7 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ReloadReport extends Response {
 
   public ReloadReport(JsonObject json) {
