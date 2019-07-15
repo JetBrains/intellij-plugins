@@ -49,7 +49,7 @@ class UISettings {
     //FONTS
     val fontSize: Int by lazy { UISettings.instance.fontSize.ifZero(JBUI.scale(13)) }
     val fontFace: String by lazy { UISettings.instance.fontFace ?: JLabel().font.fontName }
-    val moduleNameFont: Font by lazy { Font(fontFace, Font.BOLD, fontSize + 1) }
+    val moduleNameFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize + 4) }
     val plainFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize) }
     val italicFont: Font by lazy { plainFont.deriveFont(Font.ITALIC) }
     val boldFont: Font by lazy { plainFont.deriveFont(Font.BOLD) }
