@@ -27,6 +27,9 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 import org.jetbrains.vuejs.lang.expr.VueVForExpression
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueNamedSymbol
+import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/resolve/"
@@ -1801,6 +1804,37 @@ export default class UsageComponent extends Vue {
     val reference = myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
     TestCase.assertEquals("name: 'HelloWorld'", reference!!.resolve()!!.parent.text)
   }
+
+  fun testComponentModelProperty() {
+    val file = myFixture.configureByText("a-component.vue", """
+      <script>
+        export default {
+          model: {
+            event: "foo"
+          }
+        }
+      </script>
+    """)
+    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+    assertEquals("value", component.model.prop)
+    assertEquals("foo", component.model.event)
+  }
+
+  fun testAtComponentResolution() {
+    val file = myFixture.configureByFile("at_component.vue")
+    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+
+    val getNames = { list: Collection<VueNamedSymbol> -> list.map { it.name }.sorted() }
+
+    assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
+    assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")
+    assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
+    assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
+    assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
+    assertEquals(component.model.prop, "checked")
+    assertEquals(component.model.event, "change")
+  }
+
 }
 
 fun globalMixinText(): String {

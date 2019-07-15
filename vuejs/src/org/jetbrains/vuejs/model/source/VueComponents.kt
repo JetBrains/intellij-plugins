@@ -163,7 +163,7 @@ class VueComponents {
 }
 
 class VueComponentDescriptor(val obj: JSObjectLiteralExpression? = null,
-                             val clazz: JSClassExpression<*>? = null) {
+                             val clazz: JSClass<*>? = null) {
   init {
     assert(obj != null || clazz != null)
   }

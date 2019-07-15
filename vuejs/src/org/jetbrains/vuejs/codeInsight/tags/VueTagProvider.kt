@@ -157,12 +157,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
 
   override fun getDeclaration(): JSImplicitElement {
     return StreamEx.of(sources)
-      .map {
-        it.source?.let { source ->
-          VueModelManager.getComponentImplicitElement(source)
-          ?: JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, source).forbidAstAccess())
-        }
-      }
+      .map { it.source }
       .select(JSImplicitElement::class.java)
       .findFirst()
       .orElseGet { JSImplicitElementImpl(JSImplicitElementImpl.Builder(tag.name, tag).forbidAstAccess()) }

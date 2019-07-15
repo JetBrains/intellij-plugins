@@ -132,7 +132,7 @@ class VueSourceGlobal(override val project: Project) : VueGlobal {
         .filter(VueComponents.Companion::isNotInLibrary)
         .map { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
         .nonNull()
-        .map { VueSourceApp(it!!) }
+        .map { VueModelManager.getApp(it!!) }
         .filter { it.element != null }
         .toList()
     }

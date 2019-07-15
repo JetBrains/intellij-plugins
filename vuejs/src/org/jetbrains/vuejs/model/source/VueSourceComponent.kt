@@ -2,18 +2,20 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.psi.PsiElement
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.model.VueRegularComponent
 
-class VueSourceComponent(sourceElement: PsiElement,
+class VueSourceComponent(sourceElement: JSImplicitElement,
+                         clazz: JSClass<*>?,
                          declaration: JSObjectLiteralExpression?,
                          private val indexData: VueIndexData?)
-  : VueSourceContainer(sourceElement, declaration), VueRegularComponent {
+  : VueSourceContainer(sourceElement, clazz, declaration), VueRegularComponent {
 
   override val defaultName: String?
     get() = indexData?.originalName
-            ?: getTextIfLiteral(declaration?.findProperty("name")?.value)
+            ?: getTextIfLiteral(initializer?.findProperty("name")?.value)
 
 }

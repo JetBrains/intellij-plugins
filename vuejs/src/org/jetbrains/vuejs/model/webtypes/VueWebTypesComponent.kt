@@ -26,6 +26,13 @@ class VueWebTypesComponent(tag: Tag, private val parent: VueWebTypesPlugin, type
   override val directives: Map<String, VueDirective> = Collections.emptyMap()
   override val filters: Map<String, VueFilter> = Collections.emptyMap()
   override val mixins: List<VueMixin> = Collections.emptyList()
+  override val model: VueModelDirectiveProperties = tag.vueModel
+                                                      ?.let {
+                                                        VueModelDirectiveProperties(
+                                                          it.prop ?: VueModelDirectiveProperties.DEFAULT_PROP,
+                                                          it.event ?: VueModelDirectiveProperties.DEFAULT_EVENT)
+                                                      }
+                                                    ?: VueModelDirectiveProperties()
   override val defaultName: String = tag.name!!
 
   private val sourceFile: String? = tag.sourceFile
