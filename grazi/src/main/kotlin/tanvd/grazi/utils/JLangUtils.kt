@@ -28,7 +28,7 @@ fun FlowOrPhrasingContent.toIncorrectHtml(example: IncorrectExample) {
     toHtml(example) { mistake ->
         if (mistake.isNotEmpty()) {
             strong {
-                +mistake
+                +mistake.trim()
             }
         }
     }
@@ -38,7 +38,7 @@ fun FlowOrPhrasingContent.toCorrectHtml(example: IncorrectExample) {
     toHtml(example) { mistake ->
         if (mistake.isNotEmpty() && example.corrections.isNotEmpty()) {
             strong {
-                +example.corrections.first()
+                +example.corrections.first().trim()
             }
         }
     }
