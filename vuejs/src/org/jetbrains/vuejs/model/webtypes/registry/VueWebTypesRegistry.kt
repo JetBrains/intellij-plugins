@@ -234,8 +234,9 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       }
       .nonNullValues()
       .mapValues {
-        EntryStream.of(it!!.versionUrlMap)
-          .filter { (version, _) -> it.deprecationMap[version] == null }
+        EntryStream.of(it!!.versionsInfo)
+          .filter { (_, info) -> !info.isDeprecated && info.url != null }
+          .mapValues { info -> info.url }
           .into(TreeMap<SemVer, String>(Comparator.reverseOrder()) as SortedMap<SemVer, String>)
       }
       .toSortedMap()
