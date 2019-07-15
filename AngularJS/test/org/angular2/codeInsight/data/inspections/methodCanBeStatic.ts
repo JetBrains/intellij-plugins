@@ -11,7 +11,7 @@ export class Home {
         console.log("foobar")
     }
 
-    public unusedMethod() {
+    public <warning descr="Method can be static">unusedMethod</warning>() {
         console.log("foobar")
     }
 
@@ -28,7 +28,7 @@ export class Home {
 
     }
 
-    get unused(): string {
+    get <warning descr="Method can be static">unused</warning>(): string {
         return "foo"
     }
 }
