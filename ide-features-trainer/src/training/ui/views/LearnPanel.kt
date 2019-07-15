@@ -23,7 +23,7 @@ import javax.swing.text.BadLocationException
  */
 class LearnPanel : JPanel() {
 
-    private val boxLayout: BoxLayout
+    private val boxLayout: BoxLayout = BoxLayout(this, BoxLayout.Y_AXIS)
 
     //XmlLesson panel items
     private var lessonPanel: JPanel? = null
@@ -45,7 +45,6 @@ class LearnPanel : JPanel() {
     private var lessonPanelBoxLayout: BoxLayout? = null
 
     init {
-        boxLayout = BoxLayout(this, BoxLayout.Y_AXIS)
         layout = boxLayout
         isFocusable = false
 
@@ -83,10 +82,7 @@ class LearnPanel : JPanel() {
 
         allTopicsLabel = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
         allTopicsLabel!!.name = "allTopicsLabel"
-        allTopicsLabel!!.setListener({ aSource, aLinkData ->
-            val guessCurrentProject = guessCurrentProject(lessonPanel)
-            UiManager.setModulesView()
-        }, null)
+        allTopicsLabel!!.setListener({ _, _ -> UiManager.setModulesView() }, null)
 
         lessonNameLabel = JLabel()
         lessonNameLabel!!.name = "lessonNameLabel"
@@ -299,8 +295,7 @@ class LearnPanel : JPanel() {
 
     private fun initModulePanel() {
         modulePanel = ModulePanel()
-        modulePanel!!.name = "modulePanel"
-        modulePanel!!.setName( LearnPanel::modulePanel.name)
+        modulePanel!!.name = LearnPanel::modulePanel.name
         modulePanel!!.layout = BoxLayout(modulePanel, BoxLayout.Y_AXIS)
         modulePanel!!.isFocusable = false
         modulePanel!!.isOpaque = false
@@ -328,9 +323,8 @@ class LearnPanel : JPanel() {
 
         private fun initModuleLessons(lesson: Lesson?) {
             if (lesson == null) return
-            if (lesson.module == null) return
             val module = lesson.module
-            val myLessons = module!!.lessons
+            val myLessons = module.lessons
 
             //create ModuleLessons region
             val moduleLessons = JLabel()
@@ -369,7 +363,7 @@ class LearnPanel : JPanel() {
                 lessonLinkLabel.horizontalTextPosition = SwingConstants.LEFT
                 lessonLinkLabel.border = EmptyBorder(0, UISettings.instance.checkIndent, UISettings.instance.lessonGap, 0)
                 lessonLinkLabel.isFocusable = false
-                lessonLinkLabel.setListener({ aSource, aLinkData ->
+                lessonLinkLabel.setListener({ _, _ ->
                     try {
                         val project = guessCurrentProject(this@LearnPanel)
                         CourseManager.instance.openLesson(project, currentLesson)
@@ -410,7 +404,7 @@ class LearnPanel : JPanel() {
             for (lesson in lessonLabelMap.keys) {
                 if (lesson.passed) {
                     val jLabel: MyLinkLabel = lessonLabelMap[lesson]!!
-                    val point = jLabel.getLocation()
+                    val point = jLabel.location
                     if (!SystemInfo.isMac) {
                         LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 1)
                     } else {
@@ -423,7 +417,7 @@ class LearnPanel : JPanel() {
 
         internal inner class MyLinkLabel(text: String) : LinkLabel<Any>(text, null) {
 
-            var userTextColor: Color? = null
+            private var userTextColor: Color? = null
 
             override fun getTextColor(): Color {
                 return userTextColor ?: super.getTextColor()
