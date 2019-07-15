@@ -85,5 +85,5 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown
 
   private fun TaskContext.checkWordInSearch(expected: String): Boolean =
-      (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
+          (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true 
 }
