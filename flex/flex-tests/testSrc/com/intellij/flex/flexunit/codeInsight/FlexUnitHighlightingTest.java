@@ -188,7 +188,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
   public void testMethodInSuite2() throws Exception {
     JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
-    inspection.m_onlyPrivate = false;
+    inspection.myOnlyPrivate = false;
     enableInspectionTool(inspection);
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
