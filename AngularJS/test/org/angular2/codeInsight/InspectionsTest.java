@@ -35,7 +35,9 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMethodCanBeStatic() {
-    myFixture.enableInspections(JSMethodCanBeStaticInspection.class);
+    JSMethodCanBeStaticInspection canBeStaticInspection = new JSMethodCanBeStaticInspection();
+    canBeStaticInspection.m_onlyPrivate = false;
+    myFixture.enableInspections(canBeStaticInspection);
     myFixture.configureByFiles("methodCanBeStatic.ts", "methodCanBeStatic.html", "package.json");
     myFixture.checkHighlighting();
   }
