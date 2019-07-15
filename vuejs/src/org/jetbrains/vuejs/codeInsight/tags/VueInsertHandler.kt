@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
@@ -35,7 +34,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getElementComponentDecorator
 
@@ -66,14 +64,14 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val jsImplicitElement = VueModelManager.getComponentImplicitElement(item.`object` as PsiElement) ?: return
-    val importedFile = jsImplicitElement.containingFile
+    val element = item.`object` as? PsiElement ?: return
+    val importedFile = element.containingFile
     if (importedFile == context.file) return
-    val nodeModule = NodeModuleSearchUtil.findDependencyRoot(jsImplicitElement.containingFile.virtualFile)
+    val nodeModule = NodeModuleSearchUtil.findDependencyRoot(element.containingFile.virtualFile)
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
-    val isClass = jsImplicitElement.parent is JSClassExpression<*> || jsImplicitElement.parent is ES6Decorator
+    val isClass = element.context is JSClassExpression<*>
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
     }

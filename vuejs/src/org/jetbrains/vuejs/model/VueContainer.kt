@@ -15,17 +15,31 @@ interface VueContainer : VueEntitiesContainer {
   val template: PsiElement?
   val element: String?
   val extends: List<VueContainer>
+  val model: VueModelDirectiveProperties
 }
 
-interface VueSlot
-
-interface VueEmitCall {
-  val name: String
+class VueModelDirectiveProperties(
+  val prop: String = DEFAULT_PROP,
+  val event: String = DEFAULT_EVENT
+) {
+  companion object {
+    const val DEFAULT_PROP = "value"
+    const val DEFAULT_EVENT = "input"
+  }
 }
 
-interface VueProperty {
+interface VueSlot : VueNamedSymbol
+
+interface VueEmitCall : VueNamedSymbol {
+  val eventJSType: JSType? get() = null
+}
+
+interface VueNamedSymbol {
   val name: String
-  val source: PsiElement?
+  val source: PsiElement? get() = null
+}
+
+interface VueProperty : VueNamedSymbol {
   val jsType: JSType? get() = null
 }
 
@@ -35,7 +49,4 @@ interface VueDataProperty : VueProperty
 
 interface VueComputedProperty : VueProperty
 
-interface VueMethod {
-  val name: String
-  val source: PsiElement?
-}
+interface VueMethod : VueNamedSymbol

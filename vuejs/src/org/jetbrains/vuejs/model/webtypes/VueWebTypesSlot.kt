@@ -6,4 +6,6 @@ import org.jetbrains.vuejs.model.webtypes.json.Slot
 
 class VueWebTypesSlot(it: Slot) : VueSlot {
 
+  override val name: String = it.name!!
+
 }

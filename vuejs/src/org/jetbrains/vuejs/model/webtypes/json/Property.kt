@@ -5,33 +5,13 @@ import com.fasterxml.jackson.annotation.*
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("source-file", "attributes", "events", "slots", "vue-scoped-slots", "vue-model", "name", "description", "doc-url")
-class Tag {
+@JsonPropertyOrder("type", "name", "description", "doc-url")
+class Property {
 
-  @JsonProperty("source-file")
-  @get:JsonProperty("source-file")
-  @set:JsonProperty("source-file")
-  var sourceFile: String? = null
-  @JsonProperty("attributes")
-  @get:JsonProperty("attributes")
-  @set:JsonProperty("attributes")
-  var attributes: List<Attribute> = ArrayList()
-  @JsonProperty("events")
-  @get:JsonProperty("events")
-  @set:JsonProperty("events")
-  var events: List<Event> = ArrayList()
-  @JsonProperty("slots")
-  @get:JsonProperty("slots")
-  @set:JsonProperty("slots")
-  var slots: List<Slot> = ArrayList()
-  @JsonProperty("vue-scoped-slots")
-  @get:JsonProperty("vue-scoped-slots")
-  @set:JsonProperty("vue-scoped-slots")
-  var vueScopedSlots: List<VueScopedSlot> = ArrayList()
-  @JsonProperty("vue-model")
-  @get:JsonProperty("vue-model")
-  @set:JsonProperty("vue-model")
-  var vueModel: VueModel? = null
+  @JsonProperty("type")
+  @get:JsonProperty("type")
+  @set:JsonProperty("type")
+  var type: Any? = null
   /**
    *
    * (Required)

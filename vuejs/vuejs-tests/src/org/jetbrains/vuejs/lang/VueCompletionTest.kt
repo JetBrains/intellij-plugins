@@ -1591,6 +1591,15 @@ $script""")
         .sorted())
   }
 
+  fun testComplexComponentDecoratorCompletion() {
+    myFixture.copyDirectoryToProject("complexComponentDecorator", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,
+                           "component-prop", "mixin-prop", "decorated-mixin-prop", "decorated-mixin-prop2")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
