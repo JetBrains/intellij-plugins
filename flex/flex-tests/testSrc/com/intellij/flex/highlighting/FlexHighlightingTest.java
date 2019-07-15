@@ -2242,7 +2242,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMakeMethodStatic() throws Exception {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.m_onlyPrivate = false;
+    enableInspectionTool(inspection);
     doHighlightingWithInvokeFixAndCheckResult("Make 'static'", "mxml", getTestName(false) + ".mxml");
   }
 
