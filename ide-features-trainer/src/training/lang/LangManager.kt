@@ -1,5 +1,6 @@
 package training.lang
 
+import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -14,7 +15,6 @@ import training.util.trainerPluginConfigName
 /**
  * @author Sergey Karashevich
  */
-
 @State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
@@ -24,10 +24,10 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   private var myLangSupport: LangSupport? = null
 
   init {
-    if (supportedLanguagesExtensions.size == 1) {
-      val first = supportedLanguagesExtensions.first()
-      myLangSupport = first.instance
-      myState.languageName = first.language
+    val onlyLang = supportedLanguagesExtensions.singleOrNull { Language.findLanguageByID(it.language) != null }
+    if (onlyLang != null) {
+      myLangSupport = onlyLang.instance
+      myState.languageName = onlyLang.language
     }
   }
 
