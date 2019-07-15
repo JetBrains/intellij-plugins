@@ -36,12 +36,14 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.RTypedSyntheticSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeFactory;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.RSymbolTypeImpl;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.ArgumentInfo;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.Visibility;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -133,11 +135,11 @@ public class MotionSymbolUtil {
     if (!typeName.endsWith("*")) {
       final Symbol symbol = RubyMotionSymbolProvider.findClassOrStruct(module, frameworks, FQN.Builder.fromString(typeName).asList());
       return symbol instanceof StructSymbol || (symbol != null && RubyMotionUtil.getInstance().isAndroid(module)) ?
-             new RSymbolTypeImpl(symbol, Context.INSTANCE) : REmptyType.INSTANCE;
+             new RSymbolTypeImpl(symbol, Visibility.PUBLIC) : REmptyType.INSTANCE;
     }
     typeName = dereferencePointerType(typeName);
     final Symbol symbol = RubyMotionSymbolProvider.findClassOrStruct(module, frameworks, Collections.singletonList(typeName));
-    return symbol != null ? new RSymbolTypeImpl(symbol, Context.INSTANCE) : REmptyType.INSTANCE;
+    return symbol != null ? new RSymbolTypeImpl(symbol, Visibility.PUBLIC) : REmptyType.INSTANCE;
   }
 
   @NotNull

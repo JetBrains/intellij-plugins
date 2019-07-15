@@ -20,6 +20,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolFilte
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.*;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.collections.RCollectionType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.impl.REmptyType;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.Visibility;
 
 /**
  * @author Dennis.Ushakov
@@ -140,7 +141,7 @@ public class RubyMotionTypeConversionTest extends RubyMotionLightFixtureTestCase
   }
 
   private void assertHasMembers(final String className, final String... members) {
-    final RType type = RTypeFactory.createTypeByFQN(getProject(), className, Context.INSTANCE_PRIVATE);
+    final RType type = RTypeFactory.createTypeByFQN(getProject(), className, Visibility.PRIVATE);
     for (String member : members) {
       assertNotNull("Does not have member " + member, type.getMemberForName(member, SymbolFilterFactory.EMPTY_FILTER, myFixture.getFile()));
     }

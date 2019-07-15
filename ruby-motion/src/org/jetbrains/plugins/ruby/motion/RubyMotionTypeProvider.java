@@ -36,7 +36,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.resolve.scope.ScopeVariable;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.ClassModuleSymbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RTypeUtil;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPossibleCall;
@@ -44,6 +43,7 @@ import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RArgument;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RMethod;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RNamedArgument;
+import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.Visibility;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RExpression;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.methodCall.RCall;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.references.RReference;
@@ -59,7 +59,7 @@ import java.util.List;
 public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
   @Nullable
   @Override
-  public RType createTypeBySymbol(Symbol symbol, Context context) {
+  public RType createTypeBySymbol(Symbol symbol, Visibility visibility) {
     if (symbol instanceof ConstantSymbol) {
       final Constant constant = ((ConstantSymbol)symbol).getConstant();
       return MotionSymbolUtil.getTypeByName(symbol.getModule(), constant.getDeclaredType());
