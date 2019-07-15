@@ -76,7 +76,7 @@ class LearnPanel : JPanel() {
 
         moduleNameLabel = JLabel()
         moduleNameLabel!!.name = "moduleNameLabel"
-        moduleNameLabel!!.font = UISettings.instance.plainFont
+        moduleNameLabel!!.font = UISettings.instance.moduleNameFont
         moduleNameLabel!!.isFocusable = false
         moduleNameLabel!!.border = UISettings.instance.checkmarkShiftBorder
 
