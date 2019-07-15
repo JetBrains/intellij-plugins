@@ -19,7 +19,7 @@
   <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory"/>
+    <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
