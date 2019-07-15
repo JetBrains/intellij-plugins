@@ -207,17 +207,23 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testMethodCanBeStatic() throws Exception {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.m_onlyPrivate = false;
+    enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
 
   public void testMethodCanBeStatic2() throws Exception {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.m_onlyPrivate = false;
+    enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
 
   public void testMethodCanBeStatic3() throws Exception {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.m_onlyPrivate = false;
+    enableInspectionTool(inspection);
     doSimpleHighlightingWithInvokeFixAndCheckResult("Make 'static'");
   }
 
@@ -228,7 +234,9 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
   public void testMethodCanBeStaticImplicitVars() {
-    enableInspectionTool(new JSMethodCanBeStaticInspection());
+    JSMethodCanBeStaticInspection inspection = new JSMethodCanBeStaticInspection();
+    inspection.m_onlyPrivate = false;
+    enableInspectionTool(inspection);
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
