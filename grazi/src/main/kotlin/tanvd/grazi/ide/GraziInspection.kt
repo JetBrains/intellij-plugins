@@ -7,12 +7,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import kotlinx.html.*
+import kotlinx.html.style
+import kotlinx.html.table
+import kotlinx.html.td
+import kotlinx.html.tr
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.msg.GraziStateLifecycle
-import tanvd.grazi.ide.quickfix.*
+import tanvd.grazi.ide.quickfix.GraziAddWord
+import tanvd.grazi.ide.quickfix.GraziDisableRule
+import tanvd.grazi.ide.quickfix.GraziRenameTypo
+import tanvd.grazi.ide.quickfix.GraziReplaceTypo
 import tanvd.grazi.ide.ui.msg
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
@@ -23,63 +29,58 @@ class GraziInspection : LocalInspectionTool() {
         private fun getProblemMessage(fix: Typo): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
             return html {
-                if (fix.isSpellingTypo) {
-                    if (fix.info.rule.description.length > 50) {
-                        style = "width: 300px;"
-                    }
+                if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
+                    style = "width: 300px;"
+                }
 
+                if (fix.isSpellingTypo) {
                     +fix.info.rule.toDescriptionSanitized()
                 } else {
-                    div {
-                        style = "margin-bottom: 3px;"
-                        if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
-                            style += "width: 300px;"
-                        }
+                    table {
+                        attributes["cellpadding"] = "0"
+                        attributes["cellspacing"] = "0"
 
-                        table {
-                            if (fix.fixes.isNotEmpty()) {
-                                tr {
-                                    td {
-                                        colSpan = "2"
-                                        style = "padding-bottom: 3px;"
-                                        +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
-                                    }
-                                }
-                            }
-
+                        if (fix.fixes.isNotEmpty()) {
                             tr {
                                 td {
                                     colSpan = "2"
-                                    +fix.info.rule.toDescriptionSanitized()
+                                    style = "padding-bottom: 10px;"
+                                    +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
                                 }
                             }
                         }
 
-                        table {
-                            fix.info.incorrectExample?.let {
-                                tr {
-                                    style = "padding-top: 5px;"
-                                    td {
-                                        style = "color: gray;"
-                                        +msg("grazi.ui.settings.rules.rule.incorrect")
-                                    }
-                                    td {
-                                        style = "text-align: left"
-                                        toIncorrectHtml(it)
-                                    }
-                                }
+                        tr {
+                            td {
+                                colSpan = "2"
+                                style = "padding-bottom: 8px;"
+                                +fix.info.rule.toDescriptionSanitized()
+                            }
+                        }
 
-                                if (it.corrections.any { !it.isNullOrBlank() }) {
-                                    tr {
-                                        style = "padding-top: 5px;"
-                                        td {
-                                            style = "color: gray;"
-                                            +msg("grazi.ui.settings.rules.rule.correct")
-                                        }
-                                        td {
-                                            style = "text-align: left"
-                                            toCorrectHtml(it)
-                                        }
+                        fix.info.incorrectExample?.let {
+                            tr {
+                                td {
+                                    attributes["valign"] = "top"
+                                    style = "padding-bottom: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                                    +msg("grazi.ui.settings.rules.rule.incorrect")
+                                }
+                                td {
+                                    style = "padding-bottom: 5px; width: 100%;"
+                                    toIncorrectHtml(it)
+                                }
+                            }
+
+                            if (it.corrections.any { !it.isNullOrBlank() }) {
+                                tr {
+                                    td {
+                                        attributes["valign"] = "top"
+                                        style = "padding-bottom: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                                        +msg("grazi.ui.settings.rules.rule.correct")
+                                    }
+                                    td {
+                                        style = "padding-bottom: 5px; width: 100%;"
+                                        toCorrectHtml(it)
                                     }
                                 }
                             }

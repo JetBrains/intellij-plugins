@@ -49,7 +49,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
-    private val cmbNativeLanguage = ComboBox<Lang>()
+    private val cmbNativeLanguage = ComboBox<Lang>(Lang.sortedValues.toTypedArray())
     private val adpEnabledLanguages by lazy {
         object : AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.toList()) {
             private val cbLanguage = ComboBox<Lang>()
@@ -77,11 +77,10 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
                 val dialog = DialogBuilder(this)
                         .title(msg("grazi.ui.settings.language.list.text"))
-                        .centerPanel(ComponentPanelBuilder(cbLanguage).withLabel(msg("grazi.ui.settings.language.text"))
-                                .withComment(msg("grazi.ui.settings.language.choose.text")).createPanel())
+                        .centerPanel(wrap(cbLanguage, msg("grazi.ui.settings.language.choose.text"), msg("grazi.ui.settings.language.text")))
 
                 return when (dialog.show()) {
-                    DialogWrapper.OK_EXIT_CODE -> cbLanguage.selectedItem as Lang
+                    DialogWrapper.OK_EXIT_CODE -> (cbLanguage.selectedItem as Lang)
                     else -> null
                 }
             }
@@ -272,15 +271,11 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     override fun getComponent(): JComponent {
-        Lang.sortedValues.forEach {
-            cmbNativeLanguage.addItem(it)
-        }
-
         return panel(MigLayout(createLayoutConstraints(), AC().grow(), AC().index(1).grow())) {
             panel(MigLayout(createLayoutConstraints(), AC().grow()), constraint = CC().growX().wrap()) {
                 border = border(msg("grazi.ui.settings.languages.text"), false, JBUI.insetsBottom(10), false)
 
-                add(adpEnabledLanguages, CC().growX().maxHeight("").width("45%").minWidth("250px").alignY("top"))
+                add(adpEnabledLanguages, CC().growX().maxHeight("").width("45%").minWidth("250px").minHeight("120px").maxHeight("120px").alignY("top"))
 
                 panel(VerticalLayout(), CC().grow().width("55%").minWidth("250px").alignY("top")) {
                     border = padding(JBUI.insetsLeft(20))
