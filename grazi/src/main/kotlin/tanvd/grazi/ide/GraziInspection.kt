@@ -53,7 +53,11 @@ class GraziInspection : LocalInspectionTool() {
                         tr {
                             td {
                                 colSpan = "2"
-                                style = "padding-bottom: 8px;"
+
+                                fix.info.incorrectExample?.let {
+                                    style = "padding-bottom: 8px;"
+                                }
+
                                 +fix.info.rule.toDescriptionSanitized()
                             }
                         }
@@ -62,11 +66,11 @@ class GraziInspection : LocalInspectionTool() {
                             tr {
                                 td {
                                     attributes["valign"] = "top"
-                                    style = "padding-bottom: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                                    style = "padding-right: 5px; color: gray; vertical-align: top;"
                                     +msg("grazi.ui.settings.rules.rule.incorrect")
                                 }
                                 td {
-                                    style = "padding-bottom: 5px; width: 100%;"
+                                    style = "width: 100%;"
                                     toIncorrectHtml(it)
                                 }
                             }
@@ -75,11 +79,11 @@ class GraziInspection : LocalInspectionTool() {
                                 tr {
                                     td {
                                         attributes["valign"] = "top"
-                                        style = "padding-bottom: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                                        style = "padding-bottom: 5px; padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
                                         +msg("grazi.ui.settings.rules.rule.correct")
                                     }
                                     td {
-                                        style = "padding-bottom: 5px; width: 100%;"
+                                        style = "padding-bottom: 5px; padding-top: 5px; width: 100%;"
                                         toCorrectHtml(it)
                                     }
                                 }

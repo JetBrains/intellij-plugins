@@ -12,7 +12,6 @@ import com.intellij.ui.SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
-import org.languagetool.rules.Category
 import org.picocontainer.Disposable
 import tanvd.grazi.ide.ui.panel
 import tanvd.grazi.language.Lang
@@ -20,29 +19,38 @@ import tanvd.grazi.language.LangTool
 import java.awt.BorderLayout
 import java.util.*
 import javax.swing.JTree
-import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val state = HashMap<String, RuleWithLang>()
 
+    private class GraziTreeNode(userObject: Any? = null) : CheckedTreeNode(userObject) {
+        override fun equals(other: Any?): Boolean {
+            if (other is GraziTreeNode) {
+                return userObject == other.userObject
+            }
+
+            return super.equals(other)
+        }
+    }
+
     private val tree: CheckboxTree by lazy {
         CheckboxTree(object : CheckboxTree.CheckboxTreeCellRenderer(true) {
             override fun customizeRenderer(tree: JTree?, node: Any?, selected: Boolean, expanded: Boolean,
                                            leaf: Boolean, row: Int, hasFocus: Boolean) {
-                if (node !is CheckedTreeNode) return
+                if (node !is GraziTreeNode) return
 
                 val background = UIUtil.getTreeBackground(selected, true)
                 UIUtil.changeBackGround(this, background)
 
                 SearchUtil.appendFragments(_filter?.filter, node.nodeText, node.attrs.style, node.attrs.fgColor, background, textRenderer)
             }
-        }, CheckedTreeNode()).apply {
+        }, GraziTreeNode()).apply {
             selectionModel.addTreeSelectionListener { e ->
                 when (val meta = (e?.path?.lastPathComponent as DefaultMutableTreeNode).userObject) {
                     is RuleWithLang -> selectionListener(meta.rule)
-                    is Category -> selectionListener(meta)
+                    is ComparableCategory -> selectionListener(meta)
                     is Lang -> selectionListener(meta)
                 }
             }
@@ -60,24 +68,25 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
                     }
                 }
             })
+
+            setSelectionRow(0)
         }
     }
 
+    private val expansionMonitor by lazy { TreeExpansionMonitor.install(tree) }
+
     private val _filter: FilterComponent? by lazy {
         object : FilterComponent("GRAZI_RULES_FILTER", 10) {
-            private val expansionMonitor by lazy { TreeExpansionMonitor.install(tree) }
 
             override fun filter() {
-                if (!filter.isNullOrBlank()) expansionMonitor.freeze()
+                if (!filter.isNullOrBlank()){
+                    expansionMonitor.freeze()
+                }
 
                 filterTree(filter)
-
                 (tree.model as DefaultTreeModel).reload()
-                TreeUtil.restoreExpandedPaths(tree, TreeUtil.collectExpandedPaths(tree))
+                TreeUtil.expandAll(tree)
 
-                SwingUtilities.invokeLater { tree.setSelectionRow(0) }
-
-                TreeUtil.collapseAll(tree, 1)
                 if (filter.isNullOrBlank()) {
                     TreeUtil.collapseAll(tree, 0)
                     expansionMonitor.restore()
@@ -129,7 +138,6 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         return TreeState(enabled.map { it.rule.id }.toSet(), disabled.map { it.rule.id }.toSet())
     }
 
-
     /** Will filter tree representation in UI */
     fun filterTree(filterString: String?) {
         if (!filterString.isNullOrBlank()) {
@@ -145,36 +153,37 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
     fun reset() {
         state.clear()
+        expansionMonitor.freeze()
         reset(LangTool.allRulesWithLangs())
+        (tree.model as DefaultTreeModel).reload()
+        TreeUtil.collapseAll(tree, 0)
+        expansionMonitor.restore()
     }
 
     private fun reset(rules: RulesMap) {
-        val root = CheckedTreeNode()
+        val root = GraziTreeNode()
         val model = tree.model as DefaultTreeModel
 
         rules.forEach { (lang, categories) ->
-            val langNode = CheckedTreeNode(lang)
+            val langNode = GraziTreeNode(lang)
             model.insertNodeInto(langNode, root, root.childCount)
             categories.forEach { (category, rules) ->
-                val categoryNode = CheckedTreeNode(category)
+                val categoryNode = GraziTreeNode(category)
                 model.insertNodeInto(categoryNode, langNode, langNode.childCount)
                 rules.forEach { rule ->
-                    model.insertNodeInto(CheckedTreeNode(rule), categoryNode, categoryNode.childCount)
+                    model.insertNodeInto(GraziTreeNode(rule), categoryNode, categoryNode.childCount)
                 }
             }
         }
 
         with(root) {
-            resetMark()
             model.setRoot(this)
+            resetMark()
             model.nodeChanged(this)
         }
-
-        TreeUtil.collapseAll(tree, 1)
-        tree.setSelectionRow(0)
     }
 
-    private fun CheckedTreeNode.resetMark(): Boolean {
+    private fun GraziTreeNode.resetMark(): Boolean {
         val meta = userObject
         if (meta is RuleWithLang) {
             isChecked = when (val rule = state[meta.rule.id]) {
@@ -184,7 +193,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         } else {
             isChecked = false
             for (child in children()) {
-                if (child is CheckedTreeNode && child.resetMark()) {
+                if (child is GraziTreeNode && child.resetMark()) {
                     isChecked = true
                 }
             }
@@ -197,14 +206,14 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         _filter?.dispose()
     }
 
-    private val CheckedTreeNode.nodeText: String
+    private val GraziTreeNode.nodeText: String
         get() = when (val meta = userObject) {
             is RuleWithLang -> meta.rule.description
-            is Category -> meta.name
+            is ComparableCategory -> meta.name
             is Lang -> meta.displayName
             else -> ""
         }
 
-    private val CheckedTreeNode.attrs: SimpleTextAttributes
+    private val GraziTreeNode.attrs: SimpleTextAttributes
         get() = if (userObject is RuleWithLang) REGULAR_ATTRIBUTES else REGULAR_BOLD_ATTRIBUTES
 }

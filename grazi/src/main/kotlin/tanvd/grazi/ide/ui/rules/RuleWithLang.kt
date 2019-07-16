@@ -6,20 +6,60 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import java.util.*
-import kotlin.Comparator
 
 data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, var enabledInTree: Boolean) {
     val category: Category = rule.category
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RuleWithLang
+
+        if (lang != other.lang) return false
+        if (rule.description != other.rule.description) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = rule.description.hashCode()
+        result = 31 * result + lang.hashCode()
+        return result
+    }
 }
 
-typealias RulesMap = Map<Lang, Map<Category, List<RuleWithLang>>>
+data class ComparableCategory(val category: Category): Comparable<ComparableCategory> {
+    val name: String = category.name
+
+    override fun compareTo(other: ComparableCategory): Int {
+        return name.compareTo(other.name)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ComparableCategory
+
+        if (category.name != other.category.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return category.name.hashCode()
+    }
+}
+
+typealias RulesMap = Map<Lang, Map<ComparableCategory, List<RuleWithLang>>>
 
 fun LangTool.allRulesWithLangs(): RulesMap {
     val state = GraziConfig.get()
 
-    val result = TreeMap<Lang, SortedMap<Category, MutableList<RuleWithLang>>>()
+    val result = TreeMap<Lang, SortedMap<ComparableCategory, MutableList<RuleWithLang>>>()
     state.enabledLanguages.forEach { lang ->
-        val categories = TreeMap<Category, MutableList<RuleWithLang>>(Comparator.comparing(Category::getName))
+        val categories = TreeMap<ComparableCategory, MutableList<RuleWithLang>>()
 
         with(get(lang)) {
             val activeRules = allActiveRules.toSet()
@@ -28,7 +68,9 @@ fun LangTool.allRulesWithLangs(): RulesMap {
                     || (id !in state.userDisabledRules && id !in state.userEnabledRules && this in activeRules)
 
             allRules.distinctBy { it.id }.forEach {
-                categories.getOrPut(it.category, ::LinkedList).add(RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
+                if (!it.isDictionaryBasedSpellingRule) {
+                    categories.getOrPut(ComparableCategory(it.category), ::LinkedList).add(RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
+                }
             }
 
             if (categories.isNotEmpty()) result[lang] = categories

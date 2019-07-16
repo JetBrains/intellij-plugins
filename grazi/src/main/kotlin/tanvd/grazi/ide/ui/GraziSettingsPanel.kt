@@ -262,11 +262,11 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
             )
         }
+
         rulesTree.reset()
     }
 
     override fun reset(settings: GraziConfig) {
-        adpEnabledLanguages.reset(settings)
         cmbNativeLanguage.selectedItem = settings.state.nativeLanguage
         cbEnableGraziSpellcheck.isSelected = settings.state.enabledSpellcheck
         adpEnabledLanguages.reset(settings)
