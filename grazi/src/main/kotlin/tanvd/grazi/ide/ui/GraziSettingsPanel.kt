@@ -164,6 +164,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                             if (examples.isNotEmpty()) {
                                 tr {
                                     td {
+                                        colSpan = "2"
                                         style = "padding-bottom: 5px;"
                                         +msg("grazi.ui.settings.rules.rule.examples")
                                     }
@@ -180,7 +181,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                                 accepted.forEach { example ->
                                     tr {
                                         td {
-                                            style = "padding-bottom: 5px; color: gray;"
+                                            attributes["valign"] = "top"
+                                            style = "padding-bottom: 5px; padding-right: 5px; color: gray;"
                                             +msg("grazi.ui.settings.rules.rule.incorrect")
                                         }
                                         td {
@@ -192,7 +194,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                                     if (example.corrections.any { it.isNotBlank() }) {
                                         tr {
                                             td {
-                                                style = "padding-bottom: 10px; color: gray;"
+                                                attributes["valign"] = "top"
+                                                style = "padding-bottom: 10px; padding-right: 5px; color: gray;"
                                                 +msg("grazi.ui.settings.rules.rule.correct")
                                             }
                                             td {
