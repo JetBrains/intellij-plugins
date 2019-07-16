@@ -478,7 +478,7 @@ public class OsgiManifestParserTest extends LightIdeaTestCase {
            "            ManifestToken:NEWLINE_TOKEN('\\n')\n");
   }
 
-  private static void doTest(String source, String expected) {
+  private void doTest(String source, String expected) {
     PsiFile file = createLightFile("MANIFEST.MF", source);
     assertEquals(expected, DebugUtil.psiToString(file, true));
   }

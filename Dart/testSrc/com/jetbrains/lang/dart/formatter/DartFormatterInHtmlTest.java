@@ -34,7 +34,7 @@ public class DartFormatterInHtmlTest extends FormatterTestCase {
     doTest(testName + "." + getFileExtension(), testName + "_after." + getFileExtension(), resultNumber);
   }
 
-  private static void setTestStyleSettings() {
+  private void setTestStyleSettings() {
     final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
     CommonCodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
     assertNotNull(indentOptions);

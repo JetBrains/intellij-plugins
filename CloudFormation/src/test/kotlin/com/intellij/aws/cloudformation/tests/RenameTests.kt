@@ -9,7 +9,7 @@ class RenameTests : LightJavaCodeInsightTestCase() {
   fun testSimpleEntity() {
     configureByFile("simpleEntity.template")
     val element = TargetElementUtil.findTargetElement(
-        LightPlatformCodeInsightTestCase.myEditor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)!!
+        editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)!!
     RenameProcessor(getProject(), element, "NEW_NAME", false, false).run()
     checkResultByFile("simpleEntity.after.template")
   }
