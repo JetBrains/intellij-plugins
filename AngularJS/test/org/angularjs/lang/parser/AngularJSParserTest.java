@@ -52,7 +52,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
     }
   }
 
-  private static void doSingleTest(String suffix, String path) throws Throwable{
+  private void doSingleTest(String suffix, String path) throws Throwable{
     final String text = FileUtil.loadFile(new File(path, suffix), true);
     final StringBuilder result = new StringBuilder();
     for (String line : StringUtil.splitByLines(text)) {

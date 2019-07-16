@@ -19,10 +19,10 @@ public class DartInjectionTest extends LightQuickFixTestCase {
 
   private void doTest() throws Exception {
     configureByFile(getTestName(false) + ".dart");
-    ParsingTestCase.doCheckResult(getTestDataPath(), getTestName(false) + "." + "txt", toParseTreeText(myFile));
+    ParsingTestCase.doCheckResult(getTestDataPath(), getTestName(false) + "." + "txt", toParseTreeText(getFile()));
   }
 
-  private static String toParseTreeText(PsiFile file) {
+  private String toParseTreeText(PsiFile file) {
     return DebugUtil.psiToString(file, false, false, (psiElement, consumer) -> InjectedLanguageManager
       .getInstance(getProject()).enumerate(psiElement, (injectedPsi, places) -> consumer.consume(injectedPsi)));
   }
