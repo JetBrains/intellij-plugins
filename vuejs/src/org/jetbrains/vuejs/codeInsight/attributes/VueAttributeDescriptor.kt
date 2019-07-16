@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
-import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.psi.PsiElement
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
@@ -9,6 +8,8 @@ import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
+import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
+import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
@@ -17,8 +18,26 @@ import javax.swing.Icon
 open class VueAttributeDescriptor(name: String,
                                   element: PsiElement? = null,
                                   acceptsNoValue: Boolean = false,
-                                  val priority: AttributePriority = AttributePriority.NORMAL) :
+                                  val priority: AttributePriority = AttributePriority.NORMAL,
+                                  isRequired: Boolean = false) :
   org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isNonProp = acceptsNoValue) {
+
+  constructor(name: String, prop: VueInputProperty) : this(name, prop.source,
+                                                           isRequired = prop.required,
+                                                           acceptsNoValue = isBooleanProp(prop),
+                                                           priority = AttributePriority.HIGH)
+
+  private val _isRequired: Boolean = isRequired
+
+  override fun isRequired(): Boolean {
+    return _isRequired
+  }
+
+  companion object {
+    private fun isBooleanProp(prop: VueInputProperty): Boolean {
+      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
+    }
+  }
 
   enum class AttributePriority(val value: Double) {
     NONE(0.0),
@@ -46,16 +65,13 @@ open class VueAttributeDescriptor(name: String,
 open class _VueAttributeDescriptor(private val name: String,
                                    internal val element: PsiElement? = null,
                                    private val acceptsNoValue: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
+  override fun isRequired(): Boolean {
+    return false
+  }
+
   override fun getName(): String = name
   override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}
-  override fun isRequired(): Boolean {
-    if (name.startsWith(":") || name.startsWith("v-bind:")) return false
-    // TODO use input prop definition model
-    val initializer = (element as? JSProperty)?.objectLiteralExpressionInitializer ?: return false
-    val literal = initializer.findProperty("required")?.literalExpressionInitializer
-    return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
-  }
 
   override fun isFixed(): Boolean = false
   override fun hasIdType(): Boolean = false

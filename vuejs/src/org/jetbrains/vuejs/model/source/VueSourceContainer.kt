@@ -15,10 +15,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.*
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.createContainingFileScope
-import org.jetbrains.vuejs.codeInsight.getJSTypeFromVueType
-import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
@@ -318,9 +315,9 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
 
 class VueSourceInputProperty(override val name: String,
                              override val source: PsiElement?) : VueInputProperty {
-  override val jsType: JSType? get() = getJSTypeFromVueType((source as? JSProperty)?.value)
+  override val jsType: JSType? = getJSTypeFromPropOptions((source as? JSProperty)?.value)
+  override val required: Boolean = getRequiredFromPropOptions((source as? JSProperty)?.value)
 }
-
 
 class VueSourceDataProperty(override val name: String,
                             override val source: PsiElement?) : VueDataProperty

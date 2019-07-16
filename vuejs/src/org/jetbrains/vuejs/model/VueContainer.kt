@@ -43,7 +43,9 @@ interface VueProperty : VueNamedSymbol {
   val jsType: JSType? get() = null
 }
 
-interface VueInputProperty : VueProperty
+interface VueInputProperty : VueProperty {
+  val required: Boolean
+}
 
 interface VueDataProperty : VueProperty
 
