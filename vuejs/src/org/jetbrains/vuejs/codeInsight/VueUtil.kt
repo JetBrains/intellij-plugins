@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
@@ -15,6 +16,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
 import org.jetbrains.vuejs.index.findScriptTag
 
@@ -87,11 +89,45 @@ fun getSearchScope(project: Project, includeLibraries: Boolean = false): GlobalS
 
 val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
 
-fun getJSTypeFromVueType(expression: JSExpression?): JSType? {
-  return (expression as? JSReferenceExpression)
-    ?.referenceName
+fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
+  return when (expression) {
+    is JSReferenceExpression -> getJSTypeFromVueType(expression)
+    is JSArrayLiteralExpression -> JSCompositeTypeImpl.getCommonType(
+      StreamEx.of(*expression.expressions)
+        .select(JSReferenceExpression::class.java)
+        .map { getJSTypeFromVueType(it) }
+        .nonNull()
+        .toList(),
+      JSTypeSource.EXPLICITLY_DECLARED, false
+    )
+    is JSObjectLiteralExpression -> expression.findProperty("type")
+      ?.value
+      ?.let {
+        when (it) {
+          is JSReferenceExpression -> getJSTypeFromVueType(it)
+          is JSArrayLiteralExpression -> getJSTypeFromPropOptions(it)
+          else -> null
+        }
+      }
+    else -> null
+  }
+}
+
+private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
+  return reference
+    .referenceName
     // TODO support other types here
     ?.let { name -> if (name == "Boolean") BOOLEAN_TYPE else null }
+}
+
+fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
+  return (expression as? JSObjectLiteralExpression)
+           ?.findProperty("required")
+           ?.literalExpressionInitializer
+           ?.let {
+             it.isBooleanLiteral && "true" == it.significantValue
+           }
+         ?: false
 }
 
 fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {

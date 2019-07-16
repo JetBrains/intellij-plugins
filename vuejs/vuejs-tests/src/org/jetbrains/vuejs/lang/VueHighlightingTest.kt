@@ -21,7 +21,7 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/highlighting"
 
   override fun setUp() {
     super.setUp()
@@ -714,7 +714,7 @@ Vue.component('global-comp-literal', {
 
   fun testBuiltinTagsHighlighting() {
     createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("BuiltinTagsHighlighting.vue", """
 <template>
     <transition-group>
@@ -1188,7 +1188,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
   }
 
   fun testVueExtendSyntax() {
-    myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1212,7 +1212,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
 
   fun testBootstrapVue() {
     createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
     myFixture.configureByText("b-component.vue", """
       <template>
         <b-alert show>Foo</b-alert>
@@ -1281,7 +1281,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
   }
 
   fun testDirectivesWithParameters() {
-    myFixture.configureByText("a-component.vue","""
+    myFixture.configureByText("a-component.vue", """
       <template>
           <div>
               <a href="#" 
@@ -1305,7 +1305,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
 
   fun testDirectiveWithModifiers() {
     createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """
       <template>
         <div>
@@ -1326,6 +1326,11 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
         <tr :is="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></tr>
       </table>
     """)
+    myFixture.checkHighlighting()
+  }
+
+  fun testPropsWithOptions() {
+    myFixture.configureByFiles("propsWithOptions/usage.vue", "propsWithOptions/component.vue")
     myFixture.checkHighlighting()
   }
 }

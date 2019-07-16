@@ -9,5 +9,6 @@ import org.jetbrains.vuejs.model.webtypes.json.Attribute
 class VueWebTypesInputProperty(it: Attribute, typeProvider: (Any?) -> JSType?) : VueInputProperty {
   override val name: String = it.name!!
   override val source: PsiElement? = null
+  override val required: Boolean = it.required ?: false
   override val jsType: JSType? = typeProvider(it.type)
 }

@@ -1,12 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSRecordType.TypeMember
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -16,6 +13,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 
@@ -46,12 +45,12 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
         val decorator = findDecorator(member)
         when (decorator?.decoratorName) {
           PROP_DEC -> if (member is PropertySignature) {
-            props.add(VueDecoratedInputProperty(member.memberName, member))
+            props.add(VueDecoratedInputProperty(member.memberName, member, getPropOptionsFromDec(decorator, 0)))
           }
-          PROP_SYNCED_DEC -> if (member is PropertySignature) {
+          PROP_SYNC_DEC -> if (member is PropertySignature) {
             computed.add(VueDecoratedComputedProperty(member.memberName, member))
             getNameFromDecorator(decorator)?.let { name ->
-              props.add(VueDecoratedInputProperty(name, member))
+              props.add(VueDecoratedInputProperty(name, member, getPropOptionsFromDec(decorator, 1)))
               emits.add(VueDecoratedPropertyEmitCall("update:$name", member))
             }
           }
@@ -59,7 +58,7 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
             val name = getNameFromDecorator(decorator)
             model = VueModelDirectiveProperties(member.memberName,
                                                 name ?: VueModelDirectiveProperties.DEFAULT_EVENT)
-            props.add(VueDecoratedInputProperty(member.memberName, member))
+            props.add(VueDecoratedInputProperty(member.memberName, member, getPropOptionsFromDec(decorator, 1)))
           }
           EMIT_DEC -> if (member is PropertySignature) {
             if (member.memberSource.singleElement is JSFunction) {
@@ -121,11 +120,11 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
     }
 
     private const val PROP_DEC = "Prop"
-    private const val PROP_SYNCED_DEC = "PropSynced"
+    private const val PROP_SYNC_DEC = "PropSync"
     private const val MODEL_DEC = "Model"
     private const val EMIT_DEC = "Emit"
 
-    private val DECS = setOf(PROP_DEC, PROP_SYNCED_DEC, MODEL_DEC, EMIT_DEC)
+    private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
 
     private fun findDecorator(member: TypeMember): ES6Decorator? {
       return (member.memberSource.singleElement as? JSAttributeListOwner)
@@ -140,6 +139,12 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
         ?.firstOrNull()
         ?.let { getTextIfLiteral(it) }
     }
+
+    private fun getPropOptionsFromDec(decorator: ES6Decorator, index: Int): JSExpression? {
+      return (decorator.expression as? JSCallExpression)
+        ?.arguments
+        ?.getOrNull(index)
+    }
   }
 
   private abstract class VueDecoratedNamedSymbol<T : TypeMember>(override val name: String, protected val member: T)
@@ -152,8 +157,12 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
     override val jsType: JSType? get() = member.jsType
   }
 
-  private class VueDecoratedInputProperty(name: String, member: PropertySignature)
-    : VueDecoratedProperty(name, member), VueInputProperty
+  private class VueDecoratedInputProperty(name: String, member: PropertySignature, propOptions: JSExpression?)
+    : VueDecoratedProperty(name, member), VueInputProperty {
+    val typeFromProps = getJSTypeFromPropOptions(propOptions)
+    override val jsType: JSType? get() = typeFromProps ?: member.jsType
+    override val required: Boolean = getRequiredFromPropOptions(propOptions)
+  }
 
   private class VueDecoratedComputedProperty(name: String, member: PropertySignature)
     : VueDecoratedProperty(name, member), VueComputedProperty

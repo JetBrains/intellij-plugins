@@ -1,5 +1,5 @@
 <script>
-  import {Component, Model, Prop, PropSynced} from 'vue-property-decorator';
+  import {Component, Model, Prop, PropSync} from 'vue-property-decorator';
 
   @Component({
                props: {
@@ -16,7 +16,7 @@
 
     @Prop() bar;
 
-    @PropSynced('name') syncedName;
+    @PropSync('name') syncedName;
 
     @Model('change') checked
 
