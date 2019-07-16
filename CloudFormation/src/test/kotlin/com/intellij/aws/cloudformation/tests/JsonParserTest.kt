@@ -10,10 +10,10 @@ class JsonParserTest : LightPlatformCodeInsightTestCase() {
 
   fun runTest(name: String) {
     configureByFile("$name.template")
-    val parsed = CloudFormationParser.parse(myFile)
+    val parsed = CloudFormationParser.parse(file)
     TestUtil.checkContent(
         File(testDataPath, "$name.expected"),
-        TestUtil.renderProblems(myFile, parsed.problems)
+        TestUtil.renderProblems(file, parsed.problems)
     )
   }
 

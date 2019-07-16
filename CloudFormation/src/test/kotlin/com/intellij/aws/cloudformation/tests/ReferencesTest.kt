@@ -9,7 +9,7 @@ class ReferencesTest: LightJavaCodeInsightTestCase() {
     configureByFile("refRange.yaml")
     TestUtil.checkContent(
         File(testDataPath, "refRange.yaml.expected"),
-        TestUtil.renderReferences(LightPlatformCodeInsightTestCase.myFile)
+        TestUtil.renderReferences(file)
     )
   }
 
