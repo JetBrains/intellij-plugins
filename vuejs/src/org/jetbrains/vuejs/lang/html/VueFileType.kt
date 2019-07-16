@@ -6,8 +6,10 @@ import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
 import javax.swing.Icon
 
+@Suppress("DEPRECATION")
 class VueFileType: org.jetbrains.vuejs.VueFileType() {
   companion object {
+    @JvmField
     val INSTANCE: VueFileType = VueFileType()
   }
 }
