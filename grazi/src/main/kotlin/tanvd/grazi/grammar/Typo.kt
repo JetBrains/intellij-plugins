@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import org.languagetool.rules.*
 import tanvd.grazi.language.Lang
+import tanvd.grazi.language.LangToolFixes
 import tanvd.grazi.utils.*
 
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
@@ -27,6 +28,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
 
     val word by lazy { location.pointer?.element!!.text.subSequence(location.range).toString() }
 
+    /** Constructor for LangTool, applies fixes to RuleMatch (Main constructor doesn't apply fixes) */
     constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
             Location(match.toIntRange().withOffset(offset)),
             Info(lang, match.rule, match, match.typoCategory),

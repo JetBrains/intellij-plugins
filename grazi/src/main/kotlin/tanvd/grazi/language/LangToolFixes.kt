@@ -1,4 +1,4 @@
-package tanvd.grazi.grammar
+package tanvd.grazi.language
 
 import org.languagetool.rules.Rule
 
