@@ -9,9 +9,9 @@ import com.intellij.tapestry.core.TapestryConstants;
 public class TapestryMetaDataContributor implements MetaDataContributor {
   @Override
   public void contributeMetaData(MetaDataRegistrar registrar) {
-    MetaDataRegistrar.getInstance().registerMetaData(new RootTagFilter(new TargetNamespaceFilter(TapestryXmlExtension.tapestryTemplateNamespaces())),
+    registrar.registerMetaData(new RootTagFilter(new TargetNamespaceFilter(TapestryXmlExtension.tapestryTemplateNamespaces())),
                                                      TapestryNamespaceDescriptor.class);
-    MetaDataRegistrar.getInstance().registerMetaData(new RootTagFilter(new TargetNamespaceFilter(TapestryConstants.PARAMETERS_NAMESPACE)),
+    registrar.registerMetaData(new RootTagFilter(new TargetNamespaceFilter(TapestryConstants.PARAMETERS_NAMESPACE)),
                                                      TapestryParametersNamespaceDescriptor.class);
   }
 }
