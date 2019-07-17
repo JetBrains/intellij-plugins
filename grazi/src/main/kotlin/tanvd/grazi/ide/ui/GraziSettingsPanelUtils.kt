@@ -8,10 +8,7 @@ import org.languagetool.rules.Rule
 import tanvd.grazi.ide.ui.rules.ComparableCategory
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
-import tanvd.grazi.utils.html
-import tanvd.grazi.utils.text
-import tanvd.grazi.utils.toCorrectHtml
-import tanvd.grazi.utils.toIncorrectHtml
+import tanvd.grazi.utils.*
 
 private const val MINIMUM_EXAMPLES_SIMILARITY = 0.2
 private val levenshtein = LevenshteinDistance()
@@ -24,8 +21,8 @@ fun getDescriptionPaneContent(it: Any): String {
     return when (it) {
         is Rule -> html {
             table {
-                attributes["cellpadding"] = "0"
-                attributes["cellspacing"] = "0"
+                cellpading = "0"
+                cellspacing = "0"
 
                 tr {
                     td {
@@ -91,7 +88,7 @@ fun getDescriptionPaneContent(it: Any): String {
                         accepted.forEach { example ->
                             tr {
                                 td {
-                                    attributes["valign"] = "top"
+                                    valign = "top"
                                     style = "padding-bottom: 5px; padding-right: 5px; color: gray;"
                                     +msg("grazi.ui.settings.rules.rule.incorrect")
                                 }
@@ -104,7 +101,7 @@ fun getDescriptionPaneContent(it: Any): String {
                             if (example.corrections.any { it.isNotBlank() }) {
                                 tr {
                                     td {
-                                        attributes["valign"] = "top"
+                                        valign = "top"
                                         style = "padding-bottom: 10px; padding-right: 5px; color: gray;"
                                         +msg("grazi.ui.settings.rules.rule.correct")
                                     }

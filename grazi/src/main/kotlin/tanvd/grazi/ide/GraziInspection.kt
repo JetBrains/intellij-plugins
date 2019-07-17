@@ -45,13 +45,13 @@ class GraziInspection : LocalInspectionTool() {
                     }
 
                     table {
-                        attributes["cellpadding"] = "0"
-                        attributes["cellspacing"] = "0"
+                        cellpading = "0"
+                        cellspacing = "0"
 
                         fix.info.incorrectExample?.let {
                             tr {
                                 td {
-                                    attributes["valign"] = "top"
+                                    valign = "top"
                                     style = "padding-right: 5px; color: gray; vertical-align: top;"
                                     +msg("grazi.ui.settings.rules.rule.incorrect")
                                 }
@@ -64,7 +64,7 @@ class GraziInspection : LocalInspectionTool() {
                             if (it.corrections.any { !it.isNullOrBlank() }) {
                                 tr {
                                     td {
-                                        attributes["valign"] = "top"
+                                        valign = "top"
                                         style = "padding-bottom: 5px; padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
                                         +msg("grazi.ui.settings.rules.rule.correct")
                                     }
