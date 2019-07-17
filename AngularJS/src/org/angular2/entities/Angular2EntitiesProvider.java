@@ -356,5 +356,10 @@ public class Angular2EntitiesProvider {
       }
       return null;
     }
+
+    @Override
+    public String toString() {
+      return Arrays.toString(myDecoratorNames) + " - " + super.toString();
+    }
   }
 }
