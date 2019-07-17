@@ -93,10 +93,12 @@ public class Angular2EntitiesProvider {
       Angular2MetadataFunctionIndex.KEY, function.getName(), function.getProject(),
       GlobalSearchScope.allScope(function.getProject()),
       Angular2MetadataFunction.class, (f) -> {
-        Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
-        if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
-          result.set(f);
-          return false;
+        if (f.isValid()) {
+          Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
+          if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
+            result.set(f);
+            return false;
+          }
         }
         return true;
       });
@@ -208,13 +210,17 @@ public class Angular2EntitiesProvider {
       StubIndex.getInstance().processElements(Angular2SourceModuleIndex.KEY, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               JSImplicitElementProvider.class, (module) -> {
-          ContainerUtil.addIfNotNull(result, getModule(module));
+          if (module.isValid()) {
+            ContainerUtil.addIfNotNull(result, getModule(module));
+          }
           return true;
         });
       StubIndex.getInstance().processElements(Angular2MetadataModuleIndex.KEY, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               Angular2MetadataModule.class, (module) -> {
-          result.add(module);
+          if (module.isValid()) {
+            result.add(module);
+          }
           return true;
         });
       return create(result, PsiModificationTracker.MODIFICATION_COUNT);

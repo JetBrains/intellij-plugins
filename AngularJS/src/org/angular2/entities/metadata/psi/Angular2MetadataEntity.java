@@ -62,7 +62,7 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
         continue;
       }
       if (cacheDependencies != null && element != null) {
-        cacheDependencies.add(notNull(element.getContainingFile(), element));
+        cacheDependencies.add(element);
       }
       if (element instanceof Angular2MetadataArray) {
         resolveQueue.addAll(asList(element.getChildren()));

@@ -4,9 +4,12 @@ package org.angular2.lang.metadata.psi;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
@@ -28,6 +31,23 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
 
   public MetadataElement(@NotNull Stub stub) {
     myStub = stub;
+  }
+
+  @Override
+  public PsiFile getContainingFile() {
+    StubElement stub = myStub;
+    while (stub != null && !(stub instanceof PsiFileStubImpl)) {
+      stub = stub.getParentStub();
+    }
+    if (stub == null) {
+      throw new PsiInvalidElementAccessException(this);
+    }
+    PsiFile result = ((PsiFileStubImpl)stub).getPsi();
+    if (result == null) {
+      throw new PsiInvalidElementAccessException(
+        this, "Metadata file psi has been cleared: " + ((PsiFileStubImpl)stub).getInvalidationReason());
+    }
+    return result;
   }
 
   @Override
