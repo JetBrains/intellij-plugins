@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.openapi.editor.Document;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -82,10 +81,6 @@ public class Angular2FixesPsiUtil {
     property = propertyPointer.getElement();
     assert property != null;
 
-    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(property.getProject());
-    Document document = documentManager.getDocument(property.getContainingFile());
-    assert document != null;
-    documentManager.commitDocument(document);
     PsiFile htmlContent = Angular2InjectionUtils.getFirstInjectedFile(property.getValue());
     if (htmlContent != null) {
       FormatFixer.create(htmlContent, FormatFixer.Mode.Reformat).fixFormat();
