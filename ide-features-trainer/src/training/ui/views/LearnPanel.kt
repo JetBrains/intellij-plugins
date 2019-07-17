@@ -182,13 +182,10 @@ class LearnPanel : JPanel() {
         }
 
         lessonMessagePane!!.addMessage(messages)
-        lessonMessagePane!!.invalidate()
-        lessonMessagePane!!.repaint()
+        //invoke #getPreferredSize explicitly to update actual size of LessonMessagePane
+        lessonMessagePane!!.preferredSize
 
         //Pack lesson panel
-        this.invalidate()
-        this.repaint()
-        lessonPanel!!.revalidate()
         lessonPanel!!.repaint()
         //run to update LessonMessagePane.getMinimumSize and LessonMessagePane.getPreferredSize
         lessonPanelBoxLayout!!.invalidateLayout(lessonPanel)
@@ -205,8 +202,6 @@ class LearnPanel : JPanel() {
     }
 
     fun setLessonPassed() {
-
-        //        lessonNameLabel.setForeground(lessonPassedColor);
         setButtonToNext()
         this.repaint()
     }
