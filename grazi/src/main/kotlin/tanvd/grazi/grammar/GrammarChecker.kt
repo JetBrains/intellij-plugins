@@ -88,16 +88,6 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                     val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
                     typo.copy(location = typo.location.copy(range = newRange, pointer = firstToken.toPointer()))
                 } else null
-            }?.let { typo ->
-                if (typo.info.rule.id == "ARTICLE_MISSING") {
-                    typo.copy(fixes = typo.fixes.map {
-                        when {
-                            it.startsWith("The") -> "The " + it[4].toLowerCase() + it.substring(5)
-                            it.startsWith("A") -> "A " + it[2].toLowerCase() + it.substring(3)
-                            else -> it
-                        }
-                    })
-                } else typo
             }
         }.toSet()
     }
