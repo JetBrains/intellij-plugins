@@ -12,6 +12,9 @@ val Typo.isSpellingTypo: Boolean
 val RuleMatch.typoCategory: Typo.Category
     get() = Typo.Category[rule.category.id.toString()]
 
+val ExampleSentence.text: CharSequence
+    get() = example
+
 fun Rule.toDescriptionSanitized() = this.description.replace("**", "")
 
 private fun FlowOrPhrasingContent.toHtml(example: IncorrectExample, mistakeHandler: FlowOrPhrasingContent.(String) -> Unit) {

@@ -57,7 +57,7 @@ typealias RulesMap = Map<Lang, Map<ComparableCategory, List<RuleWithLang>>>
 fun LangTool.allRulesWithLangs(): RulesMap {
     val state = GraziConfig.get()
 
-    val result = TreeMap<Lang, SortedMap<ComparableCategory, MutableList<RuleWithLang>>>()
+    val result = TreeMap<Lang, SortedMap<ComparableCategory, MutableList<RuleWithLang>>>(Comparator.comparing(Lang::displayName))
     state.enabledLanguages.forEach { lang ->
         val categories = TreeMap<ComparableCategory, MutableList<RuleWithLang>>()
 

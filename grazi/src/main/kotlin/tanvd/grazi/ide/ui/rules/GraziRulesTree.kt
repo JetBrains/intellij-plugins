@@ -68,8 +68,6 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
                     }
                 }
             })
-
-            setSelectionRow(0)
         }
     }
 
@@ -149,6 +147,10 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         } else {
             reset(LangTool.allRulesWithLangs())
         }
+    }
+
+    fun resetSelection() {
+        tree.setSelectionRow(0)
     }
 
     fun reset() {
