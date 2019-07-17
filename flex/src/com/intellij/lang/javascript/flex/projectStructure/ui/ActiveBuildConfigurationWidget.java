@@ -178,7 +178,7 @@ public class ActiveBuildConfigurationWidget {
 
     @Override
     @Nullable
-    public WidgetPresentation getPresentation(@NotNull final PlatformType type) {
+    public WidgetPresentation getPresentation() {
       return null;
     }
 
