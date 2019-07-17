@@ -3,6 +3,7 @@ package training.lang
 import com.goide.configuration.GoSdkConfigurable
 import com.goide.sdk.GoSdkService
 import com.goide.sdk.GoSdkUtil
+import com.goide.sdk.combobox.GoSdkList
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
@@ -34,6 +35,7 @@ class GoLangSupport : AbstractLangSupport() {
       StartupManager.getInstance(project).runWhenProjectIsInitialized {
         ApplicationManager.getApplication().invokeLater {
           if (!project.hasValidSdk()) {
+            GoSdkList.getInstance().reloadSdks { }
             GoSdkUtil.automaticallyInitializeSdk(project, null)
           }
         }
