@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -20,7 +19,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
@@ -31,7 +29,6 @@ import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,21 +45,14 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   @Nullable
   @Override
   public PsiFile getTemplateFile() {
-    return getCachedValue(() -> {
-      PsiFile template = findAngularComponentTemplate();
-      return create(template, new InvalidPsiTracker(template),
-                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
-    });
+    return getCachedValue(() -> create(
+      findAngularComponentTemplate(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
   }
 
   @NotNull
   @Override
   public List<PsiFile> getCssFiles() {
-    return getCachedValue(() -> {
-      List<PsiFile> cssFiles = findCssFiles();
-      return create(cssFiles, new InvalidPsiTracker(cssFiles),
-                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
-    });
+    return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
   }
 
   @NotNull
@@ -223,24 +213,6 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
       }
     }
     return null;
-  }
-
-  private static class InvalidPsiTracker implements ModificationTracker {
-
-    private final Collection<? extends PsiElement> myElements;
-
-    private InvalidPsiTracker(@Nullable PsiElement element) {
-      myElements = element == null ? Collections.emptyList() : Collections.singleton(element);
-    }
-
-    private InvalidPsiTracker(Collection<? extends PsiElement> elements) {
-      myElements = elements;
-    }
-
-    @Override
-    public long getModificationCount() {
-      return ContainerUtil.all(myElements, PsiElement::isValid) ? 0 : -1;
-    }
   }
 
   private static class FakeStringLiteral extends FakePsiElement {
