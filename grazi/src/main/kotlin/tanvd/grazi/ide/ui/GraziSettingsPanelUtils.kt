@@ -5,6 +5,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance
 import org.languagetool.rules.Category
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
+import tanvd.grazi.ide.ui.rules.ComparableCategory
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.html
@@ -121,7 +122,7 @@ fun getDescriptionPaneContent(it: Any): String {
         is Lang -> html {
             unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
         }
-        is Category -> html {
+        is ComparableCategory -> html {
             unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
         }
         else -> ""

@@ -140,8 +140,10 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     fun filterTree(filterString: String?) {
         if (!filterString.isNullOrBlank()) {
             reset(LangTool.allRulesWithLangs().asSequence().map { (lang, categories) ->
-                lang to categories.map { (category, rules) ->
-                    category to rules.filter { it.rule.description.contains(filterString, true) }
+                if (lang.displayName.contains(filterString, true)) lang to categories
+                else lang to categories.map { (category, rules) ->
+                    if (category.name.contains(filterString, true)) category to rules
+                    else category to rules.filter { it.rule.description.contains(filterString, true) }
                 }.toMap().filterValues { it.isNotEmpty() }
             }.toMap().filterValues { it.isNotEmpty() })
         } else {

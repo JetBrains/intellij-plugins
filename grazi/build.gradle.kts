@@ -49,7 +49,7 @@ tasks.withType<KotlinJvmCompile> {
 }
 
 tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx1g")
+    jvmArgs("-Xmx10g")
 }
 
 tasks.withType<PublishTask> {

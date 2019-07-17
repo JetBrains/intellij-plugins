@@ -113,7 +113,7 @@ object GraziSpellchecker : GraziStateLifecycle {
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
         checker = createChecker(newState)
 
-        if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck != newState.enabledSpellcheck) return
+        if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck == newState.enabledSpellcheck) return
 
         if (newState.enabledSpellcheck) {
             modifyAndCommitProjectProfile(project, Consumer {

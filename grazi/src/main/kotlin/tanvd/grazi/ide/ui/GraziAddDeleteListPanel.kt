@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.AddDeleteListPanel
+import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.Lang
@@ -38,9 +39,13 @@ class GraziAddDeleteListPanel : AddDeleteListPanel<Lang>(null, GraziConfig.get()
         cbLanguage.removeAllItems()
         Lang.sortedValues.filter { it !in langsInList }.forEach { cbLanguage.addItem(it) }
 
+
         val dialog = DialogBuilder(this)
-                .title(msg("grazi.ui.settings.language.list.text"))
-                .centerPanel(wrap(cbLanguage, msg("grazi.ui.settings.language.choose.text"), msg("grazi.ui.settings.language.text")))
+                .title(msg("grazi.ui.settings.language.dialog.title"))
+                .centerPanel(
+                        if (cbLanguage.itemCount == 0) JBLabel(msg("grazi.ui.settings.language.dialog.empty.text"))
+                        else wrap(cbLanguage, msg("grazi.ui.settings.language.dialog.comment.text"), msg("grazi.ui.settings.language.dialog.label.text"))
+                )
 
         return when (dialog.show()) {
             DialogWrapper.OK_EXIT_CODE -> (cbLanguage.selectedItem as Lang)
@@ -51,7 +56,7 @@ class GraziAddDeleteListPanel : AddDeleteListPanel<Lang>(null, GraziConfig.get()
     fun reset(settings: GraziConfig) {
         val model = myList.model as DefaultListModel<Lang>
         model.clear()
-        settings.state.enabledLanguages.forEach {
+        settings.state.enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName)).forEach {
             model.addElement(it)
         }
     }

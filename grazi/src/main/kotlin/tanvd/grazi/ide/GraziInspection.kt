@@ -7,10 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import kotlinx.html.style
-import kotlinx.html.table
-import kotlinx.html.td
-import kotlinx.html.tr
+import kotlinx.html.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
@@ -29,38 +26,27 @@ class GraziInspection : LocalInspectionTool() {
         private fun getProblemMessage(fix: Typo): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
             return html {
-                if (fix.info.rule.description.length > 50 || fix.info.incorrectExample?.example?.length ?: 0 > 50) {
-                    style = "width: 300px;"
-                }
-
                 if (fix.isSpellingTypo) {
                     +fix.info.rule.toDescriptionSanitized()
                 } else {
+                    if (fix.fixes.isNotEmpty()) {
+                        p {
+                            style = "padding-bottom: 10px;"
+                            +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
+                        }
+                    }
+
+                    p {
+                        fix.info.incorrectExample?.let {
+                            style = "padding-bottom: 8px;"
+                        }
+
+                        +fix.info.rule.toDescriptionSanitized()
+                    }
+
                     table {
                         attributes["cellpadding"] = "0"
                         attributes["cellspacing"] = "0"
-
-                        if (fix.fixes.isNotEmpty()) {
-                            tr {
-                                td {
-                                    colSpan = "2"
-                                    style = "padding-bottom: 10px;"
-                                    +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
-                                }
-                            }
-                        }
-
-                        tr {
-                            td {
-                                colSpan = "2"
-
-                                fix.info.incorrectExample?.let {
-                                    style = "padding-bottom: 8px;"
-                                }
-
-                                +fix.info.rule.toDescriptionSanitized()
-                            }
-                        }
 
                         fix.info.incorrectExample?.let {
                             tr {

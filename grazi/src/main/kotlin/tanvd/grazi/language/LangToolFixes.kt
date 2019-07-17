@@ -10,6 +10,13 @@ enum class LangToolFixes(private val ruleId: String, private val fix: (suggestio
             suggestion.startsWith("A") -> "A " + suggestion[2].toLowerCase() + suggestion.substring(3)
             else -> suggestion
         }
+    }),
+    THE_SUPERLATIVE("THE_SUPERLATIVE", {
+        val suggestion = it.replace("\\s+".toRegex()," ")
+        when {
+            suggestion.startsWith("The") -> "The " + suggestion[4].toLowerCase() + suggestion.substring(5)
+            else -> suggestion
+        }
     });
 
     companion object {
