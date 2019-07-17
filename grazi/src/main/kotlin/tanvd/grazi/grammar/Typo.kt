@@ -30,7 +30,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
     constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
             Location(match.toIntRange().withOffset(offset)),
             Info(lang, match.rule, match, match.typoCategory),
-            match.suggestedReplacements.map { LangToolFixes[match.rule].fixSuggestion(it) }
+            match.suggestedReplacements.map { LangToolFixes.fixSuggestion(match.rule, it) }
     )
 
     enum class Category(val value: String, val description: String) : ProblemGroup {
