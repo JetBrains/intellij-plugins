@@ -4,11 +4,10 @@ import com.goide.configuration.GoSdkConfigurable
 import com.goide.sdk.GoSdkService
 import com.goide.sdk.GoSdkUtil
 import com.goide.sdk.combobox.GoSdkList
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.ui.DialogBuilder
 import training.project.ProjectUtils
 
 class GoLangSupport : AbstractLangSupport() {
@@ -31,17 +30,16 @@ class GoLangSupport : AbstractLangSupport() {
   override fun checkSdk(sdk: Sdk?, project: Project) {}
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { project ->
-    if (!project.hasValidSdk()) {
-      StartupManager.getInstance(project).runWhenProjectIsInitialized {
-        ApplicationManager.getApplication().invokeLater {
-          if (!project.hasValidSdk()) {
-            GoSdkList.getInstance().reloadSdks { }
-            GoSdkUtil.automaticallyInitializeSdk(project, null)
-          }
-        }
-        ApplicationManager.getApplication().invokeLater {
-          if (!project.hasValidSdk()) {
-            ShowSettingsUtil.getInstance().editConfigurable(project, GoSdkConfigurable(project, true))
+    StartupManager.getInstance(project).runWhenProjectIsInitialized {
+      if (!project.hasValidSdk()) {
+        GoSdkList.getInstance().reloadSdks { }
+        GoSdkUtil.automaticallyInitializeSdk(project, null)
+        if (!project.hasValidSdk()) {
+          val configurable = GoSdkConfigurable(project, true)
+          val dialog = DialogBuilder().centerPanel(configurable.createComponent())
+                  .title("Specify Go SDK to continue learning")
+          if (dialog.showAndGet()) {
+            configurable.apply()
           }
         }
       }
