@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer;
 import static org.angular2.Angular2DecoratorUtil.getReferencedObjectLiteralInitializer;
 
@@ -142,7 +141,7 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
 
     @Override
     protected void processCacheDependency(PsiElement element) {
-      myDependencies.add(notNull(element.getContainingFile(), element));
+      myDependencies.add(element);
     }
 
     @Override
