@@ -14,6 +14,7 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
   }
 
   @Override
+  @NotNull
   public final String getScenarioName() {
     final StringBuilder result = new StringBuilder();
 
@@ -43,5 +44,10 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
   public final GherkinTag[] getTags() {
     final GherkinTag[] tags = PsiTreeUtil.getChildrenOfType(this, GherkinTag.class);
     return tags == null ? GherkinTag.EMPTY_ARRAY : tags;
+  }
+
+  @Override
+  public String getScenarioKeyword() {
+    return getFirstChild().getText();
   }
 }
