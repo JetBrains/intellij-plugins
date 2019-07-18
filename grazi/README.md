@@ -14,6 +14,8 @@ accuracy among free (and even non-free) alternatives.
 
 In general, *Grazi is a Grammarly inside your IDE*. 
 
+![Usage of Grazi plugin](https://gph.is/g/ZdxKVA3)
+
 ## What's inside
 
 Grazi consists of two parts - grammar checker, backed by LanguageTool, and spellchecker backed by LanguageTool dictionaries and IDEA built-in spellcheck. When it is sensible, Grazi will use full checking pipeline (proofreading and spellchecking), but in some cases (e.g., in code) it will use just spellcheck.
