@@ -1,0 +1,24 @@
+AngularCliJsonFileConfig[
+  myAngularCliJson=temp:///src/angular.json
+  myRootPaths=[]
+  myStylePreprocessorIncludePaths=[]
+  myKarmaConfigPath=karma.conf.js
+  myProtractorConfigPath=e2e/protractor.conf.js
+  myIndexHtmlPath=src/index.html
+  myStyles=[foo, src/styles.scss]
+  myLintConfigs=[AngularCliJsonFileConfig.TsLintConfigurationImpl[
+    name=null
+    tsLintConfig=apps/app-name/tslint.json
+    tsConfigs=[apps/internal-app/tsconfig.app.json]
+    format=null
+    includePattern=^((\/src\/apps\/app\-name\/src(\/.+?)?\/[^\/]*\.ts))$
+    excludePattern=^((\/src\/test\.ts)|(\/src(\/.+?)?\/[^\/]*\.spec\.ts)|(\/src(\/.+?)?\/[^\/]*\.ui\-spec\.ts))($|\/)
+  ], AngularCliJsonFileConfig.TsLintConfigurationImpl[
+    name=specs
+    tsLintConfig=./tslint.spec.json
+    tsConfigs=[apps/app-name/tsconfig.spec.json]
+    format=null
+    includePattern=^((\/src\/apps\/app\-name\/src(\/.+?)?\/[^\/]*\.spec\.ts)|(\/src\/apps\/app\-name\/src(\/.+?)?\/[^\/]*\.ui\-spec\.ts))$
+    excludePattern=null
+  ]]
+]

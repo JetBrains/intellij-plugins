@@ -12,10 +12,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.intellij.lang.javascript.frameworks.modules.JSPathMappingsUtil
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.AtomicNullableLazyValue
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -25,6 +28,10 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.text.CharSequenceReader
+import one.util.streamex.StreamEx
+import org.apache.commons.lang.SystemUtils
+import org.apache.commons.lang.builder.ToStringBuilder
+import org.apache.commons.lang.builder.ToStringStyle
 import java.io.IOException
 
 
@@ -74,11 +81,22 @@ interface AngularCliConfig {
 
   fun getProtractorConfigFile(): VirtualFile?
 
+  fun getTsLintConfigurations(): Collection<TsLintConfiguration>
+
   fun exists(): Boolean
 
 }
 
+interface TsLintConfiguration {
+  val name: String?
+  val format: String?
+  fun getTsLintConfig(): VirtualFile?
+  fun getTsConfigs(): List<VirtualFile>
+  fun accept(file: VirtualFile): Boolean
+}
+
 private class AngularCliEmptyConfig : AngularCliConfig {
+
   override fun getIndexHtmlFile(): VirtualFile? = null
 
   override fun getGlobalStyleSheets(): Collection<VirtualFile> = emptyList()
@@ -93,6 +111,8 @@ private class AngularCliEmptyConfig : AngularCliConfig {
 
   override fun exists(): Boolean = false
 
+  override fun getTsLintConfigurations(): Collection<TsLintConfiguration> = emptyList()
+
 }
 
 private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSequence) : AngularCliConfig {
@@ -104,6 +124,7 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
   private val myProtractorConfigPath: String?
   private val myIndexHtmlPath: String?
   private val myStyles: List<String>?
+  private val myLintConfigs: List<TsLintConfiguration>
 
   init {
     val mapper = ObjectMapper()
@@ -118,6 +139,17 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
     myProtractorConfigPath = allProjects.mapNotNull { it.targets?.e2e?.options?.protractorConfig }.firstOrNull()
     myIndexHtmlPath = allProjects.mapNotNull { it.targets?.build?.options?.index ?: it.index }.firstOrNull()
     myStyles = allProjects.mapNotNull { it.targets?.build?.options?.styles ?: it.styles }.firstOrNull()
+    myLintConfigs = StreamEx.of(allProjects)
+      .map { it.targets?.lint }
+      .nonNull()
+      .flatCollection { lint ->
+        val result = mutableListOf<TsLintConfigurationImpl>()
+        lint!!.options?.let { result.add(TsLintConfigurationImpl(it)) }
+        lint.configurations.mapTo(result) { (name, config) ->
+          TsLintConfigurationImpl(config, name)
+        }
+        result
+      }.toImmutableList()
   }
 
   private fun resolveFile(filePath: String?): VirtualFile? {
@@ -157,8 +189,66 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
     return myAngularCliJson.parent.findFileByRelativePath(myProtractorConfigPath ?: return null)
   }
 
+  override fun getTsLintConfigurations(): Collection<TsLintConfiguration> = myLintConfigs
+
   override fun exists(): Boolean = true
 
+  override fun toString(): String {
+    return ToStringBuilder.reflectionToString(this, TO_STRING_STYLE)
+  }
+
+  companion object {
+    private val TO_STRING_STYLE = object : ToStringStyle() {
+      init {
+        this.isUseShortClassName = true
+        this.isUseIdentityHashCode = false
+        this.contentStart = "["
+        this.fieldSeparator = SystemUtils.LINE_SEPARATOR + "  "
+        this.isFieldSeparatorAtStart = true
+        this.contentEnd = SystemUtils.LINE_SEPARATOR + "]"
+      }
+    }
+  }
+
+  inner class TsLintConfigurationImpl(val config: AngularCliLintOptions, override val name: String? = null) : TsLintConfiguration {
+
+    private val myIncludePattern = AtomicNullableLazyValue.createValue {
+      val parent = myAngularCliJson.parent
+      TypeScriptConfigUtil.getRegularExpressionForGlobPattern(
+        config.files, parent, TypeScriptConfigUtil.WildCardType.FILES)
+        ?.let { JSPathMappingsUtil.createMappingPattern(it, parent) }
+    }
+    private val myExcludePattern = AtomicNullableLazyValue.createValue {
+      val parent = myAngularCliJson.parent
+      TypeScriptConfigUtil.getRegularExpressionForGlobPattern(
+        config.exclude, parent, TypeScriptConfigUtil.WildCardType.EXCLUDE)
+        ?.let { JSPathMappingsUtil.createMappingPattern(it, parent) }
+    }
+
+    override val format: String? = config.format
+
+    override fun getTsLintConfig(): VirtualFile? = resolveFile(config.tsLintConfig ?: "./tslint.json")
+
+    override fun getTsConfigs(): List<VirtualFile> = config.tsConfig.mapNotNull { resolveFile(it) }
+
+    override fun accept(file: VirtualFile): Boolean {
+      val path = file.path
+      return (myIncludePattern.value?.matcher(path)?.find() ?: true)
+             && !(myExcludePattern.value?.matcher(path)?.find() ?: false)
+    }
+
+    override fun toString(): String {
+      return """
+        AngularCliJsonFileConfig.TsLintConfigurationImpl[
+            name=${name}
+            tsLintConfig=${config.tsLintConfig}
+            tsConfigs=${config.tsConfig}
+            format=${format}
+            includePattern=${myIncludePattern.value}
+            excludePattern=${myExcludePattern.value}
+          ]""".trimIndent()
+    }
+  }
 }
 
 private class AngularCli {
@@ -202,6 +292,9 @@ private class AngularCliTargets {
 
   @JsonProperty("e2e")
   val e2e: AngularCliE2E? = null
+
+  @JsonProperty("lint")
+  val lint: AngularCliLint? = null
 }
 
 private class AngularCliE2E {
@@ -236,6 +329,32 @@ private class AngularCliStylePreprocessorOptions {
   val includePaths: List<String> = ArrayList()
 }
 
+private class AngularCliLint {
+  @JsonProperty("options")
+  val options: AngularCliLintOptions? = null
+
+  @JsonProperty("configurations")
+  val configurations: Map<String, AngularCliLintOptions> = HashMap()
+}
+
+private class AngularCliLintOptions {
+  @JsonProperty
+  @JsonDeserialize(using = StringOrStringArrayDeserializer::class)
+  val tsConfig: List<String> = emptyList()
+
+  @JsonProperty("tslintConfig")
+  val tsLintConfig: String? = null
+
+  @JsonProperty("format")
+  val format: String? = null
+
+  @JsonProperty("files")
+  val files: List<String> = emptyList()
+
+  @JsonProperty("exclude")
+  val exclude: List<String> = emptyList()
+}
+
 private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String>>() {
 
   @Throws(IOException::class)
@@ -265,4 +384,26 @@ private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String
     }
     return files
   }
+}
+
+private class StringOrStringArrayDeserializer : JsonDeserializer<List<String>>() {
+
+  override fun deserialize(jsonParser: JsonParser, deserializationContext: DeserializationContext): List<String> {
+    val items = mutableListOf<String>()
+    when (jsonParser.currentToken) {
+      JsonToken.START_ARRAY ->
+        while (jsonParser.nextToken() !== JsonToken.END_ARRAY) {
+          if (jsonParser.currentToken === JsonToken.VALUE_STRING) {
+            items.add(jsonParser.valueAsString)
+          }
+          else {
+            deserializationContext.handleUnexpectedToken(String::class.java, jsonParser)
+          }
+        }
+      JsonToken.VALUE_STRING -> items.add(jsonParser.valueAsString)
+      else -> deserializationContext.handleUnexpectedToken(String::class.java, jsonParser)
+    }
+    return items
+  }
+
 }

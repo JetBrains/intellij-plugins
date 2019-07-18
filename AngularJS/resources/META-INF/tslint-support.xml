@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <tslint.setupDetector implementation="org.angular2.tslint.TsLintSetupAngularDetector" order="first" id="angular"/>
+  </extensions>
+</idea-plugin>

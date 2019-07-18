@@ -9,6 +9,11 @@
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.tslint.setupDetector"
+                    interface="com.intellij.lang.javascript.linter.tslint.config.TsLintSetupDetector"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
 
     <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.tslint.editor.TsLintCodeStyleEditorNotificationProvider"/>
@@ -40,6 +45,9 @@
     <registryKey key="tslint.service.node.arguments" description="Command line options for TSLint service process"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.tslint.config.TslintOptionsUsageCollector"/>
     <lang.typescript.languageService.extension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypeScriptExtension"/>
+    <tslint.setupDetector implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintSetupDefaultDetector"
+                          id="default"
+                          order="last"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>

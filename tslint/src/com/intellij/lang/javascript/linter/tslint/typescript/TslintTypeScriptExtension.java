@@ -26,7 +26,7 @@ public class TslintTypeScriptExtension implements TypeScriptServiceExtension {
     }
     VirtualFile virtualFile = fileToHighlight.getVirtualFile();
     if (virtualFile != null) {
-      VirtualFile tslintJson = TslintUtil.lookupConfig(virtualFile);
+      VirtualFile tslintJson = TslintUtil.lookupConfig(fileToHighlight.getProject(), virtualFile);
       if (tslintJson != null) {
         return ContainerUtil.newHashSet(tslintJson);
       }
