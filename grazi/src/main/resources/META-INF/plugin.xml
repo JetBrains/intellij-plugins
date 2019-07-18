@@ -4,40 +4,31 @@
     <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">JetBrains</vendor>
 
     <description><![CDATA[
-        Grazi is a proofreader and grammar checker covering over 15 languages,
-        including English, German, Russian, Chinese, and others. It improves the
-        quality of texts written using IntelliJ Platform IDEs by providing
-        intelligent spelling and grammar checking.
+    <strong>Grazi</strong>
 
-        <br/>
+    <p>Provides intelligent spelling and grammar checks for text that you write in the IDE.</p>
 
-        The plugin supports natural language constructs wherever they are: Kotlin,
-        Python, and Java (including literals and docs), comments, Markdown, XML,
-        commit messages and plain text.
+    <ul>
+        <li>Supports over 15 languages, including English, German, Russian, Chinese, and others.</li>
+        <li>Recognizes natural language constructs in programming languages (Kotlin, Python, Java and others),
+            markup languages (Latex, Markdown, XML, HTML), comments, commits messages, and more.</li>
+        <li>Uses LanguageTool as its proofreading engine.</li>
+    </ul>
 
-        <br/>
+    <p>English is enabled by default when you install the plugin. To enable other languages, open Settings/Preferences
+       and select <strong>Tools</strong> > <strong>Grazi</strong>.</p>
 
-        Under the hood, it uses LanguageTool to provide you with the unrivaled
-        performance and accuracy of the leading proofreading and grammar checking engine.
-
-        <br/>
-
-        Note, that all verification is performed locally, inside your IDE. The plugin does not
-        send any of your data anywhere.
-
-        <br/>
-
-        To enable spellchecking or support for other languages (by default English is enabled),
-        use the Grazi settings located at Settings/Preferences -> Tools -> Grazi
+    <p><strong>NOTE:</strong> All verification is performed locally, inside your IDE. The plugin does not send any of
+       your data anywhere.</p>
     ]]></description>
 
     <change-notes><![CDATA[
     <h4>2019.1-3</h4>
     <ul>
-         <li>Huge performance improvements for all languages</li>
-         <li>Grazi spellcheck is enabled by default</li>
-         <li>Reworked inspection tooltips</li>
-         <li>Support of Rust, JSON, JavaScript</li>
+        <li>Huge performance improvements for all languages</li>
+        <li>Fully reworked UI</li>
+        <li>Configurations of enabled rules in UI</li>
+        <li>Support of Rust, JSON, JavaScript, Latex, Properties</li>
     </ul>
     <h4>2019.1-2</h4>
     <ul>
