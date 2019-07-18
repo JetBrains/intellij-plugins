@@ -1,93 +1,83 @@
 package tanvd.grazi.ide
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import kotlinx.html.*
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.ide.quickfix.GraziAddWord
 import tanvd.grazi.ide.quickfix.GraziDisableRule
 import tanvd.grazi.ide.quickfix.GraziRenameTypo
 import tanvd.grazi.ide.quickfix.GraziReplaceTypo
+import tanvd.grazi.ide.ui.msg
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
-    companion object {
-
-
+    companion object : GraziStateLifecycle {
         private fun getProblemMessage(fix: Typo): String {
-            if (GraziPlugin.isTest) return ""
-
-            val message = if (fix.isSpellingTypo) {
-                //language=HTML
-                """
-                    <html>
-                        <body>
-                            <div>
-                                <p>${fix.info.rule.toDescriptionSanitized()}</p>
-                            </div>
-                        </body>
-                    </html>
-                """.trimIndent()
-            } else {
-                val examples = fix.info.incorrectExample?.let {
-                    val corrections = it.corrections.filter { it?.isNotBlank() ?: false }
-                    if (corrections.isEmpty()) {
-                        //language=HTML
-                        """
-                            <tr style='padding-top: 5px;'>
-                                <td valign='top' style='color: gray;'>Incorrect:</td>
-                                <td>${it.toIncorrectHtml()}</td>
-                            </tr>
-                        """.trimIndent()
-
-                    } else {
-                        //language=HTML
-                        """
-                            <tr style='padding-top: 5px;'>
-                                <td valign='top'  style='color: gray;'>Incorrect:</td>
-                                <td style='text-align: left'>${it.toIncorrectHtml()}</td>
-                            </tr>
-                            <tr>
-                                <td valign='top'  style='color: gray;'>Correct:</td>
-                                <td style='text-align: left'>${it.toCorrectHtml()}</td>
-                            </tr>
-                        """.trimIndent()
+            if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
+            return html {
+                if (fix.isSpellingTypo) {
+                    +fix.info.rule.toDescriptionSanitized()
+                } else {
+                    if (fix.fixes.isNotEmpty()) {
+                        p {
+                            style = "padding-bottom: 10px;"
+                            +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
+                        }
                     }
-                } ?: ""
 
-                val fixes = if (fix.fixes.isNotEmpty()) {
-                    //language=HTML
-                    """
-                        <tr><td colspan='2' style='padding-bottom: 3px;'>${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}</td></tr>
-                    """
-                } else ""
+                    p {
+                        fix.info.incorrectExample?.let {
+                            style = "padding-bottom: 8px;"
+                        }
 
-                //language=HTML
-                """
-                    <html>
-                        <body>
-                            <div>
-                                <table>
-                                $fixes
-                                <tr><td colspan='2'>${fix.info.rule.toDescriptionSanitized()}</td></tr>
-                                </table>
-                                <table>
-                                $examples
-                                </table>
-                            </div>
-                        </body>
-                    </html>
-                """.trimIndent()
+                        +fix.info.rule.toDescriptionSanitized()
+                    }
+
+                    table {
+                        cellpading = "0"
+                        cellspacing = "0"
+
+                        fix.info.incorrectExample?.let {
+                            tr {
+                                td {
+                                    valign = "top"
+                                    style = "padding-right: 5px; color: gray; vertical-align: top;"
+                                    +msg("grazi.ui.settings.rules.rule.incorrect")
+                                }
+                                td {
+                                    style = "width: 100%;"
+                                    toIncorrectHtml(it)
+                                }
+                            }
+
+                            if (it.corrections.any { !it.isNullOrBlank() }) {
+                                tr {
+                                    td {
+                                        valign = "top"
+                                        style = "padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                                        +msg("grazi.ui.settings.rules.rule.correct")
+                                    }
+                                    td {
+                                        style = "padding-top: 5px; width: 100%;"
+                                        toCorrectHtml(it)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            if (fix.info.rule.description.length > 50 || (!fix.isSpellingTypo && fix.info.incorrectExample?.example?.length ?: 0 > 50)) {
-                return message.replaceFirst("<div>", "<div style='width: 300px;'>")
-            }
-            return message.filterOutNewLines()
         }
 
         private fun createProblemDescriptor(fix: Typo, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor? {
@@ -112,6 +102,14 @@ class GraziInspection : LocalInspectionTool() {
                         fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
             }
         }
+
+        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
+            if (prevState == newState) return
+
+            ProjectManager.getInstance().openProjects.forEach {
+                DaemonCodeAnalyzer.getInstance(it).restart()
+            }
+        }
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -121,14 +119,13 @@ class GraziInspection : LocalInspectionTool() {
 
                 val typos = HashSet<Typo>()
 
-                for (ext in LanguageSupport.all.filter { it.isSupported(element.language) && it.isRelevant(element) }) {
-                    typos.addAll(ext.getFixes(element))
+                for (ext in LanguageSupport.allForLanguage(element.language).filter { it.isRelevant(element) }) {
+                    typos.addAll(ext.getTypos(element))
                 }
 
-                if (GraziConfig.state.enabledSpellcheck) {
-                    typos.addAll(GraziSpellchecker.getFixes(element))
+                if (GraziConfig.get().enabledSpellcheck) {
+                    typos.addAll(GraziSpellchecker.getTypos(element))
                 }
-
 
                 typos.mapNotNull { createProblemDescriptor(it, holder.manager, isOnTheFly) }.forEach {
                     holder.registerProblem(it)
@@ -139,7 +136,5 @@ class GraziInspection : LocalInspectionTool() {
         }
     }
 
-    override fun getDisplayName(): String {
-        return "Grazi proofreading inspection"
-    }
+    override fun getDisplayName() = "Grazi proofreading inspection"
 }
