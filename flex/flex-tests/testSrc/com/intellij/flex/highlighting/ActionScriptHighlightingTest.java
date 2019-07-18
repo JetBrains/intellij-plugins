@@ -2,7 +2,6 @@
 package com.intellij.flex.highlighting;
 
 import com.intellij.application.options.CodeStyle;
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.Lookup;
@@ -80,14 +79,24 @@ import java.util.Collections;
 import java.util.List;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
+  @NonNls private static final String BASE_PATH = "/js2_highlighting/";
+  protected Runnable myAfterCommitRunnable = null;
+
   @Override
   protected boolean isIconRequired() {
     return true;
   }
 
-  @NonNls private static final String BASE_PATH = "/js2_highlighting/";
+  @Override
+  protected String getBasePath() {
+    return BASE_PATH.substring(0, BASE_PATH.length() - 1);
+  }
 
-  private Runnable myAfterCommitRunnable = null;
+  @Override
+  @NonNls
+  protected String getExtension() {
+    return "js2";
+  }
 
   @NotNull
   @Override
@@ -925,12 +934,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest();
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
-  public void testUnusedSymbols4() throws Exception {
-    enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused inner class 'Foo'");
-  }
-
   public void testUnusedSymbols4_2() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doSimpleHighlightingWithInvokeFixAndCheckResult("Remove unused namespace 'baz'");
@@ -1252,16 +1255,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testHighlightStaticInstanceMembers() {
-    defaultTest();
-  }
-
-  @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testGenerics() {
-    defaultTest();
-  }
-
   public void testGenerics2() {
     defaultTest();
   }
@@ -1327,12 +1320,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
-  public void testOverridingMarkersWithLineMarkers() {
-    //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    defaultTest();
-  }
-
   public void testOverrideTest() throws Exception {
     doOverrideMethodTestWithResultFileCheck();
   }
@@ -1343,18 +1330,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testOverrideTestCustomNs_2() throws Exception {
     doOverrideMethodTestWithResultFileCheck();
-  }
-
-  @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testNoOverrideForInternal() {
-    DaemonCodeAnalyzerSettings myDaemonCodeAnalyzerSettings = DaemonCodeAnalyzerSettings.getInstance();
-    myDaemonCodeAnalyzerSettings.SHOW_METHOD_SEPARATORS = true;
-    try {
-      defaultTest();
-    }
-    finally {
-      myDaemonCodeAnalyzerSettings.SHOW_METHOD_SEPARATORS = false;
-    }
   }
 
   public void testOverrideInInterface() {
@@ -1390,34 +1365,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     invokeNamedActionWithExpectedFileCheck(getTestName(false), "ImplementMethods", "js2");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
-  public void testOverridingMarkers2() {
-    //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, () -> {
-      checkSetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
-      PsiElement at = invokeGotoSuperMethodAction("AAA");
-      checkSetProperty(at);
-      at = invokeShowImplementations(JSFunction.class, at);
-      checkSetProperty(at);
-      at = invokeGotoSuperMethodAction("IAAA");
-      checkSetProperty(at);
-    }, getTestName(false) + ".js2");
-  }
-
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
-  public void testOverridingMarkers3() {
-    //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, () -> {
-      checkGetProperty(myFile.findElementAt(myEditor.getCaretModel().getOffset()));
-      PsiElement at = invokeGotoSuperMethodAction("AAA");
-      checkGetProperty(at);
-      at = invokeShowImplementations(JSFunction.class, at);
-      checkGetProperty(at);
-      at = invokeGotoSuperMethodAction("IAAA");
-      checkGetProperty(at);
-    }, getTestName(false) + ".js2");
-  }
-
   @JSTestOptions(JSTestOption.WithJsSupportLoader)
   public void testShowImplementationsForStatic() {
     doTestFor(true, () -> {
@@ -1426,18 +1373,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                 assertEquals(0, JSTestUtils.getGoToImplementationsResults(at).size());
               },
               getTestName(false) + ".js2");
-  }
-
-  private static void checkSetProperty(final PsiElement at) {
-    final JSFunction parentOfType = PsiTreeUtil.getParentOfType(at, JSFunction.class, false);
-    assertNotNull(parentOfType);
-    assertTrue(parentOfType.isSetProperty());
-  }
-
-  private static void checkGetProperty(final PsiElement at) {
-    final JSFunction parentOfType = PsiTreeUtil.getParentOfType(at, JSFunction.class, false);
-    assertNotNull(parentOfType);
-    assertTrue(parentOfType.isGetProperty());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
@@ -1466,31 +1401,12 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     }, getTestName(false) + ".js2");
   }
 
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
-  public void testImplementsAndImplementedMarkers() {
-    //enableInspectionTool(new JSUnusedLocalSymbolsInspection());
-    doTestFor(true, () -> {
-      PsiElement at = invokeGotoSuperMethodAction("SecondInterface");
-      JSTestUtils.invokeShowImplementations(JSFunction.class, at, 3, false);
-      invokeShowImplemenationsForLineMarker(at, 5);
-    }, getTestName(false) + ".js2");
-  }
-
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testShowImplementationsFromInterface() {
     doTestFor(true, () -> {
       final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
       JSTestUtils.invokeShowImplementations(JSClass.class, at, 3, false);
       invokeShowImplemenationsForLineMarker(at, 3);
-    }, getTestName(false) + ".js2");
-  }
-
-  @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithLineMarkers})
-  public void testShowImplementationsFromInterface2() {
-    doTestFor(true, () -> {
-      final PsiElement at = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-      JSTestUtils.invokeShowImplementations(JSClass.class, at, 2, false);
-      invokeShowImplemenationsForLineMarker(at, 2);
     }, getTestName(false) + ".js2");
   }
 
@@ -1516,11 +1432,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     return at;
   }
 
-  private static PsiElement invokeShowImplementations(final Class<? extends JSNamedElement> destinationClazz, final PsiElement at) {
+  public static PsiElement invokeShowImplementations(final Class<? extends JSNamedElement> destinationClazz, final PsiElement at) {
     return JSTestUtils.invokeShowImplementations(destinationClazz, at, 1, true);
   }
 
-  private static void invokeShowImplemenationsForLineMarker(PsiElement at, int num) {
+  public static void invokeShowImplemenationsForLineMarker(PsiElement at, int num) {
     JSClass c = PsiTreeUtil.getParentOfType(at, JSClass.class);
     int items = (c.isInterface()
                  ? JavaScriptLineMarkerProvider.ourInterfaceImplementationsNavHandler
@@ -1647,8 +1563,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testConditionalBlocks() {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.getCompilerOptions()
-                                                             .setAllOptions(
-                                                               Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
+      .setAllOptions(
+        Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
 
     enableInspectionTool(new BadExpressionStatementJSInspection());
     defaultTest();
@@ -1669,17 +1585,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, testName + ".js2", testName + "_2.js2");
   }
 
-  @Override
-  protected String getBasePath() {
-    return BASE_PATH.substring(0, BASE_PATH.length() - 1);
-  }
-
-  @Override
-  @NonNls
-  protected String getExtension() {
-    return "js2";
-  }
-
   public void testUsingNonPublicNamespace() {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
@@ -1698,21 +1603,10 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testImplementingMarkerFromSwc() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
-    doTestFor(true, getTestName(false) + ".as");
-  }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithUnusedImports})
   public void testNoFqnReplaceInsideNamesake() { // IDEADEV-37712
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as");
-  }
-
-  @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testImplicitImplementMarker() {
-    doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -1835,11 +1729,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testNullQualifiedName() {
-    doTestFor(true, getTestName(false) + ".as");
-  }
-
   // IDEA-56342
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMultinamesInDecompiledSwc() {
@@ -1909,38 +1798,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testInvalidAttribute() {
     doTestFor(true, getTestName(false) + ".as");
-  }
-
-  @JSTestOptions(JSTestOption.WithLineMarkers)
-  public void testStaticMethodDoesNotImplement() throws Exception {
-    final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
-    invokeGotoSuperMethodAction("Impl");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.implement.methods"), "as", infos);
-  }
-
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithoutSourceRoot})
-  public void testLineMarkersInLibrarySource() {
-    myAfterCommitRunnable = new Runnable() {
-      @Override
-      public void run() {
-        VirtualFile file = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getFile();
-        VirtualFile fakeClassFile = getVirtualFile(BASE_PATH + "/" + getTestName(false) + "_2.js2");
-        try {
-          VirtualFile classesDir = file.createChildDirectory(this, "classes");
-          VfsUtilCore.copyFile(this, fakeClassFile, classesDir);
-        }
-        catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-        FlexTestUtils.addFlexLibrary(true, myModule, "lib", true, file.getPath(), "classes", "", null);
-
-        ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-        model.removeContentEntry(model.getContentEntries()[0]);
-        model.commit();
-      }
-    };
-
-    doTestFor(true, getTestName(false) + ".js2");
   }
 
   public void testNoTypeGuessFromAsdoc() throws Exception {
@@ -2440,11 +2297,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testArgumentsInParenthesis() {
     defaultTest(); // IDEA-153275
-  }
-
-  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithSemanticKeywords})
-  public void testSemanticHighlighting() {
-    defaultTest(); // IDEA-110040
   }
 
   public void testNoHtmlInspectionsForXmlLiteral() {
