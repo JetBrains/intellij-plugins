@@ -119,7 +119,7 @@ class GraziInspection : LocalInspectionTool() {
 
                 val typos = HashSet<Typo>()
 
-                for (ext in LanguageSupport.allForLanguage(element.language).filter { it.isRelevant(element) }) {
+                for (ext in LanguageSupport.allForLanguageOrAny(element.language).filter { it.isRelevant(element) }) {
                     typos.addAll(ext.getTypos(element))
                 }
 
