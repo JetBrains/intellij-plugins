@@ -117,7 +117,7 @@
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
-                     displayName="Angular CLI Add Dependency"
+                     displayName="Angular CLI add dependency"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection"
                      displayName="Incorrect component template definition"
