@@ -155,9 +155,16 @@ class CourseManager internal constructor() {
     return ContainerUtil.concat(filterByLanguage(langSupport.primaryLanguage).map { m -> m.lessons }).size
   }
 
+  fun calcPassedLessonsForLanguage(langSupport: LangSupport): Int {
+    return filterByLanguage(langSupport.primaryLanguage)
+        .flatMap { m -> m.lessons }
+        .filter { it.passed }
+        .size
+  }
+
   private fun filterByLanguage(language: String): List<Module> {
     return allModules.filter { m ->
-          m.primaryLanguage!!.equals(language, ignoreCase = true)
+      m.primaryLanguage!!.equals(language, ignoreCase = true)
     }
   }
 

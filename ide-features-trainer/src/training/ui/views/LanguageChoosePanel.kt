@@ -9,6 +9,7 @@ import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.lang.LangSupport
+import training.learn.BundlePlace
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.ui.UISettings
@@ -28,7 +29,13 @@ import javax.swing.text.StyleConstants
 /**
 * @author Sergey Karashevich
 */
-class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : JPanel() {
+
+sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bundleAppendix) {
+    object WELCOME_SCREEN : LanguageChoosePanelPlace("")
+    object TOOL_WINDOW : LanguageChoosePanelPlace(".tool.window")
+}
+
+class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true, val place: LanguageChoosePanelPlace = LanguageChoosePanelPlace.WELCOME_SCREEN ) : JPanel() {
 
     private var caption: JLabel? = null
     private var description: MyJTextPane? = null
@@ -80,7 +87,7 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
                 }
             }
             gotoModulesViewButton!!.isOpaque = false
-            gotoModulesViewButton!!.action = object: AbstractAction(LearnBundle.message("learn.choose.language.button")) {
+            gotoModulesViewButton!!.action = object: AbstractAction(LearnBundle.messageInPlace("learn.choose.language.button", place)) {
                 override fun actionPerformed(e: ActionEvent?) {
                     val activeLangSupport = getActiveLangSupport()
                     LangManager.getInstance().updateLangSupport(activeLangSupport)
@@ -113,15 +120,17 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
 
     private fun initMainPanel() {
 
-        mainPanel = JPanel()
-        mainPanel!!.layout = BoxLayout(mainPanel, BoxLayout.PAGE_AXIS)
-        mainPanel!!.isOpaque = false
-        mainPanel!!.isFocusable = false
+        mainPanel = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+            isOpaque = false
+            isFocusable = false
 
-        mainPanel!!.add(caption)
-        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.afterCaptionGap))
-        mainPanel!!.add(description)
-        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
+            add(caption)
+            add(Box.createVerticalStrut(UISettings.instance.afterCaptionGap))
+            add(description)
+            add(Box.createVerticalStrut(UISettings.instance.groupGap))
+            if (place == LanguageChoosePanelPlace.TOOL_WINDOW) border = UISettings.instance.checkmarkShiftBorder
+        }
 
         try {
             initSouthPanel()
@@ -130,9 +139,9 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
         }
 
 
-        caption!!.text = LearnBundle.message("learn.choose.language.caption")
+        caption!!.text = LearnBundle.messageInPlace("learn.choose.language.caption", place)
         try {
-            description!!.document.insertString(0, LearnBundle.message("learn.choose.language.description"), REGULAR)
+            description!!.document.insertString(0, LearnBundle.messageInPlace("learn.choose.language.description", place), REGULAR)
         } catch (e: BadLocationException) {
             e.printStackTrace()
         }
@@ -149,21 +158,36 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true) : J
 
         val sortedLangSupportExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy {it.language}
 
-        for (langSupportExt in sortedLangSupportExtensions) {
+        for (langSupportExt: LanguageExtensionPoint<LangSupport> in sortedLangSupportExtensions) {
 
-            val lessonsCount = CourseManager.instance.calcLessonsForLanguage(langSupportExt.instance)
-            val lang = Language.findLanguageByID(langSupportExt.language) ?: continue
-            val jrb = JRadioButton("${lang!!.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}) ")
-            jrb.isOpaque = false
-            buttonGroup.add(jrb)
+            val radioButton = createRadioButton(langSupportExt) ?: continue
+            buttonGroup.add(radioButton)
             //add radio buttons
-            myRadioButtonMap.put(jrb, langSupportExt)
-            radioButtonPanel.add(jrb, Component.LEFT_ALIGNMENT)
+            myRadioButtonMap[radioButton] = langSupportExt
+            radioButtonPanel.add(radioButton, Component.LEFT_ALIGNMENT)
         }
-        buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
+        //set selected language if it is not started
+        if (LangManager.getInstance().getLangSupport() != null) {
+            val button = myRadioButtonMap.keys.firstOrNull { myRadioButtonMap[it]?.instance ==  LangManager.getInstance().getLangSupport()}
+            if (button != null) buttonGroup.setSelected(button.model, true)
+            else buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
+        } else {
+            buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
+        }
         mainPanel!!.add(radioButtonPanel)
         mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
         if (myAddButton) mainPanel!!.add(gotoModulesViewButton)
+    }
+
+    private fun createRadioButton(langSupportExt: LanguageExtensionPoint<LangSupport>): JRadioButton? {
+        val lessonsCount = CourseManager.instance.calcLessonsForLanguage(langSupportExt.instance)
+        val lang: Language = Language.findLanguageByID(langSupportExt.language) ?: return null
+        val passedLessons = CourseManager.instance.calcPassedLessonsForLanguage(langSupportExt.instance)
+        val buttonName = "${lang.displayName} ($lessonsCount lesson${if (lessonsCount != 1) "s" else ""}${if (passedLessons > 0) ", $passedLessons passed" else ""}) "
+        val radioButton = JRadioButton(buttonName)
+        radioButton.border = UISettings.instance.radioButtonBorder
+        radioButton.isOpaque = false
+        return radioButton
     }
 
 

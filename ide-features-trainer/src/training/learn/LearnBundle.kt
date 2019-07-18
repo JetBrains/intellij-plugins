@@ -10,15 +10,21 @@ import java.util.*
 /**
  * Created by karashevich on 09/09/15.
  */
+open class BundlePlace(val bundleAppendix: String)
+
 object LearnBundle {
 
   private var ourBundle: Reference<ResourceBundle>? = null
 
-  const @NonNls
-  private val BUNDLE = "training.learn.LearnBundle"
+  @NonNls
+  private const val BUNDLE = "training.learn.LearnBundle"
 
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String {
     return CommonBundle.message(bundle, key, *params)
+  }
+
+  fun messageInPlace(@PropertyKey(resourceBundle = BUNDLE) key: String, bundlePlace: BundlePlace, vararg params: Any): String {
+    return CommonBundle.message(bundle, key + bundlePlace.bundleAppendix, *params)
   }
 
   // Cached loading
