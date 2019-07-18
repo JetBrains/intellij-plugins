@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
@@ -12,7 +13,9 @@ import training.lang.LangSupport
 import training.learn.BundlePlace
 import training.learn.CourseManager
 import training.learn.LearnBundle
+import training.learn.lesson.LessonStateManager
 import training.ui.UISettings
+import training.ui.UiManager
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -35,14 +38,12 @@ sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bund
     object TOOL_WINDOW : LanguageChoosePanelPlace(".tool.window")
 }
 
-class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true, val place: LanguageChoosePanelPlace = LanguageChoosePanelPlace.WELCOME_SCREEN ) : JPanel() {
+class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean = true, val place: LanguageChoosePanelPlace = LanguageChoosePanelPlace.WELCOME_SCREEN ) : JPanel() {
 
     private var caption: JLabel? = null
     private var description: MyJTextPane? = null
 
     private var mainPanel: JPanel? = null
-    private var gotoModulesViewButton: JButton? = null
-    private val myAddButton: Boolean = addButton
 
     private val myRadioButtonMap = HashMap<JRadioButton, LanguageExtensionPoint<LangSupport>>()
     private val buttonGroup = ButtonGroup()
@@ -79,29 +80,6 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true, val
         description!!.margin = Insets(0, 0, 0, 0)
         description!!.border = EmptyBorder(0, 0, 0, 0)
 
-        if (myAddButton) {
-            gotoModulesViewButton = JButton()
-            gotoModulesViewButton!!.action = object : AbstractAction() {
-                override fun actionPerformed(e: ActionEvent) {
-                    gotoModulesViewButton!!.isEnabled = false
-                }
-            }
-            gotoModulesViewButton!!.isOpaque = false
-            gotoModulesViewButton!!.action = object: AbstractAction(LearnBundle.messageInPlace("learn.choose.language.button", place)) {
-                override fun actionPerformed(e: ActionEvent?) {
-                    val activeLangSupport = getActiveLangSupport()
-                    LangManager.getInstance().updateLangSupport(activeLangSupport)
-
-                    val action = ActionManager.getInstance().getAction("learn.open.lesson")
-                    val context = com.intellij.openapi.actionSystem.DataContext.EMPTY_CONTEXT
-                    val event = AnActionEvent.createFromAnAction(action, null, "LearnToolWindow.ChooseLanguageView", context)
-
-                    ActionUtil.performActionDumbAware(action, event)
-                }
-            }
-        }
-
-
         StyleConstants.setFontFamily(REGULAR, UISettings.instance.plainFont.family)
         StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
         StyleConstants.setForeground(REGULAR, UISettings.instance.questionColor)
@@ -115,6 +93,50 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true, val
         StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 0.0f)
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f)
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f)
+    }
+
+    private fun createLearnButton(): JButton {
+        val button = JButton()
+        button.action = object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                button.isEnabled = false
+            }
+        }
+        button.isOpaque = false
+        button.action = object : AbstractAction(LearnBundle.messageInPlace("learn.choose.language.button", place)) {
+            override fun actionPerformed(e: ActionEvent?) {
+                val activeLangSupport = getActiveLangSupport()
+                LangManager.getInstance().updateLangSupport(activeLangSupport)
+
+                val action = ActionManager.getInstance().getAction("learn.open.lesson")
+                val context = DataContext.EMPTY_CONTEXT
+                val event = AnActionEvent.createFromAnAction(action, null, "LearnToolWindow.ChooseLanguageView", context)
+
+                ActionUtil.performActionDumbAware(action, event)
+            }
+        }
+        return button
+    }
+
+    private fun createResetResultsButton(): JButton {
+        val button = JButton()
+        button.action = object : AbstractAction() {
+            override fun actionPerformed(e: ActionEvent) {
+                button.isEnabled = false
+            }
+        }
+        button.isOpaque = false
+        button.action = object : AbstractAction(LearnBundle.message("learn.choose.language.button.reset.tool.window")) {
+            override fun actionPerformed(e: ActionEvent?) {
+                LessonStateManager.resetPassedStatus()
+                myRadioButtonMap.values
+                    .flatMap { CourseManager.instance.getModulesByLanguage(it.instance) }
+                    .flatMap { module -> module.lessons }
+                    .forEach { lesson -> lesson.passed = false }
+                UiManager.setLanguageChooserView()
+            }
+        }
+        return button
     }
 
 
@@ -176,7 +198,11 @@ class LanguageChoosePanel(opaque: Boolean = true, addButton: Boolean = true, val
         }
         mainPanel!!.add(radioButtonPanel)
         mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
-        if (myAddButton) mainPanel!!.add(gotoModulesViewButton)
+        if (addButton) mainPanel!!.add(createLearnButton())
+        if (addButton && place == LanguageChoosePanelPlace.TOOL_WINDOW) {
+            mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.languagePanelButtonsGap))
+            mainPanel!!.add(createResetResultsButton())
+        }
     }
 
     private fun createRadioButton(langSupportExt: LanguageExtensionPoint<LangSupport>): JRadioButton? {
