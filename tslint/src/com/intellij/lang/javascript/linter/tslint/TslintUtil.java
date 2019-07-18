@@ -14,12 +14,14 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintSetupDetector;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +63,20 @@ public class TslintUtil {
   }
 
   @Nullable
+  public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
+    return doGetConfig(state, project, virtualFile);
+  }
+
+  /**
+   * @deprecated Use {@link #lookupConfig(Project, VirtualFile)} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull VirtualFile virtualFile) {
+    return doGetConfig(state, null, virtualFile);
+  }
+
+  private static VirtualFile doGetConfig(@NotNull TsLintState state, @Nullable Project project, @NotNull VirtualFile virtualFile) {
     if (state.isCustomConfigFileUsed()) {
       final String configFilePath = state.getCustomConfigFilePath();
       if (StringUtil.isEmptyOrSpaces(configFilePath)) {
@@ -71,9 +86,25 @@ public class TslintUtil {
       return VfsUtil.findFileByIoFile(configFile, false);
     }
 
-    return lookupConfig(virtualFile);
+    return project != null ? lookupConfig(project, virtualFile) : lookupConfig(virtualFile);
   }
 
+  @Nullable
+  public static VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    for (TsLintSetupDetector detector : TsLintSetupDetector.TS_LINT_SETUP_DETECTOR_EP.getExtensionList()) {
+      TsLintSetupDetector.TsLintSetup setup = detector.detectSetup(project, virtualFile);
+      if (setup != null) {
+        return setup.getTsLintConfig();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @deprecated Use {@link #lookupConfig(Project, VirtualFile)} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   @Nullable
   public static VirtualFile lookupConfig(@NotNull VirtualFile virtualFile) {
     return JSLinterConfigFileUtil.findFileUpToFileSystemRoot(virtualFile, CONFIG_FILE_NAMES);

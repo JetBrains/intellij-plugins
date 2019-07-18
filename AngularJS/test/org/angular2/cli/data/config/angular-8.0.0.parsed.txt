@@ -6,4 +6,12 @@ AngularCliJsonFileConfig[
   myProtractorConfigPath=e2e/protractor.conf.js
   myIndexHtmlPath=src/index.html
   myStyles=[foo, src/styles.scss]
+  myLintConfigs=[AngularCliJsonFileConfig.TsLintConfigurationImpl[
+    name=null
+    tsLintConfig=null
+    tsConfigs=[tsconfig.app.json, tsconfig.spec.json, e2e/tsconfig.json]
+    format=null
+    includePattern=null
+    excludePattern=null
+  ]]
 ]

@@ -97,7 +97,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   protected TsLinterInput createInfo(@NotNull PsiFile psiFile,
                                      TsLintState state,
                                      EditorColorsScheme colorsScheme) {
-    VirtualFile config = TslintUtil.getConfig(state, psiFile.getVirtualFile());
+    VirtualFile config = TslintUtil.getConfig(state, psiFile.getProject(), psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;

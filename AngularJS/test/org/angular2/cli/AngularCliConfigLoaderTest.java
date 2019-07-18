@@ -7,9 +7,6 @@ import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import one.util.streamex.StreamEx;
 import org.angularjs.AngularTestUtil;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -66,15 +63,7 @@ public class AngularCliConfigLoaderTest extends BasePlatformTestCase {
 
     AngularCliConfig config = ReadAction.compute(() -> AngularCliConfigLoader.load(getProject(), vFile));
 
-    myFixture.configureByText("out.txt", ToStringBuilder.reflectionToString(config, new ToStringStyle() {{
-      this.setUseShortClassName(true);
-      this.setUseIdentityHashCode(false);
-
-      this.setContentStart("[");
-      this.setFieldSeparator(SystemUtils.LINE_SEPARATOR + "  ");
-      this.setFieldSeparatorAtStart(true);
-      this.setContentEnd(SystemUtils.LINE_SEPARATOR + "]");
-    }})+ "\n");
+    myFixture.configureByText("out.txt", config.toString() + "\n");
     myFixture.checkResultByFile(myFileName + ".parsed.txt", true);
   }
 }

@@ -78,7 +78,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   @Nullable
   public final CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
-    VirtualFile config = TslintUtil.getConfig(state, virtualFile);
+    VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
       if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {

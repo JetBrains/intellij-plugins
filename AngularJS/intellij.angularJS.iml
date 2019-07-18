@@ -56,5 +56,6 @@
     <orderEntry type="module" module-name="intellij.html.tools" scope="TEST" />
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
+    <orderEntry type="module" module-name="intellij.tslint" />
   </component>
 </module>
