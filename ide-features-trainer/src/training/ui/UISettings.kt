@@ -46,6 +46,7 @@ class UISettings {
     val labelLineGap: Int by lazy { JBUI.scale(12) }
     val moduleNameSeparatorGap: Int by lazy { JBUI.scale(5) }
     val moduleNameLessonsGap: Int by lazy { JBUI.scale(10) }
+    val languagePanelButtonsGap: Int by lazy { JBUI.scale(8) }
 
     //FONTS
     val fontSize: Int by lazy { UISettings.instance.fontSize.ifZero(JBUI.scale(13)) }

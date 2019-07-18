@@ -168,6 +168,10 @@ class CourseManager internal constructor() {
     }
   }
 
+  fun getModulesByLanguage(langSupport: LangSupport): List<Module> {
+    return filterByLanguage(langSupport.primaryLanguage)
+  }
+
   companion object {
     const val NOTIFICATION_ID = "Training plugin"
 
