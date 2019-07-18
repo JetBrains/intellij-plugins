@@ -49,7 +49,7 @@ class ExampleClassWithTypos {
      * @return {Number} the new size <warning descr="DT_DT">a the</warning> group.
      */
     badFunction(member) {
-        return 1; // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1; // It <warning descr="IT_VBZ">are</warning> <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }
 

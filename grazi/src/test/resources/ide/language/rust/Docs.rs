@@ -66,6 +66,6 @@ impl ExampleClassWithTypos {
     /// Int -- the new size <warning descr="DT_DT">a the</warning> group.
     ///
     pub fn good_function(member: &str) -> Int {
-        return 1 // <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1 // It <warning descr="IT_VBZ">are</warning> <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
     }
 }
