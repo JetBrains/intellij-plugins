@@ -14,7 +14,9 @@ accuracy among free (and even non-free) alternatives.
 
 In general, *Grazi is a Grammarly inside your IDE*. 
 
-![Usage of Grazi plugin](https://media.giphy.com/media/kbWMEsvlqSIv4mcTX7/giphy.gif)
+<p align="center">
+  <img src="https://media.giphy.com/media/kbWMEsvlqSIv4mcTX7/giphy.gif">
+</p>
 
 ## What's inside
 
