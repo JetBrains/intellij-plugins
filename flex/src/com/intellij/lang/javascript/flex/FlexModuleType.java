@@ -38,6 +38,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
     return FlexBundle.message("flash.module.type.description");
   }
 
+  @NotNull
   @Override
   public Icon getNodeIcon(final boolean isOpened) {
     return FlexIcons.Flex.Flash_module_closed;

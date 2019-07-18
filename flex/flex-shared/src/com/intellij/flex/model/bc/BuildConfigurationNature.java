@@ -3,6 +3,7 @@ package com.intellij.flex.model.bc;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.openapi.util.text.StringUtil;
 import icons.FlexSharedIcons;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -65,6 +66,7 @@ public class BuildConfigurationNature {
     return result;
   }
 
+  @NotNull
   public Icon getIcon() {
     switch (targetPlatform) {
       case Web:
