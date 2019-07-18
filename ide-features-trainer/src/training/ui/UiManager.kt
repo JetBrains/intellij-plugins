@@ -4,6 +4,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
 import training.learn.interfaces.Lesson
+import training.ui.views.LanguageChoosePanel
+import training.ui.views.LanguageChoosePanelPlace
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 
@@ -21,6 +23,16 @@ object UiManager {
     val factory = LearnToolWindowFactory()
     factory.createToolWindowContent(project, windowManager.getToolWindow(learnToolWindow))
     LOG.debug("updateToolWindow")
+  }
+
+  fun setLanguageChooserView() {
+    LearnToolWindowFactory.learnWindowPerProject.keys
+        .forEach {
+          if (it.isOpen) {
+            setLanguageViewPerProject(it)
+          }
+        }
+    LOG.debug("setLangView")
   }
 
   fun setLessonView() {
@@ -141,6 +153,14 @@ object UiManager {
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
     val scrollPane = myLearnToolWindow.scrollPane ?: return
     scrollPane.setViewportView(learnPanelPerProject[project])
+    scrollPane.revalidate()
+    scrollPane.repaint()
+  }
+
+  private fun setLanguageViewPerProject(project: Project) {
+    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
+    val scrollPane = myLearnToolWindow.scrollPane ?: return
+    scrollPane.setViewportView(LanguageChoosePanel(place = LanguageChoosePanelPlace.TOOL_WINDOW))
     scrollPane.revalidate()
     scrollPane.repaint()
   }
