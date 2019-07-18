@@ -43,16 +43,16 @@ module Teamcity
           close_scenario_outline
         end
 
-        rule = get_rule(event.test_case)
-        if @current_rule != rule
-          close_rule
-          open_rule(rule) if rule
-        end
-
         feature_file = event.test_case.location.file
         if @current_feature_file.nil? || feature_file != @current_feature_file
           close_feature
           open_feature(feature_file)
+        end
+
+        rule = get_rule(event.test_case)
+        if @current_rule != rule
+          close_rule
+          open_rule(rule) if rule
         end
 
         location = event.test_case.location
@@ -83,7 +83,12 @@ module Teamcity
           return
         end
 
-        duration_ms = event.result.duration.nanoseconds / 1000
+        if event.result.duration.kind_of?(::Cucumber::Core::Test::Result::Duration)
+          duration_ms = event.result.duration.nanoseconds / 1000
+        else
+          duration_ms = 0
+        end
+
         if event.result.kind_of?(::Cucumber::Core::Test::Result::Skipped)
           result = :skipped
         elsif event.result.kind_of?(::Cucumber::Core::Test::Result::Pending)
