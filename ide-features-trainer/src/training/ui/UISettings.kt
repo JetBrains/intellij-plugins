@@ -35,6 +35,7 @@ class UISettings {
     val moduleGap: Int by lazy { JBUI.scale(20) }
     val progressGap: Int by lazy { JBUI.scale(12) }
     val lessonGap: Int by lazy { JBUI.scale(12) }
+    val radioButtonGap: Int by lazy { JBUI.scale(3) }
 
     val lessonNameGap: Int by lazy { JBUI.scale(5) }
     val beforeButtonGap: Int by lazy { JBUI.scale(20) }
@@ -49,7 +50,7 @@ class UISettings {
     //FONTS
     val fontSize: Int by lazy { UISettings.instance.fontSize.ifZero(JBUI.scale(13)) }
     val fontFace: String by lazy { UISettings.instance.fontFace ?: JLabel().font.fontName }
-    val moduleNameFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize + 4) }
+    val moduleNameFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize + 1) }
     val plainFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize) }
     val italicFont: Font by lazy { plainFont.deriveFont(Font.ITALIC) }
     val boldFont: Font by lazy { plainFont.deriveFont(Font.BOLD) }
@@ -70,8 +71,11 @@ class UISettings {
     val radioButtonLabelColor = descriptionColor
     var questionColor = lessonActiveColor
 
+    //BORDERS
     val emptyBorder: Border
         get() = EmptyBorder(northInset, westInset, southInset, eastInset)
+    val radioButtonBorder: Border
+        get() = EmptyBorder(radioButtonGap, 0, radioButtonGap, 0)
 
     val checkmarkShiftBorder: Border
         get() = EmptyBorder(0, checkIndent, 0, 0)
