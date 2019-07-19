@@ -86,7 +86,10 @@ public class CucumberJavaTestUtil {
   }
 
   protected static void attachStandardCucumberLibraries(@NotNull ModifiableRootModel model) {
-    PsiTestUtil.addProjectLibrary(model, "cucumber-java", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-java"));
+    IntelliJProjectConfiguration.LibraryRoots
+      libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java");
+    PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
+
     PsiTestUtil.addProjectLibrary(model, "cucumber-jvm-deps", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-testing"));
     PsiTestUtil.addLibrary(model, "cucumber-java8", PathManager.getHomePath() + "/community/lib", "cucumber-java8-1.2.4.jar");
   }

@@ -32,7 +32,6 @@
     </orderEntry>
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="intellij.java.impl" />
-    <orderEntry type="library" name="cucumber-core" level="project" />
     <orderEntry type="module" module-name="intellij.cucumber.java" />
   </component>
 </module>
