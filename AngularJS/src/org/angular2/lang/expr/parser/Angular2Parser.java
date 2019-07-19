@@ -478,7 +478,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
         builder.advanceLexer();
       }
 
-      parsePropertyInitializer();
+      parsePropertyInitializer(false);
 
       property.done(PROPERTY);
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
