@@ -29,7 +29,7 @@ public class GherkinScenarioImpl extends GherkinStepsHolderBase implements Gherk
 
   @Override
   protected String getPresentableText() {
-    return buildPresentableText(isBackground() ? "Background" : "Scenario");
+    return buildPresentableText(isBackground() ? "Background" : getScenarioKeyword());
   }
 
   @Override
