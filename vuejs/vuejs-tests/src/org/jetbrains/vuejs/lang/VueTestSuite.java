@@ -43,7 +43,8 @@ import org.junit.runners.Suite;
   VueParserTest.class,
   VueEmmetTest.class,
   VueModuleImportTest.class,
-  VueTypeScriptHighlightingTest.class
+  VueTypeScriptHighlightingTest.class,
+  VueTypeScriptLineMarkersTest.class
 })
 public class VueTestSuite {
 }
