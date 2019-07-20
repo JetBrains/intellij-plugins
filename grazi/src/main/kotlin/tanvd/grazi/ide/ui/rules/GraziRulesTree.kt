@@ -88,6 +88,8 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
                 if (filter.isNullOrBlank()) {
                     TreeUtil.collapseAll(tree, 0)
                     expansionMonitor.restore()
+                } else {
+                    expansionMonitor.unfreeze()
                 }
             }
         }
@@ -157,11 +159,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
     fun reset() {
         state.clear()
-        expansionMonitor.freeze()
-        reset(LangTool.allRulesWithLangs())
-        (tree.model as DefaultTreeModel).reload()
-        TreeUtil.collapseAll(tree, 0)
-        expansionMonitor.restore()
+        _filter?.filter()
     }
 
     private fun reset(rules: RulesMap) {
