@@ -23,7 +23,7 @@ import tanvd.kex.buildList
 
 class GraziInspection : LocalInspectionTool() {
     companion object : GraziStateLifecycle {
-        private fun getProblemMessage(fix: Typo): String {
+        private fun getProblemMessage(fix: Typo, isOnTheFly: Boolean): String {
             if (ApplicationManager.getApplication().isUnitTestMode) return fix.info.rule.id
             return html {
                 if (fix.isSpellingTypo) {
@@ -33,6 +33,7 @@ class GraziInspection : LocalInspectionTool() {
                         p {
                             style = "padding-bottom: 10px;"
                             +"${fix.word} &rarr; ${fix.fixes.take(3).joinToString(separator = "/")}"
+                            if (!isOnTheFly) nbsp()
                         }
                     }
 
@@ -42,6 +43,7 @@ class GraziInspection : LocalInspectionTool() {
                         }
 
                         +fix.info.rule.toDescriptionSanitized()
+                        if (!isOnTheFly) nbsp()
                     }
 
                     table {
@@ -54,10 +56,12 @@ class GraziInspection : LocalInspectionTool() {
                                     valign = "top"
                                     style = "padding-right: 5px; color: gray; vertical-align: top;"
                                     +msg("grazi.ui.settings.rules.rule.incorrect")
+                                    if (!isOnTheFly) nbsp()
                                 }
                                 td {
                                     style = "width: 100%;"
                                     toIncorrectHtml(it)
+                                    if (!isOnTheFly) nbsp()
                                 }
                             }
 
@@ -67,10 +71,12 @@ class GraziInspection : LocalInspectionTool() {
                                         valign = "top"
                                         style = "padding-bottom: 5px; padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
                                         +msg("grazi.ui.settings.rules.rule.correct")
+                                        if (!isOnTheFly) nbsp()
                                     }
                                     td {
                                         style = "padding-bottom: 5px; padding-top: 5px; width: 100%;"
                                         toCorrectHtml(it)
+                                        if (!isOnTheFly) nbsp()
                                     }
                                 }
                             }
@@ -98,7 +104,7 @@ class GraziInspection : LocalInspectionTool() {
                     add(GraziDisableRule(fix))
                 }
 
-                manager.createProblemDescriptor(element, fix.toSelectionRange(), getProblemMessage(fix),
+                manager.createProblemDescriptor(element, fix.toSelectionRange(), getProblemMessage(fix, isOnTheFly),
                         fix.info.category.highlight, isOnTheFly, *fixes.toTypedArray())
             }
         }

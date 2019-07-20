@@ -16,3 +16,5 @@ var TABLE.cellspacing: String
 var TD.valign: String
     get() = attributes["valign"] ?: ""
     set(value) { attributes["valign"] = value }
+
+fun FlowContent.nbsp() = +"&nbsp;"

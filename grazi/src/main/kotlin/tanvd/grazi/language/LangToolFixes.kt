@@ -1,20 +1,21 @@
 package tanvd.grazi.language
 
 import org.languagetool.rules.Rule
+import tanvd.grazi.utils.safeSubstring
 
 enum class LangToolFixes(private val ruleId: String, private val fix: (suggestion: String) -> String) {
     ARTICLE_MISSING("ARTICLE_MISSING", {
-        val suggestion = it.replace("\\s+".toRegex()," ")
+        val suggestion = it.replace("\\s+".toRegex(), " ")
         when {
-            suggestion.startsWith("The") -> "The " + suggestion[4].toLowerCase() + suggestion.substring(5)
-            suggestion.startsWith("A") -> "A " + suggestion[2].toLowerCase() + suggestion.substring(3)
+            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalize()
+            suggestion.startsWith("A") -> "A " + suggestion.safeSubstring(2).decapitalize()
             else -> suggestion
         }
     }),
     THE_SUPERLATIVE("THE_SUPERLATIVE", {
-        val suggestion = it.replace("\\s+".toRegex()," ")
+        val suggestion = it.replace("\\s+".toRegex(), " ")
         when {
-            suggestion.startsWith("The") -> "The " + suggestion[4].toLowerCase() + suggestion.substring(5)
+            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalize()
             else -> suggestion
         }
     });
