@@ -1,3 +1,4 @@
+import org.jetbrains.intellij.tasks.PrepareSandboxTask
 import org.jetbrains.intellij.tasks.PublishTask
 import org.jetbrains.intellij.tasks.RunIdeTask
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
@@ -36,7 +37,8 @@ intellij {
             "nl.rubensten.texifyidea:0.6.6",
             "CSS",
             "JavaScriptLanguage",
-            "properties"
+            "properties",
+            "com.intellij.testGuiFramework:0.9.44.1@nightly"
     )
 }
 
@@ -50,12 +52,45 @@ tasks.withType<KotlinJvmCompile> {
 
 tasks.withType<RunIdeTask> {
     jvmArgs("-Xmx1g")
+
+    systemProperties((System.getProperties() as Map<String, Any>).filter { it.key.startsWith("idea") || it.key.startsWith("jb") }.toMutableMap())
+    args (System.getProperty("exec.args", "").split(","))
 }
 
 tasks.withType<PublishTask> {
     username(System.getenv("publish_username"))
     token(System.getenv("publish_token"))
     channels(channel)
+}
+
+tasks.create("guiTest", Test::class) {
+    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/ui/"
+    val props = (System.getProperties() as Map<String, Any>).filter { it.key.startsWith("idea") || it.key.startsWith("jb") }.toMutableMap()
+    props["idea.gui.tests.gradle.runner"] = true
+    systemProperties(props)
+    include("**/*TestSuite*")
+}
+
+val testsJar = tasks.create("testsJar", Jar::class) {
+    classifier = "tests"
+
+    from (sourceSets.test.get().output)
+}
+
+tasks.withType<PrepareSandboxTask> {
+    from(testsJar) {
+        into ("testGuiFramework/lib")
+    }
+
+    from (sourceSets.test.get().resources) {
+        exclude ("META-INF")
+        into ("testGuiFramework/lib")
+    }
+
+    from (sourceSets.main.get().resources) {
+        exclude ("META-INF")
+        into ("testGuiFramework/lib")
+    }
 }
 
 detekt {
