@@ -31,7 +31,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   @NotNull
   @Override
   protected String getPackageName() {
-    return "tslint";
+    return TslintUtil.PACKAGE_NAME;
   }
 
   public void testOne() {
