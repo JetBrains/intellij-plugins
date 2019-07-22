@@ -21,6 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
 import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
@@ -458,7 +459,8 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun, @NotNull DartClass... rootDartClasses) {
+  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun,
+                                              @NotNull DartClass... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(dartClass -> {
       unfilteredResult.addAll(fun.fun(dartClass));
@@ -830,8 +832,8 @@ public class DartResolveUtil {
       assert prevSibling != null;
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();
-      // If the last child is a comma, then the index needs to be decremented
-      if (!prevSibling.getLastChild().getText().equals(",")) {
+      // If the last argument list doesn't end with a comma, then the index needs to be decremented
+      if (prevSibling.getLastChild().getNode().getElementType() != DartTokenTypes.COMMA) {
         parameterIndex--;
       }
     }
