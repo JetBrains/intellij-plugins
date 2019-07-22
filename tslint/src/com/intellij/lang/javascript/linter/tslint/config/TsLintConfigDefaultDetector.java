@@ -10,12 +10,12 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.lang.javascript.linter.tslint.TslintUtil.CONFIG_FILE_NAMES;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 
-public class TsLintSetupDefaultDetector implements TsLintSetupDetector {
+public class TsLintConfigDefaultDetector implements TsLintConfigDetector {
 
   @Nullable
   @Override
-  public TsLintSetup detectSetup(@NotNull Project project, @NotNull VirtualFile fileToBeLinted) {
+  public TsLintConfigs detectConfigs(@NotNull Project project, @NotNull VirtualFile fileToBeLinted) {
     return doIfNotNull(JSLinterConfigFileUtil.findFileUpToFileSystemRoot(fileToBeLinted, CONFIG_FILE_NAMES),
-                       file -> TsLintSetupDetector.builder(file).build());
+                       file -> new TsLintConfigDetector.TsLintConfigs(file, null));
   }
 }

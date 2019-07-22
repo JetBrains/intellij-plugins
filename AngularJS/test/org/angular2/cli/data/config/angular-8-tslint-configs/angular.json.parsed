@@ -1,0 +1,30 @@
+ AngularConfig {
+   defaultProject: Webstorm-Test
+   projects: [
+     AngularProject {
+       name: Webstorm-Test
+       rootDir: temp:///src
+       indexHtml: temp:///src/src/index.html
+       globalStyleSheets: [temp:///src/src/styles.scss]
+       stylePreprocessorIncludeDirs: []
+       karmaConfigFile: temp:///src/karma.conf.js
+       protractorConfigFile: temp:///src/e2e/protractor.conf.js
+       tsLintConfigurations: [
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/tsconfig.app.json, temp:///src/e2e/tsconfig.json]
+           includePattern=null
+           excludePattern=^((\/src(\/.+?)?\/[^\/]*\.spec\.ts))($|\/)
+         },
+         TsLintConfiguration {
+           name=spec
+           tsLintConfig=temp:///src/tslint.spec.json
+           tsConfigs=[temp:///src/tsconfig.spec.json]
+           includePattern=^((\/src(\/.+?)?\/[^\/]*\.spec\.ts))$
+           excludePattern=null
+         }
+       ]
+     }
+   ]
+ }

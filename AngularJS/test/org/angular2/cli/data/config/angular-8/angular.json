@@ -23,13 +23,16 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": false,
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            },
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
               {
-                "input": "foo",
+                "input": "foo.scss",
                 "lazy": false
               },
               "src/styles.scss"

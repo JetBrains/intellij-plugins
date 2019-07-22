@@ -1,34 +1,33 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.tslint
 
-import com.intellij.lang.javascript.linter.tslint.config.TsLintSetupDetector
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService.Provider.parseConfigFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFileBase
-import org.angular2.cli.load
+import org.angular2.cli.config.AngularConfigProvider
 import org.angular2.lang.Angular2LangUtil
 
-class TsLintSetupAngularDetector : TsLintSetupDetector {
+class TsLintConfigAngularDetector : TsLintConfigDetector {
 
-  override fun detectSetup(project: Project, fileToBeLinted: VirtualFile): TsLintSetupDetector.TsLintSetup? {
+  override fun detectConfigs(project: Project, fileToBeLinted: VirtualFile): TsLintConfigDetector.TsLintConfigs? {
     if (!Angular2LangUtil.isAngular2Context(project, fileToBeLinted))
       return null
     var file: VirtualFile? = fileToBeLinted
     while (file is LightVirtualFileBase) {
       file = file.originalFile
     }
-    return load(project, file ?: return null)
-      .getTsLintConfigurations()
-      .find { it.getTsLintConfig() != null && it.accept(file) }
+    return AngularConfigProvider.getAngularProject(project, file ?: return null)
+      ?.tsLintConfigurations
+      ?.find { it.tsLintConfig != null && it.accept(file) }
       ?.let {
-        TsLintSetupDetector.builder(it.getTsLintConfig()!!)
-          .setFormat(it.format)
-          .setTsConfig(it.getTsConfigs().find { tsConfig ->
+        TsLintConfigDetector.TsLintConfigs(
+          it.tsLintConfig!!,
+          it.tsConfigs.find { tsConfig ->
             parseConfigFile(project, tsConfig).include
               .accept(file)
           })
-          .build()
       }
   }
 }

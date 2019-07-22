@@ -101,28 +101,27 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": "apps/internal-app/tsconfig.app.json",
-            "tslintConfig": "apps/app-name/tslint.json",
-            "files": [
-              "apps/app-name/src/**/*.ts"
+            "tsConfig": [
+              "tsconfig.app.json",
+              "e2e/tsconfig.json"
             ],
             "exclude": [
-              "test.ts",
-              "**/*.spec.ts",
-              "**/*.ui-spec.ts",
-              "**/testing/**"
+              "**/node_modules/**",
+              "**/test/**",
+              "**/*.spec.ts"
             ]
           },
           "configurations": {
-            "specs": {
-              "tsConfig": "apps/app-name/tsconfig.spec.json",
-              "tslintConfig": "./tslint.spec.json",
+            "spec": {
+              "tslintConfig": "tslint.spec.json",
+              "tsConfig": "tsconfig.spec.json",
               "files": [
-                "apps/app-name/src/**/*.spec.ts",
-                "apps/app-name/src/**/*.ui-spec.ts",
-                "apps/app-name/src/**/testing/**/*.ts"
+                "**/*.spec.ts",
+                "**/test/**/*.ts"
               ],
-              "exclude": []
+              "exclude": [
+                "**/node_modules/**"
+              ]
             }
           }
         },
