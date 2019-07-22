@@ -5,6 +5,7 @@
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartYamlFileTypeFactory"/>
+    <!--<fileType name="YAML" fileNames=".analysis_options"/> TODO: uncomment this when YAMLFileTypeLoader is removed and changed to <fileType .../> registration as well (at the moment of writing it would break 3rd party plugin) -->
     <completion.contributor language="yaml" implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerCompletionContributor"/>
     <annotator language="yaml" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
   </extensions>
