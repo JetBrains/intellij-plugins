@@ -833,7 +833,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void checkNavigatableSymbols(String s) {
     JavaScriptIndex scriptIndex = JavaScriptIndex.getInstance(myProject);
-    String[] strings = scriptIndex.getSymbolNames();
+    String[] strings = JSIndexTest.getSymbolNames(myProject);
     Arrays.sort(strings);
 
     assertTrue(Arrays.binarySearch(strings, s) >= 0);
