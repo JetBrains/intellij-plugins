@@ -8,7 +8,7 @@
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="org.jetbrains.plugins.cucumber.psi.CucumberFileTypeFactory"/>
+    <fileType name="Cucumber" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFileType" fieldName="INSTANCE" language="Gherkin" extensions="feature"/>
     <lang.syntaxHighlighterFactory language="Gherkin"
                                    implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinSyntaxHighlighterFactory"/>
 
