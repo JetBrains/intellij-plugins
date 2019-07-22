@@ -10,7 +10,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -1509,7 +1509,7 @@ public class FlexDebugProcess extends XDebugProcess {
             .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
               @Override
               protected void hyperlinkActivated(final HyperlinkEvent e) {
-                ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
               }
             });
         }

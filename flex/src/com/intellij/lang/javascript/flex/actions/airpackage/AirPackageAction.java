@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
@@ -200,7 +201,7 @@ public class AirPackageAction extends DumbAwareAction {
             if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
               notification.expire();
               final String packagePath = event.getDescription();
-              ShowFilePathAction.openFile(new File(packagePath));
+              RevealFileAction.openFile(new File(packagePath));
             }
           }
         };

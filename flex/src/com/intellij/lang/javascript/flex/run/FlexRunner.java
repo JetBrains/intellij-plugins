@@ -15,7 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
@@ -121,7 +121,7 @@ public class FlexRunner extends FlexBaseRunner {
                   .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
                     @Override
                     protected void hyperlinkActivated(final HyperlinkEvent e) {
-                      ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                      RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
                     }
                   });
               }
