@@ -63,8 +63,8 @@ class VueXmlExtension : HtmlXmlExtension() {
   }
 
   override fun isCollapsibleTag(tag: XmlTag?): Boolean = false
-  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor
-  override fun isSingleTagException(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor
+  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSelfClosingTagAllowed(tag)
+  override fun isSingleTagException(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSingleTagException(tag)
 
   override fun createTagNameReference(nameElement: ASTNode?, startTagFlag: Boolean): TagNameReference? {
     val parentTag = nameElement?.treeParent as? XmlTag
