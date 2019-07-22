@@ -42,7 +42,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
   public SearchScope getUseScope() {
     // LocalSearchScope enables in-place rename. See DartRefactoringSupportProvider.isInplaceRenameAvailable() and its usages.
     DartComponentType type = DartComponentType.typeOf(this);
-    if (type == DartComponentType.PARAMETER || type == DartComponentType.LOCAL_VARIABLE) {
+    if (type == DartComponentType.LOCAL_VARIABLE) {
       // this -> name, parent -> component, but we need next component up the tree.
       DartComponent parentComponent = PsiTreeUtil.getParentOfType(getParent(), DartComponent.class);
       return new LocalSearchScope(parentComponent != null ? parentComponent : getContainingFile());
