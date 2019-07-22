@@ -43,6 +43,9 @@ internal class AngularJsonProject : AngularJsonBuildOptionsBase() {
   @JsonProperty("root")
   val rootPath: String? = null
 
+  @JsonProperty("sourceRoot")
+  val sourceRoot: String? = null
+
   @JsonProperty("targets")
   @JsonAlias(value = ["architect"])
   val targets: AngularJsonTargets? = null

@@ -22,7 +22,12 @@ class AngularLintConfiguration internal constructor(private val project: Angular
   }
 
   val tsLintConfig: VirtualFile?
-    get() = project.resolveFile(config.tsLintConfig ?: "./tslint.json")
+    get() = if (config.tsLintConfig != null) {
+      project.resolveFile(config.tsLintConfig)
+    }
+    else {
+      project.rootDir?.findChild("tslint.json")
+    }
 
   val tsConfigs: List<VirtualFile>
     get() = config.tsConfig.mapNotNull { project.resolveFile(it) }
