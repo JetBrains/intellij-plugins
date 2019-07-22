@@ -6,8 +6,7 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.lang.javascript.BaseJSCompletionTestCase.checkJSStringCompletion
-import com.intellij.lang.javascript.BaseJSCompletionTestCase.getLocationPresentation
+import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -1598,6 +1597,34 @@ $script""")
     assertContainsElements(myFixture.lookupElementStrings!!,
                            "component-prop", "mixin-prop", "decorated-mixin-prop", "decorated-mixin-prop2")
     assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
+  }
+
+  fun testDestructuringVariableTypeInVFor() {
+    configureVueDefinitions()
+    myFixture.configureByText("PersonDetails.vue",
+"""<template>
+            <li v-for="{name} in items">
+                {{name.<caret>}}
+            </li>
+        </template>
+        
+        <script lang="ts">
+          import Vue from 'vue';
+          import Component from 'vue-class-component';
+          import { Prop } from 'vue-property-decorator';
+        
+          @Component
+          export default class PersonDetails extends Vue {
+            @Prop()
+            public items: {name: {first, last}}[];
+        
+            m() {
+        
+            }
+          }
+        </script>""")
+    myFixture.completeBasic()
+    assertStartsWith(myFixture.lookupElements!!, "first", "last")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

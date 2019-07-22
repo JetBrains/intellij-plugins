@@ -3,11 +3,9 @@ package org.jetbrains.vuejs.lang.expr
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.psi.JSParenthesizedExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSVarStatement
-import com.intellij.lang.javascript.psi.JSVariable
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl
+import com.intellij.lang.javascript.psi.impl.JSForInStatementImpl
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl
 import com.intellij.lang.javascript.psi.stubs.JSVariableStubBase
 import com.intellij.lang.javascript.types.JSEmbeddedContentElementType
@@ -57,6 +55,10 @@ open class _VueVForExpression(vueJSElementType: IElementType) : JSExpressionImpl
   }
 
   fun getReferenceExpression(): PsiElement? = children.firstOrNull { it is JSReferenceExpression }
+
+  fun getCollectionExpression(): JSExpression? {
+    return JSForInStatementImpl.findCollectionExpression(this)
+  }
 }
 
 class VueVForExpression(vueJSElementType: IElementType) : org.jetbrains.vuejs.language.VueVForExpression(vueJSElementType)
