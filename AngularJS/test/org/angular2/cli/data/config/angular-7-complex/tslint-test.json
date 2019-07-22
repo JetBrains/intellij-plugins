@@ -1,0 +1,5 @@
+{
+  "src/test.spec.ts": "/src/tslint.json",
+  "src/test.ts": "/src/tslint.json",
+  "e2e/test.ts": "/src/tslint-e2e.json"
+}

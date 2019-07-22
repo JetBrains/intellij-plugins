@@ -14,7 +14,7 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
-import com.intellij.lang.javascript.linter.tslint.config.TsLintSetupDetector;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -91,8 +91,8 @@ public class TslintUtil {
 
   @Nullable
   public static VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    for (TsLintSetupDetector detector : TsLintSetupDetector.TS_LINT_SETUP_DETECTOR_EP.getExtensionList()) {
-      TsLintSetupDetector.TsLintSetup setup = detector.detectSetup(project, virtualFile);
+    for (TsLintConfigDetector detector : TsLintConfigDetector.TS_LINT_CONFIG_DETECTOR_EP.getExtensionList()) {
+      TsLintConfigDetector.TsLintConfigs setup = detector.detectConfigs(project, virtualFile);
       if (setup != null) {
         return setup.getTsLintConfig();
       }
