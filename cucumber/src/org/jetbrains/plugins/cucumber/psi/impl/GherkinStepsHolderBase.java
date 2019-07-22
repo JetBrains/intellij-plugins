@@ -47,6 +47,7 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
   }
 
   @Override
+  @NotNull
   public String getScenarioKeyword() {
     return getFirstChild().getText();
   }

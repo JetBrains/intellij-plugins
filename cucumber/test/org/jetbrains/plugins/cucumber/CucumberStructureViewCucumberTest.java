@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber;
 
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,6 +99,7 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
     myFixture.configureByText("test.feature", fileContent);
     myFixture.testStructureView(component -> {
       expandAll(component.getTree());
+      PlatformTestUtil.waitForPromise(component.select(component.getTreeModel().getCurrentEditorElement(), false));
       assertTreeEqual(component.getTree(), expectedResult);
     });
   }
