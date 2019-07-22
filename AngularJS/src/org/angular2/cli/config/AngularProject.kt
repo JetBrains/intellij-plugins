@@ -7,7 +7,9 @@ class AngularProject internal constructor(val name: String,
                                           private val project: AngularJsonProject,
                                           internal val angularCliFolder: VirtualFile) {
 
-  val rootDir = project.rootPath?.let { angularCliFolder.findFileByRelativePath(project.rootPath) }
+  val rootDir = project.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
+
+  val sourceDir = (project.sourceRoot ?: "").ifBlank { project.rootPath }?.let { angularCliFolder.findFileByRelativePath(it) }
 
   val indexHtmlFile get() = resolveFile(project.targets?.build?.options?.index ?: project.index)
 
@@ -54,6 +56,7 @@ class AngularProject internal constructor(val name: String,
       |AngularProject {
       |       name: ${name}
       |       rootDir: ${rootDir}
+      |       sourceDir: ${sourceDir}
       |       indexHtml: ${indexHtmlFile}
       |       globalStyleSheets: ${globalStyleSheets}
       |       stylePreprocessorIncludeDirs: ${stylePreprocessorIncludeDirs}

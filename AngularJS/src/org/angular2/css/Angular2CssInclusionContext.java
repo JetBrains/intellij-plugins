@@ -21,9 +21,9 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.cli.AngularCliConfig;
-import org.angular2.cli.AngularCliConfigLoader;
 import org.angular2.cli.AngularCliUtil;
+import org.angular2.cli.config.AngularConfigProvider;
+import org.angular2.cli.config.AngularProject;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.index.Angular2IndexingHandler;
@@ -115,17 +115,18 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
     public PsiFile[] getCssFiles() {
       final Project project = myComponent.getSourceElement().getProject();
       final List<PsiFile> cssFilesList = new ArrayList<>(myComponent.getCssFiles());
-      if (myAngularCliJson != null) {
-        AngularCliConfig config = AngularCliConfigLoader.load(project, myAngularCliJson);
+      AngularProject ngProject;
+      if (myAngularCliJson != null
+          && (ngProject = AngularConfigProvider.getAngularProject(project, myAngularCliJson)) != null) {
         PsiManager psiManager = PsiManager.getInstance(project);
-        PsiFile html = doIfNotNull(config.getIndexHtmlFile(), psiManager::findFile);
+        PsiFile html = doIfNotNull(ngProject.getIndexHtmlFile(), psiManager::findFile);
         if (html instanceof XmlFile) {
           AstLoadingFilter.forceAllowTreeLoading(html, () ->
             cssFilesList.addAll(asList(CssResolveManager.getInstance().getNewResolver()
                                          .resolveStyleSheets((XmlFile)html, null))));
         }
         cssFilesList.addAll(ContainerUtil.mapNotNull(
-          config.getGlobalStyleSheets(), file -> ObjectUtils.tryCast(psiManager.findFile(file), StylesheetFile.class)));
+          ngProject.getGlobalStyleSheets(), file -> ObjectUtils.tryCast(psiManager.findFile(file), StylesheetFile.class)));
       }
       return cssFilesList.toArray(PsiFile.EMPTY_ARRAY);
     }

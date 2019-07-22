@@ -4,6 +4,7 @@
      AngularProject {
        name: Webstorm-Test
        rootDir: temp:///src
+       sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
        globalStyleSheets: [temp:///src/src/styles.scss]
        stylePreprocessorIncludeDirs: []
