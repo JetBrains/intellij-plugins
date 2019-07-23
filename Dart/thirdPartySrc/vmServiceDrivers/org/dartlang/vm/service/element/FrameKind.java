@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 /**
  * A {@link FrameKind} is used to distinguish different kinds of {@link Frame} objects.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum FrameKind {
 
   AsyncActivation,

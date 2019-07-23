@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link TypeArgumentsRef} is a reference to a {@link TypeArguments} object.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class TypeArgumentsRef extends ObjRef {
 
   public TypeArgumentsRef(JsonObject json) {

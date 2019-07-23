@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * An {@link Isolate} object provides information about one isolate in the VM.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Isolate extends Response {
 
   public Isolate(JsonObject json) {
@@ -48,14 +48,21 @@ public class Isolate extends Response {
    * Can return <code>null</code>.
    */
   public ErrorObj getError() {
-    return json.get("error") == null ? null : new ErrorObj((JsonObject) json.get("error"));
+    JsonObject obj = (JsonObject) json.get("error");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new ErrorObj(obj);
   }
 
   /**
    * The current pause on exception mode for this isolate.
    */
   public ExceptionPauseMode getExceptionPauseMode() {
-    JsonElement value = json.get("exceptionPauseMode");
+    final JsonElement value = json.get("exceptionPauseMode");
     try {
       return value == null ? ExceptionPauseMode.Unknown : ExceptionPauseMode.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
@@ -137,7 +144,14 @@ public class Isolate extends Response {
    * Can return <code>null</code>.
    */
   public LibraryRef getRootLib() {
-    return json.get("rootLib") == null ? null : new LibraryRef((JsonObject) json.get("rootLib"));
+    JsonObject obj = (JsonObject) json.get("rootLib");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new LibraryRef(obj);
   }
 
   /**

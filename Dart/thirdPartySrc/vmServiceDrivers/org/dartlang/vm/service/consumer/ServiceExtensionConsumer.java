@@ -16,5 +16,5 @@ package org.dartlang.vm.service.consumer;
 import com.google.gson.JsonObject;
 
 public interface ServiceExtensionConsumer extends Consumer {
-    public void received(JsonObject result);
+  void received(JsonObject result);
 }

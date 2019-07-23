@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Library} provides information about a Dart language library.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Library extends Obj {
 
   public Library(JsonObject json) {
