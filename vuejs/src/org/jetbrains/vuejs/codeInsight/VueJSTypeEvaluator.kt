@@ -13,19 +13,17 @@ import org.jetbrains.vuejs.lang.expr.VueVForVariable
 class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor, helper: JSTypeEvaluationHelper)
   : JSTypeEvaluator(context, processor, helper) {
   override fun addTypeFromVariableResolveResult(jsVariable: JSFieldVariable) {
-    if (jsVariable is VueVForVariable) {
-      val vForExpression = PsiTreeUtil.getParentOfType(jsVariable, VueVForExpression::class.java)
-      if (vForExpression != null) {
-        pushDestructuringContext(jsVariable)
-        val expression = myContext.processedExpression
-        val types = getComponentTypeFromArrayExpression(expression, vForExpression.getCollectionExpression())
-        for (type in types) {
-          addType(type, expression)
-        }
-        restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
-        return
-      }
-    }
+    if (evaluateTypeFromVForVariable(jsVariable)) return
     super.addTypeFromVariableResolveResult(jsVariable)
+  }
+
+  private fun evaluateTypeFromVForVariable(jsVariable: JSFieldVariable): Boolean {
+    if (jsVariable !is VueVForVariable) return false
+    val vForExpression = PsiTreeUtil.getParentOfType(jsVariable, VueVForExpression::class.java) ?: return false
+    pushDestructuringContext(jsVariable)
+    val expression = myContext.processedExpression
+    getComponentTypeFromArrayExpression(expression, vForExpression.getCollectionExpression()).forEach { addType(it, expression) }
+    restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
+    return true
   }
 }
