@@ -195,7 +195,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         if (meta is RuleWithLang) {
             isChecked = when (val rule = state[meta.rule.id]) {
                 is RuleWithLang -> rule.enabledInTree
-                else -> !LangTool[meta.lang].disabledRules.contains(meta.rule.id)
+                else -> meta.enabled
             }
         } else {
             isChecked = false
