@@ -30,7 +30,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.util.TimeoutUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +42,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
-public class FlashBuilderImportTest extends PlatformTestCase {
+public class FlashBuilderImportTest extends HeavyPlatformTestCase {
 
   private static final String FB_PROJECT_DIR_NAME = "flash_builder_importer_test";
 

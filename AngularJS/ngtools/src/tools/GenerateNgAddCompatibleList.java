@@ -27,7 +27,7 @@ import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -195,7 +195,7 @@ public class GenerateNgAddCompatibleList {
 
   private static void setUpApplication() {
     try {
-      String[] candidates = ReflectionUtil.getField(PlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
+      String[] candidates = ReflectionUtil.getField(HeavyPlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
       if (candidates != null) {
         candidates[0] = "WebStorm";
       }
