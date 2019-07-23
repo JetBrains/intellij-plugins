@@ -1,45 +1,32 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.config
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-class AngularProject internal constructor(val name: String,
-                                          private val project: AngularJsonProject,
-                                          internal val angularCliFolder: VirtualFile) {
+abstract class AngularProject(internal val angularCliFolder: VirtualFile, internal val project: Project) {
+  abstract val name: String
 
-  val rootDir = project.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
+  abstract val rootDir: VirtualFile?
 
-  val sourceDir = (project.sourceRoot ?: "").ifBlank { project.rootPath }?.let { angularCliFolder.findFileByRelativePath(it) }
+  abstract val sourceDir: VirtualFile?
 
-  val indexHtmlFile get() = resolveFile(project.targets?.build?.options?.index ?: project.index)
+  abstract val indexHtmlFile: VirtualFile?
 
-  val globalStyleSheets
-    get() = (project.targets?.build?.options?.styles ?: project.styles)
-              ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
-            ?: emptyList()
+  abstract val globalStyleSheets: List<VirtualFile>
 
-  val stylePreprocessorIncludeDirs
-    get() = (project.targets?.build?.options?.stylePreprocessorOptions ?: project.stylePreprocessorOptions)
-              ?.includePaths
-              ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
-            ?: emptyList()
+  abstract val stylePreprocessorIncludeDirs: List<VirtualFile>
 
-  val karmaConfigFile get() = resolveFile(project.targets?.test?.options?.karmaConfig)
+  abstract val karmaConfigFile: VirtualFile?
 
-  val protractorConfigFile get() = resolveFile(project.targets?.e2e?.options?.protractorConfig)
+  abstract val protractorConfigFile: VirtualFile?
 
-  val tsLintConfigurations = project.targets?.lint?.let { lint ->
-    val result = mutableListOf<AngularLintConfiguration>()
-    lint.options?.let { result.add(AngularLintConfiguration(this, it)) }
-    lint.configurations.mapTo(result) { (name, config) ->
-      AngularLintConfiguration(this, config, name)
+  abstract val tsLintConfigurations: List<AngularLintConfiguration>
+
+  internal open fun resolveFile(filePath: String?): VirtualFile? {
+    return filePath?.let {
+      rootDir?.findFileByRelativePath(it) ?: angularCliFolder.findFileByRelativePath(it)
     }
-    result
-  } ?: emptyList<AngularLintConfiguration>()
-
-  internal fun resolveFile(filePath: String?): VirtualFile? {
-    return angularCliFolder.findFileByRelativePath(filePath ?: return null)
-           ?: rootDir?.findFileByRelativePath(filePath)
   }
 
   internal fun proximity(context: VirtualFile): Int {
@@ -53,7 +40,7 @@ class AngularProject internal constructor(val name: String,
 
   override fun toString(): String {
     return """
-      |AngularProject {
+      |${javaClass.simpleName} {
       |       name: ${name}
       |       rootDir: ${rootDir}
       |       sourceDir: ${sourceDir}
@@ -68,5 +55,84 @@ class AngularProject internal constructor(val name: String,
       |     }
     """.trimMargin()
   }
+}
 
+internal class AngularProjectImpl(override val name: String,
+                                  private val ngProject: AngularJsonProject,
+                                  angularCliFolder: VirtualFile,
+                                  project: Project)
+  : AngularProject(angularCliFolder, project) {
+
+  override val rootDir = ngProject.rootPath?.let { angularCliFolder.findFileByRelativePath(it) }
+
+  override val sourceDir get() = ngProject.sourceRoot?.let { angularCliFolder.findFileByRelativePath(it) } ?: rootDir
+
+  override val indexHtmlFile get() = resolveFile(ngProject.targets?.build?.options?.index)
+
+  override val globalStyleSheets
+    get() = ngProject.targets?.build?.options?.styles
+              ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
+            ?: emptyList()
+
+  override val stylePreprocessorIncludeDirs
+    get() = ngProject.targets?.build?.options?.stylePreprocessorOptions?.includePaths
+              ?.mapNotNull { rootDir?.findFileByRelativePath(it) }
+            ?: emptyList()
+
+  override val karmaConfigFile get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
+
+  override val protractorConfigFile get() = resolveFile(ngProject.targets?.e2e?.options?.protractorConfig)
+
+  override val tsLintConfigurations = ngProject.targets?.lint?.let { lint ->
+    val result = mutableListOf<AngularLintConfiguration>()
+    lint.options?.let { result.add(AngularLintConfiguration(this, it)) }
+    lint.configurations.mapTo(result) { (name, config) ->
+      AngularLintConfiguration(this, config, name)
+    }
+    result
+  } ?: emptyList<AngularLintConfiguration>()
+
+}
+
+internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
+                                        private val app: AngularJsonLegacyApp,
+                                        angularCliFolder: VirtualFile,
+                                        project: Project)
+  : AngularProject(angularCliFolder, project) {
+
+  override val name: String = app.name ?: angularJson.legacyProject?.name ?: "Angular project"
+
+  override val rootDir: VirtualFile = app.appRoot?.let { angularCliFolder.findFileByRelativePath(it) } ?: angularCliFolder
+
+  override val sourceDir: VirtualFile? get() = app.root?.let { rootDir.findFileByRelativePath(it) }
+
+  override val indexHtmlFile: VirtualFile? get() = resolveFile(app.index)
+
+  override val globalStyleSheets: List<VirtualFile>
+    get() = app.styles
+              ?.mapNotNull { sourceDir?.findFileByRelativePath(it) }
+            ?: emptyList()
+
+  override val stylePreprocessorIncludeDirs: List<VirtualFile>
+    get() = app.stylePreprocessorOptions?.includePaths
+              ?.mapNotNull { sourceDir?.findFileByRelativePath(it) }
+            ?: emptyList()
+
+  override val karmaConfigFile: VirtualFile?
+    get() = resolveFile(angularJson.legacyTest?.karma?.config)
+
+  override val protractorConfigFile: VirtualFile?
+    get() = resolveFile(angularJson.legacyE2E?.protractor?.config)
+
+  override val tsLintConfigurations
+    get() = angularJson.legacyLint.map { config ->
+      AngularLintConfiguration(this, config, null)
+    }
+
+  override fun resolveFile(filePath: String?): VirtualFile? {
+    return filePath?.let {
+      sourceDir?.findFileByRelativePath(it)
+      ?: rootDir.findFileByRelativePath(it)
+    }
+  }
 }

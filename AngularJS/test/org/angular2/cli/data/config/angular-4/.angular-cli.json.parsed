@@ -1,0 +1,38 @@
+ AngularConfig {
+   defaultProject: ang-cli156ang446
+   projects: [
+     AngularLegacyProjectImpl {
+       name: ang-cli156ang446
+       rootDir: temp:///src
+       sourceDir: temp:///src/src
+       indexHtml: temp:///src/src/index.html
+       globalStyleSheets: [temp:///src/src/styles.css]
+       stylePreprocessorIncludeDirs: []
+       karmaConfigFile: temp:///src/karma.conf.js
+       protractorConfigFile: temp:///src/protractor.conf.js
+       tsLintConfigurations: [
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/src/tsconfig.app.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         },
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/src/tsconfig.spec.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         },
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/e2e/tsconfig.e2e.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         }
+       ]
+     }
+   ]
+ }
