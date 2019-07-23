@@ -56,7 +56,7 @@ public class BlockingRequestSink implements RequestSink {
    * @param errorResponseSink the sink to send error responses to, not {@code null}
    */
   public RequestSink toErrorSink(ResponseSink errorResponseSink, String errorResponseCode,
-      String errorResponseMessage) {
+                                 String errorResponseMessage) {
     ErrorRequestSink errorRequestSink = new ErrorRequestSink(errorResponseSink, errorResponseCode,
         errorResponseMessage);
     synchronized (queue) {

@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Flag} represents a single VM command line flag.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Flag extends Element {
 
   public Flag(JsonObject json) {

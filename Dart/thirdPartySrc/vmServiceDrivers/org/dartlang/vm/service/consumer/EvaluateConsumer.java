@@ -19,12 +19,12 @@ import org.dartlang.vm.service.element.ErrorRef;
 import org.dartlang.vm.service.element.InstanceRef;
 import org.dartlang.vm.service.element.Sentinel;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface EvaluateConsumer extends Consumer {
 
-  public void received(ErrorRef response);
+  void received(ErrorRef response);
 
-  public void received(InstanceRef response);
+  void received(InstanceRef response);
 
-  public void received(Sentinel response);
+  void received(Sentinel response);
 }

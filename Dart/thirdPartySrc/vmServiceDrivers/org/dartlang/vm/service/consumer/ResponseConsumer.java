@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.Response;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface ResponseConsumer extends Consumer {
 
-  public void received(Response response);
+  void received(Response response);
 }

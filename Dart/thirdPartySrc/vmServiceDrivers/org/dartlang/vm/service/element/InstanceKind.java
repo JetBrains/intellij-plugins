@@ -19,7 +19,7 @@ package org.dartlang.vm.service.element;
  * Adding new values to {@link InstanceKind} is considered a backwards compatible change. Clients
  * should treat unrecognized instance kinds as {@link PlainInstance}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum InstanceKind {
 
   /**

@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Breakpoint} describes a debugger breakpoint.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Breakpoint extends Obj {
 
   public Breakpoint(JsonObject json) {
@@ -51,7 +51,7 @@ public class Breakpoint extends Obj {
    * @return one of <code>SourceLocation</code> or <code>UnresolvedSourceLocation</code>
    */
   public Object getLocation() {
-    JsonObject elem = (JsonObject)json.get("location");
+    final JsonObject elem = (JsonObject)json.get("location");
     if (elem == null) return null;
 
     if (elem.get("type").getAsString().equals("SourceLocation")) return new SourceLocation(elem);

@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class VM extends Response {
 
   public VM(JsonObject json) {
@@ -49,6 +49,13 @@ public class VM extends Response {
         return new IsolateRef(array.get(index).getAsJsonObject());
       }
     };
+  }
+
+  /**
+   * A name identifying this vm. Not guaranteed to be unique.
+   */
+  public String getName() {
+    return json.get("name").getAsString();
   }
 
   /**

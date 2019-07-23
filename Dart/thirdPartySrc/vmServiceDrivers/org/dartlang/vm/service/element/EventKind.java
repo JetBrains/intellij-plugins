@@ -19,7 +19,7 @@ package org.dartlang.vm.service.element;
  * Adding new values to {@link EventKind} is considered a backwards compatible change. Clients
  * should ignore unrecognized events.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum EventKind {
 
   /**
@@ -77,6 +77,11 @@ public enum EventKind {
    * changes to the isolate debugging name via setName.
    */
   IsolateUpdate,
+
+  /**
+   * Event from dart:developer.log.
+   */
+  Logging,
 
   /**
    * Indicates an isolate is not yet runnable. Only appears in an Isolate's pauseEvent. Never sent
