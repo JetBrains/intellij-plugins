@@ -1,28 +1,35 @@
  AngularConfig {
-   defaultProject: Webstorm-Test
+   defaultProject: idle-ant
    projects: [
-     AngularProjectImpl {
-       name: Webstorm-Test
+     AngularLegacyProjectImpl {
+       name: idle-ant
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
        globalStyleSheets: [temp:///src/src/styles.scss]
        stylePreprocessorIncludeDirs: []
        karmaConfigFile: temp:///src/karma.conf.js
-       protractorConfigFile: temp:///src/e2e/protractor.conf.js
+       protractorConfigFile: temp:///src/protractor.conf.js
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
            tsLintConfig=temp:///src/tslint.json
-           tsConfigs=[temp:///src/tsconfig.app.json, temp:///src/e2e/tsconfig.json]
+           tsConfigs=[temp:///src/src/tsconfig.app.json]
            includes=null
-           excludes=[**/node_modules/**, **/test/**, **/*.spec.ts]
+           excludes=[**/node_modules/**]
          },
          TsLintConfiguration {
-           name=spec
+           name=null
            tsLintConfig=temp:///src/tslint.spec.json
-           tsConfigs=[temp:///src/tsconfig.spec.json]
-           includes=[**/*.spec.ts, **/test/**/*.ts]
+           tsConfigs=[temp:///src/src/tsconfig.spec.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         },
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.spec.json
+           tsConfigs=[temp:///src/e2e/tsconfig.e2e.json]
+           includes=null
            excludes=[**/node_modules/**]
          }
        ]

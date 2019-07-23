@@ -36,8 +36,8 @@ class AngularConfigProvider private constructor() {
         val cachedDocument = FileDocumentManager.getInstance().getCachedDocument(angularCliJson)
         val config =
           try {
-            AngularConfig(angularCliJson,
-                          cachedDocument?.charsSequence ?: VfsUtilCore.loadText(angularCliJson))
+            AngularConfig(cachedDocument?.charsSequence ?: VfsUtilCore.loadText(angularCliJson),
+                          angularCliJson, psiFile.project)
           }
           catch (e: ProcessCanceledException) {
             throw e

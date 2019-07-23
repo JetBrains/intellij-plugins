@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.cli.config.AngularConfigProvider;
 import org.angular2.cli.config.AngularProject;
@@ -36,7 +35,8 @@ public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelpe
     @Override
     protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
       return StreamEx.ofNullable(AngularConfigProvider.getAngularProject(project, context))
-        .flatCollection(ngProject -> ContainerUtil.packNullables(ngProject.getSourceDir(), ngProject.getRootDir()))
+        .flatArray(ngProject -> new VirtualFile[]{ngProject.getSourceDir(), ngProject.getRootDir()})
+        .nonNull()
         .distinct()
         .toList();
     }

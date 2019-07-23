@@ -3,11 +3,12 @@ package org.angular2.cli.config
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.CharSequenceReader
 import one.util.streamex.StreamEx
 
-class AngularConfig(val angularJsonFile: VirtualFile, text: CharSequence) {
+class AngularConfig(text: CharSequence, val angularJsonFile: VirtualFile, project: Project) {
 
   val projects: List<AngularProject>
 
@@ -19,17 +20,18 @@ class AngularConfig(val angularJsonFile: VirtualFile, text: CharSequence) {
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     val angularJson = mapper.readValue(CharSequenceReader(text), AngularJson::class.java)
     if (angularJson.projects.isNotEmpty()) {
-      projects = angularJson.projects.map { (name, project) ->
-        AngularProject(name, project, angularCliFolder)
+      projects = angularJson.projects.map { (name, ngProjectJson) ->
+        AngularProjectImpl(name, ngProjectJson, angularCliFolder, project)
+      }
+      defaultProject = angularJson.defaultProject?.let { defaultProject ->
+        projects.find { it.name == defaultProject }
       }
     }
     else {
-      projects = angularJson.apps.map {
-        AngularProject(it.name ?: "app", it, angularCliFolder)
+      projects = angularJson.legacyApps.map { app ->
+        AngularLegacyProjectImpl(angularJson, app, angularCliFolder, project)
       }
-    }
-    defaultProject = angularJson.defaultProject?.let { defaultProject ->
-      projects.find { it.name == defaultProject }
+      defaultProject = projects.firstOrNull()
     }
   }
 

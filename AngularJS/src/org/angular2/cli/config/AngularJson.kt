@@ -10,33 +10,31 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import java.io.IOException
 
-
 internal class AngularJson {
-  @JsonProperty("apps")
-  val apps: List<AngularJsonProject> = ArrayList()
 
   @JsonProperty("projects")
   val projects: Map<String, AngularJsonProject> = HashMap()
 
   @JsonProperty("defaultProject")
   val defaultProject: String? = null
+
+  @JsonProperty("apps")
+  val legacyApps: List<AngularJsonLegacyApp> = ArrayList()
+
+  @JsonProperty("project")
+  val legacyProject: AngularJsonLegacyProject? = null
+
+  @JsonProperty("e2e")
+  val legacyE2E: AngularJsonLegacyE2E? = null
+
+  @JsonProperty("test")
+  val legacyTest: AngularJsonLegacyTest? = null
+
+  @JsonProperty("lint")
+  val legacyLint: List<AngularJsonLintOptions> = ArrayList()
 }
 
-internal open class AngularJsonBuildOptionsBase {
-
-  @JsonProperty("stylePreprocessorOptions")
-  val stylePreprocessorOptions: AngularJsonStylePreprocessorOptions? = null
-
-  @JsonProperty("index")
-  val index: String? = null
-
-  @JsonProperty("styles")
-  @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
-  val styles: List<String>? = null
-
-}
-
-internal class AngularJsonProject : AngularJsonBuildOptionsBase() {
+internal class AngularJsonProject {
   @JsonProperty("name")
   val name: String? = null
 
@@ -91,6 +89,20 @@ internal class AngularJsonBuild {
   val options: AngularJsonBuildOptions? = null
 }
 
+internal open class AngularJsonBuildOptionsBase {
+
+  @JsonProperty("stylePreprocessorOptions")
+  val stylePreprocessorOptions: AngularJsonStylePreprocessorOptions? = null
+
+  @JsonProperty("index")
+  val index: String? = null
+
+  @JsonProperty("styles")
+  @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
+  val styles: List<String>? = null
+
+}
+
 internal class AngularJsonBuildOptions : AngularJsonBuildOptionsBase()
 
 internal class AngularJsonStylePreprocessorOptions {
@@ -107,7 +119,8 @@ internal class AngularJsonLint {
 }
 
 internal class AngularJsonLintOptions {
-  @JsonProperty
+  @JsonProperty("tsConfig")
+  @JsonAlias("project")
   @JsonDeserialize(using = StringOrStringArrayDeserializer::class)
   val tsConfig: List<String> = emptyList()
 
@@ -115,10 +128,40 @@ internal class AngularJsonLintOptions {
   val tsLintConfig: String? = null
 
   @JsonProperty("files")
+  @JsonDeserialize(using = StringOrStringArrayDeserializer::class)
   val files: List<String> = emptyList()
 
   @JsonProperty("exclude")
+  @JsonDeserialize(using = StringOrStringArrayDeserializer::class)
   val exclude: List<String> = emptyList()
+}
+
+internal class AngularJsonLegacyApp : AngularJsonBuildOptionsBase() {
+  @JsonProperty("appRoot")
+  val appRoot: String? = null
+
+  @JsonProperty("root")
+  val root: String? = null
+
+  @JsonProperty("name")
+  val name: String? = null
+}
+
+internal class AngularJsonLegacyProject {
+  @JsonProperty("name")
+  val name: String? = null
+}
+
+internal class AngularJsonLegacyE2E {
+  val protractor: AngularJsonLegacyConfig? = null
+}
+
+internal class AngularJsonLegacyTest {
+  val karma: AngularJsonLegacyConfig? = null
+}
+
+internal class AngularJsonLegacyConfig {
+  val config: String? = null
 }
 
 private class StringOrObjectWithInputDeserializer : JsonDeserializer<List<String>>() {
