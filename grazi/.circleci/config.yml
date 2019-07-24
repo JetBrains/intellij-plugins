@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - run: ./gradlew build --stacktrace
+      - store_artifacts:
+        path: build/grazi/reports
+        destination: reports
   release:
     docker:
       - image: circleci/openjdk:8-jdk
