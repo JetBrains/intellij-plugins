@@ -10,7 +10,6 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.layout.migLayout.createLayoutConstraints
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
@@ -20,7 +19,6 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.ui.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
 import javax.swing.JComponent
-import javax.swing.JEditorPane
 import javax.swing.JLabel
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
@@ -36,21 +34,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         add(JLabel(AllIcons.Ide.External_link_arrow))
     }
 
-    private val smallInfoPane = JEditorPane().apply {
-        editorKit = UIUtil.getHTMLEditorKit()
-        isEditable = false
-        isOpaque = true
-        border = null
-        background = null
-    }
-
-    private val descriptionPane = JEditorPane().apply {
-        editorKit = UIUtil.getHTMLEditorKit()
-        isEditable = false
-        isOpaque = true
-        border = null
-        background = null
-    }
+    private val smallInfoPane = pane()
+    private val descriptionPane = pane()
 
     private val rulesTree by lazy {
         GraziRulesTree {
@@ -66,17 +51,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     private val adpEnabledLanguages by lazy {
-        GraziAddDeleteListPanel(object : GraziLanguagePanelUpdateListener {
-            override fun onLanguageAdded(lang: Lang) {
-                rulesTree.langs.add(lang)
-                rulesTree.update()
-            }
-
-            override fun onLanguageRemoved(lang: Lang) {
-                rulesTree.langs.remove(lang)
-                rulesTree.update()
-            }
-        })
+        GraziAddDeleteListPanel({ rulesTree.addLang(it) }, { rulesTree.removeLang(it) })
     }
 
     override fun isModified(settings: GraziConfig): Boolean {

@@ -18,7 +18,7 @@ fun CharSequence.isSimilarTo(sequence: CharSequence): Boolean {
     return levenshtein.apply(this, sequence).toDouble() / length < MINIMUM_EXAMPLES_SIMILARITY
 }
 
-fun getSmallInfoPaneContent(it: Any): String {
+fun GraziSettingsPanel.getSmallInfoPaneContent(it: Any): String {
     return when (it) {
         is Rule -> html {
             unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
@@ -33,14 +33,14 @@ fun getSmallInfoPaneContent(it: Any): String {
     }
 }
 
-fun getLinkLabelListener(it: Any): LinkListener<Any?>? {
+fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
     return when (it) {
         is Rule -> it.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
         else -> null
     }
 }
 
-fun getDescriptionPaneContent(it: Any): String {
+fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
     return when (it) {
         is Rule -> html {
             table {

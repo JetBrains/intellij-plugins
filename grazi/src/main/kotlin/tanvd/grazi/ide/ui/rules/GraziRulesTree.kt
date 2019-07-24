@@ -26,7 +26,16 @@ import javax.swing.tree.DefaultTreeModel
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val state = HashMap<String, RuleWithLang>()
-    val langs = HashSet<Lang>(GraziConfig.get().enabledLanguages)
+    private val langs = HashSet<Lang>(GraziConfig.get().enabledLanguages)
+
+    fun addLang(lang: Lang) {
+        langs.add(lang)
+        update()
+    }
+    fun removeLang(lang: Lang) {
+        langs.remove(lang)
+        update()
+    }
 
     private class GraziTreeNode(userObject: Any? = null) : CheckedTreeNode(userObject) {
         override fun equals(other: Any?): Boolean {
@@ -160,6 +169,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
     fun update() {
         _filter?.filter()
+        if (tree.isSelectionEmpty) resetSelection()
     }
 
     fun reset() {

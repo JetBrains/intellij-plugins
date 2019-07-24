@@ -2,6 +2,7 @@ package tanvd.grazi.ide.ui
 
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.ui.IdeBorderFactory
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.PropertyKey
 import tanvd.grazi.GraziBundle
 import java.awt.BorderLayout
@@ -9,6 +10,7 @@ import java.awt.Container
 import java.awt.Insets
 import java.awt.LayoutManager
 import javax.swing.JComponent
+import javax.swing.JEditorPane
 import javax.swing.JPanel
 import javax.swing.border.Border
 
@@ -26,3 +28,11 @@ fun wrap(component: JComponent, comment: String) = ComponentPanelBuilder(compone
 fun wrap(component: JComponent, comment: String, label: String) = ComponentPanelBuilder(component).withComment(comment).withLabel(label).resizeY(true).createPanel()
 
 fun msg(@PropertyKey(resourceBundle = GraziBundle.bundleName) key: String, vararg params: String): String = GraziBundle.message(key, *params)
+
+fun pane() = JEditorPane().apply {
+    editorKit = UIUtil.getHTMLEditorKit()
+    isEditable = false
+    isOpaque = true
+    border = null
+    background = null
+}

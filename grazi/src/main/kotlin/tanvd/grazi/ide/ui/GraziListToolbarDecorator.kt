@@ -25,10 +25,7 @@ class GraziListToolbarDecorator(val list: JList<Any>) : ToolbarDecorator() {
         }
     }
 
-    override fun setVisibleRowCount(rowCount: Int): ToolbarDecorator {
-        list.visibleRowCount = rowCount
-        return this
-    }
+    override fun setVisibleRowCount(rowCount: Int) = this.also { list.visibleRowCount = rowCount }
 
     override fun getComponent() = list
 
