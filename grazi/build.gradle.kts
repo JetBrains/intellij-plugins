@@ -1,9 +1,6 @@
-import org.jetbrains.intellij.tasks.PrepareSandboxTask
-import org.jetbrains.intellij.tasks.PublishTask
-import org.jetbrains.intellij.tasks.RunIdeTask
+import org.jetbrains.intellij.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import tanvd.grazi.Versions
-import tanvd.grazi.channel
+import tanvd.grazi.*
 
 group = "tanvd.grazi"
 version = "2019.1-3.$channel"
@@ -12,7 +9,7 @@ version = "2019.1-3.$channel"
 plugins {
     id("tanvd.kosogor") version "1.0.7" apply true
     id("io.gitlab.arturbosch.detekt") version ("1.0.0-RC14") apply true
-    id("org.jetbrains.intellij") version "0.4.9" apply true
+    id("org.jetbrains.intellij") apply true
     kotlin("jvm") version "1.3.41" apply true
 }
 
@@ -41,9 +38,7 @@ intellij {
             "com.intellij.testGuiFramework:0.9.44.1@nightly"
     )
 
-    if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
-        alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
-    }
+    alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
 }
 
 tasks.withType<KotlinJvmCompile> {
@@ -57,8 +52,9 @@ tasks.withType<KotlinJvmCompile> {
 tasks.withType<RunIdeTask> {
     jvmArgs("-Xmx1g")
 
-    systemProperties((System.getProperties() as Map<String, Any>).filter { it.key.startsWith("idea") || it.key.startsWith("jb") }.toMutableMap())
-    args (System.getProperty("exec.args", "").split(","))
+    systemProperties(jbProperties<String>())
+
+    args(execArguments())
 }
 
 tasks.withType<PublishTask> {
@@ -67,48 +63,6 @@ tasks.withType<PublishTask> {
     channels(channel)
 }
 
-tasks.create("guiTest", Test::class) {
-    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/ui/"
-    val props = (System.getProperties() as Map<String, Any>).filter { it.key.startsWith("idea") || it.key.startsWith("jb") }.toMutableMap()
-    props["idea.gui.tests.gradle.runner"] = true
-    systemProperties(props)
-    include("**/*TestSuite*")
-}
-
-val classesJar = tasks.create("classesJar", Jar::class) {
-    classifier = "classes"
-
-    from (sourceSets.main.get().output)
-    exclude ("META-INF/plugin.xml")
-    exclude ("testData/*")
-}
-
-val testsJar = tasks.create("testsJar", Jar::class) {
-    classifier = "tests"
-
-    from (sourceSets.test.get().output)
-    exclude ("testData/*")
-}
-
-tasks.withType<PrepareSandboxTask> {
-//    from(classesJar) {
-//        into ("testGuiFramework/lib")
-//    }
-
-    from (sourceSets.test.get().resources) {
-        exclude ("META-INF")
-        into ("testGuiFramework/lib")
-    }
-
-    from (sourceSets.main.get().resources) {
-        exclude ("META-INF")
-        into ("testGuiFramework/lib")
-    }
-
-    from(testsJar) {
-        into ("testGuiFramework/lib")
-    }
-}
 
 detekt {
     parallel = true
@@ -144,6 +98,8 @@ dependencies {
 
     compile("tanvd.kex", "kex", "0.1.1")
 }
+
+setupGuiTests()
 
 tasks.withType<Test> {
     useJUnit()
