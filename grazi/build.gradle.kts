@@ -40,6 +40,10 @@ intellij {
             "properties",
             "com.intellij.testGuiFramework:0.9.44.1@nightly"
     )
+
+    if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
+        alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
+    }
 }
 
 tasks.withType<KotlinJvmCompile> {
@@ -71,16 +75,25 @@ tasks.create("guiTest", Test::class) {
     include("**/*TestSuite*")
 }
 
+val classesJar = tasks.create("classesJar", Jar::class) {
+    classifier = "classes"
+
+    from (sourceSets.main.get().output)
+    exclude ("META-INF/plugin.xml")
+    exclude ("testData/*")
+}
+
 val testsJar = tasks.create("testsJar", Jar::class) {
     classifier = "tests"
 
     from (sourceSets.test.get().output)
+    exclude ("testData/*")
 }
 
 tasks.withType<PrepareSandboxTask> {
-    from(testsJar) {
-        into ("testGuiFramework/lib")
-    }
+//    from(classesJar) {
+//        into ("testGuiFramework/lib")
+//    }
 
     from (sourceSets.test.get().resources) {
         exclude ("META-INF")
@@ -89,6 +102,10 @@ tasks.withType<PrepareSandboxTask> {
 
     from (sourceSets.main.get().resources) {
         exclude ("META-INF")
+        into ("testGuiFramework/lib")
+    }
+
+    from(testsJar) {
         into ("testGuiFramework/lib")
     }
 }
