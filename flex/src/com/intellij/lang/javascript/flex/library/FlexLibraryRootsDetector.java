@@ -7,9 +7,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryRootType;
 import com.intellij.openapi.roots.libraries.ui.DetectedLibraryRoot;
 import com.intellij.openapi.roots.libraries.ui.impl.LibraryRootsDetectorImpl;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 

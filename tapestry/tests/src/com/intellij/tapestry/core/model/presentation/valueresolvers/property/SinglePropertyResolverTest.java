@@ -2,7 +2,6 @@ package com.intellij.tapestry.core.model.presentation.valueresolvers.property;
 
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaMethod;
-import com.intellij.tapestry.core.java.IMethodParameter;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.mocks.JavaMethodMock;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverContext;

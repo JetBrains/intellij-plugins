@@ -21,7 +21,6 @@ import jetbrains.communicator.util.UIUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
