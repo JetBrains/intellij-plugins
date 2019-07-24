@@ -13,6 +13,8 @@ import org.angular2.cli.config.AngularProject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 
 public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelper {
   @NotNull
@@ -34,11 +36,10 @@ public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelpe
 
     @Override
     protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
-      return StreamEx.ofNullable(AngularConfigProvider.getAngularProject(project, context))
-        .flatArray(ngProject -> new VirtualFile[]{ngProject.getSourceDir(), ngProject.getRootDir()})
-        .nonNull()
-        .distinct()
-        .toList();
+      return Optional.ofNullable(AngularConfigProvider.getAngularProject(project, context))
+        .map(AngularProject::getSourceDir)
+        .map(Collections::singletonList)
+        .orElseGet(Collections::emptyList);
     }
   }
 }
