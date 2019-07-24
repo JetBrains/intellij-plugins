@@ -6,7 +6,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
-      - run: ./gradlew build --stacktrace
+      - run: ./gradlew build
       - store_artifacts:
           path: build/grazi/reports
           destination: reports
@@ -17,6 +17,9 @@ jobs:
     steps:
       - checkout
       - run: ./gradlew build publishPlugin
+      - store_artifacts:
+          path: build/grazi/reports
+          destination: reports
 workflows:
   version: 2
   build:
