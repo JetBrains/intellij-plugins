@@ -36,7 +36,7 @@ class AngularLintConfiguration internal constructor(private val ngProject: Angul
              && !myExcludes.value.any { it.match(relativePath) }
     }
     return !myExcludes.value.any { it.match(relativePath) }
-           && tsConfigs.any { TypeScriptConfigUtil.isFileIncludedInTsProgram(ngProject.project, file, it) }
+           && tsConfigs.any { TypeScriptConfigUtil.configGraphIncludesFile(ngProject.project, file, it) }
   }
 
   override fun toString(): String {
