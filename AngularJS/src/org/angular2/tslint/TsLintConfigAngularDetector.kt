@@ -2,7 +2,7 @@
 package org.angular2.tslint
 
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil.isFileIncludedInTsProgram
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil.configGraphIncludesFile
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFileBase
@@ -24,7 +24,7 @@ class TsLintConfigAngularDetector : TsLintConfigDetector {
       ?.let {
         TsLintConfigDetector.TsLintConfigs(
           it.tsLintConfig!!,
-          it.tsConfigs.find { tsConfig -> isFileIncludedInTsProgram(project, file, tsConfig) })
+          it.tsConfigs.find { tsConfig -> configGraphIncludesFile(project, file, tsConfig) })
       }
   }
 }
