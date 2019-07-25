@@ -9,12 +9,16 @@
           "onclick": "CreateNewDoc()"
         },
         {
-          "value": "There are <warning descr="THERE_RE_MANY">document</warning>",
+          "value": "There is <warning descr="ARTICLE_MISSING">document</warning>",
           "onclick": "OpenDoc()"
         },
         {
           "value": "Close",
           "onclick": "CloseDoc()"
+        },
+        {
+          "value": "В коробке лежало <warning descr="Sklonenije_NUM_NN">пять карандаша</warning>.",
+          "onclick": "А <warning descr="grammar_vse_li_noun">все ли ошибка</warning> найдены?"
         }
       ]
     }

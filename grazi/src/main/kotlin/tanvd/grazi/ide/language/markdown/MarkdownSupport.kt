@@ -2,12 +2,13 @@ package tanvd.grazi.ide.language.markdown
 
 
 import com.intellij.psi.PsiElement
-import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
-import tanvd.grazi.grammar.*
+import org.jetbrains.kotlin.idea.editor.fixers.range
+import org.rust.lang.core.psi.ext.elementType
+import tanvd.grazi.grammar.GrammarChecker
+import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.utils.spellcheckOnly
-import tanvd.grazi.utils.traverse
+import tanvd.grazi.utils.parents
 
 class MarkdownSupport : LanguageSupport() {
     companion object {
@@ -15,60 +16,16 @@ class MarkdownSupport : LanguageSupport() {
     }
 
     override fun isRelevant(element: PsiElement): Boolean {
-        return MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element)
-                || MarkdownPsiUtils.isCode(element) || MarkdownPsiUtils.isOuterListItem(element)
+        return MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element) || MarkdownPsiUtils.isCode(element)
     }
 
     override fun check(element: PsiElement): Set<Typo> {
-        return when {
-            MarkdownPsiUtils.isHeader(element) -> {
-                val ignoreFilter = TokensFilter()
-                val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray())
-
-                ignoreFilter.populateMd(elements)
-
-                ignoreFilter.filter(GrammarChecker.default.check(elements))
-
-            }
-            MarkdownPsiUtils.isCode(element) -> {
-                val elements = element.filterForTokens<PsiElement>(MarkdownTokenTypes.TEXT)
-
-                GrammarChecker.default.check(elements).spellcheckOnly()
-            }
-            MarkdownPsiUtils.isOuterListItem(element) -> {
-                val ignoreFilter = TokensFilter()
-                val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray())
-
-                ignoreFilter.populateMd(elements)
-
-                ignoreFilter.filter(GrammarChecker.default.check(elements).filter {
-                    it.info.category !in bulletsIgnoredCategories
-                })
-            }
-            MarkdownPsiUtils.isParagraph(element) -> {
-                val ignoreFilter = TokensFilter()
-                val elements = element.filterForTextTokensExcluding(*MarkdownPsiUtils.inlineTypes.toTypedArray(), MarkdownElementTypes.LIST_ITEM)
-
-                ignoreFilter.populateMd(elements)
-
-                ignoreFilter.filter(GrammarChecker.default.check(elements))
-            }
-            else -> {
-                emptySet()
-            }
-        }
+        return GrammarChecker.default.check(listOf(element), indexBasedIgnore = { token, index ->
+            token.children.find { element -> index in element.range }?.elementType == MarkdownTokenTypes.TEXT
+        }).filter { typo -> !(typo.isTypoInOuterListItem() && typo.info.category in bulletsIgnoredCategories) }.toSet()
     }
 
-    private fun TokensFilter.populateMd(elements: Collection<PsiElement>) {
-        populate(elements, addAsLeftIf = {
-            val nextElement = it.traverse(take = { it.nextSibling ?: it.parent.firstChild },
-                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEOL(it) })
-            nextElement != null && MarkdownPsiUtils.isInline(nextElement)
-        }, addAsRightIf = {
-            val nextElement = it.traverse(take = { it.prevSibling ?: it.parent.lastChild },
-                    cond = { MarkdownPsiUtils.isWhitespace(it) || MarkdownPsiUtils.isEOL(it) })
-            nextElement != null && MarkdownPsiUtils.isInline(nextElement)
-        })
-    }
-
+    private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element ->
+        element.node?.let { MarkdownPsiUtils.isOuterListItem(element) } ?: false
+    } ?: false
 }

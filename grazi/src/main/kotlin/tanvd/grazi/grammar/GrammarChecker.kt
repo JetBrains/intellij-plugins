@@ -5,27 +5,27 @@ import tanvd.grazi.utils.Text
 import tanvd.grazi.utils.toPointer
 import tanvd.kex.*
 
-class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char, CharSequence) -> Boolean> = LinkedSet(),
                      private val replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
                      private val ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet()) {
 
-    constructor(checker: GrammarChecker, ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+    constructor(checker: GrammarChecker, ignoreChar: LinkedSet<(CharSequence, Char, CharSequence) -> Boolean> = LinkedSet(),
                 replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
                 ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet())
             : this(LinkedSet(checker.ignoreChar + ignoreChar), LinkedSet(checker.replaceChar + replaceChar), LinkedSet(checker.ignoreToken + ignoreToken))
 
     companion object {
         object Rules {
-            val deduplicateBlanks: (CharSequence, Char) -> Boolean = { str, cur ->
-                str.lastOrNull()?.isWhitespace().orTrue() && cur.isWhitespace()
+            val deduplicateBlanks: (CharSequence, Char, CharSequence) -> Boolean = { prefix, cur, _ ->
+                prefix.lastOrNull()?.isWhitespace().orTrue() && cur.isWhitespace()
             }
             //TODO probably we need to flat them only if previous char is not end of sentence punctuation mark
             val flatNewlines: (CharSequence, Char) -> Char? = { _, cur ->
                 Text.isNewline(cur).ifTrue { ' ' }
             }
 
-            val ignoreQuotesAtBorders: (CharSequence, Char) -> Boolean = { prev, cur ->
-                (cur == '\'' || cur == '\"') && (prev.isEmpty() || prev.last() == cur)
+            val ignoreQuotesAtBorders: (CharSequence, Char, CharSequence) -> Boolean = { prefix, cur, suffix ->
+                (cur == '\'' || cur == '\"') && (prefix.isEmpty() || suffix.asSequence().all { it.isWhitespace() || it == cur })
             }
         }
 
@@ -44,8 +44,9 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
 
         val resultText = buildString {
             var index = 0
+            val dirtyText: String
             //iterate through non-ignored tokens
-            for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }) {
+            for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }.also { dirtyText = it.joinToString("") { getText(it) } }) {
                 val tokenStartIndex = index
 
                 var totalExcluded = 0
@@ -55,7 +56,8 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                     @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignoreChar.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
+                    if (ignoreChar.any { it(this, char, if (dirtyText.length < index + 1 ) dirtyText.substring(index + 1) else "" ) }
+                            || indexBasedIgnore(token, tokenIndex)) {
                         indexesShift[index] = ++totalExcluded
                         continue
                     }

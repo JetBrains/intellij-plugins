@@ -10,10 +10,12 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import tanvd.grazi.ide.GraziInspection
 import tanvd.grazi.ide.msg.GraziStateLifecycle
+import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.filterFor
 import java.io.File
 
 abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeInsightFixtureTestCase() {
+
     override fun getTestDataPath(): String {
         return File("src/test/resources").canonicalPath
     }
@@ -27,6 +29,13 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
         while (ApplicationManager.getApplication().messageBus.hasUndeliveredEvents(GraziStateLifecycle.topic)) {
             Thread.sleep(500)
         }
+
+        GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages + Lang.RUSSIAN) }
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages - Lang.RUSSIAN) }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
