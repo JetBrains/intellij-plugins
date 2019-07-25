@@ -1,10 +1,8 @@
-import org.jetbrains.intellij.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-import tanvd.grazi.*
+import tanvd.grazi.channel
 
 group = "tanvd.grazi"
 version = "2019.1-3.$channel"
-
 
 plugins {
     id("tanvd.kosogor") version "1.0.7" apply true
@@ -13,98 +11,39 @@ plugins {
     kotlin("jvm") version "1.3.41" apply true
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-}
-
-intellij {
-    pluginName = "Grazi"
-    version = "2019.1.3"
-    downloadSources = true
-    type = "IU"
-
-    updateSinceUntilBuild = false
-
-    setPlugins(
-            "markdown",
-            "Kotlin",
-            "PythonCore:2019.1.191.6183.53",
-            "org.rust.lang:0.2.98.2125-191",
-            "nl.rubensten.texifyidea:0.6.6",
-            "CSS",
-            "JavaScriptLanguage",
-            "properties",
-            "com.intellij.testGuiFramework:0.9.44.1@nightly"
-    )
-
-    alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
-}
-
-tasks.withType<KotlinJvmCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        languageVersion = "1.3"
-        apiVersion = "1.3"
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
     }
-}
 
-tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx1g")
-
-    systemProperties(jbProperties<String>())
-
-    args(execArguments())
-}
-
-tasks.withType<PublishTask> {
-    username(System.getenv("publish_username"))
-    token(System.getenv("publish_token"))
-    channels(channel)
-}
-
-
-detekt {
-    parallel = true
-    failFast = false
-    config = files(File(project.rootProject.projectDir, "buildScripts/detekt/detekt.yml"))
-    reports {
-        xml {
-            enabled = false
-        }
-        html {
-            enabled = false
-        }
+    apply {
+        plugin("tanvd.kosogor")
+        plugin("io.gitlab.arturbosch.detekt")
+        plugin("org.jetbrains.intellij")
+        plugin("kotlin")
     }
-}
 
-val langs = setOf("en", "ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
-
-dependencies {
-    compileOnly(kotlin("stdlib"))
-
-    compile("org.languagetool", "languagetool-core", Versions.languageTool) {
-        exclude("org.slf4j", "slf4j-api")
-    }
-    for (lang in langs) {
-        compile("org.languagetool", "language-$lang", Versions.languageTool) {
-            exclude("org.slf4j", "slf4j-api")
+    tasks.withType<KotlinJvmCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+            languageVersion = "1.3"
+            apiVersion = "1.3"
         }
     }
 
-    compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 
-    compile("org.apache.commons", "commons-lang3", "3.5")
-
-    compile("tanvd.kex", "kex", "0.1.1")
-}
-
-setupGuiTests()
-
-tasks.withType<Test> {
-    useJUnit()
-
-    testLogging {
-        events("passed", "skipped", "failed")
+    detekt {
+        parallel = true
+        failFast = false
+        config = files(File(project.rootProject.projectDir, "buildScripts/detekt/detekt.yml"))
+        reports {
+            xml {
+                enabled = false
+            }
+            html {
+                enabled = false
+            }
+        }
     }
 }
