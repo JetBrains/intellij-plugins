@@ -170,7 +170,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
       myConnection.addConnectionListener(new SmackConnectionListener());
     } catch (XMPPException e) {
       String message = getMessage(e);
-      if (message != null && (message.indexOf("authentication failed") == -1 || password.length() != 0)) {
+      if (message != null && (!message.contains("authentication failed") || password.length() != 0)) {
         LOG.info(message, e);
       }
       return message;

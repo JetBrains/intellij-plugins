@@ -66,7 +66,7 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
             PsiElement parentClass = JSResolveUtil.findParent(resolved);
             if (parentClass instanceof JSClass) {
               String name = ((JSClass)parentClass).getName();
-              isSoft = name == null || (name.indexOf("ResourceManager") == -1 && name.indexOf("ResourceBundle") == -1);
+              isSoft = name == null || (!name.contains("ResourceManager") && !name.contains("ResourceBundle"));
             }
           }
         }

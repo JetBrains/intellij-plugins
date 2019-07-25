@@ -672,7 +672,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   @NonNls
   public String getName(final PsiElement context) {
     XmlTag tag = (XmlTag)context;
-    if (tag.getName().indexOf("Rulezz") != -1) {
+    if (tag.getName().contains("Rulezz")) {
       // tag name completion
       final String namespaceByPrefix = tag.getPrefixByNamespace(parentDescriptor.context.namespace);
       if (namespaceByPrefix != null && !namespaceByPrefix.isEmpty()) return namespaceByPrefix + ":" + getName();

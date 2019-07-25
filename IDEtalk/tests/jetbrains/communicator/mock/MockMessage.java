@@ -47,7 +47,7 @@ public class MockMessage implements LocalMessage {
 
   @Override
   public boolean containsString(String searchString) {
-    return myMessage.indexOf(searchString) >= 0;
+    return myMessage.contains(searchString);
   }
 
   @Override
