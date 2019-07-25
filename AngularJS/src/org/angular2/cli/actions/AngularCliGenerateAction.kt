@@ -29,6 +29,7 @@ import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import org.angular2.cli.*
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -224,7 +225,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null)
+    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
     val module = modules.firstOrNull() ?: return
 

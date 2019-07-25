@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -90,6 +92,22 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     for (Pair<String, ? extends JSLanguageDialect> signature : ContainerUtil.newArrayList(
       Pair.create("eve<caret>nt", Angular2Language.INSTANCE),
       Pair.create("bind<caret>ing", Angular2Language.INSTANCE),
+      Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
+      final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
+      PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);
+      if (element == null) {
+        element = myFixture.getFile().findElementAt(offset);
+      }
+      assertEquals(signature.first, signature.second, element.getContainingFile().getLanguage());
+    }
+  }
+
+  public void testNonAngular() {
+    myFixture.configureByFiles("nonAngularComponent.ts", "package.json");
+    for (Pair<String, ? extends Language> signature : ContainerUtil.newArrayList(
+      Pair.create("<foo><caret></foo>", HTMLLanguage.INSTANCE),
+      Pair.create("eve<caret>nt", JavaScriptSupportLoader.TYPESCRIPT),
+      Pair.create("bind<caret>ing", JavaScriptSupportLoader.TYPESCRIPT),
       Pair.create("at<caret>tribute", JavaScriptSupportLoader.TYPESCRIPT))) {
       final int offset = findOffsetBySignature(signature.first, myFixture.getFile());
       PsiElement element = InjectedLanguageManager.getInstance(getProject()).findInjectedElementAt(myFixture.getFile(), offset);

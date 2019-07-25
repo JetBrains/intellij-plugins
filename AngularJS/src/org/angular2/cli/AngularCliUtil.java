@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliUtil {
 
@@ -74,7 +75,7 @@ public class AngularCliUtil {
 
   public static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
     List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
+    NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
     return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
   }
 

@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElementVisitor;
 import org.angular2.entities.Angular2Component;
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -24,9 +23,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     return new JSElementVisitor() {
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if ((MODULE_DEC.equals(decorator.getDecoratorName())
-             || COMPONENT_DEC.equals(decorator.getDecoratorName()))
-            && Angular2LangUtil.isAngular2Context(decorator)) {
+        if (isAngularDecorator(decorator, MODULE_DEC, COMPONENT_DEC)) {
           ValidationResults<ProblemType> results = new ValidationResults<>();
           new EntryComponentsValidator().validate(decorator, results);
           if (MODULE_DEC.equals(decorator.getDecoratorName())) {

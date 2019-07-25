@@ -18,7 +18,6 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
@@ -308,13 +307,12 @@ public class Angular2EntitiesProvider {
         }
         element = element.getContext();
       }
-      if (element instanceof TypeScriptClass
-          && Angular2LangUtil.isAngular2Context(element)) {
+      if (element instanceof TypeScriptClass) {
         ES6Decorator decorator = findDecorator((TypeScriptClass)element, myDecoratorNames);
         if (decorator != null) {
           element = decorator;
         }
-        else {
+        else if (Angular2LangUtil.isAngular2Context(element)) {
           TypeScriptClass typeScriptClass = (TypeScriptClass)element;
           String className = typeScriptClass.getName();
           if (className == null
@@ -338,23 +336,23 @@ public class Angular2EntitiesProvider {
             });
           return result.get();
         }
-      }
-      if (element instanceof ES6Decorator) {
-        ES6Decorator dec = (ES6Decorator)element;
-        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)
-            || !Angular2LangUtil.isAngular2Context(element)) {
+        else {
           return null;
         }
-        return CachedValuesManager.getCachedValue(dec, () -> {
-          JSImplicitElement entityElement = null;
-          if (dec.getIndexingData() != null) {
-            entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
-                                               myImplicitElementTester);
-          }
-          return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
-        });
       }
-      return null;
+      else if (!(element instanceof ES6Decorator)
+               || !isAngularDecorator((ES6Decorator)element, myDecoratorNames)) {
+        return null;
+      }
+      ES6Decorator dec = (ES6Decorator)element;
+      return CachedValuesManager.getCachedValue(dec, () -> {
+        JSImplicitElement entityElement = null;
+        if (dec.getIndexingData() != null) {
+          entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
+                                             myImplicitElementTester);
+        }
+        return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
+      });
     }
 
     @Override

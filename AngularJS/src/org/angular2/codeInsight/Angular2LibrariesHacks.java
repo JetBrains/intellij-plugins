@@ -42,7 +42,7 @@ import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 /**
  * This class is intended to be a single point of origin for any hack to support a badly written library.

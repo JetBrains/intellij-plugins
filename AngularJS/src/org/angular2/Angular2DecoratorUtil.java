@@ -1,16 +1,22 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2;
 
+import com.intellij.lang.ecmascript6.psi.ES6FromClause;
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration;
 import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.AstLoadingFilter;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -18,11 +24,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
+import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
 import static com.intellij.util.ArrayUtil.contains;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2DecoratorUtil {
 
@@ -59,8 +66,8 @@ public class Angular2DecoratorUtil {
       return literal.isQuotedLiteral()
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
-             && contains(doIfNotNull(getParentOfType(parent, ES6Decorator.class), ES6Decorator::getDecoratorName),
-                         decoratorNames);
+             && doIfNotNull(getContextOfType(parent, ES6Decorator.class),
+                            decorator -> isAngularDecorator(decorator, decoratorNames)) == Boolean.TRUE;
     }
     return false;
   }
@@ -73,11 +80,8 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      String decoratorName = decorator.getDecoratorName();
-      for (String n : names) {
-        if (n.equals(decoratorName)) {
-          return decorator;
-        }
+      if (isAngularDecorator(decorator, names)) {
+        return decorator;
       }
     }
     return null;
@@ -91,7 +95,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (name.equals(decorator.getDecoratorName())) {
+      if (isAngularDecorator(decorator, name)) {
         return decorator;
       }
     }
@@ -174,7 +178,19 @@ public class Angular2DecoratorUtil {
                        expr -> expr.findProperty(name));
   }
 
-  public static boolean isDirective(@NotNull String decoratorName) {
-    return DIRECTIVE_DEC.equals(decoratorName) || COMPONENT_DEC.equals(decoratorName);
+  public static boolean isAngularDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
+    String decoratorName = decorator.getDecoratorName();
+    if (decoratorName == null
+        || !contains(decoratorName, names)
+        || !Angular2LangUtil.isAngular2Context(decorator)) {
+      return false;
+    }
+    String importedModuleName = Optional.ofNullable(JSStubBasedPsiTreeUtil.resolveLocally(decoratorName, decorator))
+      .map(element -> getContextOfType(element, ES6ImportDeclaration.class))
+      .map(ES6ImportExportDeclaration::getFromClause)
+      .map(ES6FromClause::getReferenceText)
+      .map(StringUtil::unquoteString)
+      .orElse(null);
+    return ANGULAR_CORE_PACKAGE.equals(importedModuleName);
   }
 }
