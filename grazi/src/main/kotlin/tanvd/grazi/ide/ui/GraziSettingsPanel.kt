@@ -31,6 +31,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val linkPanel = panel(HorizontalLayout(0)) {
         border = padding(JBUI.insetsBottom(10))
         isVisible = false
+        name = "GRAZI_LINK_PANEL"
 
         add(ruleLink)
         add(JLabel(AllIcons.Ide.External_link_arrow))

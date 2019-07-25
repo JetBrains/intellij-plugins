@@ -79,6 +79,10 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val _filter: FilterComponent? by lazy {
         object : FilterComponent("GRAZI_RULES_FILTER", 10) {
 
+            init {
+                popupLocationComponent.name = "GRAZI_RULES_SEARCH"
+            }
+
             override fun filter() {
                 expansionMonitor.freeze()
 

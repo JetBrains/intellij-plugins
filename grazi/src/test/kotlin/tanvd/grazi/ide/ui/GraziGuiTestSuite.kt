@@ -6,5 +6,5 @@ import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(GuiTestSuiteRunner::class)
-@Suite.SuiteClasses(GraziGuiTest::class)
+@Suite.SuiteClasses(RulesTreeGuiTest::class, LanguageListGuiTest::class, SpellcheckGuiTest::class, NativeLanguageGuiTest::class)
 class GraziGuiTestSuite : GuiTestSuite()
