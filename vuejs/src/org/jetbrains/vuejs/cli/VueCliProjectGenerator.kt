@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
 import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
@@ -135,12 +137,20 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     CreateRunConfigurationUtil.debugConfiguration(project, 8080)
     CreateRunConfigurationUtil.npmConfiguration(project, "serve")
     setupWebpackConfigFile(project, baseDir)
+    ensureES6Level(project)
   }
 
   private fun setupWebpackConfigFile(project: Project, baseDir: VirtualFile) {
     val configPath = baseDir.path + "/node_modules/@vue/cli-service/webpack.config.js"
     if (File(configPath).isFile) {
       WebPackConfigManager.instance(project).loadState(WebPackConfiguration(configPath))
+    }
+  }
+
+  private fun ensureES6Level(project: Project) {
+    val configuration = JSRootConfiguration.getInstance(project)
+    if (configuration.languageLevel != JSLanguageLevel.ES6) {
+      configuration.storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
     }
   }
 }
