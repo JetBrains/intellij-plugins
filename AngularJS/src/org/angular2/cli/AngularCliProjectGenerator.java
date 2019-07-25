@@ -40,10 +40,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.util.containers.ContainerUtil.exists;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
-  @NonNls public static final String PACKAGE_NAME = "@angular/cli";
   @NonNls public static final String NG_EXECUTABLE = "ng";
   private static final Logger LOG = Logger.getInstance(AngularCliProjectGenerator.class);
   private static final Pattern NPX_PACKAGE_PATTERN =
@@ -107,7 +107,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @SuppressWarnings("SameParameterValue")
   private static boolean isPackageGreaterOrEqual(NodePackage pkg, int major, int minor, int patch) {
     SemVer ver = null;
-    if (pkg.getName().equals(PACKAGE_NAME)) {
+    if (pkg.getName().equals(ANGULAR_CLI_PACKAGE)) {
       ver = pkg.getVersion();
     }
     else {
@@ -140,7 +140,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String packageName() {
-    return PACKAGE_NAME;
+    return ANGULAR_CLI_PACKAGE;
   }
 
   @Override
@@ -152,7 +152,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   protected List<NpxPackageDescriptor.NpxCommand> getNpxCommands() {
-    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(PACKAGE_NAME, NG_EXECUTABLE));
+    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(ANGULAR_CLI_PACKAGE, NG_EXECUTABLE));
   }
 
   @Override

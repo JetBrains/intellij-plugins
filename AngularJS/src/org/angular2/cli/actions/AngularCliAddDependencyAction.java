@@ -67,6 +67,8 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
+
 public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static final NodePackageBasicInfo OTHER =
@@ -232,7 +234,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
     try {
       List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
+      NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
       }

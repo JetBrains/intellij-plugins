@@ -5,23 +5,19 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-
+import {Directive, Input} from "@angular/core"
 import {
-    ChangeDetectorRef,
-    Directive,
-    DoCheck,
-    EmbeddedViewRef,
-    forwardRef,
-    Input,
-    isDevMode,
-    IterableChangeRecord,
-    IterableChanges,
-    IterableDiffer,
-    IterableDiffers,
-    NgIterable,
-    TemplateRef,
-    TrackByFunction,
-    ViewContainerRef
+  DoCheck,
+  EmbeddedViewRef,
+  isDevMode,
+  IterableChangeRecord,
+  IterableChanges,
+  IterableDiffer,
+  IterableDiffers,
+  NgIterable,
+  TemplateRef,
+  TrackByFunction,
+  ViewContainerRef
 } from './iterable_differs';
 
 export class NgForOfContext<T> {

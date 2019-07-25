@@ -6,11 +6,10 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import {Directive, Input} from "@angular/core"
 import {
-  Directive,
   DoCheck,
   EmbeddedViewRef,
-  Input,
   isDevMode,
   IterableChangeRecord,
   IterableChanges,

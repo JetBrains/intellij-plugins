@@ -54,8 +54,7 @@ public class AngularInvalidSelectorInspection extends LocalInspectionTool {
 
         @Override
         public void visitES6Decorator(ES6Decorator decorator) {
-          if ((COMPONENT_DEC.equals(decorator.getDecoratorName())
-               || DIRECTIVE_DEC.equals(decorator.getDecoratorName()))) {
+          if (isAngularDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC)) {
             JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
             if (initializer == null) {
               return;

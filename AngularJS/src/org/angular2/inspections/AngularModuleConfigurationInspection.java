@@ -19,7 +19,6 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
@@ -52,14 +51,12 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
 
   @NotNull
   public static ValidationResults<ProblemType> getValidationResults(@NotNull ES6Decorator decorator) {
-    if (!MODULE_DEC.equals(decorator.getDecoratorName())
-        || !Angular2LangUtil.isAngular2Context(decorator)) {
-      return ValidationResults.empty();
-    }
-    return CachedValuesManager.getCachedValue(
-      decorator, () -> CachedValueProvider.Result.create(
-        validate(decorator),
-        PsiModificationTracker.MODIFICATION_COUNT));
+    return isAngularDecorator(decorator, MODULE_DEC)
+           ? CachedValuesManager.getCachedValue(decorator,
+                                                () -> CachedValueProvider.Result.create(
+                                                  validate(decorator),
+                                                  PsiModificationTracker.MODIFICATION_COUNT))
+           : ValidationResults.empty();
   }
 
   @NotNull

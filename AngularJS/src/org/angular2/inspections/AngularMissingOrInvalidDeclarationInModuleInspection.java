@@ -19,7 +19,6 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -37,13 +36,8 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
 
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if ((COMPONENT_DEC.equals(decorator.getDecoratorName())
-             || DIRECTIVE_DEC.equals(decorator.getDecoratorName())
-             || PIPE_DEC.equals(decorator.getDecoratorName()))
-            && Angular2LangUtil.isAngular2Context(decorator)) {
-          if (TestFinderHelper.isTest(decorator)) {
-            return;
-          }
+        if (isAngularDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, PIPE_DEC)
+            && !TestFinderHelper.isTest(decorator)) {
           Angular2Declaration declaration = tryCast(Angular2EntitiesProvider.getEntity(decorator),
                                                     Angular2Declaration.class);
           if (declaration != null) {

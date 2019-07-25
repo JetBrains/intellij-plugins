@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -16,7 +17,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
-import org.angular2.Angular2DecoratorUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
@@ -137,8 +138,7 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName)
-                                                       || Angular2DecoratorUtil.VIEW_DEC.equals(decoratorName),
+                                      decorator -> isAngularDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC),
                                       language, fileExtension);
   }
 
@@ -146,14 +146,12 @@ public class Angular2Injector implements MultiHostInjector {
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
                                                  @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
-                                                 @NotNull Predicate<? super String> decoratorNameAcceptor,
+                                                 @NotNull Predicate<? super ES6Decorator> decoratorAcceptor,
                                                  @NotNull Language language,
                                                  @Nullable String fileExtension) {
-    final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
-    final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
-    if (expression instanceof JSReferenceExpression) {
-      final String decoratorName = ((JSReferenceExpression)expression).getReferenceName();
-      if (decoratorNameAcceptor.test(decoratorName)) {
+    final ES6Decorator decorator = PsiTreeUtil.getContextOfType(parent, ES6Decorator.class);
+    if (decorator != null) {
+      if (decoratorAcceptor.test(decorator)) {
         inject(registrar, context, language, fileExtension);
         JSFormattableInjectionUtil.setReformattableInjection(context, language);
       }

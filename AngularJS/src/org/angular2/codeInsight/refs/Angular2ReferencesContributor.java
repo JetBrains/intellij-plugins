@@ -95,8 +95,7 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         return element instanceof PsiElement
-               && isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorNames)
-               && Angular2LangUtil.isAngular2Context((PsiElement)element);
+               && isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorNames);
       }
 
       @Override

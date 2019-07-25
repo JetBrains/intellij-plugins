@@ -24,6 +24,9 @@ import java.util.Set;
 
 public class Angular2LangUtil {
 
+  @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
+  @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";
+
   @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {

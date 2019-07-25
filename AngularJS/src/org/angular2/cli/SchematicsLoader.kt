@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import org.angularjs.lang.AngularJSLanguage
 import java.io.File
 
@@ -22,7 +23,7 @@ private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader
 fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors: Boolean): List<Schematic> {
   myLogErrors.set(logErrors)
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return emptyList()
-  val configurator : NodeCommandLineConfigurator
+  val configurator: NodeCommandLineConfigurator
   try {
     configurator = NodeCommandLineConfigurator.find(interpreter)
   }
@@ -76,7 +77,7 @@ private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
 
 private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator, cli: VirtualFile): String {
   val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-  NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null)
+  NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
   val module = modules.firstOrNull() ?: return ""
   val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"

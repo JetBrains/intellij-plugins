@@ -15,7 +15,6 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
 import org.angular2.inspections.quickfixes.RemoveJSProperty;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -29,8 +28,7 @@ public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectio
 
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if (COMPONENT_DEC.equals(decorator.getDecoratorName())
-            && Angular2LangUtil.isAngular2Context(decorator)) {
+        if (isAngularDecorator(decorator, COMPONENT_DEC)) {
           JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
           if (initializer == null) {
             return;
