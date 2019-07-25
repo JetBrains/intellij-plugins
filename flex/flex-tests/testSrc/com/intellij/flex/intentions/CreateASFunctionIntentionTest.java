@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -174,10 +175,8 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
   private void doTestTwoFiles() {
     myFixture.enableInspections(new JSValidateTypesInspection(), new JSCheckFunctionSignaturesInspection());
     String name = getTestName(false);
-    String directory = "/" + name;
-    String first = directory + "/" + name + ".as";
-    String secondName = name + "_2.as";
-    String second = directory + "/" + secondName;
+    String first = name + '/' + name + ".as";
+    String second = name + '/' + name + "_2.as";
     doTestForAndCheckLastFile(first, second);
   }
 
