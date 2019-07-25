@@ -35,7 +35,7 @@ tasks.withType<RunIdeTask> {
 val guiTest = tasks.create("guiTest", Test::class) {
     group = "gui"
 
-    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/ui/"
+    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/"
     systemProperties(jbProperties<Any>().also { it["idea.gui.tests.gradle.runner"] = true })
     include("**/*TestSuite*")
 
