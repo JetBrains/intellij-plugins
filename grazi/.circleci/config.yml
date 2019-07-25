@@ -68,7 +68,6 @@ workflows:
           requires:
             - build
             - test
-            - gui-test
       - release:
           requires:
             - approve-release
