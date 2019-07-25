@@ -2,16 +2,12 @@ package tanvd.grazi
 
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.fixtures.JDialogFixture
-import com.intellij.testGuiFramework.framework.GuiTestSuite
-import com.intellij.testGuiFramework.framework.GuiTestSuiteRunner
 import com.intellij.testGuiFramework.impl.*
 import com.intellij.ui.SearchTextField
 import org.fest.swing.fixture.JTextComponentFixture
 import org.fest.swing.timing.Timeout
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
 
-open class GraziGuiTestCase : GuiTestCase() {
+abstract class GraziGuiTestBase : GuiTestCase() {
     companion object {
         val langs = listOf("Chinese", "Dutch", "English (Canadian)", "English (GB)", "English (US)",
                 "French", "German (Austria)", "German (Germany)", "Greek", "Italian", "Japanese", "Persian", "Polish",

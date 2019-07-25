@@ -4,12 +4,12 @@ import com.intellij.testGuiFramework.framework.RunWithIde
 import com.intellij.testGuiFramework.impl.*
 import com.intellij.testGuiFramework.launcher.ide.CommunityIde
 import org.junit.Test
-import tanvd.grazi.GraziGuiTestCase
+import tanvd.grazi.GraziGuiTestBase
 import kotlin.test.assertEquals
 
 
 @RunWithIde(CommunityIde::class)
-class NativeLanguageGuiTest : GraziGuiTestCase() {
+class NativeLanguageGuiTest : GraziGuiTestBase() {
     @Test
     fun `test native language combobox`() {
         settings {

@@ -10,24 +10,39 @@ jobs:
       - store_artifacts:
           path: build/grazi/plugin/reports
           destination: reports
+
   test:
     docker:
       - image: circleci/openjdk:8-jdk
     working_directory: ~
     steps:
       - checkout
-      - run: ./gradlew :plugin:test
-      - run: ./gradlew :gui-tests:guiTest
+      - run: ./gradlew :plugin:test -Dorg.gradle.java.home=/usr/lib/jvm/java-8-openjdk-amd64
       - store_artifacts:
-          path: build/grazi/gui-tests/reports
-          destination: reports
+          path: build/plugin/reports
+
+  gui-test:
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+        environment:
+          DISPLAY: :99
+    working_directory: ~
+    steps:
+      - checkout
+      - run:
+          name: Start GUI tests
+          command: ./gradlew :gui-tests:test
+      - store_artifacts:
+          path: build/gui-tests/reports
+      - store_artifacts:
+          path: gui-tests/guitest.log
   release:
     docker:
       - image: circleci/openjdk:8-jdk
     working_directory: ~
     steps:
       - checkout
-      - run: ./gradlew :plugin:publishPlugin
+      - run: ./gradlew :plugin:publishPlugin -x test
 workflows:
   version: 2
   build:
@@ -36,11 +51,25 @@ workflows:
       - test
   release:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - /dev-.*/
+                - /stable-.*/
+      - test:
+          filters:
+            branches:
+              only:
+                - /dev-.*/
+                - /stable-.*/
       - approve-release:
           type: approval
           requires:
             - build
+            - test
+            - gui-test
       - release:
           requires:
             - approve-release
+

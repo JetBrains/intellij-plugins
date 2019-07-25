@@ -41,7 +41,7 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return object : ProjectDescriptor(LanguageLevel.JDK_1_8) {
             override fun getSdk(): Sdk? {
-                return JavaSdk.getInstance().createJdk("jdk8", System.getenv("JAVA_HOME"), false)
+                return JavaSdk.getInstance().createJdk("jdk8", System.getenv("JAVA_HOME") ?: "/usr/lib/jvm/java-8-openjdk-amd64", false)
             }
         }
     }

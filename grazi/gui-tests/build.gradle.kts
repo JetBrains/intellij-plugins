@@ -32,19 +32,6 @@ tasks.withType<RunIdeTask> {
     args(execArguments())
 }
 
-val guiTest = tasks.create("guiTest", Test::class) {
-    group = "gui"
-
-    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/"
-    systemProperties(jbProperties<Any>().also { it["idea.gui.tests.gradle.runner"] = true })
-    include("**/*TestSuite*")
-
-    useJUnit()
-
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
-}
 
 val testsJar = tasks.create("guiTestJar", Jar::class) {
     group = "gui"
@@ -60,11 +47,6 @@ tasks.withType<PrepareSandboxTask> {
         into("testGuiFramework/lib")
     }
 
-    from(_sourceSets["main"].resources) {
-        exclude("META-INF")
-        into("testGuiFramework/lib")
-    }
-
     from(testsJar) {
         exclude("testData/*")
         into("testGuiFramework/lib")
@@ -75,4 +57,16 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 
     compile(project(":plugin"))
+}
+
+tasks.withType<Test> {
+    environment["GUI_TEST_DATA_DIR"] = projectDir.absolutePath + "/src/test/resources/ide/ui/"
+
+    systemProperties(jbProperties<Any>().also { it["idea.gui.tests.gradle.runner"] = true })
+
+    useJUnit()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
