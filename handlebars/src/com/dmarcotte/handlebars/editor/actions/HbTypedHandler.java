@@ -100,7 +100,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
             }
 
             editor.getDocument().insertString(offset, braceCompleter);
-            offset = offset + braceCompleter.length();
+            offset += braceCompleter.length();
             editor.getCaretModel().moveToOffset(offset);
             closeBraceCompleted = true;
           }
