@@ -3,7 +3,7 @@ package tanvd.grazi.ide.language
 import com.intellij.lang.LanguageExtension
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.isInjectedFragment
 
@@ -17,7 +17,7 @@ abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet
             .filterNot { it.info.rule.id in disabledRules }
             .filter {
                 it.location.element?.let { gotElement ->
-                    !gotElement.isInjectedFragment() && (gotElement == element || element.isAncestor(gotElement))
+                    !gotElement.isInjectedFragment() && isAncestor(element, gotElement, false)
                 } ?: false
             }.toSet()
 

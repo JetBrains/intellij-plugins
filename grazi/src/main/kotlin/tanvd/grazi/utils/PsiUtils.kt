@@ -7,8 +7,6 @@ import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.parents
-import org.rust.lang.core.psi.ext.elementType
 
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
 
@@ -23,21 +21,6 @@ fun ASTNode.hasType(tokens: Set<IElementType>) = this.elementType in tokens
 
 inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType): List<T> = filterFor { token ->
     tokens.contains(token.node.elementType)
-}
-
-fun PsiElement.exclusiveFilterFor(excludeFromWalk: (PsiElement) -> Boolean, includeInResult: (PsiElement) -> Boolean): List<PsiElement> {
-    val result = ArrayList<PsiElement>()
-    children.forEach {
-        if (includeInResult(it)) {
-            result += it
-        }
-
-        if (!excludeFromWalk(it)) {
-            result += it.exclusiveFilterFor(excludeFromWalk, includeInResult)
-        }
-    }
-
-    return result
 }
 
 inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> = SmartPointerManager.createPointer(this)
