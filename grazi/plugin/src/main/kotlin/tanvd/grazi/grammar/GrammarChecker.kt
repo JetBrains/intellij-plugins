@@ -56,7 +56,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char, Char
                     @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignoreChar.any { it(this, char, if (dirtyText.length < index + 1 ) dirtyText.substring(index + 1) else "" ) }
+                    if (ignoreChar.any { it(this, char, if (dirtyText.length > index + 1 ) dirtyText.substring(index + 1) else "" ) }
                             || indexBasedIgnore(token, tokenIndex)) {
                         indexesShift[index] = ++totalExcluded
                         continue

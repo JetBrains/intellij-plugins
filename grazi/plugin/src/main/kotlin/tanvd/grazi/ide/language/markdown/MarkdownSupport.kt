@@ -2,9 +2,7 @@ package tanvd.grazi.ide.language.markdown
 
 
 import com.intellij.psi.PsiElement
-import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
-import org.jetbrains.kotlin.idea.editor.fixers.range
-import org.rust.lang.core.psi.ext.elementType
+import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
@@ -21,11 +19,36 @@ class MarkdownSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         return GrammarChecker.default.check(listOf(element), indexBasedIgnore = { token, index ->
-            token.children.find { element -> index in element.range }?.elementType == MarkdownTokenTypes.TEXT
-        }).filter { typo -> !(typo.isTypoInOuterListItem() && typo.info.category in bulletsIgnoredCategories) }.toSet()
+            val elementInToken = token.findElementAt(index)!!
+            !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
+        }).filter { typo ->
+            val typoStartElement: PsiElement = element.findElementAt(typo.location.range.start)!!
+            val typoEndElement: PsiElement = element.findElementAt(typo.location.range.last)!!
+
+            // Inline elements inside typo
+            if (generateSequence(typoStartElement) { PsiTreeUtil.nextLeaf(it) }.takeWhile { it != typoEndElement }
+                            .flatMap { it.parents() }.any { MarkdownPsiUtils.isInline(it) }) return@filter false
+
+
+            // Inline element right before a typo (TODO add categories filter)
+            if (typo.location.isAtStartOfInnerElement(typoStartElement)) {
+                generateSequence(PsiTreeUtil.prevLeaf(typoStartElement)) { PsiTreeUtil.prevLeaf(it) }
+                        .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
+                        ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
+                        ?.let { if (it) return@filter false }
+            }
+
+            // Inline element right after a typo (TODO add categories filter)
+            if (typo.location.isAtEndOfInnerElement(typoEndElement)) {
+                generateSequence(PsiTreeUtil.nextLeaf(typoEndElement)) { PsiTreeUtil.nextLeaf(it) }
+                        .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
+                        ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
+                        ?.let { if (it) return@filter false }
+            }
+
+            !(typo.isTypoInOuterListItem() && typo.info.category in bulletsIgnoredCategories)
+        }.toSet()
     }
 
-    private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element ->
-        element.node?.let { MarkdownPsiUtils.isOuterListItem(element) } ?: false
-    } ?: false
+    private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element ->  MarkdownPsiUtils.isOuterListItem(element) } ?: false
 }
