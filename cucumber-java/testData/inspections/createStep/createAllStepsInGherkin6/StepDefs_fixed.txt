@@ -9,11 +9,9 @@ public class CreateAllStepDefs {
 
     @Given("^test$")
     public void test() {
-        
     }
 
     @Given("^super test$")
     public void superTest() {
-        
     }
 }
