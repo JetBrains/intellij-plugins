@@ -9,6 +9,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,6 +96,12 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     TypeScriptClass clazz = PsiTreeUtil.getContextOfType(parent, TypeScriptClass.class, false);
     return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
                          : parent.getContainingFile().getName() + ":" + getTextOffset();
+  }
+
+  @NotNull
+  @Override
+  public SearchScope getUseScope() {
+    return GlobalSearchScope.projectScope(getProject());
   }
 
   @Nullable

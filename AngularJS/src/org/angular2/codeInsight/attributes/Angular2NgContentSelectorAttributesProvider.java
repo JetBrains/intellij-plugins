@@ -22,8 +22,7 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
                                           @NotNull XmlTag tag,
                                           @NotNull String attributeName) {
     getAvailableNgContentAttrSelectorsStream(tag, completionResultsConsumer.getScope())
-      .map(selector -> Angular2AttributeDescriptor.create(tag, selector.getName(), selector))
-      .nonNull()
+      .map(selector -> new NgContentSelectorBasedAttributeDescriptor(tag, selector))
       .forEach(completionResultsConsumer::addDescriptor);
   }
 
@@ -35,8 +34,7 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
     String attrName = StringUtil.toLowerCase(attributeName);
     return getAvailableNgContentAttrSelectorsStream(tag, new Angular2DeclarationsScope(tag))
       .filter(selector -> StringUtil.toLowerCase(selector.getName()).equals(attrName))
-      .map(selector -> Angular2AttributeDescriptor.create(tag, selector.getName(), selector))
-      .nonNull()
+      .map(selector -> new NgContentSelectorBasedAttributeDescriptor(tag, selector))
       .findAny()
       .orElse(null);
   }
@@ -57,5 +55,13 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
         .map(SimpleSelectorWithPsi::getAttributes)
         .append(selector.getAttributes()))
       .flatMap(Collection::stream);
+  }
+
+  private static class NgContentSelectorBasedAttributeDescriptor extends Angular2AttributeDescriptor {
+
+    protected NgContentSelectorBasedAttributeDescriptor(@NotNull XmlTag xmlTag,
+                                                        @NotNull Angular2DirectiveSelectorPsiElement selector) {
+      super(xmlTag, selector.getName(), AttributePriority.HIGH, Collections.singleton(selector), false);
+    }
   }
 }
