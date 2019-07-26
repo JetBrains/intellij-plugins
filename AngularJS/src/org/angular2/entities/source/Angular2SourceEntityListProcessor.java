@@ -277,7 +277,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
         final List<JSType> evaluatedReturnTypes = new SmartList<>();
         final JSFunctionNodesVisitor cachedDataEvaluator =
           new TypeScriptFunctionCachingVisitor(function,
-                                               cachedData, nestedFuns, evaluatedReturnTypes);
+                                               cachedData, nestedFuns);
         AstLoadingFilter.forceAllowTreeLoading(
           function.getContainingFile(),
           () -> cachedDataEvaluator.visitElement(function.getNode()));
