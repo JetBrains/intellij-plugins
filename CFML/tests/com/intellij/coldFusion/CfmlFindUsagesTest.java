@@ -15,7 +15,6 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 
 import java.util.Collection;

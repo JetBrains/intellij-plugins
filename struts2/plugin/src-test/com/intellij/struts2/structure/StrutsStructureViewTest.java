@@ -16,7 +16,6 @@ package com.intellij.struts2.structure;
 
 import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**

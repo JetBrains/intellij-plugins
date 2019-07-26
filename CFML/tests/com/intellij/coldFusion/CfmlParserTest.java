@@ -18,7 +18,6 @@ package com.intellij.coldFusion;
 import com.intellij.coldFusion.model.CfmlLanguage;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 /**
  * Created by Lera Nikolaenko

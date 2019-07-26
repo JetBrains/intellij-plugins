@@ -1,7 +1,6 @@
 package com.intellij.tapestry.tests.actions.createnew;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;

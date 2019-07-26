@@ -1,7 +1,6 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.ide.IdeView;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleFileIndex;

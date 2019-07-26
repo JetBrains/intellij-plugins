@@ -20,7 +20,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.jam.JamSimpleReferenceConverter;
 import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;

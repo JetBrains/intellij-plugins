@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
-import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;

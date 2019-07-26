@@ -10,7 +10,6 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author yole
