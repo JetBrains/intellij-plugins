@@ -79,7 +79,7 @@ this.metaClass.mixin(cucumber.api.groovy.EN)
       PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
       final at = file.findElementAt(myFixture.editor.caretModel.offset)
       final step = PsiTreeUtil.getParentOfType(at, GherkinStep)
-      new GrStepDefinitionCreator().createStepDefinition(step, stepDef)
+      new GrStepDefinitionCreator().createStepDefinition(step, stepDef, false)
       PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
     }
 
