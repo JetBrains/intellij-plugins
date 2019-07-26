@@ -115,13 +115,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return result;
   }
 
-  private void createStepDefinitionFile(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  private boolean createStepDefinitionFile(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
     final PsiFile featureFile = step.getContainingFile();
     assert featureFile != null;
 
     final CreateStepDefinitionFileModel model = askUserForFilePath(step);
     if (model == null) {
-      return;
+      return false;
     }
     String filePath = FileUtil.toSystemDependentName(model.getFilePath());
     final BDDFrameworkType frameworkType = model.getSelectedFileType();
@@ -147,21 +147,25 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             LOG.error(e);
           }
         }, CucumberBundle.message("cucumber.quick.fix.create.step.command.name.create"), null));
+      return true;
     }
     else {
       Messages.showErrorDialog(project,
                                CucumberBundle.message("cucumber.quick.fix.create.step.error.already.exist.msg", filePath),
                                CucumberBundle.message("cucumber.quick.fix.create.step.file.name.title"));
+      return false;
     }
   }
 
-  protected void createFileOrStepDefinition(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  /**
+   * @return false if was cancelled
+   */
+  protected boolean createFileOrStepDefinition(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
     if (context.getFrameworkType() == null) {
-      createStepDefinitionFile(step, context);
+      return createStepDefinitionFile(step, context);
     }
-    else {
-      createStepDefinition(step, context);
-    }
+    createStepDefinition(step, context);
+    return true;
   }
 
   protected boolean shouldRunTemplateOnStepDefinition() {

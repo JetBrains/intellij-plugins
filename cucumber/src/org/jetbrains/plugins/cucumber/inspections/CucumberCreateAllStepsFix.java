@@ -46,7 +46,9 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
               pattern = StringUtil.trimEnd(StringUtil.trimStart(pattern, "\\Q"), "\\E");
               pattern = CucumberUtil.prepareStepRegexp(pattern);
               if (!createdStepDefPatterns.contains(pattern)) {
-                createFileOrStepDefinition(step, fileAndFrameworkType);
+                if (!createFileOrStepDefinition(step, fileAndFrameworkType)) {
+                  return;
+                }
                 createdStepDefPatterns.add(pattern);
               }
             }
