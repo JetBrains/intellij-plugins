@@ -104,6 +104,10 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
     doMultiFileTest("foo.component.html", "product");
   }
 
+  public void testNgContentSelector() {
+    doMultiFileTest("slots.component.ts", "new-tag");
+  }
+
   private void doMultiFileTest(String mainFile, String newName) {
     doMultiFileTest(mainFile, newName, true);
   }

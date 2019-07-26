@@ -75,13 +75,25 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       .nonNull()
       .forEach(element -> {
         if (names.add(element.getName())) {
-          addLookupItem(language, elements, element, element.getName(), null, null);
+          addNgContentSelectorBasedLookupItem(language, elements, element);
         }
       });
   }
 
   private static void addLookupItem(@NotNull Language language, @NotNull List<? super LookupElement> elements, @NotNull String name) {
     addLookupItem(language, elements, name, name, null, null);
+  }
+
+  private static void addNgContentSelectorBasedLookupItem(@NotNull Language language,
+                                                          @NotNull List<LookupElement> elements,
+                                                          @NotNull Angular2DirectiveSelectorPsiElement selectorElement) {
+    LookupElementBuilder element = LookupElementBuilder.create(selectorElement, selectorElement.getName())
+      .withIcon(AngularJSIcons.Angular2)
+      .withBoldness(true);
+    if (language.isKindOf(XMLLanguage.INSTANCE)) {
+      element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
+    }
+    elements.add(PrioritizedLookupElement.withPriority(element, 2));
   }
 
   private static void addLookupItem(@NotNull Language language,
