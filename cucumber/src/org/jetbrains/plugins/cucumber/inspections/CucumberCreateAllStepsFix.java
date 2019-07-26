@@ -55,4 +55,9 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
       }
     }
   }
+
+  @Override
+  protected boolean shouldRunTemplateOnStepDefinition() {
+    return false;
+  }
 }

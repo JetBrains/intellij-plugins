@@ -62,7 +62,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file, boolean withTemplate) {
     if (!(file instanceof PsiClassOwner)) return false;
 
     final Project project = file.getProject();
@@ -88,7 +88,9 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
       final PsiElement regexpElement = annotation.getParameterList().getAttributes()[0];
 
-      runTemplateBuilderOnAddedStep(editor, addedElement, regexpElement, blockVars, body);
+      if (withTemplate) {
+        runTemplateBuilderOnAddedStep(editor, addedElement, regexpElement, blockVars, body);
+      }
     }
 
     return true;
