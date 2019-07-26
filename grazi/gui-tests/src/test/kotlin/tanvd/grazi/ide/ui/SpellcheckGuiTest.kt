@@ -2,7 +2,8 @@ package tanvd.grazi.ide.ui
 
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testGuiFramework.framework.RunWithIde
-import com.intellij.testGuiFramework.impl.*
+import com.intellij.testGuiFramework.impl.checkbox
+import com.intellij.testGuiFramework.impl.waitAMoment
 import com.intellij.testGuiFramework.launcher.ide.CommunityIde
 import org.junit.Test
 import tanvd.grazi.GraziGuiTestBase
@@ -15,18 +16,24 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
         simpleProject {
             waitAMoment()
 
-            ideFrame {
-                projectView {
-                    path("SimpleProject", "src", "Main.kt").doubleClick()
-                }
+            openTestFile()
+            enableGit()
 
-                editor {
-                    moveToLine(1)
-                    typeText("// text with eror")
-                    waitAMoment()
+            editor {
+                moveToLine(1)
+                typeText("// text with eror")
+                waitAMoment()
 
-                    requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
-                }
+                requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
+            }
+
+            settings { } // FIXME workaround for check highlights in git dialog
+
+            gitEditor {
+                moveToLine(1)
+                typeText("text with eror")
+
+                requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
             settings {
@@ -36,32 +43,15 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
                 }
             }
 
-            ideFrame {
-                editor {
-                    waitAMoment()
-                    requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
-                }
+            waitAMoment()
+
+            editor {
+                waitAMoment()
+                requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
-            ideFrame {
-                invokeMainMenu("Start.Use.Vcs")
-                dialog("Enable Version Control Integration") {
-                    combobox("Select a version control system to associate with the project root:").selectItem("Git")
-                    button("OK").click()
-                }
-
-                invokeMainMenu("CheckinProject")
-                dialog("Commit Changes") {
-                    editor {
-                        moveToLine(1)
-                        typeText("text with eror")
-                        waitAMoment()
-
-                        requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
-                    }
-
-                    button("Cancel").click()
-                }
+            gitEditor {
+                requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
             settings {
@@ -72,15 +62,14 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             }
 
             waitAMoment()
-            ideFrame {
-                invokeMainMenu("CheckinProject")
-                dialog("Commit Changes") {
-                    editor {
-                        requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
-                    }
 
-                    button("Cancel").click()
-                }
+            editor {
+                waitAMoment()
+                requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
+            }
+
+            gitEditor {
+                requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
         }
     }

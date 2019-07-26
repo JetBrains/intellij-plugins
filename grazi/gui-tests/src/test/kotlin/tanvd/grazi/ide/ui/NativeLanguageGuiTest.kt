@@ -1,5 +1,6 @@
 package tanvd.grazi.ide.ui
 
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testGuiFramework.framework.RunWithIde
 import com.intellij.testGuiFramework.impl.*
 import com.intellij.testGuiFramework.launcher.ide.CommunityIde
@@ -30,8 +31,28 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                     assert(!path(lang, "False friends").hasPath())
                     assert(path(lang, "Омонимы").hasPath())
                 }
+            }
+        }
 
-                selectItem(lang)
+        ideFrame {
+            openTestFile()
+
+            editor {
+                moveToLine(1)
+                typeText("// I love a baton")
+                waitAMoment()
+
+                requireHighlights(HighlightSeverity.INFORMATION, "baton &rarr; loafЗначение омонимов: baton")
+            }
+
+            settings {
+                combobox("Native language:").selectItem("English (US)")
+            }
+
+            waitAMoment()
+
+            editor {
+                requireCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 0)
             }
         }
     }

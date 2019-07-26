@@ -64,7 +64,7 @@ tasks.withType<Test> {
 
     systemProperties(jbProperties<Any>().also { it["idea.gui.tests.gradle.runner"] = true })
 
-    useJUnit()
+    include("**/*TestSuite*")
 
     testLogging {
         events("passed", "skipped", "failed")

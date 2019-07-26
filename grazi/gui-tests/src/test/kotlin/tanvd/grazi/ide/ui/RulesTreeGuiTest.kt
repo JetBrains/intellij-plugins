@@ -46,10 +46,17 @@ class RulesTreeGuiTest : GraziGuiTestBase() {
     @Test
     fun `test default disabled rules`() {
         settings("Cancel") {
+            actionButton("Add").click()
+            popupMenu("Russian").clickSearchedItem()
+
             assert(!checkboxTree("English (US)", "Capitalization", "Checks that a sentence starts with an uppercase letter").isSelected())
             assert(!checkboxTree("English (US)", "Creative Writing", "Creative Writing: E-Prime: all 'to be' forms").isSelected())
             assert(!checkboxTree("English (US)", "Text Analysis", "Readability: Too difficult text").isSelected())
             assert(checkboxTree("English (US)", "Grammar", "'kind/type/sort of a/an'").isSelected())
+
+            assert(!checkboxTree("Russian", "Miscellaneous", "Проверка на использование тире вместо дефиса (то есть «из — за» вместо «из-за»).").isSelected())
+            assert(!checkboxTree("Russian", "Стиль", "Благозвучность").isSelected())
+            assert(checkboxTree("Russian", "Грамматика", "Глагол и причастие").isSelected())
         }
     }
 }

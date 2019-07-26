@@ -1,5 +1,6 @@
 package tanvd.grazi
 
+import com.intellij.testGuiFramework.fixtures.FileEditorFixture
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.fixtures.JDialogFixture
 import com.intellij.testGuiFramework.impl.*
@@ -33,6 +34,31 @@ abstract class GraziGuiTestBase : GuiTestCase() {
     fun JDialogFixture.rulesSearchField(): JTextComponentFixture {
         val field: SearchTextField = findComponentWithTimeout(Timeout.timeout(5)) { it.name == "GRAZI_RULES_SEARCH" }
         return JTextComponentFixture(robot(), field.textEditor)
+    }
+
+    fun IdeFrameFixture.enableGit() {
+        invokeMainMenu("Start.Use.Vcs")
+        dialog("Enable Version Control Integration") {
+            combobox("Select a version control system to associate with the project root:").selectItem("Git")
+            button("OK").click()
+        }
+    }
+
+    fun IdeFrameFixture.openTestFile() {
+        projectView {
+            path("SimpleProject", "src", "Main.kt").doubleClick()
+        }
+    }
+
+    fun IdeFrameFixture.gitEditor(body: FileEditorFixture.() -> Unit) {
+        invokeMainMenu("CheckinProject")
+        dialog("Commit Changes") {
+            editor {
+                body()
+            }
+
+            button("Cancel").click()
+        }
     }
 }
 
