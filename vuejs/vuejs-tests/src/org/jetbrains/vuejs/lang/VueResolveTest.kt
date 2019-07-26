@@ -1835,6 +1835,21 @@ export default class UsageComponent extends Vue {
     assertEquals(component.model.event, "change")
   }
 
+  fun testAtComponentResolutionTs() {
+    val file = myFixture.configureByFile("at_component_ts.vue")
+    val component = VueModelManager.findEnclosingContainer(file) as VueRegularComponent
+
+    val getNames = { list: Collection<VueNamedSymbol> -> list.map { it.name }.sorted() }
+
+    assertSameElements(getNames(component.props), "bar", "foo_prop", "name", "checked")
+    assertSameElements(getNames(component.data), "foo", "foo_prop", "foo_data")
+    assertSameElements(getNames(component.computed), "computedBar", "computedSetter", "syncedName")
+    assertSameElements(getNames(component.methods), "addToCount", "getBar", "resetCount")
+    assertSameElements(getNames(component.emits), "add-to-count", "reset", "update:name")
+    assertEquals(component.model.prop, "checked")
+    assertEquals(component.model.event, "change")
+  }
+
 }
 
 fun globalMixinText(): String {

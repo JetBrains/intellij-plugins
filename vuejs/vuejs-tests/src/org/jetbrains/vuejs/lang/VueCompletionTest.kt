@@ -1599,6 +1599,15 @@ $script""")
     assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
   }
 
+  fun testComplexComponentDecoratorCompletionTs() {
+    myFixture.copyDirectoryToProject("complexComponentDecoratorTs", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,
+                           "component-prop", "mixin-prop", "decorated-mixin-prop", "decorated-mixin-prop2")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "decorated-mixin-prop3")
+  }
+
   fun testDestructuringVariableTypeInVFor() {
     configureVueDefinitions()
     myFixture.configureByFile(getTestName(false) + ".vue")
