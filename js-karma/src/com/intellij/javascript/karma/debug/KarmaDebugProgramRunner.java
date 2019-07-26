@@ -134,7 +134,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
-              if (Registry.is("js.debugger.break.on.first.statement")) {
+              if (Registry.is("js.debugger.break.on.first.statement.karma")) {
                 vm.getBreakpointManager().setBreakOnFirstStatement();
               }
               alarm.cancelAllRequests();
