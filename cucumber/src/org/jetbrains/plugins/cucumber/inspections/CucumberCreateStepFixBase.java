@@ -115,7 +115,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return result;
   }
 
-  private static void createStepDefinitionFile(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  private void createStepDefinitionFile(final GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
     final PsiFile featureFile = step.getContainingFile();
     assert featureFile != null;
 
@@ -164,6 +164,10 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
+  protected boolean shouldRunTemplateOnStepDefinition() {
+    return true;
+  }
+
   @Nullable
   private static CreateStepDefinitionFileModel askUserForFilePath(@NotNull final GherkinStep step) {
     final InputValidator validator = new InputValidator() {
@@ -202,12 +206,14 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     }
   }
 
-  private static void createStepDefinition(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
+  private void createStepDefinition(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
     CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(step.getProject());
     StepDefinitionCreator stepDefCreator = stepsIndex.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
     PsiFile file = context.getPsiFile();
-    if (file != null){
-      WriteCommandAction.runWriteCommandAction(step.getProject(), null, null, () -> stepDefCreator.createStepDefinition(step, file), file);
+    if (file != null) {
+      WriteCommandAction.runWriteCommandAction(step.getProject(), null, null,
+                                               () -> stepDefCreator.createStepDefinition(step, file, shouldRunTemplateOnStepDefinition()),
+                                               file);
     }
   }
 }

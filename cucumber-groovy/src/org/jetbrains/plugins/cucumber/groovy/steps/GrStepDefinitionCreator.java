@@ -61,7 +61,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file, boolean withTemplate) {
     if (!(file instanceof GroovyFile)) return false;
 
     final Project project = file.getProject();
@@ -109,6 +109,10 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     for (GrParameter var : blockVars) {
       PsiElement identifier = var.getNameIdentifierGroovy();
       builder.replaceElement(identifier, identifier.getText());
+    }
+
+    if (!withTemplate) {
+      return true;
     }
 
     TemplateManager manager = TemplateManager.getInstance(project);
