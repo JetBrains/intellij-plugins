@@ -471,7 +471,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
         }
 
         if (element != null &&
-            (element.getKind().equals(ElementKind.CONSTRUCTOR)|| element.getKind().equals(ElementKind.FUNCTION)) &&
+            (element.getKind().equals(ElementKind.CONSTRUCTOR) || element.getKind().equals(ElementKind.FUNCTION)) &&
             suggestion.getParameterNames() != null) {
           handleFunctionInvocationInsertion(context, item, suggestion);
         }
