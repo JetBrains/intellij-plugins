@@ -17,7 +17,6 @@ package org.jetbrains.plugins.ruby.motion.paramdefs;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.containers.hash.HashMap;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Class;
@@ -33,10 +32,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefLea
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefSeq;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dennis.Ushakov
