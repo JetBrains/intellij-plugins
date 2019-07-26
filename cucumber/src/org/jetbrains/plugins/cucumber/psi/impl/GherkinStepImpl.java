@@ -48,7 +48,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Override
   public String toString() {
-    return "GherkinStep:" + getStepName();
+    return "GherkinStep:" + getName();
   }
 
   @Override
@@ -88,7 +88,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   protected String getPresentableText() {
     final ASTNode keywordNode = getKeyword();
     final String prefix = keywordNode != null ? keywordNode.getText() + ": " : "Step: ";
-    return prefix + getStepName();
+    return prefix + getName();
   }
 
   @NotNull
@@ -115,7 +115,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
 
         // step name
-        final String text = getStepName();
+        final String text = getName();
         if (StringUtil.isEmpty(text)) {
           return Collections.emptyList();
         }
@@ -182,10 +182,10 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   public String getSubstitutedName() {
     final GherkinStepsHolder holder = getStepHolder();
     if (!(holder instanceof GherkinScenarioOutline)) {
-      return getStepName();
+      return getName();
     }
     final GherkinScenarioOutline outline = (GherkinScenarioOutline)holder;
-    return CucumberUtil.substituteTableReferences(getStepName(), outline.getOutlineTableMap()).getSubstitution();
+    return CucumberUtil.substituteTableReferences(getName(), outline.getOutlineTableMap()).getSubstitution();
   }
 
   @Override
@@ -196,6 +196,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
+  @NotNull
   public String getName() {
     return getElementText();
   }

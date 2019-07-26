@@ -259,13 +259,13 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
     String methodAnnotation = String.format("@%s.", annotationPackage);
 
-    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new JavaSnippet());
 
     String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));
 
     if (CucumberJavaUtil.isCucumberExpressionsAvailable(step)) {
-      snippet = replaceRegexpWithCucumberExpression(snippet, step.getStepName());
+      snippet = replaceRegexpWithCucumberExpression(snippet, step.getName());
     }
 
     snippet = snippet.replaceFirst("@", methodAnnotation);

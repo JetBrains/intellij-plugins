@@ -42,7 +42,7 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
 
             final AbstractStepDefinition definition = ((CucumberStepReference)reference).resolveToDefinition();
             if (definition == null) {
-              String pattern = Pattern.quote(step.getStepName());
+              String pattern = Pattern.quote(step.getName());
               pattern = StringUtil.trimEnd(StringUtil.trimStart(pattern, "\\Q"), "\\E");
               pattern = CucumberUtil.prepareStepRegexp(pattern);
               if (!createdStepDefPatterns.contains(pattern)) {

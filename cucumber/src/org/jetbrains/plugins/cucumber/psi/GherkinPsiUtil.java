@@ -61,8 +61,8 @@ public class GherkinPsiUtil {
       }
     }
 
-    int k = step.getText().indexOf(step.getStepName());
-    k += step.getStepName().length();
+    int k = step.getText().indexOf(step.getName());
+    k += step.getName().length();
     if (k < step.getText().length() - 1) {
       String text = step.getText().substring(k + 1);
       boolean inParam = false;
@@ -75,7 +75,7 @@ public class GherkinPsiUtil {
         }
 
         if (text.charAt(i) == '>' && inParam) {
-          parameterRanges.add(new TextRange(paramStart, i + 1).shiftRight(shiftOffset + step.getStepName().length() + 1));
+          parameterRanges.add(new TextRange(paramStart, i + 1).shiftRight(shiftOffset + step.getName().length() + 1));
           inParam = false;
         }
         i++;
@@ -91,6 +91,6 @@ public class GherkinPsiUtil {
     }
 
     Map<String, String> outlineTableMap = ((GherkinScenarioOutline)step.getStepHolder()).getOutlineTableMap();
-    return CucumberUtil.substituteTableReferences(step.getStepName(), outlineTableMap);
+    return CucumberUtil.substituteTableReferences(step.getName(), outlineTableMap);
   }
 }

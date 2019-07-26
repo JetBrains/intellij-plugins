@@ -140,7 +140,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
 
       // highlight in step name
       final int textStartOffset = reference.getRangeInElement().getStartOffset();
-      highlightOutlineParamsForText(step.getStepName(), textStartOffset, pattern, step);
+      highlightOutlineParamsForText(step.getName(), textStartOffset, pattern, step);
 
       // highlight in pystring
       final GherkinPystring pystring = step.getPystring();

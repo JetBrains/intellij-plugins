@@ -170,7 +170,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
 
-    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
     final String fqnPendingException;
