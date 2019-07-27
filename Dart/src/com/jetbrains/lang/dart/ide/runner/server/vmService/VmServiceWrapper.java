@@ -551,8 +551,6 @@ public class VmServiceWrapper implements Disposable {
   public void callToString(@NotNull final String isolateId,
                            @NotNull final String targetId,
                            @NotNull final InvokeConsumer callback) {
-    // todo: upstream the changes to the library
-
     // For 3.11 and after we use "invoke"; before that, we use "eval";
     if (supportsInvoke()) {
       addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));
