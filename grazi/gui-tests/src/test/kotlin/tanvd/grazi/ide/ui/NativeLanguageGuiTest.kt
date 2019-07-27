@@ -38,10 +38,12 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
             openTestFile()
 
             editor {
+                waitAMoment()
                 moveToLine(1)
                 typeText("// I love a baton")
-                waitAMoment()
 
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "baton &rarr; loafЗначение омонимов: baton")
             }
 
@@ -49,9 +51,9 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                 combobox("Native language:").selectItem("English (US)")
             }
 
-            waitAMoment()
 
             editor {
+                waitAMoment()
                 requireCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 0)
             }
         }

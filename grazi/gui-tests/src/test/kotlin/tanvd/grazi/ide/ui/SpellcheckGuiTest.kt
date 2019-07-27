@@ -20,20 +20,24 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             enableGit()
 
             editor {
+                waitAMoment()
                 moveToLine(1)
                 typeText("// text with eror")
 
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
             settings { } // FIXME workaround for check highlights in git dialog
 
             gitEditor {
+                waitAMoment()
                 moveToLine(1)
                 typeText("text with eror")
 
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
@@ -44,17 +48,15 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
                 }
             }
 
-            waitAMoment()
-
             editor {
-
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
             gitEditor {
-
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
@@ -65,15 +67,15 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
                 }
             }
 
-            waitAMoment()
-
             editor {
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
             gitEditor {
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
         }

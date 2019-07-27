@@ -50,11 +50,13 @@ class LanguageListGuiTest : GraziGuiTestBase() {
             openTestFile()
 
             editor {
+                waitAMoment()
                 moveToLine(1)
                 typeText("// Сдесь два ошибка.\n")
                 typeText("// It are eror")
 
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 4)
                 requireHighlights(HighlightSeverity.INFORMATION, "Проверка орфографии с исправлениями",
                         "два ошибка &rarr; два ошибкиСклонение  «числительное + существительное»Incorrect:В коробке лежало три карандаш.Correct:В коробке лежало три карандаша.",
                         "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.", "Typo: In word 'eror'")
@@ -73,7 +75,8 @@ class LanguageListGuiTest : GraziGuiTestBase() {
             }
 
             editor {
-                waitUntilErrorAnalysisFinishes()
+                waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 2)
                 requireHighlights(HighlightSeverity.INFORMATION,
                         "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.", "Typo: In word 'eror'")
             }
