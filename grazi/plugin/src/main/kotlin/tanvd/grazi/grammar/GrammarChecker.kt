@@ -7,15 +7,14 @@ import tanvd.kex.*
 
 class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
                      private val replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
-                     private val ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet(),
-                     private val afterResultReplace: LinkedSet<(String) -> String> = LinkedSet()) {
+                     private val ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet()) {
 
-    constructor(checker: GrammarChecker, ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+    constructor(checker: GrammarChecker,
+                ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
                 replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
-                ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet(),
-                afterResultReplace: LinkedSet<(String) -> String> = LinkedSet())
+                ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet())
             : this(LinkedSet(checker.ignoreChar + ignoreChar), LinkedSet(checker.replaceChar + replaceChar),
-                LinkedSet(checker.ignoreToken + ignoreToken), LinkedSet(checker.afterResultReplace + afterResultReplace))
+            LinkedSet(checker.ignoreToken + ignoreToken))
 
     companion object {
         object Rules {
@@ -27,15 +26,13 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                 Text.isNewline(cur).ifTrue { ' ' }
             }
 
-            val ignoreQuotesAtBorders: (String) -> String = { result ->
-                val begin = result.indexOfFirst { !it.isWhitespace() && it != '\"' && it != '\'' }
-                val end = result.indexOfLast { !it.isWhitespace() && it != '\"' && it != '\'' }
-                "\r".repeat(begin) + result.substring(begin, end + 1) + "\r".repeat(result.length - end - 1)
+            val ignoreQuotesAtBorders: (CharSequence, Char) -> Boolean = { prev, cur ->
+                (cur == '\'' || cur == '\"') && (prev.isNotEmpty() && prev.last() == cur)
             }
         }
 
         val default = GrammarChecker(ignoreChar = linkedSetOf(Rules.deduplicateBlanks), replaceChar = linkedSetOf(Rules.flatNewlines))
-        val ignoringQuotes = GrammarChecker(default, afterResultReplace = linkedSetOf(Rules.ignoreQuotesAtBorders))
+        val ignoringQuotes = GrammarChecker(default, ignoreChar = linkedSetOf(Rules.ignoreQuotesAtBorders))
     }
 
     fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
@@ -60,8 +57,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
                     @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignoreChar.any { it(this, char) }
-                            || indexBasedIgnore(token, tokenIndex)) {
+                    if (ignoreChar.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
                         indexesShift[index] = ++totalExcluded
                         continue
                     }
@@ -81,7 +77,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
             }
         }
 
-        val typos = GrammarEngine.getTypos(afterResultReplace.untilNotNull { it(resultText) } ?: resultText)
+        val typos = GrammarEngine.getTypos(resultText)
 
         val sortedIndexesShift = indexesShift.toList().sortedBy { it.first }
 
