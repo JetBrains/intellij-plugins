@@ -1,0 +1,3 @@
+<template>
+   <input :value="model" @input="model = $event.target.value" />
+</template>
