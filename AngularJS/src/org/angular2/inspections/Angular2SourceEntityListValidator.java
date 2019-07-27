@@ -14,7 +14,7 @@ import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
-import com.intellij.util.containers.hash.HashSet;
+import java.util.HashSet;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.source.Angular2SourceEntityListProcessor;
 import org.jetbrains.annotations.NotNull;
