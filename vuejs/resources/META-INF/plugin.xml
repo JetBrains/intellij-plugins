@@ -129,6 +129,10 @@
       <className>org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention</className>
       <category>VueJS</category>
     </intentionAction>
+    <intentionAction>
+      <className>org.jetbrains.vuejs.intentions.expandVModel.VueExpandVModelIntention</className>
+      <category>VueJS</category>
+    </intentionAction>
 
     <!--suppress PluginXmlValidity -->
     <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector"
