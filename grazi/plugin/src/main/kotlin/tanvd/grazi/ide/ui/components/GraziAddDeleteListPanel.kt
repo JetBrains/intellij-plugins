@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui
+package tanvd.grazi.ide.ui.components
 
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -8,6 +8,8 @@ import com.intellij.ui.*
 import com.intellij.util.ui.EditableModel
 import com.intellij.util.ui.JBUI
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.ide.ui.components.dsl.padding
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Component

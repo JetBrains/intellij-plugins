@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui
+package tanvd.grazi.ide.ui.components.settings
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ConfigurableUi
@@ -17,7 +17,9 @@ import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.rules.GraziRulesTree
+import tanvd.grazi.ide.ui.components.GraziAddDeleteListPanel
+import tanvd.grazi.ide.ui.components.dsl.*
+import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
 import javax.swing.JComponent
 import javax.swing.JEditorPane

@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui.rules
+package tanvd.grazi.ide.ui.components.rules
 
 import org.languagetool.rules.Category
 import org.languagetool.rules.Rule
@@ -29,7 +29,7 @@ data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, va
     }
 }
 
-data class ComparableCategory(val category: Category): Comparable<ComparableCategory> {
+data class ComparableCategory(val category: Category) : Comparable<ComparableCategory> {
     val name: String = category.name
 
     override fun compareTo(other: ComparableCategory): Int {

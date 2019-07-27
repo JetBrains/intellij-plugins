@@ -34,7 +34,7 @@ tasks.withType<RunIdeTask> {
 
 
 val testsJar = tasks.create("guiTestJar", Jar::class) {
-    group = "gui"
+    group = "build"
     classifier = "tests"
 
     from(_sourceSets["test"].output)

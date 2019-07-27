@@ -7,14 +7,20 @@ fun html(body: BODY.() -> Unit) = createHTML(false).html { body { body(this) } }
 
 var TABLE.cellpading: String
     get() = attributes["cellpadding"] ?: ""
-    set(value) { attributes["cellpadding"] = value }
+    set(value) {
+        attributes["cellpadding"] = value
+    }
 
 var TABLE.cellspacing: String
     get() = attributes["cellspacing"] ?: ""
-    set(value) { attributes["cellspacing"] = value }
+    set(value) {
+        attributes["cellspacing"] = value
+    }
 
 var TD.valign: String
     get() = attributes["valign"] ?: ""
-    set(value) { attributes["valign"] = value }
+    set(value) {
+        attributes["valign"] = value
+    }
 
 fun FlowContent.nbsp() = +"&nbsp;"

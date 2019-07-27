@@ -13,7 +13,7 @@ import tanvd.grazi.ide.msg.GraziStateLifecycle
 
 
 class GraziCommitInspection : BaseCommitMessageInspection() {
-    companion object: GraziStateLifecycle {
+    companion object : GraziStateLifecycle {
         val graziInspection: LocalInspectionTool by lazy { GraziInspection() }
 
         override fun init(state: GraziConfig.State, project: Project) {

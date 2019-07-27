@@ -21,14 +21,14 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
 
         return when (element.literalElementType) {
             JavaTokenType.STRING_LITERAL -> {
-                GrammarChecker.default.check(element) { it.innerText!! }.map { typo ->
+                GrammarChecker.default.check(element, getText = { it.innerText!! }).map { typo ->
                     val typoElement = typo.location.pointer?.element!!
                     val indexStart = typoElement.text.indexOf((typoElement as PsiLiteralExpressionImpl).innerText!!)
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))
                 }
             }
             JavaTokenType.RAW_STRING_LITERAL -> {
-                GrammarChecker.default.check(element) { it.rawString!! }.map { typo ->
+                GrammarChecker.default.check(element, getText = { it.rawString!! }).map { typo ->
                     val typoElement = typo.location.pointer?.element!!
                     val indexStart = typoElement.text.indexOf((typoElement as PsiLiteralExpressionImpl).rawString!!)
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))

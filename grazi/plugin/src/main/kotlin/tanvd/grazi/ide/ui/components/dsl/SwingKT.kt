@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui
+package tanvd.grazi.ide.ui.components.dsl
 
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.ui.IdeBorderFactory

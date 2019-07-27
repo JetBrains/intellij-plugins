@@ -3,6 +3,7 @@ package tanvd.grazi.ide.ui
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.options.ConfigurableBase
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.ui.components.settings.GraziSettingsPanel
 
 class GraziConfigurable : ConfigurableBase<GraziSettingsPanel, GraziConfig>("reference.settingsdialog.project.grazi", "Grazi", null) {
     private lateinit var ui: GraziSettingsPanel

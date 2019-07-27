@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui
+package tanvd.grazi.ide.ui.components.settings
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.components.labels.LinkListener
@@ -6,7 +6,8 @@ import kotlinx.html.*
 import org.apache.commons.text.similarity.LevenshteinDistance
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
-import tanvd.grazi.ide.ui.rules.ComparableCategory
+import tanvd.grazi.ide.ui.components.rules.ComparableCategory
+import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*

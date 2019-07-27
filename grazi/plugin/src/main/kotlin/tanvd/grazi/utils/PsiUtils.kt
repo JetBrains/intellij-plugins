@@ -35,15 +35,3 @@ fun PsiElement.isInjectedFragment(): Boolean {
     }
     return isInjected
 }
-
-/**
- * Will traverse through PsiElements using [take] function while [cond] is true.
- * Starts with [take(this)] element
- */
-fun <T : PsiElement> T.traverse(take: (T) -> T?, cond: (T) -> Boolean): PsiElement? {
-    var current: T? = take(this)
-    while (current != null && cond(current)) {
-        current = take(current)
-    }
-    return current
-}

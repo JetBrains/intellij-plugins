@@ -16,7 +16,7 @@ import tanvd.grazi.ide.quickfix.GraziAddWord
 import tanvd.grazi.ide.quickfix.GraziDisableRule
 import tanvd.grazi.ide.quickfix.GraziRenameTypo
 import tanvd.grazi.ide.quickfix.GraziReplaceTypo
-import tanvd.grazi.ide.ui.msg
+import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList

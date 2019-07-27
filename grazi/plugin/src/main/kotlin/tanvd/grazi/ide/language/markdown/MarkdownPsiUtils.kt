@@ -9,20 +9,20 @@ import tanvd.grazi.utils.*
 import tanvd.kex.orTrue
 
 object MarkdownPsiUtils {
-    val headerTypes = setOf(MarkdownElementTypes.ATX_1, MarkdownElementTypes.ATX_2, MarkdownElementTypes.ATX_3,
+    private val headerTypes = setOf(MarkdownElementTypes.ATX_1, MarkdownElementTypes.ATX_2, MarkdownElementTypes.ATX_3,
             MarkdownElementTypes.ATX_4, MarkdownElementTypes.ATX_5, MarkdownElementTypes.ATX_6)
-    val linkTypes = setOf(
+    private val linkTypes = setOf(
             MarkdownElementTypes.LINK_DEFINITION, MarkdownElementTypes.LINK_LABEL, MarkdownElementTypes.LINK_DESTINATION,
             MarkdownElementTypes.LINK_TITLE, MarkdownElementTypes.LINK_TEXT, MarkdownElementTypes.LINK_COMMENT,
             MarkdownElementTypes.FULL_REFERENCE_LINK, MarkdownElementTypes.SHORT_REFERENCE_LINK,
             MarkdownElementTypes.AUTOLINK, MarkdownElementTypes.INLINE_LINK)
-    val textTypes = setOf(
+    private val textTypes = setOf(
             MarkdownTokenTypes.TEXT, MarkdownTokenTypes.WHITE_SPACE, MarkdownTokenTypes.SINGLE_QUOTE,
             MarkdownTokenTypes.DOUBLE_QUOTE, MarkdownTokenTypes.EXCLAMATION_MARK, MarkdownTokenTypes.COLON,
             MarkdownTokenTypes.LPAREN, MarkdownTokenTypes.RPAREN
     )
-    val codeTypes = setOf(MarkdownElementTypes.CODE_FENCE, MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_SPAN)
-    val inlineTypes = linkTypes + codeTypes
+    private val codeTypes = setOf(MarkdownElementTypes.CODE_FENCE, MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_SPAN)
+    private val inlineTypes = linkTypes + codeTypes
 
     fun isParagraph(element: PsiElement) = element.node?.hasType(MarkdownElementTypes.PARAGRAPH) ?: false
     fun isHeader(element: PsiElement) = element.node?.hasType(headerTypes) ?: false

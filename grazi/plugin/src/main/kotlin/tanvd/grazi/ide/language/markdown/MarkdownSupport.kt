@@ -22,25 +22,25 @@ class MarkdownSupport : LanguageSupport() {
             val elementInToken = token.findElementAt(index)!!
             !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
         }).filter { typo ->
-            val typoStartElement: PsiElement = element.findElementAt(typo.location.range.start)!!
-            val typoEndElement: PsiElement = element.findElementAt(typo.location.range.last)!!
+            val startElement = element.findElementAt(typo.location.range.start)!!
+            val endElement = element.findElementAt(typo.location.range.last)!!
 
             // Inline elements inside typo
-            if (generateSequence(typoStartElement) { PsiTreeUtil.nextLeaf(it) }.takeWhile { it != typoEndElement }
-                            .flatMap { it.parents() }.any { MarkdownPsiUtils.isInline(it) }) return@filter false
+            if (generateSequence(startElement) { PsiTreeUtil.nextLeaf(it) }.takeWhile { it != endElement }
+                            .any { it.parents().any { MarkdownPsiUtils.isInline(it) } }) return@filter false
 
 
             // Inline element right before a typo (TODO add categories filter)
-            if (typo.location.isAtStartOfInnerElement(typoStartElement)) {
-                generateSequence(PsiTreeUtil.prevLeaf(typoStartElement)) { PsiTreeUtil.prevLeaf(it) }
+            if (typo.location.isAtStartOfInnerElement(startElement)) {
+                generateSequence(PsiTreeUtil.prevLeaf(startElement)) { PsiTreeUtil.prevLeaf(it) }
                         .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
                         ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
                         ?.let { if (it) return@filter false }
             }
 
             // Inline element right after a typo (TODO add categories filter)
-            if (typo.location.isAtEndOfInnerElement(typoEndElement)) {
-                generateSequence(PsiTreeUtil.nextLeaf(typoEndElement)) { PsiTreeUtil.nextLeaf(it) }
+            if (typo.location.isAtEndOfInnerElement(endElement)) {
+                generateSequence(PsiTreeUtil.nextLeaf(endElement)) { PsiTreeUtil.nextLeaf(it) }
                         .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
                         ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
                         ?.let { if (it) return@filter false }
@@ -50,5 +50,5 @@ class MarkdownSupport : LanguageSupport() {
         }.toSet()
     }
 
-    private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element ->  MarkdownPsiUtils.isOuterListItem(element) } ?: false
+    private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element -> MarkdownPsiUtils.isOuterListItem(element) } ?: false
 }

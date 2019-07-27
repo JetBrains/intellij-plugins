@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui.rules
+package tanvd.grazi.ide.ui.components.rules
 
 import com.intellij.ide.CommonActionsManager
 import com.intellij.ide.DefaultTreeExpander
@@ -14,7 +14,7 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.panel
+import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import java.awt.BorderLayout
@@ -26,7 +26,17 @@ import javax.swing.tree.DefaultTreeModel
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val state = HashMap<String, RuleWithLang>()
-    val langs = HashSet<Lang>(GraziConfig.get().enabledLanguages)
+    private val langs = HashSet<Lang>(GraziConfig.get().enabledLanguages)
+
+    fun addLang(lang: Lang) {
+        langs.add(lang)
+        update()
+    }
+
+    fun removeLang(lang: Lang) {
+        langs.remove(lang)
+        update()
+    }
 
     private class GraziTreeNode(userObject: Any? = null) : CheckedTreeNode(userObject) {
         override fun equals(other: Any?): Boolean {
@@ -164,6 +174,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
 
     fun update() {
         _filter?.filter()
+        if (tree.isSelectionEmpty) resetSelection()
     }
 
     fun reset() {
@@ -199,7 +210,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         if (meta is RuleWithLang) {
             isChecked = when (val rule = state[meta.rule.id]) {
                 is RuleWithLang -> rule.enabledInTree
-                else -> !LangTool[meta.lang].disabledRules.contains(meta.rule.id)
+                else -> meta.enabled
             }
         } else {
             isChecked = false

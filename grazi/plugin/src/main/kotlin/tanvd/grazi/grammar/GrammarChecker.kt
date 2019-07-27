@@ -35,7 +35,8 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
         val ignoringQuotes = GrammarChecker(default, ignoreChar = linkedSetOf(Rules.ignoreQuotesAtBorders))
     }
 
-    fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
+    fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text },
+                               indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }) = check(tokens.toList(), getText, indexBasedIgnore)
 
     fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text },
                                indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }): Set<Typo> {

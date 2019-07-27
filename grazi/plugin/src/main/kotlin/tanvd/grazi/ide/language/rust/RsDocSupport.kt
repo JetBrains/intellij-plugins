@@ -23,7 +23,6 @@ class RsDocSupport : LanguageSupport() {
     override fun check(element: PsiElement): Set<Typo> {
         require(element is RsDocCommentImpl) { "Got not RsDocCommentImpl in a RsDocSupport" }
         val ranges = findDoctestInjectableRanges(element).flatten().toList()
-        return checker.check(setOf(element),
-                indexBasedIgnore = { _, index -> ranges.any { it.contains(index) } })
+        return checker.check(element, indexBasedIgnore = { _, index -> ranges.any { it.contains(index) } })
     }
 }

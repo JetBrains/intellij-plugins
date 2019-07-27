@@ -2,6 +2,7 @@ package tanvd.grazi.ide.ui
 
 import com.intellij.ide.ui.search.SearchableOptionContributor
 import com.intellij.ide.ui.search.SearchableOptionProcessor
+import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
 
 class GraziSearchableOptionContributor : SearchableOptionContributor() {

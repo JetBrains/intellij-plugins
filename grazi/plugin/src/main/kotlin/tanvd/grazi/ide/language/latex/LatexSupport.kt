@@ -6,16 +6,17 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.utils.parents
 
 class LatexSupport : LanguageSupport() {
     private val ignoredCategories = listOf(Typo.Category.CASING, Typo.Category.PUNCTUATION, Typo.Category.GRAMMAR)
 
     private fun PsiElement.isNotInMathEnvironment(): Boolean {
-        return parents.none { it is LatexMathEnvironment }
+        return parents().none { it is LatexMathEnvironment }
     }
 
     private fun PsiElement.isNotInSquareBrackets(): Boolean {
-        return parents.find { it is LatexGroup || it is LatexOpenGroup }?.let { it is LatexGroup } ?: true
+        return parents().find { it is LatexGroup || it is LatexOpenGroup }?.let { it is LatexGroup } ?: true
     }
 
     override fun isRelevant(element: PsiElement): Boolean {
