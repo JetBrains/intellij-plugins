@@ -99,13 +99,6 @@ class LanguageListGuiTest : GraziGuiTestBase() {
             waitAMoment()
 
             remove.requireDisabled()
-
-            langs.shuffled().take(5).forEach {
-                add.click()
-                popupMenu(it).clickSearchedItem()
-            }
-
-            add.requireDisabled()
         }
     }
 }
