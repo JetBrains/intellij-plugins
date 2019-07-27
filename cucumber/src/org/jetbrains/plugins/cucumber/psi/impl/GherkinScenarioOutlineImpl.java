@@ -1,8 +1,12 @@
 package org.jetbrains.plugins.cucumber.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Ref;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -12,13 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author yole
- */
 public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implements GherkinScenarioOutline {
   private static final TokenSet EXAMPLES_BLOCK_FILTER = TokenSet.create(GherkinElementTypes.EXAMPLES_BLOCK);
-
-  private Ref<Map<String, String>> myOutlineTableMap;
 
   public GherkinScenarioOutlineImpl(@NotNull final ASTNode node) {
     super(node);
@@ -53,15 +52,30 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
   @Override
   @Nullable
   public Map<String, String> getOutlineTableMap() {
-    if (myOutlineTableMap == null) {
-      myOutlineTableMap = new Ref<>(buildOutlineTableMap());
-    }
-    return myOutlineTableMap.get();
+    SmartPsiElementPointer<GherkinScenarioOutline> smartPointer = SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this);
+    return CachedValuesManager.getCachedValue(getContainingFile(), new MyCachedValueProvider(smartPointer));
   }
+  
+  private static class MyCachedValueProvider implements CachedValueProvider<Map<String, String>> {
+    private final SmartPsiElementPointer<GherkinScenarioOutline> mySmartPointer;
+
+    private MyCachedValueProvider(@NotNull SmartPsiElementPointer<GherkinScenarioOutline> smartPointer) {
+      mySmartPointer = smartPointer;
+    }
+
+    @Nullable
+    @Override
+    public Result<Map<String, String>> compute() {
+      return CachedValueProvider.Result.create(buildOutlineTableMap(mySmartPointer.getElement()), PsiModificationTracker.MODIFICATION_COUNT);
+    }
+  } 
 
   @Nullable
-  private Map<String, String> buildOutlineTableMap() {
-    final List<GherkinExamplesBlock> examplesBlocks = getExamplesBlocks();
+  private static Map<String, String> buildOutlineTableMap(@Nullable GherkinScenarioOutline scenarioOutline) {
+    if (scenarioOutline == null) {
+      return null;
+    }
+    final List<GherkinExamplesBlock> examplesBlocks = scenarioOutline.getExamplesBlocks();
     for (GherkinExamplesBlock examplesBlock : examplesBlocks) {
       GherkinTable table = examplesBlock.getTable();
       if (table == null || table.getHeaderRow() == null || table.getDataRows().size() == 0) {

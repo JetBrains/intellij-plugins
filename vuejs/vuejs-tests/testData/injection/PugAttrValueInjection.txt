@@ -176,15 +176,6 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"someElse"')
-                      JSFile:PugAttrValueInjection.vue
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someElse')
-                    JSFile:PugAttrValueInjection.vue
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someElse')
-                  JSFile:PugAttrValueInjection.vue
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('someElse')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -268,15 +259,6 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"somePre"')
-                      JSFile:PugAttrValueInjection.vue
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('somePre')
-                    JSFile:PugAttrValueInjection.vue
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('somePre')
-                  JSFile:PugAttrValueInjection.vue
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('somePre')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -291,15 +273,6 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"someCloak"')
-                      JSFile:PugAttrValueInjection.vue
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someCloak')
-                    JSFile:PugAttrValueInjection.vue
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someCloak')
-                  JSFile:PugAttrValueInjection.vue
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('someCloak')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -314,15 +287,6 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"someOnce"')
-                      JSFile:PugAttrValueInjection.vue
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someOnce')
-                    JSFile:PugAttrValueInjection.vue
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someOnce')
-                  JSFile:PugAttrValueInjection.vue
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('someOnce')
               PsiElement(RPAREN)(')')
               PsiElement(EOL)('\n')
             PsiElement(INDENT)('\n    ')

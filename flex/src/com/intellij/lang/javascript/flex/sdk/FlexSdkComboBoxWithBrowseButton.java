@@ -22,7 +22,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -69,50 +69,44 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
-    sdkCombo.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value instanceof BCSdk) {
-          final Sdk sdk = ((BCSdk)value).mySdk;
-          if (sdk == null) {
-            if (sdkCombo.isEnabled()) {
-              setText("<html>SDK set for the build configuration <font color='red'>[not set]</font></html>");
-              setIcon(null);
-            }
-            else {
-              setText("SDK set for the build configuration [not set]");
-              setIcon(null);
-            }
-          }
-          else {
-            setText("SDK set for the build configuration [" + sdk.getName() + "]");
-            setIcon(((SdkType)((BCSdk)value).mySdk.getSdkType()).getIcon());
-          }
-        }
-        else if (value instanceof String) {
+    sdkCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      if (value instanceof BCSdk) {
+        final Sdk sdk = ((BCSdk)value).mySdk;
+        if (sdk == null) {
           if (sdkCombo.isEnabled()) {
-            setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
-            setIcon(null);
+            label.setText("<html>SDK set for the build configuration <font color='red'>[not set]</font></html>");
           }
           else {
-            setText(value + " [Invalid]");
-            setIcon(null);
+            label.setText("SDK set for the build configuration [not set]");
           }
-        }
-        else if (value instanceof Sdk) {
-          setText(((Sdk)value).getName());
-          setIcon(((SdkType)((Sdk)value).getSdkType()).getIcon());
         }
         else {
-          if (sdkCombo.isEnabled()) {
-            setText("<html><font color='red'>[none]</font></html>");
-          }
-          else {
-            setText("[none]");
-          }
+          label.setText("SDK set for the build configuration [" + sdk.getName() + "]");
+          label.setIcon(((SdkType)((BCSdk)value).mySdk.getSdkType()).getIcon());
         }
       }
-    });
+      else if (value instanceof String) {
+        if (sdkCombo.isEnabled()) {
+          label.setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
+          label.setIcon(null);
+        }
+        else {
+          label.setText(value + " [Invalid]");
+        }
+      }
+      else if (value instanceof Sdk) {
+        label.setText(((Sdk)value).getName());
+        label.setIcon(((SdkType)((Sdk)value).getSdkType()).getIcon());
+      }
+      else {
+        if (sdkCombo.isEnabled()) {
+          label.setText("<html><font color='red'>[none]</font></html>");
+        }
+        else {
+          label.setText("[none]");
+        }
+      }
+    }));
 
     addActionListener(new ActionListener() {
       @Override
@@ -322,27 +316,29 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void addListener(final Listener listener) {
+    public void addListener(@NotNull final Listener listener) {
       myOriginal.addListener(listener);
     }
 
     @Override
-    public void removeListener(final Listener listener) {
+    public void removeListener(@NotNull final Listener listener) {
       myOriginal.removeListener(listener);
     }
 
+    @NotNull
     @Override
     public Listener getMulticaster() {
       return myOriginal.getMulticaster();
     }
 
+    @NotNull
     @Override
     public Sdk[] getSdks() {
       return myOriginal.getSdks();
     }
 
     @Override
-    public Sdk findSdk(final String sdkName) {
+    public Sdk findSdk(@NotNull final String sdkName) {
       return myOriginal.findSdk(sdkName);
     }
 
@@ -351,6 +347,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       // ignore
     }
 
+    @NotNull
     @Override
     public HashMap<Sdk, Sdk> getProjectSdks() {
       return myOriginal.getProjectSdks();
@@ -362,30 +359,30 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void removeSdk(final Sdk editableObject) {
+    public void removeSdk(@NotNull final Sdk editableObject) {
       myOriginal.removeSdk(editableObject);
     }
 
     @Override
     public void createAddActions(@NotNull final DefaultActionGroup group,
                                  @NotNull final JComponent parent,
-                                 @NotNull final Consumer<Sdk> updateTree,
-                                 @Nullable final Condition<SdkTypeId> filter) {
+                                 @NotNull final Consumer<? super Sdk> updateTree,
+                                 @Nullable final Condition<? super SdkTypeId> filter) {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
     @Override
-    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<Sdk> updateTree) {
+    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(parent, type, updateTree);
     }
 
     @Override
-    public void addSdk(final Sdk sdk) {
+    public void addSdk(@NotNull final Sdk sdk) {
       myOriginal.addSdk(sdk);
     }
 
     @Override
-    public void doAdd(final Sdk newSdk, @Nullable final Consumer<Sdk> updateTree) {
+    public void doAdd(@NotNull final Sdk newSdk, @Nullable final Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 

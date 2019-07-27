@@ -3,12 +3,12 @@ package com.intellij.tapestry.core.model.presentation;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.IResource;
 
 public class Mixin extends ParameterReceiverElement {
 
-    Mixin(Library library, IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
+    Mixin(TapestryLibrary library, IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
         super(library, componentClass, project);
     }
 

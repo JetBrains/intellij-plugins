@@ -1,13 +1,13 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
+import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -41,9 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -84,9 +83,11 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Override
   protected boolean acceptPsiFile(@NotNull PsiFile file) {
-    return file instanceof JSFile
-           && (DialectDetector.JAVASCRIPT_FILE_TYPES.contains(file.getFileType()) ||
-               TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(file.getFileType()));
+    if (!(file instanceof JSFile)) return false;
+    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(file.getProject());
+    if (configuration.getExtendedState().getState().isAllowJs() && JSUtils.isJavaScriptFile(file)) return true;
+    final DialectOptionHolder holder = DialectDetector.dialectOfElement(file);
+    return holder != null && holder.isTypeScript;
   }
 
   @Nullable
@@ -94,7 +95,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   protected TsLinterInput createInfo(@NotNull PsiFile psiFile,
                                      TsLintState state,
                                      EditorColorsScheme colorsScheme) {
-    VirtualFile config = TslintUtil.getConfig(state, psiFile.getVirtualFile());
+    VirtualFile config = TslintUtil.getConfig(state, psiFile.getProject(), psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
     if (skipProcessing) {
       return null;
@@ -113,7 +114,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
   @Nullable
-  private JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
+  private static JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
     VirtualFile config = collectedInfo.getConfig();
     final Project project = collectedInfo.getProject();
     final TsLintState linterState = collectedInfo.getState();
@@ -126,14 +127,14 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
 
-    final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), 
-                                                                 config, collectedInfo.getFileContent(), linterState);
+    final CompletableFuture<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(),
+                                                                            config, collectedInfo.getFileContent(), linterState);
     final List<TsLinterError> result;
     try {
-      result = JSLanguageServiceUtil.awaitLanguageService(future, service);
+      result = JSLanguageServiceUtil.awaitLanguageService(future, service, collectedInfo.getVirtualFile());
     }
     catch (ExecutionException e) {
-      return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(e.getMessage()), config);
+      return createGlobalErrorMessage(collectedInfo, config, e.getMessage());
     }
     if (result == null || result.isEmpty()) return null;
 
@@ -142,23 +143,18 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return createGlobalErrorMessage(collectedInfo, config, globalError.get().getDescription());
     }
 
-    final List<JSLinterError> filtered = filterResultByFile(collectedInfo, result);
+    final List<TsLinterError> filtered = filterResultByFile(collectedInfo.getVirtualFile(), result);
     return JSLinterAnnotationResult.createLinterResult(collectedInfo, filtered, config);
   }
 
-  public List<JSLinterError> filterResultByFile(@NotNull TsLinterInput collectedInfo, @NotNull List<TsLinterError> annotationErrors) {
-    final String filePath = collectedInfo.getVirtualFile().getPath();
-    final String fileName = collectedInfo.getPsiFile().getName();
+  private static List<TsLinterError> filterResultByFile(@NotNull VirtualFile virtualFile, @NotNull List<TsLinterError> annotationErrors) {
+    final String filePath = virtualFile.getPath();
+    final String fileName = virtualFile.getName();
 
-    final Set<String> filteredPaths = annotationErrors.stream().map(TsLinterError::getAbsoluteFilePath)
-      .distinct()
-      .filter(path -> {
-        if (path == null) return true;
-        if (!path.endsWith(fileName)) return false;
-        return FileUtil.pathsEqual(filePath, path);
-      }).collect(Collectors.toSet());
-
-    return annotationErrors.stream().filter(el -> filteredPaths.contains(el.getAbsoluteFilePath())).collect(Collectors.toList());
+    return ContainerUtil.filter(annotationErrors, error -> {
+      String path = error.getAbsoluteFilePath();
+      return path == null || (/*optimization?*/path.endsWith(fileName) && FileUtil.pathsEqual(filePath, path));
+    });
   }
 
   @NotNull
@@ -210,25 +206,29 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     if (annotationResult == null) return;
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+    long documentModificationStamp = document != null ? document.getModificationStamp() : -1;
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
 
     JSLinterStandardFixes fixes = new JSLinterStandardFixes();
     fixes.setErrorToIntentionConverter(errorBase -> {
-      if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
-        ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+      if (!(errorBase instanceof TsLinterError)) {
+        return ContainerUtil.emptyList();
+      }
+      TsLinterError tslintError = (TsLinterError)errorBase;
+      ArrayList<IntentionAction> result = new ArrayList<>();
+      if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {
-          result.add(new TsLintErrorFixAction(file, (TsLinterError)errorBase, document.getModificationStamp()));
+          result.add(new TsLintErrorFixAction(file, tslintError, documentModificationStamp));
         }
         result.add(fixAllFileIntention);
-        return result;
       }
-      return ContainerUtil.emptyList();
+      else if (!holder.isBatchMode()){
+        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressForLineAction(tslintError, documentModificationStamp));
+      }
+      return result;
     }).setProblemGroup(error -> {
       if (isOnTheFly() && error instanceof TsLinterError) {
-        SuppressIntentionAction[] intentionActions = TsLintSuppressionUtil.INSTANCE
-          .getSuppressionsForError((TsLinterError)error)
-          .toArray(SuppressIntentionAction.EMPTY_ARRAY);
-        return new JSAnnotatorProblemGroup(intentionActions, null);
+        return new JSAnnotatorProblemGroup(TsLintSuppressionUtil.INSTANCE.getSuppressionsForError((TsLinterError)error, documentModificationStamp), null);
       }
       return null;
     });

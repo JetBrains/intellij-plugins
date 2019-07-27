@@ -22,9 +22,12 @@ public abstract class Angular2MetadataElementStub<Psi extends MetadataElement> e
       @Override
       protected Map<String, ConstructorFromJsonValue> compute() {
         return ContainerUtil.<String, ConstructorFromJsonValue>immutableMapBuilder()
-          .put("class", Angular2MetadataClassStubBase::createClassStub)
-          .put("reference", Angular2MetadataReferenceStub::createReferenceStub)
-          .put("function", Angular2MetadataFunctionStub::createFunctionStub)
+          .put(SYMBOL_CLASS, Angular2MetadataClassStubBase::createClassStub)
+          .put(SYMBOL_REFERENCE, Angular2MetadataReferenceStub::createReferenceStub)
+          .put(SYMBOL_FUNCTION, Angular2MetadataFunctionStub::createFunctionStub)
+          .put(SYMBOL_CALL, Angular2MetadataCallStub::createCallStub)
+          .put(SYMBOL_SPREAD, Angular2MetadataSpreadStub::createSpreadStub)
+          .put(STRING_TYPE, Angular2MetadataStringStub::new)
           .put(ARRAY_TYPE, Angular2MetadataArrayStub::new)
           .put(OBJECT_TYPE, Angular2MetadataObjectStub::new)
           .build();

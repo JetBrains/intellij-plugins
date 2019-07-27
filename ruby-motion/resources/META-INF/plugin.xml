@@ -13,17 +13,12 @@
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.RubyMotionUtil"
                         serviceImplementation="org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl"/>
-    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader"
-                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader" />
-    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder"
-                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder"/>
-    <applicationService serviceInterface="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"
-                        serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"/>
+    <applicationService serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.BridgeSupportLoader" />
+    <applicationService serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder"/>
+    <applicationService serviceImplementation="org.jetbrains.plugins.ruby.motion.bridgesupport.FrameworkDependencyResolver"/>
 
-    <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache"
-                   serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache" />
-    <moduleService serviceInterface="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"
-                   serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"/>
+    <moduleService serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionTypeCache" />
+    <moduleService serviceImplementation="org.jetbrains.plugins.ruby.motion.symbols.MotionSymbolUtil$MotionSymbolsCache"/>
 
     <facetType implementation="org.jetbrains.plugins.ruby.motion.facet.RubyMotionFacetType"/>
 

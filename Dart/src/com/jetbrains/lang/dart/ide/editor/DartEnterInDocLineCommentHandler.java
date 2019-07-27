@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
@@ -10,7 +11,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -32,18 +32,13 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
     if (file.getLanguage() != DartLanguage.INSTANCE && !HtmlUtil.isHtmlFile(file)) return Result.Continue;
 
     final int caretOffset = caretOffsetRef.get().intValue();
+    if (caretOffset == 0) return Result.Continue;
+
     final Document document = editor.getDocument();
     PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
-    final PsiElement psiAtOffset = file.findElementAt(caretOffset);
-    final PsiElement probablyDocComment = psiAtOffset instanceof PsiWhiteSpace && psiAtOffset.getText().startsWith("\n")
-                                          ? psiAtOffset.getPrevSibling()
-                                          : psiAtOffset == null && caretOffset > 0 && caretOffset == document.getTextLength()
-                                            ? file.findElementAt(caretOffset - 1)
-                                            : psiAtOffset;
+    final PsiElement psiAtOffset = file.findElementAt(caretOffset - 1);
 
-    if (probablyDocComment != null &&
-        probablyDocComment.getTextRange().getStartOffset() < caretOffset &&
-        probablyDocComment.getNode().getElementType() == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {
+    if (psiAtOffset != null && psiAtOffset.getNode().getElementType() == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT) {
       final CharSequence text = document.getCharsSequence();
       final int offset = CharArrayUtil.shiftForward(text, caretOffset, " \t");
 
@@ -52,7 +47,7 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
         caretAdvance.set(DartDocUtil.SINGLE_LINE_DOC_COMMENT.length());
       }
       else {
-        final String docText = StringUtil.trimStart(probablyDocComment.getText(), DartDocUtil.SINGLE_LINE_DOC_COMMENT);
+        final String docText = StringUtil.trimStart(psiAtOffset.getText(), DartDocUtil.SINGLE_LINE_DOC_COMMENT);
         final int spacesBeforeText = StringUtil.isEmptyOrSpaces(docText) ? 1 : StringUtil.countChars(docText, ' ', 0, true);
         final int spacesToAdd = Math.max(0, spacesBeforeText - StringUtil.countChars(text, ' ', caretOffset, true));
         document.insertString(caretOffset, DartDocUtil.SINGLE_LINE_DOC_COMMENT + StringUtil.repeatSymbol(' ', spacesToAdd));

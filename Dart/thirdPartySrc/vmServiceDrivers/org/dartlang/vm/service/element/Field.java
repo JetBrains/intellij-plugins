@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link Field} provides information about a Dart language field or variable.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Field extends Obj {
 
   public Field(JsonObject json) {
@@ -42,7 +42,14 @@ public class Field extends Obj {
    * Can return <code>null</code>.
    */
   public SourceLocation getLocation() {
-    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
+    JsonObject obj = (JsonObject) json.get("location");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new SourceLocation(obj);
   }
 
   /**
@@ -65,7 +72,9 @@ public class Field extends Obj {
    * Can return <code>null</code>.
    */
   public InstanceRef getStaticValue() {
-    return json.get("staticValue") == null ? null : new InstanceRef((JsonObject) json.get("staticValue"));
+    JsonObject obj = (JsonObject) json.get("staticValue");
+    if (obj == null) return null;
+    return new InstanceRef(obj);
   }
 
   /**

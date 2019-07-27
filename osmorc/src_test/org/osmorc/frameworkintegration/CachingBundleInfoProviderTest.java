@@ -33,8 +33,7 @@ import org.osmorc.OsgiTestUtil;
 
 import java.io.File;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -49,7 +48,7 @@ public class CachingBundleInfoProviderTest {
   public void setUp() throws Exception {
     myTempDir = FileUtil.createTempDirectory("osgi.", ".test");
     OsgiTestUtil.extractProject("CachingBundleInfoProviderTest", myTempDir.getPath());
-    myDirBundle = new File(myTempDir, "t0/dirbundle").getPath();
+      myDirBundle = new File(myTempDir, "t0/dirbundle").getPath();
     myInvalidDirBundle = new File(myTempDir, "t0/invaliddirbundle").getPath();
     myJarBundle = new File(myTempDir, "t0/jarbundle.jar").getPath();
   }
@@ -61,29 +60,29 @@ public class CachingBundleInfoProviderTest {
 
   @Test
   public void testIsBundle() {
-    assertThat(CachingBundleInfoProvider.isBundle(myDirBundle), equalTo(true));
-    assertThat(CachingBundleInfoProvider.isBundle(myJarBundle), equalTo(true));
-    assertThat(CachingBundleInfoProvider.isBundle(myInvalidDirBundle), equalTo(false));
+    assertTrue(CachingBundleInfoProvider.isBundle(myDirBundle));
+    assertTrue(CachingBundleInfoProvider.isBundle(myJarBundle));
+    assertFalse(CachingBundleInfoProvider.isBundle(myInvalidDirBundle));
   }
 
   @Test
   public void testGetBundleSymbolicName() {
-    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myDirBundle), equalTo("dirbundle"));
-    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myJarBundle), equalTo("jarbundle"));
-    assertThat(CachingBundleInfoProvider.getBundleSymbolicName(myInvalidDirBundle), equalTo(null));
+    assertEquals("dirbundle", CachingBundleInfoProvider.getBundleSymbolicName(myDirBundle));
+    assertEquals("jarbundle", CachingBundleInfoProvider.getBundleSymbolicName(myJarBundle));
+    assertNull(CachingBundleInfoProvider.getBundleSymbolicName(myInvalidDirBundle));
   }
 
   @Test
   public void testGetBundleVersions() {
-    assertThat(CachingBundleInfoProvider.getBundleVersion(myDirBundle), equalTo("1.0.0"));
-    assertThat(CachingBundleInfoProvider.getBundleVersion(myJarBundle), equalTo("1.0.0"));
-    assertThat(CachingBundleInfoProvider.getBundleVersion(myInvalidDirBundle), equalTo(null));
+    assertEquals("1.0.0", CachingBundleInfoProvider.getBundleVersion(myDirBundle));
+    assertEquals("1.0.0", CachingBundleInfoProvider.getBundleVersion(myJarBundle));
+    assertNull(CachingBundleInfoProvider.getBundleVersion(myInvalidDirBundle));
   }
 
   @Test
   public void testIsFragmentBundle() {
-    assertThat(CachingBundleInfoProvider.isFragmentBundle(myDirBundle), equalTo(true));
-    assertThat(CachingBundleInfoProvider.isFragmentBundle(myJarBundle), equalTo(false));
-    assertThat(CachingBundleInfoProvider.isFragmentBundle(myInvalidDirBundle), equalTo(false));
+    assertTrue(CachingBundleInfoProvider.isFragmentBundle(myDirBundle));
+    assertFalse(CachingBundleInfoProvider.isFragmentBundle(myJarBundle));
+    assertFalse(CachingBundleInfoProvider.isFragmentBundle(myInvalidDirBundle));
   }
 }

@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface DartListLiteralExpression extends DartExpression, DartReference {
 
-  @Nullable
-  DartExpressionList getExpressionList();
+  @NotNull
+  List<DartElement> getElementList();
 
   @Nullable
   DartTypeArguments getTypeArguments();

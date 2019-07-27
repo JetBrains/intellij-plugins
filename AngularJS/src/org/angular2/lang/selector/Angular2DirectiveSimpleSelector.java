@@ -10,17 +10,17 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
-import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +60,7 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
                                    new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
@@ -82,7 +82,7 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
                                    new TextRange(matcher.start(8), matcher.end(8)));
         }
         addResult.accept(cssSelector);
@@ -105,7 +105,7 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
                                    new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
@@ -127,7 +127,7 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
                                    new TextRange(matcher.start(8), matcher.end(8)));
         }
         results.add(cssSelector);
@@ -156,17 +156,16 @@ public class Angular2DirectiveSimpleSelector {
 
     cssSelector.setElement(elNameNoNs);
 
-    boolean isTemplateTag = Angular2Processor.isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag);
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, element);
       if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
           || info.type == Angular2AttributeType.VARIABLE
           || info.type == Angular2AttributeType.REFERENCE) {
         continue;
       }
       cssSelector.addAttribute(info.name, attr.getValue());
-      if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
+      if (StringUtil.toLowerCase(attr.getName()).equals("class") && attr.getValue() != null) {
         StringUtil.split(attr.getValue(), " ")
           .forEach(clsName -> cssSelector.addClassName(clsName));
       }
@@ -230,16 +229,16 @@ public class Angular2DirectiveSimpleSelector {
 
   public void addAttribute(@NotNull String name, @Nullable String value) {
     attrs.add(name);
-    attrs.add(value != null ? value.toLowerCase(Locale.ENGLISH) : "");
+    attrs.add(value != null ? StringUtil.toLowerCase(value) : "");
   }
 
   public void addClassName(@NotNull String name) {
-    classNames.add(name.toLowerCase(Locale.ENGLISH));
+    classNames.add(StringUtil.toLowerCase(name));
   }
 
   @NotNull
   public String toString() {
-    StringBuilder result = new StringBuilder();
+    @NonNls StringBuilder result = new StringBuilder();
     if (element != null) {
       result.append(element);
     }

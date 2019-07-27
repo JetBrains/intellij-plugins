@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
@@ -39,9 +27,16 @@ import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.language.VueJSLanguage
+import org.jetbrains.vuejs.codeInsight.detectLanguage
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
+import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
+import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VueFileVisitor
+import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val containingFile = list[0].containingFile
@@ -85,10 +80,11 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val declarations = JSResolveUtil.getStubbedChildren(content, ES6_IMPORT_DECLARATION)
     val foundImport = declarations.firstOrNull { declaration ->
       val importDeclaration = declaration as ES6ImportDeclaration
-      val byName = importDeclaration.importedBindings.firstOrNull { !it.isNamespaceImport && it.name != null &&
-                                                                    fromAsset(
-                                                                      ref.nameElement.text) == fromAsset(
-        it.name!!)
+      val byName = importDeclaration.importedBindings.firstOrNull {
+        !it.isNamespaceImport && it.name != null &&
+        fromAsset(
+          ref.nameElement.text) == fromAsset(
+          it.name!!)
       }
       return@firstOrNull byName != null
     } as? ES6ImportDeclaration ?: return
@@ -100,10 +96,10 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val refs = mutableListOf<RefData>()
     val injManager = InjectedLanguageManager.getInstance(list[0].project)
     list.forEach { tag ->
-      PsiTreeUtil.processElements(tag, {
+      PsiTreeUtil.processElements(tag) {
         refs.addAll(addElementReferences(it, tag, 0))
         true
-      })
+      }
       val tagOffset = tag.textRange.startOffset
       val hosts = PsiTreeUtil.findChildrenOfType(tag, PsiLanguageInjectionHost::class.java)
       hosts.forEach { host ->
@@ -140,7 +136,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     }
   }
 
-  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0], { "template" == (it as? XmlTag)?.name }) as? XmlTag
+  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { "template" == (it as? XmlTag)?.name } as? XmlTag
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName) ?: return null
@@ -162,7 +158,8 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
         if (existing != null && state != existing) {
           hasDirectUsageSet.add(refName)
           true
-        } else {
+        }
+        else {
           hasReplaceMap[refName] = state
           false
         }
@@ -171,7 +168,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
 
     var newText =
 
-"""<template${langAttribute(templateLanguage)}>
+      """<template${langAttribute(templateLanguage)}>
 ${generateNewTemplateContents(hasDirectUsageSet)}
 </template>
 <script${langAttribute(scriptLanguage)}>${generateImports()}
@@ -180,8 +177,10 @@ export default {
 }
 </script>${copyStyles()}"""
 
-    newText = psiOperationOnText(newText, { optimizeAndRemoveEmptyStyles(it) })
-    newText = psiOperationOnText(newText, { CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset) })
+    newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
+    newText = psiOperationOnText(newText) {
+      CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset)
+    }
 
     return newText
   }
@@ -209,7 +208,7 @@ export default {
     currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(file.project, suffix, false) }
     val toDelete = findStyles(file).filter { styleTag ->
       styleTag.isValid &&
-      PsiTreeUtil.processElements(styleTag, { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) })
+      PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
     }
     toDelete.forEach { styleTag -> styleTag.delete() }
   }
@@ -217,21 +216,23 @@ export default {
   private fun hasMeaningfulChildren(element: PsiElement) =
     !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, element.children)
 
-  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"" + lang + "\""
+  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
-    return importsToCopy.keys.sorted().joinToString("\n", "\n") { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
+    return importsToCopy.keys.sorted().joinToString("\n", "\n") {
+      "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}"
+    }
   }
 
   private fun generateDescriptorMembers(mapHasDirectUsage: MutableSet<String>): String {
     val members = mutableListOf<String>()
-    if (!importsToCopy.isEmpty()) {
-      members.add(importsToCopy.keys.sorted().joinToString ( ", ", ",\ncomponents: {", "}" ))
+    if (importsToCopy.isNotEmpty()) {
+      members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
-    if (!refDataMap.isEmpty()) {
+    if (refDataMap.isNotEmpty()) {
       members.add(sortedProps(true).joinToString(",\n", ",\nprops: {\n", "\n}")
-      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}" }" })
+      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
     return members.joinToString("")
   }
@@ -266,7 +267,7 @@ export default {
     val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
 
     val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
-    if (components != null && !components.isEmpty()) {
+    if (components != null && components.isNotEmpty()) {
       val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement?) {
@@ -284,7 +285,7 @@ export default {
   }
 
   private fun generateProps(): String {
-    return sortedProps(true).joinToString(" "){
+    return sortedProps(true).joinToString(" ") {
       ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\""
     }
   }
@@ -300,7 +301,7 @@ export default {
       return JSResolveUtil.getLeftmostQualifier(jsRef).referenceName ?: ref.canonicalText
     }
 
-    fun resolve() : PsiElement? {
+    fun resolve(): PsiElement? {
       val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
       return JSResolveUtil.getLeftmostQualifier(jsRef).resolve()
     }

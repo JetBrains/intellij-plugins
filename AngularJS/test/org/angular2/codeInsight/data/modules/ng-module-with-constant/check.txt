@@ -1,0 +1,13 @@
+MyModule: Angular2SourceModule
+  imports:
+  declarations:
+    MyComponent: Angular2SourceComponent
+  exports:
+    MyComponent: Angular2SourceComponent
+  all-exported-declarations:
+    MyComponent: Angular2SourceComponent
+  scope:
+    MyComponent: Angular2SourceComponent
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true

@@ -56,6 +56,10 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
     doTest("{{ a }}b{{ c // comment }}");
   }
 
+  public void testMultiLineComment() {
+    doTest("{{ a }}b{{ c // comment\non\nmultiple\nlines }}");
+  }
+
   public void testBoundAttributes() {
     doTest("<a [src]=bla() (click)='event()'></a>");
   }
@@ -106,6 +110,20 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "</tr>\n");
   }
 
+  public void testEscapes() {
+    doTest("{{today | date:'d \\'days so far in\\' LLLL'}}" +
+           "<div [input]=\"'test&quot;test\\u1234\\u123\\n\\r\\t'\">" +
+           "<div [input]='\"ttt\" + &apos;str\\u1234ing&apos;'>");
+  }
+
+  public void testTextInEscapedQuotes() {
+    doTest("<div [foo]=\"&quot;test&quot; + 12\">");
+  }
+
+  public void testTextInEscapedApos() {
+    doTest("<div [foo]=\"&apos;test&apos; + 12\">");
+  }
+
   public void testExpansionForm() {
     doTest("{one.two, three, =4 {four} =5 {five} foo {bar} }");
   }
@@ -131,7 +149,9 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testExpansionFormComplex() {
-    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
+    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}",
+           // TODO improve state handling when nesting expansion forms
+           false);
   }
 
   public void testScriptSrc() {
@@ -155,10 +175,93 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "</body>");
   }
 
+  public void testScriptWithEventAndAngularAttr() {
+    doTest("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
+           "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
+           "  console.log(2)\n" +
+           "</script>\n" +
+           "<div></div>",
+           // TODO improve JS embedded lexer
+           false);
+  }
+
+  public void testStyleTag() {
+    doTest("<style>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testStyleAngularAttr() {
+    doTest("<style (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testStyleWithEventAndAngularAttr() {
+    doTest("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testStyleAfterBinding() {
+    doTest("<div *foo style=\"width: 13px\">\n" +
+           "  <span (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testStyleAfterStyle() {
+    doTest("<div style style *foo='bar'>\n" +
+           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testBindingAfterStyle() {
+    doTest("<div style *foo='bar'>\n" +
+           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testEmptyStructuralDirective() {
+    doTest("<div *foo [bar]=\"\"></div>\n" +
+           "<div [bar]=\"some\"></div>");
+  }
+
+  public void testEmptyHtmlEvent() {
+    doTest("<div onclick onclick=\"\"></div>\n" +
+           "<div [bar]=\"some\"></div>");
+  }
+
   @Override
   protected void doTest(@NonNls String text) {
+    doTest(text, true);
+  }
+
+  protected void doTest(@NonNls String text, boolean checkRestartOnEveryToken) {
     super.doTest(text);
-    checkCorrectRestart(text);
+    if (checkRestartOnEveryToken) {
+      checkCorrectRestartOnEveryToken(text);
+    }
+    else {
+      checkCorrectRestart(text);
+    }
   }
 
   @Override

@@ -1,0 +1,26 @@
+MetadataFile:index.metadata.json
+  @angular/material/input <metadata node module>
+    MatTextareaAutosize <metadata directive>: selector=textarea[mat-autosize], textarea[matTextareaAutosize]; exportAs=matTextareaAutosize; inputs=[matAutosizeMinRows, cdkAutosizeMinRows, matTextareaAutosize, matAutosizeMaxRows, mat-autosize, cdkAutosizeMaxRows]; outputs=[]; inOuts=[]
+      #ext: @angular/cdk/text-field#CdkTextareaAutosize <metadata reference>('')
+    MatInputBase <metadata class>('')
+    _MatInputMixinBase: <metadata call>
+      #expression: @angular/material/core#mixinErrorState <metadata reference>('')
+    MatInput <metadata directive>: selector=input[matInput], textarea[matInput], select[matNativeControl],
+      input[matNativeControl], textarea[matNativeControl]; exportAs=matInput; inputs=[readonly, errorStateMatcher, disabled, id, placeholder, type, value, required]; outputs=[]; inOuts=[]
+      #ext: _MatInputMixinBase <metadata reference>('')
+    getMatInputUnsupportedTypeError <metadata function>
+      #value: <metadata call>
+        #expression: Error <metadata reference>('')
+    MatInputModule <metadata module>: imports=[CommonModule, MatFormFieldModule]; declarations=[MatInput, MatTextareaAutosize]; exports=[MatFormFieldModule, MatInput, MatTextareaAutosize]; scopeFullyResolved=false; exportsFullyResolved=false
+      ___dec.declarations <metadata array>
+        MatInput <metadata reference>('')
+        MatTextareaAutosize <metadata reference>('')
+      ___dec.exports <metadata array>
+        @angular/cdk/text-field#TextFieldModule <metadata reference>('')
+        @angular/material/form-field#MatFormFieldModule <metadata reference>('')
+        MatInput <metadata reference>('')
+        MatTextareaAutosize <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/text-field#TextFieldModule <metadata reference>('')
+        @angular/material/form-field#MatFormFieldModule <metadata reference>('')

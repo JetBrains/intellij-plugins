@@ -1,9 +1,9 @@
 buildscript {
-  ext.kotlin_version = '1.0.3'
+  ext.kotlin_version = '1.3.11'
 
   repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
   }
 
   dependencies {
@@ -12,7 +12,21 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.1.10"
+  id "org.jetbrains.intellij" version "0.4.7"
+}
+
+// JDK compatibility
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+// Kotlin compatibility
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+  kotlinOptions {
+    jvmTarget = "1.8"
+    languageVersion = "1.3"
+    apiVersion = "1.3"
+  }
 }
 
 sourceSets {
@@ -36,7 +50,7 @@ apply plugin: "kotlin"
 
 version="163.7000"
 intellij {
-  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'AngularJS'
   downloadSources false
   updateSinceUntilBuild false
@@ -49,4 +63,5 @@ repositories {
 
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compile "org.jetbrains:annotations-java5:17.0.0"
 }

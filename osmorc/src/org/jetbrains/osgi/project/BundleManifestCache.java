@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.project;
 
 import aQute.bnd.osgi.Constants;
@@ -24,7 +10,7 @@ import com.intellij.openapi.roots.JdkOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -35,6 +21,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,6 +35,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
@@ -105,76 +93,63 @@ public class BundleManifestCache {
     OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet == null) return null;
 
-    CachedValue<BundleManifest> value = myCache.get(facet);
+    CachedValue<BundleManifest> value = myCache.computeIfAbsent(facet, k -> myManager.createCachedValue(() -> {
+      OsmorcFacetConfiguration configuration = facet.getConfiguration();
+      BundleManifest manifest = null;
+      List<Object> dependencies = ContainerUtil.newSmartList(configuration);
 
-    if (value == null) {
-      value = myManager.createCachedValue(() -> {
-        OsmorcFacetConfiguration configuration = facet.getConfiguration();
-        BundleManifest manifest = null;
-        List<Object> dependencies = ContainerUtil.newSmartList(configuration);
-
-        switch (configuration.getManifestGenerationMode()) {
-          case Manually: {
-            PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
-            if (manifestFile instanceof ManifestFile) {
-              manifest = readManifest((ManifestFile)manifestFile);
-              dependencies.add(manifestFile);
-            }
-            else {
-              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
-            }
-            break;
+      switch (configuration.getManifestGenerationMode()) {
+        case Manually: {
+          PsiFile manifestFile = findInModuleRoots(facet.getModule(), configuration.getManifestLocation());
+          if (manifestFile instanceof ManifestFile) {
+            manifest = readManifest((ManifestFile)manifestFile);
+            dependencies.add(manifestFile);
           }
-
-          case OsmorcControlled: {
-            Map<String, String> map = ContainerUtil.newHashMap(configuration.getAdditionalPropertiesAsMap());
-            map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
-            map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
-            map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
-            manifest = new BundleManifest(map);
-            break;
+          else {
+            dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
           }
-
-          case Bnd: {
-            PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
-            if (bndFile != null) {
-              manifest = readProperties(bndFile);
-              dependencies.add(bndFile);
-            }
-            else {
-              dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
-            }
-            break;
-          }
-
-          case Bundlor:
-            break; // not supported
+          break;
         }
 
-        return CachedValueProvider.Result.create(manifest, dependencies);
-      }, false);
+        case OsmorcControlled: {
+          Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
+          map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
+          map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
+          map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
+          manifest = new BundleManifest(map);
+          break;
+        }
 
-      myCache.put(facet, value);
-    }
+        case Bnd: {
+          PsiFile bndFile = findInModuleRoots(facet.getModule(), configuration.getBndFileLocation());
+          if (bndFile != null) {
+            manifest = readProperties(bndFile);
+            dependencies.add(bndFile);
+          }
+          else {
+            dependencies.add(PsiModificationTracker.MODIFICATION_COUNT);
+          }
+          break;
+        }
+
+        case Bundlor:
+          break; // not supported
+      }
+
+      return CachedValueProvider.Result.create(manifest, dependencies);
+    }, false));
 
     return value.getValue();
   }
 
   @Nullable
-  public BundleManifest getManifest(@NotNull final VirtualFile libRoot) {
-    CachedValue<BundleManifest> value = myCache.get(libRoot);
-
-    if (value == null) {
-      value = myManager.createCachedValue(() -> {
-        VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
-        PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
-        BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
-        return CachedValueProvider.Result.createSingleDependency(manifest, libRoot);
-      }, false);
-
-      myCache.put(libRoot, value);
-    }
-
+  public BundleManifest getManifest(@NotNull VirtualFile libRoot) {
+    CachedValue<BundleManifest> value = myCache.computeIfAbsent(libRoot, k -> myManager.createCachedValue(() -> {
+      VirtualFile manifestFile = libRoot.findFileByRelativePath(JarFile.MANIFEST_NAME);
+      PsiFile psiFile = manifestFile != null ? PsiManager.getInstance(myProject).findFile(manifestFile) : null;
+      BundleManifest manifest = psiFile instanceof ManifestFile ? readManifest((ManifestFile)psiFile) : null;
+      return CachedValueProvider.Result.createSingleDependency(manifest, ObjectUtils.notNull(psiFile, libRoot));
+    }, false));
     return value.getValue();
   }
 
@@ -193,7 +168,7 @@ public class BundleManifestCache {
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(StandardCharsets.UTF_8));
       Attributes attributes = new Manifest(stream).getMainAttributes();
-      Map<String, String> map = ContainerUtil.newHashMap();
+      Map<String, String> map = new HashMap<>();
       for (Object key : attributes.keySet()) {
         String name = key.toString();
         map.put(name, attributes.getValue(name));
@@ -210,7 +185,7 @@ public class BundleManifestCache {
     try {
       UTF8Properties properties = new UTF8Properties();
       properties.load(new StringReader(propertiesFile.getText()));
-      Map<String, String> map = ContainerUtil.newHashMap();
+      Map<String, String> map = new HashMap<>();
       for (Object key : properties.keySet()) {
         String name = key.toString();
         map.put(name, properties.getProperty(name));
@@ -219,7 +194,7 @@ public class BundleManifestCache {
         VirtualFile file = propertiesFile.getVirtualFile();
         if (file != null) {
           if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
-            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtil.getNameWithoutExtension(file.getName()));
+            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtilRt.getNameWithoutExtension(file.getName()));
           }
           else if (file.getParent() != null) {
             map.put(Constants.BUNDLE_SYMBOLICNAME, file.getParent().getName());

@@ -10,8 +10,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -44,8 +46,21 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
   @Override
   public void visitElement(final PsiElement element) {
     ProgressManager.checkCanceled();
-
     super.visitElement(element);
+
+    boolean textInsideScenario =
+      PsiUtilCore.getElementType(element) == GherkinTokenTypes.TEXT && element.getParent() instanceof GherkinStepsHolder;
+    if (textInsideScenario && hasStepsBefore(element)) {
+      myHolder.createErrorAnnotation(element, CucumberBundle.message("gherkin.lexer.unexpected.element"));
+    }
+  }
+
+  private static boolean hasStepsBefore(@NotNull PsiElement element) {
+    element = element.getPrevSibling();
+    while (element != null && (!(element instanceof GherkinStep))) {
+      element = element.getPrevSibling();
+    }
+    return element != null;
   }
 
   @Override
@@ -106,7 +121,6 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
     }
   }
 
-
   private void highlightOutlineParams(@NotNull final GherkinStep step, @NotNull final CucumberStepReference reference) {
     final List<String> realSubstitutions = getRealSubstitutions(step);
     if (realSubstitutions != null && !realSubstitutions.isEmpty()) {
@@ -126,7 +140,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
 
       // highlight in step name
       final int textStartOffset = reference.getRangeInElement().getStartOffset();
-      highlightOutlineParamsForText(step.getStepName(), textStartOffset, pattern, step);
+      highlightOutlineParamsForText(step.getName(), textStartOffset, pattern, step);
 
       // highlight in pystring
       final GherkinPystring pystring = step.getPystring();

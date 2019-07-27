@@ -1,0 +1,5 @@
+class A {
+  static function foo() {
+    var a = <selection>1</selection>;
+  }
+}

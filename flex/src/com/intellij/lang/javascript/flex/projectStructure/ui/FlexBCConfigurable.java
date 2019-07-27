@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -56,7 +56,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase.AirDescriptorInfoProvider;
 
@@ -216,15 +219,12 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     initRLMControls();
     initCSSControls();
 
-    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
-    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if ("".equals(value)) {
-          setText("<no optimization>");
-        }
+    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Collections.singletonList(""), ""));
+    myOptimizeForCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      if ("".equals(value)) {
+        label.setText("<no optimization>");
       }
-    });
+    }));
 
     myMainClassWarning.setIcon(AllIcons.General.BalloonWarning12);
     myOutputFileNameWarning.setIcon(AllIcons.General.BalloonWarning12);

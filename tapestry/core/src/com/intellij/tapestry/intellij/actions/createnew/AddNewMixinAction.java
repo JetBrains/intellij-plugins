@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.actions.createnew;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -44,7 +44,7 @@ public class AddNewMixinAction extends AddNewElementAction<MixinsNode> {
     if (defaultMixinPath == null) return;
 
     final AddNewMixinDialog addNewMixinDialog =
-        new AddNewMixinDialog((Module)event.getDataContext().getData(DataKeys.MODULE.getName()), defaultMixinPath);
+        new AddNewMixinDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultMixinPath);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewMixinDialog.getContentPane());

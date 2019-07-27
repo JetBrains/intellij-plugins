@@ -1,0 +1,24 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "WebServerUser1": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "AAA": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "Description": {
+          "Fn::GetAtt": [
+              "WebServerUser1", "<caret>"
+          ]
+        },
+        "ConfigurationTemplates": "aaa"
+      }
+    }
+  }
+}

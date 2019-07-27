@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.impl.JSElementImpl;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
-import org.angular2.lang.expr.psi.Angular2PipeArgumentsList;
 import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +19,8 @@ public class Angular2PipeLeftSideArgumentImpl extends JSElementImpl implements A
     super(elementType);
   }
 
-  @Override
-  public JSExpression getExpression() {
+  @Nullable
+  JSExpression getPipeLeftSideExpression() {
     return doIfNotNull(findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS),
                        node -> node.getPsi(JSExpression.class));
   }
@@ -28,22 +28,21 @@ public class Angular2PipeLeftSideArgumentImpl extends JSElementImpl implements A
   @NotNull
   @Override
   public JSExpression[] getArguments() {
-    JSExpression[] mainArgsList = getPipeRightSideExpressions();
-    if (mainArgsList != null) {
-      return mainArgsList;
+    JSExpression leftExpr = getPipeLeftSideExpression();
+    if (leftExpr == null) {
+      return JSExpression.EMPTY_ARRAY;
     }
-    JSExpression thisExpr = getExpression();
-    return thisExpr != null
-           ? new JSExpression[]{thisExpr}
-           : JSExpression.EMPTY_ARRAY;
+    JSExpression[] mainArgsList = getPipeRightSideExpressions();
+    return mainArgsList == null ? new JSExpression[]{leftExpr}
+                                : ArrayUtil.prepend(leftExpr, mainArgsList);
   }
 
   @Nullable
   private JSExpression[] getPipeRightSideExpressions() {
     return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
                          .findChildByType(Angular2ElementTypes.PIPE_ARGUMENTS_LIST),
-                       node -> doIfNotNull(node.getPsi(Angular2PipeArgumentsList.class),
-                                           Angular2PipeArgumentsList::getArguments));
+                       node -> doIfNotNull(node.getPsi(Angular2PipeArgumentsListImpl.class),
+                                           Angular2PipeArgumentsListImpl::getPipeRightSideExpressions));
   }
 
   @Override

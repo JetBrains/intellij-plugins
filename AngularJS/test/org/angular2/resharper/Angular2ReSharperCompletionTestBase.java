@@ -1,11 +1,11 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.resharper;
 
 import com.intellij.lang.javascript.resharper.TypeScriptReSharperCompletionTestBase;
 import com.intellij.lang.resharper.ReSharperTestUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.TestDataPath;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +19,12 @@ public abstract class Angular2ReSharperCompletionTestBase extends TypeScriptReSh
            + "/CodeCompletion/"
            + StringUtil.trimStart(klass.getAnnotation(TestDataPath.class).value(),
                                   "$R#_COMPLETION_TEST_ROOT");
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    AngularTestUtil.enableAstLoadingFilter(this);
   }
 
   protected List<String> doGetExtraFiles() {
@@ -36,7 +42,7 @@ public abstract class Angular2ReSharperCompletionTestBase extends TypeScriptReSh
   @NotNull
   @Override
   protected final Map<String, String[]> getExtraFiles() {
-    return Collections.singletonMap(getName(), ArrayUtil.toStringArray(doGetExtraFiles()));
+    return Collections.singletonMap(getName(), ArrayUtilRt.toStringArray(doGetExtraFiles()));
   }
 
   @Override

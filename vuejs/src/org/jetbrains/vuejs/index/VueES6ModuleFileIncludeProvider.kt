@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.ecmascript6.index.ES6FileIncludeProvider
@@ -10,9 +10,8 @@ import com.intellij.psi.impl.include.FileIncludeInfo
 import com.intellij.psi.impl.include.FileIncludeProvider
 import com.intellij.util.Consumer
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.VueLanguage
-import org.jetbrains.vuejs.codeInsight.findModule
+import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 /**
  * ES6FileIncludeProvider doesn't work for vue files but we need these files in index for building ts imports graph

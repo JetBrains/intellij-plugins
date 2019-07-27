@@ -1,27 +1,27 @@
 <ng-template
-  <weak_warning descr="Property 'innerHTML' is not provided by any applicable directive on an embedded template.">[innerHTML]</weak_warning>="b"
-  <weak_warning descr="Event 'click' is not emitted by any applicable directive on an embedded template.">(click)</weak_warning>="f"
+  <weak_warning descr="Property innerHTML is not provided by any applicable directive on an embedded template">[innerHTML]</weak_warning>="b"
+  <weak_warning descr="Event click is not emitted by any applicable directive on an embedded template">(click)</weak_warning>="f"
 ></ng-template>
 <ng-template
-  <weak_warning descr="Property 'foo-comp' is not provided by any applicable directive on an embedded template.">[foo-comp]</weak_warning>="a"
+  <weak_warning descr="Property foo-comp is not provided by any applicable directive on an embedded template">[foo-comp]</weak_warning>="a"
 ></ng-template>
 <ng-template
-  <weak_warning descr="Property 'foo-dir' is not provided by any applicable directive on an embedded template.">[foo-dir]</weak_warning>="a"
+  <weak_warning descr="Property foo-dir is not provided by any applicable directive on an embedded template">[foo-dir]</weak_warning>="a"
 ></ng-template>
 
-<div <weak_warning descr="Property 'foo-comp' is not provided by any applicable directive on an embedded template.">*foo-comp</weak_warning>="a"></div>
-<div <weak_warning descr="Property 'foo-dir' is not provided by any applicable directive on an embedded template.">*foo-dir</weak_warning>="a"></div>
+<div <weak_warning descr="Property foo-comp is not provided by any applicable directive on an embedded template">*foo-comp</weak_warning>="a"></div>
+<div <weak_warning descr="Property foo-dir is not provided by any applicable directive on an embedded template">*foo-dir</weak_warning>="a"></div>
 <div *foo-dir></div>
 <div *foo-dir="let a"></div>
 
 <div foo-dir="" foo-comp="" <warning descr="Attribute foo-bar is not allowed here">foo-bar</warning>=""></div>
-<my-comp [onFoo]="a" <weak_warning descr="Property 'foo' is not provided by any applicable directives nor by 'my-comp' element.">[foo]</weak_warning>=""></my-comp>
+<my-comp [onFoo]="a" <weak_warning descr="Property foo is not provided by any applicable directives nor by my-comp element">[foo]</weak_warning>=""></my-comp>
 
-<div *myTemplate="let a for b; bar: c; <weak_warning descr="Property 'myTemplateGoo' is not provided by any applicable directive on an embedded template.">goo</weak_warning>: nope"></div>
+<div *myTemplate="let a for b; bar: c; <weak_warning descr="Property myTemplateGoo is not provided by any applicable directive on an embedded template">goo</weak_warning>: nope"></div>
 
-<ng-template <weak_warning descr="Property 'myTemplateFor' is not provided by any applicable directive on an embedded template.">[myTemplateFor]</weak_warning>="nope"
+<ng-template <weak_warning descr="Property myTemplateFor is not provided by any applicable directive on an embedded template">[myTemplateFor]</weak_warning>="nope"
   (otherEvent)="yup"
-  <weak_warning descr="Event 'badEvent' is not emitted by any applicable directive on an embedded template.">(badEvent)</weak_warning>="fff"
+  <weak_warning descr="Event badEvent is not emitted by any applicable directive on an embedded template">(badEvent)</weak_warning>="fff"
 ></ng-template>
 <ng-template myTemplate="foo" [myTemplateFor]="nope" (otherEvent)="yup"></ng-template>
 

@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2014, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -17,13 +17,17 @@ package com.google.dart.server.internal;
 import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
 import org.dartlang.analysis.server.protocol.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class {@code BroadcastAnalysisServerListener} implements {@link AnalysisServerListener} that
  * broadcasts events to other listeners.
- * 
+ *
  * @coverage dart.server
  */
 public class BroadcastAnalysisServerListener implements AnalysisServerListener {
@@ -32,7 +36,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   /**
    * Add the given listener to the list of listeners that will receive notification when new
    * analysis results become available.
-   * 
+   *
    * @param listener the listener to be added
    */
   public void addListener(AnalysisServerListener listener) {
@@ -52,15 +56,34 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   }
 
   @Override
-  public void computedCompletion(String completionId, int replacementOffset, int replacementLength,
-      List<CompletionSuggestion> completions, boolean isLast) {
+  public void computedAvailableSuggestions(@NotNull List<AvailableSuggestionSet> updated,
+                                           @NotNull int[] removed) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.computedAvailableSuggestions(updated, removed);
+    }
+  }
+
+  @Override
+  public void computedCompletion(String completionId,
+                                 int replacementOffset,
+                                 int replacementLength,
+                                 List<CompletionSuggestion> completions,
+                                 List<IncludedSuggestionSet> includedSuggestionSets,
+                                 List<String> includedElementKinds,
+                                 List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
+                                 boolean isLast,
+                                 @Nullable String libraryFile) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedCompletion(
-          completionId,
-          replacementOffset,
-          replacementLength,
-          completions,
-          isLast);
+        completionId,
+        replacementOffset,
+        replacementLength,
+        completions,
+        includedSuggestionSets,
+        includedElementKinds,
+        includedSuggestionRelevanceTags,
+        isLast,
+        libraryFile);
     }
   }
 
@@ -80,7 +103,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
 
   @Override
   public void computedImplemented(String file, List<ImplementedClass> implementedClasses,
-      List<ImplementedMember> implementedMembers) {
+                                  List<ImplementedMember> implementedMembers) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedImplemented(file, implementedClasses, implementedMembers);
     }
@@ -145,7 +168,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   /**
    * Remove the given listener from the list of listeners that will receive notification when new
    * analysis results become available.
-   * 
+   *
    * @param listener the listener to be removed
    */
   public void removeListener(AnalysisServerListener listener) {
@@ -186,6 +209,13 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.serverStatus(analysisStatus, pubStatus);
+    }
+  }
+
+  @Override
+  public void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.computedExistingImports(file, existingImports);
     }
   }
 

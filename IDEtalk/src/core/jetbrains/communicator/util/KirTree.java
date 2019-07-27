@@ -36,7 +36,7 @@ public class KirTree extends Tree {
 
   public KirTree() {
     setOpaque(true);
-    setBackground(UIManager.getColor("Tree.background"));
+    setBackground(com.intellij.util.ui.UIUtil.getTreeBackground());
 
     setRootVisible(false);
     setShowsRootHandles(true);

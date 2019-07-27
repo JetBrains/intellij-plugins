@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,14 +15,14 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.util.text.StringUtil.notNullize;
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.*;
-import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority.*;
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.lang.html.parser.Angular2AttributeType.EVENT;
 
 public class Angular2ExtendedKeyEventAttributesProvider implements Angular2AttributesProvider {
 
-  private static final String KEYDOWN_EVENT_BASE_PREFIX = "keydown.";
-  private static final String KEYUP_EVENT_BASE_PREFIX = "keyup.";
+  @NonNls private static final String KEYDOWN_EVENT_BASE_PREFIX = "keydown.";
+  @NonNls private static final String KEYUP_EVENT_BASE_PREFIX = "keyup.";
 
   private static final String CANONICAL_PREFIX_BASE = EVENT.getCanonicalPrefix();
 
@@ -33,21 +34,21 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
 
   private static List<String> buildPrefixes(String prefix, boolean includeCanonical) {
     if (includeCanonical) {
-      return Arrays.asList("(" + prefix, CANONICAL_PREFIX_BASE + prefix, "on" + prefix, prefix);
+      return Arrays.asList("(" + prefix, CANONICAL_PREFIX_BASE + prefix, EVENT_ATTR_PREFIX + prefix, prefix);
     }
     else {
-      return Arrays.asList("(" + prefix, "on" + prefix, prefix);
+      return Arrays.asList("(" + prefix, EVENT_ATTR_PREFIX + prefix, prefix);
     }
   }
 
-  private static final List<String> MODIFIER_KEYS = newArrayList(
+  @NonNls private static final List<String> MODIFIER_KEYS = newArrayList(
     "alt",
     "control",
     "meta",
     "shift"
   );
 
-  private static final List<String> SPECIAL_KEY_NAMES = newArrayList(
+  @NonNls private static final List<String> SPECIAL_KEY_NAMES = newArrayList(
     "space",
     "dot",
     "escape",
@@ -69,7 +70,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     "printScreen"
   );
 
-  private static final List<String> STD_KEY_NAMES = newArrayList();
+  private static final List<String> STD_KEY_NAMES = new ArrayList<>();
 
   static {
     for (int i = 1; i <= 20; i++) {
@@ -119,10 +120,10 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
       }
       XmlAttributeDescriptor descriptor = getEventDescriptor(tag, keydown);
       for (String keyName : SPECIAL_KEY_NAMES) {
-        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(descriptor, itemBase, keyName, NORMAL, isCanonical));
+        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(tag, descriptor, itemBase, keyName, NORMAL, isCanonical));
       }
       for (String keyName : STD_KEY_NAMES) {
-        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(descriptor, itemBase, keyName, LOW, isCanonical));
+        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(tag, descriptor, itemBase, keyName, LOW, isCanonical));
       }
     }
     else {
@@ -145,7 +146,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     if (info.type == EVENT
         && (info.name.startsWith(KEYDOWN_EVENT_BASE_PREFIX)
             || info.name.startsWith(KEYUP_EVENT_BASE_PREFIX))) {
-      return new Angular2ExtendedKeyEventDescriptor(getEventDescriptor(
+      return new Angular2ExtendedKeyEventDescriptor(tag, getEventDescriptor(
         tag, info.name.startsWith(KEYDOWN_EVENT_BASE_PREFIX)), null, info.name, NORMAL, info.isCanonical);
     }
     return null;
@@ -158,8 +159,8 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
   }
 
   private static XmlAttributeDescriptor getEventDescriptor(@NotNull XmlTag tag, boolean keydown) {
-    String attrName = "on" + trimEnd(keydown ? KEYDOWN_EVENT_BASE_PREFIX : KEYUP_EVENT_BASE_PREFIX,
-                                     '.');
+    String attrName = EVENT_ATTR_PREFIX + trimEnd(keydown ? KEYDOWN_EVENT_BASE_PREFIX : KEYUP_EVENT_BASE_PREFIX,
+                                                  '.');
     return find(Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag),
                 attr -> attrName.equalsIgnoreCase(attr.getName()));
   }
@@ -168,15 +169,17 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
 
     private final String myBaseName;
 
-    protected Angular2ExtendedKeyEventDescriptor(@Nullable XmlAttributeDescriptor originalDescriptor,
+    protected Angular2ExtendedKeyEventDescriptor(@NotNull XmlTag xmlTag,
+                                                 @Nullable XmlAttributeDescriptor originalDescriptor,
                                                  @Nullable String baseName,
                                                  @NotNull String keyName,
                                                  @NotNull AttributePriority priority,
                                                  boolean canonical) {
-      super(Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
-            false,
+      super(xmlTag,
+            Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
             priority,
-            originalDescriptor == null ? Collections.emptySet() : singletonList(originalDescriptor.getDeclaration()));
+            originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations(),
+            true);
       myBaseName = baseName;
     }
 

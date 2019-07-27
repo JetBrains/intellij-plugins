@@ -14,10 +14,17 @@
 package com.google.dart.server.internal.remote.processor;
 
 import com.google.dart.server.AnalysisServerListener;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
+import org.dartlang.analysis.server.protocol.IncludedSuggestionRelevanceTag;
+import org.dartlang.analysis.server.protocol.IncludedSuggestionSet;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Processor for "completion.results" notification.
@@ -38,15 +45,52 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
     JsonObject paramsObject = response.get("params").getAsJsonObject();
     String completionId = paramsObject.get("id").getAsString();
     JsonArray resultsArray = paramsObject.get("results").getAsJsonArray();
+
+    final List<IncludedSuggestionSet> includedSuggestionSets;
+    final JsonElement includedSuggestionSetsElement = paramsObject.get("includedSuggestionSets");
+    if (includedSuggestionSetsElement != null) {
+      final JsonArray includedSuggestionSetsArray = includedSuggestionSetsElement.getAsJsonArray();
+      includedSuggestionSets = IncludedSuggestionSet.fromJsonArray(includedSuggestionSetsArray);
+    } else {
+      includedSuggestionSets = Collections.emptyList();
+    }
+
+    final List<String> includedElementKinds;
+    final JsonElement includedElementKindsElement = paramsObject.get("includedElementKinds");
+    final JsonElement includedSuggestionKindsElement = paramsObject.get("includedSuggestionKinds");
+    if (includedElementKindsElement != null) {
+      final JsonArray includedElementKindsArray = includedElementKindsElement.getAsJsonArray();
+      includedElementKinds = JsonUtilities.decodeStringList(includedElementKindsArray);
+    } else if (includedSuggestionKindsElement != null) {
+      final JsonArray includedSuggestionKindsArray = includedSuggestionKindsElement.getAsJsonArray();
+      includedElementKinds = JsonUtilities.decodeStringList(includedSuggestionKindsArray);
+    } else {
+      includedElementKinds = Collections.emptyList();
+    }
+
+    final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags;
+    final JsonElement includedSuggestionRelevanceKindsElement = paramsObject.get("includedSuggestionRelevanceTags");
+    if (includedSuggestionRelevanceKindsElement != null) {
+      final JsonArray includedSuggestionRelevanceTagsArray = includedSuggestionRelevanceKindsElement.getAsJsonArray();
+      includedSuggestionRelevanceTags = IncludedSuggestionRelevanceTag.fromJsonArray(includedSuggestionRelevanceTagsArray);
+    } else {
+      includedSuggestionRelevanceTags = Collections.emptyList();
+    }
+
     int replacementOffset = paramsObject.get("replacementOffset").getAsInt();
     int replacementLength = paramsObject.get("replacementLength").getAsInt();
     boolean isLast = paramsObject.get("isLast").getAsBoolean();
+    String libraryFile = paramsObject.get("libraryFile") != null ? paramsObject.get("libraryFile").getAsString() : null;
     // compute outline and notify listener
     getListener().computedCompletion(
         completionId,
         replacementOffset,
         replacementLength,
         CompletionSuggestion.fromJsonArray(resultsArray),
-        isLast);
+        includedSuggestionSets,
+        includedElementKinds,
+        includedSuggestionRelevanceTags,
+        isLast,
+        libraryFile);
   }
 }

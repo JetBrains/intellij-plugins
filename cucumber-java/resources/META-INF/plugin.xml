@@ -4,7 +4,7 @@
   <name>Cucumber for Java</name>
   <description>
       <![CDATA[
-      This plugin enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Java.
+      Enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Java.
         The following coding assistance features are available:
         <ul>
           <li>Error and syntax highlighting.</li>

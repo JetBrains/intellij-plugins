@@ -29,7 +29,7 @@ import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class BasicLightHighlightingTestCase extends LightJavaCodeInsightFixtureTestCase {
 
   @NonNls
   public static final String TEST_DATA_PATH = "/contrib/struts2/plugin/testData/";
@@ -118,7 +118,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
     }
     finally {
       // clear existing StrutsFacet configuration before running next test
-      final StrutsFacet existing = StrutsFacet.getInstance(myModule);
+      final StrutsFacet existing = StrutsFacet.getInstance(getModule());
       if (existing != null) {
         existing.getConfiguration().getFileSets().clear();
       }
@@ -158,7 +158,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
    * @param strutsXmlPaths Paths to files.
    */
   protected void createStrutsFileSet(@NonNls final String... strutsXmlPaths) {
-    final StrutsFacet strutsFacet = StrutsFacet.getInstance(myModule);
+    final StrutsFacet strutsFacet = StrutsFacet.getInstance(getModule());
     assertNotNull(strutsFacet);
     final StrutsFacetConfiguration facetConfiguration = strutsFacet.getConfiguration();
 

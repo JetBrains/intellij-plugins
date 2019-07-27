@@ -20,4 +20,7 @@ public interface PostCssElementTypes {
   IElementType POST_CSS_CUSTOM_MEDIA_RULE = new PostCssElementType("POST_CSS_CUSTOM_MEDIA_RULE");
   CssStylesheetLazyElementType POST_CSS_LAZY_STYLESHEET = new CssStylesheetLazyElementType("POST_CSS_LAZY_STYLESHEET", PostCssLanguage.INSTANCE);
   CssStylesheetStubElementType POST_CSS_STYLESHEET = new CssStylesheetStubElementType("POST_CSS_STYLESHEET", PostCssLanguage.INSTANCE);
+
+  IElementType POST_CSS_SIMPLE_VARIABLE = new PostCssElementType("POST_CSS_SIMPLE_VARIABLE");
+  IElementType POST_CSS_SIMPLE_VARIABLE_DECLARATION = new PostCssElementType("POST_CSS_SIMPLE_VARIABLE_DECLARATION");
 }

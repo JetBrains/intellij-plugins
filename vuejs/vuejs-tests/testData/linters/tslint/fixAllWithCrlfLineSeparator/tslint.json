@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "no-consecutive-blank-lines": true,
+    "quotemark": true,
+    "semicolon": [true, "always"],
+    "linebreak-style": [true, "CRLF"],
+    "no-console": true,
+    "arrow-return-shorthand": true
+  }
+}

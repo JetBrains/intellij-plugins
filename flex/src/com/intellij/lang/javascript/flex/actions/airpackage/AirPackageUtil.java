@@ -20,15 +20,12 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -606,22 +603,30 @@ public class AirPackageUtil {
                                               final Sdk flexSdk,
                                               final String ipaPath,
                                               final String applicationId,
-                                              final String iOSSdkPath) {
-    return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath) &&
+                                              final String iOSSdkPath,
+                                              final String simulatorDevice) {
+    return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath, simulatorDevice) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-             @Override
-             protected void appendAdtOptions(final List<String> command) {
-               command.add("-installApp");
-               command.add("-platform");
-               command.add("ios");
-               command.add("-platformsdk");
-               command.add(iOSSdkPath);
-               command.add("-device");
-               command.add("ios-simulator");
-               command.add("-package");
-               command.add(ipaPath);
-             }
-           }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+                                          @Override
+                                          protected void appendAdtOptions(final List<String> command) {
+                                            command.add("-installApp");
+                                            command.add("-platform");
+                                            command.add("ios");
+                                            command.add("-platformsdk");
+                                            command.add(iOSSdkPath);
+                                            command.add("-device");
+                                            command.add("ios-simulator");
+                                            command.add("-package");
+                                            command.add(ipaPath);
+                                          }
+
+                                          @Override
+                                          protected void prepareEnvVars(Map<String, String> envVars) {
+                                            if (!StringUtil.isEmpty(simulatorDevice)) {
+                                              envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+                                            }
+                                          }
+                                        }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
                                         FlexBundle.message("install.ipa.on.simulator.title"));
   }
 
@@ -695,7 +700,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select iOS device", "iOS Device", null,
-                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
+                                                   ArrayUtilRt.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);
@@ -744,7 +749,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select Android device", "Android Device", null,
-                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
+                                                   ArrayUtilRt.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);
@@ -757,7 +762,8 @@ public class AirPackageUtil {
   private static boolean uninstallFromIosSimulator(final Project project,
                                                    final Sdk sdk,
                                                    final String applicationId,
-                                                   final String iOSSdkPath) {
+                                                   final String iOSSdkPath,
+                                                   final String simulatorDevice) {
     return ExternalTask.runWithProgress(new AdtTask(project, sdk) {
       @Override
       protected void appendAdtOptions(final List<String> command) {
@@ -770,6 +776,13 @@ public class AirPackageUtil {
         command.add("ios-simulator");
         command.add("-appid");
         command.add(applicationId);
+      }
+
+      @Override
+      protected void prepareEnvVars(Map<String, String> envVars) {
+        if (!StringUtil.isEmpty(simulatorDevice)) {
+          envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+        }
       }
 
       @Override
@@ -834,7 +847,8 @@ public class AirPackageUtil {
   public static boolean launchOnIosSimulator(final Project project,
                                              final Sdk flexSdk,
                                              final String applicationId,
-                                             final String iOSSdkPath) {
+                                             final String iOSSdkPath,
+                                             final String simulatorDevice) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       @Override
       protected void appendAdtOptions(final List<String> command) {
@@ -847,6 +861,13 @@ public class AirPackageUtil {
         command.add("ios-simulator");
         command.add("-appid");
         command.add(applicationId);
+      }
+
+      @Override
+      protected void prepareEnvVars(Map<String, String> envVars) {
+        if (!StringUtil.isEmpty(simulatorDevice)) {
+          envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+        }
       }
     }, FlexBundle.message("launching.ios.application", applicationId), FlexBundle.message("launch.ios.application.title"));
   }

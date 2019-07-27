@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -9,16 +9,19 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -37,11 +40,12 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,18 +61,23 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String REQUIRE = "require";
 
-  private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
-  private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
-  private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
-  private static final String ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi";
+  @NonNls private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
+  @NonNls private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
+  @NonNls private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
+  @NonNls private static final String ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi";
 
-  private static final String PIPE_TYPE = "P;;;";
-  private static final String DIRECTIVE_TYPE = "D;;;";
-  private static final String MODULE_TYPE = "M;;;";
+  @NonNls private static final String PIPE_TYPE = "P;;;";
+  @NonNls private static final String DIRECTIVE_TYPE = "D;;;";
+  @NonNls private static final String MODULE_TYPE = "M;;;";
 
-  public static final String NG_MODULE_INDEX_NAME = "ngModule";
+  @NonNls public static final String NG_MODULE_INDEX_NAME = "ngModule";
 
-  private static final String STYLESHEET_INDEX_PREFIX = "ss/";
+  @NonNls private static final String STYLESHEET_INDEX_PREFIX = "ss/";
+
+  private static final Set<String> STUBBED_PROPERTIES = ContainerUtil.newHashSet(
+    TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP);
+  private static final Set<String> STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
+    INPUT_DEC, OUTPUT_DEC);
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
@@ -99,16 +108,48 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public int getVersion() {
-    return Angular2IndexBase.VERSION;
+  public boolean shouldCreateStubForLiteral(ASTNode node) {
+    return checkIsInterestingPropertyValue(node.getTreeParent());
   }
 
   @Override
-  public boolean shouldCreateStubForLiteral(ASTNode node) {
-    if (node.getElementType() == JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
-      return Angular2LangUtil.isAngular2Context(node.getPsi());
+  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+    final ASTNode parent = node.getTreeParent();
+    if (parent != null && parent.getElementType() == JSStubElementTypes.ES6_DECORATOR) {
+      final ASTNode methodExpression = node.getFirstChildNode();
+      if (methodExpression.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) return false;
+
+      final ASTNode referencedNameElement = methodExpression.getFirstChildNode();
+      final String decoratorName = referencedNameElement.getText();
+      return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName);
     }
     return false;
+  }
+
+  private boolean checkIsInterestingPropertyValue(@Nullable ASTNode parent) {
+    if (parent == null) {
+      return false;
+    }
+    if (parent.getElementType() == JSElementTypes.ARGUMENT_LIST) {
+      final ASTNode grandParent = parent.getTreeParent();
+      return grandParent != null
+             && grandParent.getElementType() == JSStubElementTypes.CALL_EXPRESSION
+             && shouldCreateStubForCallExpression(grandParent);
+    }
+    if (parent.getElementType() == JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
+      parent = parent.getTreeParent();
+    }
+    if (parent != null && parent.getElementType() == JSStubElementTypes.PROPERTY) {
+      ASTNode identifier = JSPropertyImpl.findNameIdentifier(parent);
+      String propName = identifier != null ? JSPsiImplUtils.getNameFromIdentifier(identifier) : null;
+      return propName != null && STUBBED_PROPERTIES.contains(propName);
+    }
+    return false;
+  }
+
+  @Override
+  public boolean hasSignificantValue(@NotNull JSLiteralExpression expression) {
+    return shouldCreateStubForLiteral(expression.getNode());
   }
 
   @Nullable
@@ -149,8 +190,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addDirective(@NotNull TypeScriptClass directiveClass,
-                                   @NotNull Consumer<JSImplicitElement> processor,
-                                   @Nullable String selector) {
+                                   @NotNull Consumer<? super JSImplicitElement> processor,
+                                   @NonNls @Nullable String selector) {
     final Set<String> indexNames;
     if (selector == null) {
       selector = "<null>";
@@ -198,15 +239,15 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addComponentExternalFilesRefs(@NotNull ES6Decorator decorator,
                                                     @NotNull String namePrefix,
-                                                    @NotNull Consumer<JSImplicitElement> processor,
+                                                    @NotNull Consumer<? super JSImplicitElement> processor,
                                                     @NotNull List<String> fileUrls) {
     for (String fileUrl : fileUrls) {
       int lastSlash = fileUrl.lastIndexOf('/');
       String name = fileUrl.substring(lastSlash + 1);
       //don't index if file name matches TS file name and is in the same directory
       if ((lastSlash <= 0 || (lastSlash == 1 && fileUrl.charAt(0) == '.'))
-          && FileUtil.getNameWithoutExtension(name)
-            .equals(FileUtil.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()))) {
+          && FileUtilRt.getNameWithoutExtension(name)
+            .equals(FileUtilRt.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()))) {
         continue;
       }
       JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(namePrefix + name, decorator)
@@ -216,10 +257,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addPipe(@NotNull TypeScriptClass pipeClass,
-                              @NotNull Consumer<JSImplicitElement> processor,
-                              @Nullable String pipe) {
+                              @NotNull Consumer<? super JSImplicitElement> processor,
+                              @NonNls @Nullable String pipe) {
     if (pipe == null) {
-      pipe = "<unnamed>";
+      pipe = Angular2Bundle.message("angular.description.unnamed");
     }
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
       .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)
@@ -260,7 +301,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
       // inline content
       return ContainerUtil.packNullables(PsiTreeUtil.getContextOfType(
-        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file),
+        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file.getOriginalFile()),
         TypeScriptClass.class));
     }
     // external content

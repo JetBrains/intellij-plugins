@@ -1,0 +1,4 @@
+function foo(arg) {}
+
+var arg:String = "111";
+foo(arg)

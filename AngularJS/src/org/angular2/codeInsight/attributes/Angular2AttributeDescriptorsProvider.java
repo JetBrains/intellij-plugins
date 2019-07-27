@@ -8,8 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.util.CachedValue;
@@ -22,7 +21,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
-import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -32,28 +30,36 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
 
+  @NonNls public static final String EVENT_ATTR_PREFIX = "on";
+  @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
+
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
-                                                              @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
+                                                              @NotNull BiFunction<? super XmlTag, ? super Predicate<String>, XmlAttributeDescriptor[]> attrDescrProvider) {
     if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
     }
-    Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, true);
-    for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
+    Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, xmlTag);
+    Predicate<String> shouldIncludeOneTimeBinding = info.type == REGULAR ? name -> name.equals(attrName)
+                                                                         : name -> false;
+    for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag, shouldIncludeOneTimeBinding)) {
       if (d instanceof Angular2AttributeDescriptor) {
         if (attrName.equals(d.getName())
             || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
@@ -78,12 +84,18 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return CUSTOM_NG_ATTRS;
   }
 
-  private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
-  private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
+  @NonNls private static final List<String> CUSTOM_NG_ATTRS =
+    ContainerUtil.immutableList("i18n", NG_NON_BINDABLE_ATTR, "ngProjectAs");
+  @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag) {
+    return getAttributeDescriptors(xmlTag, a -> true);
+  }
+
+  private static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag,
+                                                                  @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     if (xmlTag == null
         || DumbService.isDumb(xmlTag.getProject())
         || !Angular2LangUtil.isAngular2Context(xmlTag)) {
@@ -102,12 +114,12 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         return a;
       });
 
-    getDirectiveDescriptors(xmlTag).forEach(addDescriptor);
+    getDirectiveDescriptors(xmlTag, shouldIncludeOneTimeBinding).forEach(addDescriptor);
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(addDescriptor);
     getExistingVarsAndRefsDescriptors(xmlTag).forEach(addDescriptor);
 
     for (String CUSTOM_NG_ATTR : CUSTOM_NG_ATTRS) {
-      addDescriptor.accept(Angular2AttributeDescriptor.create(CUSTOM_NG_ATTR));
+      addDescriptor.accept(Angular2AttributeDescriptor.create(xmlTag, CUSTOM_NG_ATTR));
     }
 
     return result.values().toArray(XmlAttributeDescriptor.EMPTY);
@@ -116,17 +128,20 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag) {
-    return getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors);
+    return xmlTag != null && Angular2LangUtil.isAngular2Context(xmlTag)
+           ? getAttributeDescriptor(attrName, xmlTag, Angular2AttributeDescriptorsProvider::getAttributeDescriptors)
+           : null;
   }
 
   @NotNull
-  public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
+  private static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag,
+                                                                            @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     Angular2ApplicableDirectivesProvider applicableDirectives = new Angular2ApplicableDirectivesProvider(xmlTag);
 
-    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     for (Angular2Directive matchedDirective : applicableDirectives.getMatched()) {
-      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(matchedDirective, isTemplateTag));
+      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(
+        matchedDirective, xmlTag, shouldIncludeOneTimeBinding));
     }
 
     Set<String> knownAttributes = new HashSet<>();
@@ -136,24 +151,25 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(
       attr -> knownAttributes.add(attr.getName()));
 
-    MultiMap<String, Pair<Angular2Directive, PsiElement>> attrsFromSelectors = new MultiMap<>();
+    boolean isTemplateTag = isTemplateTag(xmlTag);
+    MultiMap<String, Angular2Directive> attrsFromSelectors = MultiMap.createSet();
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> inOuts = new HashMap<>();
+    Set<String> attributes = new HashSet<>();
     for (Angular2Directive candidate : applicableDirectives.getCandidates()) {
-      BiConsumer<String, PsiElement> addAttribute = (attrName, source) -> {
+      Consumer<String> addAttribute = (attrName) -> {
         if (!knownAttributes.contains(attrName)) {
-          attrsFromSelectors.putValue(attrName, pair(candidate, source));
+          attrsFromSelectors.putValue(attrName, candidate);
         }
       };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
-      if (!isTemplateTag && candidate.isTemplate()) {
+      if (!isTemplateTag && candidate.isStructuralDirective()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
-        if (selectors.size() == 1) {
-          List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selectors.get(0).getAttributes();
+        for (SimpleSelectorWithPsi selector : selectors) {
+          List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
           if (attributeCandidates.size() == 1) {
-            addAttribute.accept("*" + attributeCandidates.get(0).getName(),
-                                attributeCandidates.get(0).getNavigationElement());
+            addAttribute.accept("*" + attributeCandidates.get(0).getName());
           }
           else {
             CANDIDATES_LOOP:
@@ -164,56 +180,61 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
                   break CANDIDATES_LOOP;
                 }
               }
-              addAttribute.accept("*" + attrName, attr.getNavigationElement());
+              addAttribute.accept("*" + attrName);
             }
           }
         }
       }
-      else {
+      if (isTemplateTag || candidate.isRegularDirective()) {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
+        attributes.clear();
+        candidate.getAttributes().forEach(attr -> attributes.add(attr.getName()));
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
           for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
             String attrName = attr.getName();
             boolean added = false;
             Angular2DirectiveProperty property;
-            if ((property = inOuts.get(attrName)) != null) {
-              addAttribute.accept(BANANA_BOX_BINDING.buildName(attrName), property.getNavigableElement());
+            if (inOuts.get(attrName) != null) {
+              addAttribute.accept(BANANA_BOX_BINDING.buildName(attrName));
               added = true;
             }
             if ((property = inputs.get(attrName)) != null) {
-              addAttribute.accept(PROPERTY_BINDING.buildName(attrName), property.getNavigableElement());
+              addAttribute.accept(PROPERTY_BINDING.buildName(attrName));
               added = true;
-              if (Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
-                addAttribute.accept(attrName, property.getNavigableElement());
+              if (shouldIncludeOneTimeBinding.test(property.getName())
+                  && Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
+                addAttribute.accept(attrName);
               }
             }
-            if ((property = outputs.get(attrName)) != null) {
-              addAttribute.accept(EVENT.buildName(attrName), property.getNavigableElement());
+            if (attributes.contains(attrName)) {
+              addAttribute.accept(attrName);
+              added = true;
+            }
+            if (outputs.get(attrName) != null) {
+              addAttribute.accept(EVENT.buildName(attrName));
               added = true;
             }
             if (!added) {
-              addAttribute.accept(attrName, attr.getNavigationElement());
+              addAttribute.accept(attrName);
             }
           }
           for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
             for (Angular2DirectiveSelectorPsiElement attr : notSelector.getAttributes()) {
-              addAttribute.accept(attr.getName(), attr.getNavigationElement());
+              addAttribute.accept(attr.getName());
             }
           }
         }
       }
     }
     attrsFromSelectors.entrySet().forEach(
-      e -> result.add(new Angular2AttributeDescriptor(e.getKey(), isTemplateTag,
-                                                      ContainerUtil.map2Set(e.getValue(), p -> p.getFirst()),
-                                                      ContainerUtil.map2Set(e.getValue(), p -> p.getSecond()))));
+      e -> result.add(new Angular2AttributeDescriptor(xmlTag, e.getKey(), e.getValue(), false)));
     return result;
   }
 
   private static <T> void fillNamesAndProperties(@NotNull Map<String, Angular2DirectiveProperty> map,
-                                                 @NotNull Collection<T> propertiesCollection,
-                                                 @NotNull Function<T, Angular2DirectiveProperty> propertyExtractor) {
+                                                 @NotNull Collection<? extends T> propertiesCollection,
+                                                 @NotNull Function<? super T, ? extends Angular2DirectiveProperty> propertyExtractor) {
     map.clear();
     for (T item : propertiesCollection) {
       Angular2DirectiveProperty property = propertyExtractor.apply(item);
@@ -225,7 +246,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
     return ContainerUtil.mapNotNull(getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
       String name = attrDescriptor.getName();
-      if (name.startsWith("on")) {
+      if (name.startsWith(EVENT_ATTR_PREFIX)) {
         return name;
       }
       return null;
@@ -233,15 +254,14 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NotNull
-  public static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
+  private static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
       allowedElementProperties.addAll(ContainerUtil.map(
         getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
-      JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
+      JSType tagClass = getHtmlElementClassType(xmlTag, xmlTag.getName());
       List<XmlAttributeDescriptor> result = new ArrayList<>();
       Set<Object> dependencies = new HashSet<>();
-      boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
       if (tagClass != null) {
         for (JSRecordType.PropertySignature property : tagClass.asRecordType().getProperties()) {
           if (property.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
@@ -254,47 +274,53 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             }
             dependencies.add(propertyDeclaration.getContainingFile());
             String name;
-            if (property.getMemberName().startsWith("on")) {
+            if (property.getMemberName().startsWith(EVENT_ATTR_PREFIX)) {
               name = EVENT.buildName(property.getMemberName().substring(2));
             }
             else {
               name = PROPERTY_BINDING.buildName(property.getMemberName());
             }
             if (allowedElementProperties.remove(name)) {
-              result.add(Angular2AttributeDescriptor.create(name, propertyDeclaration));
+              result.add(Angular2AttributeDescriptor.create(xmlTag, name, propertyDeclaration));
             }
           }
         }
       }
       for (String name : allowedElementProperties) {
         if (name.startsWith("(")) {
-          result.add(new Angular2EventHandlerDescriptor(name, isInTemplateTag, emptyList()));
+          result.add(new Angular2EventHandlerDescriptor(xmlTag, name, emptyList(), true));
         }
         else {
-          result.add(new Angular2AttributeDescriptor(name, isInTemplateTag, emptyList()));
+          result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
         }
       }
-      return CachedValueProvider.Result.create(Collections.unmodifiableList(result),
-                                               !dependencies.isEmpty() ? dependencies :
-                                               Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT));
+      if (dependencies.isEmpty()) {
+        dependencies = Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT);
+      }
+      else {
+        String tagName = xmlTag.getName();
+        dependencies.add((ModificationTracker)() -> tagName.equals(xmlTag.getName()) ? 0 : 1);
+      }
+      return CachedValueProvider.Result.create(Collections.unmodifiableList(result), dependencies);
     });
   }
 
   @NotNull
-  public static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
+  private static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
     List<XmlAttributeDescriptor> result = new ArrayList<>();
-    boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
       public void visitVariable(Angular2HtmlVariable variable) {
-        result.add(new Angular2AttributeDescriptor(variable.getName(), isInTemplateTag,
-                                                   singletonList(variable.getNameElement())));
+        result.add(new Angular2AttributeDescriptor(xmlTag, variable.getName(),
+                                                   singletonList(variable.getNameElement()),
+                                                   true));
       }
 
       @Override
       public void visitReference(Angular2HtmlReference reference) {
-        result.add(new Angular2AttributeDescriptor(reference.getName(), isInTemplateTag,
-                                                   singletonList(reference.getNameElement())));
+        result.add(new Angular2AttributeDescriptor(xmlTag, reference.getName(),
+                                                   singletonList(reference.getNameElement()),
+                                                   true));
       }
     });
     return result;

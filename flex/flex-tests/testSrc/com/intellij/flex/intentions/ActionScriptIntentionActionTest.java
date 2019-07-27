@@ -18,11 +18,11 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.inspections.JSJoinVariableDeclarationAndAssignmentInspection;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle;
 import org.junit.Assert;
 
-public class ActionScriptIntentionActionTest extends LightCodeInsightFixtureTestCase {
+public class ActionScriptIntentionActionTest extends LightJavaCodeInsightFixtureTestCase {
 
   @Override
   protected void setUp() throws Exception {

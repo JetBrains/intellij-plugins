@@ -25,7 +25,7 @@
 
 <idea-plugin>
   <id>Osmorc</id>
-  <name>Osmorc</name>
+  <name>OSGi</name>
   <description><![CDATA[
     <p>Adds support for the development of OSGi-based applications.</p>
 
@@ -45,61 +45,6 @@
   ]]></description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
-
-  <change-notes>
-    <![CDATA[
-      <b>Version 1.4.12</b>
-      <ul>
-        <li>Bndlib 4.0.0</li>
-      </ul>
-
-      <b>Version 1.4.11</b>
-      <ul>
-        <li>Bug fixes</li>
-      </ul>
-
-      <b>Version 1.4.10</b>
-      <ul>
-        <li>Bug fixes</li>
-      </ul>
-
-      <b>Version 1.4.9</b>
-      <ul>
-        <li>Bndlib 3.3.0</li>
-        <li>Bug fixes</li>
-      </ul>
-
-      <b>Version 1.4.8</b>
-      <ul>
-        <li>Bug fixes</li>
-      </ul>
-
-      <b>Version 1.4.7</b>
-      <ul>
-        <li>Bug fixes</li>
-      </ul>
-
-      <b>Version 1.4.6</b>
-      <ul>
-        <li>Compatible with IDEA 14.1</li>
-        <li>Bnd/Bndtools project import</li>
-        <li>Bnd Run Configurations</li>
-      </ul>
-
-      <b>Version 1.4.5</b>
-      <ul>
-        <li>Compatible with IDEA 14</li>
-        <li>Minor fixes</li>
-      </ul>
-
-      <b>Version 1.4.4</b>
-      <ul>
-        <li>Compatible with IDEA 13</li>
-        <li>Framework runners reworked to support modern versions</li>
-        <li>PAX Runner dropped</li>
-      </ul>
-    ]]>
-  </change-notes>
 
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
@@ -173,7 +118,7 @@
 
     <standardResourceProvider implementation="org.jetbrains.osgi.xml.OsgiResourceProvider"/>
 
-    <compileServer.plugin classpath="osmorc-jps-plugin.jar;biz.aQute.bndlib-4.0.0.jar;biz.aQute.repository-4.0.0.jar;biz.aQute.resolve-4.0.0.jar;bundlor-all.jar"/>
+    <compileServer.plugin classpath="osmorc-jps-plugin.jar;biz.aQute.bndlib-4.2.0.jar;biz.aQute.repository-4.2.0.jar;biz.aQute.resolve-4.2.0.jar;bundlor-all.jar"/>
 
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 

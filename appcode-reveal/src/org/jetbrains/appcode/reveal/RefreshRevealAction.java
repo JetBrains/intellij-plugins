@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -14,7 +14,6 @@ import com.intellij.openapi.ui.Messages;
 import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
-import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
 import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
@@ -50,7 +49,6 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
 
     e.getPresentation().setIcon(ICON);
 
@@ -127,7 +125,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
   @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
-    if (Xcode.getVersion().isOrGreaterThan(8)) {
+    if (Xcode.getVersion().is(8)) {
       // Xcode 8's simulators use the host computer's name
       return ExecUtil.execAndReadLine(new GeneralCommandLine("scutil", "--get", "ComputerName"));
     } else if (destination.isDevice()) {
@@ -136,18 +134,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
       SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
       if (simulator == null) throw new ExecutionException("Simulator not specified.");
 
-      switch (simulator.getDeviceFamilyID()) {
-        case SimulatorConfiguration.IPHONE_FAMILY:
-          return "iPhone Simulator";
-        case SimulatorConfiguration.IPAD_FAMILY:
-          return "iPad Simulator";
-        case SimulatorConfiguration.TV_FAMILY:
-          return "Apple TV Simulator";
-        case SimulatorConfiguration.WATCH_FAMILY:
-          return "Apple Watch Simulator";
-      }
-
-      throw new ExecutionException("Unknown simulator type: " + simulator);
+      return simulator.getName();
     }
     throw new ExecutionException("Unsupported destination: " + destination);
   }

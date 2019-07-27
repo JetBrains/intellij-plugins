@@ -9,6 +9,7 @@ import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,7 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
     PsiElement symbol = Angular2InjectionUtils.getTargetElementFromContext(context);
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol) != null) {
-      return "Component &Template";
+      return Angular2Bundle.message("angular.action.goto-type-declaration.component-template");
     }
     return null;
   }

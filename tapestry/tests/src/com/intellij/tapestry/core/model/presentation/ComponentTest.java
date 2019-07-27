@@ -2,7 +2,7 @@ package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.resource.TestableResource;
@@ -23,7 +23,7 @@ public class ComponentTest {
     private JavaClassTypeMock _classInRootComponentsPackageMock;
     private TapestryProject _tapestryProjectMock;
     private IResourceFinder _resourceFinderMock;
-    private Library _libraryMock;
+    private TapestryLibrary _libraryMock;
 
     @BeforeMethod
     public void initMocks() {
@@ -42,7 +42,7 @@ public class ComponentTest {
         org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(Library.class);
+        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
@@ -55,14 +55,14 @@ public class ComponentTest {
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
+        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
 
         reset(_resourceFinderMock);
         expect(_resourceFinderMock.findLocalizedClasspathResource("com/app/components/SomeClass.tml", true)).andReturn(new ArrayList<>()).anyTimes();
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(new ArrayList<>()).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
+        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate().length == 0;
     }
 
     @Test
@@ -76,11 +76,11 @@ public class ComponentTest {
         expect(_resourceFinderMock.findLocalizedContextResource("SomeClass.tml")).andReturn(templates).anyTimes();
         replay(_resourceFinderMock);
 
-        assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate()[0].getName().equals("SomeClass.tml");
+        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getTemplate()[0].getName().equals("SomeClass.tml");
     }
 
     @Test
     public void allowsTemplate() {
-        assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).allowsTemplate();
+        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).allowsTemplate();
     }
 }

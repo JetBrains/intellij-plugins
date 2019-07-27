@@ -68,6 +68,6 @@ public final class OsgiConfigurationType extends SimpleConfigurationType {
 
   @Override
   public String getHelpTopic() {
-    return "reference.dialogs.rundebug.#org.osmorc.OsgiConfigurationType";
+    return "reference.dialogs.rundebug.osgi.classic";
   }
 }

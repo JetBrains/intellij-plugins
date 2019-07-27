@@ -1,10 +1,11 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
@@ -16,18 +17,19 @@ import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
@@ -47,17 +49,16 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Nullable
-  public final Future<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
-                                                     @Nullable VirtualFile config,
-                                                     @Nullable String content,
-                                                     @NotNull TsLintState state) {
-    boolean isJSFile = DialectDetector.JAVASCRIPT_FILE_TYPES.contains(virtualFile.getFileType());
+  public final CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
+                                                                @Nullable VirtualFile config,
+                                                                @Nullable String content,
+                                                                @NotNull TsLintState state) {
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
-      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE || isJSFile) {
-        return new FixedFuture<>(ContainerUtil.emptyList());
+      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {
+        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
       }
-      return new FixedFuture<>(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
+      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
     }
     String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
     if (path == null) {
@@ -66,26 +67,24 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
-      return new FixedFuture<>(Collections.singletonList(
+      return CompletableFuture.completedFuture(Collections.singletonList(
         TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
     GetErrorsCommand command = new GetErrorsCommand(LocalFilePath.create(path),
                                                     LocalFilePath.create(configFilePath),
-                                                    StringUtil.notNullize(content), 
-                                                    isJSFile);
+                                                    StringUtil.notNullize(content));
     return process.execute(command, createHighlightProcessor(path));
   }
 
   @Nullable
-  public final Future<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
-    boolean isJSFile = DialectDetector.JAVASCRIPT_FILE_TYPES.contains(virtualFile.getFileType());
-    VirtualFile config = TslintUtil.getConfig(state, virtualFile);
+  public final CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
+    VirtualFile config = TslintUtil.getConfig(state, myProject, virtualFile);
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
-      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE || isJSFile) {
-        return new FixedFuture<>(ContainerUtil.emptyList());
+      if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE) {
+        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
       }
-      return new FixedFuture<>(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
+      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
     }
     String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
     if (path == null) {
@@ -94,14 +93,13 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
-      return new FixedFuture<>(Collections.singletonList(
+      return CompletableFuture.completedFuture(Collections.singletonList(
         TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
 
     //doesn't pass content (file should be saved before)
     FixErrorsCommand command = new FixErrorsCommand(LocalFilePath.create(path),
-                                                    LocalFilePath.create(configFilePath),
-                                                    isJSFile);
+                                                    LocalFilePath.create(configFilePath));
     return process.execute(command, createHighlightProcessor(path));
   }
 
@@ -123,7 +121,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     final SemVer tsLintVersion = SemVer.parseFromText(version);
     final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
     final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased, gson);
-    return ContainerUtil.newArrayList(parser.getErrors());
+    return new ArrayList<>(parser.getErrors());
   }
 
   private static JsonElement parseBody(@NotNull JsonObject element) {
@@ -164,12 +162,10 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     public LocalFilePath filePath;
     @Nullable
     public LocalFilePath configPath;
-    public boolean isJSFile;
 
-    protected BaseCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, boolean isJSFile) {
+    protected BaseCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
       this.filePath = filePath;
       this.configPath = configPath;
-      this.isJSFile = isJSFile;
     }
 
     @NotNull
@@ -181,9 +177,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   private static class GetErrorsCommand extends BaseCommand{
     public String content;
-    private GetErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, 
-                             String content, boolean isJSFile) {
-      super(filePath, configPath, isJSFile);
+    private GetErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, String content) {
+      super(filePath, configPath);
       this.content = content;
     }
 
@@ -195,8 +190,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   private static class FixErrorsCommand extends BaseCommand{
-    private FixErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath, boolean isJSFile) {
-      super(filePath, configPath, isJSFile);
+    private FixErrorsCommand(LocalFilePath filePath, @Nullable LocalFilePath configPath) {
+      super(filePath, configPath);
     }
 
     @NotNull
@@ -238,6 +233,15 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       result.pluginPath = LocalFilePath.create(
         JSLanguageServiceUtil.getPluginDirectory(getClass(), "js/languageService/tslint-plugin-provider.js").getAbsolutePath());
       return result;
+    }
+
+    @Override
+    protected void addNodeProcessAdditionalArguments(@NotNull GeneralCommandLine commandLine) {
+      super.addNodeProcessAdditionalArguments(commandLine);
+      if (myServiceName != null) {
+        JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(commandLine, myServiceName,
+                                                                  () -> Registry.stringValue("tslint.service.node.arguments"));
+      }
     }
 
     @Override

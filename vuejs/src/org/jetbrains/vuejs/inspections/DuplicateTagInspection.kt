@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -13,7 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -30,7 +31,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
   }
 }
 
-class DeleteTagFix(tag: XmlTag, val tagName:String = tag.name) : LocalQuickFixOnPsiElement(tag) {
+class DeleteTagFix(tag: XmlTag, private val tagName: String = tag.name) : LocalQuickFixOnPsiElement(tag) {
   override fun getFamilyName(): String = "Remove Tag"
   override fun getText(): String = "Remove ${tagName} Tag"
 

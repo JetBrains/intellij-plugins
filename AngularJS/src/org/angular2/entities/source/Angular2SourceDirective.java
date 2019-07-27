@@ -1,19 +1,30 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.source;
 
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
+import com.intellij.lang.javascript.psi.stubs.ES6DecoratorStub;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.util.AstLoadingFilter;
+import com.intellij.util.ObjectUtils;
+import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.entities.*;
@@ -25,7 +36,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
+import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -38,22 +52,43 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   public Angular2DirectiveSelector getSelector() {
     return getCachedValue(() -> {
       JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
-      String value;
-      if (property != null
-          && property.getValue() instanceof JSLiteralExpression
-          && (value = ((JSLiteralExpression)property.getValue()).getStringValue()) != null) {
-        return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
-          property.getValue(), value, p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property.getValue());
+      String value = null;
+      if (property != null) {
+        JSLiteralExpression initializer;
+        JSPropertyStub stub = ((JSPropertyImpl)property).getStub();
+        if (stub != null) {
+          initializer = StreamEx.of(stub.getChildrenStubs())
+            .map(StubElement::getPsi)
+            .select(JSLiteralExpression.class)
+            .findFirst()
+            .orElse(null);
+          value = initializer == null ? null : doIfNotNull(initializer.getSignificantValue(), Angular2EntityUtils::unquote);
+        }
+        else {
+          initializer = ObjectUtils.tryCast(property.getValue(), JSLiteralExpression.class);
+          value = initializer == null ? null : initializer.getStringValue();
+        }
+        if (value != null) {
+          return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
+            initializer, StringUtil.unquoteString(value), p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property);
+        }
+        value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
+                                                       () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), null, a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, null),
                                                getDecorator());
     });
   }
 
   @Override
-  public boolean isTemplate() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      isTemplate(getTypeScriptClass()), getClassModificationDependencies()));
+  public boolean isStructuralDirective() {
+    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
+    return matches.first || matches.second;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return !getConstructorParamsMatch().first;
   }
 
   @NotNull
@@ -78,6 +113,15 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @Override
   public Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return getCachedProperties().second;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+    return getCachedValue(
+      () -> Result.create(getAttributeParameters(),
+                          getClassModificationDependencies())
+    );
   }
 
   @NotNull
@@ -120,23 +164,39 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @NotNull
   private Map<String, String> readPropertyMappings(String source) {
     JSProperty prop = Angular2DecoratorUtil.getProperty(getDecorator(), source);
-    if (prop != null && prop.getValue() instanceof JSArrayLiteralExpression) {
-      return ((JSArrayLiteralExpression)prop.getValue())
+    if (prop == null) {
+      return Collections.emptyMap();
+    }
+    JSPropertyStub stub = ((JSPropertyImpl)prop).getStub();
+    Stream<String> stream;
+    if (stub != null) {
+      stream = StreamEx.of(stub.getChildrenStubs())
+        .map(StubElement::getPsi)
+        .select(JSLiteralExpression.class)
+        .map(JSLiteralExpression::getSignificantValue)
+        .nonNull()
+        .map(Angular2EntityUtils::unquote);
+    }
+    else if (prop.getValue() instanceof JSArrayLiteralExpression) {
+      stream = ((JSArrayLiteralExpression)prop.getValue())
         .getExpressionStream()
         .filter(expression -> expression instanceof JSLiteralExpression && ((JSLiteralExpression)expression).isQuotedLiteral())
         .map(expression -> ((JSLiteralExpression)expression).getStringValue())
-        .filter(Objects::nonNull)
-        .map(Angular2EntityUtils::parsePropertyMapping)
-        .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
+        .filter(Objects::nonNull);
     }
-    return Collections.emptyMap();
+    else {
+      return Collections.emptyMap();
+    }
+    return stream
+      .map(Angular2EntityUtils::parsePropertyMapping)
+      .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
   }
 
   private static List<JSAttributeListOwner> getPropertySources(PsiElement property) {
     if (property instanceof TypeScriptFunction) {
       TypeScriptFunction fun = (TypeScriptFunction)property;
       if (!fun.isSetProperty() && !fun.isGetProperty()) {
-        return Collections.emptyList();
+        return Collections.singletonList(fun);
       }
       List<JSAttributeListOwner> result = new ArrayList<>();
       result.add(fun);
@@ -159,7 +219,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       bindingName = Arrays.stream(field.getAttributeList().getDecorators())
         .filter(d -> decorator.equals(d.getDecoratorName()))
         .findFirst()
-        .map(d -> StringUtil.notNullize(getStringParamValue(d.getExpression()), property.getMemberName()))
+        .map(d -> StringUtil.notNullize(getStringParamValue(d), property.getMemberName()))
         .orElse(null);
     }
     if (bindingName != null) {
@@ -167,10 +227,55 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     }
   }
 
+  @NotNull
+  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
+    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+    return constructors.length == 1
+           ? processCtorParameters(constructors[0])
+           : Arrays.stream(constructors)
+             .filter(TypeScriptFunction::isOverloadImplementation)
+             .findFirst()
+             .map(Angular2SourceDirective::processCtorParameters)
+             .orElse(Collections.emptyList());
+  }
+
+  @NotNull
+  private static Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+    return StreamEx.of(ctor.getParameterVariables())
+      .mapToEntry(JSParameter::getAttributeList)
+      .nonNullValues()
+      .flatMapValues(a -> Arrays.stream(a.getDecorators()))
+      .filterValues(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
+      .mapValues(Angular2SourceDirective::getStringParamValue)
+      .filterValues(v -> v != null && !v.trim().isEmpty())
+      .distinctValues()
+      .mapToValue(Angular2SourceDirectiveAttribute::new)
+      .values()
+      .toList();
+  }
+
   @Nullable
-  private static String getStringParamValue(@Nullable JSExpression expression) {
-    if (expression instanceof JSCallExpression) {
-      JSExpression[] args = ((JSCallExpression)expression).getArguments();
+  private static String getStringParamValue(@Nullable ES6Decorator decorator) {
+    if (decorator == null) {
+      return null;
+    }
+    ES6DecoratorStub stub = decorator.getStub();
+    if (stub != null) {
+      return StreamEx.of(stub.getChildrenStubs())
+        .filter(s -> s.getStubType() == JSStubElementTypes.CALL_EXPRESSION)
+        .map(StubElement::getPsi)
+        .select(JSCallExpression.class)
+        .map(JSStubBasedPsiTreeUtil::findRequireCallArgument)
+        .nonNull()
+        .map(JSLiteralExpression::getSignificantValue)
+        .nonNull()
+        .map(Angular2EntityUtils::unquote)
+        .findFirst()
+        .orElse(null);
+    }
+    JSCallExpression expression = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
+    if (expression != null) {
+      JSExpression[] args = expression.getArguments();
       if (args.length == 1 && args[0] instanceof JSLiteralExpression && ((JSLiteralExpression)args[0]).isQuotedLiteral()) {
         return ((JSLiteralExpression)args[0]).getStringValue();
       }
@@ -178,21 +283,34 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return null;
   }
 
-  private static boolean isTemplate(@NotNull TypeScriptClass clazz) {
-    return !JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass
-          && Stream.of(((TypeScriptClass)aClass).getConstructors())
-            .map(JSFunction::getParameterList)
-            .filter(Objects::nonNull)
-            .map(JSParameterList::getParameters)
-            .flatMap(Stream::of)
-            .map(JSParameterListElement::getType)
-            .filter(Objects::nonNull)
-            .map(type -> type.getTypeText())
-            .anyMatch(t -> t.contains(TEMPLATE_REF))) {
-        return false;
+  @NotNull
+  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
+  }
+
+  @NotNull
+  private static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
+    Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
+    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass) {
+        List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
+          .map(JSFunction::getParameterList)
+          .nonNull()
+          .flatArray(JSParameterList::getParameters)
+          .map(JSParameterListElement::getJSType)
+          .nonNull()
+          .map(type -> type.getTypeText())
+          .toList();
+        boolean templateRef = exists(types, t -> t.contains(TEMPLATE_REF));
+        boolean viewContainerRef = exists(types, t -> t.contains(VIEW_CONTAINER_REF));
+        if (templateRef || viewContainerRef) {
+          result.set(pair(templateRef, viewContainerRef));
+          return false;
+        }
       }
       return true;
     });
+    return result.get();
   }
 }

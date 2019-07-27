@@ -25,6 +25,7 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -36,7 +37,7 @@ import java.util.List;
  */
 public class AngularJSFrameworkDetector extends FrameworkDetector {
   protected AngularJSFrameworkDetector() {
-    super("AngularCLI");
+    super(AngularJSFramework.ID);
   }
 
   @NotNull
@@ -72,13 +73,14 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
     return Collections.emptyList();
   }
 
-  private static boolean isConfigured(Collection<VirtualFile> files, Project project) {
+  private static boolean isConfigured(Collection<? extends VirtualFile> files, Project project) {
     if (project == null) return false;
 
     for (VirtualFile file : files) {
       Module module = ModuleUtilCore.findModuleForFile(file, project);
       if (module != null) {
         for (String root : ModuleRootManager.getInstance(module).getExcludeRootUrls()) {
+          //noinspection HardCodedStringLiteral
           if (root.equals(file.getParent().getUrl() + "/tmp")) {
             return true;
           }
@@ -94,9 +96,9 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   }
 
   private class AngularCLIFrameworkDescription extends DetectedFrameworkDescription {
-    private final Collection<VirtualFile> myNewFiles;
+    private final Collection<? extends VirtualFile> myNewFiles;
 
-    AngularCLIFrameworkDescription(Collection<VirtualFile> newFiles) {
+    AngularCLIFrameworkDescription(Collection<? extends VirtualFile> newFiles) {
       myNewFiles = newFiles;
     }
 
@@ -109,7 +111,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
     @NotNull
     @Override
     public String getSetupText() {
-      return "AngularCLI";
+      return Angular2Bundle.message("angular.description.angular-cli");
     }
 
     @NotNull
@@ -130,6 +132,9 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
         }
         AngularJSProjectConfigurator.excludeDefault(item.getParent(), entry);
         modifiableModelsProvider.commitModuleModifiableModel(model);
+        for (VirtualFile vf: myNewFiles) {
+          AngularCliUtil.createRunConfigurations(module.getProject(), vf.getParent());
+        }
       }
     }
 

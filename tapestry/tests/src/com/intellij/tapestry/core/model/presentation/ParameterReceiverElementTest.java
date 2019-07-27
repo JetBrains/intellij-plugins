@@ -4,7 +4,7 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.mocks.JavaFieldMock;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.IResource;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,7 +20,7 @@ public class ParameterReceiverElementTest {
 
     private JavaClassTypeMock _classInSubComponentsPackageMock;
     private JavaClassTypeMock _classInRootComponentsPackageMock;
-    private Library _libraryMock;
+    private TapestryLibrary _libraryMock;
     private TapestryProject _tapestryProjectMock;
 
     @BeforeMethod
@@ -41,7 +41,7 @@ public class ParameterReceiverElementTest {
         org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(null).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(Library.class);
+        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
@@ -51,14 +51,14 @@ public class ParameterReceiverElementTest {
 
     @Test
     public void getParameters_no_parameters() {
-        assert new Component(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
 
         JavaFieldMock publicField = new JavaFieldMock("publicField", false).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
         JavaFieldMock privateField = new JavaFieldMock("privateField", true);
 
         _classInSubComponentsPackageMock.addField(publicField).addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 1;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 1;
     }
 
     @Test
@@ -76,7 +76,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 0;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 0;
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 1;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 1;
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 1;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 1;
     }
 
     @Test
@@ -105,6 +105,6 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 0;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 0;
     }
 }

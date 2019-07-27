@@ -1,0 +1,2 @@
+var x:int
+var created:int = ~x;

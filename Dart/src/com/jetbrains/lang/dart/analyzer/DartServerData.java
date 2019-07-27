@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -10,6 +11,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.EventDispatcher;
@@ -38,6 +41,8 @@ public class DartServerData {
   private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, Map<String, Map<String, Set<String>>>> myExistingImports = Collections.synchronizedMap(new THashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -126,6 +131,24 @@ public class DartServerData {
     ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().outlineUpdated(filePath),
                                                     ModalityState.NON_MODAL,
                                                     myService.getProject().getDisposed());
+  }
+
+  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed, @NotNull final int[] removed) {
+    for (int id : removed) {
+      myAvailableSuggestionSetMap.remove(id);
+    }
+    for (AvailableSuggestionSet suggestionSet : changed) {
+      myAvailableSuggestionSetMap.put(suggestionSet.getId(), suggestionSet);
+    }
+  }
+
+  void computedExistingImports(@NotNull String filePathSD, @NotNull Map<String, Map<String, Set<String>>> existingImports) {
+    if (existingImports.isEmpty()) {
+      myExistingImports.remove(filePathSD);
+      return;
+    }
+
+    myExistingImports.put(filePathSD, existingImports);
   }
 
   @NotNull
@@ -263,20 +286,34 @@ public class DartServerData {
     myEventDispatcher.removeListener(listener);
   }
 
+  @Nullable
+  AvailableSuggestionSet getAvailableSuggestionSet(int id) {
+    return myAvailableSuggestionSetMap.get(id);
+  }
+
+  @Nullable
+  Map<String, Map<String, Set<String>>> getExistingImports(@Nullable String filePathSD) {
+    if (filePathSD == null) return null;
+    return myExistingImports.get(filePathSD);
+  }
+
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {
       final Project project = myService.getProject();
 
-      if (clearCache) {
-        ResolveCache.getInstance(project).clearCache(true);
-      }
-
       // It's ok to call DaemonCodeAnalyzer.restart() right in this thread, without invokeLater(),
-      // but it would cache RemoteAnalysisServerImpl$ServerResponseReaderThread in FileStatusMap.threads and as a result,
-      // DartAnalysisServerService.myProject would be leaked in tests
-      ApplicationManager.getApplication().invokeLater(() -> DaemonCodeAnalyzer.getInstance(project).restart(),
-                                                      ModalityState.NON_MODAL,
-                                                      project.getDisposed());
+      // but it will cache RemoteAnalysisServerImpl$ServerResponseReaderThread in FileStatusMap.threads and as a result,
+      // DartAnalysisServerService.myProject will be leaked in tests
+      ApplicationManager.getApplication()
+        .invokeLater(() -> {
+                       if (clearCache) {
+                         ResolveCache.getInstance(project).clearCache(true);
+                         ((PsiModificationTrackerImpl)PsiManager.getInstance(project).getModificationTracker()).incCounter();
+                       }
+                       DaemonCodeAnalyzer.getInstance(project).restart();
+                     },
+                     ModalityState.NON_MODAL,
+                     project.getDisposed());
     }
   }
 
@@ -340,6 +377,7 @@ public class DartServerData {
     myImplementedClassData.clear();
     myImplementedMemberData.clear();
     myOutlineData.clear();
+    myAvailableSuggestionSetMap.clear();
   }
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {
@@ -495,10 +533,12 @@ public class DartServerData {
   }
 
   public static class DartError extends DartRegion {
-    private final String myAnalysisErrorFileSD;
-    private final String mySeverity;
+    @NotNull private final String myAnalysisErrorFileSD;
+    @NotNull private final String mySeverity;
     @Nullable private final String myCode;
-    private final String myMessage;
+    @NotNull private final String myMessage;
+    @Nullable private final String myCorrection;
+    @Nullable private final String myUrl;
 
     private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
       super(correctedOffset, correctedLength);
@@ -506,12 +546,16 @@ public class DartServerData {
       mySeverity = error.getSeverity().intern();
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
+      myCorrection = error.getCorrection();
+      myUrl = error.getUrl();
     }
 
+    @NotNull
     public String getAnalysisErrorFileSD() {
       return myAnalysisErrorFileSD;
     }
 
+    @NotNull
     public String getSeverity() {
       return mySeverity;
     }
@@ -525,8 +569,19 @@ public class DartServerData {
       return myCode;
     }
 
+    @NotNull
     public String getMessage() {
       return myMessage;
+    }
+
+    @Nullable
+    public String getCorrection() {
+      return myCorrection;
+    }
+
+    @Nullable
+    public String getUrl() {
+      return myUrl;
     }
   }
 

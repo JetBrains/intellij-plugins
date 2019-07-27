@@ -1,0 +1,8 @@
+package {
+public class Vector$object {
+    function pop():* {}
+}
+}
+
+var x:Vector.<String>
+var s:String = x.pop();

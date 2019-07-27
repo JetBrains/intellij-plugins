@@ -117,6 +117,7 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     return myOriginal.isSkipCompile();
   }
 
+  @NotNull
   @Override
   public Icon getIcon() {
     return myOriginal.getIcon();

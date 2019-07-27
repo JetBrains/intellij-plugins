@@ -1,0 +1,7 @@
+for (var i = 0; i < this.entryCount; i++)
+        {
+            var created:* = Element.addClassName(this.getEntry(i),"selected");
+            this.index==i ?
+                      created :
+                      Element.removeClassName(this.getEntry(i),"selected");
+        }

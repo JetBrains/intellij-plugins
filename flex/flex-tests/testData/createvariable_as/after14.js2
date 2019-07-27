@@ -1,4 +1,4 @@
-// "Create Field 'aaa'" "true"
+// "Create field 'aaa'" "true"
 class A___ {
     private var aaa<caret>:int;
   function A___() {

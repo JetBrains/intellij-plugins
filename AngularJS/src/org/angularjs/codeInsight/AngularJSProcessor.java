@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
@@ -95,12 +94,8 @@ public class AngularJSProcessor {
 
   private static void processComponentInitializer(@NotNull final XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
-                                                  @NotNull Collection<JSPsiElementBase> result) {
-
-    result.add(new JSLocalImplicitElementImpl(
-      getCtrlVarName(componentInitializer),
-      getComponentScopeType(file, componentInitializer),
-      componentInitializer, JSImplicitElement.Type.Class));
+                                                  @NotNull Collection<? super JSPsiElementBase> result) {
+    result.add(new AngularJSLocalImplicitElement(file, componentInitializer));
   }
 
   private static String getCtrlVarName(@NotNull JSObjectLiteralExpression componentInitializer) {
@@ -110,6 +105,33 @@ public class AngularJSProcessor {
       ctrlName = unquote(ctrlAs.getValue());
     }
     return ctrlName != null ? ctrlName : $CTRL;
+  }
+
+  private static class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
+    @NotNull private final XmlFile myFile;
+    private AngularJSLocalImplicitElement(@NotNull final XmlFile file,
+                                          @NotNull JSObjectLiteralExpression componentInitializer) {
+      super(getCtrlVarName(componentInitializer), getComponentScopeType(file, componentInitializer), componentInitializer,
+            JSImplicitElement.Type.Class);
+      myFile = file;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      AngularJSLocalImplicitElement element = (AngularJSLocalImplicitElement)o;
+      if (!myName.equals(element.myName)) return false;
+      if (!Objects.equals(myFile, element.myFile)) return false;
+      if (!Objects.equals(myProvider, element.myProvider)) return false;
+      if (myKind != element.myKind) return false;
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass(), myFile, myName, myProvider, myKind);
+    }
   }
 
   @NotNull
@@ -145,19 +167,19 @@ public class AngularJSProcessor {
   }
 
   private static void contributeBindingProperties(@Nullable JSProperty bindingsProperty,
-                                                  @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+                                                  @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
     if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression)) {
       JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
-          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true));
+          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true, false));
         }
       }
     }
   }
 
   private static void contributeControllerProperties(@Nullable JSProperty controllerProperty,
-                                                     @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+                                                     @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
     if (controllerProperty != null && controllerProperty.getValue() != null) {
       PsiElement controller = controllerProperty.getValue();
       if (controller instanceof JSLiteralExpression && ((JSLiteralExpression)controller).isQuotedLiteral()) {
@@ -197,8 +219,8 @@ public class AngularJSProcessor {
           .stream()
           .filter(el -> el.getName() != null)
           .map(el -> new JSRecordTypeImpl.PropertySignatureImpl(
-            el.getName(), JSResolveUtil.getElementJSType(el, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
-            true, el))
+            el.getName(), JSResolveUtil.getElementJSType(el),
+            true, false, el))
           .forEach(processor);
       }
     }
@@ -220,7 +242,7 @@ public class AngularJSProcessor {
     return result.get();
   }
 
-  private static void processDocument(XmlDocument document, final Collection<JSPsiElementBase> result) {
+  private static void processDocument(XmlDocument document, final Collection<? super JSPsiElementBase> result) {
     if (document == null) return;
     final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
 
@@ -293,9 +315,9 @@ public class AngularJSProcessor {
   }
 
   private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
-    private final Collection<JSPsiElementBase> myResult;
+    private final Collection<? super JSPsiElementBase> myResult;
 
-    AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
+    AngularInjectedFilesVisitor(Collection<? super JSPsiElementBase> result) {
       myResult = result;
     }
 

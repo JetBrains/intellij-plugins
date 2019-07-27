@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.execution.RunManager;
@@ -28,7 +29,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -41,116 +42,116 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  public void testRenameBundleRef() throws Exception {
+  public void testRenameBundleRef() {
     String testName = getTestName(false);
     doTest("MyBundleName2.properties", testName + "_after.js2", testName + ".js2", "MyBundleName.properties");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSNamespace() throws Exception {
+  public void testJSNamespace() {
     String testName = getTestName(false);
     doTest("BBB", testName + "_after.js2", testName + ".js2", testName + "_2.js2");
     assertEquals(5, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSNamespace2() throws Exception {
+  public void testJSNamespace2() {
     String testName = getTestName(false);
     doTest("BBB", true, testName + ".js2", testName + "_2.js2");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSFunction() throws Exception {
+  public void testJSFunction() {
     String testName = getTestName(false);
     doTest("JSFunctionNew", testName + "_after.js2", testName + ".js2");
     assertEquals("JSFunctionNew.js2", myFixture.getFile().getName());
   }
 
-  public void testJSFunction2() throws Exception {
+  public void testJSFunction2() {
     String testName = getTestName(false);
     doTest("JSFunctionNew2", true, testName + ".js2", testName + "_2.js2");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSVariable() throws Exception {
+  public void testJSVariable() {
     String testName = getTestName(false);
     doTest("JSVariableNew", testName + "_after.js2", testName + ".js2");
     assertEquals("JSVariableNew.js2", myFixture.getFile().getName());
   }
 
-  public void testJSVariable2() throws Exception {
+  public void testJSVariable2() {
     String testName = getTestName(false);
     doTest("JSVariableNew2", true, testName + ".js2", testName + "_2.js2");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSClass() throws Exception {
+  public void testJSClass() {
     doTest("BBB", "js2");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testJSClass4() throws Exception {
+  public void testJSClass4() {
     doTest("Bar2", "js2");
   }
 
-  public void testRenameDefaultProperty() throws Exception {
+  public void testRenameDefaultProperty() {
     doTest("test2", "js2");
   }
 
-  public void testRenameMethodOfInterface() throws Exception {
+  public void testRenameMethodOfInterface() {
     doTest("test2", "js2");
   }
 
-  public void testRenameMethodOfInterface2() throws Exception {
+  public void testRenameMethodOfInterface2() {
     final String name = getTestName(false);
     doTest("test2", false, name + "." + "js2");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testRenameMethodOfInterface3() throws Exception {
+  public void testRenameMethodOfInterface3() {
     final String testName = getTestName(false);
     doTest("test2", "RenameMethodOfInterface3_after.js2", testName + ".js2", testName + "_2.mxml", testName + "_3.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testRenameMethodOfInterface4() throws Exception {
+  public void testRenameMethodOfInterface4() {
     doTest("foo2", "as");
   }
 
-  public void testRenameMethodOfSuperClass() throws Exception {
+  public void testRenameMethodOfSuperClass() {
     doTest("test2", "js2");
   }
 
-  public void testRenameMethodOfSuperClass2() throws Exception {
+  public void testRenameMethodOfSuperClass2() {
     doTest("test2", "js2");
   }
 
-  public void testJSClass2() throws Exception {
+  public void testJSClass2() {
     final String name = getTestName(false);
     doTest("BBB", true, name + ".js2");
   }
 
-  public void testJSClass3() throws Exception {
+  public void testJSClass3() {
     doTest("AAA", "js2");
   }
 
-  public void testRenameClassUpdatesJSDoc() throws Exception {
+  public void testRenameClassUpdatesJSDoc() {
     doTest("DDD", "js2");
   }
 
-  public void testRenameMethodUpdatesJSDoc() throws Exception {
+  public void testRenameMethodUpdatesJSDoc() {
     doTest("bar", "js2");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentRename() throws Exception {
+  public void testMxmlComponentRename() {
     String name = getTestName(false);
     doTest("RenamedComponent2", name + "_after.mxml", name + ".mxml", "RenamedComponent.mxml");
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentRename_2() throws Exception {
+  public void testMxmlComponentRename_2() {
     String name = getTestName(false);
 
     doTest("RenamedComponent2", name + "_after.mxml", name + ".mxml", "RenamedComponent.mxml");
@@ -158,7 +159,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenameStateInMxml() throws Exception {
+  public void testRenameStateInMxml() {
     String name = getTestName(false);
 
     doTest("foo2", name + "_after.mxml", name + ".mxml");
@@ -180,13 +181,13 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenameStateGroupInMxml() throws Exception {
+  public void testRenameStateGroupInMxml() {
     String name = getTestName(false);
 
     doTest("bar2", name + "_after.mxml", name + ".mxml");
   }
 
-  public void testClassRename() throws Exception {
+  public void testClassRename() {
     final String name = getTestName(false);
     doTest("ClassRename2", name + "_after.as", name + ".as", getTestName(false) + "_2.as");
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
@@ -194,35 +195,35 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentRename2() throws Exception {
+  public void testMxmlComponentRename2() {
     final String name = getTestName(false);
     doTest("RenamedClazz", name + "_after.mxml", name + ".mxml", "Clazz.as");
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentRename3() throws Exception {
+  public void testMxmlComponentRename3() {
     String name = getTestName(false);
     doTest("RenamedComponent3", name + "_after.mxml", name + ".mxml", "RenamedComponent2.mxml");
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentRename4() throws Exception {
+  public void testMxmlComponentRename4() {
     String name = getTestName(false);
     doTest("RenamedComponent4", true, name + ".as", "MxmlComponentRename4_2.mxml", "MxmlComponentRename4_3.xml");
     assertEquals(7, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePackageRefs() throws Exception {
+  public void testRenamePackageRefs() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.mxml", testName + ".mxml", testName + "_2.as");
     assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePackageRefs2() throws Exception {
+  public void testRenamePackageRefs2() {
     String testName = getTestName(false);
     doTest(
       "yyy2",
@@ -235,7 +236,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePackageRefs3() throws Exception {
+  public void testRenamePackageRefs3() {
     String testName = getTestName(false);
     doTest(
       "yyy2",
@@ -249,14 +250,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePackageRefs4() throws Exception {
+  public void testRenamePackageRefs4() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
     assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePackageRefs5() throws Exception {
+  public void testRenamePackageRefs5() {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
     FileBasedIndex.getInstance().ensureUpToDate(JSPackageIndex.INDEX_ID, myFixture.getProject(), null);
@@ -264,35 +265,35 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testClassRename2() throws Exception {
+  public void testClassRename2() {
     String name = getTestName(false);
     doTest("classRename2_2", name + "_after.as", name + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testMxmlComponentIdRename() throws Exception {
+  public void testMxmlComponentIdRename() {
     final String name = getTestName(false);
     doTest("p2", name + "_after.mxml", name + ".mxml");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenameRestParameter() throws Exception {
+  public void testRenameRestParameter() {
     final String name = getTestName(false);
     doTest("rest2", name + "_after.js2", name + ".js2");
   }
 
-  public void testRenameVarWhenRenamingGetSetFunctionFromInterface() throws Exception {
+  public void testRenameVarWhenRenamingGetSetFunctionFromInterface() {
     final String name = getTestName(false);
     doTest("yyy", name + "_after.js2", name + ".js2");
   }
 
-  public void testRenameVarWhenRenamingGetSetFunctionFromInterface2() throws Exception {
+  public void testRenameVarWhenRenamingGetSetFunctionFromInterface2() {
     final String name = getTestName(false);
     doTest("yyy", name + "_after.js2", name + ".js2");
   }
 
-  public void testRenamePropertyAsWhole() throws Exception {
+  public void testRenamePropertyAsWhole() {
     String name = getTestName(false);
     doTest("yyy", name + "_after.js2", name + ".js2");
     name += "_2";
@@ -325,24 +326,24 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testRenamePropertyAsWhole2() throws Exception {
+  public void testRenamePropertyAsWhole2() {
     final String name = getTestName(false);
     doTest("yyy", name + "_after.js2", name + ".js2", name + ".mxml");
   }
 
-  public void testRenameFileReferences() throws Exception {
+  public void testRenameFileReferences() {
     final String name = getTestName(false);
     doTest("xxx.as", name + "_after.as", name + ".as", name + "_2.as");
   }
 
-  public void testRenameFileReferences2() throws Exception {
+  public void testRenameFileReferences2() {
     final String name = getTestName(false);
     doTest("xxx.as", name + "_after.as", name + ".as", name.substring(0, name.length() - 1) + "_2.as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testSeeTopLevelFunction() throws Exception {
+  public void testSeeTopLevelFunction() {
     String name = getTestName(false);
     doTest("SeeTopLevelFunction_3", true, name + ".as", name + "_2.as");
 
@@ -367,14 +368,14 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     assertTrue(jsonNamesValidator.isIdentifier("aaa.bbb", myFixture.getProject()));
   }
 
-  public void testAmbiguity1() throws Exception {
+  public void testAmbiguity1() {
     String name = getTestName(false);
     doTest("Ambiguous", name + "_after.as", name + ".as", name + "_2.as", name + "_3.as");
 
     assertEquals(3, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testAmbiguity2() throws Exception {
+  public void testAmbiguity2() {
     String name = getTestName(false);
     doTest("Ambiguous", name + "_after.as", name + ".as", name + "_2.as", name + "_3.as");
 
@@ -382,153 +383,153 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testSuperClasses() throws Exception {
+  public void testSuperClasses() {
     String name = getTestName(false);
     doTest("foo", true, name + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testSuperClasses2() throws Exception {
+  public void testSuperClasses2() {
     String name = getTestName(false);
     doTest("foo", true, name + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testRenameFileReferenceInInjectedCode() throws Exception {
+  public void testRenameFileReferenceInInjectedCode() {
     final String name = getTestName(false);
     doTest("foo.txt", name + "_after.mxml", false, true, true, name + ".mxml", name + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testRunConfigUpdatedOnMethodRename() throws Exception {
+  public void testRunConfigUpdatedOnMethodRename() {
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils
-      .createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "", "SomeTest",
+      .createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", getModule(), FlexUnitRunnerParameters.Scope.Method, "", "SomeTest",
                                "testSomething",
                                true);
     doTest("testAnotherThing", "as");
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testAnotherThing()", "", "SomeTest", "testAnotherThing");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "SomeTest.testAnotherThing()", "", "SomeTest", "testAnotherThing");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConfigUpdatedOnClassRename() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
+  public void testConfigUpdatedOnClassRename() {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> bc.setMainClass("foo.bar.SomeClass"));
 
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
-    FlexTestUtils.createFlexUnitRunConfig(runManager, "Own name", myModule, FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "Own name", getModule(), FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
                                           "testSomething",
                                           false);
     FlexTestUtils
-      .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
+      .createFlexUnitRunConfig(runManager, "SomeClass", getModule(), FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
                                true);
     FlexTestUtils
-      .createFlexUnitRunConfig(runManager, "Same class short name", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.SomeClass", "",
+      .createFlexUnitRunConfig(runManager, "Same class short name", getModule(), FlexUnitRunnerParameters.Scope.Class, "", "foo.SomeClass", "",
                                false);
-    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlashRunConfig(runManager, getModule(), "SomeClass", "foo.bar.SomeClass", true);
 
     doTest("Renamed", "as");
 
-    assertEquals("foo.bar.Renamed", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Own name", "", "foo.bar.Renamed", "testSomething");
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Renamed", "", "foo.bar.Renamed", "");
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "Same class short name", "", "foo.SomeClass", "");
-    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "Renamed", "foo.bar.Renamed");
+    assertEquals("foo.bar.Renamed", FlexBuildConfigurationManager.getInstance(getModule()).getActiveConfiguration().getMainClass());
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "Own name", "", "foo.bar.Renamed", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "Renamed", "", "foo.bar.Renamed", "");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "Same class short name", "", "foo.SomeClass", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "Renamed", "foo.bar.Renamed");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConfigUpdatedOnPackageRename() throws Exception {
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
+  public void testConfigUpdatedOnPackageRename() {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> bc.setMainClass("foo.bar.SomeClass"));
 
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
-    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", getModule(), FlexUnitRunnerParameters.Scope.Method, "",
                                           "foo.bar.SomeClass", "testSomething",
                                           true);
     FlexTestUtils
-      .createFlexUnitRunConfig(runManager, "SomeClass", myModule, FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
+      .createFlexUnitRunConfig(runManager, "SomeClass", getModule(), FlexUnitRunnerParameters.Scope.Class, "", "foo.bar.SomeClass", "",
                                true);
-    FlexTestUtils.createFlexUnitRunConfig(runManager, "foo.bar", myModule, FlexUnitRunnerParameters.Scope.Package, "foo.bar", "", "", true);
-    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "foo.bar", getModule(), FlexUnitRunnerParameters.Scope.Package, "foo.bar", "", "", true);
+    FlexTestUtils.createFlashRunConfig(runManager, getModule(), "SomeClass", "foo.bar.SomeClass", true);
 
     doTest("renamed", "as");
 
-    assertEquals("foo.renamed.SomeClass", FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getMainClass());
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass.testSomething()", "", "foo.renamed.SomeClass", "testSomething");
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeClass", "", "foo.renamed.SomeClass", "");
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "foo.renamed", "foo.renamed", "", "");
-    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.renamed.SomeClass");
+    assertEquals("foo.renamed.SomeClass", FlexBuildConfigurationManager.getInstance(getModule()).getActiveConfiguration().getMainClass());
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "SomeClass.testSomething()", "", "foo.renamed.SomeClass", "testSomething");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "SomeClass", "", "foo.renamed.SomeClass", "");
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "foo.renamed", "foo.renamed", "", "");
+    FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "SomeClass", "foo.renamed.SomeClass");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnBcRename() {
     final RunManager runManager = RunManager.getInstance(myFixture.getProject());
-    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
+    FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", getModule(), FlexUnitRunnerParameters.Scope.Method, "",
                                           "SomeTest", "testSomething",
                                           true);
-    FlexTestUtils.createFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass", true);
+    FlexTestUtils.createFlashRunConfig(runManager, getModule(), "SomeClass", "foo.bar.SomeClass", true);
     final String newBcName = "Abcde";
-    FlexTestUtils.modifyBuildConfiguration(myModule, configuration -> configuration.setName(newBcName));
-    assertEquals(newBcName, FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration().getName());
-    FlexTestUtils.checkFlexUnitRunConfig(runManager, myModule, "SomeTest.testSomething()", "", "SomeTest", "testSomething");
-    FlexTestUtils.checkFlashRunConfig(runManager, myModule, "SomeClass", "foo.bar.SomeClass");
+    FlexTestUtils.modifyBuildConfiguration(getModule(), configuration -> configuration.setName(newBcName));
+    assertEquals(newBcName, FlexBuildConfigurationManager.getInstance(getModule()).getActiveConfiguration().getName());
+    FlexTestUtils.checkFlexUnitRunConfig(runManager, getModule(), "SomeTest.testSomething()", "", "SomeTest", "testSomething");
+    FlexTestUtils.checkFlashRunConfig(runManager, getModule(), "SomeClass", "foo.bar.SomeClass");
   }
 
-  public void testLiteralReference1() throws Exception {
+  public void testLiteralReference1() {
     final String name = getTestName(false);
     doTest("bar", name + "_after.js2", false, false, false, name + ".js2");
   }
 
-  public void testLiteralReference2() throws Exception {
+  public void testLiteralReference2() {
     final String name = getTestName(false);
     doTest("bar", name + "_after.js2", false, true, false, name + ".js2");
   }
 
-  public void testLiteralReference5() throws Exception {
+  public void testLiteralReference5() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, false, false, name + ".as", name + "_2.as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testLiteralReference6() throws Exception {
+  public void testLiteralReference6() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
-  public void testLiteralReference7() throws Exception {
+  public void testLiteralReference7() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
-  public void testLiteralReference8() throws Exception {
+  public void testLiteralReference8() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
-  public void testLiteralReference9() throws Exception {
+  public void testLiteralReference9() {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
     assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
-  public void testLiteralReference10() throws Exception {
+  public void testLiteralReference10() {
     final String name = getTestName(false);
     doTest("bar", name + "_after.as", false, false, false, name + ".as");
     assertEquals(0, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testLiteralReference11() throws Exception {
+  public void testLiteralReference11() {
     final String name = getTestName(false);
     doTest("bar", name + "_after.as", false, true, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
-  public void testRenameFlexClassReferencedInCss() throws Exception {
+  public void testRenameFlexClassReferencedInCss() {
     final String name = getTestName(false);
     doTest(name + "Renamed", name + "_after.css", name + ".css", name + ".as");
 
@@ -544,22 +545,21 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @Override
-  protected void doTest(final String newName, String ext) throws Exception {
+  protected void doTest(final String newName, String ext) {
     final String name = getTestName(false);
     doTest(newName, name + "_after." + ext, true, true, false,
-            name + "." + ext); // current test data expects that string refs are renamed
+           name + "." + ext); // current test data expects that string refs are renamed
   }
 
-  protected void doTest(final String newName, String fileNameAfter, String... fileNames) throws Exception {
+  protected void doTest(final String newName, String fileNameAfter, String... fileNames) {
     doTest(newName, fileNameAfter, false, true, false, fileNames);
   }
 
-  protected void doTest(final String newName, boolean substituteElement, String... fileNames) throws Exception {
+  protected void doTest(final String newName, boolean substituteElement, String... fileNames) {
     doTest(defaultParameters().withName(newName).substitute(substituteElement).withFiles(fileNames));
   }
 
-  protected void doTest(final String newName, String fileNameAfter, boolean substituteElement, String... fileNames)
-    throws Exception {
+  protected void doTest(final String newName, String fileNameAfter, boolean substituteElement, String... fileNames) {
     doTest(newName, fileNameAfter, substituteElement, false, false, fileNames);
   }
 
@@ -568,7 +568,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
                         final boolean substituteElement,
                         final boolean searchInCommentsAndStrings, //true by default
                         final boolean searchForTextOccurrences, //false by default
-                        final String... fileNames) throws Exception {
+                        final String... fileNames) {
     myFixture.configureByFiles(fileNames);
     performDialogRename(defaultParameters()
                           .withName(newName)

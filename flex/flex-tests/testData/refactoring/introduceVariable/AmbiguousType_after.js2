@@ -1,0 +1,17 @@
+package foo {
+public class A {}
+}
+package bar {
+public class A {}
+}
+package {
+import bar.A;
+
+import foo.A;
+
+class Test {
+    function func():foo.A {
+        var created:foo.A = func();
+    }
+}
+}

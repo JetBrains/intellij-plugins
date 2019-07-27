@@ -3,25 +3,15 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
-import com.intellij.lang.javascript.service.JSLanguageServiceExecutorImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Irina.Chernushina on 6/4/2015.
@@ -41,7 +31,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   @NotNull
   @Override
   protected String getPackageName() {
-    return "tslint";
+    return TslintUtil.PACKAGE_NAME;
   }
 
   public void testOne() {
@@ -97,23 +87,29 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testLineSeparatorsWin() {
-    doEditorHighlightingTest("data.ts",
-                             () -> ensureLineSeparators(myFixture.getFile().getVirtualFile(), LineSeparator.CRLF.getSeparatorString()));
+    doEditorHighlightingTest("data.ts",() -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
   }
 
   public void testTimeout() {
     JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-    myExpectedGlobalAnnotation =
-      new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceExecutorImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+    String expectedMessage = "TSLint: " + JSLanguageServiceUtil.getTimeoutMessage("ts.ts");
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation(expectedMessage, true, false);
     doEditorHighlightingTest("ts.ts");
   }
 
   public void testHighlightJsFiles() {
-    doEditorHighlightingTest("test.js");
+    doEditorHighlightingTest("test.js", () -> {
+      TsLintConfiguration configuration = TsLintConfiguration.getInstance(myFixture.getProject());
+      TsLintState newState = configuration.getExtendedState()
+        .getState()
+        .builder()
+        .setAllowJs(true)
+        .build();
+      configuration.setExtendedState(configuration.isEnabled(), newState);
+    });
   }
 
-  public void testSuppressNoConfigFileForJs() {
-    //similarly to tslint **/*.*, if there are no jsRules, there shouldn't be an error for .js files
+  public void testNoJsFilesByDefault() {
     doEditorHighlightingTest("test.js");
   }
 
@@ -145,38 +141,8 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
   }
 
-  public void _testAllRulesAreInConfig() throws Exception {
-    myFixture.configureByFile(getTestName(true) + "/tslint.json");
-    final Set<String> fromConfig =
-      Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString()))
-        .collect(Collectors.toSet());
-
-    final Path rulesDir = Paths.get(getNodePackage().getSystemDependentPath()).resolve("lib").resolve("rules");
-    Assert.assertTrue(Files.exists(rulesDir));
-    final Set<String> fromDir = Files.list(rulesDir).map(path -> path.toFile().getName())
-      .filter(name -> name.endsWith("Rule.js"))
-      .map(name -> {
-        name = name.substring(0, name.length() - 7);
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-          final char ch = name.charAt(i);
-          if (Character.isUpperCase(ch)) {
-            sb.append("-").append(Character.toLowerCase(ch));
-          }
-          else {
-            sb.append(ch);
-          }
-        }
-        return sb.toString();
-      })
-      .collect(Collectors.toSet());
-
-    final List<String> outdated = fromConfig.stream().filter(name -> !fromDir.contains(name)).sorted().collect(Collectors.toList());
-    final List<String> newRules = fromDir.stream().filter(name -> !fromConfig.contains(name)).sorted().collect(Collectors.toList());
-
-    if (!outdated.isEmpty() || !newRules.isEmpty()) {
-      Assert.fail(String.format("Outdated: (%d)\n%s\nMissing: (%d)\n%s\n", outdated.size(), outdated, newRules.size(), newRules));
-    }
+  public void testSuppressAllRulesForLineOverwritesExistingSuppressionForRule() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {

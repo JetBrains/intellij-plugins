@@ -62,7 +62,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file, boolean withTemplate) {
     if (!(file instanceof PsiClassOwner)) return false;
 
     final Project project = file.getProject();
@@ -88,7 +88,9 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
       final PsiElement regexpElement = annotation.getParameterList().getAttributes()[0];
 
-      runTemplateBuilderOnAddedStep(editor, addedElement, regexpElement, blockVars, body);
+      if (withTemplate) {
+        runTemplateBuilderOnAddedStep(editor, addedElement, regexpElement, blockVars, body);
+      }
     }
 
     return true;
@@ -119,10 +121,10 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
                              firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
     }
 
-    Template template = builder.buildInlineTemplate();
-
-    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
     documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
+
+    Template template = builder.buildInlineTemplate();
 
     editor.getCaretModel().moveToOffset(addedElement.getTextRange().getStartOffset());
     TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
@@ -257,13 +259,13 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
     String methodAnnotation = String.format("@%s.", annotationPackage);
 
-    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new JavaSnippet());
 
     String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));
 
     if (CucumberJavaUtil.isCucumberExpressionsAvailable(step)) {
-      snippet = replaceRegexpWithCucumberExpression(snippet, step.getStepName());
+      snippet = replaceRegexpWithCucumberExpression(snippet, step.getName());
     }
 
     snippet = snippet.replaceFirst("@", methodAnnotation);

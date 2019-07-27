@@ -446,17 +446,18 @@ Dart File
                   PsiElement(IDENTIFIER)('map')
             VAR_INIT
               PsiElement(=)('=')
-              MAP_LITERAL_EXPRESSION
+              SET_OR_MAP_LITERAL_EXPRESSION
                 PsiElement({)('{')
-                MAP_LITERAL_ENTRY
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('TEST')
-                  PsiElement(:)(':')
-                  STRING_LITERAL_EXPRESSION
-                    PsiElement(OPEN_QUOTE)(''')
-                    PsiElement(REGULAR_STRING_PART)('some value')
-                    PsiElement(CLOSING_QUOTE)(''')
+                ELEMENT
+                  MAP_ENTRY
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('TEST')
+                    PsiElement(:)(':')
+                    STRING_LITERAL_EXPRESSION
+                      PsiElement(OPEN_QUOTE)(''')
+                      PsiElement(REGULAR_STRING_PART)('some value')
+                      PsiElement(CLOSING_QUOTE)(''')
                 PsiElement(})('}')
           PsiElement(;)(';')
           CALL_EXPRESSION
@@ -481,13 +482,15 @@ Dart File
                         ARGUMENT_LIST
                           LIST_LITERAL_EXPRESSION
                             PsiElement([)('[')
-                            EXPRESSION_LIST
+                            ELEMENT
                               LITERAL_EXPRESSION
                                 PsiElement(NUMBER)('1')
-                              PsiElement(,)(',')
+                            PsiElement(,)(',')
+                            ELEMENT
                               LITERAL_EXPRESSION
                                 PsiElement(NUMBER)('2')
-                              PsiElement(,)(',')
+                            PsiElement(,)(',')
+                            ELEMENT
                               LITERAL_EXPRESSION
                                 PsiElement(NUMBER)('3')
                             PsiElement(])(']')

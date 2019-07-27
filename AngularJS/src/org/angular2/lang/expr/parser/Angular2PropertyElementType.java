@@ -10,6 +10,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.lang.expr.psi.impl.Angular2PropertyImpl;
 import org.angular2.lang.expr.psi.impl.Angular2PropertyStubImpl;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class Angular2PropertyElementType extends JSPropertyElementType {
     this("NG:PROPERTY");
   }
 
-  protected Angular2PropertyElementType(String debugName) {
+  protected Angular2PropertyElementType(@NonNls String debugName) {
     super(debugName);
   }
 

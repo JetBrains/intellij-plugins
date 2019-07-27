@@ -1,13 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.annotation.Annotation;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.AnnotationSession;
-import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
@@ -26,6 +23,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblem;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -172,15 +170,17 @@ public class DartAnnotator implements Annotator {
       session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
-      if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest()) {
-        service.updateFilesContent();
+      if (canBeAnalyzedByServer(element.getProject(), vFile)) {
+        final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
+        if (service.serverReadyForRequest()) {
+          service.updateFilesContent();
 
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+          if (ApplicationManager.getApplication().isUnitTestMode()) {
+            service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+          }
+
+          applyServerHighlighting(vFile, holder);
         }
-
-        applyServerHighlighting(vFile, holder);
       }
     }
 
@@ -262,29 +262,31 @@ public class DartAnnotator implements Annotator {
     final TextRange textRange = new TextRange(highlightingStart, highlightingEnd);
 
     final String severity = error.getSeverity();
-    final String message = StringUtil.notNullize(error.getMessage());
-
-    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(message);
-    final Annotation annotation;
+    final String message = error.getMessage();
+    final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
+    final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
+    final HighlightSeverity annotationSeverity;
+    final TextAttributesKey textAttributesKey;
 
     if (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType == null) {
-      annotation = holder.createWeakWarningAnnotation(textRange, message);
-      annotation.setTextAttributes(DartSyntaxHighlighterColors.HINT);
+      annotationSeverity = HighlightSeverity.WEAK_WARNING;
+      textAttributesKey = DartSyntaxHighlighterColors.HINT;
     }
-    else if (AnalysisErrorSeverity.WARNING.equals(severity) ||
-             (AnalysisErrorSeverity.INFO.equals(severity) && specialHighlightType != null)) {
-      annotation = holder.createWarningAnnotation(textRange, message);
-      annotation.setTextAttributes(DartSyntaxHighlighterColors.WARNING);
+    else if (AnalysisErrorSeverity.WARNING.equals(severity) || AnalysisErrorSeverity.INFO.equals(severity)) {
+      annotationSeverity = HighlightSeverity.WARNING;
+      textAttributesKey = DartSyntaxHighlighterColors.WARNING;
     }
     else if (AnalysisErrorSeverity.ERROR.equals(severity)) {
-      annotation = holder.createErrorAnnotation(textRange, message);
-      annotation.setTextAttributes(DartSyntaxHighlighterColors.ERROR);
+      annotationSeverity = HighlightSeverity.ERROR;
+      textAttributesKey = DartSyntaxHighlighterColors.ERROR;
     }
     else {
-      annotation = null;
+      return null;
     }
 
-    if (annotation != null && specialHighlightType != null) {
+    final Annotation annotation = holder.createAnnotation(annotationSeverity, textRange, message, tooltip);
+    annotation.setTextAttributes(textAttributesKey);
+    if (specialHighlightType != null) {
       annotation.setTextAttributes(null);
       annotation.setHighlightType(specialHighlightType);
     }
@@ -293,10 +295,26 @@ public class DartAnnotator implements Annotator {
   }
 
   @Nullable
-  private static ProblemHighlightType getSpecialHighlightType(@NotNull final String errorMessage) {
-    // see [Dart repo]/pkg/analyzer/lib/src/generated/error.dart
-    // todo it is now possible to switch to checking error code instead of error message
+  private static ProblemHighlightType getSpecialHighlightType(@NotNull final DartServerData.DartError error) {
+    final String code = error.getCode();
+    if (code != null) {
+      // See https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/error/error.dart
+      if (StringUtil.equals(code, "duplicate_import") ||
+          code.startsWith("dead_") ||
+          code.startsWith("unused_")) {
+        return ProblemHighlightType.LIKE_UNUSED_SYMBOL;
+      }
 
+      // deprecated_member_use, deprecated_member_use_from_same_package
+      if (code.startsWith("deprecated_member_use")) {
+        return ProblemHighlightType.LIKE_DEPRECATED;
+      }
+
+      return null;
+    }
+
+    // Old SDK. See old version of https://github.com/dart-lang/sdk/blob/e976e692be5fcd33a69d11269d9b0d59f14d2838/pkg/analyzer/lib/src/generated/error.dart
+    String errorMessage = error.getMessage();
     if (errorMessage.startsWith("Unused import") ||
         errorMessage.startsWith("Duplicate import") ||
         errorMessage.contains(" is not used") ||

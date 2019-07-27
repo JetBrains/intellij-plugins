@@ -22,35 +22,35 @@ public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineVariable/");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  private void ecmaTest() throws Exception {
+  private void ecmaTest() {
     doTest(getTestName(false), "js2");
   }
 
-  public void testClassMember() throws Exception {
+  public void testClassMember() {
     ecmaTest();
   }
 
-  public void testClassMember2() throws Exception {
+  public void testClassMember2() {
     ecmaTest();
   }
 
-  public void testClassMember3() throws Exception {
+  public void testClassMember3() {
     ecmaTest();
   }
 
-  public void testInMxml() throws Exception {
+  public void testInMxml() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testIntoAttribute() throws Exception {
+  public void testIntoAttribute() {
     doTest(getTestName(false), "mxml");
   }
 
-  public void testInlineOneFieldUsage() throws Exception {
+  public void testInlineOneFieldUsage() {
     doTest(new String[]{getTestName(false) + ".js2"}, true);
   }
 

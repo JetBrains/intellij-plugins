@@ -20,7 +20,6 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.ui.treeStructure.actions.ExpandAllAction;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -45,7 +44,6 @@ public class DependenciesTab {
     public DependenciesTab() {
         _splitPane.setDividerLocation(0.5);
 
-        UIUtil.setLineStyleAngled(_dependenciesTree);
         _dependenciesTree.setCellRenderer(new DependenciesTreeCellRenderer());
 
         _navigateToElementAction = new NavigateToElementAction();

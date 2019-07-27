@@ -1,0 +1,24 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      Angular2HtmlPropertyBinding <input,PROPERTY>
+        XmlToken:XML_NAME('[input]')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          ASTWrapperPsiElement(NG:BINDING_EXPR)
+            Angular2Binding
+              JSLiteralExpression
+                PsiElement(NG:XML_CHAR_ENTITY_REF)('&apos;')
+                PsiElement(JS:STRING_LITERAL_PART)('foo')
+                PsiElement(NG:XML_CHAR_ENTITY_REF)('&quot;')
+                PsiElement(NG:XML_CHAR_ENTITY_REF)('&dash;')
+                PsiElement(NG:XML_CHAR_ENTITY_REF)('&apos;')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      PsiErrorElement:Tag start is not closed
+        <empty list>

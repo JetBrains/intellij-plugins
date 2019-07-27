@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 /**
  * A {@link SentinelKind} is used to distinguish different kinds of {@link Sentinel} objects.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public enum SentinelKind {
 
   /**

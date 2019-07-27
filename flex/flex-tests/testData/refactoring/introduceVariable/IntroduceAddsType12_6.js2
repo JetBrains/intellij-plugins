@@ -1,0 +1,3 @@
+var x:int
+var y:uint
+<selection>x+y</selection>

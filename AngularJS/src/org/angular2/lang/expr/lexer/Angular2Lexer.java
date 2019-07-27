@@ -83,16 +83,14 @@ public class Angular2Lexer extends MergingLexerAdapterBase {
     @Override
     public IElementType merge(IElementType type, Lexer originalLexer) {
       if (type != STRING_LITERAL_PART) {
-        myPrevTokenEscapeSequence = type == ESCAPE_SEQUENCE
-                                    || type == INVALID_ESCAPE_SEQUENCE;
+        myPrevTokenEscapeSequence = STRING_PART_SPECIAL_SEQ.contains(type);
         return type;
       }
       while (true) {
         final IElementType tokenType = originalLexer.getTokenType();
         if (tokenType != STRING_LITERAL_PART) {
           if (myPrevTokenEscapeSequence
-              || tokenType == ESCAPE_SEQUENCE
-              || tokenType == INVALID_ESCAPE_SEQUENCE) {
+              || STRING_PART_SPECIAL_SEQ.contains(tokenType)) {
             myPrevTokenEscapeSequence = false;
             return STRING_LITERAL_PART;
           }

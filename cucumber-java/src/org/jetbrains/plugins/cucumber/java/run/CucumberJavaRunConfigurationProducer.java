@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.JavaExecutionUtil;
@@ -12,23 +12,18 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
-import java.util.Collection;
 import java.util.Set;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
@@ -55,7 +50,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   @Nullable
-  protected abstract NullableComputable<String> getStepsGlue(@NotNull final PsiElement element);
+  protected abstract CucumberGlueProvider getGlueProvider(@NotNull final PsiElement element);
 
   protected abstract String getConfigurationName(@NotNull ConfigurationContext context);
 
@@ -67,9 +62,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   protected abstract VirtualFile getFileToRun(ConfigurationContext context);
 
   @Override
-  protected boolean setupConfigurationFromContext(CucumberJavaRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull CucumberJavaRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile virtualFile = getFileToRun(context);
     if (virtualFile == null) {
       return false;
@@ -116,8 +111,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       return false;
     }
     if (StringUtil.isEmpty(configuration.getGlue())) {
-      final NullableComputable<String> glue = getStepsGlue(element);
-      configuration.setGlue(glue);
+      configuration.setGlueProvider(getGlueProvider(element));
     }
     configuration.setNameFilter(getNameFilter(context));
     configuration.setFilePath(file.getPath());
@@ -142,7 +136,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   @Override
-  public boolean isConfigurationFromContext(CucumberJavaRunConfiguration runConfiguration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull CucumberJavaRunConfiguration runConfiguration, @NotNull ConfigurationContext context) {
     Location location = context.getLocation();
     if (location == null) {
       return false;
@@ -171,41 +165,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     }
 
     return true;
-  }
-
-  protected Set<String> getHookGlue(final PsiElement element) {
-    final Set<String> packages = ContainerUtil.newLinkedHashSet();
-
-    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
-    if (module == null) {
-      return packages;
-    }
-
-    final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
-    final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
-
-    for (final String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
-      final PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, dependenciesScope);
-
-      if (psiClass != null) {
-        final Query<PsiMethod> psiMethods = AnnotatedElementsSearch
-          .searchPsiMethods(psiClass, GlobalSearchScope.allScope(element.getProject()));
-        final Collection<PsiMethod> methods = psiMethods.findAll();
-        addPackagesOfMethods(methods, packages);
-      }
-    }
-
-    return packages;
-  }
-
-  private static void addPackagesOfMethods(final Collection<PsiMethod> psiMethods, final Set<String> packages) {
-    for (final PsiMethod psiMethod : psiMethods) {
-      final PsiClassOwner file = (PsiClassOwner)psiMethod.getContainingFile();
-      final String packageName = file.getPackageName();
-      if (StringUtil.isNotEmpty(packageName)) {
-        CucumberJavaUtil.addGlue(packageName, packages);
-      }
-    }
   }
 
   @NotNull

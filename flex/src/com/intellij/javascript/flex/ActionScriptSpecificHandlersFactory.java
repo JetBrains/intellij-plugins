@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.index.JSCustomIndexer;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpectedTypeKind;
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
@@ -26,14 +25,13 @@ import org.jetbrains.annotations.Nullable;
 public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
   @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
+  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new ActionScriptTypeEvaluator(context, processor);
   }
 
-  @NotNull
   @Override
-  public JSGenericTypesEvaluator getGenericTypeEvaluator() {
-    return JSGenericTypesEvaluator.NO_OP;
+  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
+    return ActionScriptTypeEvaluationHelper.INSTANCE;
   }
 
   @NotNull
@@ -45,8 +43,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent,
-                                                           JSExpectedTypeKind expectedTypeKind) {
+  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(PsiElement parent,
+                                                           @NotNull JSExpectedTypeKind expectedTypeKind) {
     return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 

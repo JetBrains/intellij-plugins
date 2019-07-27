@@ -32,8 +32,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
-    <psi.treeChangePreprocessor implementation="com.jetbrains.lang.dart.DartPsiTreeChangePreprocessor"/>
+    <moveFileHandler implementation="com.jetbrains.lang.dart.ide.refactoring.moveFile.DartServerMoveDartFileHandler"/>
+    <fileType name="Dart" extensions="dart" language="Dart" implementationClass="com.jetbrains.lang.dart.DartFileType" fieldName="INSTANCE"/>
     <lang.syntaxHighlighterFactory language="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
     <highlightErrorFilter implementation="com.jetbrains.lang.dart.highlight.DartHighlightingErrorFilter"/>
     <embeddedTokenHighlighter implementation="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
@@ -74,6 +74,8 @@
                               order="last"/>
     <psi.referenceContributor language="Dart" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
     <psi.referenceContributor language="XML" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
+    <xml.elementDescriptorProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlElementDescriptorProvider"/>
+    <xml.attributeDescriptorsProvider implementation="com.jetbrains.lang.dart.xml.DartHtmlAttributeDescriptorProvider"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
@@ -129,6 +131,8 @@
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
+    <declarationRangeHandler key="com.jetbrains.lang.dart.psi.DartPsiCompositeElement"
+                             implementationClass="com.jetbrains.lang.dart.contextInfo.DartDeclarationRangeHandler"/>
     <projectViewNestingRulesProvider implementation="com.jetbrains.lang.dart.projectView.DartNestingRulesProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first" id="DartIconProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.lang.dart.projectView.DartNodeDecorator"/>
@@ -166,11 +170,9 @@
     <lang.smartEnterProcessor language="Dart"
                               implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerStatementCompletionProcessor"/>
 
-    <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
-
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <annotator language="HTML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
-    <!--<annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartUnresolvedReferenceVisitor"/>-->
+    <annotator language="XML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
 
     <lang.findUsagesProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.findUsages.DartFindUsagesProvider"/>
     <usageTypeProvider implementation="com.jetbrains.lang.dart.ide.findUsages.DartUsageTypeProvider"/>
@@ -184,22 +186,16 @@
       <category>Dart</category>
     </intentionAction>
 
-    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
-                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
-                    serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
-                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
-                    serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"
-                        serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
-    <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
-                        serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
 
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
-    <editorNotificationProviderApp implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
+    <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
     <consoleFilterProvider implementation="com.jetbrains.lang.dart.ide.runner.DartConsoleFilterProvider" order="first"/>
     <console.folding implementation="com.jetbrains.lang.dart.ide.runner.server.DartConsoleFolding"/>
 
@@ -220,9 +216,8 @@
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"
-                        serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
-    <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
+    <codeCompletionConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
@@ -236,7 +231,7 @@
   </extensions>
 
   <actions>
-    <action id="Dart.stop.dart.dev.server" class="com.jetbrains.lang.dart.pubServer.StopDartDevServerAction" text="Stop Dart Dev Server"/>
+    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction" text="Stop Dart Webdev Server"/>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>

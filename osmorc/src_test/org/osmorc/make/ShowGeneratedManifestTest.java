@@ -36,7 +36,6 @@ import org.osmorc.HeavyOsgiFixtureTestCase;
 import org.osmorc.SwingRunner;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

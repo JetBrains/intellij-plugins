@@ -1,13 +1,15 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiType;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.IconManager;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.PlatformIcons;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +50,9 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     if (access == null) {
       return METHOD_ICON;
     }
-    access = access.toLowerCase();
-    RowIcon baseIcon = new RowIcon(2);
+    access = StringUtil.toLowerCase(access);
+
+    RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
     baseIcon.setIcon(METHOD_ICON, 0);
     if ("private".equals(access)) {
       baseIcon.setIcon(PRIVATE_ICON, 1);
@@ -66,6 +69,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     return baseIcon;
   }
 
+  @NotNull
   @Override
   public String getTagName() {
     return TAG_NAME;

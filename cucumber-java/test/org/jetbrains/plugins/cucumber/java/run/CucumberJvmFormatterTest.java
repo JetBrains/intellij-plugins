@@ -1,24 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
-import com.intellij.openapi.vfs.CharsetToolkit;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +28,7 @@ public class CucumberJvmFormatterTest {
     CucumberJava2Mock cucumberJava2Mock = new CucumberJava2Mock();
     smFormatter.setEventPublisher(cucumberJava2Mock);
     cucumberJava2Mock.simulateRun();
-    String output = new String(byteArrayOutputStream.toByteArray(), CharsetToolkit.UTF8_CHARSET).replace("\r", "");
+    String output = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8).replace("\r", "");
 
     assertEquals(
       "##teamcity[enteredTheMatrix timestamp = '<time>']\n" +
@@ -55,8 +43,9 @@ public class CucumberJvmFormatterTest {
       "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:4' captureStandardOutput = 'true' name = 'failing step']\n" +
       "##teamcity[testFailed timestamp = '<time>' details = '' message = '' name = 'failing step' ]\n" +
       "##teamcity[testFinished timestamp = '<time>' duration = '0' name = 'failing step']\n" +
-      "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:5' captureStandardOutput = 'true' name = '\\bstep with \"special|\' symbols']\n" +
-      "##teamcity[testFinished timestamp = '<time>' duration = '0' name = '\\bstep with \"special|\' symbols']\n" +
+      "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:5' captureStandardOutput = 'true' name = '\\bstep with \"special|' symbols']\n" +
+      "text\n" +
+      "##teamcity[testFinished timestamp = '<time>' duration = '0' name = '\\bstep with \"special|' symbols']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'scenario']\n" +
       "##teamcity[customProgressStatus type = 'testFinished' timestamp = '<time>']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'feature|'']\n",

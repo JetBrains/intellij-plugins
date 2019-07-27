@@ -24,6 +24,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2LangUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,14 +104,17 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
     }
   }
 
+  @NonNls
   private static String getDefaultPipeFileName(String pipeName) {
     return pipeName + ".pipe.ts";
   }
 
+  @NonNls
   private static String getDefaultPipeSpecFileName(String pipeName) {
     return pipeName + ".pipe.spec.ts";
   }
 
+  @NonNls
   private static String getDefaultPipeClassName(String pipeName) {
     return StringUtil.capitalize(pipeName) + "Pipe";
   }

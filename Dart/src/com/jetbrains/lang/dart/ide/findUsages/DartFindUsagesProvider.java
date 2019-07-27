@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.lang.cacheBuilder.WordsScanner;
@@ -8,8 +9,6 @@ import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 public class DartFindUsagesProvider implements FindUsagesProvider {
   @Override
@@ -34,7 +33,10 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
       return "library";
     }
     final DartComponentType type = DartComponentType.typeOf(element.getParent());
-    return type == null ? "reference" : type.toString().toLowerCase(Locale.US);
+    if (type == null) return "reference";
+    if (type == DartComponentType.LOCAL_VARIABLE) return "local variable";
+    if (type == DartComponentType.GLOBAL_VARIABLE) return "top level variable";
+    return StringUtil.toLowerCase(type.toString());
   }
 
   @Override

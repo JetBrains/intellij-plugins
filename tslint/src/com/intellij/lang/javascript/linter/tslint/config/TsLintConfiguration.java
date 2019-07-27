@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
-import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -23,12 +22,13 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private static final String IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-custom-config-file";
   private static final String CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME = "custom-config-file-path";
   private static final String RULES = "rules";
+  private static final String ALLOW_JS = "allowJs";
 
   private final JSLinterPackage myPackage;
 
   public TsLintConfiguration(@NotNull Project project) {
     super(project);
-    myPackage = new JSLinterPackage(project, "tslint", TslintUtil.isMultiRootEnabled());
+    myPackage = new JSLinterPackage(project, "tslint", true);
   }
 
   @NotNull
@@ -70,6 +70,9 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       root.setAttribute(RULES, FileUtil.toSystemIndependentName(rulesDirectory));
     }
+    if (state.isAllowJs()) {
+      root.setAttribute(ALLOW_JS, String.valueOf(true));
+    }
     storeLinterLocalPaths(state);
     return root;
   }
@@ -85,6 +88,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       builder.setRulesDirectory(rulesDirectory);
     }
+    builder.setAllowJs(Boolean.parseBoolean(element.getAttributeValue(ALLOW_JS)));
     restoreLinterLocalPaths(builder);
     return builder.build();
   }

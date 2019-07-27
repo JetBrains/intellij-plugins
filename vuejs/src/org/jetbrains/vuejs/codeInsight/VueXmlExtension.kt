@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
@@ -24,24 +12,27 @@ import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
-import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
+import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
-    if (namespacePrefix != null && (namespacePrefix == "v-bind" || namespacePrefix == "v-on" || namespacePrefix.startsWith("@"))) {
-      val schemaPrefix = findAttributeSchema(context, namespacePrefix, 0)
-      if (schemaPrefix != null) return schemaPrefix
+    if (namespacePrefix != null && (namespacePrefix.startsWith("v-")
+                                    || namespacePrefix.startsWith("@"))) {
+      findAttributeSchema(context, namespacePrefix)
+        ?.let { return it }
     }
     return super.getPrefixDeclaration(context, namespacePrefix)
   }
 
-  private fun findAttributeSchema(context: XmlTag, namespacePrefix: String, offset: Int): SchemaPrefix? {
-    context.attributes
-      .filter { it.name.startsWith(namespacePrefix) }
-      .forEach { return SchemaPrefix(it, TextRange.create(offset, namespacePrefix.length), namespacePrefix.substring(offset)) }
-    return null
+  private fun findAttributeSchema(context: XmlTag, namespacePrefix: String): SchemaPrefix? {
+    return context.attributes
+      .find { it.name.startsWith("$namespacePrefix:") }
+      ?.let { SchemaPrefix(it, TextRange.create(0, namespacePrefix.length), namespacePrefix) }
   }
 
   override fun isRequiredAttributeImplicitlyPresent(tag: XmlTag?, attrName: String?): Boolean {
@@ -56,20 +47,24 @@ class VueXmlExtension : HtmlXmlExtension() {
         val child = jsEmbeddedContent?.firstChild
         if (child is JSReferenceExpression && child.nextSibling == null) {
           val resolve = child.resolve()
-          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach {
-            if (it.name == toAssetName) return@find true
+          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach { property ->
+            if (property.name == toAssetName) return@find true
           }
         }
         return@find false
       }
-
-      return@find fromAsset(VueComponentDetailsProvider.getBoundName(it.name) ?: it.name) == fromAssetName
+      val info = VueAttributeNameParser.parse(it.name, null)
+      return@find fromAsset(if (info is VueAttributeNameParser.VueDirectiveInfo
+                                && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
+                                && info.arguments != null)
+                              info.arguments
+                            else info.name) == fromAssetName
     } != null
   }
 
   override fun isCollapsibleTag(tag: XmlTag?): Boolean = false
-  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor
-  override fun isSingleTagException(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor
+  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSelfClosingTagAllowed(tag)
+  override fun isSingleTagException(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSingleTagException(tag)
 
   override fun createTagNameReference(nameElement: ASTNode?, startTagFlag: Boolean): TagNameReference? {
     val parentTag = nameElement?.treeParent as? XmlTag

@@ -27,6 +27,7 @@ package org.osmorc;
 import aQute.bnd.build.Workspace;
 import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManager;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -68,19 +69,12 @@ public class OsmorcProjectComponent implements BaseComponent {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
-  private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
-  private final ProjectSettings myProjectSettings;
   private final MergingUpdateQueue myQueue;
   private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
 
-  public OsmorcProjectComponent(@NotNull OsgiConfigurationType configurationType,
-                                @NotNull Project project,
-                                @NotNull ProjectSettings projectSettings) {
-    myConfigurationType = configurationType;
+  public OsmorcProjectComponent(@NotNull Project project) {
     myProject = project;
-    myProjectSettings = projectSettings;
-
     myQueue = new MergingUpdateQueue(getComponentName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
   }
 
@@ -95,12 +89,13 @@ public class OsmorcProjectComponent implements BaseComponent {
       connection.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
     }
   }
-  
+
   private void scheduleImportNotification() {
     myQueue.queue(new Update("reimport") {
       @Override
       public void run() {
-        if (myProjectSettings.isBndAutoImport()) {
+        ProjectSettings projectSettings = ProjectSettings.getInstance(myProject);
+        if (projectSettings.isBndAutoImport()) {
           BndProjectImporter.reimportWorkspace(myProject);
           return;
         }
@@ -117,7 +112,7 @@ public class OsmorcProjectComponent implements BaseComponent {
             protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
               notification.expire();
               if (e.getDescription().equals("auto")) {
-                myProjectSettings.setBndAutoImport(true);
+                projectSettings.setBndAutoImport(true);
               }
               BndProjectImporter.reimportWorkspace(myProject);
             }
@@ -132,9 +127,10 @@ public class OsmorcProjectComponent implements BaseComponent {
   private class MyFrameworkDefinitionListener implements FrameworkDefinitionListener {
     @Override
     public void definitionsChanged(@NotNull List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> changes) {
+      OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
       for (Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition> pair : changes) {
         if (pair.first == null) continue;
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(myConfigurationType)) {
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(configurationType)) {
           OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration)runConfiguration;
           if (pair.first.equals(osgiRunConfiguration.getInstanceToUse())) {
             osgiRunConfiguration.setInstanceToUse(pair.second);
@@ -148,10 +144,10 @@ public class OsmorcProjectComponent implements BaseComponent {
     @Override
     public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
       final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
-
+      OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
       for (Module module : modules) {
         String oldName = oldNameProvider.fun(module);
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(myConfigurationType)) {
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(configurationType)) {
           for (SelectedBundle bundle : ((OsgiRunConfiguration)runConfiguration).getBundlesToDeploy()) {
             if (bundle.isModule() && bundle.getName().equals(oldName)) {
               pairs.add(Pair.create(bundle, module.getName()));

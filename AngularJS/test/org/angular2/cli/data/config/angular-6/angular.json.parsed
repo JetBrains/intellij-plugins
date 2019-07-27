@@ -1,0 +1,43 @@
+ AngularConfig {
+   defaultProject: ang-cli629ang6xx
+   projects: [
+     AngularProjectImpl {
+       name: ang-cli629ang6xx
+       rootDir: temp:///src
+       sourceDir: temp:///src/src
+       indexHtml: temp:///src/src/index.html
+       globalStyleSheets: [temp:///src/src/styles.css]
+       stylePreprocessorIncludeDirs: []
+       karmaConfigFile: temp:///src/src/karma.conf.js
+       protractorConfigFile: null
+       tsLintConfigurations: [
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/src/tsconfig.app.json, temp:///src/src/tsconfig.spec.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         }
+       ]
+     },
+     AngularProjectImpl {
+       name: ang-cli629ang6xx-e2e
+       rootDir: temp:///src/e2e
+       sourceDir: temp:///src/e2e
+       indexHtml: null
+       globalStyleSheets: []
+       stylePreprocessorIncludeDirs: []
+       karmaConfigFile: null
+       protractorConfigFile: temp:///src/e2e/protractor.conf.js
+       tsLintConfigurations: [
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/e2e/tsconfig.e2e.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         }
+       ]
+     }
+   ]
+ }

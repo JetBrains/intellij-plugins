@@ -1,0 +1,173 @@
+FormsModuleMetadataTest: Angular2SourceModule
+  imports:
+    FormsModule: Angular2MetadataModule
+      imports:
+      declarations:
+        NgForm: Angular2MetadataDirective
+        NgFormSelectorWarning: Angular2MetadataDirective
+        NgModel: Angular2MetadataDirective
+        NgModelGroup: Angular2MetadataDirective
+      exports:
+        InternalFormsSharedModule: Angular2MetadataModule
+          imports:
+          declarations:
+            CheckboxControlValueAccessor: Angular2MetadataDirective
+            CheckboxRequiredValidator: Angular2MetadataDirective
+            DefaultValueAccessor: Angular2MetadataDirective
+            EmailValidator: Angular2MetadataDirective
+            MaxLengthValidator: Angular2MetadataDirective
+            MinLengthValidator: Angular2MetadataDirective
+            NgControlStatus: Angular2MetadataDirective
+            NgControlStatusGroup: Angular2MetadataDirective
+            NgNoValidate: Angular2MetadataDirective
+            NgSelectMultipleOption: Angular2MetadataDirective
+            NgSelectOption: Angular2MetadataDirective
+            NumberValueAccessor: Angular2MetadataDirective
+            PatternValidator: Angular2MetadataDirective
+            RadioControlValueAccessor: Angular2MetadataDirective
+            RangeValueAccessor: Angular2MetadataDirective
+            RequiredValidator: Angular2MetadataDirective
+            SelectControlValueAccessor: Angular2MetadataDirective
+            SelectMultipleControlValueAccessor: Angular2MetadataDirective
+          exports:
+            CheckboxControlValueAccessor: Angular2MetadataDirective
+            CheckboxRequiredValidator: Angular2MetadataDirective
+            DefaultValueAccessor: Angular2MetadataDirective
+            EmailValidator: Angular2MetadataDirective
+            MaxLengthValidator: Angular2MetadataDirective
+            MinLengthValidator: Angular2MetadataDirective
+            NgControlStatus: Angular2MetadataDirective
+            NgControlStatusGroup: Angular2MetadataDirective
+            NgNoValidate: Angular2MetadataDirective
+            NgSelectMultipleOption: Angular2MetadataDirective
+            NgSelectOption: Angular2MetadataDirective
+            NumberValueAccessor: Angular2MetadataDirective
+            PatternValidator: Angular2MetadataDirective
+            RadioControlValueAccessor: Angular2MetadataDirective
+            RangeValueAccessor: Angular2MetadataDirective
+            RequiredValidator: Angular2MetadataDirective
+            SelectControlValueAccessor: Angular2MetadataDirective
+            SelectMultipleControlValueAccessor: Angular2MetadataDirective
+          all-exported-declarations:
+            CheckboxControlValueAccessor: Angular2MetadataDirective
+            CheckboxRequiredValidator: Angular2MetadataDirective
+            DefaultValueAccessor: Angular2MetadataDirective
+            EmailValidator: Angular2MetadataDirective
+            MaxLengthValidator: Angular2MetadataDirective
+            MinLengthValidator: Angular2MetadataDirective
+            NgControlStatus: Angular2MetadataDirective
+            NgControlStatusGroup: Angular2MetadataDirective
+            NgNoValidate: Angular2MetadataDirective
+            NgSelectMultipleOption: Angular2MetadataDirective
+            NgSelectOption: Angular2MetadataDirective
+            NumberValueAccessor: Angular2MetadataDirective
+            PatternValidator: Angular2MetadataDirective
+            RadioControlValueAccessor: Angular2MetadataDirective
+            RangeValueAccessor: Angular2MetadataDirective
+            RequiredValidator: Angular2MetadataDirective
+            SelectControlValueAccessor: Angular2MetadataDirective
+            SelectMultipleControlValueAccessor: Angular2MetadataDirective
+          scope:
+            CheckboxControlValueAccessor: Angular2MetadataDirective
+            CheckboxRequiredValidator: Angular2MetadataDirective
+            DefaultValueAccessor: Angular2MetadataDirective
+            EmailValidator: Angular2MetadataDirective
+            MaxLengthValidator: Angular2MetadataDirective
+            MinLengthValidator: Angular2MetadataDirective
+            NgControlStatus: Angular2MetadataDirective
+            NgControlStatusGroup: Angular2MetadataDirective
+            NgNoValidate: Angular2MetadataDirective
+            NgSelectMultipleOption: Angular2MetadataDirective
+            NgSelectOption: Angular2MetadataDirective
+            NumberValueAccessor: Angular2MetadataDirective
+            PatternValidator: Angular2MetadataDirective
+            RadioControlValueAccessor: Angular2MetadataDirective
+            RangeValueAccessor: Angular2MetadataDirective
+            RequiredValidator: Angular2MetadataDirective
+            SelectControlValueAccessor: Angular2MetadataDirective
+            SelectMultipleControlValueAccessor: Angular2MetadataDirective
+          scope fully resolved: true
+          exports fully resolved: true
+          declarations fully resolved: true
+        NgForm: Angular2MetadataDirective
+        NgFormSelectorWarning: Angular2MetadataDirective
+        NgModel: Angular2MetadataDirective
+        NgModelGroup: Angular2MetadataDirective
+      all-exported-declarations:
+        CheckboxControlValueAccessor: Angular2MetadataDirective
+        CheckboxRequiredValidator: Angular2MetadataDirective
+        DefaultValueAccessor: Angular2MetadataDirective
+        EmailValidator: Angular2MetadataDirective
+        MaxLengthValidator: Angular2MetadataDirective
+        MinLengthValidator: Angular2MetadataDirective
+        NgControlStatus: Angular2MetadataDirective
+        NgControlStatusGroup: Angular2MetadataDirective
+        NgForm: Angular2MetadataDirective
+        NgFormSelectorWarning: Angular2MetadataDirective
+        NgModel: Angular2MetadataDirective
+        NgModelGroup: Angular2MetadataDirective
+        NgNoValidate: Angular2MetadataDirective
+        NgSelectMultipleOption: Angular2MetadataDirective
+        NgSelectOption: Angular2MetadataDirective
+        NumberValueAccessor: Angular2MetadataDirective
+        PatternValidator: Angular2MetadataDirective
+        RadioControlValueAccessor: Angular2MetadataDirective
+        RangeValueAccessor: Angular2MetadataDirective
+        RequiredValidator: Angular2MetadataDirective
+        SelectControlValueAccessor: Angular2MetadataDirective
+        SelectMultipleControlValueAccessor: Angular2MetadataDirective
+      scope:
+        CheckboxControlValueAccessor: Angular2MetadataDirective
+        CheckboxRequiredValidator: Angular2MetadataDirective
+        DefaultValueAccessor: Angular2MetadataDirective
+        EmailValidator: Angular2MetadataDirective
+        MaxLengthValidator: Angular2MetadataDirective
+        MinLengthValidator: Angular2MetadataDirective
+        NgControlStatus: Angular2MetadataDirective
+        NgControlStatusGroup: Angular2MetadataDirective
+        NgForm: Angular2MetadataDirective
+        NgFormSelectorWarning: Angular2MetadataDirective
+        NgModel: Angular2MetadataDirective
+        NgModelGroup: Angular2MetadataDirective
+        NgNoValidate: Angular2MetadataDirective
+        NgSelectMultipleOption: Angular2MetadataDirective
+        NgSelectOption: Angular2MetadataDirective
+        NumberValueAccessor: Angular2MetadataDirective
+        PatternValidator: Angular2MetadataDirective
+        RadioControlValueAccessor: Angular2MetadataDirective
+        RangeValueAccessor: Angular2MetadataDirective
+        RequiredValidator: Angular2MetadataDirective
+        SelectControlValueAccessor: Angular2MetadataDirective
+        SelectMultipleControlValueAccessor: Angular2MetadataDirective
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+  exports:
+  all-exported-declarations:
+  scope:
+    CheckboxControlValueAccessor: Angular2MetadataDirective
+    CheckboxRequiredValidator: Angular2MetadataDirective
+    DefaultValueAccessor: Angular2MetadataDirective
+    EmailValidator: Angular2MetadataDirective
+    MaxLengthValidator: Angular2MetadataDirective
+    MinLengthValidator: Angular2MetadataDirective
+    NgControlStatus: Angular2MetadataDirective
+    NgControlStatusGroup: Angular2MetadataDirective
+    NgForm: Angular2MetadataDirective
+    NgFormSelectorWarning: Angular2MetadataDirective
+    NgModel: Angular2MetadataDirective
+    NgModelGroup: Angular2MetadataDirective
+    NgNoValidate: Angular2MetadataDirective
+    NgSelectMultipleOption: Angular2MetadataDirective
+    NgSelectOption: Angular2MetadataDirective
+    NumberValueAccessor: Angular2MetadataDirective
+    PatternValidator: Angular2MetadataDirective
+    RadioControlValueAccessor: Angular2MetadataDirective
+    RangeValueAccessor: Angular2MetadataDirective
+    RequiredValidator: Angular2MetadataDirective
+    SelectControlValueAccessor: Angular2MetadataDirective
+    SelectMultipleControlValueAccessor: Angular2MetadataDirective
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -285,7 +286,7 @@ public class CodeContext {
     for (FlexCompilerConfigFileUtil.NamespacesInfo info : FlexCompilerConfigFileUtil.getNamespacesInfos(configFile)) {
       if (onlyIncludedInSwc && !info.includedInSwc) continue;
 
-      final VirtualFile manifestFile = VfsUtil.findRelativeFile(info.manifest, configFile);
+      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(info.manifest, configFile);
       if (manifestFile != null && !manifestFile.isDirectory()) {
         processManifestFile(module, contextsOfModule, manifestFile, info.namespace, configFile);
       }
@@ -293,7 +294,7 @@ public class CodeContext {
 
     FlexUtils.processCompilerOption(module, bc, "compiler.namespaces.namespace", namespaceAndManifest -> {
       // namespaces configured in IDEA are always included in SWC
-      final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
+      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(namespaceAndManifest.second, configFile);
       if (manifestFile != null && !manifestFile.isDirectory()) {
         processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
       }
@@ -302,7 +303,7 @@ public class CodeContext {
   }
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
-    if (file.getFileType() == ArchiveFileType.INSTANCE &&
+    if (FileTypeRegistry.getInstance().isFileOfType(file, ArchiveFileType.INSTANCE) &&
         ("swc".equalsIgnoreCase(file.getExtension()) ||
          "ane".equalsIgnoreCase(file.getExtension()) ||
          "jar".equalsIgnoreCase(file.getExtension()))) {
@@ -462,7 +463,7 @@ public class CodeContext {
     if (sdkHome == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
     FlexSdkUtils.processStandardNamespaces(bc, (namespace1, relativePath) -> {
-      final VirtualFile manifestFile = VfsUtil.findRelativeFile(relativePath, sdkHome);
+      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(relativePath, sdkHome);
 
       if (manifestFile != null) {
         handleStandardManifest(module, namespace1, manifestFile, sdkHome);

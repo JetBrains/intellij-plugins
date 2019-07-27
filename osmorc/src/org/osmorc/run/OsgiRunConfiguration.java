@@ -36,7 +36,9 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -58,7 +60,7 @@ import java.util.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
+public class OsgiRunConfiguration extends RunConfigurationBase<Element> implements ModuleRunConfiguration {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.run.OsgiRunConfiguration");
 
   private static final String BUNDLE_ELEMENT = "bundle";
@@ -143,6 +145,11 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       String url = child.getAttributeValue(URL_ATTRIBUTE);
       String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
       String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
+
+      if (StringUtil.isEmptyOrSpaces(name)) {
+        LOG.error("missing name attribute: " + JDOMUtil.writeElement(element));
+        continue;
+      }
 
       SelectedBundle.BundleType type;
       try {
@@ -274,7 +281,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
           modules.add(module);
         }
         else {
-          LOG.error("no module [" + selectedBundle.getName() + "]");
+          LOG.debug("module not found: " + selectedBundle.getName());
         }
       }
     }

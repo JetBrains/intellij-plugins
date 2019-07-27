@@ -18,7 +18,6 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
@@ -52,17 +51,14 @@ public class Angular2EntitiesProvider {
 
   @Nullable
   public static Angular2Entity getEntity(@Nullable PsiElement element) {
-    Angular2Entity result;
-    if ((result = getDirective(element)) != null) {
-      return result;
-    }
-    if ((result = getPipe(element)) != null) {
-      return result;
-    }
-    if ((result = getModule(element)) != null) {
-      return result;
-    }
-    return null;
+    Angular2Declaration result = getDeclaration(element);
+    return result != null ? result : getModule(element);
+  }
+
+  @Nullable
+  public static Angular2Declaration getDeclaration(@Nullable PsiElement element) {
+    Angular2Directive result = getDirective(element);
+    return result != null ? result : getPipe(element);
   }
 
   @Nullable
@@ -96,10 +92,12 @@ public class Angular2EntitiesProvider {
       Angular2MetadataFunctionIndex.KEY, function.getName(), function.getProject(),
       GlobalSearchScope.allScope(function.getProject()),
       Angular2MetadataFunction.class, (f) -> {
-        Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
-        if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
-          result.set(f);
-          return false;
+        if (f.isValid()) {
+          Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
+          if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
+            result.set(f);
+            return false;
+          }
         }
         return true;
       });
@@ -211,13 +209,17 @@ public class Angular2EntitiesProvider {
       StubIndex.getInstance().processElements(Angular2SourceModuleIndex.KEY, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               JSImplicitElementProvider.class, (module) -> {
-          ContainerUtil.addIfNotNull(result, getModule(module));
+          if (module.isValid()) {
+            ContainerUtil.addIfNotNull(result, getModule(module));
+          }
           return true;
         });
       StubIndex.getInstance().processElements(Angular2MetadataModuleIndex.KEY, NG_MODULE_INDEX_NAME,
                                               project, GlobalSearchScope.allScope(project),
                                               Angular2MetadataModule.class, (module) -> {
-          result.add(module);
+          if (module.isValid()) {
+            result.add(module);
+          }
           return true;
         });
       return create(result, PsiModificationTracker.MODIFICATION_COUNT);
@@ -259,7 +261,7 @@ public class Angular2EntitiesProvider {
                                                                                  @NotNull String name,
                                                                                  @NotNull Class<T> entityClass,
                                                                                  @NotNull StubIndexKey<String, T> key,
-                                                                                 @NotNull Processor<T> processor) {
+                                                                                 @NotNull Processor<? super T> processor) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
       if (el.isValid()) {
         return processor.process(el);
@@ -284,13 +286,13 @@ public class Angular2EntitiesProvider {
   private static class EntityGetter<T extends Angular2Entity> {
 
     private final Class<T> myEntityClass;
-    private final Condition<JSImplicitElement> myImplicitElementTester;
-    private final BiFunction<ES6Decorator, JSImplicitElement, T> myEntityConstructor;
+    private final Condition<? super JSImplicitElement> myImplicitElementTester;
+    private final BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> myEntityConstructor;
     private final String[] myDecoratorNames;
 
     private EntityGetter(@NotNull Class<T> aClass,
-                         @NotNull Condition<JSImplicitElement> tester,
-                         @NotNull BiFunction<ES6Decorator, JSImplicitElement, T> constructor,
+                         @NotNull Condition<? super JSImplicitElement> tester,
+                         @NotNull BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> constructor,
                          @NotNull String... names) {
       myEntityClass = aClass;
       myImplicitElementTester = tester;
@@ -305,13 +307,12 @@ public class Angular2EntitiesProvider {
         }
         element = element.getContext();
       }
-      if (element instanceof TypeScriptClass
-          && Angular2LangUtil.isAngular2Context(element)) {
+      if (element instanceof TypeScriptClass) {
         ES6Decorator decorator = findDecorator((TypeScriptClass)element, myDecoratorNames);
         if (decorator != null) {
           element = decorator;
         }
-        else {
+        else if (Angular2LangUtil.isAngular2Context(element)) {
           TypeScriptClass typeScriptClass = (TypeScriptClass)element;
           String className = typeScriptClass.getName();
           if (className == null
@@ -335,23 +336,28 @@ public class Angular2EntitiesProvider {
             });
           return result.get();
         }
-      }
-      if (element instanceof ES6Decorator) {
-        ES6Decorator dec = (ES6Decorator)element;
-        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)
-            || !Angular2LangUtil.isAngular2Context(element)) {
+        else {
           return null;
         }
-        return CachedValuesManager.getCachedValue(dec, () -> {
-          JSImplicitElement entityElement = null;
-          if (dec.getIndexingData() != null) {
-            entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
-                                               myImplicitElementTester);
-          }
-          return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
-        });
       }
-      return null;
+      else if (!(element instanceof ES6Decorator)
+               || !isAngularDecorator((ES6Decorator)element, myDecoratorNames)) {
+        return null;
+      }
+      ES6Decorator dec = (ES6Decorator)element;
+      return CachedValuesManager.getCachedValue(dec, () -> {
+        JSImplicitElement entityElement = null;
+        if (dec.getIndexingData() != null) {
+          entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
+                                             myImplicitElementTester);
+        }
+        return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
+      });
+    }
+
+    @Override
+    public String toString() {
+      return Arrays.toString(myDecoratorNames) + " - " + super.toString();
     }
   }
 }

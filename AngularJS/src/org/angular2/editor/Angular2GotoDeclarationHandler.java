@@ -10,6 +10,7 @@ import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,9 @@ public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
     List<Angular2Directive> directives;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && !(directives = Angular2EntitiesProvider.findDirectives((Angular2DirectiveSelectorPsiElement)symbol)).isEmpty()) {
-      return ContainerUtil.all(directives, Angular2Directive::isComponent) ? "Component &Declaration" : "Directive &Declaration";
+      return ContainerUtil.all(directives, Angular2Directive::isComponent)
+             ? Angular2Bundle.message("angular.action.goto-declaration.component")
+             : Angular2Bundle.message("angular.action.goto-declaration.directive");
     }
     return null;
   }

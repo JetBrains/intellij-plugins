@@ -1,58 +1,43 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.intellij.util.indexing.FindSymbolParameters;
+import com.jetbrains.lang.dart.ide.DartClassContributor;
 import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerSupertypesHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStructure;
-import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class DartTypeHierarchyTest extends HierarchyViewTestBase {
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest();
-  }
-
+public class DartTypeHierarchyTest extends DartHierarchyTestBase {
   @Override
   protected String getBasePath() {
-    return "analysisServer/typeHierarchy/" + getTestName(false);
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH;
+    return "/analysisServer/typeHierarchy/" + getTestName(false);
   }
 
   private void doDartTypeHierarchyTest(final String className, final boolean subtype, final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
-      final Project project = getProject();
-      final List<DartComponentName> dartComponentNames =
-        DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
-      for (DartComponentName name : dartComponentNames) {
-        DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
+      Project project = getProject();
+      Ref<HierarchyTreeStructure> result = Ref.create();
+      new DartClassContributor().processElementsWithName(className, item -> {
+        DartClass dartClass = PsiTreeUtil.getParentOfType((PsiElement)item, DartClass.class);
         if (dartClass != null && dartClass.getName().equals(className)) {
           if (subtype) {
-            return new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+            result.set(new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.SCOPE_PROJECT));
           }
           else {
-            return new DartServerSupertypesHierarchyTreeStructure(project, dartClass);
+            result.set(new DartServerSupertypesHierarchyTreeStructure(project, dartClass));
           }
+          return false;
         }
-      }
-      return null;
+        return true;
+      }, FindSymbolParameters.wrap("", GlobalSearchScope.projectScope(project)));
+      return result.get();
     }, fileNames);
   }
 

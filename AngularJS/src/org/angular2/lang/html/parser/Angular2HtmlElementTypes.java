@@ -9,6 +9,7 @@ import com.intellij.psi.xml.XmlElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes;
 import org.angular2.lang.html.psi.impl.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -42,7 +43,7 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
 
     private final Function<Angular2ElementType, ASTNode> myClassConstructor;
 
-    public Angular2ElementType(@NotNull String debugName, Function<Angular2ElementType, ASTNode> classConstructor) {
+    public Angular2ElementType(@NotNull @NonNls String debugName, Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, Angular2HtmlLanguage.INSTANCE);
       myClassConstructor = classConstructor;
     }

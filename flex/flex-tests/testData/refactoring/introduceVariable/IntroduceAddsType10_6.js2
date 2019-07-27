@@ -1,0 +1,4 @@
+class C {}
+var x:C
+var x2:Array
+<selection>x = x2[0]</selection>

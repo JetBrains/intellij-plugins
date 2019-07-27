@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
@@ -30,6 +30,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -188,6 +189,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myScreenDpi = 0;
   private boolean myClearAppDataOnEachLaunch = true;
   private @NotNull String myIOSSimulatorSdkPath = "";
+  private @NotNull String myIOSSimulatorDevice = "";
   private boolean myFastPackaging = true;
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
@@ -356,6 +358,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myIOSSimulatorSdkPath = IOSSimulatorSdkPath;
   }
 
+  @NotNull
+  public String getIOSSimulatorDevice() {
+    return myIOSSimulatorDevice;
+  }
+
+  public void setIOSSimulatorDevice(@NotNull String iOSSimulatorDevice) {
+    myIOSSimulatorDevice = iOSSimulatorDevice;
+  }
+
   public boolean isFastPackaging() {
     return myFastPackaging;
   }
@@ -502,8 +513,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
       }
 
-      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
-      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtilRt.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtilRt.getNameWithoutExtension(myOverriddenOutputFileName));
 
       return Pair.create(moduleAndBC.first, overriddenBC);
     }
@@ -539,7 +550,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (myOverriddenOutputFileName.isEmpty()) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
       }
-      if (!myOverriddenOutputFileName.toLowerCase().endsWith(".swf")) {
+      if (!StringUtil.toLowerCase(myOverriddenOutputFileName).endsWith(".swf")) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.must.have.swf.extension"));
       }
     }
@@ -755,19 +766,20 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
            myClearAppDataOnEachLaunch == that.myClearAppDataOnEachLaunch &&
            myFastPackaging == that.myFastPackaging &&
            myUsbDebugPort == that.myUsbDebugPort &&
-           Objects.equals(myOverriddenMainClass, that.myOverriddenMainClass) &&
-           Objects.equals(myOverriddenOutputFileName, that.myOverriddenOutputFileName) &&
-           Objects.equals(myUrl, that.myUrl) &&
-           Objects.equals(myLauncherParameters, that.myLauncherParameters) &&
-           Objects.equals(myAdlOptions, that.myAdlOptions) &&
-           Objects.equals(myAirProgramParameters, that.myAirProgramParameters) &&
+           myOverriddenMainClass.equals(that.myOverriddenMainClass) &&
+           myOverriddenOutputFileName.equals(that.myOverriddenOutputFileName) &&
+           myUrl.equals(that.myUrl) &&
+           myLauncherParameters.equals(that.myLauncherParameters) &&
+           myAdlOptions.equals(that.myAdlOptions) &&
+           myAirProgramParameters.equals(that.myAirProgramParameters) &&
            myMobileRunTarget == that.myMobileRunTarget &&
            myEmulator == that.myEmulator &&
-           Objects.equals(myIOSSimulatorSdkPath, that.myIOSSimulatorSdkPath) &&
+           myIOSSimulatorSdkPath.equals(that.myIOSSimulatorSdkPath) &&
+           myIOSSimulatorDevice.equals(that.myIOSSimulatorDevice) &&
            myDebugTransport == that.myDebugTransport &&
-           Objects.equals(myEmulatorAdlOptions, that.myEmulatorAdlOptions) &&
+           myEmulatorAdlOptions.equals(that.myEmulatorAdlOptions) &&
            myAppDescriptorForEmulator == that.myAppDescriptorForEmulator &&
-           Objects.equals(myDebuggerSdkRaw, that.myDebuggerSdkRaw);
+           myDebuggerSdkRaw.equals(that.myDebuggerSdkRaw);
   }
 
   @Override
@@ -775,7 +787,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return Objects.hash(super.hashCode(), myOverrideMainClass, myOverriddenMainClass, myOverriddenOutputFileName, myLaunchUrl, myUrl,
                         myLauncherParameters, myRunTrusted, myAdlOptions, myAirProgramParameters, myMobileRunTarget, myEmulator,
                         myScreenWidth, myScreenHeight, myFullScreenWidth, myFullScreenHeight, myScreenDpi, myClearAppDataOnEachLaunch,
-                        myIOSSimulatorSdkPath, myFastPackaging, myDebugTransport, myUsbDebugPort, myEmulatorAdlOptions,
+                        myIOSSimulatorSdkPath, myIOSSimulatorDevice, myFastPackaging, myDebugTransport, myUsbDebugPort,
+                        myEmulatorAdlOptions,
                         myAppDescriptorForEmulator, myDebuggerSdkRaw);
   }
 }

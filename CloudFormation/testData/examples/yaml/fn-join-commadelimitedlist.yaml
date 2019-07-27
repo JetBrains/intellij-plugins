@@ -1,0 +1,13 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "Sample !Join and !Ref usage"
+Parameters:
+  aliasesParameter:
+    Type: CommaDelimitedList
+    Description: Comma separated list of domain names
+Resources:
+  MyDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: !Join [ ", ", !Ref aliasesParameter ]

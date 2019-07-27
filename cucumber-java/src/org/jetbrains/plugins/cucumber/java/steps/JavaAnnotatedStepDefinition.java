@@ -16,8 +16,7 @@ public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
 
   @Nullable
   @Override
-  public String getStepDefinitionText() {
-    PsiElement element = getElement();
+  protected String getCucumberRegexFromElement(PsiElement element) {
     if (element == null) {
       return null;
     }

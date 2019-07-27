@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  myEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !Cidr [ !Cidr [ "a", 100 ], 100, 22 ]
+      InstanceType: 0@<!Cidr [ "a" ]>
+
+0: Cidr expects two or three arguments

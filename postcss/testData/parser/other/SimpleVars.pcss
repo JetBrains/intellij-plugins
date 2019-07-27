@@ -1,0 +1,20 @@
+$dir;
+$blue:;
+$blue:   #056ef0
+$column: 200px a b[] var(--foo);
+
+.menu_link {
+    background: 1px $blue -$column;
+    width: $column;
+    height: calc(4 * $column);
+}
+
+$prefix{ }
+a $prefix.b{ }
+
+.menu_link-$(dir) {
+    margin-$(dir): 10px;
+    height: $(foo);
+    height: a$(foo);
+    height: $(foo)b;
+}

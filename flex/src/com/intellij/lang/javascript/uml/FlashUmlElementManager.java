@@ -8,6 +8,7 @@ import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
@@ -19,11 +20,8 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Iconable;
@@ -32,6 +30,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.ElementBase;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiFormatUtilBase;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlFile;
@@ -43,18 +42,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class FlashUmlElementManager extends AbstractDiagramElementManager<Object> {
-  private final FlashUmlProvider myUmlProvider;
-  private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.uml.FlashUmlElementManager");
-
-  public FlashUmlElementManager(FlashUmlProvider umlProvider) {
-    myUmlProvider = umlProvider;
-  }
 
   @Override
   public boolean isAcceptableAsNode(Object element) {
@@ -89,7 +82,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   public static boolean packageExists(final Project project, final String packageName, final GlobalSearchScope scope) {
-    return JSUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
+    return FlexUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
   }
 
   @Override
@@ -100,7 +93,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
 
     // if caret stands on a member or whitespace, show diagram for the enclosing class
-    final Editor editor = LangDataKeys.EDITOR.getData(context);
+    Editor editor = CommonDataKeys.EDITOR.getData(context);
     if (editor != null) {
       final PsiFile file = CommonDataKeys.PSI_FILE.getData(context);
       if (file != null) {
@@ -144,7 +137,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   public PsiElement[] getNodeItems(Object parent) {
     if (parent instanceof JSClass) {
       final JSClass clazz = (JSClass)parent;
-      if (!clazz.isValid()) { return PsiElement.EMPTY_ARRAY; }
+      if (!clazz.isValid()) return PsiElement.EMPTY_ARRAY;
       final List<PsiElement> elements = new ArrayList<>();
       ContainerUtil.addAll(elements, clazz.getFields());
       boolean isInterface = clazz.isInterface();
@@ -164,7 +157,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code
-        Collections.sort(elements, (o1, o2) -> o1.getTextOffset() - o2.getTextOffset());
+        Collections.sort(elements, Comparator.comparingInt(PsiElement::getTextOffset));
       }
       return PsiUtilCore.toPsiElementArray(elements);
     }
@@ -243,67 +236,61 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return s.length() > 0 ? s : JSBundle.message("top.level");
   }
 
-  private SimpleColoredText decorate(String name) {
-    int style = SimpleTextAttributes.STYLE_BOLD;
-    final SimpleColoredText text = new SimpleColoredText();
-    text.append(name, new SimpleTextAttributes(style, getFGColor()));
+  private static SimpleColoredText decorate(String name) {
+    SimpleColoredText text = new SimpleColoredText();
+    text.append(name, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
     return text;
   }
 
-  private SimpleColoredText getClassPresentableName(JSClass clazz) {
+  private static SimpleColoredText getClassPresentableName(JSClass clazz) {
     int style = SimpleTextAttributes.STYLE_BOLD;
     if (clazz.isDeprecated()) style |= SimpleTextAttributes.STYLE_STRIKEOUT;
     if (!clazz.isPhysical()) style |= SimpleTextAttributes.STYLE_ITALIC;
 
     final SimpleColoredText text = new SimpleColoredText();
     String name = StringUtil.notNullize(clazz.getName());
-    text.append(FlashUmlVfsResolver.fixVectorTypeName(name), new SimpleTextAttributes(style, getFGColor()));
+    text.append(FlashUmlVfsResolver.fixVectorTypeName(name), new SimpleTextAttributes(style, DEFAULT_TEXT_ATTR.getFgColor()));
     return text;
   }
 
-  private SimpleColoredText getMethodPresentableName(JSFunction method) {
+  private static SimpleColoredText getMethodPresentableName(JSFunction method) {
     int style = SimpleTextAttributes.STYLE_PLAIN;
     if (method.isDeprecated()) style |= SimpleTextAttributes.STYLE_STRIKEOUT;
     if (!method.isPhysical()) style |= SimpleTextAttributes.STYLE_ITALIC;
     final SimpleColoredText text = new SimpleColoredText();
     text.append(getMethodText(method),
-                new SimpleTextAttributes(style, getFGColor()));
+      new SimpleTextAttributes(style, DEFAULT_TEXT_ATTR.getFgColor()));
     return text;
   }
 
-  private SimpleColoredText getFieldPresentableName(@NotNull JSVariable field) {
+  private static SimpleColoredText getFieldPresentableName(@NotNull JSVariable field) {
     int style = SimpleTextAttributes.STYLE_PLAIN;
     if (field.isDeprecated()) style |= SimpleTextAttributes.STYLE_STRIKEOUT;
     if (!field.isPhysical()) style |= SimpleTextAttributes.STYLE_ITALIC;
-    return new SimpleColoredText(getFieldText(field), new SimpleTextAttributes(style, getFGColor()));
+    return new SimpleColoredText(getFieldText(field), new SimpleTextAttributes(style, DEFAULT_TEXT_ATTR.getFgColor()));
   }
 
   public static String getMethodText(JSFunction method) {
-    return JSFormatUtil.formatMethod(method, JSFormatUtil.SHOW_NAME | JSFormatUtil.SHOW_PARAMETERS, JSFormatUtil.SHOW_TYPE);
+    return JSFormatUtil.formatMethod(method, PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_PARAMETERS, PsiFormatUtilBase.SHOW_TYPE);
   }
 
   public static String getFieldText(JSVariable field) {
-    return JSFormatUtil.formatField(field, JSFormatUtil.SHOW_NAME);
+    return JSFormatUtil.formatField(field, PsiFormatUtilBase.SHOW_NAME);
   }
-
-  private Color getFGColor() {
-    return myUmlProvider.getColorManager().getNodeForegroundColor(false);
-  }
-
 
   @Override
   public SimpleColoredText getItemType(Object element) {
     String text = getPresentableTypeStatic(element);
-    return text != null ? new SimpleColoredText(text, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, getFGColor())) : null;
+    return text != null ? new SimpleColoredText(text, DEFAULT_TEXT_ATTR) : null;
   }
 
   @Nullable
   public static String getPresentableTypeStatic(Object element) {
     if (element instanceof JSFunction) {
-      return JSFormatUtil.formatMethod(((JSFunction)element), JSFormatUtil.SHOW_TYPE, 0);
+      return JSFormatUtil.formatMethod(((JSFunction)element), PsiFormatUtilBase.SHOW_TYPE, 0);
     }
     else if (element instanceof JSVariable) {
-      return JSFormatUtil.formatField(((JSVariable)element), JSFormatUtil.SHOW_TYPE);
+      return JSFormatUtil.formatField(((JSVariable)element), PsiFormatUtilBase.SHOW_TYPE);
     }
     else {
       return null;

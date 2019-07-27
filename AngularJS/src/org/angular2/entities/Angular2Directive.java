@@ -2,6 +2,7 @@
 package org.angular2.entities;
 
 import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,7 +23,12 @@ public interface Angular2Directive extends Angular2Declaration {
   @NotNull
   Collection<? extends Angular2DirectiveProperty> getOutputs();
 
-  boolean isTemplate();
+  @NotNull
+  Collection<? extends Angular2DirectiveAttribute> getAttributes();
+
+  boolean isStructuralDirective();
+
+  boolean isRegularDirective();
 
   default boolean isComponent() {
     return this instanceof Angular2Component;
@@ -30,7 +36,7 @@ public interface Angular2Directive extends Angular2Declaration {
 
 
   default List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>> getInOuts() {
-    final String OUTPUT_CHANGE_SUFFIX = "Change";
+    @NonNls final String OUTPUT_CHANGE_SUFFIX = "Change";
 
     Collection<? extends Angular2DirectiveProperty> outputs = getOutputs();
     Collection<? extends Angular2DirectiveProperty> inputs = getInputs();

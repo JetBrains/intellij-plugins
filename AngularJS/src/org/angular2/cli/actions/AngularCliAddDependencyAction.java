@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.actions;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -15,7 +15,6 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
@@ -43,6 +42,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.ListWithFilter;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.ui.EmptyIcon;
@@ -52,6 +52,8 @@ import org.angular2.cli.AngularCliFilter;
 import org.angular2.cli.AngularCliProjectGenerator;
 import org.angular2.cli.AngularCliSchematicsRegistryService;
 import org.angular2.cli.AngularCliUtil;
+import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,12 +67,15 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
+
 public class AngularCliAddDependencyAction extends DumbAwareAction {
 
   private static final NodePackageBasicInfo OTHER =
-    new NodePackageBasicInfo("Install package not listed above…", null);
-  private static final Logger LOG = Logger.getInstance(AngularCliAddDependencyAction.class);
+    new NodePackageBasicInfo(Angular2Bundle.message("angular.action.ng-add.install-other"), null);
+  @NonNls private static final Logger LOG = Logger.getInstance(AngularCliAddDependencyAction.class);
   private static final long TIMEOUT = 2000;
+  @NonNls private static final String LATEST = "latest";
 
   public static void runAndShowConsoleLater(@NotNull Project project, @NotNull VirtualFile cli, @NotNull String packageName,
                                             @Nullable String packageVersion, boolean proposeLatestVersionIfNeeded) {
@@ -78,7 +83,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       if (project.isDisposed()) {
         return;
       }
-      Ref<String> version = new Ref<>(StringUtil.defaultIfEmpty(packageVersion, "latest"));
+      Ref<String> version = new Ref<>(StringUtil.defaultIfEmpty(packageVersion, LATEST));
       boolean proposeLatestVersion = proposeLatestVersionIfNeeded &&
                                      !AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, version.get(), TIMEOUT);
       ApplicationManager.getApplication().invokeLater(
@@ -87,13 +92,16 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
             //noinspection DialogTitleCapitalization
             switch (Messages.showDialog(
               project,
-              "It looks like specified version of package doesn't support 'ng add'.\n\nWould you like to install the latest version of the package?",
-              "Install with 'ng add'",
-              new String[]{"Install latest version", "Try with current version", Messages.CANCEL_BUTTON},
-              0, Messages.getQuestionIcon())) {
+              Angular2Bundle.message("angular.action.ng-add.not-supported-specified-try-latest"),
+              Angular2Bundle.message("angular.action.ng-add.title"),
+              new String[]{
+                Angular2Bundle.message("angular.action.ng-add.install-latest"),
+                Angular2Bundle.message("angular.action.ng-add.install-current"),
+                Messages.CANCEL_BUTTON
+              }, 0, Messages.getQuestionIcon())) {
 
               case 0:
-                version.set("latest");
+                version.set(LATEST);
                 break;
               case 1:
                 version.set(packageVersion);
@@ -110,18 +118,18 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    if (project == null) {
+    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
+    if (project == null || file == null) {
       return;
     }
-
-    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     final VirtualFile cli = AngularCliUtil.findAngularCliFolder(project, file);
     final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
     if (cli == null || packageJson == null) {
       return;
     }
     if (!AngularCliUtil.hasAngularCLIPackageInstalled(project, cli)) {
-      AngularCliUtil.notifyAngularCliNotInstalled(project, cli, "Can't add new Angular dependency");
+      AngularCliUtil.notifyAngularCliNotInstalled(
+        project, cli, Angular2Bundle.message("angular.action.ng-add.cant-add-new-dependency"));
       return;
     }
 
@@ -166,11 +174,12 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       .setMovable(true)
       .setResizable(true)
       .setCancelOnWindowDeactivation(false)
-      .setTitle("Install with 'ng add'")
+      .setTitle(Angular2Bundle.message("angular.action.ng-add.title"))
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
-      .setMinSize(new Dimension(JBUI.scale(350), JBUI.scale(300)))
-      .setCancelButton(new IconButton("Close", AllIcons.Actions.Close, AllIcons.Actions.CloseHovered));
+      .setMinSize(new Dimension(JBUIScale.scale(350), JBUIScale.scale(300)))
+      .setCancelButton(new IconButton(Angular2Bundle.message("angular.action.ng-add.button-close"),
+                                      AllIcons.Actions.Close, AllIcons.Actions.CloseHovered));
 
     JBPopup popup = builder.createPopup();
 
@@ -209,8 +218,9 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    e.getPresentation().setEnabledAndVisible(
-      project != null && AngularCliUtil.findAngularCliFolder(project, file) != null);
+    e.getPresentation().setEnabledAndVisible(project != null
+                                             && file != null
+                                             && AngularCliUtil.findAngularCliFolder(project, file) != null);
   }
 
   private static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli,
@@ -219,25 +229,22 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       return;
     }
     NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
-    NodeJsLocalInterpreter node = NodeJsLocalInterpreter.tryCast(interpreter);
+    if (interpreter == null) {
+      return;
+    }
     try {
-      if (node == null) {
-        throw new ExecutionException("Cannot find local node interpreter.");
-      }
-
       List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
-                                               false, node);
+      NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
       }
       CompletionModuleInfo module = modules.get(0);
       ProcessHandler handler = NpmPackageProjectGenerator.generate(
-        node, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
-        pkg -> Objects.requireNonNull(pkg.findBinFile("ng", null)).getAbsolutePath(),
+        interpreter, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
+        pkg -> Objects.requireNonNull(pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)).getAbsolutePath(),
         cli, VfsUtilCore.virtualToIoFile(cli),
         project, () -> GistManager.getInstance().invalidateData(),
-        "Installing " + packageSpec + " for " + cli.getName(),
+        Angular2Bundle.message("angular.action.ng-add.installing-for", packageSpec, cli.getName()),
         new Filter[]{new AngularCliFilter(project, cli.getPath())},
         "add", packageSpec);
       if (proposeLatestVersionIfNeeded) {
@@ -278,12 +285,12 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
           //noinspection DialogTitleCapitalization
           if (Messages.OK == Messages.showDialog(
             project,
-            "It looks like installed version of package doesn't support 'ng add'.\n\nWould you like to install the latest version of the package instead?",
-            "Install with 'ng add'",
-            new String[]{"Install latest version", Messages.CANCEL_BUTTON},
+            Angular2Bundle.message("angular.action.ng-add.not-supported-installed-try-latest"),
+            Angular2Bundle.message("angular.action.ng-add.title"),
+            new String[]{Angular2Bundle.message("angular.action.ng-add.install-latest"), Messages.CANCEL_BUTTON},
             0, Messages.getQuestionIcon())) {
 
-            runAndShowConsole(project, cli, packageName + "@latest", false);
+            runAndShowConsole(project, cli, packageName + "@" + LATEST, false);
           }
         }, project.getDisposed()
       );
@@ -334,9 +341,9 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       myProject = project;
       myExistingPackages = existingPackages;
       //noinspection DialogTitleCapitalization
-      setTitle("Install with 'ng add'");
+      setTitle(Angular2Bundle.message("angular.action.ng-add.title"));
       init();
-      getOKAction().putValue(Action.NAME, "Install");
+      getOKAction().putValue(Action.NAME, Angular2Bundle.message("angular.action.ng-add.button-install"));
     }
 
     @Nullable
@@ -352,7 +359,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       myTextEditor = new TextFieldWithAutoCompletion<>(
         myProject, new NodePackagesCompletionProvider(myExistingPackages), false, null);
       myTextEditor.setPreferredWidth(250);
-      panel.add(LabeledComponent.create(myTextEditor, "Package name", BorderLayout.NORTH));
+      panel.add(LabeledComponent.create(myTextEditor, Angular2Bundle.message("angular.action.ng-add.package-name"), BorderLayout.NORTH));
       return panel;
     }
 

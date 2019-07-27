@@ -24,7 +24,7 @@ import jetbrains.communicator.idea.BaseIncomingLocalMessage;
 import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.VFSUtil;
 import jetbrains.communicator.util.PositionCorrector;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
@@ -90,7 +90,7 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
 
   @Override
   public String getTitle() {
-    return StringUtil.getMsg("code.pointer");
+    return CommunicatorStrings.getMsg("code.pointer");
   }
 
   private LogicalPosition getLogicalPosition(int line, int column, PositionCorrector positionCorrector) {
@@ -120,15 +120,15 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
       VirtualFile virtualFile = VFSUtil.getVirtualFile(myRemoteFile);
       if (virtualFile == null) {
         LOG.info("Unable to find " + myRemoteFile);
-        myFacade.showMessage(StringUtil.getMsg("no.file"), StringUtil.getMsg("idea.link.nofile", myRemoteFile.getDisplayName()));
+        myFacade.showMessage(CommunicatorStrings.getMsg("no.file"), CommunicatorStrings.getMsg("idea.link.nofile", myRemoteFile.getDisplayName()));
         return;
       }
 
       final Editor editor = openTextEditor(project, virtualFile);
       if (editor == null) {
         LOG.info("Unable to open text editor for " + virtualFile.getPresentableUrl());
-        myFacade.showMessage(StringUtil.getMsg("unable.to.open"),
-            StringUtil.getMsg("idea.link.noeditor", virtualFile.getPresentableUrl()));
+        myFacade.showMessage(CommunicatorStrings.getMsg("unable.to.open"),
+                             CommunicatorStrings.getMsg("idea.link.noeditor", virtualFile.getPresentableUrl()));
         return;
       }
 

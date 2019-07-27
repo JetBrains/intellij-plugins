@@ -1,0 +1,24 @@
+ AngularConfig {
+   defaultProject: Webstorm-Test
+   projects: [
+     AngularProjectImpl {
+       name: Webstorm-Test
+       rootDir: temp:///src
+       sourceDir: temp:///src/src
+       indexHtml: temp:///src/src/index.html
+       globalStyleSheets: [temp:///src/foo.scss, temp:///src/src/styles.scss]
+       stylePreprocessorIncludeDirs: [temp:///src/src/styles]
+       karmaConfigFile: temp:///src/karma.conf.js
+       protractorConfigFile: temp:///src/e2e/protractor.conf.js
+       tsLintConfigurations: [
+         TsLintConfiguration {
+           name=null
+           tsLintConfig=temp:///src/tslint.json
+           tsConfigs=[temp:///src/tsconfig.app.json, temp:///src/tsconfig.spec.json, temp:///src/e2e/tsconfig.json]
+           includes=null
+           excludes=[**/node_modules/**]
+         }
+       ]
+     }
+   ]
+ }

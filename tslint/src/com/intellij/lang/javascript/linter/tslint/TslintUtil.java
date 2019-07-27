@@ -14,13 +14,14 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,13 +35,10 @@ public class TslintUtil {
   public static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.TsLint");
   public static final String PACKAGE_NAME = "tslint";
   public static final String TSLINT_JSON = "tslint.json";
+  public static final String TYPESCRIPT_PLUGIN_OLD_PACKAGE_NAME = "tslint-language-service";
+  public static final String TYPESCRIPT_PLUGIN_PACKAGE_NAME = "typescript-tslint-plugin";
 
   public static final String[] CONFIG_FILE_NAMES = new String[]{TSLINT_JSON, "tslint.yaml", "tslint.yml"};
-
-  public static boolean isMultiRootEnabled() {
-    //noinspection UnresolvedPropertyKey IDEA-199936
-    return Registry.is("tslint.enable.multiroot");
-  }
 
   public static boolean isConfigFile(@NotNull VirtualFile file) {
     if (!file.isValid() || file.isDirectory()) {
@@ -65,7 +63,20 @@ public class TslintUtil {
   }
 
   @Nullable
+  public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull Project project, @NotNull VirtualFile virtualFile) {
+    return doGetConfig(state, project, virtualFile);
+  }
+
+  /**
+   * @deprecated Use {@link #lookupConfig(Project, VirtualFile)} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   public static VirtualFile getConfig(@NotNull TsLintState state, @NotNull VirtualFile virtualFile) {
+    return doGetConfig(state, null, virtualFile);
+  }
+
+  private static VirtualFile doGetConfig(@NotNull TsLintState state, @Nullable Project project, @NotNull VirtualFile virtualFile) {
     if (state.isCustomConfigFileUsed()) {
       final String configFilePath = state.getCustomConfigFilePath();
       if (StringUtil.isEmptyOrSpaces(configFilePath)) {
@@ -75,9 +86,25 @@ public class TslintUtil {
       return VfsUtil.findFileByIoFile(configFile, false);
     }
 
-    return lookupConfig(virtualFile);
+    return project != null ? lookupConfig(project, virtualFile) : lookupConfig(virtualFile);
   }
 
+  @Nullable
+  public static VirtualFile lookupConfig(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    for (TsLintConfigDetector detector : TsLintConfigDetector.TS_LINT_CONFIG_DETECTOR_EP.getExtensionList()) {
+      TsLintConfigDetector.TsLintConfigs setup = detector.detectConfigs(project, virtualFile);
+      if (setup != null) {
+        return setup.getTsLintConfig();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @deprecated Use {@link #lookupConfig(Project, VirtualFile)} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
   @Nullable
   public static VirtualFile lookupConfig(@NotNull VirtualFile virtualFile) {
     return JSLinterConfigFileUtil.findFileUpToFileSystemRoot(virtualFile, CONFIG_FILE_NAMES);

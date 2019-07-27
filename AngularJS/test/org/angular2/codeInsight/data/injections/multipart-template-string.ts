@@ -15,7 +15,7 @@ const test = 'foo';
     </div>
     <div>
       {{ foo.${test} }}
-      {{ title<error descr="unexpected token 'EXTERNAL_FRAGMENT'"> </error>${12} }}
+      {{ title<error descr="Unexpected token '12'"> </error>${12} }}
     </div>
     <a>
   <error descr="Element a is not closed">`</error>,

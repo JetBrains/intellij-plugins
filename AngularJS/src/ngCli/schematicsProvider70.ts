@@ -4,20 +4,21 @@ import {SchematicsProvider} from "./schematicsProvider";
 import {SchematicCommand} from "@angular/cli/models/schematic-command";
 
 let command = new (SchematicCommand as any)({}, null);
+command.getEngineHost();
 
 const schematicsProvider: SchematicsProvider = {
-    getCollection(collectionName: string): Collection<any, any> {
-        return command.getCollection(collectionName);
-    },
-    getEngineHost() {
-        return command.getEngineHost();
-    },
-    getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
-        return command.getSchematic(collection, schematicName, allowPrivate);
-    },
-    getDefaultSchematicCollection() {
-        return command.getDefaultSchematicCollection();
-    }
+  getCollection(collectionName: string): Collection<any, any> {
+    return command.getCollection(collectionName);
+  },
+  getEngineHost() {
+    return command.getEngineHost();
+  },
+  getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
+    return command.getSchematic(collection, schematicName, allowPrivate);
+  },
+  getDefaultSchematicCollection() {
+    return command.getDefaultSchematicCollection();
+  }
 }
 
 export = schematicsProvider;

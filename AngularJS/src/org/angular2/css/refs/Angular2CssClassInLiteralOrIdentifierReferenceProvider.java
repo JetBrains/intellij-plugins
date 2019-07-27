@@ -3,6 +3,7 @@ package org.angular2.css.refs;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -21,29 +22,37 @@ public class Angular2CssClassInLiteralOrIdentifierReferenceProvider extends PsiR
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     String text = null;
-    int offset;
+    int offset = 0;
     if (element instanceof JSLiteralExpression) {
       text = ((JSLiteralExpression)element).getStringValue();
       offset = 1;
     }
-    else if (element.getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
-      text = StringUtil.unquoteString(element.getText());
-      offset = 1;
-    }
     else {
-      if (element.getNode().getElementType() == JSTokenTypes.IDENTIFIER) {
-        text = element.getText();
+      PsiElement nameSource;
+      if (element instanceof JSProperty && (nameSource = ((JSProperty)element).getNameIdentifier()) != null) {
+        offset = nameSource.getStartOffsetInParent();
+      } else {
+        nameSource = element;
       }
-      offset = 0;
+      if (nameSource.getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
+        text = StringUtil.unquoteString(nameSource.getText());
+        offset += 1;
+      }
+      else {
+        if (nameSource.getNode().getElementType() == JSTokenTypes.IDENTIFIER) {
+          text = nameSource.getText();
+        }
+      }
     }
     if (text == null) {
       return PsiReference.EMPTY_ARRAY;
     }
     List<PsiReference> result = new SmartList<>();
+    int finalOffset = offset;
     CssResolveUtil.consumeClassNames(text, element, (token, range) -> {
       CssElementDescriptorProvider descriptorProvider = CssDescriptorsUtil.findDescriptorProvider(element);
       assert descriptorProvider != null;
-      range = range.shiftRight(offset);
+      range = range.shiftRight(finalOffset);
       result.add(descriptorProvider.getStyleReference(
         element, range.getStartOffset(), range.getEndOffset(), true));
     });

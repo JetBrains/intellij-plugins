@@ -1,12 +1,14 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperProcessor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperMode;
@@ -17,7 +19,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Conditions;
@@ -28,17 +29,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.util.DocCommentPolicy;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestActionEvent;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlexExtractSuperTest extends MultiFileTestCase {
+public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase {
 
   @NotNull
   @Override
@@ -54,21 +55,16 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
 
   @Override
   public void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
     myDoCompare = true;
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
-  @NotNull
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
-  }
-
-  @Override
-  protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   private void doTest(final JSExtractSuperMode mode, final boolean classNotInterface, final String sourceClassName,
@@ -105,7 +101,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
                              JSExtractSuperMode mode,
                              String[] members,
                              String[] conflicts) {
-    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(myModule));
+    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(getModule()));
     final List<JSMemberInfo> memberInfos = FlexPullUpTest.getMemberInfos(members, sourceClass, false);
     JSMemberInfo.sortByOffset(memberInfos);
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
@@ -118,7 +114,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
       new FlexExtractSuperProcessor(sourceClass, infosArray, StringUtil.getShortName(extractedSuperName),
                                     StringUtil.getPackageName(extractedSuperName), docCommentPolicy, mode, classNotInterface, dir).run();
       assertEquals("Conflicts expected:\n" + StringUtil.join(conflicts, "\n"), 0, conflicts.length);
-      myProject.getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
+      myFixture.getProject().getComponent(PostprocessReformattingAspect.class).doPostponedFormatting();
       FileDocumentManager.getInstance().saveAllDocuments();
     }
     catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
@@ -269,42 +265,42 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
   public void testInheritanceFromSdk() {
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
     doTest(new PerformAction() {
       @Override
       public void performAction(final VirtualFile rootDir, final VirtualFile rootAfter) {
-        FlexTestUtils.modifyConfigs(myProject, editor -> {
-          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+        FlexTestUtils.modifyConfigs(myFixture.getProject(), editor -> {
+          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
           bc1.setName("1");
           FlexTestUtils.setSdk(bc1, sdk);
         });
 
         FlexExtractSuperTest.this.performAction(false, "skins.MyNewSkin1", "skins.IMySkin", DocCommentPolicy.COPY,
                                                 JSExtractSuperMode.ExtractSuperTurnRefs, new String[]{"updateDisplayList"},
-                                                ArrayUtil.EMPTY_STRING_ARRAY);
+                                                ArrayUtilRt.EMPTY_STRING_ARRAY);
       }
     });
   }
 
-  public void testActionAvailability1() throws Exception {
+  public void testActionAvailability1() {
     checkActions(getTestName(false) + ".as");
   }
 
-  public void testActionAvailability2() throws Exception {
+  public void testActionAvailability2() {
     checkActions(getTestName(false) + ".mxml");
   }
 
-  public void testActionAvailability3() throws Exception {
+  public void testActionAvailability3() {
     checkActions(getTestName(false) + ".xml");
   }
 
-  private void checkActions(String filename) throws Exception {
-    configureByFile(getTestRoot() + filename);
-    LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
+  private void checkActions(String filename) {
+    myFixture.configureByFile(getTestRoot() + filename);
+    LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(myFixture.getProject(), myFixture.getEditor().getDocument());
     int pos = 0;
     for (Map.Entry<Integer, String> entry : markers.entrySet()) {
       pos++;
-      getEditor().getCaretModel().moveToOffset(entry.getKey());
+      myFixture.getEditor().getCaretModel().moveToOffset(entry.getKey());
 
       checkAction("ExtractInterface", entry.getValue().contains("interface"), pos);
       checkAction("ExtractSuperclass", entry.getValue().contains("class"), pos);
@@ -313,7 +309,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
 
   private void checkAction(String actionId, boolean enabled, int pos) {
     AnAction action = ActionManager.getInstance().getAction(actionId);
-    AnActionEvent e = new TestActionEvent(DataManager.getInstance().getDataContext(getEditor().getComponent()), action);
+    AnActionEvent e = new TestActionEvent(DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()), action);
     action.beforeActionPerformedUpdate(e);
     assertEquals("Action " + actionId + " should be " + (enabled ? "enabled" : "disabled") + " at position " + pos, enabled,
                  e.getPresentation().isEnabled());

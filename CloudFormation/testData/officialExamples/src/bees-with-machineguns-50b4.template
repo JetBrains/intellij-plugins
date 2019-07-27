@@ -1,0 +1,555 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Create a spot-priced AutoScaling group and a Bees With Machine Guns controller; execute the load test against the AutoScaling group and store the results in S3. Run /home/ec2-user/run-bees to execute load tests manually.",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+            "Type": "String"
+        },
+        "BeesControllerInstanceType": {
+            "Description": "Type of EC2 instance to launch",
+            "Type": "String",
+            "Default": "c1.medium",
+            "AllowedValues": [
+                "t1.micro",
+                "m1.small",
+                "m1.medium",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge",
+                "m2.2xlarge",
+                "m2.4xlarge",
+                "c1.medium",
+                "c1.xlarge",
+                "cc1.4xlarge"
+            ],
+            "ConstraintDescription": "Must be a valid EC2 instance type."
+        },
+        "TotalConnections": {
+            "Description": "Total connections per load tester",
+            "Type": "Number",
+            "Default": "200000"
+        },
+        "SpotPrice": {
+            "Description": "Spot price for application AutoScaling Group",
+            "Type": "Number",
+            "MinValue" : "0"
+        },
+        "ConcurrentConnections": {
+            "Description": "Number of concurrent requests per load tester",
+            "Type": "Number",
+            "Default": "1000"
+        },
+        "BeeCount": {
+            "Description": "Number of EC2 instances to launch as the load generators (bees)",
+            "Type": "Number",
+            "Default": "2"
+        },
+        "AppInstanceType": {
+            "Description": "Type of EC2 instant for application AutoScaling Group",
+            "Type": "String",
+            "Default": "c1.medium",
+            "AllowedValues": [
+                "t1.micro",
+                "m1.small",
+                "m1.medium",
+                "m1.large",
+                "m1.xlarge",
+                "m2.xlarge",
+                "m2.2xlarge",
+                "m2.4xlarge",
+                "c1.medium",
+                "c1.xlarge",
+                "cc1.4xlarge"
+            ],
+            "ConstraintDescription": "must be a valid EC2 instance type."
+        },
+        "AppInstanceCountMin": {
+            "Description": "Minimum number of EC2 instances to launch for application AutoScaling Group",
+            "Type": "Number",
+            "Default": "2"
+        },
+        "AppInstanceCountMax": {
+            "Description": "Maximum number of EC2 instances to launch for application AutoScaling Group",
+            "Type": "Number",
+            "Default": "2"
+        },
+        "AppInstanceCountDesired": {
+            "Description": "Desired number of EC2 instances to launch for application AutoScaling Group",
+            "Type": "Number",
+            "Default": "2"
+        },
+        "RunTests": {
+            "Description": "Enter 'true' to run tests immediately. WARNING: CreateStack will not finish until test executes if this is set to 'true'",
+            "Type": "String",
+            "Default": "true",
+            "AllowedValues": [ "true", "false" ],
+            "ConstraintDescription": "Must be 'true' or 'false'."
+        },
+        "SSHLocation" : {
+    		"Description" : "The IP address range that can be used to SSH to the EC2 instances",
+    		"Type": "String",
+    		"MinLength": "9",
+    		"MaxLength": "18",
+    		"Default": "0.0.0.0/0",
+    		"AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+    		"ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+   		}
+    
+  },
+    "Mappings": {
+        "AWSRegionPlatform2AMI": {
+            "us-east-1": {
+                "amzn": "ami-e565ba8c",
+                "bee" : "ami-e661c18f"
+            },
+            "us-west-1": {
+                "amzn": "ami-e78cd4a2",
+                "bee" : "ami-93b5efd6"
+            },
+            "eu-west-1": {
+                "amzn": "ami-f9231b8d",
+                "bee" : "ami-67212413"
+            },
+            "ap-southeast-1": {
+                "amzn": "ami-be3374ec",
+                "bee" : "ami-38bef86a"
+            },
+            "ap-northeast-1": {
+                "amzn": "ami-e47acbe5",
+                "bee" : "ami-16ac1f17"
+            },
+            "us-west-2": {
+                "amzn": "ami-3ac64a0a",
+                "bee" : "ami-bc05898c"
+            },
+            "sa-east-1": {
+                "amzn": "ami-a6855bbb",
+                "bee" : "ami-5a12cc47"
+            }
+        }
+    },
+    "Resources": {
+        "CfnUser": {
+            "Type": "AWS::IAM::User",
+            "Properties": {
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "root",
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "cloudformation:DescribeStackResource",
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "elasticloadbalancing:DescribeInstanceHealth",
+                                    "Resource": "*"
+                                },
+                                {
+                                    "Effect" : "Allow",
+                                    "Action" : "ec2:*",
+                                    "Resource" : "*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "CfnKeys": {
+            "Type": "AWS::IAM::AccessKey",
+            "Properties": {
+                "UserName": {
+                    "Ref": "CfnUser"
+                }
+            }
+        },
+        "ResultBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "AccessControl": "Private"
+            },
+            "DeletionPolicy" : "Retain"
+        },
+
+        "BucketPolicy" : {
+            "Type" : "AWS::S3::BucketPolicy",
+            "Properties" : {
+                "PolicyDocument": {
+                    "Version"      : "2008-10-17",
+                    "Id"           : "MyPolicy",
+                    "Statement"    : [{
+                        "Sid"        : "AllAccess",
+                        "Action"     : ["s3:*"],
+                        "Effect"     : "Allow",
+                        "Resource"   : { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ResultBucket" }, "/*"]]},
+                        "Principal"  : { "AWS": {"Fn::GetAtt" : ["CfnUser", "Arn"]} }
+                    }]
+                },
+                "Bucket" : { "Ref" : "ResultBucket" }
+            }
+        },
+        "BeeController": {
+            "Type": "AWS::EC2::Instance",
+            "DependsOn": "AppGroup",
+            "Metadata": {
+                "AWS::CloudFormation::Init": {
+                    "config": {
+                        "packages": {
+                            "yum": {
+                                "gcc": [],
+                                "gcc-c++": [],
+                                "make": [],
+                                "openssl-devel": [],
+                                "httpd": [],
+                                "python-paramiko": [],
+                                "gmp-devel" : [],
+                                "python26-devel" : []
+                            },
+                            "python" : {
+                                "beeswithmachineguns" : []
+                            }
+                        },
+                        "files": {
+                            "/home/ec2-user/create-keypair" : {
+                                "content" : {
+                                    "Fn::Join" : ["", ["#!/usr/bin/python\n",
+                                                       "import string\n",
+                                                       "import random\n",
+                                                       "import boto.ec2\n",
+                                                       "kp_name = ''.join(random.choice(string.letters) for i in xrange(16))\n",
+                                                       "ec2 = boto.ec2.connect_to_region('", {"Ref" : "AWS::Region" }, "')\n",
+                                                       "keypair = ec2.create_key_pair(kp_name)\n",
+                                                       "keypair.save('/home/ec2-user/.ssh/')\n",
+                                                       "with file('/home/ec2-user/bees_keypair.txt', 'w') as f:\n",
+                                                       "     f.write(kp_name)\n",
+                                                       "print 'Created keypair: %s' % kp_name\n"]]
+                                },
+                                "mode" : "000750",
+                                "owner" : "ec2-user",
+                                "group" : "ec2-user"
+                            },
+                            "/home/ec2-user/delete-keypair" : {
+                                "content" : {
+                                    "Fn::Join" : ["", ["#!/usr/bin/python\n",
+                                                       "import string\n",
+                                                       "import random\n",
+                                                       "import boto.ec2\n",
+                                                       "import os\n",
+                                                       "import sys\n",
+                                                       "if not os.path.exists('/home/ec2-user/bees_keypair.txt'):\n",
+                                                       "     print >> sys.stderr, 'bees_keypair.txt does not exist'\n",
+                                                       "     sys.exit(-1)\n",
+                                                       "with file('/home/ec2-user/bees_keypair.txt', 'r') as f:\n",
+                                                       "     kp_name = f.read().strip()\n",
+                                                       "ec2 = boto.ec2.connect_to_region('", {"Ref" : "AWS::Region" }, "')\n",
+                                                       "ec2.delete_key_pair(kp_name)\n",
+                                                       "os.remove('/home/ec2-user/bees_keypair.txt')\n",
+                                                       "os.remove('/home/ec2-user/.ssh/%s.pem' % kp_name)\n",
+                                                       "print 'Deleted keypair: %s' % kp_name\n"]]
+                                },
+                                "mode" : "000750",
+                                "owner" : "ec2-user",
+                                "group" : "ec2-user"
+                            },
+                            "/home/ec2-user/create-swarm": {
+                                "content": {
+                                    "Fn::Join": [ "", ["#!/bin/bash\n",
+                                                       "/usr/bin/bees up -k `cat /home/ec2-user/bees_keypair.txt` -s ", { "Ref": "BeeCount" },
+                                                       " -z ", { "Fn::Select" : [ "1", { "Fn::GetAZs" : "" }] },
+                                                       " -g ", { "Ref" : "BeeSecurityGroup" },
+                                                       " --instance ",  { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "bee"]},
+                                                       " --login ec2-user\n"]]
+                                },
+                                "mode": "000755",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/home/ec2-user/start-swarm": {
+                                "content": {
+                                    "Fn::Join": [ "", ["#!/bin/bash\n",
+                                                       "/usr/bin/bees attack --url http://", { "Fn::GetAtt": [  "ElasticLoadBalancer", "DNSName"  ] }, "/",
+                                                       " -n ",  { "Ref": "TotalConnections" },
+                                                       " --concurrent ", { "Ref": "ConcurrentConnections" }]]
+                                },
+                                "mode": "000755",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/home/ec2-user/kill-swarm": {
+                                "content": {
+                                    "Fn::Join": ["", ["#!/bin/bash\n",
+                                                      "/usr/bin/bees down\n"]]
+                                },
+                                "mode": "000755",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/home/ec2-user/.boto": {
+                                "content": {
+                                    "Fn::Join": ["", [ "[Credentials]\n",
+                                                       "aws_access_key_id = ", { "Ref": "CfnKeys" }, "\n",
+                                                       "aws_secret_access_key = ", { "Fn::GetAtt": ["CfnKeys", "SecretAccessKey"] }, "\n",
+                                                       "[Boto]\n",
+                                                       "ec2_region_name = ", { "Ref" : "AWS::Region" }, "\n",
+                                                       "ec2_region_endpoint = ec2.", { "Ref" : "AWS::Region" }, ".amazonaws.com\n",
+                                                       "elb_region_name = ", { "Ref" : "AWS::Region" }, "\n",
+                                                       "elb_region_endpoint = elasticloadbalancing.", { "Ref" : "AWS::Region" }, ".amazonaws.com\n" ]]
+                                },
+                                "mode": "000600",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/home/ec2-user/run-bees": {
+                                "content": {
+                                    "Fn::Join": ["", [ "#!/bin/bash\n\n",
+                                                       "/home/ec2-user/wait-for-elb\n",
+                                                       "if [ $? -eq 0 ]\n",
+                                                       "then\n",
+                                                       "  mkdir /home/ec2-user/swarm-results\n",
+                                                       "  /home/ec2-user/create-keypair > /home/ec2-user/swarm-results/create-keypair.log 2>&1\n",
+                                                       "  bash /home/ec2-user/create-swarm > /home/ec2-user/swarm-results/create-swarm.log 2>&1\n",
+                                                       "  sleep 45 # Allow EC2 instances to fully come up\n",
+                                                       "  bash /home/ec2-user/start-swarm > /home/ec2-user/swarm-results/start-swarm.log 2>&1\n",
+                                                       "  bash /home/ec2-user/kill-swarm > /home/ec2-user/swarm-results/kill-swarm.log 2>&1\n",
+                                                       "  /home/ec2-user/delete-keypair > /home/ec2-user/swarm-results/delete-keypair.log 2>&1\n",
+                                                       "  tar cvf /home/ec2-user/swarm-results.tar.gz /home/ec2-user/swarm-results/*\n",
+                                                       "  chown ec2-user:ec2-user -R /home/ec2-user/swarm-results\n",
+                                                       "  chown ec2-user:ec2-user /home/ec2-user/swarm-results.tar.gz\n",
+                                                       "  aws put ",  { "Ref": "ResultBucket" }, "/swarm-results.tar.gz /home/ec2-user/swarm-results.tar.gz\n",
+                                                       "else\n",
+                                                       "  exit 1\n",
+                                                       "fi\n"]]
+                                },
+                                "mode": "000755",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/home/ec2-user/wait-for-elb" : {
+                                "content" : {
+                                    "Fn::Join" : ["", ["#!/usr/bin/python\n",
+                                                       "import boto.ec2.elb\n",
+                                                       "import sys\n",
+                                                       "import time\n",
+                                                       "elb = boto.ec2.elb.ELBConnection()\n",
+                                                       "for i in range(120):\n",
+                                                       "   if i > 0:\n",
+                                                       "      time.sleep(5)\n",
+                                                       "   health=elb.describe_instance_health('", { "Ref": "ElasticLoadBalancer" }, "')\n",
+                                                       "   healthy_instances = [i for i in health if i.state == 'InService']\n",
+                                                       "   if len(healthy_instances) == ", { "Ref": "AppInstanceCountDesired" }, ":\n",
+                                                       "      break\n",
+                                                       "else:\n",
+                                                       "   print >> sys.stderr, 'Gave up waiting for ", { "Ref": "AppInstanceCountDesired" }, "instances.'\n",
+                                                       "   sys.exit(1)\n"]]
+                                },
+                                "mode" : "000750",
+                                "owner" : "ec2-user",
+                                "group" : "ec2-user"
+                            },
+                            "/home/ec2-user/tools/aws" : {
+                                "source" : "https://raw.github.com/timkay/aws/master/aws",
+                                "mode" : "000755",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"                               
+                            },
+                            "/home/ec2-user/.awssecret" : {
+                                "content" : { "Fn::Join" : ["", [{ "Ref": "CfnKeys" }, "\n",
+                                                                 { "Fn::GetAtt": ["CfnKeys", "SecretAccessKey"] }]] },
+                                "mode" : "000600",
+                                "owner": "ec2-user",
+                                "group": "ec2-user"
+                            },
+                            "/root/.awssecret" : {
+                                "content" : { "Fn::Join" : ["", [{ "Ref": "CfnKeys" }, "\n",
+                                                                 { "Fn::GetAtt": ["CfnKeys", "SecretAccessKey"] }]] },
+                                "mode" : "000600",
+                                "owner": "root",
+                                "group": "root"
+                            }
+                        },
+                        "commands" : {
+                            "00install_aws" : {
+                                "command" : ["perl", "/home/ec2-user/tools/aws", "--install"]
+                            },
+                            "01run_bees" : {
+                                "command" : ["su", "ec2-user", "-c", "./run-bees"],
+                                "cwd" : "/home/ec2-user",
+                                "test" : ["test", "true", "=", { "Ref": "RunTests" }]
+                            }
+                        }
+                        
+                    }
+                }
+            },
+            "Properties": {
+                "SecurityGroups": [ { "Ref": "ControllerSecurityGroup" } ],
+                "KeyName": { "Ref": "KeyName" },
+                "ImageId": { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "amzn"]},
+                "InstanceType": { "Ref": "BeesControllerInstanceType" },
+                "Tags": [ { "Key": "Name", "Value": "bees-controller" } ],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [ "", [ "#!/bin/bash\n",
+                                            "yum update -y aws-cfn-bootstrap\n",
+                                            "/opt/aws/bin/cfn-init -v -s ", { "Ref": "AWS::StackName" },
+                                            " -r BeeController --access-key ", { "Ref": "CfnKeys" },
+                                            " --secret-key ", { "Fn::GetAtt": ["CfnKeys", "SecretAccessKey"] },
+                                            " --region ", {  "Ref": "AWS::Region" }, "\n",
+                                            "/opt/aws/bin/cfn-signal -e $? '", { "Ref" : "ControllerHandle" }, "'\n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        "ElasticLoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Properties": {
+                "AvailabilityZones": { "Fn::GetAZs" : "" } ,
+                "Listeners": [ { "LoadBalancerPort": "80",
+                                 "InstancePort": "80",
+                                 "Protocol": "HTTP",
+                                 "InstanceProtocol": "HTTP" } ],
+                "HealthCheck": {
+                    "Target": "HTTP:80/",
+                    "HealthyThreshold": "2",
+                    "UnhealthyThreshold": "10",
+                    "Interval": "30",
+                    "Timeout": "5"
+                }
+            }
+        },
+        "AppGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "AvailabilityZones": { "Fn::GetAZs" : "" },
+                "LaunchConfigurationName": { "Ref": "LaunchConfig" },
+                "MinSize": { "Ref": "AppInstanceCountMin" },
+                "MaxSize": { "Ref": "AppInstanceCountMax" },
+                "DesiredCapacity": {  "Ref": "AppInstanceCountDesired" },
+                "LoadBalancerNames": [ { "Ref": "ElasticLoadBalancer" } ]
+            }
+        },
+        "LaunchConfig": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Metadata" : {
+                "AWS::CloudFormation::Init" : {
+                    "config" : {
+                        "packages" : {
+                            "yum" : {
+                                "nginx" : []
+                            }
+                        },
+                        "services" : {
+                            "sysvinit" : {
+                                "nginx" : {
+                                    "enabled" : "true",
+                                    "ensureRunning" : "true",
+                                    "packages" : {
+                                        "yum" : ["nginx"]
+                                    }
+                                }
+                            }   
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "SpotPrice" : { "Ref" : "SpotPrice" },
+                "ImageId": { "Fn::FindInMap": [ "AWSRegionPlatform2AMI", { "Ref": "AWS::Region" }, "amzn"]},
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": ["", [ "#!/bin/bash\n",
+                                           "yum update -y aws-cfn-bootstrap\n",
+                                           "/opt/aws/bin/cfn-init -v -s ", { "Ref": "AWS::StackName" },
+                                           " -r LaunchConfig --access-key ", { "Ref": "CfnKeys" },
+                                           " --secret-key ", { "Fn::GetAtt": ["CfnKeys", "SecretAccessKey"] },
+                                           " --region ", {  "Ref": "AWS::Region" }, "\n"]]}
+                },
+                "SecurityGroups": [ { "Ref": "AppSecurityGroup" } ],
+                "InstanceType": { "Ref": "AppInstanceType" },
+                "KeyName": {  "Ref": "KeyName"  }
+            }
+        },
+        "ControllerSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable SSH access",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": { "Ref" : "SSHLocation"}
+                    }
+                ]
+            }
+        },
+        "BeeSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable SSH access and HTTP access on the inbound port",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "SourceSecurityGroupName" : { "Ref" : "ControllerSecurityGroup" }
+                    }
+                ]
+            }
+        },
+        "AppSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable tcp access on the inbound port for ELB and SSH from outside",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "SourceSecurityGroupOwnerId" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.OwnerAlias"]},
+                        "SourceSecurityGroupName" : {"Fn::GetAtt" : ["ElasticLoadBalancer", "SourceSecurityGroup.GroupName"]}
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": { "Ref" : "SSHLocation"}
+                    }]
+            }
+        },
+        
+        "ControllerHandle" : {
+            "Type" : "AWS::CloudFormation::WaitConditionHandle"
+        },
+          
+        "ControllerCondition" : {
+            "Type" : "AWS::CloudFormation::WaitCondition",
+            "DependsOn" : "BeeController",
+            "Properties" : {
+                "Handle" : { "Ref" : "ControllerHandle" },
+                "Timeout" : "900"
+            }
+        }
+    },
+    "Outputs": {
+        "WebsiteURL": {
+            "Description": "URL of website under test",
+            "Value": { "Fn::Join": ["", ["http://", { "Fn::GetAtt": ["ElasticLoadBalancer", "DNSName"] }]]}
+        },
+        "BeeControllerAddress": {
+            "Description": "Public address of the bees controller",
+            "Value": {  "Fn::GetAtt": [ "BeeController", "PublicDnsName" ] }
+        },
+        "TestResultsURL": {
+            "Value": { "Fn::Join": [ "", ["https://", { "Fn::GetAtt": [ "ResultBucket", "DomainName" ] }, "/swarm-results.tar.gz" ]]},
+            "Description": "URL of Results file"
+        }
+    }
+}

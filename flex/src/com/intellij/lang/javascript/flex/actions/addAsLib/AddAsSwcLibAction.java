@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.addAsLib;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -43,8 +44,7 @@ public class AddAsSwcLibAction extends AnAction {
     final boolean enabled = project != null && containsFlashModule(project) && !getRoots(e).isEmpty();
 
     e.getPresentation().setText(FlexBundle.message("add.as.library.title") + "...");
-    e.getPresentation().setVisible(enabled);
-    e.getPresentation().setEnabled(enabled);
+    e.getPresentation().setEnabledAndVisible(enabled);
   }
 
   @NotNull

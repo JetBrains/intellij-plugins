@@ -259,6 +259,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
     return myIosPackagingOptions;
   }
 
+  @NotNull
   @Override
   public Icon getIcon() {
     return getNature().getIcon();

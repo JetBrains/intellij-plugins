@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.module.Module;
@@ -8,11 +9,8 @@ import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
-import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractCucumberExtension;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -42,25 +40,11 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
     return false;
   }
 
+  // ToDo: remove
   @NotNull
   @Override
   public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = ContainerUtil.newHashSet();
-    }
-    final Set<String> glues = gluesFromOtherFiles;
-
-    file.accept(new GherkinRecursiveElementVisitor() {
-      @Override
-      public void visitStep(GherkinStep step) {
-        final String glue = CucumberJavaUtil.getPackageOfStep(step);
-        if (glue != null) {
-          CucumberJavaUtil.addGlue(glue, glues);
-        }
-      }
-    });
-
-    return glues;
+    return Collections.emptyList();
   }
 
   @Override

@@ -1,11 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.css.refs;
 
-import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -17,6 +15,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2Binding;
+import org.angular2.lang.expr.psi.impl.Angular2PropertyImpl;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -52,18 +51,14 @@ public class Angular2CssReferencesContributor extends PsiReferenceContributor {
           return true;
         }
       }));
-  private static final PsiElementPattern.Capture<PsiElement> NG_CLASS_PATTERN_IN_JS_PROPERTY =
-    PlatformPatterns.psiElement()
-      .withElementType(PlatformPatterns.elementType().or(JSTokenTypes.STRING_LITERAL, JSTokenTypes.IDENTIFIER))
+  private static final PsiElementPattern.Capture<Angular2PropertyImpl> NG_CLASS_PATTERN_IN_JS_PROPERTY =
+    PlatformPatterns.psiElement(Angular2PropertyImpl.class)
       .and(new FilterPattern(new ElementFilter() {
         @Override
         public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-          PsiElement parent;
           return context != null
-                 && (parent = context.getParent()) instanceof JSProperty
-                 && parent.getLanguage().is(Angular2Language.INSTANCE)
                  && isNgClassAttribute(PsiTreeUtil.getParentOfType(context, XmlAttribute.class))
-                 && checkHierarchy(parent,
+                 && checkHierarchy(context,
                                    JSObjectLiteralExpression.class,
                                    Angular2Binding.class);
         }
@@ -82,7 +77,7 @@ public class Angular2CssReferencesContributor extends PsiReferenceContributor {
           if (context instanceof Angular2HtmlPropertyBinding
               || (context instanceof XmlAttribute
                   && !context.getLanguage().is(Angular2Language.INSTANCE))) {
-            info = Angular2AttributeNameParser.parse(((XmlAttribute)context).getName(), false);
+            info = Angular2AttributeNameParser.parse(((XmlAttribute)context).getName(), ((XmlAttribute)context).getParent());
             return (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
                     && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.CLASS);
           }

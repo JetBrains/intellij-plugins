@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +24,7 @@ public class Angular2AttributeNameVariantsBuilder {
       }
     }
     if (includeDataPrefixVariants) {
-      return ContainerUtil.concat(result, ContainerUtil.map2List(result, r -> "data-" + r));
+      return ContainerUtil.concat(result, ContainerUtil.map2List(result, r -> HtmlUtil.HTML5_DATA_ATTR_PREFIX + r));
     }
     return result;
   }

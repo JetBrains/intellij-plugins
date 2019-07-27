@@ -6,9 +6,10 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSInjectionBracesUtil;
-import com.intellij.lang.javascript.JSInjectionController;
-import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
+import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil;
+import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -27,12 +28,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
 
   public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
-    .delimitersFactory(Angular2Language.INSTANCE.getDisplayName(),
+    .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
                        (project, key) -> /* no support for custom delimiters*/ null);
 
   @NotNull
@@ -41,6 +43,7 @@ public class Angular2Injector implements MultiHostInjector {
     return Arrays.asList(JSLiteralExpression.class, XmlText.class);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     final PsiElement parent = context.getParent();
@@ -100,6 +103,7 @@ public class Angular2Injector implements MultiHostInjector {
                                                       braces.first, braces.second, INTERPOLATION);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Nullable
   private static String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
     if (valueLength == 0) {
@@ -134,7 +138,7 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2LangUtil.isDirective(decoratorName) || "View".equals(decoratorName),
+                                      decorator -> isAngularDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, VIEW_DEC),
                                       language, fileExtension);
   }
 
@@ -142,14 +146,12 @@ public class Angular2Injector implements MultiHostInjector {
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
                                                  @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
-                                                 @NotNull Predicate<String> decoratorNameAcceptor,
+                                                 @NotNull Predicate<? super ES6Decorator> decoratorAcceptor,
                                                  @NotNull Language language,
                                                  @Nullable String fileExtension) {
-    final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
-    final JSExpression expression = callExpression != null ? callExpression.getMethodExpression() : null;
-    if (expression instanceof JSReferenceExpression) {
-      final String decoratorName = ((JSReferenceExpression)expression).getReferenceName();
-      if (decoratorNameAcceptor.test(decoratorName)) {
+    final ES6Decorator decorator = PsiTreeUtil.getContextOfType(parent, ES6Decorator.class);
+    if (decorator != null) {
+      if (decoratorAcceptor.test(decorator)) {
         inject(registrar, context, language, fileExtension);
         JSFormattableInjectionUtil.setReformattableInjection(context, language);
       }
@@ -161,6 +163,6 @@ public class Angular2Injector implements MultiHostInjector {
 
   private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull JSLiteralExpression context, @NotNull Language language,
                              @Nullable String extension) {
-    JSInjectionController.injectInQuotedLiteral(registrar, language, extension, context, null, null);
+    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null);
   }
 }

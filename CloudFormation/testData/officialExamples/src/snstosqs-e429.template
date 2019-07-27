@@ -1,0 +1,193 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template SNSToSQS: This Template creates an SNS topic that can send messages to two SQS queues with appropriate permissions for one IAM user to publish to the topic and another to read messages from the queues. MySNSTopic is set up to publish to two subscribed endpoints, which are two SQS queues (MyQueue1 and MyQueue2). MyPublishUser is an IAM user that can publish to MySNSTopic using the Publish API. MyTopicPolicy assigns that permission to MyPublishUser. MyQueueUser is an IAM user that can read messages from the two SQS queues. MyQueuePolicy assigns those permissions to MyQueueUser. It also assigns permission for MySNSTopic to publish its notifications to the two queues. The template creates access keys for the two IAM users with MyPublishUserKey and MyQueueUserKey. ***Warning*** you will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "MyPublishUserPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Password for the IAM user MyPublishUser",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "MyQueueUserPassword": {
+      "NoEcho": "true",
+      "Type": "String",
+      "Description" : "Password for the IAM user MyQueueUser",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "ConstraintDescription" : "password must be between 1 and 41 characters."
+    }
+  },
+
+  "Resources" : {
+    "MySNSTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [ {
+          "Endpoint" : { "Fn::GetAtt" : ["MyQueue1", "Arn"]},
+          "Protocol" : "sqs"
+        }, {
+          "Endpoint" : { "Fn::GetAtt" : ["MyQueue2", "Arn"]},
+          "Protocol" : "sqs"
+        } ]
+      }
+    },
+
+    "MyQueue1" : {
+      "Type" : "AWS::SQS::Queue"
+    },
+
+    "MyQueue2" : {
+      "Type" : "AWS::SQS::Queue"
+    },
+
+    "MyPublishUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "LoginProfile": {
+          "Password": {"Ref" : "MyPublishUserPassword"}
+        }
+      }
+    },
+
+    "MyPublishUserKey" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : {"Ref": "MyPublishUser"}
+      }
+    },
+
+    "MyPublishTopicGroup" : {
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "Policies": [ {
+          "PolicyName": "MyTopicGroupPolicy",
+          "PolicyDocument": {
+            "Statement":[ {
+              "Effect":"Allow",
+ 	      "Action":[ "sns:Publish" ],
+              "Resource": {"Ref" : "MySNSTopic"}
+            } ]
+          }
+        } ]
+      }
+    },
+
+    "AddUserToMyPublishTopicGroup" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "Properties" : {
+        "GroupName": {"Ref" : "MyPublishTopicGroup"},
+        "Users" : [{ "Ref" : "MyPublishUser" }]
+      }
+    },
+
+    "MyQueueUser" : {
+     "Type" : "AWS::IAM::User",
+     "Properties" : {
+       "LoginProfile": {
+         "Password": {"Ref" : "MyQueueUserPassword"}
+       }
+     }
+    },
+
+    "MyQueueUserKey" : {
+     "Type" : "AWS::IAM::AccessKey",
+     "Properties" : {
+          "UserName" : {"Ref": "MyQueueUser"}
+      }
+    },
+
+    "MyRDMessageQueueGroup" : {
+      "Type" : "AWS::IAM::Group",
+      "Properties" : {
+        "Policies": [ {
+          "PolicyName": "MyQueueGroupPolicy",
+          "PolicyDocument": {
+            "Statement":[ {
+              "Effect":"Allow",
+ 	      "Action":[ "sqs:DeleteMessage", "sqs:ReceiveMessage" ],
+              "Resource":[ { "Fn::GetAtt" : ["MyQueue1", "Arn"]}, { "Fn::GetAtt" : ["MyQueue2", "Arn"]} ]
+            } ]
+          }
+        } ]
+      }
+    },
+
+    "AddUserToMyQueueGroup" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "Properties" : {
+        "GroupName": {"Ref" : "MyRDMessageQueueGroup"},
+        "Users" : [{ "Ref" : "MyQueueUser" }]
+      }
+    },
+
+    "MyQueuePolicy" : {
+      "Type" : "AWS::SQS::QueuePolicy",
+      "Properties" : {
+        "PolicyDocument":  {
+          "Id":"MyQueuePolicy",
+          "Statement" : [ {
+            "Sid":"Allow-SendMessage-To-Both-Queues-From-SNS-Topic",
+	    "Effect":"Allow",
+	    "Principal" : {"AWS" : "*"},
+ 	    "Action":["sqs:SendMessage"],
+	    "Resource": "*",
+            "Condition": {
+              "ArnEquals": { "aws:SourceArn": { "Ref" : "MySNSTopic" } }
+            }
+          } ]
+        },
+        "Queues" : [{"Ref" : "MyQueue1"}, {"Ref" : "MyQueue2"}]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "MySNSTopicTopicARN" : {
+      "Value" : { "Ref" : "MySNSTopic" },
+      "Description" : "Topic ARN of newly created SNS topic"
+    },
+    "MyQueue1Info" : {
+      "Value" : {"Fn::Join" : [ " ", [ "ARN:", { "Fn::GetAtt" : [ "MyQueue1", "Arn" ] }, "URL:", { "Ref" : "MyQueue1" } ] ]},
+      "Description" : "Queue1 details"
+    },
+    "MyQueue2Info" : {
+      "Value" : {"Fn::Join" : [ " ", [ "ARN:", { "Fn::GetAtt" : [ "MyQueue2", "Arn" ] }, "URL:", { "Ref" : "MyQueue2" } ] ]},
+      "Description" : "Queue2 details"
+    },
+    "MyPublishUserInfo" : {
+      "Description" : "Information for publisher",
+      "Value" : {"Fn::Join" : [
+        " ",
+        [
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyPublishUser", "Arn" ] },
+          "Access Key:",
+          {"Ref" : "MyPublishUserKey"},
+          "Secret Key:",
+          {"Fn::GetAtt" : ["MyPublishUserKey", "SecretAccessKey"]}
+        ]
+      ]}
+    },
+
+    "MyQueueUserInfo" : {
+      "Description" : "Information for consumer",
+      "Value" : {"Fn::Join" : [
+        " ",
+        [
+          "ARN:",
+          { "Fn::GetAtt" : [ "MyQueueUser", "Arn" ] },
+          "Access Key:",
+          {"Ref" : "MyQueueUserKey"},
+          "Secret Key:",
+          {"Fn::GetAtt" : ["MyQueueUserKey", "SecretAccessKey"]}
+        ]
+      ]}
+    }
+  }
+}

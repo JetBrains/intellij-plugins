@@ -25,6 +25,22 @@ public class Angular2HtmlLexer extends HtmlLexer {
       tokenizeExpansionForms, interpolationConfig))), true);
   }
 
+  @Override
+  protected boolean isHtmlTagState(int state) {
+    return state == _Angular2HtmlLexer.START_TAG_NAME || state == _Angular2HtmlLexer.END_TAG_NAME;
+  }
+
+  @Override
+  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+    super.start(buffer, startOffset, endOffset,
+                ((Angular2HtmlMergingLexer)getDelegate()).initExpansionFormNestingLevel(initialState));
+  }
+
+  @Override
+  public int getState() {
+    return super.getState() | ((Angular2HtmlMergingLexer)getDelegate()).getExpansionFormNestingLevelState();
+  }
+
   public static class Angular2HtmlMergingLexer extends MergingLexerAdapterBase {
 
     public static boolean isLexerWithinInterpolation(int state) {
@@ -47,55 +63,54 @@ public class Angular2HtmlLexer extends HtmlLexer {
       return state & BASE_STATE_MASK;
     }
 
-    private static final int BASE_STATE_MASK = 0x7F;
-    private static final int STATE_SHIFT = BASE_STATE_SHIFT + 3;
-    private static final int STATE_MASK = 0xff << STATE_SHIFT;
+    private static final int EXPANSION_LEVEL_STATE_SHIFT = 28;
+    private static final int EXPANSION_LEVEL_STATE_MASK = 0xf << EXPANSION_LEVEL_STATE_SHIFT;
 
-    private int myExpansionFormNestingLevel;
+    private int myExpansionFormNestingLevelCur;
+    private int myExpansionFormNestingLevelNext;
 
     public Angular2HtmlMergingLexer(@NotNull FlexAdapter original) {
       super(original);
     }
 
-    @Override
-    public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
-      getFlexLexer().setExpansionFormNestingLevel((initialState & STATE_MASK) >> STATE_SHIFT);
-      super.start(buffer, startOffset, endOffset, initialState & ~STATE_MASK);
+    public int initExpansionFormNestingLevel(int initialState) {
+      int levelState = (initialState & EXPANSION_LEVEL_STATE_MASK) >> EXPANSION_LEVEL_STATE_SHIFT;
+      myExpansionFormNestingLevelCur = (levelState >> 2) & 0x3;
+      myExpansionFormNestingLevelNext = levelState & 0x3;
+      getFlexLexer().setExpansionFormNestingLevel(myExpansionFormNestingLevelCur);
+      return initialState & ~EXPANSION_LEVEL_STATE_MASK;
     }
 
-    @Override
-    public int getState() {
-      return super.getState() | ((myExpansionFormNestingLevel & 0xFF) << STATE_SHIFT);
+
+    public int getExpansionFormNestingLevelState() {
+      return (((myExpansionFormNestingLevelCur & 0x3) << 2) + (getExpansionFormNestingLevelNext() & 0x3)) << EXPANSION_LEVEL_STATE_SHIFT;
+    }
+
+    private int getExpansionFormNestingLevelNext() {
+      return myExpansionFormNestingLevelNext >= 0 ? myExpansionFormNestingLevelNext
+                                                  : getFlexLexer().getExpansionFormNestingLevel();
     }
 
     @Override
     public MergeFunction getMergeFunction() {
-      return Angular2HtmlMergingLexer::merge;
-    }
-
-    @Override
-    public void restore(@NotNull LexerPosition position) {
-      getFlexLexer().setExpansionFormNestingLevel(((MyLexerPosition)position).getExpansionFormNestingLevel());
-      super.restore(((MyLexerPosition)position).getOriginal());
-    }
-
-    @NotNull
-    @Override
-    public LexerPosition getCurrentPosition() {
-      return new MyLexerPosition(super.getCurrentPosition(), myExpansionFormNestingLevel);
+      return this::merge;
     }
 
     @Override
     public void advance() {
-      myExpansionFormNestingLevel = getFlexLexer().getExpansionFormNestingLevel();
+      myExpansionFormNestingLevelCur = getExpansionFormNestingLevelNext();
       super.advance();
+      if (myExpansionFormNestingLevelNext >= 0) {
+        getFlexLexer().setExpansionFormNestingLevel(myExpansionFormNestingLevelNext);
+        myExpansionFormNestingLevelNext = -1;
+      }
     }
 
     private _Angular2HtmlLexer getFlexLexer() {
       return (_Angular2HtmlLexer)((FlexAdapter)getOriginal()).getFlex();
     }
 
-    private static IElementType merge(IElementType type, Lexer originalLexer) {
+    protected IElementType merge(IElementType type, Lexer originalLexer) {
       final IElementType next = originalLexer.getTokenType();
       if (type == INTERPOLATION_START
           && next != INTERPOLATION_EXPR
@@ -114,36 +129,6 @@ public class Angular2HtmlLexer extends HtmlLexer {
         originalLexer.advance();
       }
       return type;
-    }
-  }
-
-  private static class MyLexerPosition implements LexerPosition {
-
-    private final LexerPosition myOriginal;
-    private final int myExpansionFormNestingLevel;
-
-    private MyLexerPosition(@NotNull LexerPosition original, int expansionFormNestingLevel) {
-      myOriginal = original;
-      myExpansionFormNestingLevel = expansionFormNestingLevel;
-    }
-
-    public int getExpansionFormNestingLevel() {
-      return myExpansionFormNestingLevel;
-    }
-
-    @NotNull
-    public LexerPosition getOriginal() {
-      return myOriginal;
-    }
-
-    @Override
-    public int getOffset() {
-      return myOriginal.getOffset();
-    }
-
-    @Override
-    public int getState() {
-      return myOriginal.getState();
     }
   }
 }

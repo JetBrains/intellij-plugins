@@ -9,6 +9,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import com.intellij.xml.Html5SchemaProvider;
@@ -16,26 +17,37 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptorEx;
 import com.intellij.xml.util.XmlUtil;
-import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
+
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
 
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    Angular2Directive directive = Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class));
-    if (directive == null) {
+    Angular2DirectiveSelector directiveSelector;
+    if (element instanceof Angular2HtmlNgContentSelector) {
+      directiveSelector = ((Angular2HtmlNgContentSelector)element).getSelector();
+    }
+    else {
+      directiveSelector = doIfNotNull(Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class)),
+                                      dir -> dir.getSelector());
+    }
+    if (directiveSelector == null) {
       return PsiReference.EMPTY_ARRAY;
     }
     List<PsiReference> result = new SmartList<>();
-    for (SimpleSelectorWithPsi selector : directive.getSelector().getSimpleSelectorsWithPsi()) {
+    for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
       String elementName = null;
       if (selector.getElement() != null && selector.getElement().getParent() == element) {
         result.add(new HtmlElementReference(selector.getElement()));
@@ -66,7 +78,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
       }
       XmlFile xmlFile = XmlUtil.findNamespace(baseFile, htmlNS);
       if (xmlFile != null) {
-        final XmlDocument document = xmlFile.getDocument();
+        final XmlDocument document = AstLoadingFilter.forceAllowTreeLoading(xmlFile, xmlFile::getDocument);
         if (document != null && document.getMetaData() instanceof XmlNSDescriptorEx) {
           return CachedValueProvider.Result.create((XmlNSDescriptorEx)document.getMetaData(), xmlFile);
         }
@@ -78,7 +90,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
   @Nullable
   public static XmlElementDescriptor getElementDescriptor(@NotNull String name, @NotNull PsiFile baseFile) {
     XmlNSDescriptorEx descriptorEx = getNamespaceDescriptor(baseFile);
-    return descriptorEx != null ? descriptorEx.getElementDescriptor(name, "http://www.w3.org/1999/xhtml") : null;
+    return descriptorEx != null ? descriptorEx.getElementDescriptor(name, XmlUtil.XHTML_URI) : null;
   }
 
   private static class HtmlElementReference extends PsiReferenceBase<PsiElement> {
@@ -98,7 +110,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     }
   }
 
-  private static class HtmlAttributeReference extends PsiReferenceBase<PsiElement> {
+  private static class HtmlAttributeReference extends PsiPolyVariantReferenceBase<PsiElement> {
 
     private final Angular2DirectiveSelectorPsiElement mySelectorPsiElement;
     private final String myElementName;
@@ -109,16 +121,18 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
       myElementName = elementName;
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public PsiElement resolve() {
+    public ResolveResult[] multiResolve(boolean incompleteCode) {
       XmlElementDescriptor descriptor =
         myElementName != null ? getElementDescriptor(myElementName, getElement().getContainingFile()) : null;
       if (descriptor == null) {
         descriptor = getElementDescriptor("div", getElement().getContainingFile());
       }
       XmlAttributeDescriptor attributeDescriptor = descriptor != null ? descriptor.getAttributeDescriptor(getValue(), null) : null;
-      return attributeDescriptor != null ? attributeDescriptor.getDeclaration() : mySelectorPsiElement;
+      return PsiElementResolveResult.createResults(attributeDescriptor != null
+                                                   ? attributeDescriptor.getDeclarations()
+                                                   : Collections.singleton(mySelectorPsiElement));
     }
   }
 }

@@ -1,0 +1,94 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "AWS CloudFormation Sample Template Redshift: Create an Amazon Redshift cluster. **WARNING** This template creates Amazon Redshift Cluster. You will be billed for the AWS resources used if you create a stack from this template.",
+ 
+  "Parameters": {
+    "DatabaseName": {
+      "Description": "The name of the first database to be created when the redshift cluster is created",
+      "Type": "String",
+      "Default": "defaultdb",
+      "AllowedPattern": "([a-z]|[0-9])+",
+      "ConstraintDescription" : "must contain a-z or 0-9 only."
+    },
+
+    "ClusterType": {
+      "Description": "The type of the cluster",
+      "Type": "String",
+      "Default": "single-node",
+      "AllowedValues": [ "single-node", "multi-node" ],
+      "ConstraintDescription" : "must be single-node or multi-node."
+    },
+
+    "NumberOfNodes": {
+      "Description": "The number of compute nodes in the redshift cluster.  When cluster type is specified as: 1) single-node, the NumberOfNodes parameter should be specified as 1, 2) multi-node, the NumberOfNodes parameter should be greater than 1",
+      "Type": "Number",
+      "Default": "1"
+    },
+
+    "NodeType": {
+      "Description": "The node type to be provisioned for the redshift cluster",
+      "Type": "String",
+      "Default": "dc1.large",
+      "AllowedValues" : [ "dw1.xlarge", "dw1.8xlarge", "dw2.large", "dw2.8xlarge", "dc1.large", "dc1.8xlarge", "ds1.xlarge", "ds1.8xlarge", "ds2.xlarge", "ds2.8xlarge" ]
+,
+      "ConstraintDescription" : "must be a valid RedShift node type."
+    },
+
+    "MasterUsername": {
+      "Description": "The user name associated with the master user account for the redshift cluster that is being created",
+      "Type": "String",
+      "AllowedPattern": "([a-z])([a-z]|[0-9])*",
+      "NoEcho": "true",
+      "ConstraintDescription" : "must start with a-z and contain only a-z or 0-9."
+    },
+
+    "MasterUserPassword": {
+      "Description": "The password associated with the aster user account for the redshift cluster that is being created. ",
+      "Type": "String",
+      "NoEcho": "true",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    }
+  },
+
+  "Conditions": {
+    "IsMultiNodeCluster": { "Fn::Equals": [ { "Ref": "ClusterType" }, "multi-node" ] }
+  },
+
+  "Resources": {
+    "RedshiftCluster": {
+      "Type": "AWS::Redshift::Cluster",
+      "Properties": {
+        "ClusterType": { "Ref": "ClusterType" },
+        "NumberOfNodes": { "Fn::If": [ "IsMultiNodeCluster", { "Ref": "NumberOfNodes" }, { "Ref": "AWS::NoValue" } ] },
+        "NodeType": { "Ref": "NodeType" },
+        "DBName": { "Ref": "DatabaseName" },
+        "MasterUsername": { "Ref": "MasterUsername" },
+        "MasterUserPassword": { "Ref": "MasterUserPassword" },
+        "ClusterParameterGroupName": { "Ref": "RedshiftClusterParameterGroup" }
+      },
+      "DeletionPolicy": "Snapshot"
+    },
+    "RedshiftClusterParameterGroup": {
+      "Type": "AWS::Redshift::ClusterParameterGroup",
+      "Properties": {
+        "Description": "Cluster paraeter group",
+        "ParameterGroupFamily": "redshift-1.0",
+        "Parameters": [ {
+          "ParameterName": "enable_user_activity_logging",
+          "ParameterValue": "true"
+        } ]
+      }
+    }
+  },
+  "Outputs": {
+    "ClusterEndpoint": {
+      "Description" : "Endpoint for the newly created RedShift cluster",
+      "Value": {
+        "Fn::Join": [ ":", [ { "Fn::GetAtt": [ "RedshiftCluster", "Endpoint.Address" ] }, { "Fn::GetAtt": [ "RedshiftCluster", "Endpoint.Port" ] } ] ] }
+    }
+  }
+}

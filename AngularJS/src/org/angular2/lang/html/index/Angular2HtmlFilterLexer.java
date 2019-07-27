@@ -20,15 +20,16 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.lexer.Angular2TokenTypes;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer;
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 
 import java.util.Set;
 
 import static com.intellij.psi.tree.TokenSet.create;
 import static com.intellij.psi.tree.TokenSet.orSet;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.ALL_ATTRIBUTES;
-import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.XML_ATTRIBUTE;
 
 public class Angular2HtmlFilterLexer extends BaseFilterLexer {
 
@@ -64,7 +65,9 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
       Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_END,
       Angular2HtmlTokenTypes.EXPANSION_FORM_CASE_START,
       XmlTokenType.XML_COMMA,
-      Angular2TokenTypes.ESCAPE_SEQUENCE
+      Angular2TokenTypes.ESCAPE_SEQUENCE,
+      Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA,
+      Angular2HtmlHighlightingLexer.EXPRESSION_WHITE_SPACE
     )
   );
 
@@ -95,8 +98,8 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
         scanWordsInToken(UsageSearchContext.IN_STRINGS, false, false);
       }
       else if (ALL_ATTRIBUTES.contains(tokenType)) {
-        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(myDelegate.getTokenText(), true);
-        if (info.elementType != XML_ATTRIBUTE) {
+        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(myDelegate.getTokenText());
+        if (info.type != Angular2AttributeType.REGULAR) {
           addOccurrenceInToken(UsageSearchContext.IN_CODE, getTokenText().lastIndexOf(info.name), info.name.length());
         }
       }

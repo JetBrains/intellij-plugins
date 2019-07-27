@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
@@ -33,7 +21,7 @@ import com.intellij.psi.css.impl.util.CssDocumentationProvider;
 import com.intellij.testFramework.LightProjectDescriptor;
 
 public class FlexDocumentationTest extends JSAbstractDocumentationTest {
-  private static final String BASE_PATH = "/as_documentation/";
+  private static final String BASE_PATH = "as_documentation/";
 
   @Override
   protected String getBasePath() {
@@ -67,7 +55,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) {
@@ -348,7 +336,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
-    FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
+    FlexTestUtils.setupCustomSdk(getModule(), swc, null, asdoc);
 
     doTest(files, getTestName(false), false, Check.Url);
   }
@@ -454,11 +442,11 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   private void testWithLibrary(String swc, String sources, String docs, Runnable test) {
-    FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
+    FlexTestUtils.addLibrary(getModule(), "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
     try {
       test.run();
     } finally {
-      FlexTestUtils.removeLibrary(myModule, "TestLib");
+      FlexTestUtils.removeLibrary(getModule(), "TestLib");
     }
   }
 
@@ -466,7 +454,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testGenericType() {
     setUpJdk();
     final String testName = getTestName(false);
-    FlexTestUtils.addASDocToSdk(myModule, getClass(), testName);
+    FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
     doTest(new String[]{testName}, "as", testName);
   }
 

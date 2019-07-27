@@ -4,6 +4,7 @@ package org.angular2.lang.metadata.psi;
 import com.intellij.lang.Language;
 import com.intellij.psi.stubs.*;
 import org.angular2.lang.metadata.stubs.MetadataElementStub;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IS
     throw new UnsupportedOperationException();
   }
 
+  @NonNls
   @Override
   public String toString() {
     return "METADATA_JSON:" + super.toString();

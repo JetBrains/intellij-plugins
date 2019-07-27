@@ -1,0 +1,297 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template MineCraft_Server: Minecraft is a game about placing blocks to build anything you can imagine. At night monsters come out, make sure to build a shelter before that happens. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+
+    "Difficulty" : {
+      "Description" : "Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server",
+      "Type" : "String",
+      "Default" : "Easy",
+      "AllowedValues" : [ "Peaceful", "Easy", "Normal", "Hard" ],
+      "ConstraintDescription" : "must be one of Peaceful, Easy, Normal, Hard."
+    },
+
+    "GameMode" : {
+      "Description" : "Defines the mode of gameplay",
+      "Type" : "String",
+      "Default" : "Survival",
+      "AllowedValues" : [ "Survival", "Creative" ],
+      "ConstraintDescription" : "must be one of Survival, Creative."
+    },
+
+    "Message" : {
+      "Description" : "This is the message that is displayed in the server list of the client, below the name",
+      "Type" : "String",
+      "Default" : "Minecraft in the AWS Cloud"
+    },
+
+    "LevelName" : {
+      "Description" : "The level-name value will be used as the world name and its folder name.",
+      "Type" : "String",
+      "Default" : "world"
+    },
+
+    "NumberOfPlayers" : {
+      "Description" : "Number of players this Minecraft server will support (1, up to 10, up to 25, up to 100, up to 200)",
+      "Type" : "Number",
+      "Default" : "1",
+      "AllowedValues" : [ "1", "10", "25", "100", "200" ],
+      "ConstraintDescription" : "must be one of 1,10,25,100,200."
+    },
+
+    "LevelSeed" : {
+      "Description" : "Seed for level generation",
+      "Type" : "String",
+      "Default" : "HelloWorld"
+    },
+
+    "PvP" : {
+      "Description" : "Enable PvP on the server. Note: Hitting a player while having PvP set to false and having tamed wolves will still cause the wolves to attack the player who was hit. true - Players will be able to kill each other. false - Players cannot kill other players (Also called PvE)",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "SpawnNPCS" : {
+      "Description" : "Determines if non-player characters (NPCs) will be spawned",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "SpawnAnimals" : {
+      "Description" : "Determines if Animals will be able to spawn",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "SpawnMonsters" : {
+      "Description" : "Determines if monsters will be spawned",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "GenerateStructures" : {
+      "Description" : "Defines whether structures (such as NPC Villages) will be generated",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "AllowNether" : {
+      "Description" : "Allows players to travel to the Nether",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be one of true, false."
+    },
+
+    "LevelType" : {
+      "Description" : "Determines the type of map that is generated. DEFAULT - Standard world with hills, valleys, water, etc. FLAT - A flat world with no features, meant for building.",
+      "Type" : "String",
+      "Default" : "DEFAULT",
+      "AllowedValues" : [ "DEFAULT", "FLAT" ],
+      "ConstraintDescription" : "must be one of DEFAULT, FLAT."
+    },
+    "SSHLocation" : {
+      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+   }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "1"     : { "InstanceType" : "t1.micro",  "Arch" : "32", "MemSize" : "512" },
+      "10"    : { "InstanceType" : "m1.small",  "Arch" : "32", "MemSize" : "1024" },
+      "25"    : { "InstanceType" : "m1.medium", "Arch" : "64", "MemSize" : "1024" },
+      "100"   : { "InstanceType" : "m1.large",  "Arch" : "64", "MemSize" : "1024" },
+      "200"   : { "InstanceType" : "m1.xlarge", "Arch" : "64", "MemSize" : "1024" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "32" : "ami-7f418316", "64" : "ami-7341831a" },
+      "us-west-1"      : { "32" : "ami-951945d0", "64" : "ami-971945d2" },
+      "us-west-2"      : { "32" : "ami-16fd7026", "64" : "ami-10fd7020" },
+      "eu-west-1"      : { "32" : "ami-24506250", "64" : "ami-20506254" },
+      "sa-east-1"      : { "32" : "ami-3e3be423", "64" : "ami-3c3be421" },
+      "ap-southeast-1" : { "32" : "ami-74dda626", "64" : "ami-7edda62c" },
+      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87" },
+      "ap-northeast-1" : { "32" : "ami-dcfa4edd", "64" : "ami-e8fa4ee9" }
+    },
+    "CommonProperties" : {
+      "ServerProperties" : {
+        "Port" : "25565"
+      },
+      "Difficulty" : {
+        "Peaceful" : "0",
+        "Easy"     : "1",
+        "Normal"   : "2",
+        "Hard"     : "3"
+      },
+      "GameMode" : {
+        "Survival" : "0",
+        "Creative" : "1"
+      }
+    }
+  },
+
+  "Resources" : {
+
+    "CfnUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": { "Statement":[{
+            "Effect":"Allow",
+            "Action":"cloudformation:DescribeStackResource",
+            "Resource":"*"
+          }]}
+        }]
+      }
+    },
+
+    "CfnKeys" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : {"Ref": "CfnUser"}
+      }
+    },
+
+    "EIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "InstanceId" : { "Ref" : "MinecraftServer" }
+      }
+    },
+
+    "MinecraftServer": {
+      "Type": "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "config" : {
+
+            "files" : {
+              "/home/ec2-user/minecraft_server.jar" : {
+                "source" : "http://www.minecraft.net/download/minecraft_server.jar",
+                "mode"  : "000644",
+                "owner" : "ec2-user",
+                "group" : "ec2-user"
+              },
+
+              "/home/ec2-user/minecraft.sh" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#!/bin/sh\n",
+                  "cd /home/ec2-user\n",
+                  "java -Xmx", { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "NumberOfPlayers" }, "MemSize" ] }, "m -Xms", { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "NumberOfPlayers" }, "MemSize" ] }, "m -jar minecraft_server.jar nogui &\n"
+                ]]},
+                "mode"  : "000755",
+                "owner" : "ec2-user",
+                "group" : "ec2-user"
+              },
+
+              "/home/ec2-user/server.properties" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#Minecraft server properties\n",
+                  "allow-nether=", {"Ref" : "AllowNether"} ,"\n",
+                  "level-name=", {"Ref" : "LevelName"} ,"\n",
+                  "enable-query=false\n",
+                  "allow-flight=false\n",
+                  "server-port=",{ "Fn::FindInMap" : [ "CommonProperties", "ServerProperties", "Port" ] }, "\n",
+                  "level-type=", {"Ref" : "LevelType"} ,"\n",
+                  "enable-rcon=false\n",
+                  "level-seed=", {"Ref" : "LevelSeed"} ,"\n",
+                  "server-ip=\n",
+                  "white-list=false\n",
+                  "difficulty=",{ "Fn::FindInMap" : [ "CommonProperties", "Difficulty", {"Ref" : "Difficulty"} ] }, "\n",
+                  "gamemode=",{ "Fn::FindInMap" : [ "CommonProperties", "GameMode", {"Ref" : "GameMode"} ] }, "\n",
+                  "max-players=", {"Ref" : "NumberOfPlayers"} ,"\n",
+                  "pvp=", {"Ref" : "PvP"} ,"\n",
+                  "spawn-npcs=", {"Ref" : "SpawnNPCS"} ,"\n",
+                  "spawn-animals=", {"Ref" : "SpawnAnimals"} ,"\n",
+                  "spawn-monsters=", {"Ref" : "SpawnMonsters"} ,"\n",
+                  "generate-structures=", {"Ref" : "GenerateStructures"} ,"\n",
+                  "view-distance=10\n",
+                  "online-mode=true\n",
+                  "motd=", {"Ref" : "Message"} ,"\n"
+                ]]},
+                "mode"  : "000644",
+                "owner" : "ec2-user",
+                "group" : "ec2-user"
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" }, { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "NumberOfPlayers" }, "Arch" ] } ] },
+        "InstanceType"   : { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "NumberOfPlayers" }, "InstanceType" ] },
+        "SecurityGroups" : [ {"Ref" : "MinecraftServerSecurityGroup"} ],
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -v\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "# Install Minecraft\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r MinecraftServer ",
+          "    --access-key ",  { "Ref" : "CfnKeys" },
+          "    --secret-key ", {"Fn::GetAtt": ["CfnKeys", "SecretAccessKey"]},
+          "    --region ", { "Ref" : "AWS::Region" }, "\n",
+
+          "# Signal status\n",
+          "/opt/aws/bin/cfn-signal -e $? '", { "Ref" : "WaitHandle" }, "'\n",
+
+          "# Start the server\n",
+          "/home/ec2-user/minecraft.sh &\n"
+
+        ]]}}
+      }
+    },
+
+    "WaitHandle" : {
+      "Type" : "AWS::CloudFormation::WaitConditionHandle"
+    },
+
+    "WaitCondition" : {
+      "Type" : "AWS::CloudFormation::WaitCondition",
+      "DependsOn" : "MinecraftServer",
+      "Properties" : {
+        "Handle" : {"Ref" : "WaitHandle"},
+        "Timeout" : "600"
+      }
+    },
+
+    "MinecraftServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH access and access to the Minecraft server",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : { "Fn::FindInMap" : [ "CommonProperties", "ServerProperties", "Port" ] }, "ToPort" : { "Fn::FindInMap" : [ "CommonProperties", "ServerProperties", "Port" ] }, "CidrIp" : 0@<0.0.0.0/0>},
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
+        ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "MinecraftServer" : {
+      "Value" : { "Ref" : "EIP" },
+      "Description" : "Address of Minecraft Server"
+    }
+  }
+}
+
+0: Expected an expression

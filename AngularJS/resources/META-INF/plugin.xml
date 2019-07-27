@@ -1,5 +1,6 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
-  <name>AngularJS</name>
+  <id>AngularJS</id>
+  <name>Angular and AngularJS</name>
   <description><![CDATA[
 <p>Support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a> projects.</p>
 <h2>Getting started</h2>
@@ -27,10 +28,15 @@
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
+  <depends optional="true" config-file="tslint-support.xml">tslint</depends>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.angular2.attributesProvider"
                     interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
+    <extensionPoint qualifiedName="org.angular2.contextProvider"
+                    interface="org.angular2.lang.Angular2ContextProvider"/>
+    <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
+                    interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -48,7 +54,7 @@
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
-    <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
+    <typedHandler implementation="org.angularjs.editor.AngularJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
@@ -75,7 +81,7 @@
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter"/>
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
-    <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
+    <fileType name="HTML" extensions="ng"/>
 
     <multiHostInjector implementation="org.angularjs.editor.AngularJSInjector" id="angular"/>
     <completion.contributor language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSCompletionContributor"
@@ -111,35 +117,38 @@
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
-                     displayName="Angular CLI Add Dependency"
+                     displayName="Angular CLI add dependency"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2ComponentTemplatePropertyInspection"
-                     displayName="Component Template Property"
+    <localInspection implementationClass="org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection"
+                     displayName="Incorrect component template definition"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2DirectiveSelectorInspection"
-                     displayName="Directive Selector Property"
+    <localInspection implementationClass="org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection"
+                     displayName="Missing or invalid component, directive or pipe declaration in a module"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2DeclarationMembershipInModuleInspection"
-                     displayName="Declaration Membership in NgModule"
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidImportedOrDeclaredSymbolInspection"
+                     displayName="Invalid imported or declared symbol"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleEntityTypeMismatchInspection"
-                     displayName="Imported or Declared Symbol in NgModule With Missing or Incorrect Decorator."
+    <localInspection implementationClass="org.angular2.inspections.AngularRecursiveModuleImportExportInspection"
+                     displayName="Recursive import or export of Angular module"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleRecursiveImportExportInspection"
-                     displayName="NgModule Recursive Import or Export."
+    <localInspection implementationClass="org.angular2.inspections.AngularUndefinedModuleExportInspection"
+                     displayName="Undefined export from Angular module"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleUndeclaredExportInspection"
-                     displayName="Undeclared NgModule Export"
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidEntryComponentInspection"
+                     displayName="Invalid entry component"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2InvalidEntryComponentInspection"
-                     displayName="Invalid Entry or Bootstrap Component"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
+                     displayName="Missing or invalid selector"
+                     groupName="Angular" enabledByDefault="true" level="ERROR"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
+                     displayName="Inaccessible component member in AOT mode"
+                     groupName="Angular" enabledByDefault="false" level="WARNING"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
-    <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
+    <fileType name="tsconfig" fileNamesCaseInsensitive="tsconfig.app.json;tsconfig.lib.json;tsconfig.spec.json;tsconfig.e2e.json"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
@@ -154,40 +163,49 @@
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
+    <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
+    <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
 
     <!-- Angular 2 HTML template contributions -->
-    <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
+    <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
+              language="Angular2Html"/>
+    <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="after JSCommentInjector, before JSConfigurationInjector"
+                       id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Angular2Html"
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor" order="first"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2EmptyEventBindingInspection"
-                     displayName="Empty Event Handler" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularMissingEventHandlerInspection"
+                     displayName="Missing event handler" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2ExpressionTypeInspection"
-                     displayName="Expression Result Type" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidExpressionResultTypeInspection"
+                     displayName="Invalid expression result type" groupName="Angular" enabledByDefault="true"
                      level="WARNING" language="Angular2"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2BindingToEventInspection"
-                     displayName="Binding to Event" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularInsecureBindingToEventInspection"
+                     displayName="Insecure binding to event" groupName="Angular" enabledByDefault="true"
                      level="WARNING"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2NonEmptyNgContentInspection"
-                     displayName="Non Empty &lt;ng-content&gt; Tag" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularNonEmptyNgContentInspection"
+                     displayName="Content inside &lt;ng-content&gt; tag" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2MultipleTemplateBindingsInspection"
-                     displayName="Multiple Structural Directives" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularMultipleStructuralDirectivesInspection"
+                     displayName="Multiple structural directives on one element" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2AnimationTriggerAssignmentInspection"
-                     displayName="Animation Trigger Assignment" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection"
+                     alternativeId=""
+                     displayName="Invalid animation trigger assignment" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2TemplateReferenceVariableInspection"
-                     displayName="Template Reference Variable" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection"
+                     displayName="Unbound or ambiguous template reference variable" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2BindingsInspection"
-                     displayName="Bindings" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularUndefinedBindingInspection"
+                     displayName="Undefined binding" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <localInspection implementationClass="org.angular2.inspections.Angular2MatchingComponentsInspection"
-                     displayName="Matching Components" groupName="Angular" enabledByDefault="true"
+    <localInspection implementationClass="org.angular2.inspections.AngularAmbiguousComponentTagInspection"
+                     displayName="Ambiguous component tag" groupName="Angular" enabledByDefault="true"
+                     level="ERROR"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularUndefinedTagInspection"
+                     displayName="Undefined tag" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
@@ -202,8 +220,11 @@
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
+    <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
+    <lang.syntaxHighlighterFactory language="Angular2"
+                                   implementationClass="org.angular2.lang.expr.highlighting.Angular2HighlighterFactory"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
@@ -215,6 +236,9 @@
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
     <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
+    <codeInsight.parameterInfo language="Angular2" implementationClass="com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler"/>
+    <codeInsight.parameterNameHints language="Angular2Html"
+                                    implementationClass="org.angular2.editor.Angular2InlayParameterHintsProvider"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="METADATA_JSON:"/>
@@ -224,7 +248,8 @@
     <stubIndex implementation="org.angular2.index.Angular2MetadataNodeModuleIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataFunctionIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataModuleIndex"/>
-    <fileTypeFactory implementation="org.angular2.entities.metadata.Angular2MetadataFileTypeFactory"/>
+    <fileType name="Angular Metadata JSON" implementationClass="org.angular2.entities.metadata.Angular2MetadataFileType"
+              fieldName="INSTANCE"/>
     <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
@@ -234,23 +259,38 @@
     <intentionAndInspectionFilter language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSInspectionFilter"/>
     <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
+    <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.inspections.AngularJSAnalysisHandlersFactory"/>
 
     <!-- Angular2 HTML language contributions -->
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="10"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
-    <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>
+    <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+
+    <!-- Angular2 metadata JSON contributions -->
+    <nodeModulesIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2NgContentSelectorAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
+
+    <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>
+    <contextProvider implementation="org.angular2.lang.Angular2NodeModulesContextProvider"/>
+
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider"
+                            id="standardSymbols"/>
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider"
+                            id="templateElements" order="after standardSymbols"/>
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2ComponentScopeProvider"
+                            id="component" order="after templateElements"/>
   </extensions>
 
   <actions>

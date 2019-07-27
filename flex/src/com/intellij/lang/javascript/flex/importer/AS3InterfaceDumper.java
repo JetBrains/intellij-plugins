@@ -39,7 +39,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   public boolean doDumpMember(final @NotNull MemberInfo memberInfo) {
     if (memberInfo.name == null) return false;
     if (memberInfo.name.name != null) {
-      if(memberInfo.name.name.indexOf(Abc.$CINIT) >= 0) return false;
+      if(memberInfo.name.name.contains(Abc.$CINIT)) return false;
       if (!StringUtil.isJavaIdentifier(memberInfo.name.name)) return false;
 
       if (!JSKeywordSets.IDENTIFIER_TOKENS_SET.contains(identifierType(memberInfo.name.name)) ) {
@@ -117,7 +117,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
 
   @Override
   public boolean doDumpMetaData(final @NotNull MetaData md) {
-    return md.name.indexOf("__") == -1;
+    return !md.name.contains("__");
   }
 
   @Override
@@ -219,12 +219,12 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static boolean isTopLevelObject(String parentName) {
-    return parentName != null ? parentName.startsWith("script"):false;
+    return parentName != null && parentName.startsWith("script");
   }
 
   private static boolean willDumpNsName(Multiname name, String parentName, boolean memberInParentNs, boolean constructor, boolean topLevelObject, String nsName) {
     return name != null && name.hasNotEmptyNs() && parentName != null &&
-        ((!constructor && !topLevelObject && !memberInParentNs) || nsName.indexOf("private") != -1);
+        ((!constructor && !topLevelObject && !memberInParentNs) || nsName.contains("private"));
   }
 
   @Override

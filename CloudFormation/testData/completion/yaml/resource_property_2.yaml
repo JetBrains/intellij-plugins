@@ -1,0 +1,8 @@
+# https://raw.githubusercontent.com/microservices-today/IaC-ecs/256f2ccee05f26e8163d9f441b5db5bcf7c9cbd8/Services/Nginx.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  service:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      Cluster: X
+      <caret>

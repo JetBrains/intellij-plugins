@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -15,15 +16,15 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ public class BCUtils {
   }
 
   public static String getWrapperFileName(final FlexBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
   public static String getGeneratedAirDescriptorName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
@@ -59,7 +60,7 @@ public class BCUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   @Nullable
@@ -84,7 +85,7 @@ public class BCUtils {
   }
 
   public static boolean isRuntimeStyleSheetBC(final FlexBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
+    return bc.isTempBCForCompilation() && StringUtil.toLowerCase(bc.getMainClass()).endsWith(".css");
   }
 
   public static boolean canHaveResourceFiles(final BuildConfigurationNature nature) {
@@ -145,7 +146,7 @@ public class BCUtils {
         });
 
         final Object selectedItem = targetPlayerCombo.getSelectedItem();
-        final String[] availablePlayersArray = ArrayUtil.toStringArray(availablePlayers);
+        final String[] availablePlayersArray = ArrayUtilRt.toStringArray(availablePlayers);
         targetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayersArray));
         //noinspection SuspiciousMethodCalls
         if (selectedItem != null && availablePlayers.contains(selectedItem)) {
@@ -157,7 +158,7 @@ public class BCUtils {
       }
     }
     else {
-      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.EMPTY_STRING_ARRAY));
+      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtilRt.EMPTY_STRING_ARRAY));
     }
   }
 
@@ -208,25 +209,17 @@ public class BCUtils {
     return mainClass.replace('.', '/') + ".swf";
   }
 
-  public static void initTargetPlatformCombo(final JComboBox targetPlatformCombo) {
-    targetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
-    targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>() {
-      @Override
-      public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-        setIcon(value.getIcon());
-      }
-    });
+  public static void initTargetPlatformCombo(final JComboBox<TargetPlatform> targetPlatformCombo) {
+    targetPlatformCombo.setModel(new DefaultComboBoxModel<>(TargetPlatform.values()));
+    targetPlatformCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setText(value.getPresentableText());
+      label.setIcon(value.getIcon());
+    }));
   }
 
-  public static void initOutputTypeCombo(final JComboBox outputTypeCombo) {
-    outputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
-    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
-      @Override
-      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
+  public static void initOutputTypeCombo(final JComboBox<OutputType> outputTypeCombo) {
+    outputTypeCombo.setModel(new DefaultComboBoxModel<>(OutputType.values()));
+    outputTypeCombo.setRenderer(SimpleListCellRenderer.create("", OutputType::getPresentableText));
   }
 
   public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {

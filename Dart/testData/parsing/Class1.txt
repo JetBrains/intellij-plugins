@@ -1172,7 +1172,7 @@ Dart File
                 PsiElement(sync)('sync')
             MULTIPLICATIVE_OPERATOR
               PsiElement(*)('*')
-            MAP_LITERAL_EXPRESSION
+            SET_OR_MAP_LITERAL_EXPRESSION
               PsiElement({)('{')
               PsiElement(})('}')
           PsiErrorElement:';' expected, got '}'
@@ -1279,7 +1279,7 @@ Dart File
                 PsiElement(async)('async')
             MULTIPLICATIVE_OPERATOR
               PsiElement(*)('*')
-            MAP_LITERAL_EXPRESSION
+            SET_OR_MAP_LITERAL_EXPRESSION
               PsiElement({)('{')
               PsiElement(})('}')
           PsiElement(;)(';')

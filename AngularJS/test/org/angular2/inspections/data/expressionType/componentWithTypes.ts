@@ -29,9 +29,17 @@ export class ComponentWithTypes {
     @Input()
     model: NgModel;
 
+    @Input
+    obj: { f: string, e: MyType }
+
     @Input()
     set setterSimpleStringEnum(value: MyType) {
 
+    }
+
+    @Input()
+    predicate(arg: string) {
+        return false;
     }
 
     id: string;

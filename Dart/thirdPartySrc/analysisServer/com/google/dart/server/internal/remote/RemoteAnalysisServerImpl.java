@@ -75,6 +75,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private static final String ANALYSIS_NOTIFICATION_CLOSING_LABELS = "analysis.closingLabels";
 
   // Code Completion domain
+  private static final String COMPLETION_AVAILABLE_SUGGESTIONS = "completion.availableSuggestions";
+  private static final String COMPLETION_EXISTING_IMPORTS = "completion.existingImports";
   private static final String COMPLETION_NOTIFICATION_RESULTS = "completion.results";
 
   // Search domain
@@ -216,9 +218,13 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void analysis_reanalyze(List<String> roots) {
+  public void analysis_getSignature(String file, int offset, GetSignatureConsumer consumer) {
+  }
+
+  @Override
+  public void analysis_reanalyze() {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateAnalysisReanalyze(id, roots));
+    sendRequestToServer(id, RequestUtilities.generateAnalysisReanalyze(id));
   }
 
   @Override
@@ -300,10 +306,36 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_registerLibraryPaths(List<LibraryPathSet> paths) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateCompletionRegisterLibraryPaths(id, paths));
+  }
+
+  @Override
+  public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer) {
+    String requestId = generateUniqueId();
+    sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails(requestId, file, id, label, offset), consumer);
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
   }
+
+  @Override
+  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer) {
+  }
+
+  @Override
+  public void completion_setSubscriptions(List<String> subscriptions) {
+    String id = generateUniqueId();
+    if (subscriptions == null) {
+      subscriptions = StringUtilities.EMPTY_LIST;
+    }
+    sendRequestToServer(id, RequestUtilities.generateCompletionSetSubscriptions(id, subscriptions));
+  }
+
 
   @Override
   public void diagnostic_getDiagnostics(GetDiagnosticsConsumer consumer) {
@@ -313,6 +345,14 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void diagnostic_getServerPort(GetServerPortConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateDiagnosticGetServerPort(id), consumer);
+  }
+
+  @Override
+  public void edit_dartfix(List<String> included,
+                           List<String> includedFixes,
+                           boolean includeRequiredFixes,
+                           List<String> excludedFixes,
+                           DartfixConsumer consumer) {
   }
 
   @Override
@@ -331,6 +371,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length), consumer);
+  }
+
+  @Override
+  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer) {
   }
 
   @Override
@@ -374,9 +418,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer) {
+  public void edit_importElements(String file, List<ImportedElements> elements, int offset, ImportElementsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements), consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements, offset), consumer);
   }
 
   @Override
@@ -437,8 +481,20 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer) {
+  }
+
+  @Override
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {
+  }
+
+  @Override
   public boolean isSocketOpen() {
     return socket.isOpen();
+  }
+
+  @Override
+  public void kythe_getKytheEntries(String file, GetKytheEntriesConsumer consumer) {
   }
 
   @Override
@@ -482,6 +538,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void search_findTopLevelDeclarations(String pattern, FindTopLevelDeclarationsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateSearchFindTopLevelDeclarations(id, pattern), consumer);
+  }
+
+  @Override
+  public void search_getElementDeclarations(String file, String pattern, int maxResults, GetElementDeclarationsConsumer consumer) {
   }
 
   @Override
@@ -548,7 +608,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    *
    * @return a unique {@link String} id to be used in the requests sent to the analysis server
    */
-  @Override
   public String generateUniqueId() {
     return Integer.toString(nextId.getAndIncrement());
   }
@@ -606,6 +665,14 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (event.equals(ANALYSIS_NOTIFICATION_ANALYZED_FILES)) {
       // analysis.errors
       new NotificationAnalysisAnalyzedFilesProcessor(listener).process(response);
+    }
+    else if (event.equals(COMPLETION_AVAILABLE_SUGGESTIONS)) {
+      // completion.results
+      new NotificationCompletionAvailableSuggestionsProcessor(listener).process(response);
+    }
+    else if (event.equals(COMPLETION_EXISTING_IMPORTS)) {
+      // completion.existingImports
+      new NotificationCompletionExistingImportsProcessor(listener).process(response);
     }
     else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
       // completion.results
@@ -670,6 +737,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Completion Domain
     //
+    else if (consumer instanceof GetSuggestionDetailsConsumer) {
+      new GetSuggestionDetailsProcessor((GetSuggestionDetailsConsumer)consumer).process(resultObject, requestError);
+    }
     else if (consumer instanceof GetSuggestionsConsumer) {
       new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
@@ -786,7 +856,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (requestListenerList) {
       List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
       for (RequestListener listener : listeners) {
-        listener.onRequest(request);
+        listener.onRequest(request.toString());
       }
     }
   }
@@ -795,7 +865,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (responseListenerList) {
       List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
       for (ResponseListener listener : listeners) {
-        listener.onResponse(response);
+        listener.onResponse(response.toString());
       }
     }
   }
@@ -807,10 +877,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param id      the identifier of the request
    * @param request the request to send
    */
-  @Override
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
-    notifyRequestListeners(request);
   }
 
   /**
@@ -820,8 +888,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param request  the request to send
    * @param consumer the {@link Consumer} to process a response
    */
-  @Override
   public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
+    notifyRequestListeners(request);
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }

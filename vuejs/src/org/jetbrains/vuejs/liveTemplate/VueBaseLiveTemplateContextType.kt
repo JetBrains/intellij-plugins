@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.liveTemplate
 
 import com.intellij.codeInsight.template.EverywhereContextType
@@ -11,12 +12,9 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.lang.html.VueFileType
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", EverywhereContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueFileType.INSTANCE == file.fileType
@@ -32,7 +30,7 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
       val element = file.findElementAt(offset) ?: return false
 
       if (VueFileType.INSTANCE != file.fileType) {
-        return hasVue(file.project) &&  notVueFileType != null && notVueFileType.invoke(element)
+        return isVueContext(file) && notVueFileType != null && notVueFileType.invoke(element)
       }
 
       val parentTag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false
@@ -60,8 +58,10 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
         }
         if (HtmlUtil.isScriptTag(tag)) {
           scriptContextEvaluator != null && scriptContextEvaluator.invoke(element)
-        } else tag != null && forTagInsert
-      } else {
+        }
+        else tag != null && forTagInsert
+      }
+      else {
         parentXml != null && forAttributeInsert
       }
     }

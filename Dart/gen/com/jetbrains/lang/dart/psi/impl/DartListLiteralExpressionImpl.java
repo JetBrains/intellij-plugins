@@ -27,9 +27,9 @@ public class DartListLiteralExpressionImpl extends DartClassReferenceImpl implem
   }
 
   @Override
-  @Nullable
-  public DartExpressionList getExpressionList() {
-    return findChildByClass(DartExpressionList.class);
+  @NotNull
+  public List<DartElement> getElementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartElement.class);
   }
 
   @Override

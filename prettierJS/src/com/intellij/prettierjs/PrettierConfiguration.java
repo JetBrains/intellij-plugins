@@ -1,11 +1,14 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
+import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
@@ -22,7 +25,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.Producer;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
-public class PrettierConfiguration {
+public class PrettierConfiguration implements JSNpmLinterState {
   @NotNull
   private final Project myProject;
   private final PropertiesComponent myPropertiesComponent;
@@ -61,13 +64,34 @@ public class PrettierConfiguration {
     return ServiceManager.getService(project, PrettierConfiguration.class);
   }
 
+  @Override
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
     return NodeJsInterpreterRef.create(ObjectUtils.coalesce(myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY),
                                                             myPropertiesComponent.getValue(OLD_INTERPRETER_PROPERTY)));
   }
 
-  @Nullable
+  @NotNull
+  @Override
+  public NodePackageRef getNodePackageRef() {
+    return NodePackageRef.create(getPackage());
+  }
+
+  @Override
+  public JSNpmLinterState withLinterPackage(@NotNull NodePackageRef nodePackage) {
+    NodePackage newPackage = nodePackage.getConstantPackage();
+    assert newPackage != null : getClass().getSimpleName() + "does not support non-constant package";
+    update(this.getInterpreterRef(), newPackage);
+    return null;
+  }
+
+  @Override
+  public JSNpmLinterState withInterpreterRef(NodeJsInterpreterRef ref) {
+    update(ref, this.getPackage());
+    return this;
+  }
+
+  @NotNull
   public NodePackage getPackage() {
     String value = ObjectUtils.coalesce(myPropertiesComponent.getValue(PACKAGE_PROPERTY),
                                         myPropertiesComponent.getValue(OLD_PACKAGE_PROPERTY),
@@ -88,7 +112,7 @@ public class PrettierConfiguration {
     detectPackage(() -> localPackageIfInDependencies());
   }
 
-  private void detectPackage(@NotNull Producer<NodePackage> packageProducer) {
+  private void detectPackage(@NotNull Supplier<NodePackage> packageProducer) {
     if (myProject.isDisposed() || myProject.isDefault()) {
       return;
     }
@@ -97,7 +121,7 @@ public class PrettierConfiguration {
       return;
     }
 
-    NodePackage detected = packageProducer.produce();
+    NodePackage detected = packageProducer.get();
     if (detected != null) {
       myPropertiesComponent.setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
     }
@@ -125,7 +149,7 @@ public class PrettierConfiguration {
 
   public static class ProjectConfigurator implements DirectoryProjectConfigurator {
     @Override
-    public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
+    public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
       StartupManager.getInstance(project).runWhenProjectIsInitialized(
         (DumbAwareRunnable)() -> getInstance(project).detectLocalOrGlobalPackage());
     }

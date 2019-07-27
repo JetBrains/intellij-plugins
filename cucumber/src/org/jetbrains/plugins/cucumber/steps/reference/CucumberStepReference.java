@@ -1,12 +1,18 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps.reference;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +24,8 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author yole
@@ -91,30 +99,51 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   }
 
   private ResolveResult[] multiResolveInner() {
-    final List<ResolveResult> result = new ArrayList<>();
-    final List<PsiElement> resolvedElements = new ArrayList<>();
+    final Module module = ModuleUtilCore.findModuleForPsiElement(myStep);
+    if (module == null) {
+      return ResolveResult.EMPTY_ARRAY;
+    }
 
-    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
-      final List<PsiElement> extensionResult = e.resolveStep(myStep);
-      for (final PsiElement element : extensionResult) {
-        if (element != null && !resolvedElements.contains(element)) {
-          resolvedElements.add(element);
-          result.add(new ResolveResult() {
-            @Override
-            public PsiElement getElement() {
-              return element;
-            }
+    List<CucumberJvmExtensionPoint> frameworks = CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
+    Collection<String> stepVariants =
+      frameworks.stream().map(e -> e.getStepName(myStep)).filter(Objects::nonNull).collect(Collectors.toSet());
+    if (stepVariants.size() == 0) {
+      return ResolveResult.EMPTY_ARRAY;
+    }
 
-            @Override
-            public boolean isValidResult() {
-              return true;
-            }
-          });
+    PsiFile featureFile = myStep.getContainingFile();
+    List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(featureFile, () -> {
+      List<AbstractStepDefinition> allStepDefinition = new ArrayList<>();
+      for (CucumberJvmExtensionPoint e : frameworks) {
+        allStepDefinition.addAll(e.loadStepsFor(featureFile, module));
+      }
+      return CachedValueProvider.Result.create(allStepDefinition, PsiModificationTracker.MODIFICATION_COUNT);
+    });
+    
+    List<PsiElement> resolvedElements = new ArrayList<>();
+    for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
+      if (stepDefinition.supportsStep(myStep)) {
+        for (String stepVariant : stepVariants) {
+          PsiElement element = stepDefinition.getElement();
+          if (stepDefinition.matches(stepVariant) && element != null && !resolvedElements.contains(element)) {
+            resolvedElements.add(element);
+            break;
+          }
         }
       }
     }
 
-    return result.toArray(ResolveResult.EMPTY_ARRAY);
+    return resolvedElements.stream().map(e -> new ResolveResult() {
+      @Override
+      public PsiElement getElement() {
+        return e;
+      }
+
+      @Override
+      public boolean isValidResult() {
+        return true;
+      }
+    }).toArray(ResolveResult[]::new);
   }
 
   /**

@@ -1,0 +1,3 @@
+var x:int
+var y:int
+var created:int = x^y;

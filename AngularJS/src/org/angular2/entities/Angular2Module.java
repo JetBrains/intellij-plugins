@@ -41,4 +41,6 @@ public interface Angular2Module extends Angular2Entity {
     }
     return result;
   }
+
+  Angular2Module[] EMPTY_ARRAY = new Angular2Module[0];
 }

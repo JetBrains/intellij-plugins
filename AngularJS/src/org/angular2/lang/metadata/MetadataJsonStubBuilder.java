@@ -9,7 +9,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.stubs.BinaryFileStubBuilder;
 import com.intellij.psi.stubs.Stub;
 import com.intellij.util.indexing.FileContent;
-import org.angular2.index.Angular2IndexBase;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +41,6 @@ public class MetadataJsonStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public int getStubVersion() {
-    return Angular2IndexBase.VERSION;
+    return 20;
   }
 }

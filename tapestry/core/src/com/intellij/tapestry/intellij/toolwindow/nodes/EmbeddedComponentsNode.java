@@ -22,7 +22,7 @@ public class EmbeddedComponentsNode extends DefaultMutableTreeNode {
 
         switch (element.getElementType()) {
             case COMPONENT:
-                addChildElements((Component) userObject);
+                addChildElements((TapestryComponent) userObject);
                 break;
             case PAGE:
                 addChildElements((Page) userObject);
@@ -33,7 +33,7 @@ public class EmbeddedComponentsNode extends DefaultMutableTreeNode {
         }
     }
 
-    private void addChildElements(Component component) {
+    private void addChildElements(TapestryComponent component) {
         for (TemplateElement embedded : component.getEmbeddedComponents()) {
             if (embedded.getTemplate().equals("class")) {
                 add(new EmbeddedComponentNode(embedded.getElement()));

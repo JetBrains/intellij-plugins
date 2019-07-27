@@ -165,9 +165,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private JComboBox myTargetPlayerCombo;
   private JLabel myTargetPlayerWarning;
   private JLabel myComponentSetLabel;
-  private JComboBox myComponentSetCombo;
+  private JComboBox<ComponentSet> myComponentSetCombo;
   private JLabel myFrameworkLinkageLabel;
-  private JComboBox myFrameworkLinkageCombo;
+  private JComboBox<LinkageType> myFrameworkLinkageCombo;
   private JLabel myWarning;
   private JPanel myTablePanel;
   private JButton myNewButton;
@@ -786,33 +786,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       updateOnSelectedSdkChange();
     });
 
-    myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>() {
-      @Override
-      public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
+    myComponentSetCombo.setModel(new DefaultComboBoxModel<>(ComponentSet.values()));
+    myComponentSetCombo.setRenderer(SimpleListCellRenderer.create("", ComponentSet::getPresentableText));
+
+    myFrameworkLinkageCombo.setRenderer(SimpleListCellRenderer.create("", value -> {
+      if (value == LinkageType.Default) {
+        Sdk sdk = mySdkCombo.getSelectedJdk();
+        String sdkVersion = sdk != null ? sdk.getVersionString() : null;
+        return sdkVersion == null ? "Default" : MessageFormat.format(
+          "Default ({0})", FlexCommonUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText());
       }
-    });
+      else {
+        return value.getLongText();
+      }
+    }));
 
-    myFrameworkLinkageCombo
-      .setRenderer(new ListCellRendererWrapper<LinkageType>() {
-        @Override
-        public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
-          if (value == LinkageType.Default) {
-            final Sdk sdk = mySdkCombo.getSelectedJdk();
-            final String sdkVersion = sdk != null ? sdk.getVersionString() : null;
-            setText(sdkVersion == null
-                    ? "Default"
-                    : MessageFormat
-                      .format("Default ({0})", FlexCommonUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText()));
-          }
-          else {
-            setText(value.getLongText());
-          }
-        }
-      });
-
-    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(myNature)));
+    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel<>(BCUtils.getSuitableFrameworkLinkages(myNature)));
 
     ItemListener updateSdkItemsListener = new ItemListener() {
       @Override
@@ -847,7 +836,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     };
     myTable.setRootVisible(false);
     myTable.getTree().setShowsRootHandles(true);
-    myTable.getTree().setLineStyleAngled();
 
     myTablePanel.add(
       ToolbarDecorator.createDecorator(myTable)

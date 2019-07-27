@@ -1,0 +1,18 @@
+package foo {
+public class Target {
+    function Target() {
+    }
+}
+}
+
+import bar.Caller;
+
+package bar {
+import foo.*;
+
+public class Caller {
+    public static function xxx():Target {}
+}
+}
+
+<selection>Caller.xxx()</selection>

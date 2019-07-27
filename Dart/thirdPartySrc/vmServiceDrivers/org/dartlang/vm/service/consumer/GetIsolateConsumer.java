@@ -18,10 +18,10 @@ package org.dartlang.vm.service.consumer;
 import org.dartlang.vm.service.element.Isolate;
 import org.dartlang.vm.service.element.Sentinel;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface GetIsolateConsumer extends Consumer {
 
-  public void received(Isolate response);
+  void received(Isolate response);
 
-  public void received(Sentinel response);
+  void received(Sentinel response);
 }

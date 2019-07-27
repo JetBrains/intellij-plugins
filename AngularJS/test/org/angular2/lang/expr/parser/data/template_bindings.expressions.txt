@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSPrefixExpression
@@ -6,7 +6,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -18,7 +18,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('2.5')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -32,7 +32,7 @@ ASTWrapperPsiElement(FILE)
           JSLiteralExpression
             PsiElement(JS:NUMERIC_LITERAL)('2.5')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -50,7 +50,7 @@ ASTWrapperPsiElement(FILE)
           JSLiteralExpression
             PsiElement(JS:NUMERIC_LITERAL)('4')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -66,7 +66,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('1.5')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -98,7 +98,7 @@ ASTWrapperPsiElement(FILE)
             JSLiteralExpression
               PsiElement(JS:NUMERIC_LITERAL)('4')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -112,7 +112,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('3')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSBinaryExpression
@@ -129,20 +129,20 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('3')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSAssignmentExpression
         JSDefinitionExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('a')
-        PsiErrorElement:binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('12')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSAssignmentExpression
@@ -155,21 +155,21 @@ ASTWrapperPsiElement(FILE)
               PsiElement(JS:IDENTIFIER)('y')
             PsiElement(JS:DOT)('.')
             PsiElement(JS:IDENTIFIER)('z')
-        PsiErrorElement:binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('123')
     PsiElement(JS:SEMICOLON)(';')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSAssignmentExpression
         JSDefinitionExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('a')
-        PsiErrorElement:binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
@@ -185,7 +185,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('234')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       PsiErrorElement:expression expected
@@ -196,7 +196,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('a')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSReferenceExpression
@@ -205,18 +205,18 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:ELVIS)('?.')
         PsiElement(JS:IDENTIFIER)('foo')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSReferenceExpression
-        JSPostfixExpression
+        TypeScriptNotNullExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('aaa')
           PsiElement(JS:EXCL)('!')
         PsiElement(JS:DOT)('.')
         PsiElement(JS:IDENTIFIER)('foo')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       <empty list>
@@ -263,7 +263,7 @@ ASTWrapperPsiElement(FILE)
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('term')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       <empty list>
@@ -310,7 +310,7 @@ ASTWrapperPsiElement(FILE)
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('term')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       <empty list>
@@ -357,7 +357,7 @@ ASTWrapperPsiElement(FILE)
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('term')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       <empty list>
@@ -400,7 +400,7 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('last')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       <empty list>
@@ -426,8 +426,6 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('async')
-          Angular2PipeArgumentsList
-            <empty list>
         PsiElement(JS:RPAR)(')')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')
@@ -439,7 +437,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('tracker')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSCallExpression
@@ -456,7 +454,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:LPAR)('(')
           PsiElement(JS:RPAR)(')')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.expressions.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSReferenceExpression

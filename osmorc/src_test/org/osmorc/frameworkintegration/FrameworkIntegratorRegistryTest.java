@@ -27,9 +27,6 @@ package org.osmorc.frameworkintegration;
 import com.intellij.openapi.components.ServiceManager;
 import org.osmorc.LightOsgiFixtureTestCase;
 
-import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
-
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
@@ -38,11 +35,11 @@ public class FrameworkIntegratorRegistryTest extends LightOsgiFixtureTestCase {
     FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
 
     for (FrameworkIntegrator integrator : registry.getFrameworkIntegrators()) {
-      assertThat(registry.findIntegratorByName(integrator.getDisplayName()), sameInstance(integrator));
+      assertSame(integrator, registry.findIntegratorByName(integrator.getDisplayName()));
     }
 
     FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
     instanceDefinition.setFrameworkIntegratorName(registry.getFrameworkIntegrators().get(1).getDisplayName());
-    assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(registry.getFrameworkIntegrators().get(1)));
+    assertSame(registry.getFrameworkIntegrators().get(1), registry.findIntegratorByInstanceDefinition(instanceDefinition));
   }
 }

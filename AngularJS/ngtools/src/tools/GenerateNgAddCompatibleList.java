@@ -27,7 +27,7 @@ import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -41,8 +41,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -90,7 +92,9 @@ public class GenerateNgAddCompatibleList {
     System.out.println("Current directory: " + new File(".").getCanonicalPath());
     System.out.println("Reading existing list of packages");
 
-    JsonObject root = (JsonObject)new JsonParser().parse(new FileReader("contrib/AngularJS/resources/org/angular2/cli/ng-packages.json"));
+    JsonObject root = (JsonObject)new JsonParser().parse(
+      new InputStreamReader(new FileInputStream("contrib/AngularJS/resources/org/angularjs/cli/ng-packages.json"),
+                            StandardCharsets.UTF_8));
     if (root.get("ng-add") != null) {
       ((JsonObject)root.get("ng-add")).entrySet()
         .forEach(e -> addPkg.consume(new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
@@ -176,7 +180,7 @@ public class GenerateNgAddCompatibleList {
     }).filter(info -> info != null).collect(
       Collectors.toMap(NodePackageBasicInfo::getName, info -> StringUtil.notNullize(info.getDescription())));
 
-    ngAddPkgs = ContainerUtil.newTreeMap(ngAddPkgs);
+    ngAddPkgs = new TreeMap<>(ngAddPkgs);
 
     System.out.println("\nFound " + ngAddPkgs.size() + " packages which support ng-add:");
     System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(ngAddPkgs));
@@ -191,7 +195,7 @@ public class GenerateNgAddCompatibleList {
 
   private static void setUpApplication() {
     try {
-      String[] candidates = ReflectionUtil.getField(PlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
+      String[] candidates = ReflectionUtil.getField(HeavyPlatformTestCase.class, null, String[].class, "PREFIX_CANDIDATES");
       if (candidates != null) {
         candidates[0] = "WebStorm";
       }

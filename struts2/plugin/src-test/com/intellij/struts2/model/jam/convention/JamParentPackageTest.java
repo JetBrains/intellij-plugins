@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class JamParentPackageTest extends JamConventionLightTestCase {
-
   @NotNull
   @Override
   protected String getTestDataFolder() {
@@ -33,13 +31,13 @@ public class JamParentPackageTest extends JamConventionLightTestCase {
 
   public void testCompletionAction() {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.testCompletionVariants("/testcompletion/Action.java",
+    myFixture.testCompletionVariants("testcompletion/Action.java",
                                      "myPackage", "myPackage2");
   }
 
   public void testCompletionPackageInfo() {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.testCompletionVariants("/testcompletion/package-info.java",
+    myFixture.testCompletionVariants("testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
 

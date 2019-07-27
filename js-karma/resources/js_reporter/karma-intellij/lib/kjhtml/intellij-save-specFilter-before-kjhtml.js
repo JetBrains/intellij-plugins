@@ -5,6 +5,11 @@
 (function(window){
 
   var env = jasmine.getEnv();
-  env.intellijPrevSpecFilter = env.specFilter;
+  if (typeof env.configuration === 'function') {
+    env.intellijPrevSpecFilter = env.configuration().specFilter;
+  }
+  else {
+    env.intellijPrevSpecFilter = env.specFilter;
+  }
 
 })(window);

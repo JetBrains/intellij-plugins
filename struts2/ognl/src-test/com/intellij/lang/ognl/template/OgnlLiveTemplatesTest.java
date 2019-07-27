@@ -20,12 +20,12 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
 import com.intellij.lang.ognl.OgnlFileType;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class OgnlLiveTemplatesTest extends BasePlatformTestCase {
 
   public void testIn() {
     doTest("a in<caret>",

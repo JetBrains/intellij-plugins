@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -10,10 +11,10 @@ public class DomElementSchemaRegistry {
 
   @NotNull
   public static Set<String> getElementProperties(@NotNull String tagName) {
-    return SCHEMA.getOrDefault(tagName.toLowerCase(Locale.ENGLISH), DEFAULT_ELEMENT_PROPERTIES);
+    return SCHEMA.getOrDefault(StringUtil.toLowerCase(tagName), DEFAULT_ELEMENT_PROPERTIES);
   }
 
-  private static final String[] SCHEMA_DEF = new String[]{
+  @NonNls private static final String[] SCHEMA_DEF = new String[]{
     "[Element]|textContent,%classList,className,id,innerHTML,*beforecopy,*beforecut,*beforepaste,*copy,*cut,*paste,*search,*selectstart,*webkitfullscreenchange,*webkitfullscreenerror,*wheel,outerHTML,#scrollLeft,#scrollTop,slot" +
       /* added manually to avoid breaking changes */
     ",*message,*mozfullscreenchange,*mozfullscreenerror,*mozpointerlockchange,*mozpointerlockerror,*webglcontextcreationerror,*webglcontextlost,*webglcontextrestored",
@@ -178,9 +179,9 @@ public class DomElementSchemaRegistry {
       List<String> strType_strProperties = StringUtil.split(encodedType, "|", true, false);
       List<String> properties = StringUtil.split(strType_strProperties.get(1), ",");
       List<String> typeNames_superName = StringUtil.split(strType_strProperties.get(0), "^", true, false);
-      StringUtil.split(typeNames_superName.get(0), ",").forEach(tag -> SCHEMA.put(tag.toLowerCase(Locale.ENGLISH),
+      StringUtil.split(typeNames_superName.get(0), ",").forEach(tag -> SCHEMA.put(StringUtil.toLowerCase(tag),
                                                                                   Collections.unmodifiableSet(type)));
-      Set<String> superType = typeNames_superName.size() > 1 ? SCHEMA.get(typeNames_superName.get(1).toLowerCase(Locale.ENGLISH)) : null;
+      Set<String> superType = typeNames_superName.size() > 1 ? SCHEMA.get(StringUtil.toLowerCase(typeNames_superName.get(1))) : null;
       if (superType != null) {
         type.addAll(superType);
       }
@@ -201,6 +202,7 @@ public class DomElementSchemaRegistry {
         }
       });
     }
-    DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get("[HTMLElement]".toLowerCase(Locale.ENGLISH));
+    //noinspection HardCodedStringLiteral
+    DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get(StringUtil.toLowerCase("[HTMLElement]"));
   }
 }

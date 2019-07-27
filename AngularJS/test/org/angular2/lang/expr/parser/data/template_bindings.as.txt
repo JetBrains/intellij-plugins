@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.as.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <as, false, null>
       JSReferenceExpression
@@ -11,7 +11,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('app')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.as.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <as, false, null>
       JSReferenceExpression
@@ -19,10 +19,10 @@ ASTWrapperPsiElement(FILE)
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
-      PsiErrorElement:Identifier or keyword expected
+      PsiErrorElement:Expected identifier or keyword
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.as.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <as, false, null>
       JSReferenceExpression
@@ -41,7 +41,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('app')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.as.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <foo-bar-t1, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
@@ -60,7 +60,7 @@ ASTWrapperPsiElement(FILE)
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('foo-')
-      PsiErrorElement:Identifier or keyword expected
+      PsiErrorElement:Expected identifier or keyword
         <empty list>
       PsiElement(JS:NUMERIC_LITERAL)('2')
     Angular2TemplateBinding <asBar, false, null>

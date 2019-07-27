@@ -1,0 +1,410 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Joomla! is a free, open-source content management system (CMS) and application framework. This template creates an auto-scaled, highly available Joomla deployment behind an Elastic Load Balancer. Login as admin/admin and change the password. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters": {
+    "JoomlaDBName": {
+      "Default": "joomla",
+      "Description": "Name of the Joomla database",
+      "Type": "String",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "JoomlaDBUser": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description": "Joomla database admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+    "JoomlaDBPwd": {
+      "Default": "admin",
+      "NoEcho": "true",
+      "Description": "Joomla database admin account password",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+    "InstanceType": {
+      "Default": "m1.small",
+      "Description": "EC2 instance type for web servers",
+      "Type": "String"
+    },
+    "OperatorEmail": {
+      "Default": "nobody@amazon.com",
+      "Description": "Email address to notify if there are any operational issues",
+      "Type": "String"
+    },
+    "WebServerPort": {
+      "Default": "8888",
+      "Description": "TCP/IP port for web servers",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "65535"
+    },
+    "JoomlaDBPort": {
+      "Default": "3306",
+      "Description": "TCP/IP port for Joomla database",
+      "Type": "Number",
+      "MinValue": "1150",
+      "MaxValue": "65535"
+    }
+  },
+  "Resources": {
+    "CPUAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "10",
+        "AlarmDescription": "Alarm if CPU too high or metric disappears indicating instance is down",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/EC2",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "CPUUtilization"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "TooManyUnhealthyHostsAlarm": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "0",
+        "AlarmDescription": "Alarm if there are too many unhealthy hosts.",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "UnHealthyHostCount"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "EC2SecurityGroup": {
+      "Properties": {
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "22",
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          },
+          {
+            "FromPort": {
+              "Ref": "WebServerPort"
+            },
+            "CidrIp": "0.0.0.0/0",
+            "ToPort": {
+              "Ref": "WebServerPort"
+            },
+            "IpProtocol": "tcp"
+          }
+        ],
+        "GroupDescription": "HTTP and SSH access"
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "RequestLatencyAlarmHigh": {
+      "Properties": {
+        "EvaluationPeriods": "1",
+        "Statistic": "Average",
+        "Threshold": "1",
+        "AlarmDescription": "Alarm if there aren't any requests coming through",
+        "Period": "60",
+        "AlarmActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Namespace": "AWS/ELB",
+        "InsufficientDataActions": [
+          {
+            "Ref": "AlarmTopic"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "LoadBalancerName",
+            "Value": {
+              "Ref": "ElasticLoadBalancer"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "MetricName": "Latency"
+      },
+      "Type": "AWS::CloudWatch::Alarm"
+    },
+    "ElasticLoadBalancer": {
+      "Properties": {
+        "Listeners": [
+          {
+            "InstancePort": {
+              "Ref": "WebServerPort"
+            },
+            "PolicyNames": [
+              "p1"
+            ],
+            "Protocol": "HTTP",
+            "LoadBalancerPort": "80"
+          }
+        ],
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Timeout": "5",
+          "Interval": "10",
+          "UnhealthyThreshold": "5",
+          "Target": {
+            "Fn::Join": [
+              "",
+              [
+                "HTTP:",
+                {
+                  "Ref": "WebServerPort"
+                },
+                "/index.php"
+              ]
+            ]
+          }
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "LBCookieStickinessPolicy": [
+          {
+            "CookieExpirationPeriod": "30",
+            "PolicyName": "p1"
+          }
+        ]
+      },
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer"
+    },
+    "DBSecurityGroup": {
+      "Properties": {
+        "DBSecurityGroupIngress": {
+          "EC2SecurityGroupName": {
+            "Ref": "EC2SecurityGroup"
+          }
+        },
+        "GroupDescription": "database access"
+      },
+      "Type": "AWS::RDS::DBSecurityGroup"
+    },
+    "JoomlaDB": {
+      "Properties": {
+        "Engine": "MySQL",
+        "DBName": {
+          "Ref": "JoomlaDBName"
+        },
+        "Port": { "Ref": "JoomlaDBPort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
+        "MasterUsername": {
+          "Ref": "JoomlaDBUser"
+        },
+        "DBInstanceClass": "db.m1.small",
+        "DBSecurityGroups": [
+          {
+            "Ref": "DBSecurityGroup"
+          }
+        ],
+        "AllocatedStorage": "5",
+        "MasterUserPassword": {
+          "Ref": "JoomlaDBPwd"
+        }
+      },
+      "Type": "AWS::RDS::DBInstance"
+    },
+    "WebServerGroup": {
+      "Properties": {
+        "LoadBalancerNames": [
+          {
+            "Ref": "ElasticLoadBalancer"
+          }
+        ],
+        "MinSize": "2",
+        "LaunchConfigurationName": {
+          "Ref": "LaunchConfig"
+        },
+        "AvailabilityZones": {
+          "Fn::GetAZs": {
+            "Ref": "AWS::Region"
+          }
+        },
+        "MaxSize": "3"
+      },
+      "Type": "AWS::AutoScaling::AutoScalingGroup"
+    },
+    "AlarmTopic": {
+      "Properties": {
+        "Subscription": [
+          {
+            "Endpoint": {
+              "Ref": "OperatorEmail"
+            },
+            "Protocol": "email"
+          }
+        ]
+      },
+      "Type": "AWS::SNS::Topic"
+    },
+    "LaunchConfig": {
+      "Properties": {
+        "SecurityGroups": [
+          {
+            "Ref": "EC2SecurityGroup"
+          }
+        ],
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
+          ]
+        },
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Ref": "JoomlaDBName"
+                },
+                {
+                  "Ref": "JoomlaDBUser"
+                },
+                {
+                  "Ref": "JoomlaDBPwd"
+                },
+                {
+                  "Ref": "JoomlaDBPort"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "JoomlaDB",
+                    "Endpoint.Address"
+                  ]
+                },
+                {
+                  "Ref": "WebServerPort"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "ElasticLoadBalancer",
+                    "DNSName"
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        }
+      },
+      "Type": "AWS::AutoScaling::LaunchConfiguration"
+    }
+  },
+
+  "Mappings": {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-8e11e2e7", "64" : "ami-8211e2eb" },
+      "us-west-1" : { "32" : "ami-efc797aa", "64" : "ami-edc797a8" },
+      "eu-west-1" : { "32" : "ami-0fc2f67b", "64" : "ami-03c2f677" },
+      "ap-southeast-1" : { "32" : "ami-00f28c52", "64" : "ami-1cf28c4e" },
+      "ap-northeast-1" : { "32" : "ami-c003a8c1", "64" : "ami-c603a8c7" }
+    },
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
+    }
+  },
+  "Outputs": {
+    "URL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [ "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }
+          ]
+        ]
+      },
+      "Description" : "URL of the Joomla! content management site"
+    },
+    "AdminURL": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "http://", { "Fn::GetAtt": [ "ElasticLoadBalancer", "DNSName" ] }, "/administrator"
+          ]
+        ]
+      },
+      "Description" : "URL of the Joomla! administrator site"
+    }
+  }
+}

@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.actions.createnew;
 
 import com.intellij.CommonBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -44,7 +44,7 @@ public class AddNewPageAction extends AddNewElementAction<PagesNode> {
     if (defaultPagePath == null) return;
 
     final AddNewComponentDialog addNewComponentDialog =
-        new AddNewComponentDialog((Module)event.getDataContext().getData(DataKeys.MODULE.getName()), defaultPagePath, true);
+        new AddNewComponentDialog((Module)event.getDataContext().getData(LangDataKeys.MODULE.getName()), defaultPagePath, true);
 
     final DialogBuilder builder = new DialogBuilder(module.getProject());
     builder.setCenterPanel(addNewComponentDialog.getContentPane());

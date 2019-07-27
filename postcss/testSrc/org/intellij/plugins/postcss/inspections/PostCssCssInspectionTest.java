@@ -1,9 +1,6 @@
 package org.intellij.plugins.postcss.inspections;
 
-import com.intellij.psi.css.inspections.invalid.CssInvalidAtRuleInspection;
-import com.intellij.psi.css.inspections.invalid.CssInvalidImportInspection;
-import com.intellij.psi.css.inspections.invalid.CssInvalidMediaFeatureInspection;
-import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
+import com.intellij.psi.css.inspections.invalid.*;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 
@@ -32,6 +29,11 @@ public class PostCssCssInspectionTest extends PostCssFixtureTestCase {
   }
 
   public void testBadAtRule() {
+    doTest();
+  }
+
+  public void testSimpleVariables() {
+    myFixture.enableInspections(CssInvalidPropertyValueInspection.class, CssInvalidHtmlTagReferenceInspection.class);
     doTest();
   }
 

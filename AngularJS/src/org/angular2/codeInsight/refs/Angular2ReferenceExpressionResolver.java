@@ -2,35 +2,36 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionResolver {
+import static com.intellij.util.ObjectUtils.tryCast;
+
+public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpressionResolver {
 
   public Angular2ReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
     super(expression, ignorePerformanceLimits);
@@ -43,7 +44,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     if (myRef instanceof Angular2PipeReferenceExpression) {
       return resolvePipeNameReference(expression, incompleteCode);
     }
-    else if (myQualifier == null) {
+    else if (myQualifier == null || myQualifier instanceof JSThisExpression) {
       return resolveTemplateVariable(expression);
     }
     return super.resolve(expression, incompleteCode);
@@ -74,43 +75,52 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   @NotNull
   private ResolveResult[] resolveTemplateVariable(@NotNull JSReferenceExpressionImpl expression) {
     assert myReferencedName != null;
-    final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
     ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance
       .getExpressionAccess(expression);
-    return localVariables.stream()
-      .map(item -> remapSetterGetter(item, access))
-      .flatMap(Collection::stream)
-      .map(JSResolveResult::new)
-      .toArray(ResolveResult[]::new);
+
+    List<ResolveResult> results = new SmartList<>();
+    Angular2TemplateScopesResolver.resolve(myRef, resolveResult -> {
+      JSPsiElementBase element = tryCast(resolveResult.getElement(), JSPsiElementBase.class);
+      if (element != null
+          && myReferencedName.equals(element.getName())) {
+        remapSetterGetterIfNeeded(results, resolveResult, access);
+        return false;
+      }
+      return true;
+    });
+    return results.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
-  @NotNull
-  private static Collection<JSPsiElementBase> remapSetterGetter(@NotNull JSPsiElementBase item,
-                                                                ReadWriteAccessDetector.Access access) {
-    if (!(item instanceof TypeScriptFunction)) {
-      return Collections.singleton(item);
+  private static void remapSetterGetterIfNeeded(@NotNull List<ResolveResult> results,
+                                                @NotNull ResolveResult resolveResult,
+                                                @NotNull ReadWriteAccessDetector.Access access) {
+    JSPsiElementBase element = (JSPsiElementBase)resolveResult.getElement();
+    if (!(element instanceof TypeScriptFunction)) {
+      results.add(resolveResult);
+      return;
     }
-    TypeScriptFunction function = (TypeScriptFunction)item;
-    List<JSPsiElementBase> result = new ArrayList<>();
+    Consumer<JSFunction> add = resolveResult instanceof Angular2ComponentPropertyResolveResult
+                               ? function -> results.add(((Angular2ComponentPropertyResolveResult)resolveResult).copyWith(function))
+                               : function -> results.add(new JSResolveResult(function));
+    TypeScriptFunction function = (TypeScriptFunction)element;
     if (function.isGetProperty() && access == ReadWriteAccessDetector.Access.Write) {
-      findPropertyAccessor(function, true, result::add);
+      findPropertyAccessor(function, true, add);
     }
     else if (function.isSetProperty() && access == ReadWriteAccessDetector.Access.Read) {
-      findPropertyAccessor(function, false, result::add);
+      findPropertyAccessor(function, false, add);
     }
     else {
-      result.add(function);
+      add.accept(function);
       if (access == ReadWriteAccessDetector.Access.ReadWrite) {
-        findPropertyAccessor(function, function.isGetProperty(), result::add);
+        findPropertyAccessor(function, function.isGetProperty(), add);
       }
     }
-    return result;
   }
 
   public static void findPropertyAccessor(@NotNull TypeScriptFunction function,
                                           boolean isSetter,
                                           @NotNull Consumer<? super JSFunction> processor) {
-    TypeScriptClass parent = ObjectUtils.tryCast(function.getParent(), TypeScriptClass.class);
+    TypeScriptClass parent = tryCast(function.getParent(), TypeScriptClass.class);
     String name = function.getName();
     if (name != null && parent != null) {
       JSClassUtils.processClassesInHierarchy(parent, true, (cls, typeSubst, isInterface) -> {
@@ -118,23 +128,12 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
           if (name.equals(fun.getName())
               && ((fun.isGetProperty() && !isSetter)
                   || (fun.isSetProperty() && isSetter))) {
-            processor.consume(fun);
+            processor.accept(fun);
             return false;
           }
         }
         return true;
       });
     }
-  }
-
-  @NotNull
-  private static Collection<JSPsiElementBase> getItemsByName(@NotNull final String name, @NotNull PsiElement element) {
-    final Collection<JSPsiElementBase> result = new ArrayList<>();
-    Angular2Processor.process(element, element1 -> {
-      if (name.equals(element1.getName())) {
-        result.add(element1);
-      }
-    });
-    return result;
   }
 }

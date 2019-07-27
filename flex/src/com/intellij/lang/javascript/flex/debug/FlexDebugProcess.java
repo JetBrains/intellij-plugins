@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.CantRunException;
@@ -9,7 +10,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -58,7 +59,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.Alarm;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
@@ -80,6 +81,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -251,7 +253,8 @@ public class FlexDebugProcess extends XDebugProcess {
               final String iosSimulatorAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
               sendCommand(new StartAppOnIosSimulatorCommand(bc.getSdk(), iosSimulatorAppId,
-                                                            ((FlashRunnerParameters)params).getIOSSimulatorSdkPath()));
+                                                            ((FlashRunnerParameters)params).getIOSSimulatorSdkPath(),
+                                                            ((FlashRunnerParameters)params).getIOSSimulatorDevice()));
               break;
             case iOSDevice:
               final String iosAppName =
@@ -381,7 +384,7 @@ public class FlexDebugProcess extends XDebugProcess {
     myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand,
                                          s -> s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s, " ");
 
-    final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
+    final Process process = Runtime.getRuntime().exec(ArrayUtilRt.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
     return process;
   }
@@ -996,7 +999,7 @@ public class FlexDebugProcess extends XDebugProcess {
     setSuspended(
       command.getOutputProcessingMode() == CommandOutputProcessingType.NO_PROCESSING && command.getEndVMState() == VMState.SUSPENDED);
     log("Sent:" + text);
-    fdbProcess.getOutputStream().write((text + "\n").getBytes());
+    fdbProcess.getOutputStream().write((text + "\n").getBytes(StandardCharsets.UTF_8));
     try {
       fdbProcess.getOutputStream().flush();
     }
@@ -1089,7 +1092,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void scheduleFdbErrorStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream());
+      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream(), StandardCharsets.UTF_8);
       try {
         char[] buf = new char[1024];
         int read;
@@ -1361,7 +1364,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private final @Nullable VirtualFile myTempDirToDeleteWhenProcessFinished;
 
     StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine,
-                                       final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
+                                final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
       myAdlCommandLine = adlCommandLine;
       myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
     }
@@ -1381,7 +1384,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream());
+        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream(), StandardCharsets.UTF_8);
         try {
           char[] buf = new char[1024];
           int read;
@@ -1420,7 +1423,7 @@ public class FlexDebugProcess extends XDebugProcess {
       });
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream());
+        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream(), StandardCharsets.UTF_8);
         try {
           char[] buf = new char[1024];
           int read;
@@ -1466,17 +1469,19 @@ public class FlexDebugProcess extends XDebugProcess {
     private final Sdk myFlexSdk;
     private final String myAppId;
     private final String myIOSSdkPath;
+    private final String mySimulatorDevice;
 
-    StartAppOnIosSimulatorCommand(final Sdk flexSdk, final String appId, final String iOSSdkPath) {
+    StartAppOnIosSimulatorCommand(final Sdk flexSdk, final String appId, final String iOSSdkPath, String simulatorDevice) {
       myFlexSdk = flexSdk;
       myAppId = appId;
       myIOSSdkPath = iOSSdkPath;
+      mySimulatorDevice = simulatorDevice;
     }
 
     @Override
-    void launchDebuggedApplication() throws IOException {
+    void launchDebuggedApplication() {
       ApplicationManager.getApplication().invokeLater(
-        () -> FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true));
+        () -> FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, mySimulatorDevice, true));
     }
   }
 
@@ -1504,7 +1509,7 @@ public class FlexDebugProcess extends XDebugProcess {
             .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
               @Override
               protected void hyperlinkActivated(final HyperlinkEvent e) {
-                ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
               }
             });
         }
@@ -1690,7 +1695,9 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar, @NotNull final DefaultActionGroup topToolbar, @NotNull DefaultActionGroup settings) {
+  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
+                                        @NotNull final DefaultActionGroup topToolbar,
+                                        @NotNull DefaultActionGroup settings) {
     topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
   }
 }

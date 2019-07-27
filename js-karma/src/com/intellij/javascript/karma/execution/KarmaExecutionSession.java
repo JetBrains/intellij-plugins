@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionException;
@@ -27,7 +28,6 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -35,11 +35,13 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
+import com.intellij.util.io.BaseOutputReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -137,7 +139,13 @@ public class KarmaExecutionSession {
   private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     GeneralCommandLine commandLine = createCommandLine(interpreter, server);
-    OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine);
+    OSProcessHandler processHandler = new KillableColoredProcessHandler(commandLine) {
+      @NotNull
+      @Override
+      protected BaseOutputReader.Options readerOptions() {
+        return BaseOutputReader.Options.forMostlySilentProcess();
+      }
+    };
     server.getRestarter().onRunnerExecutionStarted(processHandler);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
@@ -148,7 +156,7 @@ public class KarmaExecutionSession {
                                                @NotNull KarmaServer server) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setWorkDirectory(myRunSettings.getWorkingDirectorySystemDependent());
-    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
+    commandLine.setCharset(StandardCharsets.UTF_8);
     List<String> nodeOptionList = ParametersListUtil.parse(myRunSettings.getNodeOptions().trim());
     commandLine.addParameters(nodeOptionList);
     //NodeCommandLineUtil.addNodeOptionsForDebugging(commandLine, Collections.emptyList(), 5858, false, interpreter, true);

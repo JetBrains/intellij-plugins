@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.css.impl.util.CssPsiColorUtil;
@@ -34,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
 
 /**
  * @author Eugene.Kudelevsky
@@ -105,7 +105,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
       if (!cssStyle) return colorValue;
       return "#" + colorValue.substring(2);
     }
-    colorValue = colorValue.toLowerCase(Locale.US);
+    colorValue = StringUtil.toLowerCase(colorValue);
     if (ColorMap.isStandardColor(colorValue)) {
       String hex = ColorMap.getHexCodeForColorName(colorValue);
       if (hex != null) {
@@ -171,7 +171,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
       return new AnAction() {
         @Override
         public void actionPerformed(@NotNull final AnActionEvent e) {
-          final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
+          final Editor editor = e.getData(CommonDataKeys.EDITOR);
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
             final Color color = ColorChooser

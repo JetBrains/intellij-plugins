@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
 import com.google.common.collect.Lists;
@@ -23,7 +24,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
@@ -37,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -217,7 +219,7 @@ public class KarmaServer {
         if (configPath == null) {
           configPath = configFile.getAbsolutePath();
         }
-        commandLine.addParameters("--config", configPath);
+        commandLine.addParameters("--config", configurator.convertLocalPathToRemote(configPath));
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
@@ -242,7 +244,7 @@ public class KarmaServer {
     if (serverSettings.isDebug()) {
       setIntellijParameter(commandLine, "debug", "true");
     }
-    commandLine.setCharset(CharsetToolkit.UTF8_CHARSET);
+    commandLine.setCharset(StandardCharsets.UTF_8);
     configurator.configure(commandLine);
     return commandLine;
   }
@@ -294,7 +296,7 @@ public class KarmaServer {
 
   void fireOnPortBound() {
     UIUtil.invokeLaterIfNeeded(() -> {
-      List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
+      List<Runnable> callbacks = new ArrayList<>(myOnPortBoundCallbacks);
       myOnPortBoundCallbacks.clear();
       myOnPortBoundCallbacks = null;
       for (Runnable callback : callbacks) {
@@ -324,7 +326,7 @@ public class KarmaServer {
   void fireOnBrowsersReady(boolean browsersReady) {
     UIUtil.invokeLaterIfNeeded(() -> {
       if (browsersReady) {
-        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
+        List<Runnable> callbacks = new ArrayList<>(myOnBrowsersReadyCallbacks);
         myOnBrowsersReadyCallbacks.clear();
         myOnBrowsersReadyCallbacks = null;
         for (Runnable callback : callbacks) {
@@ -358,7 +360,7 @@ public class KarmaServer {
   private void fireOnTerminated(final int exitCode) {
     UIUtil.invokeLaterIfNeeded(() -> {
       myExitCode = exitCode;
-      List<KarmaServerTerminatedListener> listeners = ContainerUtil.newArrayList(myTerminationCallbacks);
+      List<KarmaServerTerminatedListener> listeners = new ArrayList<>(myTerminationCallbacks);
       myTerminationCallbacks.clear();
       for (KarmaServerTerminatedListener listener : listeners) {
         listener.onTerminated(exitCode);
@@ -420,7 +422,7 @@ public class KarmaServer {
           myOnBrowsersReadyCallbacks.clear();
         }
       });
-      shutdown();
+      shutdownAsync();
     });
 
     @Override

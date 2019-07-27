@@ -21,8 +21,8 @@ import com.google.gson.JsonObject;
  * A {@link BoundVariable} represents a local variable bound to a particular value in a {@link
  * Frame}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
-public class BoundVariable extends Element {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public class BoundVariable extends Response {
 
   public BoundVariable(JsonObject json) {
     super(json);
@@ -58,7 +58,7 @@ public class BoundVariable extends Element {
    * <code>Sentinel</code>
    */
   public Object getValue() {
-    JsonObject elem = (JsonObject)json.get("value");
+    final JsonObject elem = (JsonObject)json.get("value");
     if (elem == null) return null;
 
     if (elem.get("type").getAsString().equals("@Instance")) return new InstanceRef(elem);

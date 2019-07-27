@@ -9,6 +9,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.impl.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +55,7 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
     @NotNull
     private final Function<Angular2ElementType, ASTNode> myClassConstructor;
 
-    public Angular2ElementType(@NotNull String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
+    public Angular2ElementType(@NotNull @NonNls String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, Angular2Language.INSTANCE);
       myClassConstructor = classConstructor;
     }
@@ -68,7 +69,8 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2ExpressionElementType extends Angular2ElementType implements JSExpressionElementType {
 
-    public Angular2ExpressionElementType(@NotNull String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
+    public Angular2ExpressionElementType(@NotNull @NonNls String debugName,
+                                         @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, classConstructor);
     }
   }
@@ -82,6 +84,7 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
     private final String myName;
 
     public Angular2TemplateBindingType(@NotNull String key, boolean isVar, @Nullable String name) {
+      //noinspection HardCodedStringLiteral
       super("NG:TEMPLATE_BINDING_STATEMENT", Angular2Language.INSTANCE, false);
       myKey = key;
       myVar = isVar;
@@ -101,6 +104,7 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
     @NotNull private final String myTemplateName;
 
     public Angular2TemplateBindingsType(@NotNull String templateName) {
+      //noinspection HardCodedStringLiteral
       super("NG:TEMPLATE_BINDINGS_STATEMENT", Angular2Language.INSTANCE, false);
       myTemplateName = templateName;
     }

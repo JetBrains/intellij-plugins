@@ -1,5 +1,3 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi;
 
@@ -122,6 +120,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitElement(@NotNull DartElement o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitEnumConstantDeclaration(@NotNull DartEnumConstantDeclaration o) {
     visitComponent(o);
   }
@@ -159,6 +161,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitFinallyPart(@NotNull DartFinallyPart o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitForElement(@NotNull DartForElement o) {
     visitPsiCompositeElement(o);
   }
 
@@ -219,6 +225,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitId(@NotNull DartId o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitIfElement(@NotNull DartIfElement o) {
     visitPsiCompositeElement(o);
   }
 
@@ -300,13 +310,8 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitMapLiteralEntry(@NotNull DartMapLiteralEntry o) {
+  public void visitMapEntry(@NotNull DartMapEntry o) {
     visitPsiCompositeElement(o);
-  }
-
-  public void visitMapLiteralExpression(@NotNull DartMapLiteralExpression o) {
-    visitExpression(o);
-    // visitReference(o);
   }
 
   public void visitMetadata(@NotNull DartMetadata o) {
@@ -431,7 +436,7 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
-  public void visitSetLiteralExpression(@NotNull DartSetLiteralExpression o) {
+  public void visitSetOrMapLiteralExpression(@NotNull DartSetOrMapLiteralExpression o) {
     visitExpression(o);
     // visitReference(o);
   }
@@ -462,6 +467,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitSimpleType(@NotNull DartSimpleType o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitSpreadElement(@NotNull DartSpreadElement o) {
     visitPsiCompositeElement(o);
   }
 

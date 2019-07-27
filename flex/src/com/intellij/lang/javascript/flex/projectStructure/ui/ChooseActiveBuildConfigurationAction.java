@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -14,10 +15,11 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
@@ -40,8 +42,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   public void update(@NotNull final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
-      e.getPresentation().setVisible(enabled);
-      e.getPresentation().setEnabled(enabled);
+      e.getPresentation().setEnabledAndVisible(enabled);
     }
     else {
       //e.getPresentation().setDescription(FlexBundle.message());
@@ -57,7 +58,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    Module module = LangDataKeys.MODULE.getData(e.getDataContext());
+    Module module = e.getData(LangDataKeys.MODULE);
     if (module != null) {
       createPopup(module).showInBestPositionFor(e.getDataContext());
     }
@@ -117,7 +118,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
               isActive = false;
             }
 
-            RowIcon rowIcon = new RowIcon(2);
+            RowIcon rowIcon = IconManager.getInstance().createRowIcon(2);
             rowIcon.setIcon(isActive ? (isSelected ? ICON_ACTIVE_SELECTED : ICON_ACTIVE) : ICON_EMPTY, 0);
             rowIcon.setIcon(icon, 1);
             p.setIcon(rowIcon);

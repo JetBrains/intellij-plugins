@@ -1,0 +1,61 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template IAM_Policies_SNS_Publish_To_SQS: Sample template showing how to grant rights so that you can publish SNS notifications to an SQS queue. Note that you will need to specify the CAPABILITY_IAM flag when you create the stack to allow this template to execute. You can do this through the AWS management console by clicking on the check box acknowledging that you understand this template creates IAM resources or by specifying the CAPABILITY_IAM flag to the cfn-create-stack command line tool or CreateStack API call. **WARNING** This template creates an Amazon SQS queue and an Amazon SNS topic. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources" : {
+
+    "SQSQueue" : {
+      "Type" : "AWS::SQS::Queue"
+    },
+
+    "SNSTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [{
+          "Protocol" : "sqs",
+          "Endpoint" : { "Fn::GetAtt" : [ "SQSQueue", "Arn" ] }
+        }]
+      }
+    },
+
+    "AllowSNS2SQSPolicy" : {
+      "Type" : "AWS::SQS::QueuePolicy",
+      "Properties" : {       
+        "Queues" : [ { "Ref" : "SQSQueue" } ],
+        "PolicyDocument":  {
+          "Version": "2008-10-17",
+          "Id": "PublicationPolicy",
+          "Statement" : [
+            {
+              "Sid": "Allow-SNS-SendMessage",
+              "Effect": "Allow",          
+              "Principal" : {
+                "AWS": "*"
+              },
+              "Action": ["sqs:SendMessage"],
+              "Resource": { "Fn::GetAtt" : [ "SQSQueue", "Arn" ] },
+              "Condition" : {
+                "ArnEquals" : {
+                  "aws:SourceArn": { "Ref" : "SNSTopic" }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "QueueArn" : {
+      "Value" : { "Fn::GetAtt" : [ "SQSQueue", "Arn" ]},
+      "Description" : "ARN of SQS Queue"
+    },
+    "TopicArn" : {
+      "Value" : { "Ref" : "SNSTopic" },
+      "Description" : "ARN of SNS Topic"
+    }
+  }
+}
+

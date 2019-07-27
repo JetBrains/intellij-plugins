@@ -60,6 +60,12 @@ public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
   }
 
   @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    AngularTestUtil.enableAstLoadingFilter(this);
+  }
+
+  @Override
   protected boolean isExcluded() {
     return TESTS_TO_SKIP.contains(getName());
   }

@@ -61,7 +61,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull final PsiFile file, boolean withTemplate) {
     if (!(file instanceof GroovyFile)) return false;
 
     final Project project = file.getProject();
@@ -109,6 +109,10 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     for (GrParameter var : blockVars) {
       PsiElement identifier = var.getNameIdentifierGroovy();
       builder.replaceElement(identifier, identifier.getText());
+    }
+
+    if (!withTemplate) {
+      return true;
     }
 
     TemplateManager manager = TemplateManager.getInstance(project);
@@ -166,7 +170,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
 
-    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(Collections.emptyList(), step.getKeyword().getText(), step.getName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
     final String fqnPendingException;

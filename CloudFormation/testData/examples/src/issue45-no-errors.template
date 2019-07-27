@@ -1,0 +1,22 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Metadata": {
+    "Version": "V1.0",
+    "LastUpdated": "Jan 1st 2015",
+    "UpdatedBy": "First Last",
+    "Comments": "Initial Draft"
+  },
+  "Resources": {
+    "Test": {
+      "Type" : "AWS::Lambda::Permission",
+      "Properties" : {
+        "Action" : "",
+        "FunctionName" : "",
+        "Principal" : "",
+        "SourceAccount" : "",
+        "SourceArn" : ""
+      }
+    }
+  }
+}

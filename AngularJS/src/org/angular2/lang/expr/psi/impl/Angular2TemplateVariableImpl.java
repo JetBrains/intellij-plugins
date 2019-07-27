@@ -7,16 +7,19 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.lang.expr.parser.Angular2StubElementTypes;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 
 public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable> {
 
@@ -30,7 +33,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
 
   @Nullable
   @Override
-  protected JSType doGetType() {
+  public JSType calculateType() {
     Angular2TemplateBindings bindings = PsiTreeUtil.getParentOfType(this, Angular2TemplateBindings.class);
     Angular2TemplateBinding binding = PsiTreeUtil.getParentOfType(this, Angular2TemplateBinding.class);
     if (binding == null || binding.getName() == null || bindings == null) {
@@ -45,13 +48,20 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
       }
     }
     if (propertyName != null && (propertyType == null || propertyType instanceof JSAnyType)) {
-      JSType contextType = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
+      JSType contextType = JSResolveUtil.getElementJSType(bindings);
       if (contextType != null) {
         JSRecordType.PropertySignature signature = contextType.asRecordType().findPropertySignature(propertyName);
-        propertyType = signature != null ? signature.getType() : null;
+        propertyType = signature != null ? signature.getJSType() : null;
       }
     }
     return propertyType;
+  }
+
+  @Nullable
+  @Override
+  public JSType getJSType() {
+    return getCachedValue(this, () ->
+      create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
   @Override
@@ -66,7 +76,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
   }
 
   @Override
-  protected boolean useTypesFromJSDoc() {
+  public boolean useTypesFromJSDoc() {
     return false;
   }
 }

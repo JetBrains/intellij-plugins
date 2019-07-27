@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions.completionProviders;
 
 import com.intellij.codeInsight.completion.*;
@@ -18,7 +18,7 @@ import com.intellij.lang.StdLanguages;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.FormatterUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +104,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
                String text = position.getParent().getText();
                String[] attributeValues = text.indexOf('.') == -1 ?
                                           CfmlUtil.getAttributeValues("cffunction", "returntype", position.getProject()) :
-                                          ArrayUtil.EMPTY_STRING_ARRAY;
+                                          ArrayUtilRt.EMPTY_STRING_ARRAY;
                Set<LookupElement> lookupResult = ContainerUtil.map2Set(attributeValues, argumentValue -> LookupElementBuilder.create(argumentValue).withCaseSensitivity(false));
 
                Object[] objects =

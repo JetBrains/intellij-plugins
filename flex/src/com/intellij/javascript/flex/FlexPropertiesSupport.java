@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.lang.javascript.psi.impl.JSPropertyReference;
+import com.intellij.lang.javascript.psi.impl.FlexPropertyReference;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.BundleNameEvaluator;
 import com.intellij.lang.properties.PropertiesReferenceManager;
@@ -72,7 +72,7 @@ public class FlexPropertiesSupport {
     boolean isSoft(T element);
   }
 
-  private static class MyPropertyReference<T extends PsiElement> extends PropertyReference implements JSPropertyReference {
+  private static class MyPropertyReference<T extends PsiElement> extends PropertyReference implements FlexPropertyReference {
     MyPropertyReference(TextRange range, T element, PropertyReferenceInfoProvider<T> infoProvider) {
       super(range.substring(element.getText()), element, infoProvider.getBundleName(element), infoProvider.isSoft(element), range);
     }

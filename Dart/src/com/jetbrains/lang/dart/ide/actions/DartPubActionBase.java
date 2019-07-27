@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.CommonBundle;
@@ -100,8 +100,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
   @Nullable
   private static Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
-    final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
+    final Module module = e.getData(LangDataKeys.MODULE);
+    final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
     if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase(PUBSPEC_YAML)) {
       final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
@@ -309,9 +309,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     info.rerunPubCommandAction = rerunPubCommandAction;
     actionGroup.addAction(rerunPubCommandAction);
 
-    final StopProcessAction stopProcessAction = new StopProcessAction(DartBundle.message("stop.dart.dev.server.action"),
-                                                                      DartBundle.message("stop.dart.dev.server.action"),
-                                                                      null);
+    final StopProcessAction stopProcessAction =
+      new StopProcessAction(DartBundle.message("stop.pub.process.action"), DartBundle.message("stop.pub.process.action"), null);
     info.stopProcessAction = stopProcessAction;
     actionGroup.addAction(stopProcessAction);
 

@@ -5,11 +5,10 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ObjectUtils;
@@ -20,7 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
+import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
+import static com.intellij.util.containers.ContainerUtil.map;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,6 +37,10 @@ public class AngularTestUtil {
       fixture.configureByFiles(name + ".d.ts");
       fixture.copyFileToProject(name + ".metadata.json");
     }
+  }
+
+  public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
+    Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
 
   public static String getBaseTestDataPath(Class clazz) {
@@ -77,8 +82,30 @@ public class AngularTestUtil {
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
     TestCase.assertNotNull("No reference at '" + signature + "'", ref);
     PsiElement resolve = ref.resolve();
+    if (resolve == null && ref instanceof PsiPolyVariantReference) {
+      List<ResolveResult> results = ContainerUtil.filter(((PsiPolyVariantReference)ref).multiResolve(false),
+                                                         ResolveResult::isValidResult);
+      if (results.size() > 1) {
+        throw new AssertionError("Reference resolves to more than one element at '" + signature + "': "
+                                 + results);
+      } else if (results.size() == 1) {
+        resolve = results.get(0).getElement();
+      }
+
+    }
     TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;
+  }
+
+  @NotNull
+  public static List<PsiElement> multiResolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
+    PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
+    TestCase.assertNotNull("No reference at '" + signature + "'", ref);
+    TestCase.assertTrue("PsiPolyVariantReference expected", ref instanceof PsiPolyVariantReference);
+    ResolveResult[] resolveResult = ((PsiPolyVariantReference)ref).multiResolve(false);
+    TestCase.assertFalse("Empty reference resolution at '" + signature + "'", resolveResult.length == 0);
+    return map(resolveResult, ResolveResult::getElement);
   }
 
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
@@ -86,6 +113,9 @@ public class AngularTestUtil {
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
     TestCase.assertNotNull(ref);
     TestCase.assertNull(ref.resolve());
+    if (ref instanceof PsiPolyVariantReference) {
+      assertEmpty(((PsiPolyVariantReference)ref).multiResolve(false));
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -122,5 +152,4 @@ public class AngularTestUtil {
       return result.toString();
     });
   }
-
 }

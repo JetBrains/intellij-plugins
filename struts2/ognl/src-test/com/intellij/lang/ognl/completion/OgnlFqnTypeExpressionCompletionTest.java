@@ -17,11 +17,11 @@ package com.intellij.lang.ognl.completion;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlTestUtils;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 
 import java.util.List;
 
-public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixtureTestCase {
+public class OgnlFqnTypeExpressionCompletionTest extends LightJavaCodeInsightFixtureTestCase {
 
   public void testNewExpressionBasicCompletion() {
     myFixture.configureByText(OgnlFileType.INSTANCE,

@@ -1,0 +1,1041 @@
+# https://raw.githubusercontent.com/HealthHackAu2016/BNE_stemFlow/master/CloudFormation/stemflow-vpc.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Conditions:
+  2PlusAZs:
+    Fn::Or:
+    - Fn::Equals:
+      - Ref: AZCount
+      - '2'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '3'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '4'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '5'
+  3PlusAZs:
+    Fn::Or:
+    - Fn::Equals:
+      - Ref: AZCount
+      - '3'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '4'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '5'
+  4PlusAZs:
+    Fn::Or:
+    - Fn::Equals:
+      - Ref: AZCount
+      - '4'
+    - Fn::Equals:
+      - Ref: AZCount
+      - '5'
+  5PlusAZs:
+    Fn::Equals:
+    - Ref: AZCount
+    - '5'
+Description: VPC Network
+Parameters:
+  AZCount:
+    Default: '2'
+    Description: The number of Availability Zones that the VPC is to span.
+    Type: String
+  Environment:
+    Default: "TEST"
+    Description: Which environment type the resources will be deployed in (e.g. PROD,
+      POC, DEV).
+    Type: String
+  VPCName:
+    Default: "StemflowVPC"
+    Description: Name of the VPC.
+    Type: String
+  VPCPrefix:
+    AllowedPattern: '[0-9]+\..+'
+    Default: '10.25'
+    Description: VPC Network Prefix (first two octets ONLY).
+    Type: String
+Resources:
+  AppNACL:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - '-'
+          - - Ref: Environment
+            - App_Tier
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::NetworkAcl
+  AppSubnetA:
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 16.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - App-A
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  AppSubnetANACLAssociation:
+    Properties:
+      NetworkAclId:
+        Ref: AppNACL
+      SubnetId:
+        Ref: AppSubnetA
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  AppSubnetARouteTableAssociation:
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: AppSubnetA
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  AppSubnetB:
+    Condition: 2PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 17.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - App-B
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  AppSubnetBNACLAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: AppNACL
+      SubnetId:
+        Ref: AppSubnetB
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  AppSubnetBRouteTableAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: AppSubnetB
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  AppSubnetC:
+    Condition: 3PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 18.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - App-C
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  AppSubnetCNACLAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: AppNACL
+      SubnetId:
+        Ref: AppSubnetC
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  AppSubnetCRouteTableAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: AppSubnetC
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  AppSubnetD:
+    Condition: 4PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 3
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 19.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - App-D
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  AppSubnetDNACLAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: AppNACL
+      SubnetId:
+        Ref: AppSubnetD
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  AppSubnetDRouteTableAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: AppSubnetD
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  AppSubnetE:
+    Condition: 5PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 4
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 20.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - App-E
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  AppSubnetENACLAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: AppNACL
+      SubnetId:
+        Ref: AppSubnetE
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  AppSubnetERouteTableAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: AppSubnetE
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  AttachGateway:
+    Properties:
+      InternetGatewayId:
+        Ref: InternetGateway
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::VPCGatewayAttachment
+  DataNACL:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - '-'
+          - - Ref: Environment
+            - Data_Tier
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::NetworkAcl
+  DataSubnetA:
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 32.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Data-A
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  DataSubnetANACLAssociation:
+    Properties:
+      NetworkAclId:
+        Ref: DataNACL
+      SubnetId:
+        Ref: DataSubnetA
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  DataSubnetARouteTableAssociation:
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: DataSubnetA
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  DataSubnetB:
+    Condition: 2PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 33.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Data-B
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  DataSubnetBNACLAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: DataNACL
+      SubnetId:
+        Ref: DataSubnetB
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  DataSubnetBRouteTableAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: DataSubnetB
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  DataSubnetC:
+    Condition: 3PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 34.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Data-C
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  DataSubnetCNACLAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: DataNACL
+      SubnetId:
+        Ref: DataSubnetC
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  DataSubnetCRouteTableAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: DataSubnetC
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  DataSubnetD:
+    Condition: 4PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 3
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 35.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Data-D
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  DataSubnetDNACLAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: DataNACL
+      SubnetId:
+        Ref: DataSubnetD
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  DataSubnetDRouteTableAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: DataSubnetD
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  DataSubnetE:
+    Condition: 5PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 4
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 36.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Data-E
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  DataSubnetENACLAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: DataNACL
+      SubnetId:
+        Ref: DataSubnetE
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  DataSubnetERouteTableAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: DataSubnetE
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  InternetGateway:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ' - '
+          - - Ref: VPCName
+            - IGW
+    Type: AWS::EC2::InternetGateway
+  MgmtNACL:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - '-'
+          - - Ref: Environment
+            - Mgmt_Tier
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::NetworkAcl
+  MgmtSubnetA:
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 48.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Mgmt-A
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  MgmtSubnetANACLAssociation:
+    Properties:
+      NetworkAclId:
+        Ref: MgmtNACL
+      SubnetId:
+        Ref: MgmtSubnetA
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  MgmtSubnetARouteTableAssociation:
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: MgmtSubnetA
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  MgmtSubnetB:
+    Condition: 2PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 49.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Mgmt-B
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  MgmtSubnetBNACLAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: MgmtNACL
+      SubnetId:
+        Ref: MgmtSubnetB
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  MgmtSubnetBRouteTableAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: MgmtSubnetB
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  MgmtSubnetC:
+    Condition: 3PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 50.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Mgmt-C
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  MgmtSubnetCNACLAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: MgmtNACL
+      SubnetId:
+        Ref: MgmtSubnetC
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  MgmtSubnetCRouteTableAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: MgmtSubnetC
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  MgmtSubnetD:
+    Condition: 4PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 3
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 51.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Mgmt-D
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  MgmtSubnetDNACLAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: MgmtNACL
+      SubnetId:
+        Ref: MgmtSubnetD
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  MgmtSubnetDRouteTableAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: MgmtSubnetD
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  MgmtSubnetE:
+    Condition: 5PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 4
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 52.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Mgmt-E
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  MgmtSubnetENACLAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: MgmtNACL
+      SubnetId:
+        Ref: MgmtSubnetE
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  MgmtSubnetERouteTableAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: MgmtSubnetE
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  NATGateway:
+    DependsOn:
+    - NATGatewayEIP
+    - WebSubnetA
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+        - NATGatewayEIP
+        - AllocationId
+      SubnetId:
+        Ref: WebSubnetA
+    Type: AWS::EC2::NatGateway
+  NATGatewayEIP:
+    DependsOn: VPC
+    Properties:
+      Domain: vpc
+    Type: AWS::EC2::EIP
+  PermitAnyFromApp:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId:
+        Ref: AppNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyFromData:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId:
+        Ref: DataNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyFromMgmt:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId:
+        Ref: MgmtNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyFromWeb:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: 'true'
+      NetworkAclId:
+        Ref: WebNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyToApp:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      NetworkAclId:
+        Ref: AppNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyToData:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      NetworkAclId:
+        Ref: DataNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyToMgmt:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      NetworkAclId:
+        Ref: MgmtNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PermitAnyToWeb:
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      NetworkAclId:
+        Ref: WebNACL
+      Protocol: '-1'
+      RuleAction: allow
+      RuleNumber: '100'
+    Type: AWS::EC2::NetworkAclEntry
+  PrivateNATGatewayRoute:
+    DependsOn: NATGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: NATGateway
+      RouteTableId:
+        Ref: PrivateRouteTable
+    Type: AWS::EC2::Route
+  PrivateRouteTable:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ' - '
+          - - Ref: VPCName
+            - Private Routes
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::RouteTable
+  PublicDefaultRoute:
+    DependsOn: AttachGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+      RouteTableId:
+        Ref: PublicRouteTable
+    Type: AWS::EC2::Route
+  PublicRouteTable:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ' - '
+          - - Ref: VPCName
+            - Public Routes
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::RouteTable
+  VPC:
+    Properties:
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 0.0/16
+      Tags:
+      - Key: Name
+        Value:
+          Ref: VPCName
+    Type: AWS::EC2::VPC
+  WebNACL:
+    Properties:
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - '-'
+          - - Ref: Environment
+            - Web_Tier
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::NetworkAcl
+  WebSubnetA:
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 0
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 0.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Web-A
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  WebSubnetANACLAssociation:
+    Properties:
+      NetworkAclId:
+        Ref: WebNACL
+      SubnetId:
+        Ref: WebSubnetA
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  WebSubnetARouteTableAssociation:
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: WebSubnetA
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  WebSubnetB:
+    Condition: 2PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 1
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 1.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Web-B
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  WebSubnetBNACLAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: WebNACL
+      SubnetId:
+        Ref: WebSubnetB
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  WebSubnetBRouteTableAssociation:
+    Condition: 2PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: WebSubnetB
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  WebSubnetC:
+    Condition: 3PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 2
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 2.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Web-C
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  WebSubnetCNACLAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: WebNACL
+      SubnetId:
+        Ref: WebSubnetC
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  WebSubnetCRouteTableAssociation:
+    Condition: 3PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: WebSubnetC
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  WebSubnetD:
+    Condition: 4PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 3
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 3.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Web-D
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  WebSubnetDNACLAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: WebNACL
+      SubnetId:
+        Ref: WebSubnetD
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  WebSubnetDRouteTableAssociation:
+    Condition: 4PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: WebSubnetD
+    Type: AWS::EC2::SubnetRouteTableAssociation
+  WebSubnetE:
+    Condition: 5PlusAZs
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+        - 4
+        - Fn::GetAZs:
+            Ref: AWS::Region
+      CidrBlock:
+        Fn::Join:
+        - .
+        - - Ref: VPCPrefix
+          - 4.0/24
+      Tags:
+      - Key: Name
+        Value:
+          Fn::Join:
+          - ': '
+          - - Ref: Environment
+            - Web-E
+      VpcId:
+        Ref: VPC
+    Type: AWS::EC2::Subnet
+  WebSubnetENACLAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      NetworkAclId:
+        Ref: WebNACL
+      SubnetId:
+        Ref: WebSubnetE
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+  WebSubnetERouteTableAssociation:
+    Condition: 5PlusAZs
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: WebSubnetE
+    Type: AWS::EC2::SubnetRouteTableAssociation

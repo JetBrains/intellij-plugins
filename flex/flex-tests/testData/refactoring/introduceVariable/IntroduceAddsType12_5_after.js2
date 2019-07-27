@@ -1,0 +1,3 @@
+var x:int
+var y:int
+var created:Number = x/y;

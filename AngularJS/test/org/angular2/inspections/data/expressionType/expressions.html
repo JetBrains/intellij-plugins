@@ -1,54 +1,82 @@
 <my-comp
-    <weak_warning descr="Property 'missingAttr' is not provided by any applicable directives nor by 'my-comp' element.">[missingAttr]</weak_warning>="45 + 34"
-    [plainNumber]="<warning descr="Type 'string' is not assignable to type 'number'">12 + '12'</warning>"
-    [plainBoolean]="<warning descr="Type 'string' is not assignable to type 'boolean'">12 + '12'</warning>"
-    [simpleStringEnum]="<warning descr="Type 'string' is not assignable to type 'MyType'">12 + '12'</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type 'string' is not assignable to type 'MyType'">12 + '12'</warning>"
+    <weak_warning descr="Property missingAttr is not provided by any applicable directives nor by my-comp element">[missingAttr]</weak_warning>="45 + 34"
+    [plainNumber]="<warning descr="Type string is not assignable to type number">12 + '12'</warning>"
+    [plainBoolean]="<warning descr="Type string is not assignable to type boolean">12 + '12'</warning>"
+    [simpleStringEnum]="<warning descr="Type string is not assignable to type MyType">12 + '12'</warning>"
+    [setterSimpleStringEnum]="<warning descr="Type string is not assignable to type MyType">12 + '12'</warning>"
     [dependency]="12 + '12'"
-    [model]="<warning descr="Type 'string' is not assignable to type 'NgModel'">12 + '12'</warning>"
+    [model]="<warning descr="Type string is not assignable to type NgModel">12 + '12'</warning>"
 ></my-comp>
 
 <my-comp
     [plainNumber]="12 + 1.34"
-    [plainBoolean]="<warning descr="Type 'number' is not assignable to type 'boolean'">12 + 1.34</warning>"
-    [simpleStringEnum]="<warning descr="Type 'number' is not assignable to type 'MyType'">12 + 1.34</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type 'number' is not assignable to type 'MyType'">12 + 1.34</warning>"
-    [dependency]="<warning descr="Type 'number' is not assignable to type 'string'">12 + 1.34</warning>"
-    [model]="<warning descr="Type 'number' is not assignable to type 'NgModel'">12 + 1.34</warning>"
+    [plainBoolean]="<warning descr="Type number is not assignable to type boolean">12 + 1.34</warning>"
+    [simpleStringEnum]="<warning descr="Type number is not assignable to type MyType">12 + 1.34</warning>"
+    [setterSimpleStringEnum]="<warning descr="Type number is not assignable to type MyType">12 + 1.34</warning>"
+    [dependency]="<warning descr="Type number is not assignable to type string">12 + 1.34</warning>"
+    [model]="<warning descr="Type number is not assignable to type NgModel">12 + 1.34</warning>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type 'string' is not assignable to type 'number'"><weak_warning descr="Argument type number is not assignable to parameter type string">12</weak_warning> | lowercase</warning>"
-    [dependency]="<weak_warning descr="Argument type number is not assignable to parameter type string">12</weak_warning> | lowercase"
+    [plainNumber]="<warning descr="Type \"off\" | \"polite\" is not assignable to type number">true ? 'off' : 'polite'</warning>"
+    [simpleStringEnum]="true ? 'off' : 'polite'"
+    [setterSimpleStringEnum]="true ? 'off' : 'polite'"
+    [dependency]="true ? 'off' : 'polite'"
+></my-comp>
+
+<my-comp
+    [plainNumber]="<warning descr="Type string is not assignable to type number"><error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase</warning>"
+    [dependency]="<error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase"
 ></my-comp>
 <my-comp
-    [simpleStringEnum]="<warning descr="Type 'string' is not assignable to type 'MyType'">'off' | lowercase</warning>"
+    [simpleStringEnum]="<warning descr="Type string is not assignable to type MyType">'off' | lowercase</warning>"
     [dependency]="'12' | lowercase"
 ></my-comp>
 
 <my-comp
-    [dependency]="<warning descr="Type 'NgModel' is not assignable to type 'string'">asyncModel() | async</warning>"
+    [dependency]="<warning descr="Type NgModel is not assignable to type string">asyncModel() | async</warning>"
     [model]="asyncModel() | async"
 ></my-comp>
 
 <my-comp
     [dependency]="asyncString() | async"
-    [model]="<warning descr="Type 'string' is not assignable to type 'NgModel'">asyncString() | async</warning>"
+    [model]="<warning descr="Type string is not assignable to type NgModel">asyncString() | async</warning>"
 ></my-comp>
 
 <my-comp
-    [dependency]="'foo' | <weak_warning descr="Argument types do not match parameters">async</weak_warning>"
-    [model]="'foo' | <weak_warning descr="Argument types do not match parameters">async</weak_warning>"
+    [dependency]="<error>'foo'</error> | async"
+    [model]="<error>'foo'</error> | async"
 ></my-comp>
 
 <my-comp
     [dependency]="getText(model)"
-    [model]="<warning descr="Type 'string' is not assignable to type 'NgModel'">getText(model)</warning>"
+    [model]="<warning descr="Type string is not assignable to type NgModel">getText(model)</warning>"
 ></my-comp>
 
 <my-comp
-    [dependency]="getText(<weak_warning descr="Argument type number is not assignable to parameter type NgModel">12</weak_warning>)"
-    [model]="<warning descr="Type 'string' is not assignable to type 'NgModel'">getText(<weak_warning descr="Argument type string is not assignable to parameter type NgModel">'foo'</weak_warning>)</warning>"
+    [dependency]="getText(<error descr="Argument type 12 is not assignable to parameter type NgModel">12</error>)"
+    [model]="<warning descr="Type string is not assignable to type NgModel">getText(<error descr="Argument type \"foo\" is not assignable to parameter type NgModel">'foo'</error>)</warning>"
+></my-comp>
+
+<my-comp
+    [obj]="{f: 'test', e: 'off'}"
+></my-comp>
+
+<my-comp
+    [obj]="<warning descr="Type {e: \"ddd\", f: \"test\"} is not assignable to type {f: string, e: MyType}">{f: 'test', e: 'ddd'}</warning>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>
+
+<my-comp [predicate]="foo"></my-comp>
+<my-comp [predicate]="<warning descr="Type (arg: number) => boolean is not assignable to type (arg: string) => false">bar</warning>"></my-comp>
+
+<div (click)="asyncInferred().then()"></div>
+<div (click)="asyncInferred().<error descr="Unresolved function or method foo()">foo</error>()"></div>
+<div (click)="asyncInferredString().then()"></div>
+
+<input type='text' #inputElement value='123'>
+
+<div>Value - {{inputElement}}</div>
+<div>Value - {{inputElement.value}}</div>
+<div>Value - {{inputElement.<error descr="Unresolved variable foo">foo</error>}}</div>

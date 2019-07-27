@@ -8,7 +8,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.transport.StacktraceEvent;
 import jetbrains.communicator.idea.BaseIncomingLocalMessage;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 
@@ -25,7 +25,7 @@ public class IncomingStacktraceMessage extends BaseIncomingLocalMessage {
 
   @Override
   public boolean containsString(String searchString) {
-    return super.containsString(searchString) || StringUtil.containedIn(myStacktrace, searchString);
+    return super.containsString(searchString) || CommunicatorStrings.containedIn(myStacktrace, searchString);
   }
 
   @Override
@@ -40,7 +40,7 @@ public class IncomingStacktraceMessage extends BaseIncomingLocalMessage {
 
   @Override
   public String getTitle() {
-    return StringUtil.getMsg("stacktrace");
+    return CommunicatorStrings.getMsg("stacktrace");
   }
 
   @Override

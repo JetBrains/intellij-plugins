@@ -1,5 +1,7 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,6 +23,7 @@ import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
 
 public class DartServerRenameTest extends CodeInsightFixtureTestCase {
@@ -175,16 +178,37 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFileRename() {
-    final PsiFile barFile = myFixture.addFileToProject("src/bar.dart", "");
-    final PsiFile fooFile = myFixture.addFileToProject("foo.dart", "import  r'''src/bar.dart''' ;");
-    final PsiFile bazFile = myFixture.addFileToProject("src/baz.dart", "export  'bar.dart';");
+    PsiFile barFile = myFixture.addFileToProject("src/bar.dart",
+                                                 "class <info>InBar</info> { var <info>field</info>; <error>incorrect</error>; }");
+    PsiFile fooFile = myFixture.addFileToProject("foo.dart", "import  r'''src/bar.dart''' ;");
+    PsiFile bazFile = myFixture.addFileToProject("src/baz.dart", "export  'bar.dart';");
+
     myFixture.openFileInEditor(barFile.getVirtualFile());
-    myFixture.doHighlighting(); // warm up
+    myFixture.checkHighlighting(true, true, true);
+    List<HighlightInfo> initialHighlighting = myFixture.doHighlighting();
+
     myFixture.renameElement(barFile, "renamed.dart");
+
+    List<HighlightInfo> newHighlighting = myFixture.doHighlighting();
+    assertSameElements(newHighlighting, initialHighlighting);
+
     myFixture.openFileInEditor(fooFile.getVirtualFile());
     myFixture.checkResult("import r'''src/renamed.dart''';");
+
     myFixture.openFileInEditor(bazFile.getVirtualFile());
     myFixture.checkResult("export 'renamed.dart';");
+  }
+
+  public void testFileMove() {
+    final PsiFile fooFile = myFixture.addFileToProject("web/src/foo.dart", "import \"bar.dart\";");
+    myFixture.addFileToProject("web/src/bar.dart", "");
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.doHighlighting(); // warm up
+
+    myFixture.moveFile("web/src/foo.dart", "web");
+
+    myFixture.openFileInEditor(fooFile.getVirtualFile());
+    myFixture.checkResult("import \'src/bar.dart\';");
   }
 
   public void testTargetFileMove() {
@@ -196,6 +220,6 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     myFixture.moveFile("web/src/bar.dart", "web");
 
     myFixture.openFileInEditor(fooFile.getVirtualFile());
-    myFixture.checkResult("import \"../bar.dart\";");
+    myFixture.checkResult("import \'../bar.dart\';");
   }
 }

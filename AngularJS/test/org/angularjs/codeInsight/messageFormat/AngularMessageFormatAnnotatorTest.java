@@ -1,13 +1,13 @@
 package org.angularjs.codeInsight.messageFormat;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Irina.Chernushina on 12/3/2015.
  */
-public class AngularMessageFormatAnnotatorTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AngularMessageFormatAnnotatorTest extends BasePlatformTestCase {
   public static final String[] PLURAL = new String[]{"other", "one", "many", "few", "two", "zero", "=0", "=1", "=2", "=3"};
 
   @Override

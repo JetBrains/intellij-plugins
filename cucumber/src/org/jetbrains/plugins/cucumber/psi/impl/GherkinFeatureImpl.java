@@ -3,10 +3,11 @@ package org.jetbrains.plugins.cucumber.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
-import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
-import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
+import org.jetbrains.plugins.cucumber.psi.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author yole
@@ -37,8 +38,24 @@ public class GherkinFeatureImpl extends GherkinPsiElementBase implements Gherkin
 
   @Override
   public GherkinStepsHolder[] getScenarios() {
-    final GherkinStepsHolder[] children = PsiTreeUtil.getChildrenOfType(this, GherkinStepsHolder.class);
-    return children == null ? GherkinStepsHolder.EMPTY_ARRAY : children;
+    List<GherkinStepsHolder> result = new ArrayList<>();
+
+    GherkinStepsHolder[] scenarios = PsiTreeUtil.getChildrenOfType(this, GherkinStepsHolder.class);
+    if (scenarios != null) {
+      result.addAll(Arrays.asList(scenarios));
+    }
+    
+    GherkinRuleImpl[] rules = PsiTreeUtil.getChildrenOfType(this, GherkinRuleImpl.class);
+    if (rules != null) {
+      for (GherkinRuleImpl rule : rules) {
+        scenarios = PsiTreeUtil.getChildrenOfType(rule, GherkinStepsHolder.class);
+        if (scenarios != null) {
+          result.addAll(Arrays.asList(scenarios));
+        }
+      }
+    }
+
+    return result.toArray(GherkinStepsHolder.EMPTY_ARRAY);
   }
 
   @Override

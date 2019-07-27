@@ -1,0 +1,53 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template EC2WithMetadata: Create an Amazon EC2 instance running the Amazon Linux AMI. The Amazon EC2 instance has metadata attached, illustrating that meta data can be used to tag and instance with additonal information that can be accessed via the AWS CloudFormation command line or API. This example used the default security group, so to SSH to the new instance you will need to have port 22 open in your default security group. **WARNING** This template creates one or more Amazon EC2 instances. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Mappings" : {
+    "RegionMap" : {
+      "us-east-1"      : { "AMI" : "ami-7f418316" },
+      "us-west-1"      : { "AMI" : "ami-951945d0" },
+      "us-west-2"      : { "AMI" : "ami-16fd7026" },
+      "eu-west-1"      : { "AMI" : "ami-24506250" },
+      "sa-east-1"      : { "AMI" : "ami-3e3be423" },
+      "ap-southeast-1" : { "AMI" : "ami-74dda626" },
+      "ap-southeast-2" : { "AMI" : "ami-b3990e89" },
+      "ap-northeast-1" : { "AMI" : "ami-dcfa4edd" }
+    }
+  },
+
+  "Resources" : {
+    "Ec2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Metadata" : {
+        "Comment" : "This metadata is availabile via the cfn-describe-stack-resource command line tool, the DescribeStackResource API call or the cfn-get-metadata helper",
+        "MyAMI" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "MyRegion"  : { "Ref" : "AWS::Region" },
+        "MyStack"  : { "Ref" : "AWS::StackId" }
+      },
+      "Properties" : {
+        "ImageId" : { "Fn::FindInMap" : [ "RegionMap", { "Ref" : "AWS::Region" }, "AMI" ]},
+        "UserData" : { "Fn::Base64" : "80" }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created EC2 instance",
+      "Value" : { "Ref" : "Ec2Instance" }
+    },
+    "AZ" : {
+      "Description" : "Availability Zone of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "AvailabilityZone" ] }
+    },
+    "PublicIP" : {
+      "Description" : "Public IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PublicIp" ] }
+    },
+    "PrivateIP" : {
+      "Description" : "Private IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PrivateIp" ] }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSElementResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveScopeProvider;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -17,11 +18,8 @@ import com.intellij.psi.PsiCodeFragment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider implements JSElementResolveScopeProvider {
 
@@ -96,13 +94,12 @@ public class ActionScriptResolveScopeProvider extends JSResolveScopeProvider imp
   }
 
   @Override
-  protected List<VirtualFile> getPredefinedLibraryFiles(@NotNull Project project) {
-    return ContainerUtil
-      .filter(JSResolveUtil.JS_INDEXED_ROOT_PROVIDER.getLibraryFiles(project), ActionScriptResolveScopeProvider::isApplicable);
+  protected boolean isApplicablePredefinedLibraryFile(@NotNull VirtualFile predefinedLibraryFile) {
+    return isApplicable(predefinedLibraryFile);
   }
 
   private static boolean isApplicable(@NotNull final VirtualFile file) {
-    return file.getFileType() == ActionScriptFileType.INSTANCE || file.getFileType() == FlexApplicationComponent.MXML ||
-           file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE || JavaScriptSupportLoader.isFlexMxmFile(file);
+    return FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE) || FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.MXML) ||
+           FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) || JavaScriptSupportLoader.isFlexMxmFile(file);
   }
 }

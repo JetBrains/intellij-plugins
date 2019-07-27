@@ -1,7 +1,7 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.ide.IdeView;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -25,7 +25,7 @@ public class TapestryIdeView implements IdeView {
     @NotNull
     public PsiDirectory[] getDirectories() {
         final List<PsiDirectory> directories = new ArrayList<>();
-        final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(DataKeys.MODULE.getName())).getFileIndex();
+        final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance((Module) _viewPane.getData(LangDataKeys.MODULE.getName())).getFileIndex();
         moduleFileIndex.iterateContent(
           virtualfile -> {
               if (virtualfile.isDirectory() && moduleFileIndex.isInSourceContent(virtualfile)) {

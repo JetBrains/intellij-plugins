@@ -13,7 +13,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ResolvedValue;
@@ -68,7 +68,7 @@ public class TemplateCompletionContributor extends CompletionContributor {
           }
 
           // Try to match the tag to a component
-          Component component = TapestryUtils.getTypeOfTag(tag);
+          TapestryComponent component = TapestryUtils.getTypeOfTag(tag);
           if (component == null) return;
 
           TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);

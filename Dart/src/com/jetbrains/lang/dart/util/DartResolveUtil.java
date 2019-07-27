@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.google.common.collect.Lists;
@@ -21,6 +21,7 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
 import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
@@ -458,7 +459,8 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun, @NotNull DartClass... rootDartClasses) {
+  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun,
+                                              @NotNull DartClass... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(dartClass -> {
       unfilteredResult.addAll(fun.fun(dartClass));
@@ -814,7 +816,10 @@ public class DartResolveUtil {
       parameterIndex = functionDescription == null ? -1 : functionDescription.getParameters().length - 1;
     }
     else if (argumentList != null) {
-      for (DartExpression expression : argumentList.getExpressionList()) {
+      final SmartList<DartPsiCompositeElement> allArguments = new SmartList<>();
+      allArguments.addAll(argumentList.getExpressionList());
+      allArguments.addAll(argumentList.getNamedArgumentList());
+      for (DartPsiCompositeElement expression : allArguments) {
         ++parameterIndex;
         if (expression.getTextRange().getEndOffset() >= place.getTextRange().getStartOffset()) {
           break;
@@ -827,6 +832,10 @@ public class DartResolveUtil {
       assert prevSibling != null;
       // callExpression -> arguments -> argumentList
       parameterIndex = prevSibling.getExpressionList().size() + prevSibling.getNamedArgumentList().size();
+      // If the last argument list doesn't end with a comma, then the index needs to be decremented
+      if (prevSibling.getLastChild().getNode().getElementType() != DartTokenTypes.COMMA) {
+        parameterIndex--;
+      }
     }
     else if (DartParameterInfoHandler.findElementForParameterInfo(place) != null) {
       // foo(<caret>), new Foo(<caret>) or @Foo(<caret>)

@@ -1,0 +1,105 @@
+{
+    "Description": "AWS CloudFormation Sample Template ec2_instance_with_instance_profile: Create an EC2 instance with an associated instance profile. **WARNING** This template creates one or more Amazon EC2 instances and an Amazon SQS queue. You will be billed for the AWS resources used if you create a stack from this template.",
+
+    "AWSTemplateFormatVersion": "2010-09-09",
+
+    "Mappings": {
+        "RegionMap": {
+            "us-east-1": {
+                "AMI": "ami-7f418316"
+            },
+            "us-west-1": {
+                "AMI": "ami-951945d0"
+            },
+            "us-west-2": {
+                "AMI": "ami-16fd7026"
+            },
+            "eu-west-1": {
+                "AMI": "ami-24506250"
+            },
+            "sa-east-1": {
+                "AMI": "ami-3e3be423"
+            },
+            "ap-southeast-1": {
+                "AMI": "ami-74dda626"
+            },
+            "ap-southeast-2": {
+                "AMI": "ami-b3990e89"
+            },
+            "ap-northeast-1": {
+                "AMI": "ami-dcfa4edd"
+            }
+        }
+    },
+    "Resources": {
+        "myEC2Instance": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "IamInstanceProfile": {
+                    "Ref": "RootInstanceProfile"
+                }
+            }
+        },
+        "RootRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/"
+            }
+        },
+        "RolePolicies": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "root",
+                "PolicyDocument": {
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": "*",
+                            "Resource": "*"
+                        }
+                    ]
+                },
+                "Roles": [
+                    {
+                        "Ref": "RootRole"
+                    }
+                ]
+            }
+        },
+        "RootInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "RootRole"
+                    }
+                ]
+            }
+        }
+    }
+}

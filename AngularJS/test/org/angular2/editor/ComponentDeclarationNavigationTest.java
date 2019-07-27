@@ -4,7 +4,6 @@ package org.angular2.editor;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -13,7 +12,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ import java.util.Collection;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 @RunWith(Parameterized.class)
-public class ComponentDeclarationNavigationTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtureTestCase {
 
   @Parameterized.Parameter
   public boolean myIsComponent;
@@ -107,7 +106,7 @@ public class ComponentDeclarationNavigationTest extends LightPlatformCodeInsight
                       @Nullable String actionLabel,
                       @Nullable String targetFile,
                       @Nullable String elementText) throws Exception {
-    invokeTestRunnable(() -> JSTestUtils.testES6(getProject(), () -> {
+    invokeTestRunnable(() -> {
       myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json");
 
       AngularTestUtil.moveToOffsetBySignature(location, myFixture);
@@ -126,6 +125,6 @@ public class ComponentDeclarationNavigationTest extends LightPlatformCodeInsight
       PsiElement element = TargetElementUtil.findTargetElement(focusedEditor, findTargetFlags);
       assertNotNull(element);
       assertEquals(elementText, element.getText());
-    }));
+    });
   }
 }

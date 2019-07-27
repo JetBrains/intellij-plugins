@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 import com.google.gson.Gson
 import com.intellij.application.options.CodeStyle
 import com.intellij.lang.javascript.JavaScriptSupportLoader
+import com.intellij.lang.javascript.formatter.JSCodeStyleUtil
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
@@ -11,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleSettings
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.util.*
 import org.yaml.snakeyaml.Yaml
 
@@ -35,35 +35,13 @@ class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, priv
   private fun language(settings: CodeStyleSettings) = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
   private fun custom(settings: CodeStyleSettings) = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
-  fun getCurrentSettings(project: Project, rules: Collection<TsLintSimpleRule<*>>): Map<TsLintSimpleRule<*>, Any?> {
-    ApplicationManager.getApplication().assertReadAccessAllowed()
-    val settings = current(project)
-    val languageSettings = language(settings)
-    val jsCodeStyleSettings = custom(settings)
-
-    return rules.associate { Pair(it, it.getSettingsValue(languageSettings, jsCodeStyleSettings)) }
-  }
-
-  fun applyValues(project: Project, values: Map<TsLintSimpleRule<*>, *>) {
-    val settings = current(project)
-    val languageSettings = language(settings)
-    val jsCodeStyleSettings = custom(settings)
-    WriteAction.run<RuntimeException> {
-      values.forEach { key, value -> key.setDirectValue(languageSettings, jsCodeStyleSettings, value) }
-    }
-  }
-
   fun applyRules(project: Project, rules: Collection<TsLintSimpleRule<*>>) {
-    WriteAction.run<RuntimeException> {
-      val settingsManager = CodeStyleSettingsManager.getInstance(project)
-      if (!settingsManager.USE_PER_PROJECT_SETTINGS) {
-        settingsManager.mainProjectCodeStyle = settingsManager.currentSettings.clone()
-        settingsManager.USE_PER_PROJECT_SETTINGS = true
+    JSCodeStyleUtil.updateProjectCodeStyle(project) { newSettings ->
+      WriteAction.run<RuntimeException> {
+        val newLanguageSettings = language(newSettings)
+        val newJsCodeStyleSettings = custom(newSettings)
+        rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
       }
-      val newSettings = settingsManager.currentSettings
-      val newLanguageSettings = language(newSettings)
-      val newJsCodeStyleSettings = custom(newSettings)
-      rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
     }
   }
 

@@ -1,0 +1,251 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "Create a load-balanced, autoscaled PHP web server application attached to a multi-AZ Relational Database Service database instance. The web site is available on port 80 of the returned URL. The web server hosts can be configured to listen on any port (port 8888 by default). **WARNING** This template creates one or more Amazon EC2 instances and an Amazon Relational Database Service database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "InstanceType" : {
+      "Description" : "Type of EC2 instance to launch",
+      "Type" : "String",
+      "Default" : "m1.small"
+    },
+    "KeyName" : {
+      "Description" : "The name of an existing EC2 KeyPair enabling allow SSH access to the instance",
+      "Type" : "String"
+    },
+    "WebServerPort" : { 
+      "Description" : "TCP/IP port for the PHP web server",
+      "Type" : "String",
+      "Default" : "8888"
+    },
+    "DBName" : {
+      "Description" : "Name of the test database",
+      "Type" : "String",
+      "Default" : "PHPExampleDB"
+    },
+    "DBPort" : {
+      "Description" : "TCP/IP port number for the test database",
+      "Type" : "String",
+      "Default" : "3306"
+    },
+    "DBUser" : {
+      "Description" : "Test database admin account username",
+      "Type" : "String",
+      "NoEcho" : "true"
+    },
+    "DBPassword" : {
+      "Description" : "Test database admin account password",
+      "Type" : "String",
+      "NoEcho" : "true"
+    },
+    "OperatorEmail" : {
+      "Description" : "Email address to notify if there are any operational issues",
+      "Type" : "String",
+      "Default" : "nobody@amazon.com"
+    }
+  },
+
+  "Mappings" : {    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "64" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1" : { "32" : "ami-c813e0a1", "64" : "ami-c213e0ab" },
+      "us-west-1" : { "32" : "ami-09c7974c", "64" : "ami-0bc7974e" },
+      "eu-west-1" : { "32" : "ami-6bc2f61f", "64" : "ami-6fc2f61b" },
+      "ap-southeast-1" : { "32" : "ami-70f28c22", "64" : "ami-72f28c20" },
+      "ap-northeast-1" : { "32" : "ami-ac03a8ad", "64" : "ami-b003a8b1" }
+    },
+    "AWSRegionCapabilities" : {
+      "us-east-1" :      { "RDSMultiAZ" : "true" },
+      "us-west-1" :      { "RDSMultiAZ" : "true" },
+      "eu-west-1" :      { "RDSMultiAZ" : "true" },
+      "ap-southeast-1" : { "RDSMultiAZ" : "true" },
+      "ap-northeast-1" : { "RDSMultiAZ" : "true" }
+    }
+  },
+
+  "Resources" : {
+
+    "ElasticLoadBalancer" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties" : {
+        "AvailabilityZones" : { "Fn::GetAZs" : "" },
+        "LBCookieStickinessPolicy" : [ {
+          "PolicyName" : "CookieBasedPolicy",
+          "CookieExpirationPeriod" : "30"
+        } ],
+        "Listeners" : [ {
+          "LoadBalancerPort" : "80",
+          "InstancePort" : { "Ref" : "WebServerPort" },
+          "Protocol" : "HTTP",
+          "PolicyNames" : [ "CookieBasedPolicy" ]
+        } ],
+        "HealthCheck" : {
+          "Target" : { "Fn::Join" : [ "", [ "HTTP:", { "Ref" : "WebServerPort" }, "/" ] ] },
+          "HealthyThreshold" : "2",
+          "UnhealthyThreshold" : "5",
+          "Interval" : "10",
+          "Timeout" : "5"
+        }
+      }
+    },
+
+    "LaunchConfig" : {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Properties" : {
+        "KeyName" : { "Ref" : "KeyName" },
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [{ "Ref" : "Ec2SecurityGroup" }],
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" }, { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "UserData" : { "Fn::Base64" :
+                       { "Fn::Join" : [ "", [
+                         "Database=", { "Fn::GetAtt" : ["DB", "Endpoint.Address"] },
+                         ":", {"Ref" : "DBPort"}, "&DBUser=", {"Ref" : "DBUser"}, "&DBPassword=", {"Ref" : "DBPassword"},
+                         "&WSPort=", {"Ref" : "WebServerPort"}
+                         ]]}
+                     }
+      }
+    },
+
+    "WebServerGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "AvailabilityZones" : { "Fn::GetAZs" : "" },
+        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+        "MinSize" : "1",
+        "MaxSize" : "3",
+        "LoadBalancerNames" : [ { "Ref" : "ElasticLoadBalancer" } ]
+      }
+    },
+
+    "Ec2SecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "HTTP and SSH access",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp", 
+          "FromPort" : "22",
+          "ToPort" : "22", 
+          "CidrIp" : "0.0.0.0/0"
+        },{
+          "IpProtocol" : "tcp", 
+          "FromPort" : { "Ref" : "WebServerPort" },
+          "ToPort" : { "Ref" : "WebServerPort" }, 
+          "CidrIp" : "0.0.0.0/0"
+        } ]
+      }
+    },
+
+    "DBSecurityGroup" : { 
+      "Type" : "AWS::RDS::DBSecurityGroup", 
+      "Properties" : {
+        "GroupDescription" : "Database Access",
+        "DBSecurityGroupIngress" : {
+          "EC2SecurityGroupName" : { "Ref" : "Ec2SecurityGroup" } 
+        }
+      }
+    },
+
+    "DB" : { 
+      "Type" : "AWS::RDS::DBInstance", 
+      "Properties" : {
+        "AllocatedStorage" : "5", 
+        "DBInstanceClass" : "db.m1.small",
+        "MasterUsername" : { "Ref" : "DBUser" }, 
+        "MasterUserPassword" : { "Ref" : "DBPassword" }, 
+        "DBName" : { "Ref" : "DBName" },
+        "DBSecurityGroups" : [ { "Ref" : "DBSecurityGroup" } ], 
+        "Port" : { "Ref" : "DBPort" },
+        "MultiAZ" : { "Fn::FindInMap" : [ "AWSRegionCapabilities", { "Ref" : "AWS::Region" }, "RDSMultiAZ"] },
+        "Engine" : "MySQL" 
+      }
+    },
+
+    "AlarmTopic" : {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "Subscription" : [ {
+          "Endpoint" : { "Ref" : "OperatorEmail" },
+          "Protocol" : "email"
+        } ]
+      }
+    },
+
+    "CPUAlarmHigh" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties" : {
+        "AlarmDescription" : "Alarm if CPU too high or metric disappears indicating instance is down",
+        "AlarmActions" : [ { "Ref" : "AlarmTopic" } ],
+        "InsufficientDataActions" : [ { "Ref" : "AlarmTopic" } ],
+        "MetricName" : "CPUUtilization",
+        "Namespace" : "AWS/EC2",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "1",
+        "Threshold" : "10",
+        "ComparisonOperator" : "GreaterThanThreshold",
+        "Dimensions" : [ {
+          "Name" : "AutoScalingGroupName",
+          "Value" : { "Ref" : "WebServerGroup" }
+        } ]
+      }
+    },
+
+    "RequestLatencyAlarmHigh" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties" : {
+        "AlarmDescription" : "Alarm if there aren't any requests coming through",
+        "AlarmActions" : [ { "Ref" : "AlarmTopic" } ],
+        "InsufficientDataActions" : [ { "Ref" : "AlarmTopic" } ],
+        "MetricName" : "Latency",
+        "Namespace" : "AWS/ELB",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "1",
+        "Threshold" : "1",
+        "ComparisonOperator" : "GreaterThanThreshold",
+        "Dimensions" : [ {
+          "Name" : "LoadBalancerName",
+          "Value" : { "Ref" : "ElasticLoadBalancer" }
+        } ]
+      }
+    },
+
+    "TooManyUnhealthyHostsAlarm" : {
+      "Type" : "AWS::CloudWatch::Alarm",
+      "Properties" : {
+        "AlarmDescription" : "Alarm if there are too many unhealthy hosts.",
+        "AlarmActions" : [ { "Ref" : "AlarmTopic" } ],
+        "InsufficientDataActions" : [ { "Ref" : "AlarmTopic" } ],
+        "MetricName" : "UnHealthyHostCount",
+        "Namespace" : "AWS/ELB",
+        "Statistic" : "Average",
+        "Period" : "60",
+        "EvaluationPeriods" : "1",
+        "Threshold" : "0",
+        "ComparisonOperator" : "GreaterThanThreshold",
+        "Dimensions" : [ {
+          "Name" : "LoadBalancerName",
+          "Value" : { "Ref" : "ElasticLoadBalancer" }
+        } ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "URL" : {
+      "Description" : "URL for the website",
+      "Value" : { "Fn::Join" : [ "", [ "http://", { "Fn::GetAtt" : [ "ElasticLoadBalancer", "DNSName" ] }, "/" ] ] }
+    }
+  }
+}
+

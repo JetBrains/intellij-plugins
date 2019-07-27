@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
@@ -45,7 +44,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   public boolean checkExpressionIsAssignableToVariable(JSVariable p,
                                                        final JSExpression expr,
                                                        @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey) {
-    final JSType type = p.getType();
+    final JSType type = p.getJSType();
     boolean isAssignable =
       checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, null, true);
 
@@ -97,12 +96,12 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
         }
         else {
           final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
-          JSType paramType = parameters[0].getType();
+          JSType paramType = parameters[0].getJSType();
           final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
 
           if (expectedEventClass == null) {
-            if (!JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
-                !JSResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
+            if (!ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
+                !ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch"),
@@ -113,7 +112,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
             }
           }
           else {
-            if (!JSResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
+            if (!ActionScriptResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
               registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
@@ -156,8 +155,9 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       PsiElement methodParent = method.getParent();
       if (methodParent instanceof JSClass) {
         JSClass declaringClass = (JSClass)methodParent;
-        if (JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, declaringClass.getQualifiedName(), method)
-          || ActionScriptClassResolver.isParentClass(declaringClass, FlexCommonTypeNames.STARLING_EVENT_DISPATCHER_FQN, false)) {
+        if (ActionScriptResolveUtil
+              .isAssignableType(FlexCommonTypeNames.FLASH_IEVENT_DISPATCHER_FQN, declaringClass.getQualifiedName(), method)
+            || ActionScriptClassResolver.isParentClass(declaringClass, FlexCommonTypeNames.STARLING_EVENT_DISPATCHER_FQN, false)) {
           return true;
         }
       }
@@ -232,9 +232,9 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       if (statement != null) {
         final PsiFile containingFile = node.getContainingFile();
         final JSExpression collectionExpression = node.getCollectionExpression();
-        final String expressionType = JSResolveUtil.getQualifiedExpressionType(collectionExpression, containingFile);
+        final String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(collectionExpression, containingFile);
 
-        if (JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, expressionType, containingFile)) {
+        if (ActionScriptResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, expressionType, containingFile)) {
           return;
         }
 
@@ -244,7 +244,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
 
           if (typeElementText != null &&
               isValidArrayIndexType(typeElementText) &&
-              JSResolveUtil.isAssignableType("Array", expressionType, containingFile)) {
+              ActionScriptResolveUtil.isAssignableType("Array", expressionType, containingFile)) {
             continue;
           }
 
@@ -282,7 +282,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   }
 
   private void checkTypeIs(JSExpression rOperand, PsiElement node, String typeName, String key) {
-    String expressionType = JSResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
+    String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
     if (!typeName.equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
       myReporter.registerProblem(node, JSBundle.message(key, typeName, expressionType),
                                  getHighlightTypeForTypeOrSignatureProblem(node));
@@ -295,7 +295,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       rOperand,
       rOperand,
       "Class",
-      "javascript.binary.operand.type.mismatch"
+      "actionscript.binary.operand.type.mismatch"
     );
   }
 }

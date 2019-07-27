@@ -3,7 +3,7 @@ package com.intellij.tapestry.core.model.presentation;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.presentation.components.DummyTapestryParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
   private Map<String, TapestryParameter> _parametersCache;
   private long _parametersCacheTimestamp;
 
-  ParameterReceiverElement(@Nullable Library library, @NotNull IJavaClassType elementClass, @NotNull TapestryProject project) {
+  ParameterReceiverElement(@Nullable TapestryLibrary library, @NotNull IJavaClassType elementClass, @NotNull TapestryProject project) {
     super(library, elementClass, project);
   }
 

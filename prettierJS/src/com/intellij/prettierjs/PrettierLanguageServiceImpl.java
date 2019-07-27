@@ -13,15 +13,13 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.FixedFuture;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
@@ -45,16 +43,16 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @Nullable
   @Override
-  public Future<FormatResult> format(@NotNull String filePath,
-                                     @Nullable String ignoreFilePath,
-                                     @NotNull String text,
-                                     @NotNull NodePackage prettierPackage,
-                                     @Nullable TextRange range) {
+  public CompletableFuture<FormatResult> format(@NotNull String filePath,
+                                                @Nullable String ignoreFilePath,
+                                                @NotNull String text,
+                                                @NotNull NodePackage prettierPackage,
+                                                @Nullable TextRange range) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
-      return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
+      return CompletableFuture.completedFuture(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
     ReformatFileCommand command =
       new ReformatFileCommand(filePath, prettierPackagePath, ignoreFilePath, text, range, myFlushConfigCache);
@@ -64,17 +62,6 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     });
   }
 
-
-  @Nullable
-  public Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
-    String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
-    JSLanguageServiceQueue process = getProcess();
-    if (process == null || !process.isValid()) {
-      return new FixedFuture<>(null);
-    }
-    return process.execute(new GetSupportedFilesCommand(prettierPackagePath), 
-                           (ignored, response) -> parseGetSupportedFilesResponse(response));
-  }
 
   @NotNull
   private static FormatResult parseReformatResponse(JSLanguageServiceAnswer response) {
@@ -86,15 +73,11 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (JsonUtil.getChildAsBoolean(jsonObject, "ignored", false)) {
       return FormatResult.IGNORED;
     }
+    if (JsonUtil.getChildAsBoolean(jsonObject, "unsupported", false)) {
+      return FormatResult.UNSUPPORTED;
+    }
     String formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted");
     return FormatResult.formatted(formattedResult);
-  }
-
-  @NotNull
-  private static SupportedFilesInfo parseGetSupportedFilesResponse(@NotNull JSLanguageServiceAnswer response) {
-    return new SupportedFilesInfo(
-      ContainerUtil.notNullize(JsonUtil.getChildAsStringList(response.getElement(), "fileNames")),
-      ContainerUtil.notNullize(JsonUtil.getChildAsStringList(response.getElement(), "extensions")));
   }
 
   @Nullable
@@ -139,33 +122,6 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         PrettierConfiguration.getInstance(myProject)
                              .getInterpreterRef()
                              .resolve(myProject));
-    }
-  }
-
-  private static class GetSupportedFilesCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
-    @NotNull
-    public final String prettierPath;
-
-    private GetSupportedFilesCommand(@NotNull String path) {
-      prettierPath = path;
-    }
-
-    @NotNull
-    @Override
-    public JSLanguageServiceObject toSerializableObject() {
-      return this;
-    }
-
-    @NotNull
-    @Override
-    public String getCommand() {
-      return "getSupportedFiles";
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText(@NotNull Project project) {
-      return "getSupportedFiles";
     }
   }
 

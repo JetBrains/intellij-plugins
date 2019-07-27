@@ -41,8 +41,16 @@
   var setJasmineSpecFilter = function (config, jasmineEnv) {
     var grepOption = getGrepOption((config || {}).args);
     var filterPattern = grepOption ? new RegExp(grepOption) : null;
-    jasmineEnv.specFilter = function (spec) {
+    var specFilter = function (spec) {
       return filterPattern == null || filterPattern.test(spec.getFullName());
+    };
+    if (typeof jasmineEnv.configuration === 'function') {
+      var configuration = jasmineEnv.configuration() || {};
+      configuration.specFilter = specFilter;
+      jasmineEnv.configure(configuration);
+    }
+    else {
+      jasmineEnv.specFilter = specFilter;
     }
   };
 

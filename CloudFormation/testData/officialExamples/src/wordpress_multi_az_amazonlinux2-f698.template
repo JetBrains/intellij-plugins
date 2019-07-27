@@ -1,0 +1,412 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template WordPress_Multi_AZ: WordPress is web software you can use to create a beautiful website or blog. This template installs a highly-available, scalable WordPress deployment using a multi-az Amazon RDS database instance for storage. It demonstrates using the AWS CloudFormation bootstrap scripts to deploy WordPress. **WARNING** This template creates an Amazon EC2 instance, an Application Load Balancer and an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "VpcId" : {
+      "Type" : "AWS::EC2::VPC::Id",
+      "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
+      "ConstraintDescription" : "must be the VPC Id of an existing Virtual Private Cloud."
+    },
+
+    "Subnets" : {
+      "Type" : "List<AWS::EC2::Subnet::Id>",
+      "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
+      "ConstraintDescription" : "must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud."
+    },
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t3.large",
+      "AllowedValues" : [  "a1.medium", "a1.large", "a1.xlarge", "a1.2xlarge", "a1.4xlarge", 
+    "c5.large", "c5.xlarge", "c5.2xlarge", "c5.4xlarge", "c5.9xlarge", "c5.18xlarge",
+    "t3.micro", "t3.small", "t3.medium", "t3.large", "t3.xlarge", "t3.2xlarge",
+    "m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge",
+    "r5.large", "r5.xlarge", "r5.2xlarge", "r5.4xlarge", "r5.12xlarge", "r5.24xlarge",
+    "m5a.large", "m5a.xlarge", "m5a.2xlarge", "m5a.4xlarge", "m5a.12xlarge", "m5a.24xlarge",
+    "r5a.large", "r5a.xlarge", "r5a.2xlarge", "r5a.4xlarge", "r5a.12xlarge", "r5a.24xlarge" ]
+
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "SSHLocation": {
+      "Description": "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    },
+
+    "DBClass" : {
+      "Description" : "Database instance class",
+      "Type" : "String",
+      "Default" : "db.t2.small",
+      "AllowedValues" : [ "db.t1.micro", "db.m1.small", "db.m1.medium", "db.m1.large", "db.m1.xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge", "db.m3.medium", "db.m3.large", "db.m3.xlarge", "db.m3.2xlarge", "db.m4.large", "db.m4.xlarge", "db.m4.2xlarge", "db.m4.4xlarge", "db.m4.10xlarge", "db.r3.large", "db.r3.xlarge", "db.r3.2xlarge", "db.r3.4xlarge", "db.r3.8xlarge", "db.m2.xlarge", "db.m2.2xlarge", "db.m2.4xlarge", "db.cr1.8xlarge", "db.t2.micro", "db.t2.small", "db.t2.medium", "db.t2.large"]
+,
+      "ConstraintDescription" : "must select a valid database instance type."
+    },
+
+    "DBName" : {
+      "Default": "wordpressdb",
+      "Description" : "The WordPress database name",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "64",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBUser" : {
+      "NoEcho": "true",
+      "Description" : "The WordPress database admin account username",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "16",
+      "AllowedPattern" : "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription" : "must begin with a letter and contain only alphanumeric characters."
+    },
+
+    "DBPassword" : {
+      "NoEcho": "true",
+      "Description" : "The WordPress database admin account password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern" : "[a-zA-Z0-9]*",
+      "ConstraintDescription" : "must contain only alphanumeric characters."
+    },
+
+    "MultiAZDatabase": {
+      "Default": "false",
+      "Description" : "Create a Multi-AZ MySQL Amazon RDS database instance",
+      "Type": "String",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false."
+    },
+
+    "WebServerCapacity": {
+      "Default": "1",
+      "Description" : "The initial number of WebServer instances",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "5",
+      "ConstraintDescription" : "must be between 1 and 5 EC2 instances."
+    },
+
+    "DBAllocatedStorage" : {
+      "Default": "5",
+      "Description" : "The size of the database (Gb)",
+      "Type": "Number",
+      "MinValue": "5",
+      "MaxValue": "1024",
+      "ConstraintDescription" : "must be between 5 and 1024Gb."
+    }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "a1.medium"     : { "Arch" : "AL2arm64" },
+      "a1.large"      : { "Arch" : "AL2arm64" },
+      "a1.xlarge"     : { "Arch" : "AL2arm64" },
+      "a1.2xlarge"    : { "Arch" : "AL2arm64" },
+      "a1.4xlarge"    : { "Arch" : "AL2arm64" },
+      "t3.micro"      : { "Arch" : "AL2x86"  },
+      "t3.small"      : { "Arch" : "AL2x86"  },
+      "t3.medium"     : { "Arch" : "AL2x86"  },
+      "t3.large"      : { "Arch" : "AL2x86"  },
+      "t3.xlarge"     : { "Arch" : "AL2x86"  },
+      "t3.2xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.large"      : { "Arch" : "AL2x86"  },
+      "c5.xlarge"     : { "Arch" : "AL2x86"  },
+      "c5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.9xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.18xlarge"   : { "Arch" : "AL2x86"  },
+      "m5.large"      : { "Arch" : "AL2x86"  },
+      "m5.xlarge"     : { "Arch" : "AL2x86"  },
+      "m5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "m5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "m5.12xlarge"   : { "Arch" : "AL2x86"  },
+      "m5.24xlarge"   : { "Arch" : "AL2x86"  },
+      "r5.large"      : { "Arch" : "AL2x86"  },
+      "r5.xlarge"     : { "Arch" : "AL2x86"  },
+      "r5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "r5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "r5.12xlarge"   : { "Arch" : "AL2x86"  },
+      "r5.24xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.large"     : { "Arch" : "AL2x86"  },
+      "m5a.xlarge"    : { "Arch" : "AL2x86"  },
+      "m5a.2xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.4xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.12xlarge"  : { "Arch" : "AL2x86"  },
+      "m5a.24xlarge"  : { "Arch" : "AL2x86"  },
+      "r5a.large"     : { "Arch" : "AL2x86"  },
+      "r5a.xlarge"    : { "Arch" : "AL2x86"  },
+      "r5a.2xlarge"   : { "Arch" : "AL2x86"  },
+      "r5a.4xlarge"   : { "Arch" : "AL2x86"  },
+      "r5a.12xlarge"  : { "Arch" : "AL2x86"  },
+      "r5a.24xlarge"  : { "Arch" : "AL2x86"  }
+    },
+
+
+    "AWSRegionArch2AMI" : {
+      "us-east-1"        : {"AL2x86" : "ami-02da3a138888ced85", "AL2arm64" : "ami-0d19f5402a2c1c6bc"},
+      "us-west-2"        : {"AL2x86" : "ami-095cd038eef3e5074", "AL2arm64" : "ami-05b186cbeb4bd0170"},
+      "us-west-1"        : {"AL2x86" : "ami-09bfcadb25ee95bec", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-west-1"        : {"AL2x86" : "ami-02a39bdb8e8ee056a", "AL2arm64" : "ami-0304903e40243f64e"},
+      "eu-west-2"        : {"AL2x86" : "ami-07a5200f3fa9c33d3", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"AL2x86" : "ami-0e9073d7ac75f4491", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"AL2x86" : "ami-07f1fbbff759e24dd", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-north-1"       : {"AL2x86" : "ami-244ac35a", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-1"   : {"AL2x86" : "ami-097473abce069b8e9", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-2"   : {"AL2x86" : "ami-045e355a6004a67c4", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"AL2x86" : "ami-0c1cd51d32b64af40", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"AL2x86" : "ami-00158b185c8cc09dc", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-southeast-2"   : {"AL2x86" : "ami-0c3228fd049cdb151", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-south-1"       : {"AL2x86" : "ami-03103e7ded4c02ef8", "AL2arm64" : "NOT_SUPPORTED"},
+      "us-east-2"        : {"AL2x86" : "ami-0de7daa7385332688", "AL2arm64" : "ami-07413a099547ecc89"},
+      "ca-central-1"     : {"AL2x86" : "ami-05f9d71283317f5c9", "AL2arm64" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"AL2x86" : "ami-095a33e72f6bb89c3", "AL2arm64" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"AL2x86" : "ami-0b21cff98273d9be0", "AL2arm64" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"AL2x86" : "ami-0a9a606a323de7111", "AL2arm64" : "NOT_SUPPORTED"}
+    }
+
+  },
+
+  "Resources" : {
+
+    "ApplicationLoadBalancer" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Subnets" : { "Ref" : "Subnets"}
+      }
+    },
+
+    "ALBListener" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "ApplicationLoadBalancer" },
+        "Port" : "80",
+        "Protocol" : "HTTP"
+      }
+    },
+
+    "ALBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckPath" : "/wordpress/wp-admin/install.php",
+        "HealthCheckIntervalSeconds" : 10,
+        "HealthCheckTimeoutSeconds" : 5,
+        "HealthyThresholdCount" : 2,
+        "Port" : 80,
+        "Protocol" : "HTTP",
+        "UnhealthyThresholdCount" : 5,
+        "VpcId" : {"Ref" : "VpcId"},
+        "TargetGroupAttributes" :
+          [ { "Key" : "stickiness.enabled", "Value" : "true" },
+            { "Key" : "stickiness.type", "Value" : "lb_cookie" },
+            { "Key" : "stickiness.lb_cookie.duration_seconds", "Value" : "30" }
+        ]
+      }
+    },
+
+    "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP access via port 80 locked down to the load balancer + SSH access",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "SourceSecurityGroupId" : {"Fn::Select" : [0, {"Fn::GetAtt" : ["ApplicationLoadBalancer", "SecurityGroups"]}]}},
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
+        ],
+        "VpcId" : { "Ref" : "VpcId" }
+      }
+    },
+
+    "WebServerGroup" : {
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "VPCZoneIdentifier" : { "Ref" : "Subnets" },
+        "LaunchConfigurationName" : { "Ref" : "LaunchConfig" },
+        "MinSize" : "1",
+        "MaxSize" : "5",
+        "DesiredCapacity" : { "Ref" : "WebServerCapacity" },
+        "TargetGroupARNs" : [ { "Ref" : "ALBTargetGroup" } ]
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT15M"
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MinInstancesInService": "1",
+          "MaxBatchSize": "2",
+          "PauseTime" : "PT15M",
+          "WaitOnResourceSignals": "true"
+        }
+      }
+    },
+
+    "LaunchConfig": {
+      "Type" : "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+            "wordpress_install" : [ "install_cfn", "setup_extras", "install_wordpress" ]
+          },
+          "install_cfn" : {
+            "files": {
+              "/etc/cfn/cfn-hup.conf": {
+                "content": { "Fn::Join": [ "", [
+                  "[main]\n",
+                  "stack=", { "Ref": "AWS::StackId" }, "\n",
+                  "region=", { "Ref": "AWS::Region" }, "\n"
+                ]]},
+                "mode"  : "000400",
+                "owner" : "root",
+                "group" : "root"
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                "content": { "Fn::Join": [ "", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.LaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                          "         --stack ", { "Ref" : "AWS::StackName" },
+                          "         --resource LaunchConfig ",
+                          "         --configsets wordpress_install ",
+                          "         --region ", { "Ref" : "AWS::Region" }, "\n"
+                ]]}, "mode"  : "000400", "owner" : "root",
+                "group" : "root"
+              }
+            },
+            "services" : {
+              "sysvinit" : {
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+              }
+            }
+          },
+
+          "setup_extras" : {
+            "commands" : {
+              "01_setup_extras" : {
+                "command" : "amazon-linux-extras install lamp-mariadb10.2-php7.2"
+              }
+            }
+          },
+
+          "install_wordpress" : {
+            "packages" : {
+              "yum" : {
+                "php"       : [],
+                "httpd"     : []
+              }
+            },
+            "sources" : {
+              "/var/www/html" : "http://wordpress.org/latest.tar.gz"
+            },
+            "files" : {
+              "/tmp/create-wp-config" : {
+                "content" : { "Fn::Join" : [ "", [
+                  "#!/bin/bash\n",
+                  "cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php\n",
+                  "sed -i \"s/'database_name_here'/'",{ "Ref" : "DBName" }, "'/g\" wp-config.php\n",
+                  "sed -i \"s/'username_here'/'",{ "Ref" : "DBUser" }, "'/g\" wp-config.php\n",
+                  "sed -i \"s/'password_here'/'",{ "Ref" : "DBPassword" }, "'/g\" wp-config.php\n",
+                  "sed -i \"s/'localhost'/'",{ "Fn::GetAtt" : [ "DBInstance", "Endpoint.Address" ] }, "'/g\" wp-config.php\n"
+                ]]},
+                "mode" : "000500",
+                "owner" : "root",
+                "group" : "root"
+              }
+            },
+            "commands" : {
+              "01_configure_wordpress" : {
+                "command" : "/tmp/create-wp-config",
+                "cwd" : "/var/www/html/wordpress"
+              }
+            },
+            "services" : {
+              "sysvinit" : {
+                "httpd" : { "enabled" : "true", "ensureRunning" : "true" }
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "InstanceType"   : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
+                       "#!/bin/bash -xe\n",
+                       "yum update -y aws-cfn-bootstrap\n",
+
+                       "/opt/aws/bin/cfn-init -v ",
+                       "         --stack ", { "Ref" : "AWS::StackName" },
+                       "         --resource LaunchConfig ",
+                       "         --configsets wordpress_install ",
+                       "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+                       "/opt/aws/bin/cfn-signal -e $? ",
+                       "         --stack ", { "Ref" : "AWS::StackName" },
+                       "         --resource WebServerGroup ",
+                       "         --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
+      }
+    },
+
+    "DBEC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription": "Open database for access",
+        "SecurityGroupIngress" : [{
+        "IpProtocol" : "tcp",
+        "FromPort" : "3306",
+        "ToPort" : "3306",
+        "SourceSecurityGroupId" : { "Ref" : "WebServerSecurityGroup" }
+        }],
+        "VpcId" : { "Ref" : "VpcId" }
+      }
+    },
+
+    "DBInstance" : {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "DBName"            : { "Ref" : "DBName" },
+        "Engine"            : "MySQL",
+        "MultiAZ"           : { "Ref": "MultiAZDatabase" },
+        "MasterUsername"    : { "Ref" : "DBUser" },
+        "MasterUserPassword": { "Ref" : "DBPassword" },
+        "DBInstanceClass"   : { "Ref" : "DBClass" },
+        "AllocatedStorage"  : { "Ref" : "DBAllocatedStorage" },
+        "VPCSecurityGroups" : [{ "Fn::GetAtt": [ "DBEC2SecurityGroup", "GroupId" ]}]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "ApplicationLoadBalancer", "DNSName" ]}, "/wordpress" ]]},
+      "Description" : "WordPress Website"
+    }
+  }
+}

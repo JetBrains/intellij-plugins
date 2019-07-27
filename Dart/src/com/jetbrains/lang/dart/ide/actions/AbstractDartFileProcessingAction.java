@@ -61,7 +61,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       runOverEditor(project, editor, psiFile);
     }
     else {
-      final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+      final VirtualFile[] filesAndDirs = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
       if (filesAndDirs != null && DartAnalysisServerService.getInstance(project).serverReadyForRequest()) {
         final List<VirtualFile> files = getApplicableVirtualFiles(project, filesAndDirs);
         runOverFiles(project, files);
@@ -106,7 +106,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       return;
     }
 
-    final VirtualFile[] filesAndDirs = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(event.getDataContext());
+    final VirtualFile[] filesAndDirs = event.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
     if (filesAndDirs == null) {
       presentation.setEnabledAndVisible(false);
       return;
@@ -161,7 +161,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
   private static boolean isApplicableFile(@NotNull final Project project, @Nullable final VirtualFile file) {
     if (file == null || file.getFileType() != DartFileType.INSTANCE) return false;
-    if (ProjectFileIndex.getInstance(project).isInContent(file)) return false;
+    if (!ProjectFileIndex.getInstance(project).isInContent(file)) return false;
 
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null) return false;

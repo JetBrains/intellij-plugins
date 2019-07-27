@@ -1,22 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
@@ -42,18 +29,15 @@ import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.ui.popup.mock.MockConfirmation
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.VueInsertHandler.Companion.reformatElement
+import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 12/22/2017.
- */
 class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     editor: Editor,
                                     private val data: VueExtractComponentDataBuilder,
                                     private val oldText: String,
                                     private val validator: (String) -> String?,
-                                    private val startMarkAction: StartMarkAction):
+                                    private val startMarkAction: StartMarkAction) :
   InplaceRefactoring(editor, elementToRename, elementToRename.project) {
   private val commandName = VueBundle.message("vue.template.intention.extract.component")
   private val containingFile = myElementToRename.containingFile
@@ -115,7 +99,8 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
         myEditor.document.replaceString(offset + tag.textRange.startOffset, offset + tag.textRange.endOffset, oldText)
         myEditor.caretModel.currentCaret.moveToOffset(oldCaret)
       }
-    } finally {
+    }
+    finally {
       FinishMarkAction.finish(myProject, myEditor, myMarkAction)
     }
   }
@@ -167,7 +152,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
   }
 
   private fun performCleanupInCommand() {
-    CommandProcessor.getInstance().executeCommand(myProject, { performCleanup()}, commandName, getGroupId())
+    CommandProcessor.getInstance().executeCommand(myProject, { performCleanup() }, commandName, getGroupId())
   }
 
   private fun askAndRestartRename(error: String, commandProcessor: CommandProcessor, tag: XmlTag) {
@@ -176,7 +161,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                       hijackCommand()
                       commandProcessor.executeCommand(myProject, {
                         VueComponentInplaceIntroducer(tag, myEditor, data, oldText,
-                                                                                                      validator, startMarkAction)
+                                                      validator, startMarkAction)
                           .performInplaceRefactoring(linkedSetOf())
                       }, commandName, getGroupId())
                     },
@@ -189,7 +174,7 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     }
     else {
       return PsiTreeUtil.findElementOfClassAtRange(containingFile, myRenameOffset.startOffset,
-                                                  myRenameOffset.endOffset, XmlTag::class.java)
+                                                   myRenameOffset.endOffset, XmlTag::class.java)
     }
   }
 
@@ -223,8 +208,8 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     }
     step.defaultOptionIndex = 0
 
-    val app = ApplicationManagerEx.getApplicationEx()
-    val listPopup: ListPopup = if (app == null || !app.isUnitTestMode) ListPopupImpl(step) else MockConfirmation(step, yesText)
+    val listPopup: ListPopup = if (!ApplicationManager.getApplication().isUnitTestMode) ListPopupImpl(step)
+    else MockConfirmation(step, yesText)
     listPopup.showInBestPositionFor(myEditor)
   }
 

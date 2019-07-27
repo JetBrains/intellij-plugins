@@ -1,9 +1,9 @@
 <idea-plugin>
-  <name>Error-prone Compiler Integration</name>
+  <name>Error Prone Compiler</name>
   <id>Error-prone plugin</id>
   <description>
     <![CDATA[
-        Allows to build project using 'error-prone java compiler' (https://code.google.com/p/error-prone) to catch common Java mistakes at compile-time.
+        Allows to build projects using <a href="https://errorprone.info/">Error Prone Java compiler</a> to catch common Java mistakes at compile-time.
         To use the compiler, go to File | Settings | Compiler | 'Java Compiler' and select 'Javac with error-prone' in 'Use compiler' box.
       ]]>
   </description>

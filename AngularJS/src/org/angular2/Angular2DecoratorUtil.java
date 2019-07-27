@@ -1,50 +1,63 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2;
 
-import com.intellij.lang.javascript.JSInjectionController;
+import com.intellij.lang.ecmascript6.psi.ES6FromClause;
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration;
+import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.AstLoadingFilter;
+import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
+import java.util.Optional;
+
+import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
 import static com.intellij.util.ArrayUtil.contains;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2DecoratorUtil {
 
-  public static final String DIRECTIVE_DEC = "Directive";
-  public static final String COMPONENT_DEC = "Component";
-  public static final String PIPE_DEC = "Pipe";
-  public static final String MODULE_DEC = "NgModule";
-  public static final String INPUT_DEC = "Input";
-  public static final String OUTPUT_DEC = "Output";
-  public static final String VIEW_CHILD_DEC = "ViewChild";
+  @NonNls public static final String DIRECTIVE_DEC = "Directive";
+  @NonNls public static final String COMPONENT_DEC = "Component";
+  @NonNls public static final String PIPE_DEC = "Pipe";
+  @NonNls public static final String MODULE_DEC = "NgModule";
+  @NonNls public static final String INPUT_DEC = "Input";
+  @NonNls public static final String OUTPUT_DEC = "Output";
+  @NonNls public static final String ATTRIBUTE_DEC = "Attribute";
+  @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
+  @NonNls public static final String VIEW_DEC = "View";
 
-  public static final String NAME_PROP = "name";
-  public static final String SELECTOR_PROP = "selector";
-  public static final String EXPORT_AS_PROP = "exportAs";
-  public static final String INPUTS_PROP = "inputs";
-  public static final String OUTPUTS_PROP = "outputs";
-  public static final String IMPORTS_PROP = "imports";
-  public static final String EXPORTS_PROP = "exports";
-  public static final String DECLARATIONS_PROP = "declarations";
-  public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
-  public static final String BOOTSTRAP_PROP = "bootstrap";
+  @NonNls public static final String NAME_PROP = "name";
+  @NonNls public static final String SELECTOR_PROP = "selector";
+  @NonNls public static final String EXPORT_AS_PROP = "exportAs";
+  @NonNls public static final String INPUTS_PROP = "inputs";
+  @NonNls public static final String OUTPUTS_PROP = "outputs";
+  @NonNls public static final String IMPORTS_PROP = "imports";
+  @NonNls public static final String EXPORTS_PROP = "exports";
+  @NonNls public static final String DECLARATIONS_PROP = "declarations";
+  @NonNls public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
+  @NonNls public static final String BOOTSTRAP_PROP = "bootstrap";
 
-  public static final String TEMPLATE_URL_PROP = "templateUrl";
-  public static final String TEMPLATE_PROP = "template";
-  public static final String STYLE_URLS_PROP = "styleUrls";
-  public static final String STYLES_PROP = "styles";
+  @NonNls public static final String TEMPLATE_URL_PROP = "templateUrl";
+  @NonNls public static final String TEMPLATE_PROP = "template";
+  @NonNls public static final String STYLE_URLS_PROP = "styleUrls";
+  @NonNls public static final String STYLES_PROP = "styles";
 
   public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
@@ -53,8 +66,8 @@ public class Angular2DecoratorUtil {
       return literal.isQuotedLiteral()
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
-             && contains(doIfNotNull(getParentOfType(parent, ES6Decorator.class), ES6Decorator::getDecoratorName),
-                         decoratorNames);
+             && doIfNotNull(getContextOfType(parent, ES6Decorator.class),
+                            decorator -> isAngularDecorator(decorator, decoratorNames)) == Boolean.TRUE;
     }
     return false;
   }
@@ -67,11 +80,8 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      String decoratorName = decorator.getDecoratorName();
-      for (String n : names) {
-        if (n.equals(decoratorName)) {
-          return decorator;
-        }
+      if (isAngularDecorator(decorator, names)) {
+        return decorator;
       }
     }
     return null;
@@ -85,7 +95,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (name.equals(decorator.getDecoratorName())) {
+      if (isAngularDecorator(decorator, name)) {
         return decorator;
       }
     }
@@ -111,7 +121,7 @@ public class Angular2DecoratorUtil {
   @Nullable
   public static String getExpressionStringValue(@Nullable JSExpression value) {
     if (value instanceof JSBinaryExpression) {
-      return JSInjectionController.getConcatenationText(value);
+      return JSInjectionUtil.getConcatenationText(value);
     }
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return AngularJSIndexingHandler.unquote(value);
@@ -146,10 +156,41 @@ public class Angular2DecoratorUtil {
     return null;
   }
 
+  @StubUnsafe
+  @Nullable
+  public static JSObjectLiteralExpression getReferencedObjectLiteralInitializer(@NotNull ES6Decorator decorator) {
+    return AstLoadingFilter.forceAllowTreeLoading(decorator.getContainingFile(), () ->
+      Optional.ofNullable(decorator.getExpression())
+        .map(expr -> tryCast(expr, JSCallExpression.class))
+        .map(expr -> ArrayUtil.getFirstElement(expr.getArguments()))
+        .map(expr -> tryCast(expr, JSReferenceExpression.class))
+        .map(expr -> expr.resolve())
+        .map(expr -> tryCast(expr, JSVariable.class))
+        .map(var -> var.getInitializerOrStub())
+        .map(expr -> tryCast(expr, JSObjectLiteralExpression.class))
+        .orElse(null));
+  }
+
   @StubSafe
   @Nullable
   public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
     return doIfNotNull(getObjectLiteralInitializer(decorator),
                        expr -> expr.findProperty(name));
+  }
+
+  public static boolean isAngularDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
+    String decoratorName = decorator.getDecoratorName();
+    if (decoratorName == null
+        || !contains(decoratorName, names)
+        || !Angular2LangUtil.isAngular2Context(decorator)) {
+      return false;
+    }
+    String importedModuleName = Optional.ofNullable(JSStubBasedPsiTreeUtil.resolveLocally(decoratorName, decorator))
+      .map(element -> getContextOfType(element, ES6ImportDeclaration.class))
+      .map(ES6ImportExportDeclaration::getFromClause)
+      .map(ES6FromClause::getReferenceText)
+      .map(StringUtil::unquoteString)
+      .orElse(null);
+    return ANGULAR_CORE_PACKAGE.equals(importedModuleName);
   }
 }

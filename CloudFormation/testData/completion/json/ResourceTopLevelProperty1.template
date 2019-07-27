@@ -1,0 +1,14 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "WebServerUser": {
+      "Type": "XXX",
+      "DependsOn": "XXX",
+      "<caret>
+    }
+  }
+}

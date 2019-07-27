@@ -31,7 +31,7 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
   @Nullable
   @Override
   public JSType getType() {
-    return mySignature.getType();
+    return mySignature.getJSType();
   }
 
   @Override

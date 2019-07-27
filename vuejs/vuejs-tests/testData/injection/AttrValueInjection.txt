@@ -51,11 +51,10 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someSlotScope')
-            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
-            JSFile:AttrValueInjection.vue
+            JSEmbeddedContent:VueJSEMBEDDED_CONTENT
               JSReferenceExpression
                 PsiElement(JS:IDENTIFIER)('someSlotScope')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('div')
@@ -147,9 +146,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            JSEmbeddedContent:VueJSEMBEDDED_CONTENT
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('someElse')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someElse')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -223,9 +220,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            JSEmbeddedContent:VueJSEMBEDDED_CONTENT
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('somePre')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('somePre')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -242,9 +237,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            JSEmbeddedContent:VueJSEMBEDDED_CONTENT
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('someCloak')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someCloak')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -261,9 +254,7 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            JSEmbeddedContent:VueJSEMBEDDED_CONTENT
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('someOnce')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someOnce')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')

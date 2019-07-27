@@ -1,0 +1,9 @@
+package {
+
+class Test {
+    public function Untitled() {
+        var vectors:Vector.<Vector.<int>> = new Vector.<Vector.<int>>( 30, true );
+    }
+}
+
+}

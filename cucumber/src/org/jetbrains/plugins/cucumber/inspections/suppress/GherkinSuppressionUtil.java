@@ -5,7 +5,6 @@ import com.intellij.codeInspection.SuppressionUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

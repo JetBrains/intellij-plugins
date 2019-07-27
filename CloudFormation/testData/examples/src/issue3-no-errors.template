@@ -1,0 +1,74 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+
+  "Resources": {
+    "MySecurityGroup": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
+    "SomeSubnetA": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
+    "SomeSubnetB": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "Properties": {
+        "RouteTableIds": ["XXX"],
+        "ServiceName" : { "Fn::Join": ["", ["com.amazonaws.", { "Ref": "AWS::Region" }, ".s3"]] },
+        "VpcId": "XXX"
+      }
+    },
+    "MyLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "CrossZone": "true",
+        "SecurityGroups": [
+          {
+            "Ref": "MySecurityGroup"
+          }
+        ],
+        "Subnets": [
+          {
+            "Ref": "SomeSubnetA"
+          },
+          {
+            "Ref": "SomeSubnetB"
+          }
+        ],
+        "Listeners": [
+          {
+            "LoadBalancerPort": "443",
+            "InstancePort": "8080",
+            "Protocol": "HTTPS",
+            "SSLCertificateId": {
+              "Fn::Join": ["", ["arn:aws:iam::", {
+                "Ref": "AWS::AccountId"
+              }, ":server-certificate/", "MyLoadBalancerCertificate" ] ]
+            }
+          },
+          {
+            "LoadBalancerPort": "80",
+            "InstancePort": "8080",
+            "Protocol": "HTTP"
+          }
+        ],
+        "HealthCheck": {
+          "Target": "HTTP:8080/check",
+          "HealthyThreshold": "3",
+          "UnhealthyThreshold": "4",
+          "Interval": "60",
+          "Timeout": "20"
+        }
+      }
+    }
+  }
+}

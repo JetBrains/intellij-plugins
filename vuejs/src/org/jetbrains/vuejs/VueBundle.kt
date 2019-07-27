@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs
 
 import com.intellij.CommonBundle
@@ -7,9 +8,6 @@ import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 10/4/2017.
- */
 class VueBundle {
   companion object {
     private const val BUNDLE = "messages.VueBundle"

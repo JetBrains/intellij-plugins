@@ -1,4 +1,4 @@
-<idea-plugin url="https://www.jetbrains.com/idea">
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <diagram.Provider implementation="com.intellij.lang.javascript.uml.FlashUmlProvider"/>
     <diagram.changesProvider implementation="com.intellij.lang.javascript.uml.FlashUmlChangesProvider"/>

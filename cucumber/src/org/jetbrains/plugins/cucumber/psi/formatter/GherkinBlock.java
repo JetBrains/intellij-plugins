@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class GherkinBlock implements ASTBlock {
   private final ASTNode myNode;
   private final Indent myIndent;
@@ -28,6 +25,7 @@ public class GherkinBlock implements ASTBlock {
   private List<Block> myChildren = null;
 
   private static final TokenSet BLOCKS_TO_INDENT = TokenSet.create(GherkinElementTypes.FEATURE_HEADER,
+                                                                   GherkinElementTypes.RULE,
                                                                    GherkinElementTypes.SCENARIO,
                                                                    GherkinElementTypes.SCENARIO_OUTLINE,
                                                                    GherkinElementTypes.STEP,
@@ -37,6 +35,7 @@ public class GherkinBlock implements ASTBlock {
   private static final TokenSet BLOCKS_TO_INDENT_CHILDREN = TokenSet.create(GherkinElementTypes.GHERKIN_FILE,
                                                                             GherkinElementTypes.FEATURE,
                                                                             GherkinElementTypes.SCENARIO,
+                                                                            GherkinElementTypes.RULE,
                                                                             GherkinElementTypes.SCENARIO_OUTLINE);
 
   private static final TokenSet READ_ONLY_BLOCKS = TokenSet.create(GherkinElementTypes.PYSTRING, GherkinTokenTypes.COMMENT);
@@ -92,7 +91,17 @@ public class GherkinBlock implements ASTBlock {
       if (child.getElementType() == TokenType.WHITE_SPACE) {
         continue;
       }
-      Indent indent = BLOCKS_TO_INDENT.contains(child.getElementType()) ? Indent.getNormalIndent() : Indent.getNoneIndent();
+
+      boolean isTagInsideScenario = child.getElementType() == GherkinElementTypes.TAG &&
+                  myNode.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE &&
+                  child.getStartOffset() > myNode.getStartOffset();
+      Indent indent;
+      if (BLOCKS_TO_INDENT.contains(child.getElementType()) || isTagInsideScenario) {
+        indent = Indent.getNormalIndent();
+      }
+      else {
+        indent = Indent.getNoneIndent();
+      }
       // skip epmty cells
       if (child.getElementType() == GherkinElementTypes.TABLE_CELL) {
         if (child.getChildren(null).length == 0) {
@@ -137,13 +146,18 @@ public class GherkinBlock implements ASTBlock {
 
     ASTBlock block1 = (ASTBlock) child1;
     ASTBlock block2 = (ASTBlock) child2;
-    final IElementType elementType1 = block1.getNode().getElementType();
-    final IElementType elementType2 = block2.getNode().getElementType();
+    ASTNode node1 = block1.getNode();
+    ASTNode node2 = block2.getNode();
+    final IElementType parent1 = node1.getTreeParent() != null ? node1.getTreeParent().getElementType() : null;
+    final IElementType elementType1 = node1.getElementType();
+    final IElementType elementType2 = node2.getElementType();
 
     if (READ_ONLY_BLOCKS.contains(elementType2)) {
       return Spacing.getReadOnlySpacing();
     }
-    if (GherkinElementTypes.SCENARIOS.contains(elementType2) && elementType1 != GherkinTokenTypes.COMMENT) {
+    if (GherkinElementTypes.SCENARIOS.contains(elementType2) &&
+        elementType1 != GherkinTokenTypes.COMMENT &&
+        parent1 != GherkinElementTypes.RULE) {
       return Spacing.createSpacing(0, 0, 2, true, 2);
     }
     if (elementType1 == GherkinTokenTypes.PIPE &&
@@ -152,11 +166,11 @@ public class GherkinBlock implements ASTBlock {
     }
     if ((elementType1 == GherkinElementTypes.TABLE_CELL || elementType1 == GherkinTokenTypes.PIPE) &&
         elementType2 == GherkinTokenTypes.PIPE) {
-      final ASTNode tableNode = TreeUtil.findParent(block1.getNode(), GherkinElementTypes.TABLE);
+      final ASTNode tableNode = TreeUtil.findParent(node1, GherkinElementTypes.TABLE);
       if (tableNode != null) {
-        int columnIndex = getTableCellColumnIndex(block1.getNode());
+        int columnIndex = getTableCellColumnIndex(node1);
         int maxWidth = ((GherkinTable) tableNode.getPsi()).getColumnWidth(columnIndex);
-        int spacingWidth = (maxWidth - block1.getNode().getText().trim().length()) + 1;
+        int spacingWidth = (maxWidth - node1.getText().trim().length()) + 1;
         if (elementType1 == GherkinTokenTypes.PIPE) {
           spacingWidth += 2;
         }
@@ -201,5 +215,4 @@ public class GherkinBlock implements ASTBlock {
   public boolean isLeaf() {
     return myLeaf || getSubBlocks().size() == 0;
   }
-
 }

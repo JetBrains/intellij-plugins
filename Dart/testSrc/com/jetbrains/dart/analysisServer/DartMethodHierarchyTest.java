@@ -1,51 +1,25 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
+import com.intellij.util.indexing.FindSymbolParameters;
+import com.jetbrains.lang.dart.ide.DartClassContributor;
 import com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyTreeStructure;
-import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import static com.jetbrains.dart.analysisServer.DartCallHierarchyTest.findReference;
 
-public class DartMethodHierarchyTest extends HierarchyViewTestBase {
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    // Some tests do this here but resolution does not work if the server is initialized prior to copying the files.
-    //DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
-  }
-
+public class DartMethodHierarchyTest extends DartHierarchyTestBase {
   @Override
   protected String getBasePath() {
-    return "analysisServer/methodHierarchy/" + getTestName(false);
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH;
-  }
-
-  @Override
-  protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
-    VirtualFile root = super.configureByFiles(rawProjectRoot, vFiles);
-    return DartTestUtils.configureNavigation(this, root, vFiles);
+    return "/analysisServer/methodHierarchy";
   }
 
   private void doMethodHierarchyTest(final String className,
@@ -53,11 +27,10 @@ public class DartMethodHierarchyTest extends HierarchyViewTestBase {
                                      final boolean shouldHide,
                                      final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
-      final Project project = getProject();
-      final List<DartComponentName> dartComponentNames =
-        DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
-      for (DartComponentName name : dartComponentNames) {
-        DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
+      Project project = getProject();
+      Ref<HierarchyTreeStructure> result = Ref.create();
+      new DartClassContributor().processElementsWithName(className, item -> {
+        DartClass dartClass = PsiTreeUtil.getParentOfType((PsiElement)item, DartClass.class);
         if (dartClass != null && className.equals(dartClass.getName())) {
           PsiElement member = dartClass.findMemberByName(methodName);
           if (member == null) {
@@ -67,19 +40,21 @@ public class DartMethodHierarchyTest extends HierarchyViewTestBase {
             fail("Method not found");
           }
           if (shouldHide) {
-            HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(myProject).getState();
+            HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(project).getState();
             assert state != null;
             state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = true;
           }
-          return new DartMethodHierarchyTreeStructure(project, (DartComponent)member);
+          result.set(new DartMethodHierarchyTreeStructure(project, (DartComponent)member));
+          return false;
         }
-      }
-      return null;
+        return true;
+      }, FindSymbolParameters.wrap("", GlobalSearchScope.projectScope(project)));
+      return result.get();
     }, fileNames);
   }
 
   private void doStandardMethodHierarchyTest(String className, String methodName, boolean shouldHide) throws Exception {
-    doMethodHierarchyTest(className, methodName, shouldHide, "../t1.dart", "../t2.dart", "../t3.dart");
+    doMethodHierarchyTest(className, methodName, shouldHide, "t1.dart", "t2.dart", "t3.dart");
   }
 
   public void testT1m() throws Exception {

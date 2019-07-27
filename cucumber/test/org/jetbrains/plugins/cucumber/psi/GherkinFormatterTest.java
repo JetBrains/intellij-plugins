@@ -171,6 +171,21 @@ public class GherkinFormatterTest extends FormatterTestCase {
     );
   }
 
+  public void testExamplesWithTag() {
+    doTextTest(
+      "@javascript\n" +
+      "Feature: Autocompletion\n" +
+      "\n" +
+      "  @tag1\n" +
+      "  Scenario Outline\n" +
+      "    Given some <value>\n" +
+      "\n" +
+      "    @tag2\n" +
+      "    Examples:\n" +
+      "      | value |"
+    );
+  }
+
   protected void doTextTest(String text) {
     doTextTest(text, text);
   }

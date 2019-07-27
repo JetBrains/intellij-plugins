@@ -1,5 +1,5 @@
 <idea-plugin>
-  <name>Flash/Flex Support</name>
+  <name>Flash/Flex</name>
   <description>
     <![CDATA[
       Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:<br>
@@ -20,6 +20,8 @@
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
+
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
     <compileServer.plugin classpath="flex-jps-plugin.jar;flex-shared.jar"/>
@@ -45,7 +47,8 @@
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler"
                              order="before moveFileOrDir, before moveJavaFileOrDir"/>
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersHandler"/>
-    <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
+    <fileType name="SWF" implementationClass="com.intellij.javascript.flex.SwfFileType" fieldName="SWF_FILE_TYPE" extensions="swf"/>
+    <fileType name="MXML" implementationClass="com.intellij.lang.javascript.flex.MxmlFileType" fieldName="MXML" extensions="mxml;fxg" language="Mxml"/>
     <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
     <todoIndexer filetype="MXML" implementationClass="com.intellij.javascript.flex.MxmlTodoIndexer"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
@@ -101,10 +104,8 @@
     <enterHandlerDelegate implementation="com.intellij.lang.javascript.flex.MxmlEnterHandler"/>
     <iconProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexIconProvider"/>
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexTreeStructureProvider"/>
-    <projectService serviceInterface="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"
-                    serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
-    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"
-                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
@@ -288,9 +289,6 @@
     <component>
       <implementation-class>com.intellij.javascript.flex.mxml.schema.CodeContextHolder</implementation-class>
     </component>
-    <component>
-      <implementation-class>com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory</implementation-class>
-    </component>
   </project-components>
 
   <actions>
@@ -303,21 +301,24 @@
             text="Test Method">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
     </action>
+    <!--suppress PluginXmlCapitalization -->
     <action id="Generate.SetUp.Actionscript" class="com.intellij.lang.javascript.generation.JSGenerateSetUpMethodAction"
             text="setUp()">
       <add-to-group anchor="after" relative-to-action="Generate.TestMethod.Actionscript" group-id="GenerateGroup"/>
     </action>
+    <!--suppress PluginXmlCapitalization -->
     <action id="Generate.TearDown.Actionscript" class="com.intellij.lang.javascript.generation.JSGenerateTearDownMethodAction"
             text="tearDown()">
       <add-to-group anchor="after" relative-to-action="Generate.SetUp.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.EventHandler.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandlerAction"
             text="Event Handler">
-      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.JavaScript" group-id="GenerateGroup"/>
     </action>
+    <!--suppress PluginXmlCapitalization -->
     <action id="Generate.ToString.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateToStringAction"
             text="toString()">
-      <add-to-group anchor="after" relative-to-action="Generate.Delegate.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.EventHandler.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Flex.NewActionScriptClass" class="com.intellij.lang.javascript.flex.actions.newfile.NewActionScriptClassAction"
             text="ActionScript Class" description="Create new ActionScript class" icon="JavaScriptPsiIcons.Classes.ActionScriptClass">
@@ -327,6 +328,7 @@
             text="MXML Component" description="Create new MXML component" icon="JavaScriptPsiIcons.Classes.XmlBackedClass">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
     </action>
+    <!--suppress PluginXmlCapitalization -->
     <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"
             text="Filter [SWF] and [UnloadSWF] messages" icon="AllIcons.General.Filter"
             description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
@@ -347,7 +349,7 @@
     <action id="AddAsSwcLib" class="com.intellij.lang.javascript.flex.actions.addAsLib.AddAsSwcLibAction" text="Add as SWC Library...">
       <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" relative-to-action="MarkRootGroup" anchor="after"/>
     </action>
-  
+
     <!--
     <action id="CompileCSSToSWF" text="Compile CSS to SWF..." popup="true"
             description="Compile CSS file fo SWF to be used as a runtime style sheet for a Flash application"

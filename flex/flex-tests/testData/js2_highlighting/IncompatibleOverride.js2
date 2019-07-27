@@ -81,7 +81,7 @@ class D extends C {
     return <error>new C()</error>;
   }
 
-  public override function <error>currentImage2</error>():C {
+  public <error bundleMsg="javascript.validation.message.function.override.without.parent.method">override</error> function currentImage2():C {
     return null;
   }
 }

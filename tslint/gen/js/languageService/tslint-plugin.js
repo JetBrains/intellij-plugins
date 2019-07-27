@@ -80,13 +80,6 @@ var TSLintPlugin = /** @class */ (function () {
         var linter = this.linterApi.linter;
         var major = this.linterApi.version.major || 0;
         var configuration = this.getConfiguration(args.filePath, args.configPath);
-        if (args.isJSFile && (major < 4 || !this.hasJSRules(configuration))) {
-            return {
-                errorCount: 0, warningCount: 0,
-                failures: [], fixes: [],
-                format: "json", output: ""
-            };
-        }
         if (major >= 4) {
             var tslint_1 = new linter(options);
             tslint_1.lint(args.filePath, args.content, configuration);
@@ -106,11 +99,6 @@ var TSLintPlugin = /** @class */ (function () {
             return configurationResult.results;
         }
         return configurationResult;
-    };
-    TSLintPlugin.prototype.hasJSRules = function (config) {
-        return this.linterApi.version.major && this.linterApi.version.major >= 5
-            ? config.jsRules.size > 0
-            : Object.keys(config.jsRules).length > 0;
     };
     return TSLintPlugin;
 }());

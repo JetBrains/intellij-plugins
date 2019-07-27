@@ -19,7 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Frame extends Response {
 
   public Frame(JsonObject json) {
@@ -30,14 +30,28 @@ public class Frame extends Response {
    * Can return <code>null</code>.
    */
   public CodeRef getCode() {
-    return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
+    JsonObject obj = (JsonObject) json.get("code");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new CodeRef(obj);
   }
 
   /**
    * Can return <code>null</code>.
    */
   public FuncRef getFunction() {
-    return json.get("function") == null ? null : new FuncRef((JsonObject) json.get("function"));
+    JsonObject obj = (JsonObject) json.get("function");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new FuncRef(obj);
   }
 
   public int getIndex() {
@@ -50,7 +64,7 @@ public class Frame extends Response {
   public FrameKind getKind() {
     if (json.get("kind") == null) return null;
     
-    JsonElement value = json.get("kind");
+    final JsonElement value = json.get("kind");
     try {
       return value == null ? FrameKind.Unknown : FrameKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
@@ -62,7 +76,14 @@ public class Frame extends Response {
    * Can return <code>null</code>.
    */
   public SourceLocation getLocation() {
-    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
+    JsonObject obj = (JsonObject) json.get("location");
+    if (obj == null) return null;
+    final String type = json.get("type").getAsString();
+    if ("Instance".equals(type) || "@Instance".equals(type)) {
+      final String kind = json.get("kind").getAsString();
+      if ("Null".equals(kind)) return null;
+    }
+    return new SourceLocation(obj);
   }
 
   /**

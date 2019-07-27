@@ -16,23 +16,23 @@
 
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.DiagramEdge;
-import com.intellij.diagram.DiagramRelationshipInfo;
+import com.intellij.diagram.*;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.diagram.DiagramColorManagerBase;
+import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 public class FlashUmlColorManager extends DiagramColorManagerBase {
+  @NotNull
   @Override
-  public Color getEdgeColor(DiagramEdge edge) {
-    return edge == null
-        || !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getSource()))
-        || !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget()))
-        || edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA
-        || edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
-    super.getEdgeColor(edge) : REALIZATION;
+  public Color getEdgeColor(@NotNull DiagramBuilder builder, @NotNull DiagramEdge edge) {
+    return !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getSource())) ||
+           !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget())) ||
+           edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA ||
+           edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
+           super.getEdgeColor(builder, edge) : ObjectUtils.notNull(builder.getColorScheme().getColor(DiagramColors.REALIZATION_EDGE));
   }
 
   private static boolean isInterface(Object element) {

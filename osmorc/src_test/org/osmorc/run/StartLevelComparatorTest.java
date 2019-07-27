@@ -29,8 +29,7 @@ import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.Comparator;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -44,14 +43,14 @@ public class StartLevelComparatorTest {
 
     bundle1.setStartLevel(1);
     bundle2.setStartLevel(1);
-    assertThat(testObject.compare(bundle1, bundle2), equalTo(0));
+    assertThat(testObject.compare(bundle1, bundle2)).isEqualTo(0);
 
     bundle1.setStartLevel(1);
     bundle2.setStartLevel(2);
-    assertThat(testObject.compare(bundle1, bundle2), lessThan(0));
+    assertThat(testObject.compare(bundle1, bundle2)).isLessThan(0);
 
     bundle1.setStartLevel(4);
     bundle2.setStartLevel(2);
-    assertThat(testObject.compare(bundle1, bundle2), greaterThan(0));
+    assertThat(testObject.compare(bundle1, bundle2)).isGreaterThan(0);
   }
 }

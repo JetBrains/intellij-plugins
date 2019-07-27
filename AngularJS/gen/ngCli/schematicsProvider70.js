@@ -1,6 +1,7 @@
 "use strict";
 var schematic_command_1 = require("@angular/cli/models/schematic-command");
 var command = new schematic_command_1.SchematicCommand({}, null);
+command.getEngineHost();
 var schematicsProvider = {
     getCollection: function (collectionName) {
         return command.getCollection(collectionName);

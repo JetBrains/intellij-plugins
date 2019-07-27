@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
@@ -32,9 +32,10 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,10 +90,12 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JCheckBox myClearAndroidDataCheckBox;
   private JRadioButton myOnIOSSimulatorRadioButton;
   private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
+  private JBLabel myIOSSimulatorDeviceLabel;
+  private JBTextField myIOSSimulatorDeviceTextField;
   private JRadioButton myOnIOSDeviceRadioButton;
   private JCheckBox myFastPackagingCheckBox;
 
-  private JComboBox myEmulatorCombo;
+  private JComboBox<Emulator> myEmulatorCombo;
   private JPanel myEmulatorScreenSizePanel;
   private JTextField myScreenWidth;
   private JTextField myScreenHeight;
@@ -241,6 +244,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myOnIOSSimulatorRadioButton.setEnabled(false);
       myOnIOSSimulatorRadioButton.setText(FlexBundle.message("ios.simulator.on.mac.only.button.text"));
       myIOSSimulatorSdkTextWithBrowse.setVisible(false);
+      myIOSSimulatorDeviceLabel.setVisible(false);
+      myIOSSimulatorDeviceTextField.setVisible(false);
     }
 
     myIOSSimulatorSdkTextWithBrowse
@@ -259,25 +264,20 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
                                       () -> myBCCombo.getBC());
   }
 
-  public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
+  public static void initAppDescriptorForEmulatorCombo(final JComboBox<AppDescriptorForEmulator> appDescriptorForEmulatorCombo,
                                                        final NullableComputable<? extends FlexBuildConfiguration> bcComputable) {
-    appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
-    appDescriptorForEmulatorCombo
-      .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
-        @Override
-        public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
-          final FlexBuildConfiguration bc = bcComputable.compute();
-
-          switch (value) {
-            case Android:
-              setText(getDescriptorForEmulatorText("Android", bc == null ? null : bc.getAndroidPackagingOptions()));
-              break;
-            case IOS:
-              setText(getDescriptorForEmulatorText("iOS", bc == null ? null : bc.getIosPackagingOptions()));
-              break;
-          }
+    appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel<>(AppDescriptorForEmulator.values()));
+    appDescriptorForEmulatorCombo.setRenderer(SimpleListCellRenderer.create(
+      "", value -> {
+        FlexBuildConfiguration bc = bcComputable.compute();
+        if (value == AppDescriptorForEmulator.Android) {
+          return getDescriptorForEmulatorText("Android", bc == null ? null : bc.getAndroidPackagingOptions());
         }
-      });
+        else if (value == AppDescriptorForEmulator.IOS) {
+          return getDescriptorForEmulatorText("iOS", bc == null ? null : bc.getIosPackagingOptions());
+        }
+        throw new IllegalArgumentException(String.valueOf(value));
+      }));
   }
 
   private static String getDescriptorForEmulatorText(final String mobilePlatform, final @Nullable AirPackagingOptions packagingOptions) {
@@ -300,14 +300,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void initEmulatorRelatedControls() {
-    myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.ALL_EMULATORS.toArray()));
+    myEmulatorCombo.setModel(new DefaultComboBoxModel<>(Emulator.ALL_EMULATORS.toArray(new Emulator[0])));
 
-    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>() {
-      @Override
-      public void customize(JList list, Emulator value, int index, boolean selected, boolean hasFocus) {
-        setText(value.name);
-      }
-    });
+    myEmulatorCombo.setRenderer(SimpleListCellRenderer.create("", value -> value.name));
 
     myEmulatorCombo.addActionListener(new ActionListener() {
       @Override
@@ -398,6 +393,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
 
       myIOSSimulatorSdkTextWithBrowse.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
+      myIOSSimulatorDeviceLabel.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
+      myIOSSimulatorDeviceTextField.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
 
       if (myIOSSimulatorSdkTextWithBrowse.isEnabled() && myIOSSimulatorSdkTextWithBrowse.getText().isEmpty() && SystemInfo.isMac) {
         final String latestSelected = PropertiesComponent.getInstance().getValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY);
@@ -526,6 +523,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myClearAndroidDataCheckBox.setSelected(params.isClearAppDataOnEachLaunch());
     myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
     myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
+    myIOSSimulatorDeviceTextField.setText(params.getIOSSimulatorDevice());
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
     myFastPackagingCheckBox.setSelected(params.isFastPackaging());
 
@@ -549,7 +547,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     if (appDir.isDirectory()) {
       final String relPath = "/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs";
       final File[] xCodeDirs = appDir.listFiles(file -> {
-        final String name = file.getName().toLowerCase();
+        final String name = StringUtil.toLowerCase(file.getName());
         return file.isDirectory() && name.startsWith("xcode") && name.endsWith(".app")
                && new File(file.getPath() + relPath).isDirectory();
       });
@@ -557,7 +555,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       if (xCodeDirs.length > 0) {
         final File sdksDir = new File(xCodeDirs[0] + relPath);
         final File[] simulatorSdkDirs = sdksDir.listFiles(file -> {
-          final String filename = file.getName().toLowerCase();
+          final String filename = StringUtil.toLowerCase(file.getName());
           return file.isDirectory() && filename.startsWith("iphonesimulator") && filename.endsWith(".sdk");
         });
 
@@ -631,6 +629,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setClearAppDataOnEachLaunch(myClearAndroidDataCheckBox.isSelected());
 
     params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
+    params.setIOSSimulatorDevice(myIOSSimulatorDeviceTextField.getText().trim());
 
     params.setFastPackaging(myFastPackagingCheckBox.isSelected());
 
@@ -658,7 +657,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   public static void updateOutputFileName(final JTextField textField, final boolean isLib) {
     final String outputFileName = textField.getText();
-    final String lowercase = outputFileName.toLowerCase();
+    final String lowercase = StringUtil.toLowerCase(outputFileName);
     final String withoutExtension = lowercase.endsWith(".swf") || lowercase.endsWith(".swc")
                                     ? outputFileName.substring(0, outputFileName.length() - ".sw_".length())
                                     : outputFileName;

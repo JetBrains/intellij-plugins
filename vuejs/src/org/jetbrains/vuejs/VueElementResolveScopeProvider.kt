@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs
 
 import com.intellij.lang.javascript.DialectDetector
@@ -7,16 +8,17 @@ import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
-  private val tsProvider = object: TypeScriptResolveScopeProvider() {
+  private val tsProvider = object : TypeScriptResolveScopeProvider() {
     override fun isApplicable(file: VirtualFile): Boolean = true
 
     override fun restrictByFileType(file: VirtualFile,
                                     libraryService: TypeScriptLibraryProvider,
                                     moduleAndLibraryScope: GlobalSearchScope): GlobalSearchScope {
-      return super.restrictByFileType(file, libraryService, moduleAndLibraryScope).
-        uniteWith(GlobalSearchScope.getScopeRestrictedByFileTypes(moduleAndLibraryScope, VueFileType.INSTANCE))
+      return super.restrictByFileType(file, libraryService, moduleAndLibraryScope).uniteWith(
+        GlobalSearchScope.getScopeRestrictedByFileTypes(moduleAndLibraryScope, VueFileType.INSTANCE))
     }
   }
 

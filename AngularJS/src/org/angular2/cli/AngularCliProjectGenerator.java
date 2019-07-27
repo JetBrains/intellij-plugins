@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -13,22 +13,21 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TextAccessor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.gist.GistManager;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,12 +39,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Dennis.Ushakov
- */
+import static com.intellij.util.containers.ContainerUtil.exists;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
+
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
-  public static final String PACKAGE_NAME = "@angular/cli";
+  @NonNls public static final String NG_EXECUTABLE = "ng";
   private static final Logger LOG = Logger.getInstance(AngularCliProjectGenerator.class);
   private static final Pattern NPX_PACKAGE_PATTERN =
     Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
@@ -55,13 +54,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   public String getName() {
-    return "Angular CLI";
+    return Angular2Bundle.message("angular.action.new-project.name");
   }
 
   @Override
   @NotNull
   public String getDescription() {
-    return "The Angular CLI makes it easy to create an application that already works, right out of the box. It already follows our best practices!";
+    return Angular2Bundle.message("angular.action.new-project.description");
   }
 
   @Override
@@ -80,9 +79,10 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
@@ -95,19 +95,19 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       result.add(tokenizer.nextToken());
     }
 
-    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0)) {
-      if (!result.contains("--defaults")) {
+    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
+      if (!exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
         result.add("--defaults");
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @SuppressWarnings("SameParameterValue")
   private static boolean isPackageGreaterOrEqual(NodePackage pkg, int major, int minor, int patch) {
     SemVer ver = null;
-    if (pkg.getName().equals(PACKAGE_NAME)) {
+    if (pkg.getName().equals(ANGULAR_CLI_PACKAGE)) {
       ver = pkg.getVersion();
     }
     else {
@@ -134,30 +134,30 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   @NotNull
   public static String ng(String path) {
-    return path + File.separator + "bin" + File.separator + "ng";
+    return path + File.separator + "bin" + File.separator + NG_EXECUTABLE;
   }
 
   @Override
   @NotNull
   protected String packageName() {
-    return PACKAGE_NAME;
+    return ANGULAR_CLI_PACKAGE;
   }
 
   @Override
   @NotNull
   protected String presentablePackageName() {
-    return "Angular &CLI:";
+    return Angular2Bundle.message("angular.action.new-project.presentable-package-name");
   }
 
   @NotNull
   @Override
   protected List<NpxPackageDescriptor.NpxCommand> getNpxCommands() {
-    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(PACKAGE_NAME, "ng"));
+    return Collections.singletonList(new NpxPackageDescriptor.NpxCommand(ANGULAR_CLI_PACKAGE, NG_EXECUTABLE));
   }
 
   @Override
   protected String validateProjectPath(@NotNull String path) {
-    return Optional.ofNullable(validateFolderName(path, "Project"))
+    return Optional.ofNullable(validateFolderName(path, Angular2Bundle.message("angular.action.new-project.label-project-name")))
       .orElseGet(() -> super.validateProjectPath(path));
   }
 
@@ -191,9 +191,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     String fileName = PathUtil.getFileName(path);
     if (!VALID_NG_APP_NAME.matcher(fileName).matches()) {
       return XmlStringUtil.wrapInHtml(
-        label + " name '" + fileName + "' is not valid. " + label + " name must " +
-        "start with a letter, and must contain only alphanumeric characters or dashes. " +
-        "When adding a dash the segment after the dash must also start with a letter."
+        Angular2Bundle.message("angular.action.new-project.wrong-folder-name", label, fileName)
       );
     }
     return null;
@@ -205,26 +203,24 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     private TextAccessor myContentRoot;
 
     private SchematicOptionsTextField myOptionsTextField;
+    private JCheckBox myUseDefaults;
 
     @Override
     protected JPanel createPanel() {
       final JPanel panel = super.createPanel();
-      ComboBox<String> schematicsCollectionCombo = new ComboBox<>(new String[]{"default", "@ngrx/schematics"});
-
-      LabeledComponent component = LabeledComponent.create(schematicsCollectionCombo, "Schematics collection:");
-      component.setAnchor((JComponent)panel.getComponent(0));
-      component.setLabelLocation(BorderLayout.WEST);
-      panel.add(component);
 
       myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
                                                          Collections.emptyList());
-      myOptionsTextField.setEnabled(true);
       myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
 
-      component = LabeledComponent.create(myOptionsTextField, "Additional parameters:");
+      LabeledComponent component = LabeledComponent.create(
+        myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"));
       component.setAnchor((JComponent)panel.getComponent(0));
       component.setLabelLocation(BorderLayout.WEST);
       panel.add(component);
+
+      myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
+      panel.add(myUseDefaults);
 
       return panel;
     }
@@ -247,8 +243,9 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
           }
         };
       }
-      GistManager.getInstance().invalidateData();
-      settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand("Additional parameters:"), myOptionsTextField);
+      settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
+        Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField);
+      settingsStep.addSettingsComponent(myUseDefaults);
       getPackageField().addSelectionListener(this::nodePackageChanged);
       nodePackageChanged(getPackageField().getSelected());
     }
@@ -256,7 +253,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @NotNull
     @Override
     public Settings getSettings() {
-      return new AngularCLIProjectSettings(super.getSettings(), myOptionsTextField.getText());
+      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.isSelected(), myOptionsTextField.getText());
     }
 
     @Nullable
@@ -267,7 +264,8 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
         return info;
       }
       if (myContentRoot != null) {
-        String message = validateFolderName(myContentRoot.getText(), "Content root folder");
+        String message = validateFolderName(myContentRoot.getText(),
+                                            Angular2Bundle.message("angular.action.new-project.label-content-root-folder"));
         if (message != null) {
           return new ValidationInfo(message);
         }
@@ -275,6 +273,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       return null;
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private void nodePackageChanged(NodePackage nodePackage) {
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
         List<Option> options = Collections.emptyList();
@@ -290,10 +289,10 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
                 .filter(s -> "ng-new".equals(s.getName()))
                 .findFirst()
                 .map(schematic -> {
-                  List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
+                  List<Option> list = new ArrayList<>(schematic.getOptions());
                   list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
                   list.add(createOption("collection", "String", null, "Schematics collection to use"));
-                  Collections.sort(list, Comparator.comparing(Option::getName));
+                  list.sort(Comparator.comparing(Option::getName));
                   return list;
                 })
                 .orElse(Collections.emptyList());
@@ -320,10 +319,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
     @NotNull
     public final String myOptions;
+    public final boolean myUseDefaults;
 
     AngularCLIProjectSettings(@NotNull Settings settings,
+                              boolean useDefaults,
                               @NotNull String options) {
       super(settings.myInterpreterRef, settings.myPackage);
+      myUseDefaults = useDefaults;
       myOptions = options;
     }
   }

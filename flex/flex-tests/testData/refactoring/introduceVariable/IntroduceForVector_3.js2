@@ -1,0 +1,13 @@
+package {
+public class Vector$object {
+    function reverse():Vector$object {}
+}
+}
+
+package com {
+  public class MyClass {}
+}
+
+import com.MyClass;
+
+<selection>new Vector.<MyClass>()</selection>

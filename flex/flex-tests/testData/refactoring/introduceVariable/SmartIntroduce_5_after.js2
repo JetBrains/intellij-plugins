@@ -1,0 +1,2 @@
+var xxx:int = 0x1234;
+ba.writeInt(xxx<caret>);

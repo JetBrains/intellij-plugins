@@ -71,22 +71,21 @@ public class ErrorProneClasspathProvider extends BuildProcessParametersProvider 
     if (isErrorProneCompilerSelected(myProject)) {
       File[] jars = getLatestCompilerJars();
       LOG.assertTrue(jars.length > 0, "error-prone compiler jars not found in directory: " + getDownloadCacheDir());
+      List<String> bootClasspath = new ArrayList<>();
       List<String> classpath = new ArrayList<>();
       for (File file : jars) {
-        classpath.add(file.getAbsolutePath());
-      }
-      String classpathString = StringUtil.join(classpath, File.pathSeparator);
-      List<String> arguments = new ArrayList<>();
-      if (BuildManager.getBuildProcessRuntimeSdk(myProject).second.isAtLeast(JavaSdkVersion.JDK_1_9)) {
-        //when running under Java 9 Error Prone should add special arguments to JVM command line, see http://errorprone.info/docs/installation#command-line
-        for (String packageName : Arrays.asList("api", "util", "tree", "main", "code", "processing", "parser", "comp")) {
-          arguments.add("--add-exports=jdk.compiler/com.sun.tools.javac." + packageName + "=ALL-UNNAMED");
+        if (file.getName().startsWith("javac-")) {
+          bootClasspath.add(file.getAbsolutePath());
         }
-        arguments.add("--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED");
-        arguments.add("-D" + COMPILER_PATH_PROPERTY + "=" + classpathString);
+        else {
+          classpath.add(file.getAbsolutePath());
+        }
       }
-      else {
-        arguments.add("-Xbootclasspath/p:" + classpathString);
+      //in order to run Error Prone we should add special arguments to JVM command line, see http://errorprone.info/docs/installation#command-line
+      List<String> arguments = new ArrayList<>();
+      arguments.add("-D" + COMPILER_PATH_PROPERTY + "=" + StringUtil.join(classpath, File.pathSeparator));
+      if (!BuildManager.getBuildProcessRuntimeSdk(myProject).second.isAtLeast(JavaSdkVersion.JDK_1_9)) {
+        arguments.add("-Xbootclasspath/p:" + StringUtil.join(bootClasspath, File.pathSeparator));
       }
       StreamEx.of(jars).map(ErrorProneClasspathProvider::readVersion).nonNull().findFirst().ifPresent(
         version -> arguments.add("-D" + VERSION_PROPERTY + "=" + version)

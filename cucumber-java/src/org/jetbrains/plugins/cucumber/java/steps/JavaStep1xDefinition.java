@@ -12,8 +12,8 @@ public class JavaStep1xDefinition extends JavaAnnotatedStepDefinition {
 
   @Nullable
   @Override
-  public String getStepDefinitionText() {
-    String result = super.getStepDefinitionText();
+  public String getCucumberRegex() {
+    String result = super.getCucumberRegex();
     if (result != null) {
       if (!result.startsWith("^")) {
         result = "^" + result;

@@ -15,20 +15,10 @@ import org.jetbrains.annotations.NotNull;
 public class FlexReferenceImporter implements ReferenceImporter {
   @Override
   public boolean autoImportReferenceAtCursor(@NotNull final Editor editor, @NotNull final PsiFile file) {
-    return doAutoImportReferenceAt(editor, file, editor.getCaretModel().getOffset());
-  }
-
-  @Override
-  public boolean autoImportReferenceAt(@NotNull final Editor editor, @NotNull final PsiFile file, final int offset) {
-    return doAutoImportReferenceAt(editor, file, offset);
-  }
-
-  private static boolean doAutoImportReferenceAt(final Editor editor,
-                                                 final PsiFile file,
-                                                 final int offset) {
     if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
     if (!(file instanceof JSFile) || file.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
 
+    int offset = editor.getCaretModel().getOffset();
     JSReferenceExpression expression = JSImportHandlingUtil.findUnresolvedReferenceExpression(editor, file, offset);
     if (expression != null) {
       new AddImportECMAScriptClassOrFunctionAction(editor, expression, true).execute();

@@ -20,7 +20,7 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
   private static final @NonNls String[] accessModifiers = {"public", "private", "protected", "internal"};
 
   @Override
-  public boolean process(KeywordCompletionConsumer consumer, PsiElement context) {
+  public boolean process(@NotNull KeywordCompletionConsumer consumer, @NotNull PsiElement context) {
     if (JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()) return false;
     final PsiElement parent = context.getParent();
     final PsiElement grandParent = parent != null ? parent.getParent() : null;
@@ -61,7 +61,9 @@ public class ActionScriptCompletionKeywordsContributor extends JSCompletionKeywo
   }
 
   @Override
-  public void appendSpecificKeywords(@NotNull KeywordCompletionConsumer consumer) {
+  public void appendSpecificKeywords(@NotNull KeywordCompletionConsumer consumer,
+                                     @NotNull PsiElement context,
+                                     PsiElement grandParent) {
     consumer.consume(JSLookupPriority.NON_CONTEXT_KEYWORDS_PRIORITY, true,
                      "is",
                      "as",

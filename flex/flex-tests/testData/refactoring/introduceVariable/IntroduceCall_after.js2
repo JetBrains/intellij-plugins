@@ -1,0 +1,3 @@
+function F (NonIntersectingSegmentSet) {
+  var created:* = new NonIntersectingSegmentSet();
+}

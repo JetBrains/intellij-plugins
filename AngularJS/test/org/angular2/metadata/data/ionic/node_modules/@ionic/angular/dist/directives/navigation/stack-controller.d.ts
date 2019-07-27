@@ -1,0 +1,31 @@
+import { ComponentRef, NgZone } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavController } from '../../providers/nav-controller';
+import { RouteView, StackEvent } from './stack-utils';
+export declare class StackController {
+    private containerEl;
+    private router;
+    private navCtrl;
+    private zone;
+    private views;
+    private runningTask?;
+    private skipTransition;
+    private tabsPrefix;
+    private activeView;
+    private nextId;
+    constructor(tabsPrefix: string | undefined, containerEl: HTMLIonRouterOutletElement, router: Router, navCtrl: NavController, zone: NgZone);
+    createView(ref: ComponentRef<any>, activatedRoute: ActivatedRoute): RouteView;
+    getExistingView(activatedRoute: ActivatedRoute): RouteView | undefined;
+    setActive(enteringView: RouteView): Promise<StackEvent>;
+    canGoBack(deep: number, stackId?: string | undefined): boolean;
+    pop(deep: number, stackId?: string | undefined): Promise<boolean>;
+    startBackTransition(): Promise<void>;
+    endBackTransition(shouldComplete: boolean): void;
+    getLastUrl(stackId?: string): RouteView | undefined;
+    getActiveStackId(): string | undefined;
+    destroy(): void;
+    private getStack;
+    private insertView;
+    private transition;
+    private wait;
+}

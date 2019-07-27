@@ -1,13 +1,13 @@
 package org.angularjs.performance;
 
 import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
 
 /**
  * @author Konstantin.Ulitin
  */
-public class AngularJSPerformanceTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AngularJSPerformanceTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {

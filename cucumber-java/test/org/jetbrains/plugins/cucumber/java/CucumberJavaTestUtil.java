@@ -48,6 +48,22 @@ public class CucumberJavaTestUtil {
     };
   }
 
+  public static DefaultLightProjectDescriptor createCucumber4_5ProjectDescriptor() {
+    return new DefaultLightProjectDescriptor() {
+      @Override
+      public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        IntelliJProjectConfiguration.LibraryRoots
+          libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-4.5");
+        PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
+
+        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-4.5");
+        PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
+
+        attachCucumberExpressionsLibrary(model);
+      }
+    };
+  }
+
   public static DefaultLightProjectDescriptor createCucumberJava8ProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
       @Override
@@ -89,6 +105,11 @@ public class CucumberJavaTestUtil {
       libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-core-3");
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryRoots.getClassesPaths());
 
+    attachCucumberExpressionsLibrary(model);
+  }
+
+  private static void attachCucumberExpressionsLibrary(@NotNull ModifiableRootModel model) {
+    IntelliJProjectConfiguration.LibraryRoots libraryRoots;
     libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-expressions");
     PsiTestUtil.addProjectLibrary(model, "cucumber-expressions", libraryRoots.getClassesPaths());
   }

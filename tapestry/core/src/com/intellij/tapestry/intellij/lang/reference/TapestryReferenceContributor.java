@@ -16,7 +16,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
@@ -31,7 +31,7 @@ import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -141,7 +141,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
         XmlAttributeValue attrValue = (XmlAttributeValue)element;
         XmlTag tag = context.get(TAG_KEY);
 
-        Component component = TapestryUtils.getTypeOfTag(tag);
+        TapestryComponent component = TapestryUtils.getTypeOfTag(tag);
         if (component == null) return PsiReference.EMPTY_ARRAY;
         final PsiElement parent = attrValue.getParent();
         if (!(parent instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
@@ -189,7 +189,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
     if (range == null) return PsiReference.EMPTY_ARRAY;
     final XmlTag tag = parentTag(attributeValue);
     if (tag == null) return PsiReference.EMPTY_ARRAY;
-    Component component = TapestryUtils.getTypeOfTag(tag);
+    TapestryComponent component = TapestryUtils.getTypeOfTag(tag);
     final IntellijJavaClassType elementClass = component == null ? null : (IntellijJavaClassType)component.getElementClass();
 
     return new PsiReference[]{new PsiReferenceBase<PsiElement>(attributeValue, range) {
@@ -225,7 +225,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       @NotNull
       public Object[] getVariants() {
         List<String> fieldsIds = TapestryUtils.getEmbeddedComponentIds(tag);
-        return ArrayUtil.toStringArray(fieldsIds);
+        return ArrayUtilRt.toStringArray(fieldsIds);
       }
     }};
   }
@@ -244,7 +244,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   @NotNull
-  private static PsiReference[] getReferenceToPage(final Component component, @NotNull XmlAttributeValue pageAttrValue) {
+  private static PsiReference[] getReferenceToPage(final TapestryComponent component, @NotNull XmlAttributeValue pageAttrValue) {
     final TextRange range = ElementManipulators.getValueTextRange(pageAttrValue);
     if (range == null) return PsiReference.EMPTY_ARRAY;
 

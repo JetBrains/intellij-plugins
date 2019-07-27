@@ -77,7 +77,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return result.toArray();
     }
 
-    private void processVariables(BiPredicate<String, PsiElement> processor) {
+    private void processVariables(BiPredicate<? super String, ? super PsiElement> processor) {
       final PsiFile template = getTemplate();
       if (template != null) {
         if (template.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
@@ -95,9 +95,9 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
           template.accept(new XmlRecursiveElementWalkingVisitor() {
             @Override
             public void visitXmlAttribute(XmlAttribute attribute) {
-              AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), false);
+              AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), attribute.getParent());
               if (info.type == Angular2AttributeType.REFERENCE) {
-                JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "any", attribute);
+                JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "*", attribute);
                 if (!processor.test(info.name, refVar)) {
                   stopWalking();
                 }

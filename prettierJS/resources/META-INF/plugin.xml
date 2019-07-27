@@ -40,11 +40,13 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
         instance="com.intellij.prettierjs.PrettierConfigurable"
         provider="com.intellij.prettierjs.PrettierConfigurable$Provider"/>
 
-    <fileTypeFactory implementation="com.intellij.prettierjs.config.PrettierConfigFileTypeFactory"/>
+    <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
+    <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierConfiguration$ProjectConfigurator"/>
+    <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction"
@@ -64,6 +66,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   </actions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaProviderFactory"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij.json">
+    <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
   </extensions>
 
 </idea-plugin>

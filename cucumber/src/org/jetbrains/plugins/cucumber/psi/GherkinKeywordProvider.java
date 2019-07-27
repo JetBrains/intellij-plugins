@@ -13,7 +13,7 @@ public interface GherkinKeywordProvider {
   Collection<String> getAllKeywords(String language);
   IElementType getTokenType(String language, String keyword);
   String getBaseKeyword(String language, String keyword);
-  boolean isSpaceAfterKeyword(String language, String keyword);
+  boolean isSpaceRequiredAfterKeyword(String language, String keyword);
   boolean isStepKeyword(String keyword);
   @NotNull
   GherkinKeywordTable getKeywordsTable(@Nullable String language);

@@ -1,3 +1,5 @@
+import {Component} from "@angular/core"
+
 class EventEmitter<T> {}
 
 @Component({

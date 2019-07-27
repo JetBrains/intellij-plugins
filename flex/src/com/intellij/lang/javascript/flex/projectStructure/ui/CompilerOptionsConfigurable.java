@@ -475,7 +475,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     final TreeTableTree tree = treeTable.getTree();
 
     tree.setRootVisible(false);
-    tree.setLineStyleAngled();
     tree.setShowsRootHandles(true);
     tree.setCellRenderer(createTreeCellRenderer());
     treeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

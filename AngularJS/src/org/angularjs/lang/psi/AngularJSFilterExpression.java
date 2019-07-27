@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
+import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
@@ -33,7 +33,7 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
   @NotNull
   @Override
   public List<JSType> getArgumentTypes(boolean contextual) {
-    return JSLazyExpressionType.mapAsArguments(getArguments(), contextual);
+    return JSPsiBasedTypeOfType.mapAsArguments(getArguments(), contextual);
   }
 
   @Override
@@ -52,13 +52,6 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
   public JSArgumentList getArgumentList() {
     final ASTNode argumentList = JSCallExpressionImpl.getArgumentList(getNode());
     return argumentList != null ? (JSArgumentList)argumentList.getPsi() : null;
-  }
-
-  @NotNull
-  @Override
-  public JSExpression[] getArguments() {
-    JSArgumentList argumentList = getArgumentList();
-    return argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
   }
 
   @Override

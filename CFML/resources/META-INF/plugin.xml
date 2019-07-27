@@ -1,8 +1,9 @@
 <idea-plugin>
-  <name>CFML Support</name>
+  <id>CFML Support</id>
+  <name>CFML</name>
   <description>
     <![CDATA[
-      This plugin provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
+      Provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
       The following features are available:
         <ul>
         <li>File type.</li>
@@ -11,7 +12,7 @@
         </ul>
       ]]>
   </description>
-  <vendor email="support@jetbrains.com">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
   <resource-bundle>messages.CfmlBundle</resource-bundle>
 
   <depends>com.intellij.modules.sql</depends>
@@ -98,8 +99,7 @@
                                implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlParameterInfoHandler"/>
     <projectConfigurable groupId="language" instance="com.intellij.coldFusion.UI.config.CfmlProjectConfigurable"
                          id="reference.plugin.settings.project.settings.cfml" displayName="ColdFusion" nonDefaultProject="true"/>
-    <projectService serviceInterface="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"
-                    serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
+    <projectService serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
     <projectService serviceImplementation="com.intellij.coldFusion.model.info.CfmlLangInfo"/>
 
     <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>

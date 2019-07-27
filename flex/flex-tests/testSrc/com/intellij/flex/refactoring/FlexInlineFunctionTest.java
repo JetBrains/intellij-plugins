@@ -26,26 +26,26 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineFunction/");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  private void defaultTest() throws Exception {
+  private void defaultTest() {
     doTest(getTestName(false), "js2");
   }
 
-  public void testDefaultParams() throws Exception {
+  public void testDefaultParams() {
     defaultTest();
   }
 
-  public void testJustStatements2() throws Exception {
+  public void testJustStatements2() {
     defaultTest();
   }
 
-  public void testJustStatements2_2() throws Exception {
+  public void testJustStatements2_2() {
     defaultTest();
   }
 
-  public void testJustStatements2_3() throws Exception {
+  public void testJustStatements2_3() {
     defaultTest();
   }
 
@@ -53,42 +53,42 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestFailure(getTestName(false), "js2", JSBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
   }
 
-  public void testJustStatements2_5() throws Exception {
+  public void testJustStatements2_5() {
     defaultTest();
   }
 
-  public void testJustStatements2_6() throws Exception {
+  public void testJustStatements2_6() {
     defaultTest();
   }
 
-  public void testJustOneCall() throws Exception {
+  public void testJustOneCall() {
     doTest(new String[]{getTestName(false) + ".js2"}, true);
   }
 
-  public void testJustStatementsInMxml() throws Exception {
+  public void testJustStatementsInMxml() {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testInsideAttribute() throws Exception {
+  public void testInsideAttribute() {
     doTest(getTestName(false), "mxml");
     doTest(getTestName(false) + "_2", "mxml");
     doTest(getTestName(false) + "_3", "mxml");
   }
 
-  public void testReplacingThis() throws Exception {
+  public void testReplacingThis() {
     defaultTest();
   }
 
-  public void testNoReplacingThis() throws Exception {
+  public void testNoReplacingThis() {
     defaultTest();
   }
 
-  public void testQualifyStatics() throws Exception {
+  public void testQualifyStatics() {
     defaultTest();
   }
 
-  public void testStaticCall() throws Exception {
+  public void testStaticCall() {
     defaultTest();
   }
 
@@ -99,11 +99,11 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testConstructor() {
-    shouldFail("Can not inline constructor");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   public void testConstructor2() {
-    shouldFail("Can not inline constructor");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   private void shouldFail(String reason) {
@@ -111,7 +111,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodInHierarchy() {
-    String reason = "Can not inline method that participates in hierarchy";
+    String reason = JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method");
     doTestFailure(getTestName(false) + 1, "js2", reason);
     doTestFailure(getTestName(false) + 2, "js2", reason);
     doTestFailure(getTestName(false) + 3, "js2", reason);
@@ -120,21 +120,21 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMethodInHierarchyMxml() {
     doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
-                  "Can not inline method that participates in hierarchy");
+                  JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
   }
 
   public void testInterfaceMethod() {
-    shouldFail("Can not inline interface method");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.interface.method"));
   }
 
   public void testMethodFromExternalLibrary() {
-    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "library"));
+    FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
 
-    shouldFail("Can not inline function defined in external library");
+    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.function.defined.in.library"));
   }
 
-  public void testNonCallUsage() throws Exception {
+  public void testNonCallUsage() {
     defaultTest();
   }
 

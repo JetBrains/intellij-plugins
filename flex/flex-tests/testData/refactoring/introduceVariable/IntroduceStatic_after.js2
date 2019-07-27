@@ -1,0 +1,4 @@
+class A {
+    static var created:int = 1;
+    static var a = created;
+}

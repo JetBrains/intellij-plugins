@@ -1,4 +1,4 @@
-<!-- "Create Field 'name2'" "true" -->
+<!-- "Create field 'name2'" "true" -->
 <script lang="ts">
     class MyClass {
         name: String;

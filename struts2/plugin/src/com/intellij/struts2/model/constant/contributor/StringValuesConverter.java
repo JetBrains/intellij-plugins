@@ -42,7 +42,7 @@ class StringValuesConverter extends ResolvingConverter.StringConverter {
 
   @Override
   @NotNull
-  public Collection<? extends String> getVariants(final ConvertContext context) {
+  public Collection<String> getVariants(final ConvertContext context) {
     return Arrays.asList(values);
   }
 

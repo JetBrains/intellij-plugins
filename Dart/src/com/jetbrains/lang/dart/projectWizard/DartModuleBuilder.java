@@ -13,7 +13,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.WebModuleBuilder;
-import com.intellij.openapi.module.WebModuleType;
+import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
@@ -65,7 +65,7 @@ public class DartModuleBuilder extends ModuleBuilder {
 
   @Override
   public ModuleType getModuleType() {
-    return WebModuleType.getInstance();
+    return WebModuleTypeBase.getInstance();
   }
 
   @Override
@@ -97,18 +97,19 @@ public class DartModuleBuilder extends ModuleBuilder {
   static void setupProject(@NotNull final ModifiableRootModel modifiableRootModel,
                            @NotNull final VirtualFile baseDir,
                            @NotNull final DartProjectWizardData wizardData) {
-    final String templateName = wizardData.myTemplate == null ? "Empty project" : wizardData.myTemplate.getName();
-
     setupSdk(modifiableRootModel, wizardData);
+
     if (wizardData.myTemplate != null) {
-      try {
-        final Collection<VirtualFile> filesToOpen =
-          wizardData.myTemplate.generateProject(wizardData.dartSdkPath, modifiableRootModel.getModule(), baseDir);
-        if (!filesToOpen.isEmpty()) {
-          scheduleFilesOpeningAndPubGet(modifiableRootModel.getModule(), filesToOpen);
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        try {
+          final Collection<VirtualFile> filesToOpen =
+            wizardData.myTemplate.generateProject(wizardData.dartSdkPath, modifiableRootModel.getModule(), baseDir);
+          if (!filesToOpen.isEmpty()) {
+            scheduleFilesOpeningAndPubGet(modifiableRootModel.getModule(), filesToOpen);
+          }
         }
-      }
-      catch (IOException ignore) {/*unlucky*/}
+        catch (IOException ignore) {/*unlucky*/}
+      });
     }
   }
 

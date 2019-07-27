@@ -41,13 +41,6 @@ public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationP
     return KarmaConfigurationType.getInstance();
   }
 
-  private boolean isTestRunnerPackageAvailableFor(@NotNull PsiElement element, @NotNull ConfigurationContext context) {
-    if (context.getOriginalConfiguration(KarmaConfigurationType.getInstance()) instanceof KarmaRunConfiguration) {
-      return true;
-    }
-    return super.isTestRunnerPackageAvailableFor(element);
-  }
-
   @Override
   protected boolean setupConfigurationFromCompatibleContext(@NotNull KarmaRunConfiguration configuration,
                                                             @NotNull ConfigurationContext context,

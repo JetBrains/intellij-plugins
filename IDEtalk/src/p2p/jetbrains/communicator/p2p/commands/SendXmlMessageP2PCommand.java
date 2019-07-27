@@ -20,7 +20,7 @@ import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.transport.XmlMessage;
 import jetbrains.communicator.core.transport.XmlResponseProvider;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,18 +42,18 @@ public class SendXmlMessageP2PCommand extends BaseP2PCommand {
   }
 
   public String incomingMessage(String remoteUser, String messageText) {
-    String xml = StringUtil.fromXMLSafeString(messageText);
+    String xml = CommunicatorStrings.fromXMLSafeString(messageText);
     SAXBuilder builder = new SAXBuilder();
     try {
       Document document = builder.build(new StringReader(xml));
       Element rootElement = document.getRootElement();
-      Element response = createResponse(rootElement, StringUtil.fromXMLSafeString(remoteUser));
+      Element response = createResponse(rootElement, CommunicatorStrings.fromXMLSafeString(remoteUser));
       if (response == null) return "";
 
       return new XMLOutputter().outputString(response);
     } catch (Throwable e) {
       LOG.info(e.getMessage(), e);
-      return StringUtil.toXML(e);
+      return CommunicatorStrings.toXML(e);
     }
   }
 

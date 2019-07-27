@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.CommonBundle;
@@ -12,13 +12,11 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
@@ -82,8 +80,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Override
-  protected void writeExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element)
-          throws WriteExternalException {
+  protected void writeExternal(@NotNull AppCodeRunConfiguration runConfiguration, @NotNull Element element) {
     RevealSettings settings = getRevealSettings(runConfiguration);
 
     Element settingsTag = new Element(REVEAL_SETTINGS_TAG);
@@ -102,7 +99,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   @Nullable
   @Override
   protected <P extends AppCodeRunConfiguration> SettingsEditor<P> createEditor(@NotNull P configuration) {
-    return new MyEditor<P>();
+    return new MyEditor<>();
   }
 
   @Nullable
@@ -148,7 +145,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull BuildConfiguration buildConfiguration,
                                       @NotNull ExecutionConsole console,
                                       @NotNull ProcessHandler processHandler,
-                                      @NotNull List<AnAction> actions) throws ExecutionException {
+                                      @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,
@@ -377,7 +374,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
 
     @Override
-    protected void applyEditorTo(@NotNull AppCodeRunConfiguration s) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull AppCodeRunConfiguration s) {
       RevealSettings settings = getRevealSettings(s);
 
       settings.autoInject = myInjectCheckBox.isSelected();
@@ -454,11 +451,9 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       label.setEnabled(enabled);
       StringBuilder fontString = new StringBuilder();
       Color color = enabled ? UIUtil.getLabelForeground() : UIUtil.getLabelDisabledForeground();
-      if (color != null) {
-        fontString.append("<font color=#");
-        UIUtil.appendColor(color, fontString);
-        fontString.append(">");
-      }
+      fontString.append("<font color=#");
+      UIUtil.appendColor(color, fontString);
+      fontString.append(">");
       label.setText("<html>" + fontString + text + "</html>");
     }
   }

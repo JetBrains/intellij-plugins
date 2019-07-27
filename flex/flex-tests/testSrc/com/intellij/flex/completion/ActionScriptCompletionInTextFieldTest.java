@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
@@ -31,6 +32,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
   private static final LightProjectDescriptor DESCRIPTOR = new FlexProjectDescriptor();
@@ -122,7 +124,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   public void testCreateFlexSkinHostComponent() {
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
-    PsiFile fragment = CreateFlexSkinDialog.createHostComponentCombo("", myModule).getPsiFile();
+    PsiFile fragment = CreateFlexSkinDialog.createHostComponentCombo("", getModule()).getPsiFile();
     String[] included = new String[]{"Z111", "Z222"};
     // TODO primitive types (and e.g. not subclasses of SkinnableComponent?) should be removed from completion list
     String[] excluded = new String[]{"public", "function", "while", "Z333", "EventDispatcher", "int", "String", "uint", "Number"};
@@ -163,7 +165,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     PsiFile fragment =
       ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
     String[] included = new String[]{"Inner"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtil.EMPTY_STRING_ARRAY, "Inner",
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtilRt.EMPTY_STRING_ARRAY, "Inner",
                              getTestName(false) + ".txt");
   }
 
@@ -175,31 +177,31 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
 
     FlexTestUtils.modifyConfigs(getProject(), e -> {
       {
-        final ModifiableFlexBuildConfiguration bc = e.getConfigurations(myModule)[0];
+        final ModifiableFlexBuildConfiguration bc = e.getConfigurations(getModule())[0];
         bc.setName("Flex");
         bc.setNature(new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application));
         FlexTestUtils.setSdk(bc, sdk);
       }
       {
-        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(myModule);
+        final ModifiableFlexBuildConfiguration bc = e.createConfiguration(getModule());
         bc.setName("AIR");
         bc.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
         FlexTestUtils.setSdk(bc, sdk);
       }
     });
 
-    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(myModule);
+    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(getModule());
     FlexBuildConfiguration old = manager.getActiveConfiguration();
     Disposer.register(myFixture.getTestRootDisposable(), () ->  manager.setActiveBuildConfiguration(old));
     manager.setActiveBuildConfiguration(manager.findConfigurationByName(activeBcName));
 
     final GlobalSearchScope scope =
-      FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, manager.findConfigurationByName(selectedBcName), false);
+      FlexUtils.getModuleWithDependenciesAndLibrariesScope(getModule(), manager.findConfigurationByName(selectedBcName), false);
     PublicInheritorFilter filter =
       new PublicInheritorFilter(getProject(), FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);
 
     PsiFile fragment =
-      JSReferenceEditor.forClassName("", getProject(), null, GlobalSearchScope.moduleScope(myModule), null, filter, "").getPsiFile();
+      JSReferenceEditor.forClassName("", getProject(), null, GlobalSearchScope.moduleScope(getModule()), null, filter, "").getPsiFile();
 
     doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, filename + ".txt");
     assertEquals(numberOfVariants, myFixture.getLookupElements().length);

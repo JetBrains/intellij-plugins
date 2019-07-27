@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.*;
@@ -21,6 +22,7 @@ import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -29,13 +31,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
-import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -47,8 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -59,7 +62,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
               psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
-              psiElement().inFile(psiFile().withName(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS))),
+              psiElement().inFile(psiFile().withName(".analysis_options"))),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
@@ -92,7 +95,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file == null) return;
 
-               if (file.getFileType() == HtmlFileType.INSTANCE &&
+               if (FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
                    !Registry.is("dart.projects.without.pubspec", false)) {
                  return;
@@ -108,6 +111,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
+               final VirtualFile targetFile = file;
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
                  if (uriPrefix != null) {
@@ -135,6 +139,44 @@ public class DartServerCompletionContributor extends CompletionContributor {
                  }
 
                  updatedResultSet.addElement(lookupElement);
+               }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
+                 final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
+                 if (suggestionSet == null) {
+                   return;
+                 }
+
+                 Map<String, Map<String, Set<String>>> existingImports = das.getExistingImports(libraryFilePathSD);
+                 for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
+                   final String kind = suggestion.getElement().getKind();
+                   if (!includedKinds.contains(kind)) {
+                     continue;
+                   }
+
+                   Set<String> importedLibraries = new HashSet<>();
+                   if (existingImports != null) {
+                     for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
+                       String importedLibraryUri = entry.getKey();
+                       Map<String, Set<String>> importedLibrary = entry.getValue();
+                       Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
+                       if (names != null && names.contains(suggestion.getLabel())) {
+                         importedLibraries.add(importedLibraryUri);
+                       }
+                     }
+                   }
+
+                   if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
+                     // If some library exports this label but the current suggestion set does not, we should filter.
+                     continue;
+                   }
+
+                   CompletionSuggestion completionSuggestion =
+                     createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
+                   String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
+                   LookupElementBuilder lookupElement =
+                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
+
+                   resultSet.addElement(lookupElement);
+                 }
                });
              }
            });
@@ -289,7 +331,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (reference instanceof DartNewExpression ||
           reference instanceof DartParenthesizedExpression ||
           reference instanceof DartListLiteralExpression ||
-          reference instanceof DartMapLiteralExpression) {
+          reference instanceof DartSetOrMapLiteralExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());
@@ -315,6 +357,16 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
   @NotNull
   public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
+    return createLookupElement(project, suggestion, null, null, false, null);
+  }
+
+  @NotNull
+  public static LookupElementBuilder createLookupElement(@NotNull final Project project,
+                                                         @NotNull final CompletionSuggestion suggestion,
+                                                         final Integer suggestionSetId,
+                                                         final VirtualFile file,
+                                                         final boolean isNotYetImported,
+                                                         @Nullable final String displayUri) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -365,19 +417,21 @@ public class DartServerCompletionContributor extends CompletionContributor {
         lookup = lookup.withTypeText(returnType, true);
       }
 
-      // If this is a class, try to show which package it's coming from.
-      if (element.getKind().equals(ElementKind.CLASS) && suggestion.getElementUri() != null) {
-        lookup = lookup.appendTailText(" (" + suggestion.getElementUri() + ")", true);
+      // If this is a class or similar global symbol, try to show which package it's coming from.
+      if (!StringUtils.isEmpty(displayUri)) {
+        String packageInfo = "(" + displayUri + ")";
+        lookup = lookup.withTypeText(StringUtils.isEmpty(returnType) ? packageInfo : returnType + " " + packageInfo, true);
       }
 
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
         if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
-          icon = new RowIcon(icon, AllIcons.Gutter.OverridingMethod);
+          icon = IconManager.getInstance().createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
         }
         else {
-          icon = new RowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON
+                                                                                   : PlatformIcons.PUBLIC_ICON);
           icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
           icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         }
@@ -386,77 +440,43 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // Prepare for typing arguments, if any.
-      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
-        final List<String> parameterNames = suggestion.getParameterNames();
-        if (parameterNames != null) {
-          shouldSetSelection = false;
-          lookup = lookup.withInsertHandler((context, item) -> {
-            // like in JavaCompletionUtil.insertParentheses()
-            final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
-                                             parameterNames.isEmpty() && context.getCompletionChar() != '(';
-
-            if (parameterNames.isEmpty()) {
-              final ParenthesesInsertHandler<LookupElement> handler =
-                ParenthesesInsertHandler.getInstance(false, false, false, needRightParenth, false);
-              handler.handleInsert(context, item);
-            }
-            else {
-              final ParenthesesInsertHandler<LookupElement> handler =
-                ParenthesesInsertHandler.getInstance(true, false, false, needRightParenth, false);
-              handler.handleInsert(context, item);
-
-              final Editor editor = context.getEditor();
-
-              if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
-                // Insert argument defaults if provided.
-                final String argumentListString = suggestion.getDefaultArgumentListString();
-                if (argumentListString != null) {
-                  final Document document = editor.getDocument();
-                  int offset = editor.getCaretModel().getOffset();
-
-                  // At this point caret is expected to be right after the opening paren.
-                  // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
-                  // if so, skip inserting argumentListString
-
-                  final CharSequence text = document.getCharsSequence();
-                  if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
-                    document.insertString(offset, argumentListString);
-
-                    PsiDocumentManager.getInstance(project).commitDocument(document);
-
-                    final TemplateBuilderImpl
-                      builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
-
-                    final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
-                    // Only proceed if ranges are provided and well-formed.
-                    if (ranges != null && (ranges.length & 1) == 0) {
-                      int index = 0;
-                      while (index < ranges.length) {
-                        final int start = ranges[index];
-                        final int length = ranges[index + 1];
-                        final String arg = argumentListString.substring(start, start + length);
-                        final TextExpression expression = new TextExpression(arg);
-                        final TextRange range = new TextRange(offset + start, offset + start + length);
-
-                        index += 2;
-                        builder.replaceRange(range, "group_" + (index - 1), expression, true);
-                      }
-
-                      builder.run(editor, true);
-                    }
-                  }
-                }
-              }
-
-              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, lookupObject.findPsiElement());
-            }
-          });
-        }
+      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind()) && suggestion.getParameterNames() != null) {
+        shouldSetSelection = false;
+        lookup = lookup.withInsertHandler((context, item) -> handleFunctionInvocationInsertion(context, item, suggestion));
       }
     }
 
-    // Use selection offset / length.
-    if (shouldSetSelection) {
+    if (isNotYetImported) {
+      lookup = lookup.withInsertHandler((context, item) -> {
+        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+        final GetCompletionDetailsResult result =
+          das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
+        if (result == null) {
+          return;
+        }
+
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.completion);
+
+        @Nullable final SourceChange change = result.change;
+        if (change == null) {
+          return;
+        }
+
+        try {
+          AssistUtils.applySourceChange(project, change, true);
+        }
+        catch (DartSourceEditException e) {
+          CommonRefactoringUtil.showErrorHint(project, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
+          return;
+        }
+
+        if (element != null && ElementKind.FUNCTION.equals(element.getKind()) && suggestion.getParameterNames() != null) {
+          handleFunctionInvocationInsertion(context, item, suggestion);
+        }
+      });
+    }
+    else if (shouldSetSelection) {
+      // Use selection offset / length.
       lookup = lookup.withInsertHandler((context, item) -> {
         final Editor editor = context.getEditor();
         final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
@@ -469,6 +489,111 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
 
     return lookup;
+  }
+
+  private static void handleFunctionInvocationInsertion(@NotNull InsertionContext context,
+                                                        @NotNull LookupElement item,
+                                                        @NotNull CompletionSuggestion suggestion) {
+    List<String> parameterNames = suggestion.getParameterNames();
+    if (parameterNames == null) {
+      return;
+    }
+
+    // like in JavaCompletionUtil.insertParentheses()
+    final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
+                                     parameterNames.isEmpty() && context.getCompletionChar() != '(';
+
+    boolean hasParameters = !parameterNames.isEmpty();
+    final ParenthesesInsertHandler<LookupElement> handler =
+      ParenthesesInsertHandler.getInstance(hasParameters, false, false, needRightParenth, false);
+    handler.handleInsert(context, item);
+
+    final Editor editor = context.getEditor();
+    if (hasParameters && DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
+      final String argumentListString = suggestion.getDefaultArgumentListString();
+      if (argumentListString != null) {
+        final Document document = editor.getDocument();
+        int offset = editor.getCaretModel().getOffset();
+
+        // At this point caret is expected to be right after the opening paren.
+        // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
+        // if so, skip inserting argumentListString
+
+        final CharSequence text = document.getCharsSequence();
+        if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
+          document.insertString(offset, argumentListString);
+
+          PsiDocumentManager.getInstance(context.getProject()).commitDocument(document);
+
+          final TemplateBuilderImpl builder =
+            (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+
+          final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+          // Only proceed if ranges are provided and well-formed.
+          if (ranges != null && (ranges.length & 1) == 0) {
+            int index = 0;
+            while (index < ranges.length) {
+              final int start = ranges[index];
+              final int length = ranges[index + 1];
+              final String arg = argumentListString.substring(start, start + length);
+              final TextExpression expression = new TextExpression(arg);
+              final TextRange range = new TextRange(offset + start, offset + start + length);
+
+              index += 2;
+              builder.replaceRange(range, "group_" + (index - 1), expression, true);
+            }
+
+            builder.run(editor, true);
+          }
+        }
+      }
+    }
+
+    Object itemObj = item.getObject();
+    if (itemObj instanceof DartLookupObject) {
+      AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, ((DartLookupObject)itemObj).findPsiElement());
+    }
+  }
+
+
+  @NotNull
+  private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
+                                                                                        int suggestionSetRelevance,
+                                                                                        @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
+    int relevanceBoost = 0;
+    List<String> relevanceTags = suggestion.getRelevanceTags();
+    if (relevanceTags != null) {
+      for (String tag : relevanceTags) {
+        IncludedSuggestionRelevanceTag relevanceTag = includedSuggestionRelevanceTags.get(tag);
+        if (relevanceTag != null) {
+          relevanceBoost = Math.max(relevanceBoost, relevanceTag.getRelevanceBoost());
+        }
+      }
+    }
+
+    Element element = suggestion.getElement();
+    return new CompletionSuggestion(
+      "UNKNOWN", // we don't have info about CompletionSuggestionKind
+      suggestionSetRelevance + relevanceBoost,
+      suggestion.getLabel(),
+      null,
+      0,
+      0,
+      element.isDeprecated(),
+      false,
+      suggestion.getDocSummary(),
+      suggestion.getDocComplete(),
+      null,
+      suggestion.getDefaultArgumentListString(),
+      suggestion.getDefaultArgumentListTextRanges(),
+      element,
+      element.getReturnType(),
+      suggestion.getParameterNames(),
+      null,
+      null,
+      null,
+      null,
+      null);
   }
 
   private static Icon getBaseImage(Element element) {
@@ -507,7 +632,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       return AllIcons.Nodes.Method;
     }
     else if (elementKind.equals(ElementKind.FUNCTION)) {
-      return AllIcons.Nodes.Function;
+      return AllIcons.Nodes.Lambda;
     }
     else if (elementKind.equals(ElementKind.FUNCTION_TYPE_ALIAS)) {
       return AllIcons.Nodes.Annotationtype;

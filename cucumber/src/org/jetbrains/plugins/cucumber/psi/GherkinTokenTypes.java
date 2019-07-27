@@ -10,8 +10,10 @@ public interface GherkinTokenTypes {
   GherkinElementType TEXT = new GherkinElementType("TEXT");
   GherkinElementType EXAMPLES_KEYWORD = new GherkinElementType("EXAMPLES_KEYWORD");
   GherkinElementType FEATURE_KEYWORD = new GherkinElementType("FEATURE_KEYWORD");
+  GherkinElementType RULE_KEYWORD = new GherkinElementType("RULE_KEYWORD");
   GherkinElementType BACKGROUND_KEYWORD = new GherkinElementType("BACKGROUND_KEYWORD");
   GherkinElementType SCENARIO_KEYWORD = new GherkinElementType("SCENARIO_KEYWORD");
+  GherkinElementType EXAMPLE_KEYWORD = new GherkinElementType("EXAMPLE_KEYWORD");
   GherkinElementType SCENARIO_OUTLINE_KEYWORD = new GherkinElementType("SCENARIO_OUTLINE_KEYWORD");
   GherkinElementType STEP_KEYWORD = new GherkinElementType("STEP_KEYWORD");
   GherkinElementType STEP_PARAMETER_BRACE = new GherkinElementType("STEP_PARAMETER_BRACE");
@@ -23,10 +25,10 @@ public interface GherkinTokenTypes {
   GherkinElementType PIPE = new GherkinElementType("PIPE");
   GherkinElementType TABLE_CELL = new GherkinElementType("TABLE_CELL");
 
-  TokenSet KEYWORDS = TokenSet.create(FEATURE_KEYWORD,
+  TokenSet KEYWORDS = TokenSet.create(FEATURE_KEYWORD, RULE_KEYWORD, EXAMPLE_KEYWORD,
                                       BACKGROUND_KEYWORD, SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD,
                                       EXAMPLES_KEYWORD, EXAMPLES_KEYWORD,
                                       STEP_KEYWORD);
 
-  TokenSet SCENARIOS_KEYWORDS = TokenSet.create(SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD);
+  TokenSet SCENARIOS_KEYWORDS = TokenSet.create(SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD, EXAMPLE_KEYWORD);
 }

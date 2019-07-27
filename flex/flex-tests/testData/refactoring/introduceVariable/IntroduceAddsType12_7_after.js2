@@ -1,0 +1,2 @@
+var foo:String
+var created:String = typeof foo;

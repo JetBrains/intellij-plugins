@@ -1,0 +1,3 @@
+<ng-content select="div,foo[bar='12']"></ng-content>
+<ng-content select="div:not(<error descr="Nested :not is not allowed in selectors">:not(</error>12))"></ng-content>
+<ng-content select="div:not(foo<error descr="Multiple selectors in :not are not supported">, </error>bar)"></ng-content>

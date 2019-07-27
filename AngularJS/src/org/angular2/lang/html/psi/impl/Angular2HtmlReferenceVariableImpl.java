@@ -11,21 +11,23 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.psi.*;
+import com.intellij.psi.HintedReferenceHost;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
@@ -36,16 +38,16 @@ import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createExplicitlyDeclaredType;
-import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
-import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
-import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
+import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
+import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
+import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
   implements Angular2HtmlReferenceVariable, HintedReferenceHost {
-
-  private static final String ANGULAR_CORE_PACKAGE = "@angular/core";
-  private static final String TEMPLATE_REF_CLASS = "TemplateRef";
 
   public Angular2HtmlReferenceVariableImpl(ASTNode node) {
     super(node);
@@ -57,7 +59,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
 
   @Nullable
   @Override
-  protected JSType doGetType() {
+  public JSType calculateType() {
     Angular2HtmlReference reference = getReferenceDefinitionAttribute();
     if (reference == null) {
       return null;
@@ -71,10 +73,12 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         .filter(directive -> scope.contains(directive)
                              && hasExport ? directive.getExportAsList().contains(exportName)
                                           : directive.isComponent())
+        .map(directive -> directive.getTypeScriptClass())
+        .nonNull()
+        .map(TypeScriptClass::getJSType)
         .findFirst()
-        .map(directive -> getClassInstanceType(directive.getTypeScriptClass()))
         .orElseGet(() -> hasExport ? null
-                                   : isTemplateTag(tag.getName())
+                                   : isTemplateTag(tag)
                                      ? getTemplateRefType(getComponentClass())
                                      : getHtmlElementClassType(this, tag.getName()));
     }
@@ -82,39 +86,32 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   @Nullable
-  public static JSType getTemplateRefType(@Nullable PsiElement scope) {
-    if (scope == null) {
-      return null;
-    }
-    return CachedValuesManager.getCachedValue(scope, () -> {
-      for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
-        scope, ANGULAR_CORE_PACKAGE, false)) {
-        if (module instanceof JSElement) {
-          ResolveResult resolved = ArrayUtil.getFirstElement(
-            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF_CLASS, scope, (JSElement)module));
-          if (resolved != null && resolved.isValidResult() && resolved.getElement() instanceof TypeScriptClass) {
-            TypeScriptClass templateRefClass = (TypeScriptClass)resolved.getElement();
-            JSType baseType = getClassInstanceType(templateRefClass);
-            if (baseType != null
-                && templateRefClass.getTypeParameterList() != null
-                && templateRefClass.getTypeParameterList().getTypeParameters().length == 1) {
-              return CachedValueProvider.Result.create(
-                new JSGenericTypeImpl(baseType.getSource(), baseType,
-                                      JSAnyType.get(templateRefClass, true)),
-                PsiModificationTracker.MODIFICATION_COUNT);
-            }
-          }
-        }
-      }
-      return CachedValueProvider.Result.create(null, PsiModificationTracker.MODIFICATION_COUNT);
-    });
+  @Override
+  public JSType getJSType() {
+    return getCachedValue(this, () ->
+      create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
-  private static JSType getClassInstanceType(@Nullable TypeScriptClass clazz) {
-    return clazz == null ? null
-                         : clazz.getQualifiedName() != null
-                           ? createExplicitlyDeclaredType(clazz.getQualifiedName(), clazz)
-                           : buildTypeFromClass(clazz, false);
+  @Nullable
+  private static JSType getTemplateRefType(@Nullable PsiElement scope) {
+    return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
+      for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
+        if (!(module instanceof JSElement)) continue;
+        TypeScriptClass templateRefClass = ObjectUtils.tryCast(
+          JSResolveResult.resolve(
+            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module)),
+          TypeScriptClass.class);
+        if (templateRefClass != null
+            && templateRefClass.getTypeParameters().length == 1) {
+          return create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT);
+        }
+      }
+      return create(null, PsiModificationTracker.MODIFICATION_COUNT);
+    }), templateRefClass -> {
+      JSType baseType = templateRefClass.getJSType();
+      return new JSGenericTypeImpl(baseType.getSource(), baseType,
+                                   JSAnyType.get(templateRefClass, true));
+    });
   }
 
   @Nullable
@@ -164,7 +161,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   @Override
-  protected boolean useTypesFromJSDoc() {
+  public boolean useTypesFromJSDoc() {
     return false;
   }
 

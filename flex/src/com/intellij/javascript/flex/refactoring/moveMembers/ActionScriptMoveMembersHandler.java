@@ -13,7 +13,9 @@
 // limitations under the License.
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -31,6 +33,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -110,10 +113,15 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
   }
 
   @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
+  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer, @Nullable PsiReference reference) {
     for (PsiElement element : elements) {
       if (!JSClassUtils.isStaticMethodOrField(element)) return false;
     }
-    return targetContainer == null || super.canMove(elements, targetContainer);
+    return targetContainer == null || super.canMove(elements, targetContainer, reference);
+  }
+
+  @Override
+  public boolean supportsLanguage(@NotNull Language language) {
+    return language.isKindOf(JavascriptLanguage.INSTANCE);
   }
 }

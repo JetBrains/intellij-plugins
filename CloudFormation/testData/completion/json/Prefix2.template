@@ -1,0 +1,16 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "AAA": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "CT<caret>": "SampleAWSElasticBeanstalkApplication",
+        "Description": "aaa"
+      }
+    }
+  }
+}

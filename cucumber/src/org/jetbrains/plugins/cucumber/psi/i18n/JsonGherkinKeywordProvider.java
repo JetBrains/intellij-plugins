@@ -1,17 +1,24 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.i18n;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.MalformedJsonException;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private static final Logger LOG = Logger.getInstance(JsonGherkinKeywordProvider.class.getName());
@@ -21,41 +28,51 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private final Set<String> myAllStepKeywords = new HashSet<>();
 
   private static GherkinKeywordProvider myKeywordProvider;
+  private static GherkinKeywordProvider myGherkin6KeywordProvider;
 
   public static GherkinKeywordProvider getKeywordProvider() {
     if (myKeywordProvider == null) {
-      final ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
-      if (classLoader != null) {
-        final InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
-        if (inputStream != null) {
-          myKeywordProvider = new JsonGherkinKeywordProvider(inputStream);
-        }
-      }
-
-      if (myKeywordProvider == null) {
-        myKeywordProvider = new PlainGherkinKeywordProvider();
-      }
+      myKeywordProvider = createKeywordProviderFromJson("i18n_old.json");
     }
     return myKeywordProvider;
   }
 
-  public JsonGherkinKeywordProvider(final File keywordsFile) throws FileNotFoundException {
-    this(new FileInputStream(keywordsFile));
-
-    if (!(keywordsFile.exists() && !keywordsFile.isDirectory() && keywordsFile.canRead())){
-      LOG.error("Cannot read keywords from: " + keywordsFile);
+  public static GherkinKeywordProvider getKeywordProvider(boolean gherkin6) {
+    if (!gherkin6) {
+      return getKeywordProvider();
     }
+    if (myGherkin6KeywordProvider == null) {
+      myGherkin6KeywordProvider = createKeywordProviderFromJson("i18n.json");
+    }
+    return myGherkin6KeywordProvider;
+  }
+  
+  public static GherkinKeywordProvider getKeywordProvider(@NotNull PsiElement context) {
+    Module module = findModuleForPsiElement(context);
+    boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(context.getProject()).isGherkin6Supported(module);
+    return getKeywordProvider(gherkin6Enabled);
   }
 
-  public JsonGherkinKeywordProvider(final InputStream inputStream) {
-    Map<String, HashMap<Object, Object>> fromJson;
-    try {
-      final Reader in = new InputStreamReader(inputStream, CharsetToolkit.UTF8_CHARSET);
-      try {
-        fromJson = new Gson().fromJson(in, new TypeToken<HashMap<String, HashMap<Object, Object>>>() {}.getType());
+  private static GherkinKeywordProvider createKeywordProviderFromJson(@NotNull String jsonFileName) {
+    GherkinKeywordProvider result = null;
+    ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
+    if (classLoader != null) {
+      InputStream gherkinKeywordStream = ObjectUtils.notNull(classLoader.getResourceAsStream(jsonFileName));
+      result = new JsonGherkinKeywordProvider(gherkinKeywordStream);
+    }
 
-        for (Map.Entry<String, HashMap<Object, Object>> entry : fromJson.entrySet()) {
-          HashMap<Object, Object> translation = entry.getValue();
+    return result != null ? result : new PlainGherkinKeywordProvider(); 
+  }
+
+  public JsonGherkinKeywordProvider(@NotNull InputStream inputStream) {
+    Map<String, Map<String, Object>> fromJson;
+    try {
+      final Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+      try {
+        fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {}.getType());
+
+        for (Map.Entry<String, Map<String, Object>> entry : fromJson.entrySet()) {
+          Map<String, Object> translation = entry.getValue();
           final GherkinKeywordList keywordList = new GherkinKeywordList(translation);
           myLanguageKeywords.put(entry.getKey(), keywordList);
           for (String keyword : keywordList.getAllKeywords()) {
@@ -93,7 +110,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   }
 
   @Override
-  public boolean isSpaceAfterKeyword(String language, String keyword) {
+  public boolean isSpaceRequiredAfterKeyword(String language, String keyword) {
     return getKeywordList(language).isSpaceAfterKeyword(keyword);
   }
 

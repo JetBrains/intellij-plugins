@@ -23,7 +23,6 @@ import org.osgi.resource.Wire;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -98,9 +97,6 @@ class ResolutionSucceedDialog extends DialogWrapper {
     public boolean isLeaf(Object node) {
       return children(node).isEmpty();
     }
-
-    @Override
-    public void valueForPathChanged(TreePath path, Object newValue) { }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {

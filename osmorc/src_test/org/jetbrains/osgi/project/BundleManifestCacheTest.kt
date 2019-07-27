@@ -35,41 +35,41 @@ class BundleManifestCacheTest : LightOsgiFixtureTestCase() {
   fun testModuleManual() {
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.Manually
     myFixture.addFileToProject(myConfiguration.manifestLocation, "Bundle-SymbolicName: test\n")
-    assertManifest(myCache.getManifest(myModule))
+    assertManifest(myCache.getManifest(module))
   }
 
   fun testModuleGenerated() {
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.OsmorcControlled
     myConfiguration.setBundleSymbolicName("test")
-    assertManifest(myCache.getManifest(myModule))
+    assertManifest(myCache.getManifest(module))
   }
 
   fun testModuleBnd() {
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
     myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-SymbolicName: test\n")
-    assertManifest(myCache.getManifest(myModule))
+    assertManifest(myCache.getManifest(module))
   }
 
   fun testModuleBndImplicitBSN() {
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
     myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-Version: 1.0.0\n")
-    assertManifest(myCache.getManifest(myModule))
+    assertManifest(myCache.getManifest(module))
   }
 
   fun testModuleCacheUpdate() {
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.OsmorcControlled
-    assertNotNull(myCache.getManifest(myModule))
+    assertNotNull(myCache.getManifest(module))
 
     myConfiguration.manifestGenerationMode = ManifestGenerationMode.Bnd
-    assertNull(myCache.getManifest(myModule))
+    assertNull(myCache.getManifest(module))
 
     myFixture.addFileToProject(myConfiguration.bndFileLocation, "Bundle-SymbolicName: test\n")
-    assertNotNull(myCache.getManifest(myModule))
+    assertNotNull(myCache.getManifest(module))
   }
 
 
   private fun findClass(className: String): PsiClass =
-    JavaPsiFacade.getInstance(project).findClass(className, myModule.moduleWithLibrariesScope)!!
+    JavaPsiFacade.getInstance(project).findClass(className, module.moduleWithLibrariesScope)!!
 
   private fun assertManifest(manifest: BundleManifest?) {
     assertNotNull(manifest)

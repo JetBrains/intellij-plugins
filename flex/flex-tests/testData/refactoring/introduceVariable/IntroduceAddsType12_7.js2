@@ -1,0 +1,2 @@
+var foo:String
+<selection>typeof foo</selection>

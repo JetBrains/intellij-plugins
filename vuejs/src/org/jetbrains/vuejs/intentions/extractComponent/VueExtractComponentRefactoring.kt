@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.codeInsight.lookup.LookupElement
@@ -26,14 +14,11 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.tags.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 
-/**
- * @author Irina.Chernushina on 12/14/2017.
- */
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,
                                      private val editor: Editor) {
@@ -59,8 +44,8 @@ class VueExtractComponentRefactoring(private val project: Project,
         newlyAdded = data.replaceWithNewTag(defaultName ?: "NewComponent") as? XmlTag
       }
       VueComponentInplaceIntroducer(newlyAdded!!, editor, data, oldText,
-                                                                                    validator::validate,
-                                                                                    startMarkAction!!).performInplaceRefactoring(linkedSetOf())
+                                    validator::validate,
+                                    startMarkAction!!).performInplaceRefactoring(linkedSetOf())
 
     }, refactoringName, GROUP_ID)
   }
@@ -72,9 +57,10 @@ class VueExtractComponentRefactoring(private val project: Project,
     private val folder = context.containingFile.parent!!
     private val forbidden = mutableSetOf<String>()
     private val alreadyExisting = mutableSetOf<String>()
+
     init {
       forbidden.addAll(DefaultXmlExtension.DEFAULT_EXTENSION.getAvailableTagNames(context.containingFile as XmlFile, context)
-        .map { it.name })
+                         .map { it.name })
       val elements = mutableListOf<LookupElement>()
       VueTagProvider().addTagNameVariants(elements, context, null)
       alreadyExisting.addAll(elements.map { toAsset(it.lookupString).capitalize() })

@@ -90,7 +90,7 @@ public class PathUtils {
      * @return the full package name of the given component.
      */
     public static String getFullComponentPackage(String basePackage, String componentName) {
-        if (isEmpty(componentName) || componentName.indexOf(TAPESTRY_PATH_SEPARATOR) == -1) {
+        if (isEmpty(componentName) || !componentName.contains(TAPESTRY_PATH_SEPARATOR)) {
             return basePackage != null ? basePackage : "";
         }
 
@@ -112,7 +112,7 @@ public class PathUtils {
             return "";
         }
 
-        if (path.indexOf(TAPESTRY_PATH_SEPARATOR) == -1) {
+        if (!path.contains(TAPESTRY_PATH_SEPARATOR)) {
             return path;
         }
 
@@ -132,7 +132,7 @@ public class PathUtils {
             return "";
         }
 
-        if (path.indexOf(TAPESTRY_PATH_SEPARATOR) == -1) {
+        if (!path.contains(TAPESTRY_PATH_SEPARATOR)) {
             return path;
         }
 
@@ -183,7 +183,7 @@ public class PathUtils {
             return "";
         }
 
-        if (componentName.indexOf(TAPESTRY_PATH_SEPARATOR) == -1) {
+        if (!componentName.contains(TAPESTRY_PATH_SEPARATOR)) {
             return componentName;
         }
 
@@ -209,11 +209,11 @@ public class PathUtils {
     }
 
     private static String findSeparator(String path) {
-        if (path.indexOf(WINDOWS_PATH_SEPARATOR) != -1) {
+        if (path.contains(WINDOWS_PATH_SEPARATOR)) {
             return WINDOWS_PATH_SEPARATOR;
         }
 
-        if (path.indexOf(UNIX_PATH_SEPARATOR) != -1) {
+        if (path.contains(UNIX_PATH_SEPARATOR)) {
             return UNIX_PATH_SEPARATOR;
         }
 

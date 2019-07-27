@@ -76,7 +76,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
   }
 
   @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
+  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file, boolean withTemplate) {
     if (!(file instanceof PsiClassOwner)) return false;
 
     final PsiClass clazz = PsiTreeUtil.getChildOfType(file, PsiClass.class);
@@ -132,7 +132,9 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     }
     final PsiCodeBlock body = (PsiCodeBlock)lambdaBody;
 
-    runTemplateBuilderOnAddedStep(editor, addedStepDef, regexpElement, blockVars, body);
+    if (withTemplate) {
+      runTemplateBuilderOnAddedStep(editor, addedStepDef, regexpElement, blockVars, body);
+    }
 
     return true;
   }
@@ -146,7 +148,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
   }
 
   private static PsiElement buildStepDefinitionByStep(@NotNull final GherkinStep step, Language language) {
-    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+    final Step cucumberStep = new Step(new ArrayList<>(), step.getKeyword().getText(), step.getName(), 0, null, null);
     final SnippetGenerator generator = new SnippetGenerator(new Java8Snippet());
 
     String snippetTemplate = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));

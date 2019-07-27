@@ -21,7 +21,7 @@ public class InjectedPagesNode extends DefaultMutableTreeNode {
 
         switch (element.getElementType()) {
             case COMPONENT:
-                addChildElements((Component) userObject);
+                addChildElements((TapestryComponent) userObject);
                 break;
             case PAGE:
                 addChildElements((Page) userObject);
@@ -32,7 +32,7 @@ public class InjectedPagesNode extends DefaultMutableTreeNode {
         }
     }
 
-    private void addChildElements(Component component) {
+    private void addChildElements(TapestryComponent component) {
         for (InjectedElement injected : component.getInjectedPages()) {
             add(new InjectedPageNode(injected));
             _injectedComponentNodes.add(injected);

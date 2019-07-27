@@ -1,6 +1,7 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package icons;
 
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.IconManager;
 
 import javax.swing.*;
 
@@ -10,11 +11,8 @@ import javax.swing.*;
  */
 public final class PhoneGapIcons {
   private static Icon load(String path) {
-    return IconLoader.getIcon(path, PhoneGapIcons.class);
+    return IconManager.getInstance().getIcon(path, PhoneGapIcons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon PhonegapIntegration = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/PhonegapIntegration.svg");
+  /** 16x16 */ public static final Icon PhonegapIntegration = load("/com/github/masahirosuzuka/PhoneGapIntelliJPlugin/icons/PhonegapIntegration.svg");
 }

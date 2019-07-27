@@ -1,0 +1,5 @@
+public function f() {
+    var x:int = 123;
+    var y:int = 456;
+    <caret>return new Point(x, y);
+}

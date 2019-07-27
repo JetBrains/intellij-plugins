@@ -53,6 +53,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
+  @NotNull
   public String getPresentableName() {
     return "KarmaPresentableName";
   }
@@ -64,6 +65,7 @@ public class KarmaCoverageRunner extends CoverageRunner {
   }
 
   @Override
+  @NotNull
   public String getDataFileExtension() {
     return "dat";
   }

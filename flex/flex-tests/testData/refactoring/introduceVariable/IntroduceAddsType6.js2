@@ -1,0 +1,3 @@
+import aaa.XXX;
+class aaa.XXX {}
+var x = <selection>new XXX()</selection>;

@@ -5,14 +5,15 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
+import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE
 import org.angularjs.lang.AngularJSLanguage
 import java.io.File
 
@@ -21,13 +22,19 @@ private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader
 
 fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors: Boolean): List<Schematic> {
   myLogErrors.set(logErrors)
-  val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
-  val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
-  if (!node.isValid) return emptyList()
+  val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return emptyList()
+  val configurator: NodeCommandLineConfigurator
+  try {
+    configurator = NodeCommandLineConfigurator.find(interpreter)
+  }
+  catch (e: Exception) {
+    LOG.error("Cannot load schematics", e)
+    return emptyList()
+  }
 
   var parse: Collection<Schematic> = emptyList()
 
-  val schematicsInfoJson = loadSchematicsInfoJson(node, cli, includeHidden)
+  val schematicsInfoJson = loadSchematicsInfoJson(configurator, cli, includeHidden)
   if (schematicsInfoJson.isNotEmpty() && !schematicsInfoJson.startsWith("No schematics")) {
     try {
       parse = SchematicsJsonParser.parse(schematicsInfoJson)
@@ -38,7 +45,7 @@ fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors
   }
 
   if (parse.isEmpty()) {
-    val blueprintHelpOutput = loadBlueprintHelpOutput(node, cli)
+    val blueprintHelpOutput = loadBlueprintHelpOutput(configurator, cli)
     if (blueprintHelpOutput.isNotEmpty()) {
       try {
         parse = BlueprintParser().parse(blueprintHelpOutput)
@@ -56,25 +63,27 @@ fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors
   return parse.sortedBy { it.name }
 }
 
-private fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter,
+private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
                                    cli: VirtualFile,
                                    includeHidden: Boolean): String {
   val directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage::class.java, "ngCli")
   val utilityExe = "${directory}${File.separator}runner.js"
-  val commandLine = GeneralCommandLine(node.interpreterSystemDependentPath, utilityExe, cli.path, "./schematicsInfoProvider.js")
+  val commandLine = GeneralCommandLine("", utilityExe, cli.path, "./schematicsInfoProvider.js")
   if (includeHidden)
     commandLine.addParameter("--includeHidden")
+  configurator.configure(commandLine)
   return grabCommandOutput(commandLine, cli.path)
 }
 
-private fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
+private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator, cli: VirtualFile): String {
   val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-  NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, node)
+  NodeModuleSearchUtil.findModulesWithName(modules, ANGULAR_CLI_PACKAGE, cli, null)
 
   val module = modules.firstOrNull() ?: return ""
   val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
-  return grabCommandOutput(GeneralCommandLine(node.interpreterSystemDependentPath, moduleExe, "help", "generate"),
-                           cli.path)
+  val commandLine = GeneralCommandLine("", moduleExe, "help", "generate")
+  configurator.configure(commandLine)
+  return grabCommandOutput(commandLine, cli.path)
 }
 
 private fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): String {

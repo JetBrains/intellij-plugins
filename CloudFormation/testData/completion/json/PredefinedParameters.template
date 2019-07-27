@@ -1,0 +1,17 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "AAA": {
+      "Type": "XXX",
+      "Properties": {
+        "Description": {
+          "Ref": "AWS::<caret>"
+        }
+      }
+    }
+  }
+}

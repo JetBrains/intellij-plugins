@@ -10,7 +10,14 @@
   if (queryString.getParam('spec') == null) {
     var env = jasmine.getEnv();
     if (env.intellijPrevSpecFilter != null) {
-      env.specFilter = env.intellijPrevSpecFilter;
+      if (typeof env.configuration === 'function') {
+        var configuration = env.configuration() || {};
+        configuration.specFilter = env.intellijPrevSpecFilter;
+        env.configure(configuration);
+      }
+      else {
+        env.specFilter = env.intellijPrevSpecFilter;
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
@@ -93,7 +93,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Override
   @Nullable
-  protected RunContentDescriptor doExecute(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor doExecute(@NotNull final RunProfileState state,
+                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final RunProfile runProfile = env.getRunProfile();
@@ -290,7 +291,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       case Browser:
         final Runnable runnable1 =
           () -> BrowserLauncher.getInstance().browse(BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath),
-                                                   launcherParams.getBrowser());
+                                                     launcherParams.getBrowser());
 
         final Application application1 = ApplicationManager.getApplication();
         if (application1.isDispatchThread()) {
@@ -320,7 +321,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         catch (final IOException e) {
           final Runnable runnable2 =
             () -> Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, launcherParams.getPlayerPath(), e.getMessage()),
-                                         CommonBundle.getErrorTitle());
+                                           CommonBundle.getErrorTitle());
 
           final Application application2 = ApplicationManager.getApplication();
           if (application2.isDispatchThread()) {
@@ -374,7 +375,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     return (AirPackageUtil.packageIpaForSimulator(module, bc, runnerParameters, isDebug) &&
             AirPackageUtil.installOnIosSimulator(module.getProject(), sdk, ipaPath, applicationId,
-                                                 runnerParameters.getIOSSimulatorSdkPath()));
+                                                 runnerParameters.getIOSSimulatorSdkPath(), runnerParameters.getIOSSimulatorDevice()));
   }
 
   public static boolean packAndInstallToIOSDevice(final Module module,
@@ -443,8 +444,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                           final Sdk flexSdk,
                                           final String applicationId,
                                           final String iOSSdkPath,
+                                          final String simulatorDevice,
                                           final boolean isDebug) {
-    if (AirPackageUtil.launchOnIosSimulator(project, flexSdk, applicationId, iOSSdkPath)) {
+    if (AirPackageUtil.launchOnIosSimulator(project, flexSdk, applicationId, iOSSdkPath, simulatorDevice)) {
       ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                              FlexBundle.message("ios.simulator.application.launched"));
     }

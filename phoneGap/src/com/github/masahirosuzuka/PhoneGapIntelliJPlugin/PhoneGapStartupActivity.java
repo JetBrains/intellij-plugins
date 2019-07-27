@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
@@ -46,7 +48,7 @@ public class PhoneGapStartupActivity implements StartupActivity {
           return;
         }
 
-        updateModuleExcludeByFSEvent(project, event, ContainerUtil.newHashSet(), ContainerUtil.newHashSet(getExcludedFolderNames(event)));
+        updateModuleExcludeByFSEvent(project, event, new HashSet<>(), new HashSet<>(getExcludedFolderNames(event)));
       }
 
       @Override
@@ -55,7 +57,7 @@ public class PhoneGapStartupActivity implements StartupActivity {
           return;
         }
 
-        updateModuleExcludeByFSEvent(project, event, getExcludedFolderNames(event), ContainerUtil.newHashSet());
+        updateModuleExcludeByFSEvent(project, event, getExcludedFolderNames(event), new HashSet<>());
       }
 
       private boolean isProcess(@NotNull VirtualFileEvent event) {

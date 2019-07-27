@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -17,16 +18,14 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
 
@@ -37,7 +36,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     public Sdk findSdk(@NotNull String name, @NotNull final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {
         final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
-        return new FlexCompositeSdk(ArrayUtil.toStringArray(sdksNames));
+        return new FlexCompositeSdk(ArrayUtilRt.toStringArray(sdksNames));
       }
       return null;
     }
@@ -123,7 +122,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
           result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
           return true;
         });
-        return ArrayUtil.toStringArray(result);
+        return ArrayUtilRt.toStringArray(result);
       }
 
       @Override
@@ -284,8 +283,8 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
     @NotNull
     @Override
-    public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-      return currentSdkName;
+    public String suggestSdkName(@Nullable String currentSdkName, String sdkHome) {
+      return Objects.requireNonNull(currentSdkName);
     }
 
     @Override

@@ -23,7 +23,7 @@ class BinaryArgTypeMismatch {
         var t3:IFoo3;
         var t4:Object;
       
-        if (x <error descr="Binary operation argument type Bar is not compatible with type Baz">==</error> y ||
+        if (x <error descr="Condition is always false since types 'Bar' and 'Baz' have no overlap">==</error> y ||
             x == x || x == null || x == t3 || x == t4) {}
       
         var a:Foo2;

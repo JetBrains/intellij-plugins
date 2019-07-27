@@ -7,6 +7,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,15 +19,15 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority.NONE;
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING;
 
 public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesProvider {
 
   private static final String CANONICAL_PREFIX_BASE = PROPERTY_BINDING.getCanonicalPrefix();
 
-  private static final String BASE_PREFIX = "attr.";
+  @NonNls private static final String BASE_PREFIX = "attr.";
   private static final String SHORT_PREFIX = "[" + BASE_PREFIX;
   private static final String CANONICAL_PREFIX = CANONICAL_PREFIX_BASE + BASE_PREFIX;
 
@@ -41,8 +42,8 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       boolean isCanonical = CANONICAL_PREFIX.equals(prefix);
       completionResultsConsumer.addDescriptors(mapNotNull(
         Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag), descr -> {
-          if (!descr.getName().startsWith("on")) {
-            return new Angular2BoundHtmlAttributeDescriptor(descr, isCanonical);
+          if (!descr.getName().startsWith(EVENT_ATTR_PREFIX)) {
+            return new Angular2BoundHtmlAttributeDescriptor(tag, descr, isCanonical);
           }
           return null;
         }));
@@ -65,7 +66,7 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       String name = info.name;
       XmlAttributeDescriptor descriptor = find(Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag),
                                                attr -> name.equalsIgnoreCase(attr.getName()));
-      return descriptor != null ? new Angular2BoundHtmlAttributeDescriptor(descriptor, info.isCanonical) : null;
+      return descriptor != null ? new Angular2BoundHtmlAttributeDescriptor(tag, descriptor, info.isCanonical) : null;
     }
     return null;
   }
@@ -85,7 +86,7 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
     }
     else if (descriptor instanceof HtmlAttributeDescriptorImpl) {
       String attrName = descriptor.getName();
-      if (!attrName.startsWith("on")) {
+      if (!attrName.startsWith(EVENT_ATTR_PREFIX)) {
         return Angular2AttributeNameVariantsBuilder.forTypes(
           BASE_PREFIX + attrName, true, true,
           PROPERTY_BINDING);
@@ -96,11 +97,14 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
 
   private static class Angular2BoundHtmlAttributeDescriptor extends Angular2AttributeDescriptor {
 
-    protected Angular2BoundHtmlAttributeDescriptor(@NotNull XmlAttributeDescriptor originalDescriptor, boolean canonical) {
-      super(notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
+    protected Angular2BoundHtmlAttributeDescriptor(@NotNull XmlTag xmlTag,
+                                                   @NotNull XmlAttributeDescriptor originalDescriptor,
+                                                   boolean canonical) {
+      super(xmlTag,
+            notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
                     () -> PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName())),
-            false,
-            singletonList(originalDescriptor.getDeclaration()));
+            originalDescriptor.getDeclarations(),
+            true);
     }
 
     @Override

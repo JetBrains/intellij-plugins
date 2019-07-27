@@ -10,6 +10,7 @@ import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,15 +36,15 @@ public class Angular2ElementDescriptionProvider implements ElementDescriptionPro
   private static String getTypeDescription(@NotNull PsiElement element) {
     if (element instanceof Angular2DirectiveSelectorPsiElement) {
       return ((Angular2DirectiveSelectorPsiElement)element).isElementSelector()
-             ? "element selector"
-             : "attribute selector";
+             ? Angular2Bundle.message("angular.description.element-selector")
+             : Angular2Bundle.message("angular.description.attribute-selector");
     }
     if (element instanceof JSImplicitElement
         && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
-      return "pipe";
+      return Angular2Bundle.message("angular.description.pipe");
     }
     if (element instanceof Angular2HtmlReferenceVariable) {
-      return "template reference variable";
+      return Angular2Bundle.message("angular.description.ref-var");
     }
     return null;
   }

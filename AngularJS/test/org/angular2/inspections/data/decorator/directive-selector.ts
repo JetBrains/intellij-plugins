@@ -28,7 +28,7 @@ export class MyComponent {
 
 }
 
-@Directive(<error descr="Directive is missing required 'selector' property.">{
+@Directive(<error descr="Directive is missing a required 'selector' property">{
     inputs: ["", ""],
     outputs: [
         "",
@@ -54,7 +54,7 @@ export class MyDirective {
 }
 
 @Directive({
-    selector: "[foo]:not(a<error descr="Nesting :not is not allowed in a selector">:not(</error>)"
+    selector: "[foo]:not(a<error descr="Nested :not is not allowed in selectors">:not(</error>)"
 })
 export class MyDirective {
 

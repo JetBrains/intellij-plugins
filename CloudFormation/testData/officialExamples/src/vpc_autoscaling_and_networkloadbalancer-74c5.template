@@ -1,0 +1,120 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+   "Description" : "AWS CloudFormation Sample Template NetworkLoadBalancer: Create a network load balanced in an existing Virtual Private Cloud (VPC). **WARNING** This template creates one or more Amazon EC2 instances and Network Load Balancer. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+      "VpcId" : {
+        "Type" : "AWS::EC2::VPC::Id",
+        "Description" : "VpcId of your existing Virtual Private Cloud (VPC)",
+        "ConstraintDescription" : "must be the VPC Id of an existing Virtual Private Cloud. Outbound traffic for the default security group associated with this VPC should be enabled."
+      },
+
+      "Subnets" : {
+        "Type" : "List<AWS::EC2::Subnet::Id>",
+        "Description" : "The list of SubnetIds in your Virtual Private Cloud (VPC)",
+        "ConstraintDescription" : "must be a list of at least two existing subnets associated with at least two different availability zones. They should be residing in the selected Virtual Private Cloud."
+      }
+    },
+
+  "Resources": {
+    "NetworkLoadBalancer" : {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "SubnetMappings" : [
+          {
+            "AllocationId" : { "Fn::GetAtt" : [ "FirstEIP", "AllocationId" ] },
+            "SubnetId" : {"Fn::Select" : [0, { "Ref" : "Subnets" }]}
+          },
+          {
+            "AllocationId" : { "Fn::GetAtt" : [ "SecondEIP", "AllocationId" ] },
+            "SubnetId" : {"Fn::Select" : [1, { "Ref" : "Subnets" }]}
+          }
+        ],
+        "Type" : "network",
+        "IpAddressType" : "ipv4"
+      }
+    },
+
+    "FirstEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "Domain" : "vpc"
+      }
+    },
+
+    "SecondEIP" : {
+      "Type" : "AWS::EC2::EIP",
+      "Properties" : {
+        "Domain" : "vpc"
+      }
+    },
+
+    "LoadBalancerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP access on port 80",
+        "VpcId" : { "Ref" : "VpcId" },
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        } ],
+        "SecurityGroupEgress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        } ]
+      }
+    },
+
+    "TargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckIntervalSeconds" : 30,
+        "HealthCheckTimeoutSeconds" : 5,
+        "HealthyThresholdCount" : 3,
+        "Port" : 80,
+        "Protocol" : "HTTP",
+        "TargetType" : "instance",
+        "UnhealthyThresholdCount" : 5,
+        "VpcId" : {"Ref" : "VpcId"}
+      }
+    }
+  },
+
+  "Outputs" : {
+    "DNSName" : {
+      "Description" : "DnsName of LB",
+      "Value" : {"Fn::GetAtt" : ["NetworkLoadBalancer", "DNSName"]}
+    },
+    "LoadBalancerName" : {
+      "Description" : "LoadBalancerName of LB",
+      "Value" : {"Fn::GetAtt" : ["NetworkLoadBalancer", "LoadBalancerName"]}
+    },
+    "LoadBalancerFullName" : {
+      "Description" : "LoadBalancerFullName of LB",
+      "Value" : {"Fn::GetAtt" : ["NetworkLoadBalancer", "LoadBalancerFullName"]}
+    },
+    "SecurityGroups" : {
+      "Description" : "SecurityGroups of LB",
+      "Value" : {"Fn::Join" : [ ", ",
+        {"Fn::GetAtt" : ["NetworkLoadBalancer", "SecurityGroups"]}]
+      }
+    },
+    "CanonicalHostedZoneId" : {
+      "Description" : "CanonicalHostedZoneId of LB",
+      "Value" : {"Fn::GetAtt" : ["NetworkLoadBalancer", "CanonicalHostedZoneID"]}
+    },
+    "FirstAllocationId" : {
+      "Description" : "AllocationId of LB SubnetMapping",
+      "Value" : { "Fn::GetAtt" : [ "FirstEIP", "AllocationId" ] }
+    },
+    "SecondAllocationId" : {
+      "Description" : "AllocationId of LB SubnetMapping",
+      "Value" : { "Fn::GetAtt" : [ "SecondEIP", "AllocationId" ] }
+    }
+  }
+}

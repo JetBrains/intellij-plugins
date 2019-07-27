@@ -6,7 +6,7 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.mocks.JavaAnnotationMock;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.mocks.JavaFieldMock;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.resource.TestableResource;
@@ -35,8 +35,8 @@ public class PresentationLibraryElementTest {
     private JavaClassTypeMock _rootComponentClassMock;
     private TapestryProject _tapestryProjectMock;
     private IResourceFinder _resourceFinderMock;
-    private Library _libraryMock;
-    private Library _libraryNoRootPackageMock;
+    private TapestryLibrary _libraryMock;
+    private TapestryLibrary _libraryNoRootPackageMock;
 
     @BeforeMethod
     public void initMocks() {
@@ -71,11 +71,11 @@ public class PresentationLibraryElementTest {
         org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(Library.class);
+        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
-        _libraryNoRootPackageMock = org.easymock.EasyMock.createMock(Library.class);
+        _libraryNoRootPackageMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(_libraryNoRootPackageMock.getBasePackage()).andReturn(null).anyTimes();
         org.easymock.EasyMock.expect(_libraryNoRootPackageMock.getId()).andReturn("id").anyTimes();
 
@@ -184,7 +184,7 @@ public class PresentationLibraryElementTest {
 
     @Test
     public void createElementInstance_component() {
-        assert PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock) instanceof Component;
+        assert PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock) instanceof TapestryComponent;
     }
 
     @Test
@@ -229,7 +229,7 @@ public class PresentationLibraryElementTest {
 
         resources1.clear();
 
-        assert new Component(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getMessageCatalog().length == 2;
+        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getMessageCatalog().length == 2;
 
         resources1.clear();
 
@@ -239,7 +239,7 @@ public class PresentationLibraryElementTest {
 
 class TestableParameterReceiverElement extends ParameterReceiverElement {
 
-    TestableParameterReceiverElement(Library library, IJavaClassType elementClass, TapestryProject project) {
+    TestableParameterReceiverElement(TapestryLibrary library, IJavaClassType elementClass, TapestryProject project) {
         super(library, elementClass, project);
     }
 

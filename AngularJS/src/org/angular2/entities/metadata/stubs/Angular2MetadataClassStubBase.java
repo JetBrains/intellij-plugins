@@ -13,6 +13,8 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.angular2.lang.metadata.stubs.MetadataElementStub;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +32,7 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase> extends Angular2MetadataElementStub<Psi> {
 
-  private static final String EXTENDS_MEMBER = "#ext";
+  @NonNls private static final String EXTENDS_MEMBER = "#ext";
 
   private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
     new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
@@ -38,10 +40,10 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       @Override
       protected Map<String, EntityFactory> compute() {
         return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
-          .put(MODULE_DEC, Angular2MetadataModuleStub::createModuleStub)
+          .put(MODULE_DEC, Angular2MetadataModuleStub::new)
           .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
-          .put(COMPONENT_DEC, Angular2MetadataComponentStub::createComponentStub)
-          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::createDirectiveStub)
+          .put(COMPONENT_DEC, Angular2MetadataComponentStub::new)
+          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::new)
           .build();
       }
     };
@@ -61,11 +63,17 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       .orElseGet(() -> new Angular2MetadataClassStub(memberName, source, parent));
   }
 
-  private static final BooleanStructureElement IS_TEMPLATE_FLAG = new BooleanStructureElement();
+  private static final BooleanStructureElement IS_STRUCTURAL_DIRECTIVE_FLAG = new BooleanStructureElement();
+  private static final BooleanStructureElement IS_REGULAR_DIRECTIVE_FLAG = new BooleanStructureElement();
+  private static final BooleanStructureElement HAS_INPUT_MAPPINGS = new BooleanStructureElement();
+  private static final BooleanStructureElement HAS_OUTPUT_MAPPINGS = new BooleanStructureElement();
   @SuppressWarnings("StaticFieldReferencedViaSubclass")
   protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
     Angular2MetadataElementStub.FLAGS_STRUCTURE,
-    IS_TEMPLATE_FLAG
+    IS_STRUCTURAL_DIRECTIVE_FLAG,
+    IS_REGULAR_DIRECTIVE_FLAG,
+    HAS_INPUT_MAPPINGS,
+    HAS_OUTPUT_MAPPINGS
   );
 
   protected final Map<String, String> myInputMappings;
@@ -96,8 +104,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   public Angular2MetadataClassStubBase(@NotNull StubInputStream stream,
                                        @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
     super(stream, parent, elementType);
-    myInputMappings = readStringMap(stream);
-    myOutputMappings = readStringMap(stream);
+    myInputMappings = readFlag(HAS_INPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
+    myOutputMappings = readFlag(HAS_OUTPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
   }
 
   @Nullable
@@ -121,15 +129,25 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     return Collections.unmodifiableMap(myOutputMappings);
   }
 
-  public boolean isTemplate() {
-    return readFlag(IS_TEMPLATE_FLAG);
+  public boolean isStructuralDirective() {
+    return readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
+  }
+
+  public boolean isRegularDirective() {
+    return readFlag(IS_REGULAR_DIRECTIVE_FLAG);
   }
 
   @Override
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_INPUT_MAPPINGS, !myInputMappings.isEmpty());
+    writeFlag(HAS_OUTPUT_MAPPINGS, !myOutputMappings.isEmpty());
     super.serialize(stream);
-    writeStringMap(myInputMappings, stream);
-    writeStringMap(myOutputMappings, stream);
+    if (!myInputMappings.isEmpty()) {
+      writeStringMap(myInputMappings, stream);
+    }
+    if (!myOutputMappings.isEmpty()) {
+      writeStringMap(myOutputMappings, stream);
+    }
   }
 
   protected boolean loadInOuts() {
@@ -142,10 +160,12 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   private void readTemplateFlag(JsonObject source) {
-    JsonObject members = tryCast(doIfNotNull(source.findProperty("members"), JsonProperty::getValue), JsonObject.class);
+    JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
     JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
-    writeFlag(IS_TEMPLATE_FLAG, constructor != null
-                                && constructor.getText().contains(Angular2EntityUtils.TEMPLATE_REF));
+    String constructorText = constructor != null ? constructor.getText() : "";
+    boolean hasTemplateRef = constructorText.contains(Angular2EntityUtils.TEMPLATE_REF);
+    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, hasTemplateRef || constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF));
+    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, !hasTemplateRef);
   }
 
   private void loadMember(@NotNull JsonProperty property) {
@@ -159,7 +179,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       return;
     }
     String memberSymbol = readStringPropertyValue(obj.findProperty(SYMBOL_TYPE));
-    if (loadInOuts() && SYMBOL_PROPERTY.equals(memberSymbol)) {
+    if (loadInOuts() && (SYMBOL_PROPERTY.equals(memberSymbol) || SYMBOL_METHOD.equals(memberSymbol))) {
       streamDecorators(obj).forEach(dec -> {
         if (INPUT_DEC.equals(dec.first)) {
           addBindingMapping(name, myInputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));

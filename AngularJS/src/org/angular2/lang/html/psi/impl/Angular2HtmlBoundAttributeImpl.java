@@ -10,13 +10,15 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlBoundAttribute;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
 
 public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements Angular2HtmlBoundAttribute {
 
-  private static final Logger LOG = Logger.getInstance(Angular2HtmlBoundAttributeImpl.class);
+  @NonNls private static final Logger LOG = Logger.getInstance(Angular2HtmlBoundAttributeImpl.class);
+  @NonNls private static final String IMPL_SUFFIX = "Impl";
 
   public Angular2HtmlBoundAttributeImpl(@NotNull Angular2ElementType elementType) {
     super(elementType);
@@ -34,10 +36,10 @@ public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements 
 
   protected AttributeInfo getAttributeInfo() {
     AttributeInfo info = Angular2AttributeNameParser.parseBound(getName());
-    if (info.elementType != getElementType()) {
+    if (info.type.getElementType() != getElementType()) {
       LOG.error("Element type mismatch on attribute info. Expected " + getElementType()
-                + ", but got " + info.elementType + ". Error for " +
-                StringUtil.trimEnd(getClass().getSimpleName(), "Impl") + " <" + getName() + ">",
+                + ", but got " + info.type.getElementType() + ". Error for " +
+                StringUtil.trimEnd(getClass().getSimpleName(), IMPL_SUFFIX) + " <" + getName() + ">",
                 new Throwable());
     }
     return info;
@@ -45,6 +47,6 @@ public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements 
 
   @Override
   public String toString() {
-    return StringUtil.trimEnd(getClass().getSimpleName(), "Impl") + " " + getAttributeInfo().toString();
+    return StringUtil.trimEnd(getClass().getSimpleName(), IMPL_SUFFIX) + " " + getAttributeInfo().toString();
   }
 }

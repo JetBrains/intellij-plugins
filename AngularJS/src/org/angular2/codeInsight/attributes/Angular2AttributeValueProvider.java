@@ -15,6 +15,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +26,10 @@ import static org.angular2.lang.html.psi.PropertyBindingType.CLASS;
 
 public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
 
-  public static final String NG_CLASS_ATTR = "ngClass";
+  @NonNls public static final String NG_CLASS_ATTR = "ngClass";
 
   public static boolean isNgClassAttribute(@Nullable XmlAttribute attribute) {
-    return attribute != null && (isNgClassAttribute(parse(attribute.getName(), false)));
+    return attribute != null && (isNgClassAttribute(parse(attribute.getName(), attribute.getParent())));
   }
 
   public static boolean isNgClassAttribute(@NotNull AttributeInfo info) {
@@ -60,7 +61,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
         return null;
       }
       else {
-        AttributeInfo info = parse(attributeName, false);
+        AttributeInfo info = parse(attributeName, tag);
         if (isNgClassAttribute(info)) {
           XmlAttribute attribute = tag.getAttribute(attributeName);
           if (attribute instanceof Angular2HtmlPropertyBinding) {

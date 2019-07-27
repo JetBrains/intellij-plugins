@@ -90,13 +90,6 @@ export class TSLintPlugin implements LanguagePlugin {
         let major = this.linterApi.version.major || 0;
 
         let configuration = this.getConfiguration(args.filePath, args.configPath);
-        if (args.isJSFile && (major < 4 || !this.hasJSRules(configuration))) {
-            return {
-                errorCount: 0, warningCount: 0,
-                failures: [], fixes: [],
-                format: "json", output: ""
-            }
-        }
         if (major >= 4) {
             let tslint = new linter(options);
             tslint.lint(args.filePath, args.content, configuration);
@@ -117,12 +110,6 @@ export class TSLintPlugin implements LanguagePlugin {
             return configurationResult.results;
         }
         return (<IConfigurationFile>configurationResult)
-    }
-
-    private hasJSRules(config: IConfigurationFile): boolean {
-        return this.linterApi.version.major && this.linterApi.version.major >= 5
-            ? config.jsRules.size > 0
-            : Object.keys((<{}>config.jsRules)).length > 0;
     }
 }
 

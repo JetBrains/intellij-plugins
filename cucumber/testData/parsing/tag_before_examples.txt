@@ -1,0 +1,41 @@
+GherkinFile:tag_before_examples.feature
+  GherkinTag:@javascript
+    PsiElement(TAG)('@javascript')
+  PsiWhiteSpace('\n')
+  GherkinFeature:Autocompletion
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Autocompletion')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenarioOutline:
+      GherkinTag:@tag1
+        PsiElement(TAG)('@tag1')
+      PsiWhiteSpace('\n  ')
+      PsiElement(SCENARIO_OUTLINE_KEYWORD)('Scenario Outline')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:some <value>
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('some')
+        PsiWhiteSpace(' ')
+        PsiElement(STEP_PARAMETER_BRACE)('<')
+        GherkinStepParameter:value
+          PsiElement(STEP_PARAMETER_TEXT)('value')
+        PsiElement(STEP_PARAMETER_BRACE)('>')
+      PsiWhiteSpace('\n\n    ')
+      GherkinTag:@tag2
+        PsiElement(TAG)('@tag2')
+      PsiWhiteSpace('\n    ')
+      GherkinExamplesBlock:
+        PsiElement(EXAMPLES_KEYWORD)('Examples')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace('\n      ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('value')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')

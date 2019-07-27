@@ -8,6 +8,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.CommonProcessors.CollectProcessor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
@@ -93,10 +94,11 @@ public abstract class AbstractStepDefinition {
 
   @Nullable
   public String getCucumberRegex() {
-    return getCucumberRegexFromElement(getElement());
+    return getExpression();
   }
 
   @Nullable
+  @Contract("null -> null")
   protected abstract String getCucumberRegexFromElement(PsiElement element);
   
   protected boolean isCaseSensitive() {
@@ -175,8 +177,7 @@ public abstract class AbstractStepDefinition {
     return results;
   }
 
-  @Nullable
-  public String getStepDefinitionText() {
-    return getCucumberRegex();
+  public String getExpression() {
+    return getCucumberRegexFromElement(getElement());
   }
 }

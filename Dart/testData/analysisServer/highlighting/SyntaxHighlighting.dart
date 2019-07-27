@@ -4,9 +4,9 @@
 <info textAttributesKey="DART_KEYWORD">import</info> "dart:html"
 <info textAttributesKey="DART_KEYWORD">as</info> <info textAttributesKey="DART_IMPORT_PREFIX">html</info>
     <info textAttributesKey="DART_KEYWORD">show</info> <info textAttributesKey="DART_CLASS">HtmlElement</info>,
-    <weak_warning descr="The name document is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></weak_warning>,
-    <weak_warning descr="The name EventListener is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></weak_warning>,
-    <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><weak_warning descr="The name CDataSection is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_CLASS">CDataSection</info></weak_warning></warning>,
+    <warning descr="The name document is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></warning>,
+    <warning descr="The name EventListener is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></warning>,
+    <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><warning descr="The name CDataSection is shown, but not used." textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES"><info textAttributesKey="DART_CLASS">CDataSection</info></warning></warning>,
     <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.lang.properties.IProperty;
@@ -27,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class JamResultPathTest extends JamConventionLightTestCase {
-
   private final LightProjectDescriptor CONVENTION_WEB = new Struts2ProjectDescriptorBuilder()
     .withStrutsLibrary()
     .withStrutsFacet()
@@ -51,8 +49,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
    */
   public void testCompletionActionProperty() {
     myFixture.copyFileToProject("struts.properties");
-
-    myFixture.testCompletionVariants("/testcompletion/ActionProperty.java",
+    myFixture.testCompletionVariants("testcompletion/ActionProperty.java",
                                      "myProperty1", "myProperty2");
   }
 
@@ -73,7 +70,7 @@ public class JamResultPathTest extends JamConventionLightTestCase {
    * "value" resolving to web-dir.
    */
   public void testResolveActionValue() {
-    myFixture.copyFileToProject("/WEB-INF/customContent/test.jsp");
+    myFixture.copyFileToProject("WEB-INF/customContent/test.jsp");
     myFixture.copyFileToProject("jam/ActionValue.java");
 
     final JamResultPath jamResultPath = getClassJam("jam.ActionValue", JamResultPath.META_CLASS);

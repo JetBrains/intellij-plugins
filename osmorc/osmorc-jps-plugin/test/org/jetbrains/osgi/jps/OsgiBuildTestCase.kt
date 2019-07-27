@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps
 
 import org.jetbrains.jps.builders.BuildResult
@@ -76,7 +62,7 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
   fun BuildResult.assertBundlesCompiled(module: JpsModule, vararg bundles: String) {
     assertSuccessful()
     val bundlesDir = File("${module.name}/${extension(module).properties.myJarFileLocation}").parent
-    val bundlePaths = bundles.map { bundlesDir + '/' + it }.toTypedArray()
+    val bundlePaths = bundles.map { "${bundlesDir}/${it}" }.toTypedArray()
     assertCompiled(OsmorcBuilder.ID, *bundlePaths)
   }
 
@@ -93,14 +79,14 @@ abstract class OsgiBuildTestCase : JpsBuildTestCase() {
     assertManifest(File(File(extension(module).jarFileLocation).parent, bundle), toCheck)
 
   private fun assertJar(file: File, expected: Set<String>) {
-    val actual = JarFile(file).use { it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet() }
+    val actual = JarFile(file).use { jar -> jar.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet() }
     assertEquals(expected, actual)
   }
 
   private fun assertManifest(file: File, toCheck: Set<String>) {
     val expected = toCheck + "Manifest-Version=1.0"
-    val actual = JarFile(file).use {
-      it.manifest!!.mainAttributes!!.asSequence()
+    val actual = JarFile(file).use { jar ->
+      jar.manifest!!.mainAttributes!!.asSequence()
         .map { it.key.toString() to it.value.toString() }
         .filter { it.first !in instrumental }
         .map { "${it.first}=${if (it.first in needSorting) it.second.split(',').sorted().joinToString(",") else it.second}" }

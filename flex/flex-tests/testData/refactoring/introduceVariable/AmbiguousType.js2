@@ -1,0 +1,15 @@
+package foo {
+public class A {}
+}
+package bar {
+public class A {}
+}
+package {
+import bar.A;
+
+class Test {
+    function func():foo.A {
+        <selection>func();</selection>
+    }
+}
+}

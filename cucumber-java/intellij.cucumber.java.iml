@@ -48,6 +48,26 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-core-4.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-core:4.5.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-core/4.5.2/cucumber-core-4.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+     <orderEntry type="module-library" scope="TEST">
+      <library name="cucumber-java-4.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="io.cucumber:cucumber-java:4.5.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-java/4.5.2/cucumber-java-4.5.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="intellij.junit.rt" />
     <orderEntry type="module" module-name="intellij.junit" scope="TEST" />
   </component>

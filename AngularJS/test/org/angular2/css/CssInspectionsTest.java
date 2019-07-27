@@ -2,10 +2,10 @@
 package org.angular2.css;
 
 import com.intellij.psi.css.inspections.CssUnusedSymbolInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
-public class CssInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class CssInspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

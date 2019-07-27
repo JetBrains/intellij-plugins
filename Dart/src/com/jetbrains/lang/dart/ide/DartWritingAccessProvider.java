@@ -2,8 +2,8 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartFileType;
@@ -19,12 +19,6 @@ public class DartWritingAccessProvider implements NonProjectFileWritingAccessExt
 
   @Override
   public boolean isNotWritable(@NotNull VirtualFile file) {
-    return file.getFileType() == DartFileType.INSTANCE && ProjectRootManager.getInstance(myProject).getFileIndex().isExcluded(file);
-  }
-
-  @Deprecated
-  // TODO remove when Flutter plugin usage is removed
-  public static boolean isInDartSdkOrDartPackagesFolder(@NotNull Project project, @NotNull VirtualFile file) {
-    return file.getFileType() == DartFileType.INSTANCE && !ProjectFileIndex.getInstance(project).isInContent(file);
+    return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) && ProjectRootManager.getInstance(myProject).getFileIndex().isExcluded(file);
   }
 }

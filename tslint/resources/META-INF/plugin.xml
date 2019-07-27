@@ -1,11 +1,18 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/tslint">
   <name>tslint</name>
-  <description>Support for tslint</description>
+  <description><![CDATA[
+  Integrates <a href="https://palantir.github.io/tslint/">tslint</a>, a static analysis tool for TypeScript
+  ]]></description>
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.tslint.configDetector"
+                    interface="com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector"/>
+  </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
 
@@ -32,11 +39,14 @@
                      unfair="true"/>
 
     <externalAnnotator language="JavaScript" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
-    <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <psi.referenceContributor language="JSON" implementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigReferenceContributor"/>
     <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.tslint.TslintJsonStandardComplianceProvider"/>
-    <registryKey description="Enable TSLint support for multiple instances in one project" key="tslint.enable.multiroot" defaultValue="true"/>
+    <registryKey key="tslint.service.node.arguments" description="Command line options for TSLint service process"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.tslint.config.TslintOptionsUsageCollector"/>
+    <lang.typescript.languageService.extension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypeScriptExtension"/>
+    <tslint.configDetector implementation="com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDefaultDetector"
+                           id="default"
+                           order="last"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>

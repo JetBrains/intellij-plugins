@@ -3,182 +3,164 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
-public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TagsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "tags";
   }
 
   public void testCustomTagsCompletion20TypeScript() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "package.json", "custom.ts"));
+    myFixture.testCompletion("custom.html", "custom.after.html", "package.json", "custom.ts");
   }
 
   public void testCustomTagsCompletion20NoNormalize() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion(
-                                          "custom_no_normalize.html", "custom_no_normalize.after.html", "package.json",
-                                          "custom_no_normalize.ts"));
+    myFixture.testCompletion(
+      "custom_no_normalize.html", "custom_no_normalize.after.html", "package.json",
+      "custom_no_normalize.ts");
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("custom.ts", resolve.getContainingFile().getName());
-      assertEquals("@Component({\n" +
-                   "    selector: 'my-customer',\n" +
-                   "    properties: {\n" +
-                   "        'id':'dependency'\n" +
-                   "    }\n" +
-                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom.ts", resolve.getContainingFile().getName());
+    assertEquals("@Component({\n" +
+                 "    selector: 'my-customer',\n" +
+                 "    properties: {\n" +
+                 "        'id':'dependency'\n" +
+                 "    }\n" +
+                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testCustomTagsResolve20TypeScriptDirective() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "package.json", "custom_directive.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
-      assertEquals("@Directive({\n" +
-                   "    selector: 'my-customer',\n" +
-                   "    properties: {\n" +
-                   "        'id':'dependency'\n" +
-                   "    }\n" +
-                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("custom.after.html", "package.json", "custom_directive.ts");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
+    assertEquals("@Directive({\n" +
+                 "    selector: 'my-customer',\n" +
+                 "    properties: {\n" +
+                 "        'id':'dependency'\n" +
+                 "    }\n" +
+                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testDeepPseudoSelector() {
     myFixture.enableInspections(CssInvalidPseudoSelectorInspection.class);
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testHighlighting("deepPseudoSelector.html", "package.json"));
+    myFixture.testHighlighting("deepPseudoSelector.html", "package.json");
   }
 
   public void testCustomSpaceSeparated() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> {
-                                          final List<String> variants = myFixture.getCompletionVariants(
-                                            "customSpaceSeparated.html", "customSpaceSeparated.ts", "package.json");
-                                          assertContainsElements(variants, "dummy-list", "dummy-nav-list");
-                                        });
+    final List<String> variants = myFixture.getCompletionVariants(
+      "customSpaceSeparated.html", "customSpaceSeparated.ts", "package.json");
+    assertContainsElements(variants, "dummy-list", "dummy-nav-list");
   }
 
   public void testInlineTemplateHtmlTags() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      List<String> variants = myFixture.getCompletionVariants("inline_template.ts", "package.json");
-      assertContainsElements(variants, "a", "img", "my-customer");
-    });
+    List<String> variants = myFixture.getCompletionVariants("inline_template.ts", "package.json");
+    assertContainsElements(variants, "a", "img", "my-customer");
   }
 
   public void testNgContainerCompletion20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngContainer.html", "ngContainer.after.html", "package.json"));
+    myFixture.testCompletion("ngContainer.html", "ngContainer.after.html", "package.json");
   }
 
 
   public void testNgContainerResolve20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngContainer.after.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>container", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("ngContainer.after.html", resolve.getContainingFile().getName());
-      assertEquals("<ng-container></ng-container>", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("ngContainer.after.html", "package.json");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>container", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("ngContainer.after.html", resolve.getContainingFile().getName());
+    assertEquals("<ng-container", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNgTemplateCompletion20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngTemplate.html", "ngTemplate.after.html", "package.json"));
+    myFixture.testCompletion("ngTemplate.html", "ngTemplate.after.html", "package.json");
   }
 
 
   public void testNgTemplateResolve20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngTemplate.after.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>template", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
-      assertEquals("<ng-template></ng-template>", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("ngTemplate.after.html", "package.json");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>template", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
+    assertEquals("<ng-template", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNgContentCompletion20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("ngContent.html", "ngContent.after.html", "package.json"));
+    myFixture.testCompletion("ngContent.html", "ngContent.after.html", "package.json");
   }
 
 
   public void testNgContentResolve20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngContent.after.html", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>content", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("ngContent.after.html", resolve.getContainingFile().getName());
-      assertEquals("<ng-content></ng-content>", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("ngContent.after.html", "package.json");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ng-<caret>content", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("ngContent.after.html", resolve.getContainingFile().getName());
+    assertEquals("<ng-content", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNoNormalizedResolve20() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("noNormalized.ts", "package.json");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
-      assertEquals("@Component({\n" +
-                   "    selector: 'app_hello',\n" +
-                   "    template: '<app_hello></app_hello>',\n" +
-                   "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
+    myFixture.configureByFiles("noNormalized.ts", "package.json");
+    int offsetBySignature = AngularTestUtil.findOffsetBySignature("app_<caret>hello", myFixture.getFile());
+    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+    assertNotNull(ref);
+    PsiElement resolve = ref.resolve();
+    assertNotNull(resolve);
+    assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
+    assertEquals("@Component({\n" +
+                 "    selector: 'app_hello',\n" +
+                 "    template: '<app_hello></app_hello>',\n" +
+                 "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testTagClassTypes() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
-      myFixture.configureByFiles("tagClassTypes.ts", "package.json");
-      myFixture.checkHighlighting(true, false, true);
-    });
+    myFixture.enableInspections(TypeScriptValidateTypesInspection.class);
+    myFixture.configureByFiles("tagClassTypes.ts", "package.json");
+    myFixture.checkHighlighting(true, false, true);
   }
 
   public void testHtmlWithDoctype() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                  Angular2BindingsInspection.class,
-                                  HtmlUnknownTagInspection.class);
-      myFixture.configureByFiles("withDoctype.html", "package.json");
-      myFixture.checkHighlighting(true, false, true);
-    });
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                AngularUndefinedBindingInspection.class,
+                                HtmlUnknownTagInspection.class);
+    myFixture.configureByFiles("withDoctype.html", "package.json");
+    myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testComponentNavigation() {
+    myFixture.copyDirectoryToProject("component-navigation", ".");
+    for (int i = 1; i <= 4; i++) {
+      myFixture.configureFromTempProjectFile("app" + i + "/app/app.component.html");
+      String filePath = AngularTestUtil.resolveReference("<app-<caret>test>", myFixture).getContainingFile()
+        .getVirtualFile()
+        .getPath();
+      assertTrue(filePath + " should have " + i, filePath.endsWith("/app" + i + "/app/test.component.ts"));
+    }
   }
 }

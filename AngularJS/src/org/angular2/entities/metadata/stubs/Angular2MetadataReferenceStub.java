@@ -3,6 +3,8 @@ package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonValue;
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
+import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
@@ -32,6 +34,13 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
     return null;
   }
 
+  private static final BooleanStructureElement HAS_MODULE_NAME = new BooleanStructureElement();
+  @SuppressWarnings("StaticFieldReferencedViaSubclass")
+  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
+    Angular2MetadataElementStub.FLAGS_STRUCTURE,
+    HAS_MODULE_NAME
+  );
+
   private final StringRef myName;
   private final StringRef myModule;
 
@@ -47,21 +56,31 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
   public Angular2MetadataReferenceStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.REFERENCE);
     myName = stream.readName();
-    myModule = stream.readName();
+    myModule = readFlag(HAS_MODULE_NAME) ? stream.readName() : null;
   }
 
   @Override
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_MODULE_NAME, myModule != null);
     super.serialize(stream);
     writeString(myName, stream);
-    writeString(myModule, stream);
+    if (myModule != null) {
+      writeString(myModule, stream);
+    }
   }
 
+  @NotNull
   public String getName() {
     return StringRef.toString(myName);
   }
 
+  @Nullable
   public String getModule() {
     return StringRef.toString(myModule);
+  }
+
+  @Override
+  public FlagsStructure getFlagsStructure() {
+    return FLAGS_STRUCTURE;
   }
 }

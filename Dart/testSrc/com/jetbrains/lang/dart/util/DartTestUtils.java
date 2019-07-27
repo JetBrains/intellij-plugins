@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.Disposable;
@@ -12,13 +12,10 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.testFramework.PsiTestCase;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import junit.framework.TestCase;
@@ -168,19 +165,5 @@ public class DartTestUtils {
         }
       }
     });
-  }
-
-  public static VirtualFile configureNavigation(@NotNull PsiTestCase test,
-                                                @NotNull VirtualFile testRoot,
-                                                @NotNull final VirtualFile... vFiles) {
-    DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest();
-    // Trigger navigation requests for each file that needs to have navigation data during resolution.
-    for (VirtualFile vFile : vFiles) {
-      String name = vFile.getName();
-      VirtualFile testFile = testRoot.findChild(name);
-      if (testFile == null) TestCase.fail();
-      DartAnalysisServerService.getInstance(test.getProject()).analysis_getNavigation(testFile, 0, (int)testFile.getLength());
-    }
-    return testRoot;
   }
 }

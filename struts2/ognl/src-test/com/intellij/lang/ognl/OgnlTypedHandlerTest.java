@@ -15,12 +15,12 @@
 
 package com.intellij.lang.ognl;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlTypedHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
+public class OgnlTypedHandlerTest extends BasePlatformTestCase {
 
   public void testTypeExpressionPrefix() {
     myFixture.configureByText(OgnlFileType.INSTANCE,

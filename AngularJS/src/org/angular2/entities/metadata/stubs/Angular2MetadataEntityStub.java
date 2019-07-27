@@ -2,12 +2,14 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
+import com.intellij.json.psi.JsonProperty;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.index.Angular2MetadataEntityClassNameIndex;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +17,8 @@ import java.io.IOException;
 
 public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> extends Angular2MetadataClassStubBase<Psi> {
 
-  protected static final String NAME = "name";
+  @NonNls protected static final String NAME = "name";
+  @NonNls private static final String DECORATOR_FIELD_PREFIX = "___dec.";
 
   public Angular2MetadataEntityStub(@Nullable String memberName,
                                     @Nullable StubElement parent,
@@ -35,5 +38,18 @@ public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> exte
     if (getClassName() != null) {
       sink.occurrence(Angular2MetadataEntityClassNameIndex.KEY, getClassName());
     }
+  }
+
+  protected void stubDecoratorFields(@NotNull JsonObject initializer, @NotNull String... fields) {
+    for (String name : fields) {
+      JsonProperty property = initializer.findProperty(name);
+      if (property != null) {
+        createMember(DECORATOR_FIELD_PREFIX + name, property.getValue());
+      }
+    }
+  }
+
+  public StubElement getDecoratorFieldValueStub(@NotNull String name) {
+    return findMember(DECORATOR_FIELD_PREFIX + name);
   }
 }

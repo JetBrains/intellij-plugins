@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
@@ -89,6 +89,48 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
                      "myIonicModule.ts",
                      "export class MyIonic<caret>Module {",
                      "check-with-common.txt");
+  }
+
+  public void testSourceForRootResolution() {
+    doResolutionTest("source-forRoot",
+                     "mainModule.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt");
+  }
+
+  public void testFormsResolution() {
+    doResolutionTest("forms",
+                     "myModule.ts",
+                     "export class FormsModuleMetadata<caret>Test {",
+                     "check.txt");
+  }
+
+  public void testNgModuleWithConstant() {
+    doResolutionTest("ng-module-with-constant",
+                     "module.ts",
+                     "export class My<caret>Module {",
+                     "check.txt");
+  }
+
+  public void testAgmCore() {
+    doResolutionTest("agm-core",
+                     "module.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt");
+  }
+
+  public void testFunctionCalls() {
+    doResolutionTest("function-calls",
+                     "my-test-lib.module.ts",
+                     "MyTestLib<caret>Module",
+                     "check.txt");
+  }
+
+  public void testEvoUiKit() {
+    doResolutionTest("evo-ui-kit",
+                     "module.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt");
   }
 
   public void testCommonNgClassModules() {

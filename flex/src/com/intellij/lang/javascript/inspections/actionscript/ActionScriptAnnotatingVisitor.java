@@ -395,7 +395,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           JSBundle.message("javascript.validation.message.constructor.in.mxml.is.not.allowed")
         );
 
-        annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.constructor", node.getNode()));
+        annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.constructor", node));
       }
     }
 
@@ -418,7 +418,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final Ref<JSFunction> set = new Ref<>();
         boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSOverrideHandler() {
           @Override
-          public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
+          public boolean process(@NotNull final List<? extends JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
             JSFunction value = (JSFunction)elements.iterator().next();
@@ -432,7 +432,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                   "javascript.validation.message.function.override.for.object.method"));
 
                 annotation.registerFix(
-                  new RemoveASTNodeFix("javascript.fix.remove.override.modifier", astNode)
+                  new RemoveASTNodeFix("javascript.fix.remove.override.modifier", astNode.getPsi())
                 );
               }
               return false;
@@ -470,7 +470,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             "javascript.validation.message.function.override.without.parent.method"));
 
           annotation.registerFix(
-            new RemoveASTNodeFix("javascript.fix.remove.override.modifier", astNode)
+            new RemoveASTNodeFix("javascript.fix.remove.override.modifier", astNode.getPsi())
           );
         }
 
@@ -562,7 +562,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final ASTNode astNode = attributeList.getNode().findChildByType(JSTokenTypes.STATIC_KEYWORD);
     final Annotation annotation =
       myHolder.createErrorAnnotation(astNode, JSBundle.message(key));
-    annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", astNode));
+    annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", astNode.getPsi()));
   }
 
 
@@ -691,7 +691,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         myHolder.createErrorAnnotation(
           nameIdentifier != null ? nameIdentifier : el.getFirstChild().getNode(),
           JSBundle.message("javascript.validation.message.more.than.one.externally.visible.symbol")
-        ).registerFix(new RemoveASTNodeFix("javascript.fix.remove.externally.visible.symbol", el.getNode()));
+        ).registerFix(new RemoveASTNodeFix("javascript.fix.remove.externally.visible.symbol", el));
       }
     }
 
@@ -818,18 +818,18 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       myHolder.createErrorAnnotation(namespaceOrAccessModifierElement,
                                      JSBundle.message("javascript.validation.message.use.namespace.reference.or.access.modifier"))
         .registerFix(
-          new RemoveASTNodeFix("javascript.fix.remove.namespace.reference", namespaceOrAccessModifierElement.getNode()));
+          new RemoveASTNodeFix("javascript.fix.remove.namespace.reference", namespaceOrAccessModifierElement));
 
       myHolder.createErrorAnnotation(accessTypeElement,
                                      JSBundle.message("javascript.validation.message.use.namespace.reference.or.access.modifier"))
-        .registerFix(new RemoveASTNodeFix("javascript.fix.remove.visibility.modifier", accessTypeElement.getNode()));
+        .registerFix(new RemoveASTNodeFix("javascript.fix.remove.visibility.modifier", accessTypeElement));
     }
 
     if (children.length > 1 && namespaceElement == null) {
       for (ASTNode astNode : children) {
         myHolder.createErrorAnnotation(astNode,
                                        JSBundle.message("javascript.validation.message.one.visibility.modifier.allowed"))
-          .registerFix(new RemoveASTNodeFix("javascript.fix.remove.visibility.modifier", astNode));
+          .registerFix(new RemoveASTNodeFix("javascript.fix.remove.visibility.modifier", astNode.getPsi()));
       }
     }
 
@@ -871,7 +871,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           annotation.registerFix(new RemoveASTNodeFix(nsRef
                                                       ? "javascript.fix.remove.namespace.reference"
                                                       : "javascript.fix.remove.access.modifier",
-                                                      namespaceOrAccessModifierElement.getNode()));
+                                                      namespaceOrAccessModifierElement));
         }
       }
       else if (((JSClass)parentForCheckingNsOrAccessModifier).isInterface()) {
@@ -890,7 +890,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
           final Annotation annotation = myHolder.createErrorAnnotation(astNode, message);
 
-          annotation.registerFix(new RemoveASTNodeFix(fixMessageKey, astNode));
+          annotation.registerFix(new RemoveASTNodeFix(fixMessageKey, astNode.getPsi()));
         }
       }
       else if (JSResolveUtil.isConstructorFunction(element)) {
@@ -936,7 +936,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             annotation = myHolder.createErrorAnnotation(modifierElement, message);
           }
 
-          annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", modifierElement.getNode()));
+          annotation.registerFix(new RemoveASTNodeFix("javascript.fix.remove.static.modifier", modifierElement));
         }
         else if (JSResolveUtil.isConstructorFunction(element)) {
           modifierProblem(attributeList, JSAttributeList.ModifierType.STATIC,
@@ -986,7 +986,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     String message = JSBundle.message(messageKey);
     Annotation annotation = myHolder.createErrorAnnotation(modifierElement, message);
 
-    annotation.registerFix(new RemoveASTNodeFix(removeFixNameKey, modifierElement.getNode()));
+    annotation.registerFix(new RemoveASTNodeFix(removeFixNameKey, modifierElement));
   }
 
   private static boolean hasQualifiedName(PsiElement element) {
@@ -1008,7 +1008,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     for (int i = 0; i < ourModifiersList.size(); ++i) {
       final ASTNode[] modifiers = node.getChildren(ourModifiersList.get(i));
       if (modifiers.length < 2) continue;
-      String s = modifiers[0].getElementType().toString().toLowerCase(Locale.ENGLISH);
+      String s = StringUtil.toLowerCase(modifiers[0].getElementType().toString());
       final String type = s.substring(s.indexOf(':') + 1, s.indexOf('_'));
       for (ASTNode a : modifiers) {
         final Annotation errorAnnotation = JSAnnotatorProblemReporter.createErrorAnnotation(a.getPsi(),
@@ -1018,7 +1018,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                                                                             ProblemHighlightType.ERROR,
                                                                                             myHolder
         );
-        errorAnnotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a));
+        errorAnnotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a.getPsi()));
       }
     }
   }
@@ -1032,7 +1032,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         JSVariable var = ArrayUtil.getFirstElement(varStatement.getVariables());
 
         if (var != null) {
-          JSType type = var.getType();
+          JSType type = var.getJSType();
 
           if (!(type instanceof JSStringType) &&
               !(type instanceof JSTypeImpl && "Class".equals(type.getTypeText(JSType.TypeTextFormat.SIMPLE)))) {
@@ -1162,7 +1162,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
           JSType setterType;
           if (setterParameters.length == 1 &&
-              !((setterType = setterParameters[0].getType()) instanceof JSAnyType) &&
+              !((setterType = setterParameters[0].getJSType()) instanceof JSAnyType) &&
               !(type instanceof JSAnyType) &&
               !JSTypeUtils.areTypesCompatible(setterType, type,  null, getter)) {
             PsiElement typeElement = getter.getReturnTypeElement();
@@ -1193,7 +1193,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       myHolder.createErrorAnnotation(
         typeElement,
         JSBundle.message("javascript.validation.message.unexpected.type.for.rest.parameter")
-      ).registerFix(JSFixFactory.getInstance().removeASTNodeFix("javascript.fix.remove.type.reference", false, nodesBefore.first, nodesBefore.second));
+      ).registerFix(JSFixFactory.getInstance().removeASTNodeFix("javascript.fix.remove.type.reference", false,
+                                                                nodesBefore.first.getPsi(), nodesBefore.second.getPsi()));
     }
   }
 

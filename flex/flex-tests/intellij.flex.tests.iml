@@ -9,6 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.javascript.tests.ex" scope="TEST" />
+    
     <orderEntry type="module" module-name="intellij.diagram.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.flex" />
     <orderEntry type="module" module-name="intellij.flex.shared" />
@@ -17,5 +19,6 @@
     <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="NanoXML" level="project" />
     <orderEntry type="module" module-name="intellij.diagram.tests" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.performanceTesting" scope="TEST" />
   </component>
 </module>

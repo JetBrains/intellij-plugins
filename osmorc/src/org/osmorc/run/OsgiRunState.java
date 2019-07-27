@@ -40,7 +40,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Ref;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.jetbrains.osgi.jps.build.OsgiBuildException;
@@ -110,7 +109,7 @@ public class OsgiRunState extends JavaCommandLineState {
     final Ref<List<SelectedBundle>> result = Ref.create();
     final Ref<ExecutionException> error = Ref.create();
 
-    ProgressManager.getInstance().run(new Task.Modal(myRunConfiguration.getProject(), "Preparing bundles...", false) {
+    ProgressManager.getInstance().run(new Task.Modal(myRunConfiguration.getProject(), "Preparing Bundles...", false) {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {
         progressIndicator.setIndeterminate(false);
@@ -146,28 +145,26 @@ public class OsgiRunState extends JavaCommandLineState {
                 }
               }
               else {
-                // if the user selected a dependency as runnable library, we need to replace the dependency with
-                // the runnable library part
+                // if a user selected a dependency as runnable library, we need to replace the dependency with the runnable library part
                 selectedBundles.remove(selectedBundle);
                 selectedBundles.add(selectedBundle);
               }
             }
 
-            // filter out bundles which have the same symbolic name
-            Map<String, SelectedBundle> filteredBundles = new HashMap<>();
+            // detects bundles which have the same symbolic name
+            Map<String, SelectedBundle> filter = new HashMap<>();
             for (SelectedBundle selectedBundle : selectedBundles) {
               String path = selectedBundle.getBundlePath();
               if (path != null) {
-                String name = CachingBundleInfoProvider.getBundleSymbolicName(path);
-                String version = CachingBundleInfoProvider.getBundleVersion(path);
-                String key = name + version;
-                if (!filteredBundles.containsKey(key)) {
-                  filteredBundles.put(key, selectedBundle);
+                String key = CachingBundleInfoProvider.getBundleSymbolicName(path) + ':' + CachingBundleInfoProvider.getBundleVersion(path);
+                SelectedBundle previous = filter.put(key, selectedBundle);
+                if (previous != null) {
+                  throw new CantRunException("Bundles have same symbolic name and version (" + key + "):\n" + previous + "\n" + selectedBundle);
                 }
               }
             }
 
-            List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
+            List<SelectedBundle> sortedBundles = new ArrayList<>(selectedBundles);
             Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
             result.set(sortedBundles);
           }
@@ -194,5 +191,5 @@ public class OsgiRunState extends JavaCommandLineState {
     }
   }
 
-  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = (b1, b2) -> b1.getStartLevel() - b2.getStartLevel();
+  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = Comparator.comparingInt(SelectedBundle::getStartLevel);
 }

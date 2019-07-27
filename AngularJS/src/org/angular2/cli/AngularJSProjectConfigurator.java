@@ -1,10 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -20,12 +19,11 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
 
   @Override
-  public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
-    final ModuleManager moduleManager = ModuleManager.getInstance(project);
-    final Module[] modules = moduleManager.getModules();
-    if (modules.length == 1) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
+    Module module = moduleRef.get();
+    if (module != null) {
       final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);
-      final ModifiableRootModel model = ModuleRootManager.getInstance(modules[0]).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {
         excludeDefault(baseDir, entry);
@@ -41,6 +39,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
     }
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   public static void excludeDefault(@NotNull VirtualFile baseDir, ContentEntry entry) {
     entry.addExcludeFolder(baseDir.getUrl() + "/dist");
     entry.addExcludeFolder(baseDir.getUrl() + "/tmp");

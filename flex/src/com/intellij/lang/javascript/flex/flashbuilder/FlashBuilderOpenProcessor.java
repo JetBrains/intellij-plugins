@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
@@ -6,6 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.projectImport.ProjectOpenProcessorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,12 +16,14 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 
-public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
-
-  public FlashBuilderOpenProcessor(@NotNull final FlashBuilderImporter builder) {
-    super(builder);
+public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
+  @NotNull
+  @Override
+  protected FlashBuilderImporter doGetBuilder() {
+    return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
+  @NotNull
   @Override
   public String[] getSupportedExtensions() {
     // This method is called from:
@@ -31,21 +35,21 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
 
   @Override
   @Nullable
-  public Icon getIcon(final VirtualFile file) {
+  public Icon getIcon(@NotNull final VirtualFile file) {
     if ("zip".equalsIgnoreCase(file.getExtension())) return null; // standard icon is better for zip, it is not Flash Builder specific extension
     return super.getIcon(file);
   }
 
   @Override
-  public boolean canOpenProject(final VirtualFile file) {
-    // do not look inside archives here - it may be too expensive, fail later if not a suitable archieve
+  public boolean canOpenProject(@NotNull final VirtualFile file) {
+    // do not look inside archives here - it may be too expensive, fail later if not a suitable archive
     return file.isDirectory()
            ? FlashBuilderProjectFinder.isFlashBuilderProject(file.findChild(FlashBuilderImporter.DOT_PROJECT))
            : FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());
   }
 
   @Override
-  protected boolean doQuickImport(final VirtualFile file, final WizardContext wizardContext) {
+  protected boolean doQuickImport(@NotNull final VirtualFile file, @NotNull final WizardContext wizardContext) {
     assert !file.isDirectory() : file.getPath();
     final String title = FlexBundle.message("open.project.0", file.getName());
 

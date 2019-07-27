@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
@@ -42,9 +43,11 @@ import javax.swing.border.StrokeBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.intellij.util.ObjectUtils.notNull;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -83,7 +86,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           return null;
         }
         else {
-          final AngularUiRouterGraphBuilder.GraphNodesBuilder builder = AngularUiRouterProviderContext.getInstance(project).getBuilder(file);
+          AngularUiRouterGraphBuilder.GraphNodesBuilder builder =
+            AngularUiRouterProviderContext.getInstance(project).getBuilder(file);
           return builder == null ? null : builder.getRootNode().getIdentifyingElement();
         }
       }
@@ -156,20 +160,25 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
     };
     myColorManager = new DiagramColorManagerBase() {
+      @NotNull
       @Override
-      public Color getNodeHeaderColor(DiagramBuilder builder, @Nullable DiagramNode node) {
-        return getColor(node.getIdentifyingElement());
+      public Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
+        return getColor(builder, element);
       }
 
+      @NotNull
       @Override
-      public Color getNodeBackground(Project project, Object nodeElement, boolean selected) {
-        return getColor(nodeElement);
+      public Color getNodeBackground(@NotNull DiagramBuilder builder,
+                                     @NotNull DiagramNode node,
+                                     Object element,
+                                     boolean selected) {
+        return getColor(builder, element);
       }
 
-      @Nullable
-      private Color getColor(Object nodeElement) {
+      @NotNull
+      private Color getColor(DiagramBuilder builder, Object nodeElement) {
         if (nodeElement instanceof DiagramObject) {
-          final DiagramObject element = ((DiagramObject)nodeElement);
+          DiagramObject element = ((DiagramObject)nodeElement);
           if (Type.state.equals(element.getType())) {
             return LightColors.YELLOW;
           }
@@ -183,12 +192,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             return LightColors.SLIGHTLY_GREEN;
           }
         }
-        return null;
-      }
-
-      @Override
-      public boolean drawGradientInHeader() {
-        return false;
+        return notNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
       }
     };
   }
@@ -226,8 +230,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
                                                          DiagramPresentationModel presentationModel) {
     if (element == null || element.getNavigationTarget() == null) return null;
     final VirtualFile virtualFile = element.getNavigationTarget().getContainingFile().getVirtualFile();
-    final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder = AngularUiRouterProviderContext.getInstance(project).getBuilder(virtualFile);
-    if (nodesBuilder == null) return new AngularUiRouterDiagramModel(project, virtualFile, this, Collections.emptyList(), Collections.emptyList());
+    final AngularUiRouterGraphBuilder.GraphNodesBuilder nodesBuilder =
+      AngularUiRouterProviderContext.getInstance(project).getBuilder(virtualFile);
+    if (nodesBuilder == null) {
+      return new AngularUiRouterDiagramModel(project, virtualFile, this, Collections.emptyList(), Collections.emptyList());
+    }
     return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
@@ -241,6 +248,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
 
       private final Map<DiagramEdge, EdgeRealizer> myEdgeRealizers = new HashMap<>();
+
       @NotNull
       @Override
       public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
@@ -273,7 +281,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
         if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
-        if ( !isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
+        if (!isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
         //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
@@ -313,10 +321,13 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           if (Math.abs(s1.getX() - s2.getX()) > 5) return Double.compare(s1.getX(), s2.getX());
           return Double.compare(s1.getY(), s2.getY());
         });
-        int[] variants = sourceHeavier ? new int[]{SmartEdgeLabelModel.POSITION_TARGET_RIGHT,
-          SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_SOURCE_RIGHT} :
-                               new int[]{SmartEdgeLabelModel.POSITION_SOURCE_RIGHT,
-                                 SmartEdgeLabelModel.POSITION_RIGHT, SmartEdgeLabelModel.POSITION_TARGET_RIGHT};
+        int[] variants = sourceHeavier ? new int[]{
+          SmartEdgeLabelModel.POSITION_TARGET_RIGHT,
+          SmartEdgeLabelModel.POSITION_RIGHT,
+          SmartEdgeLabelModel.POSITION_SOURCE_RIGHT} : new int[]{
+          SmartEdgeLabelModel.POSITION_SOURCE_RIGHT,
+          SmartEdgeLabelModel.POSITION_RIGHT,
+          SmartEdgeLabelModel.POSITION_TARGET_RIGHT};
         int variantIdx = 0;
         for (Edge current : list) {
           myEdgesPositions.put(current.index(), variants[variantIdx++]);
@@ -326,6 +337,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
 
       private boolean inUpdate = false;
+
       @Override
       public void update() {
         if (inUpdate) return;
@@ -348,7 +360,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             }
           }
           updateBySelection(nodes.isEmpty() ? null : nodes.get(0));
-        } finally {
+        }
+        finally {
           inUpdate = false;
         }
       }
@@ -390,18 +403,26 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         for (DiagramEdge edge : builder.getEdgeObjects()) {
           if (nodes.contains(edge.getSource())) {
             selected = edge.getSource();
-          } else if (nodes.contains(edge.getTarget())) {
+          }
+          else if (nodes.contains(edge.getTarget())) {
             selected = edge.getTarget();
-          } else continue;
+          }
+          else {
+            continue;
+          }
           break;
         }
         if (selected == null) {
           for (DiagramEdge edge : builder.getEdgeObjects()) {
             if (isInSelectedNodes(nodes, edge.getSource())) {
               selected = edge.getSource();
-            } else if (isInSelectedNodes(nodes, edge.getTarget())) {
+            }
+            else if (isInSelectedNodes(nodes, edge.getTarget())) {
               selected = edge.getTarget();
-            } else continue;
+            }
+            else {
+              continue;
+            }
             break;
           }
         }
@@ -409,8 +430,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           if (!(edge instanceof AngularUiRouterEdge)) continue;
           if (isShowEdgeLabels() && selected != null && (selected.equals(edge.getSource()) || selected.equals(edge.getTarget()))) {
             myVisibleEdges.add((AngularUiRouterEdge)edge);
-            graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge) edge).getLabel());
-          } else {
+            graph.setLabelText(builder.getEdge(edge), ((AngularUiRouterEdge)edge).getLabel());
+          }
+          else {
             graph.setLabelText(builder.getEdge(edge), "");
           }
         }
@@ -439,8 +461,10 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       final DiagramObject selected = (DiagramObject)diagramNode.getIdentifyingElement();
       final DiagramObject object = (DiagramObject)node.getIdentifyingElement();
       if (selected.getType().equals(object.getType()) && selected.getName().equals(object.getName()) &&
-        selected.getNavigationTarget() != null && object.getNavigationTarget() != null &&
-        selected.getNavigationTarget().getVirtualFile().equals(object.getNavigationTarget().getVirtualFile())) return true;
+          selected.getNavigationTarget() != null && object.getNavigationTarget() != null &&
+          selected.getNavigationTarget().getVirtualFile().equals(object.getNavigationTarget().getVirtualFile())) {
+        return true;
+      }
     }
     return false;
   }
@@ -460,7 +484,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
-        } else if (JSModulesDiagramUtils.DIAGRAM_BUILDER.is(dataId)) {
+        }
+        else if (JSModulesDiagramUtils.DIAGRAM_BUILDER.is(dataId)) {
           return builder;
         }
         return null;
@@ -505,13 +530,17 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         if (!GraphViewUtil.isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {
             container.setBorder(ERROR_BORDER);
-          } else if (!node.getIdentifyingElement().getWarnings().isEmpty()) {
+          }
+          else if (!node.getIdentifyingElement().getWarnings().isEmpty()) {
             container.setBorder(WARNING_BORDER);
-          } else {
+          }
+          else {
             container.setBorder(NORMAL_BORDER);
           }
         }
-        if (!node.getIdentifyingElement().getChildrenList().isEmpty()) container.getHeader().setBorder(JBUI.Borders.customLine(Gray._190, 0, 0, 1, 0));
+        if (!node.getIdentifyingElement().getChildrenList().isEmpty()) {
+          container.getHeader().setBorder(JBUI.Borders.customLine(Gray._190, 0, 0, 1, 0));
+        }
         return container;
       }
     };
@@ -538,7 +567,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) {
         e.getPresentation().setEnabled(false);
         return;
@@ -549,7 +578,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) return;
       final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
       if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
@@ -557,13 +586,16 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       final AngularUiRouterNode node = (AngularUiRouterNode)nodes.get(0);
       final DiagramObject main = node.getIdentifyingElement();
       final List<DiagramObject> childrenList = main.getChildrenList();
-      if (childrenList.isEmpty()) myAction.actionPerformed(e);
+      if (childrenList.isEmpty()) {
+        myAction.actionPerformed(e);
+      }
       else {
         final List<Trinity<String, SmartPsiElementPointer, Icon>> children = childrenList.stream()
           .map(ch -> Trinity.create(ch.getType().name() + ": " + ch.getName(), ch.getNavigationTarget(), (Icon)null))
           .collect(Collectors.toList());
-        JSModulesDiagramUtils
-          .showMembersSelectionPopup(main.getType().name() + ": " + main.getName(), main.getNavigationTarget(), null, children, e.getDataContext());
+        JSModulesDiagramUtils.showMembersSelectionPopup(
+          main.getType().name() + ": " + main.getName(),
+          main.getNavigationTarget(), null, children, e.getDataContext());
       }
     }
   }

@@ -2,7 +2,7 @@ package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -16,7 +16,7 @@ public class MixinTest {
 
     private JavaClassTypeMock _classInRootPagesPackageMock;
     private TapestryProject _tapestryProjectMock;
-    private Library _libraryMock;
+    private TapestryLibrary _libraryMock;
 
     @BeforeMethod
     public void initMocks() {
@@ -27,7 +27,7 @@ public class MixinTest {
         org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(Library.class);
+        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
         org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
         org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
 

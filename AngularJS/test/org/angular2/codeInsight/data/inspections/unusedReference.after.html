@@ -1,0 +1,14 @@
+<div #refUsedInTS></div>
+<div ref-anotherRefUsedInTS></div>
+<div #refUsedLocally></div>
+{{ refUsedLocally }}
+<div ref-anotherRefUsed></div>
+{{ anotherRefUsed }}
+<div></div>
+<div></div>
+
+<div></div>
+<div></div>
+
+<div *ngIf="true"> First <a #innerRef/> </div>
+<div *ngIf="true"> Second <a #innerRef/> </div>

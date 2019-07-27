@@ -1,0 +1,3 @@
+var created:int = (function f():int {
+   return 123;
+})();

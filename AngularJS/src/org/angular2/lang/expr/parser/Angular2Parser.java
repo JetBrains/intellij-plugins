@@ -3,24 +3,22 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
-import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JSStubElementTypes;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Consumer;
+import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.NonNls;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
 import static org.angular2.lang.expr.parser.Angular2StubElementTypes.PROPERTY;
 
-public class Angular2Parser
-  extends
-  JavaScriptParser<Angular2Parser.Angular2ExpressionParser, Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
+public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2ExpressionParser,
+  Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
 
   /*
   Angular Expression AST mapping
@@ -82,7 +80,7 @@ public class Angular2Parser
                                 IElementType statementType,
                                 boolean isAction,
                                 boolean isSimpleBinding,
-                                Consumer<Angular2StatementParser> parseAction) {
+                                Consumer<? super Angular2StatementParser> parseAction) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     final PsiBuilder.Marker statementMarker = builder.mark();
     parseAction.consume(new Angular2Parser(builder, isAction, isSimpleBinding, false).getStatementParser());
@@ -93,6 +91,8 @@ public class Angular2Parser
   public static void parseJS(PsiBuilder builder, IElementType root) {
     new Angular2Parser(builder).parseJS(root);
   }
+
+  @NonNls private static final String $IMPLICIT = "$implicit";
 
   private final boolean myIsAction;
   private final boolean myIsSimpleBinding;
@@ -138,14 +138,14 @@ public class Angular2Parser
         IElementType tokenType = builder.getTokenType();
         if (tokenType == SEMICOLON) {
           if (!myIsAction) {
-            builder.error("binding expression cannot contain chained expression");
+            builder.error(Angular2Bundle.message("angular.parse.expression.chained-expression-in-binding"));
           }
           while (builder.getTokenType() == SEMICOLON) {
             builder.advanceLexer();
           }
         }
         else if (tokenType != null) {
-          builder.error("unexpected token '" + builder.getTokenText() + "'");
+          builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.getTokenText()));
         }
       }
       switch (count) {
@@ -218,7 +218,7 @@ public class Angular2Parser
             name = parseTemplateBindingKey(false);
           }
           else {
-            name = "$implicit";
+            name = $IMPLICIT;
           }
         }
         else if (builder.getTokenType() == AS_KEYWORD) {
@@ -260,7 +260,7 @@ public class Angular2Parser
           else {
             key.drop();
           }
-          builder.error("Identifier or keyword expected");
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-or-keyword"));
           builder.advanceLexer();
           return result.toString();
         }
@@ -294,6 +294,9 @@ public class Angular2Parser
 
   protected class Angular2ExpressionParser extends ExpressionParser<Angular2Parser> {
 
+    @NonNls private static final String CHAR_ENTITY_QUOT = "&quot;";
+    @NonNls private static final String CHAR_ENTITY_APOS = "&apos;";
+
     public Angular2ExpressionParser() {
       super(Angular2Parser.this);
     }
@@ -320,10 +323,10 @@ public class Angular2Parser
 
       while (builder.getTokenType() == OR) {
         if (myIsSimpleBinding) {
-          builder.error("host binding expression cannot contain pipes");
+          builder.error(Angular2Bundle.message("angular.parse.expression.pipe-in-host-binding"));
         }
         else if (myIsAction) {
-          builder.error("action expressions cannot contain pipes");
+          builder.error(Angular2Bundle.message("angular.parse.expression.pipe-in-action"));
         }
         firstParam.done(PIPE_LEFT_SIDE_ARGUMENT);
         builder.advanceLexer();
@@ -334,16 +337,23 @@ public class Angular2Parser
           pipeName.done(PIPE_REFERENCE_EXPRESSION);
         }
         else {
-          builder.error("expected identifier or keyword");
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-or-keyword"));
         }
         PsiBuilder.Marker params = builder.mark();
+        boolean hasParams = false;
         while (builder.getTokenType() == COLON) {
           builder.advanceLexer();
           if (!parseAssignmentExpressionChecked()) {
             builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
+          } else {
+            hasParams = true;
           }
         }
-        params.done(PIPE_ARGUMENTS_LIST);
+        if (hasParams) {
+          params.done(PIPE_ARGUMENTS_LIST);
+        } else {
+          params.drop();
+        }
         pipe.done(PIPE_EXPRESSION);
         firstParam = pipe.precede();
         pipe = firstParam.precede();
@@ -375,7 +385,7 @@ public class Angular2Parser
       if (builder.getTokenType() == EQ) {
         definitionExpr.done(JSStubElementTypes.DEFINITION_EXPRESSION);
         if (!myIsAction && !myIsJavaScript) {
-          builder.error("binding expressions cannot contain assignments");
+          builder.error(Angular2Bundle.message("angular.parse.expression.assignment-in-binding"));
         }
         builder.advanceLexer();
         if (!parsePipe()) {
@@ -393,10 +403,19 @@ public class Angular2Parser
     @Override
     public boolean parsePrimaryExpression() {
       final IElementType firstToken = builder.getTokenType();
-      if (firstToken == JSTokenTypes.STRING_LITERAL_PART) {
+      if (firstToken == JSTokenTypes.STRING_LITERAL_PART
+          || isEntityStringStart(firstToken)) {
         return parsePartialStringLiteral(firstToken);
       }
       return super.parsePrimaryExpression();
+    }
+
+    private boolean isEntityStringStart(IElementType tokenType) {
+      if (tokenType != XML_CHAR_ENTITY_REF) {
+        return false;
+      }
+      String text = builder.getTokenText();
+      return text != null && (text.equals(CHAR_ENTITY_QUOT) || text.equals(CHAR_ENTITY_APOS));
     }
 
     @Override
@@ -424,7 +443,7 @@ public class Angular2Parser
       if (elementType != IDENTIFIER
           && elementType != STRING_LITERAL
           && !KEYWORDS.contains(elementType)) {
-        builder.error("expected identifier, keyword, or string");
+        builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-keyword-or-string"));
         return false;
       }
       return true;
@@ -434,8 +453,9 @@ public class Angular2Parser
     protected boolean parseDialectSpecificMemberExpressionPart(Ref<PsiBuilder.Marker> markerRef) {
       if (builder.getTokenType() == EXCL) {
         builder.advanceLexer();
-        markerRef.get().done(POSTFIX_EXPRESSION);
-        markerRef.set(markerRef.get().precede());
+        PsiBuilder.Marker marker = markerRef.get();
+        marker.done(JSElementTypes.NOT_NULL_EXPRESSION);
+        markerRef.set(marker.precede());
         return true;
       }
       return false;
@@ -458,7 +478,7 @@ public class Angular2Parser
         builder.advanceLexer();
       }
 
-      parsePropertyInitializer();
+      parsePropertyInitializer(false);
 
       property.done(PROPERTY);
       property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
@@ -470,12 +490,23 @@ public class Angular2Parser
       final PsiBuilder.Marker mark = builder.mark();
       IElementType currentToken = firstToken;
       StringBuilder literal = new StringBuilder();
-      while (currentToken == JSTokenTypes.STRING_LITERAL_PART ||
-             currentToken == ESCAPE_SEQUENCE ||
-             currentToken == INVALID_ESCAPE_SEQUENCE) {
-        literal.append(builder.getTokenText());
+      String text = getCurrentLiteralPartTokenText(currentToken);
+      boolean singleQuote = text == null
+                            || text.startsWith("'");
+      boolean first = true;
+      while (text != null
+             && (currentToken == JSTokenTypes.STRING_LITERAL_PART
+                 || STRING_PART_SPECIAL_SEQ.contains(currentToken))) {
+        literal.append(text);
         builder.advanceLexer();
+        if (!first
+            && ((singleQuote && (text.endsWith("'") && !text.endsWith("\\'")))
+                || (!singleQuote && text.endsWith("\"") && !text.endsWith("\\\"")))) {
+          break;
+        }
+        first = false;
         currentToken = builder.getTokenType();
+        text = getCurrentLiteralPartTokenText(currentToken);
       }
       mark.done(JSStubElementTypes.LITERAL_EXPRESSION);
       final String errorMessage = validateLiteralText(literal.toString());
@@ -483,6 +514,19 @@ public class Angular2Parser
         builder.error(errorMessage);
       }
       return true;
+    }
+
+    private String getCurrentLiteralPartTokenText(IElementType currentToken) {
+      String text = builder.getTokenText();
+      if (text != null && currentToken == XML_CHAR_ENTITY_REF) {
+        if (text.equals(CHAR_ENTITY_APOS)) {
+          return "'";
+        }
+        else if (text.equals(CHAR_ENTITY_QUOT)) {
+          return "\"";
+        }
+      }
+      return text;
     }
   }
 }

@@ -22,6 +22,6 @@ public class Angular2HtmlIdIndexer implements LexingIdIndexer {
 
   @Override
   public int getVersion() {
-    return 2;
+    return 3;
   }
 }

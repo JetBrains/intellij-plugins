@@ -1,10 +1,10 @@
 package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestCase {
+public class HbBlockMismatchFixTest extends BasePlatformTestCase {
 
   public void testWrongCloseBlock1() {
     doTest("Change block end");

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -14,7 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
@@ -96,7 +97,8 @@ public class FlexRunner extends FlexBaseRunner {
               return null;
             }
             if (packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, false)) {
-              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosSimulatorAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
+              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosSimulatorAppId, runnerParameters.getIOSSimulatorSdkPath(),
+                                   runnerParameters.getIOSSimulatorDevice(), false);
             }
             return null;
           case iOSDevice:
@@ -119,7 +121,7 @@ public class FlexRunner extends FlexBaseRunner {
                   .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
                     @Override
                     protected void hyperlinkActivated(final HyperlinkEvent e) {
-                      ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                      RevealFileAction.openFile(new File(outputFolder + "/" + ipaName));
                     }
                   });
               }

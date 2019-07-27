@@ -2,8 +2,10 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSSuppressionHolder;
 import com.intellij.lang.javascript.psi.impl.JSElementImpl;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
@@ -19,5 +21,20 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSS
   @Override
   public Language getLanguage() {
     return Angular2Language.INSTANCE;
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof JSElementVisitor) {
+      ((JSElementVisitor)visitor).visitJSEmbeddedContent(this);
+    }
+    else {
+      super.accept(visitor);
+    }
+  }
+
+  @Override
+  public boolean allowTopLevelThis() {
+    return true;
   }
 }

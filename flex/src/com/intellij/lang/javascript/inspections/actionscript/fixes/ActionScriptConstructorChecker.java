@@ -2,12 +2,12 @@ package com.intellij.lang.javascript.inspections.actionscript.fixes;
 
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.highlighting.JSFixFactory;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
 import com.intellij.lang.javascript.validation.JSConstructorChecker;
+import com.intellij.lang.javascript.validation.fixes.ActionScriptAddConstructorAndSuperInvocationFix;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +31,9 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
     final PsiElement place = getPlaceForNamedElementProblem(jsClass);
     Annotation annotation = myProblemReporter.registerGenericError(place, JSBundle
       .message("javascript.validation.message.missed.super.constructor.call"));
-
-    annotation.registerFix(JSFixFactory.getInstance().addConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
+    if (annotation != null) {
+      annotation.registerFix(new ActionScriptAddConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
+    }
   }
 
   @Override
@@ -44,12 +45,12 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
   @Contract("null -> null")
   protected JSCallExpression findAnyBaseConstructorCall(@Nullable JSFunction jsFunction) {
     if (jsFunction == null) return null;
-    final JSSourceElement[] body = jsFunction.getBody();
-    return body.length > 0 ? findBaseConstructorCall(((JSBlockStatement)body[0])) : null;
+    final JSBlockStatement body = jsFunction.getBlock();
+    return body != null ? findBaseConstructorCall(body) : null;
   }
 
   private static JSCallExpression findBaseConstructorCall(final JSBlockStatement blockStatement) {
-    for (JSStatement statement : blockStatement.getStatements()) {
+    for (JSSourceElement statement : blockStatement.getStatementListItems()) {
       JSExpression expr;
       if (statement instanceof JSExpressionStatement &&
           (expr = ((JSExpressionStatement)statement).getExpression()) instanceof JSCallExpression &&

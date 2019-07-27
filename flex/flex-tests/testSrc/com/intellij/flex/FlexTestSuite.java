@@ -77,11 +77,13 @@ public class FlexTestSuite {
     //com.intellij.flex.highlighting.*
     testSuite.addTestSuite(ActionScriptHighlightingInTextFieldTest.class);
     testSuite.addTestSuite(ActionScriptHighlightingTest.class);
+    testSuite.addTestSuite(ActionScriptLineMarkersTest.class);
     testSuite.addTestSuite(ActionScriptRegExpHighlightingTest.class);
     testSuite.addTestSuite(ActionScriptStubsTest.class);
     testSuite.addTestSuite(FlexColorAnnotatorTest.class);
     testSuite.addTestSuite(FlexHighlightingPerformanceTest.class);
     testSuite.addTestSuite(FlexHighlightingTest.class);
+    testSuite.addTestSuite(FlexLineMarkersTest.class);
     testSuite.addTestSuite(FlexScopeTest.class);
     testSuite.addTestSuite(GlobalFlexHighlightingTest.class);
     testSuite.addTestSuite(SwfHighlightingTest.class);
@@ -111,6 +113,7 @@ public class FlexTestSuite {
     testSuite.addTestSuite(FlexProjectViewTest.class);
 
     //com.intellij.flex.refactoring.*
+    testSuite.addTestSuite(ActionScriptIntroduceVariableTest.class);
     testSuite.addTestSuite(ActionScriptInPlaceIntroduceVariableTest.class);
     testSuite.addTestSuite(FlexChangeSignatureTest.class);
     testSuite.addTestSuite(FlexExtractFunctionTest.class);

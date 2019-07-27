@@ -3,7 +3,7 @@ package com.intellij.tapestry.core.model.externalizable.toclasschain;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.TapestryComponent;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import org.apache.commons.chain.Context;
 
@@ -21,10 +21,10 @@ public class ComponentExternalizer extends ToClassExternalizer {
         if (!super.execute(context))
             return false;
 
-        if (!(getContext().getElement() instanceof Component))
+        if (!(getContext().getElement() instanceof TapestryComponent))
             return false;
 
-        Component component = (Component) getContext().getElement();
+        TapestryComponent component = (TapestryComponent) getContext().getElement();
 
         IJavaField field = component.getProject().getJavaTypeCreator().createField(
           StringUtil.notNullize(component.getElementClass().getName()), component.getElementClass(), true, true);

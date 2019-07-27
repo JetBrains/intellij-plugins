@@ -1,0 +1,13 @@
+class C {
+  function a():void {
+      var created:Function = function():void {
+          // ...
+      };
+      f(created);
+}
+
+function f(processor:Function): Boolean {
+    processor();
+    return false;
+}
+}

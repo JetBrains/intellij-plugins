@@ -1,9 +1,9 @@
 buildscript {
-  ext.kotlin_version = '1.0.3'
+  ext.kotlin_version = '1.3.21'
 
   repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
   }
 
   dependencies {
@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.3.1"
+  id "org.jetbrains.intellij" version "0.4.5"
 }
 
 sourceSets {
@@ -25,11 +25,6 @@ sourceSets {
       srcDirs 'resources'
     }
   }
-  test {
-    java {
-      srcDirs 'test'
-    }
-  }
 }
 
 apply plugin: "kotlin"
@@ -37,7 +32,7 @@ apply plugin: 'org.jetbrains.intellij'
 
 version="163.7000"
 intellij {
-  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'tslint'
   downloadSources false
   updateSinceUntilBuild false

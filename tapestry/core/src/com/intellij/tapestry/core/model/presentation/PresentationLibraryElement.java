@@ -6,7 +6,7 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
-import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.TapestryLibrary;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToClass;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToDocumentation;
 import com.intellij.tapestry.core.model.externalizable.documentation.generationchain.DocumentationGenerationChain;
@@ -54,7 +54,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
   private final IJavaClassType _class;
   private final TapestryProject _project;
   private String _name;
-  private final Library _library;
+  private final TapestryLibrary _library;
   private String _documentationCache;
   private IResource[] _messageCatalogCache;
   private long _documentationTimestamp;
@@ -62,7 +62,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
   static final String PARAMETER_ANNOTATION = "org.apache.tapestry5.annotations.Parameter";
 
-  PresentationLibraryElement(Library library, IJavaClassType elementClass, TapestryProject project) {
+  PresentationLibraryElement(TapestryLibrary library, IJavaClassType elementClass, TapestryProject project) {
     _class = elementClass;
     _project = project;
     _library = library;
@@ -91,11 +91,11 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    * @return the instance of the presentation element.
    * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
    */
-  public static PresentationLibraryElement createElementInstance(Library library, IJavaClassType elementClass, TapestryProject project)
+  public static PresentationLibraryElement createElementInstance(TapestryLibrary library, IJavaClassType elementClass, TapestryProject project)
     throws NotTapestryElementException {
     switch (getElementType(elementClass, library.getBasePackage())) {
       case COMPONENT:
-        return new Component(library, elementClass, project);
+        return new TapestryComponent(library, elementClass, project);
       case PAGE:
         return new Page(library, elementClass, project);
       case MIXIN:
@@ -207,7 +207,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
     return _project;
   }
 
-  public Library getLibrary() {
+  public TapestryLibrary getLibrary() {
     return _library;
   }
 
@@ -240,7 +240,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
           field.getAnnotations().containsKey(TapestryConstants.COMPONENT_ANNOTATION) &&
           field.getType() instanceof IJavaClassType) {
         IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
-        final Component component;
+        final TapestryComponent component;
         if (annotation.getParameters().containsKey("type")) {
           component = _project.findComponent(annotation.getParameters().get("type")[0]);
         }
@@ -261,7 +261,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
           if (!ComponentUtils._isComponentTag(tag)) return;
           boolean hasAttributeType = false;
           InjectedElement injectedElement = null;
-          Component component = null;
+          TapestryComponent component = null;
 
           for (XmlAttribute attribute : tag.getAttributes()) {
             if (attribute.getLocalName().equals("type") && TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace())) {
@@ -321,7 +321,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
             boolean hasAttributeType = false;
             InjectedElement injectedElement = null;
-            Component component = null;
+            TapestryComponent component = null;
 
             for (XmlAttribute attribute : tag.getAttributes()) {
               if (attribute.getLocalName().equals("type") && TapestryXmlExtension.isTapestryTemplateNamespace(attribute.getNamespace())) {

@@ -3,12 +3,17 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
+import com.intellij.javascript.JSScriptContentProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
+import com.intellij.lang.LanguageHtmlScriptContentProvider;
+import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
+import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -24,6 +29,7 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.BlockSupportImpl;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.impl.DiffLog;
+import org.angular2.lang.expr.parser.Angular2ParserDefinition;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +38,11 @@ import java.io.IOException;
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   public Angular2HtmlParsingTest() {
-    super("", "html", new Angular2HtmlParserDefinition(), new JavascriptParserDefinition(), new CSSParserDefinition());
+    super("", "html",
+          new Angular2HtmlParserDefinition(),
+          new Angular2ParserDefinition(),
+          new JavascriptParserDefinition(),
+          new CSSParserDefinition());
   }
 
   @Override
@@ -40,6 +50,8 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     super.setUp();
     addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
                          new HtmlInlineJSScriptTokenTypesProvider());
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
+                         new JSScriptContentProvider());
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
@@ -49,6 +61,10 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     registerApplicationService(CssElementDescriptorFactory2.class,
                                new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+
+    // Update parser definition if version is changed
+    assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.getDialect(), new ECMA6ParserDefinition());
   }
 
   @Override
@@ -229,6 +245,18 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("<div>{{foo ? ' &mdash;' + bar : \"\"}}</div>");
   }
 
+  public void testNgStringWithEntity() throws Exception {
+    doTestHtml("{{ &quot;fo&#123;o\" }}");
+  }
+
+  public void testNgStringWithEntity2() throws Exception {
+    doTestHtml("<div [input]='&apos;foo&quot;&dash;&apos;'");
+  }
+
+  public void testNgStringWithEntity3() throws Exception {
+    doTestHtml("<div [input]='&apos;foo&quot;&dash;&apos;\"second\"'");
+  }
+
   public void testNgWeb20713() throws Exception {
     doTestHtml("<h5>Last Updated: {{(viewModel.lastUpdated$ | async) | date:'mediumTime'}}</h5>");
   }
@@ -261,5 +289,58 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   public void testNgInterpolationEmpty() throws Exception {
     doTestHtml("empty {{}} interpolation");
+  }
+
+
+  public void testNgScriptWithEventAndAngularAttr() throws Exception {
+    doTestHtml("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
+               "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
+               "  console.log(2)\n" +
+               "</script>\n" +
+               "<div></div>");
+  }
+
+  public void testNgStyleTag() throws Exception {
+    doTestHtml("<style>\n" +
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
+  }
+
+  public void testNgStyleAngularAttr() throws Exception {
+    doTestHtml("<style (load)='disabled=true'>\n" +
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
+  }
+
+  public void testNgStyleWithEventAndAngularAttr() throws Exception {
+    doTestHtml("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
+  }
+
+  public void testNgContentSelect() throws Exception {
+    doTestHtml("<div><ng-content select='foo,bar'></ng-content></div>");
+  }
+
+  public void testNgNonBindable() throws Exception {
+    doTestHtml("<div><span ngNonBindable>f{{bar}}a</span>f{{foo}}a</div>");
+  }
+
+  public void testNgNonBindable2() throws Exception {
+    doTestHtml("<div><span ngNonBindable ngNonBindable>s{{bar}}e</span>s{{foo}}e</div>");
+  }
+
+  public void testNgNonBindable3() throws Exception {
+    doTestHtml("<div><span ngNonBindable ngNonBindable>{{bar}}<b ngNonBindable>{{boo}}</b></span>{{foo}}</div>");
+  }
+
+  public void testNgNonBindable4() throws Exception {
+    doTestHtml("<p ngNonBindable>{{foo}}<p>{{bar}}");
   }
 }

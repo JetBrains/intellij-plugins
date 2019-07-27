@@ -22,15 +22,16 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.*;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author vnikolaenko
@@ -102,33 +103,17 @@ public class CfmlMappingsForm {
     };
     myTableEditor.getEmptyText().setText(CfmlBundle.message("no.mapping"));
 
+    myTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Server mappings:", false, JBUI.insetsTop(8)).setShowLine(false));
     myTablePanel.add(myTableEditor.getContentPane(), BorderLayout.CENTER);
 
-    myLanguageLevel.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        if (CfmlLanguage.CF8.equals(value)) {
-          setText("ColdFusion 8");
-        }
-        else if (CfmlLanguage.CF9.equals(value)) {
-          setText("ColdFusion 9");
-        }
-        else if (CfmlLanguage.CF10.equals(value)) {
-          setText("ColdFusion 10");
-        }
-        else if (CfmlLanguage.CF11.equals(value)) {
-          setText("ColdFusion 11");
-        }
-        else if (CfmlLanguage.RAILO.equals(value)) {
-          //noinspection SpellCheckingInspection
-          setText("Railo");
-        }
-        else if (CfmlLanguage.LUCEE.equals(value)) {
-          //noinspection SpellCheckingInspection
-          setText("Lucee");
-        }
-      }
-    });
+    //noinspection SpellCheckingInspection
+    myLanguageLevel.setRenderer(SimpleListCellRenderer.create(
+      "", value -> CfmlLanguage.CF8.equals(value) ? "ColdFusion 8" :
+                   CfmlLanguage.CF9.equals(value) ? "ColdFusion 9" :
+                   CfmlLanguage.CF10.equals(value) ? "ColdFusion 10" :
+                   CfmlLanguage.CF11.equals(value) ? "ColdFusion 11" :
+                   CfmlLanguage.RAILO.equals(value) ? "Railo" :
+                   CfmlLanguage.LUCEE.equals(value) ? "Lucee" : ""));
     myLanguageLevel.addItem(CfmlLanguage.CF8);
     myLanguageLevel.addItem(CfmlLanguage.CF9);
     myLanguageLevel.addItem(CfmlLanguage.CF10);

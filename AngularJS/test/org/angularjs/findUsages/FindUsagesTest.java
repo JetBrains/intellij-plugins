@@ -1,6 +1,6 @@
 package org.angularjs.findUsages;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.usageView.UsageInfo;
 import org.angularjs.AngularTestUtil;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * @author Dennis.Ushakov
  */
-public class FindUsagesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class FindUsagesTest extends BasePlatformTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass());

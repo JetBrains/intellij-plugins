@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
@@ -18,18 +19,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.hasVuex
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.normalizeName
 import org.jetbrains.vuejs.index.DELIMITER
 import org.jetbrains.vuejs.index.VueStoreIndex
 import org.jetbrains.vuejs.index.getForAllKeys
-import org.jetbrains.vuejs.language.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.VueFileType
 
-/**
- * @author Irina.Chernushina on 11/10/2017.
- */
 class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
   companion object {
     fun isInsideScript(element: PsiElement): Boolean {
@@ -78,16 +76,21 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
 
   private fun createExportedObjectLiteralTypeEvaluator(obj: JSObjectLiteralExpression): JSType? {
     val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, "vue")
+                      .asSequence()
                       .mapNotNull {
-                        it as? JSElement ?: return@mapNotNull null
-                        ES6PsiUtil.resolveSymbolInModule("Component", obj, it).filter { it.isValidResult }
+                        if (it !is JSElement) return@mapNotNull null
+                        ES6PsiUtil.resolveSymbolInModule("Component", obj, it)
+                          .filter { resolveResult ->
+                            resolveResult.isValidResult
+                          }
                       }
                       .flatten()
                       .filter {
                         val psiFile = it.element?.containingFile
                         psiFile != null && TypeScriptUtil.isDefinitionFile(psiFile)
                       }
-                      .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }.firstOrNull() ?: return null
+                      .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }
+                      .firstOrNull() ?: return null
 
     var typeFromTypeScript = typeAlias.jsType
     if (typeFromTypeScript is JSCompositeTypeImpl) {

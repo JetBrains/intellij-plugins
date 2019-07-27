@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
@@ -20,11 +21,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
@@ -45,7 +46,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
@@ -118,7 +118,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     table.setShowVerticalLines(false);
     table.setShowHorizontalLines(false);
     table.setStriped(true);
-    table.setRowHeight(table.getRowHeight() + JBUI.scale(4));
+    table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
 
     JTableHeader tableHeader = table.getTableHeader();
     tableHeader.setPreferredSize(new Dimension(0, table.getRowHeight()));
@@ -134,23 +134,25 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
-    addQuickFixActions(group);
+    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
+    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+
+    addQuickFixActions(group, selectedProblem);
+    addDocumentationAction(group, selectedProblem);
 
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
   }
 
-  private void addQuickFixActions(@NotNull final DefaultActionGroup group) {
-    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
-    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
-    final VirtualFile selectedVFile = selectedProblem != null ? selectedProblem.getFile() : null;
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
+    final VirtualFile selectedVFile = problem != null ? problem.getFile() : null;
     if (selectedVFile == null) return;
 
     final List<SourceChange> selectedProblemSourceChangeFixes = new SmartList<>();
     DartAnalysisServerService.getInstance(myProject)
-      .askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, selectedProblem.getOffset(), fixes -> {
+      .askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, problem.getOffset(), fixes -> {
         for (AnalysisErrorFixes fix : fixes) {
-          if (fix.getError().getCode().equals(selectedProblem.getCode())) {
+          if (fix.getError().getCode().equals(problem.getCode())) {
             selectedProblemSourceChangeFixes.addAll(fix.getFixes());
           }
         }
@@ -165,8 +167,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
         @Override
         public void actionPerformed(@NotNull final AnActionEvent event) {
-          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile,
-                                                                                       selectedProblem.getOffset()));
+          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile, problem.getOffset()));
           try {
             WriteAction.run(() -> AssistUtils.applySourceChange(myProject, sourceChangeFix, true));
           }
@@ -174,6 +175,19 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
         }
       });
     }
+  }
+
+  private static void addDocumentationAction(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
+    final String url = problem != null ? problem.getUrl() : null;
+    if (url == null) return;
+
+    group.addSeparator();
+    group.add(new DumbAwareAction("Open Documentation", "Open detailed problem description in browser", AllIcons.Ide.External_link_arrow) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
+        BrowserUtil.browse(url);
+      }
+    });
   }
 
   @NotNull
@@ -318,7 +332,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity().toLowerCase(Locale.US) +
+    final String s = StringUtil.join(selectedObjects, problem -> StringUtil.toLowerCase(problem.getSeverity()) +
                                                                  ": " +
                                                                  problem.getErrorMessage() +
                                                                  " (" +

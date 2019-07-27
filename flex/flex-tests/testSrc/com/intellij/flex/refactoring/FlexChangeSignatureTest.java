@@ -2,6 +2,7 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSChangeSignatureTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -18,7 +19,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   public void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
 
   }
 
@@ -71,11 +72,12 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testChangeParam1() {
-    doTest("renamed", JSAttributeList.AccessType.PACKAGE_LOCAL, "Boolean",
-           new JSParameterInfo("i2", "Number", "", "", 1),
-           new JSParameterInfo("sss", "String", "\"abc\"", "", 0),
-           new JSParameterInfo("o", "flash.events.EventDispatcher", "FOO", "", 2),
-           new JSParameterInfo("rest2", "...", "", "", 3, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER));
+    withRefactorSuperMethod(() -> doTest("renamed", JSAttributeList.AccessType.PACKAGE_LOCAL, "Boolean",
+                                         new JSParameterInfo("i2", "Number", "", "", 1),
+                                         new JSParameterInfo("sss", "String", "\"abc\"", "", 0),
+                                         new JSParameterInfo("o", "flash.events.EventDispatcher", "FOO", "", 2),
+                                         new JSParameterInfo("rest2", "...", "", "", 3, false, ECMAL4LanguageDialect.DIALECT_OPTION_HOLDER)),
+                            false);
   }
 
 
@@ -212,8 +214,8 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoPropagateToSdkInheritor() {
-    FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
+    FlexTestUtils.addLibrary(getModule(), "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"bar", "listener"});
       performRefactoring("abc", JSAttributeList.AccessType.PACKAGE_LOCAL, "");
@@ -281,14 +283,14 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   public void testIncompatibleOverrideConflict() {
     String[] conflicts = new String[]{
-      "Overriding method B.foo() has different number of parameters than refactored method A.foo(int). Method B.foo() will be ignored during refactoring."
+      JSBundle.message("change.signature.conflict.incompatible.override", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo2", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }
 
   public void testIncompatibleImplementationConflict() {
     String[] conflicts = new String[]{
-      "Implementing method B.foo() has different number of parameters than refactored method A.foo(int). Method B.foo() will be ignored during refactoring."
+      JSBundle.message("change.signature.conflict.incompatible.implementation", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }

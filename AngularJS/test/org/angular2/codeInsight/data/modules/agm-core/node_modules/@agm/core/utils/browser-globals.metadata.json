@@ -1,0 +1,1 @@
+[{"__symbolic":"module","version":4,"metadata":{"WindowRef":{"__symbolic":"class","members":{"getNativeWindow":[{"__symbolic":"method"}]}},"DocumentRef":{"__symbolic":"class","members":{"getNativeDocument":[{"__symbolic":"method"}]}},"BROWSER_GLOBALS_PROVIDERS":[{"__symbolic":"reference","name":"WindowRef"},{"__symbolic":"reference","name":"DocumentRef"}]}}]

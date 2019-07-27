@@ -1,0 +1,19 @@
+.evo-button-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    @include media-tablet {
+        flex-direction: row;
+    }
+
+    &__item {
+        & + & {
+            margin-top: 20px;
+
+            @include media-tablet {
+                margin-top: 0;
+                margin-left: 30px;
+            }
+        }
+    }
+}

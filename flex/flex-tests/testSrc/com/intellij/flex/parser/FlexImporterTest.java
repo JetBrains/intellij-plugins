@@ -5,13 +5,13 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.flex.importer.FlexImporter;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -94,14 +94,14 @@ public class FlexImporterTest extends TestCase {
 
     try {
       String expected =
-        StringUtil.convertLineSeparators(FileUtil.loadFile(new File(resultFileName), CharsetToolkit.UTF8_CHARSET));
+        StringUtil.convertLineSeparators(FileUtil.loadFile(new File(resultFileName), StandardCharsets.UTF_8));
 
       assertEquals("interface stubs do not match", expected, result);
 
       result = FlexImporter.dumpContentsFromStream(new ByteArrayInputStream(contents), getName().equals("testAbc"));
       resultFileName = getTestDataPath() + fileName + ".il";
       expected =
-        StringUtil.convertLineSeparators(FileUtil.loadFile(new File(resultFileName), CharsetToolkit.UTF8_CHARSET));
+        StringUtil.convertLineSeparators(FileUtil.loadFile(new File(resultFileName), StandardCharsets.UTF_8));
 
       assertEquals(expected, result);
     }

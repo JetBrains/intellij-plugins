@@ -20,7 +20,7 @@ import com.intellij.ui.EditorNotifications
 private val KEY = Key.create<EditorNotificationPanel>("TsLint.Import.Code.Style.Notification")
 
 class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
-  private val sourceTracker = LinterCodeStyleImportSourceTracker(project, "tslint", TslintUtil::isConfigFile)
+  private val sourceTracker = LinterCodeStyleImportSourceTracker(project, "tslint.code.style.apply.dismiss", TslintUtil::isConfigFile)
 
   override fun getKey() = KEY
 
@@ -31,6 +31,7 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val wrapper = TsLintConfigWrapper.getConfigForFile(psiFile) ?: return null
+    sourceTracker.registerPsiChangedListener()
     val rules = wrapper.getRulesToApply(project)
 
     if (rules.isEmpty()) return null

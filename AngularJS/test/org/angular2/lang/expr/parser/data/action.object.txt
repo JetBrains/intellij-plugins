@@ -1,11 +1,11 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression
         PsiElement(JS:LBRACE)('{')
         PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression
@@ -17,7 +17,7 @@ ASTWrapperPsiElement(FILE)
             PsiElement(JS:STRING_LITERAL)(''b'')
         PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression
@@ -29,7 +29,7 @@ ASTWrapperPsiElement(FILE)
             PsiElement(JS:STRING_LITERAL)(''b'')
         PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression
@@ -41,7 +41,7 @@ ASTWrapperPsiElement(FILE)
             PsiElement(JS:STRING_LITERAL)(''b'')
         PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSIndexedPropertyAccessExpression
@@ -65,7 +65,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:FALSE_KEYWORD)('false')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSArrayLiteralExpression
@@ -75,7 +75,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:RBRACE)('}')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSArrayLiteralExpression
@@ -101,33 +101,33 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:RBRACE)('}')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     Angular2Chain
       JSExpressionStatement
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          PsiErrorElement:expected identifier, keyword, or string
+          PsiErrorElement:Expected identifier, keyword, or string
             <empty list>
       PsiWhiteSpace(' ')
       JSExpressionStatement
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('12')
-      PsiErrorElement:unexpected token ':'
+      PsiErrorElement:Unexpected token ':'
         <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:COLON)(':')
-      PsiErrorElement:unexpected token '"test"'
+      PsiErrorElement:Unexpected token '"test"'
         <empty list>
       PsiWhiteSpace(' ')
       JSExpressionStatement
         JSLiteralExpression
           PsiElement(JS:STRING_LITERAL)('"test"')
-      PsiErrorElement:unexpected token '}'
+      PsiErrorElement:Unexpected token '}'
         <empty list>
       PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression
@@ -140,7 +140,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         PsiElement(JS:RBRACE)('}')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.object.action
   Angular2Action
     JSExpressionStatement
       JSObjectLiteralExpression

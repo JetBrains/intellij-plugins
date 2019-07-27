@@ -1,10 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, Directive, Input, Output} from '@angular/core';
-import {NgModel} from './forms';
+import {Component, Directive, Input} from '@angular/core';
 
 
 @Component({
-    selector: 'my-comp',
+    selector: 'my-' + 'comp',
     template: `<div></div>`,
     exportAs: 'foo,bar'
 })
@@ -26,6 +25,13 @@ export class MyComponent2 {
     template: `<div></div>`,
 })
 export class MyComponent3 {
+}
+
+@Component({
+    selector: 'my-comp2',
+    template: `<div></div>`,
+})
+export class MyComponent4 {
 }
 
 @Directive({

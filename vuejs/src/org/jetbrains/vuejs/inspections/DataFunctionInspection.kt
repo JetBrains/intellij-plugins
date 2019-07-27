@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.inspections
 
 import com.intellij.codeInspection.LocalInspectionTool
@@ -6,22 +7,25 @@ import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class DataFunctionInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-    return object: JSElementVisitor() {
+    return object : JSElementVisitor() {
       override fun visitJSProperty(node: JSProperty?) {
-        if ("data" != node?.name || node?.value is JSFunction || node?.value is JSReferenceExpression) return
+        if ("data" != node?.name || node.value is JSFunction || node.value is JSReferenceExpression) return
 
 
-        if (isComponent(node!!)) {
-          val quickFixes:Array<LocalQuickFix> = if (node.value is JSObjectLiteralExpression) arrayOf(WrapWithFunctionFix(node.value!!)) else emptyArray()
+        if (isComponent(node)) {
+          val quickFixes: Array<LocalQuickFix> =
+            if (node.value is JSObjectLiteralExpression)
+              arrayOf(WrapWithFunctionFix(node.value!!))
+            else emptyArray()
           holder.registerProblem(node.nameIdentifier!!, "Data property should be a function", *quickFixes)
         }
       }
@@ -45,7 +49,8 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     val expression = startElement as JSObjectLiteralExpression
     val property = expression.parent as JSProperty
 
-    val newProperty = (JSChangeUtil.createExpressionWithContext("{ data() {return ${expression.text}}}", property)!!.psi as JSObjectLiteralExpression).firstProperty!!
+    val newProperty = JSPsiElementFactory.createJSExpression(
+      "{ data() {return ${expression.text}}}", property, JSObjectLiteralExpression::class.java).firstProperty!!
     property.replace(newProperty)
   }
 

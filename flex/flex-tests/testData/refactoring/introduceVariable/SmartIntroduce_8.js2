@@ -1,0 +1,2 @@
+class String {}
+var charCode:String = Stri<caret>ng.fromCharCode(123);

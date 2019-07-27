@@ -1,20 +1,15 @@
 package com.jetbrains.lang.dart.util;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class DartPresentableUtil {
 
@@ -222,72 +217,6 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-  public static void appendArgumentList(@NotNull Template result, @NotNull DartArgumentList argumentList) {
-    final List<DartNamedArgument> namedArgumentList = argumentList.getNamedArgumentList();
-    final Set<String> additionalUsedNamed = new THashSet<>();
-    for (DartNamedArgument namedArgument : namedArgumentList) {
-      additionalUsedNamed.add(namedArgument.getParameterReferenceExpression().getText());
-    }
-
-    boolean needComma = false;
-    for (DartExpression expression : argumentList.getExpressionList()) {
-      if (needComma) {
-        result.addTextSegment(", ");
-      }
-      if (expression instanceof DartReference) {
-        DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
-        if (dartClass != null) {
-          final String name = dartClass.getName();
-          if (name != null) {
-            result.addTextSegment(name);
-            result.addTextSegment(" ");
-          }
-        }
-      }
-
-      Collection<String> suggestedNames = DartNameSuggesterUtil.getSuggestedNames(expression, additionalUsedNamed);
-      String parameterName = suggestedNames.iterator().next();
-      additionalUsedNamed.add(parameterName);
-
-      result.addVariable(getExpression(parameterName), true);
-
-      needComma = true;
-    }
-    if (namedArgumentList.isEmpty()) {
-      return;
-    }
-    if (needComma) {
-      result.addTextSegment(", ");
-      needComma = false;
-    }
-    result.addTextSegment("{");
-    for (DartNamedArgument namedArgument : namedArgumentList) {
-      if (needComma) {
-        result.addTextSegment(", ");
-      }
-
-      DartExpression expression = namedArgument.getExpression();
-      if (expression instanceof DartReference) {
-        DartClass dartClass = ((DartReference)expression).resolveDartClass().getDartClass();
-        if (dartClass != null) {
-          final String name = dartClass.getName();
-          if (name != null) {
-            result.addTextSegment(name);
-            result.addTextSegment(SPACE);
-          }
-        }
-      }
-
-      result.addVariable(getExpression(namedArgument.getParameterReferenceExpression().getText()), true);
-      needComma = true;
-    }
-    result.addTextSegment("}");
-  }
-
-  public static Expression getExpression(String parameterName) {
-    return new DartTemplateExpression(parameterName);
-  }
-
   public static String buildClassText(@NotNull DartClass dartClass, DartGenericSpecialization specialization) {
     StringBuilder result = new StringBuilder();
     result.append(dartClass.getName());
@@ -311,72 +240,4 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-  private static class DartTemplateExpression extends Expression {
-    private final TextResult myResult;
-
-    DartTemplateExpression(String text) {
-      myResult = new TextResult(text);
-    }
-
-    @Nullable
-    @Override
-    public Result calculateResult(ExpressionContext context) {
-      return myResult;
-    }
-
-    @Nullable
-    @Override
-    public Result calculateQuickResult(ExpressionContext context) {
-      return myResult;
-    }
-
-    @Nullable
-    @Override
-    public LookupElement[] calculateLookupItems(ExpressionContext context) {
-      return LookupElement.EMPTY_ARRAY;
-    }
-  }
-
-  @Nullable
-  public static String findLastQuotedWord(@NotNull String text) {
-    return findLastQuotedWord(text, '\'');
-  }
-
-  @Nullable
-  public static String findLastDoubleQuotedWord(@NotNull String text) {
-    return findLastQuotedWord(text, '"');
-  }
-
-  @Nullable
-  public static String findLastQuotedWord(@NotNull String text, char quote) {
-    int j = text.lastIndexOf(quote);
-    if (j == -1) {
-      return null;
-    }
-    text = text.substring(0, j);
-    int i = text.lastIndexOf(quote);
-    if (i == -1) {
-      return null;
-    }
-    return text.substring(i + 1);
-  }
-
-  @Nullable
-  public static String findFirstQuotedWord(@NotNull String text) {
-    return findFirstQuotedWord(text, '\'');
-  }
-
-  @Nullable
-  public static String findFirstQuotedWord(@NotNull String text, char quote) {
-    int i = text.indexOf(quote);
-    if (i == -1) {
-      return null;
-    }
-    text = text.substring(i + 1);
-    int j = text.indexOf(quote);
-    if (j == -1) {
-      return null;
-    }
-    return text.substring(0, j);
-  }
 }
