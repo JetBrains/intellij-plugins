@@ -17,7 +17,7 @@ jobs:
     working_directory: ~
     steps:
       - checkout
-      - run: ./gradlew :plugin:test -Dorg.gradle.java.home=/usr/lib/jvm/java-8-openjdk-amd64
+      - run: ./gradlew :plugin:test
       - store_artifacts:
           path: build/plugin/reports
 
@@ -49,6 +49,7 @@ workflows:
     jobs:
       - build
       - test
+      - gui-test
   release:
     jobs:
       - build:
