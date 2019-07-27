@@ -13,9 +13,7 @@ class MarkdownSupport : LanguageSupport() {
         private val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element) || MarkdownPsiUtils.isCode(element)
-    }
+    override fun isRelevant(element: PsiElement) = MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element) || MarkdownPsiUtils.isCode(element)
 
     override fun check(element: PsiElement): Set<Typo> {
         return GrammarChecker.default.check(listOf(element), indexBasedIgnore = { token, index ->

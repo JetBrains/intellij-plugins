@@ -33,11 +33,6 @@ abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightCodeIns
         GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages + Lang.RUSSIAN) }
     }
 
-    override fun tearDown() {
-        super.tearDown()
-        GraziConfig.update { it.copy(enabledLanguages = it.enabledLanguages - Lang.RUSSIAN) }
-    }
-
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return object : ProjectDescriptor(LanguageLevel.JDK_1_8) {
             override fun getSdk(): Sdk? {

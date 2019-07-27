@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.util.PsiTreeUtil
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
@@ -32,29 +33,37 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
 
         fun isAtEnd(skipWhitespace: Boolean = true): Boolean {
             val element = pointer!!
-            var start = element.element!!.text.length - 1
-            while (start >= 0 && start !in range && (skipWhitespace && element.element!!.text[start].isWhitespace())) {
-                start--
+            var end = element.element!!.text.length - 1
+            while (end >= 0 && end !in range && (skipWhitespace && element.element!!.text[end].isWhitespace())) {
+                end--
             }
-            return start in range
+            return end in range
         }
 
+
+        /**
+         * Checks if [element] is at the start of typo location in case where [pointer] is ancestor to [element]
+         */
         fun isAtStartOfInnerElement(element: PsiElement): Boolean {
-            // TODO check if element is child of pointer
-            val delta = (element.textRange.startOffset - pointer!!.element!!.textRange.startOffset)
+            require(PsiTreeUtil.isAncestor(pointer!!.element, element, false))
+
+            val delta = (element.textRange.startOffset - pointer.element!!.textRange.startOffset)
             val nrange = IntRange(range.start - delta, range.last - delta)
 
             var start = 0
-            //val element = pointer!!
             while (start < element.text.length && start !in nrange && element.text[start].isWhitespace()) {
                 start++
             }
             return start in nrange
         }
 
+        /**
+         * Checks if [element] is at the end of typo location in case where [pointer] is ancestor to [element]
+         */
         fun isAtEndOfInnerElement(element: PsiElement): Boolean {
-            // TODO check if element is child of pointer
-            val delta = (element.textRange.startOffset - pointer!!.element!!.textRange.startOffset)
+            require(PsiTreeUtil.isAncestor(pointer!!.element, element, false))
+
+            val delta = (element.textRange.startOffset - pointer.element!!.textRange.startOffset)
             val nrange = IntRange(range.start - delta, range.last - delta)
 
             var end = element.text.length - 1
