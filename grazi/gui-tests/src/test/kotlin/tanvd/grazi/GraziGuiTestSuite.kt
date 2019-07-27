@@ -10,5 +10,5 @@ import tanvd.grazi.ide.ui.RulesTreeGuiTest
 import tanvd.grazi.ide.ui.SpellcheckGuiTest
 
 @RunWith(GuiTestSuiteRunner::class)
-@Suite.SuiteClasses(RulesTreeGuiTest::class)
+@Suite.SuiteClasses(RulesTreeGuiTest::class, SpellcheckGuiTest::class)
 class GraziGuiTestSuite : GuiTestSuite()

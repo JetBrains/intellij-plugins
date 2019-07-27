@@ -23,17 +23,25 @@ jobs:
 
   gui-test:
     docker:
-      - image: circleci/openjdk:8-jdk-browsers
+      - image: circleci/openjdk:8-jdk
         environment:
-          DISPLAY: :99
+          DISPLAY: :99.0
     working_directory: ~
     steps:
       - checkout
+      - run:
+          name: Start Xvfb
+          command: sudo Xvfb -ac :99 -screen 0 640x480x8 +extension GLX +iglx +extension RANDR
+          background: true
       - run:
           name: Start GUI tests
           command: ./gradlew :gui-tests:test --stacktrace
       - store_artifacts:
           path: build/gui-tests/reports
+      - store_artifacts:
+            path: build/gui-tests/idea-sandbox/system/log
+      - store_artifacts:
+          path: build/gui-tests/idea-sandbox/system/event-log
       - store_artifacts:
           path: gui-tests/guitest.log
   release:
