@@ -1,0 +1,3 @@
+<template>
+   <vue-component :value="model" @input="model = $event" />
+</template>
