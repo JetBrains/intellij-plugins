@@ -22,24 +22,20 @@ jobs:
           path: build/plugin/reports
 
   gui-test:
-    docker:
-      - image: circleci/openjdk:8-jdk
-        environment:
-          DISPLAY: :99.0
+    machine:
+      enabled: true
+      environment:
+        JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64
     working_directory: ~
     steps:
       - checkout
       - run:
-          name: Start Xvfb
-          command: sudo Xvfb -ac :99 -screen 0 640x480x8 +extension GLX +iglx +extension RANDR
-          background: true
-      - run:
           name: Start GUI tests
-          command: ./gradlew :gui-tests:test --stacktrace
+          command: ./gradlew :gui-tests:test  -Dorg.gradle.java.home=/usr/lib/jvm/java-8-openjdk-amd64 --stacktrace
       - store_artifacts:
           path: build/gui-tests/reports
       - store_artifacts:
-            path: build/gui-tests/idea-sandbox/system/log
+          path: build/gui-tests/idea-sandbox/system/log
       - store_artifacts:
           path: build/gui-tests/idea-sandbox/system/event-log
       - store_artifacts:

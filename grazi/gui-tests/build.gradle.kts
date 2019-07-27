@@ -18,7 +18,7 @@ intellij {
 }
 
 tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx1g")
+    jvmArgs("-Xmx2g")
 
     systemProperties(jbProperties<String>())
 
