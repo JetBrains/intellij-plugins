@@ -22,8 +22,8 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             editor {
                 moveToLine(1)
                 typeText("// text with eror")
-                waitAMoment()
 
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
@@ -33,6 +33,7 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
                 moveToLine(1)
                 typeText("text with eror")
 
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
@@ -46,11 +47,14 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             waitAMoment()
 
             editor {
-                waitAMoment()
+
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
             gitEditor {
+
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake")
             }
 
@@ -64,11 +68,12 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             waitAMoment()
 
             editor {
-                waitAMoment()
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
 
             gitEditor {
+                waitUntilErrorAnalysisFinishes()
                 requireHighlights(HighlightSeverity.INFORMATION, "Typo: In word 'eror'")
             }
         }
