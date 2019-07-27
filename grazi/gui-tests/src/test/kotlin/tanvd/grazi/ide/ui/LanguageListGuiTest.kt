@@ -100,7 +100,7 @@ class LanguageListGuiTest : GraziGuiTestBase() {
 
             remove.requireDisabled()
 
-            langs.forEach {
+            langs.shuffled().take(5).forEach {
                 add.click()
                 popupMenu(it).clickSearchedItem()
             }
