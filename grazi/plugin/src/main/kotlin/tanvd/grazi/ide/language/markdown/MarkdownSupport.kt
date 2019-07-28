@@ -16,6 +16,8 @@ class MarkdownSupport : LanguageSupport() {
     override fun isRelevant(element: PsiElement) = MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element) || MarkdownPsiUtils.isCode(element)
 
     override fun check(element: PsiElement): Set<Typo> {
+        require(isRelevant(element)) { "Got non Markdown header, paragraph or code in MarkdownSupport" }
+
         return GrammarChecker.default.check(listOf(element), indexBasedIgnore = { token, index ->
             val elementInToken = token.findElementAt(index)!!
             !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
