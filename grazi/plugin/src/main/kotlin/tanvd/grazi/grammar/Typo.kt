@@ -42,35 +42,39 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
 
 
         /**
-         * Checks if [element] is at the start of typo location in case where [pointer] is ancestor to [element]
+         * Checks if [element] covers the start of typo location
+         * Assumed that [pointer] at a typo is ancestor to passed [element]
          */
         fun isAtStartOfInnerElement(element: PsiElement): Boolean {
             require(PsiTreeUtil.isAncestor(pointer!!.element, element, false))
 
+            //delta between the element and [pointer] that is ancestor for this element.
             val delta = (element.textRange.startOffset - pointer.element!!.textRange.startOffset)
-            val nrange = IntRange(range.start - delta, range.last - delta)
+            val rangeForElement = IntRange(range.start - delta, range.last - delta)
 
             var start = 0
-            while (start < element.text.length && start !in nrange && element.text[start].isWhitespace()) {
+            while (start < element.text.length && start !in rangeForElement && element.text[start].isWhitespace()) {
                 start++
             }
-            return start in nrange
+            return start in rangeForElement
         }
 
         /**
-         * Checks if [element] is at the end of typo location in case where [pointer] is ancestor to [element]
+         * Checks if [element] covers the end of typo location
+         * Assumed that [pointer] at a typo is ancestor to [element]
          */
         fun isAtEndOfInnerElement(element: PsiElement): Boolean {
             require(PsiTreeUtil.isAncestor(pointer!!.element, element, false))
 
+            //delta between the element and [pointer] that is ancestor for this element.
             val delta = (element.textRange.startOffset - pointer.element!!.textRange.startOffset)
-            val nrange = IntRange(range.start - delta, range.last - delta)
+            val rangeForElement = IntRange(range.start - delta, range.last - delta)
 
             var end = element.text.length - 1
-            while (end >= 0 && end !in nrange && element.text[end].isWhitespace()) {
+            while (end >= 0 && end !in rangeForElement && element.text[end].isWhitespace()) {
                 end--
             }
-            return end in nrange
+            return end in rangeForElement
         }
     }
 
