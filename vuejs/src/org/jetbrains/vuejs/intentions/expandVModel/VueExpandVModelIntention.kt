@@ -11,7 +11,7 @@ import com.intellij.psi.xml.XmlElementType
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 
 class VueExpandVModelIntention : JavaScriptIntention() {
-    override fun getFamilyName(): String = "Expand v-model into :value and @input"
+    override fun getFamilyName(): String = "Expand v-model into :value and @input/@change"
     override fun getText(): String = this.familyName
     private val validModifiers = setOf("lazy", "number", "trim")
 
@@ -44,12 +44,19 @@ class VueExpandVModelIntention : JavaScriptIntention() {
         val isComponent = parentTag.descriptor is VueElementDescriptor
         var assignedValue = if (isComponent) "\$event" else "\$event.target.value"
         var eventName = "@input"
+        var nextNeedsParens = false
         getModifiers(directiveText).forEach {
-            when {
-                it === "trim" -> assignedValue = "$assignedValue.trim()"
-                it == "number" -> assignedValue =
-                        "isNaN(parseFloat($assignedValue)) ? $assignedValue : parseFloat($assignedValue)"
-                it == "lazy" -> eventName = "@change"
+            if (nextNeedsParens) {
+                assignedValue = "($assignedValue)"
+                nextNeedsParens = false
+            }
+            when (it) {
+                "trim" -> assignedValue = "$assignedValue.trim()"
+                "number" -> {
+                    assignedValue = "isNaN(parseFloat($assignedValue)) ? $assignedValue : parseFloat($assignedValue)"
+                    nextNeedsParens = true
+                }
+                "lazy" -> eventName = "@change"
             }
         }
         val modelVariableName = parentAttr.value
