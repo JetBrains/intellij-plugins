@@ -57,6 +57,12 @@ As for languages, Grazi supports (including dialects):
 
 Moreover, Grazi supports *native language based* inspections. It means that if you specify your native language, Grazi will provide you with additional inspections for the language you are writing on.
 
+## Dev versions
+
+You can subscribe to development channel of Grazi plugin to get the latest updates (may be a bit unstable) automatically.
+
+Just add `dev` channel (https://plugins.jetbrains.com/plugins/dev/list) in accordance with [documentation](https://www.jetbrains.com/help/idea/managing-plugins.html)
+
 ## Setup
 
 For local development and testing Gradle is used:
