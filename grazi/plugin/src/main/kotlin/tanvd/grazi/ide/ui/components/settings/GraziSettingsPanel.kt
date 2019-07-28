@@ -31,7 +31,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val ruleLink = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
     private val linkPanel = panel(HorizontalLayout(0)) {
-        border = padding(JBUI.insetsBottom(10))
+        border = padding(JBUI.insetsBottom(7))
         isVisible = false
         name = "GRAZI_LINK_PANEL"
 
@@ -57,7 +57,9 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val rulesTree by lazy {
         GraziRulesTree {
-            smallInfoPane.text = getSmallInfoPaneContent(it)
+            smallInfoPane.text = getSmallInfoPaneContent(it).also {
+                smallInfoPane.isVisible = it.isNotBlank()
+            }
 
             linkPanel.isVisible = getLinkLabelListener(it)?.let { listener ->
                 ruleLink.setListener(listener, null)
@@ -160,7 +162,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
                 panel(MigLayout(createLayoutConstraints().flowY().fillX()), constraint = CC().grow().width("55%")) {
                     border = padding(JBUI.insets(30, 20, 0, 0))
-                    add(smallInfoPane.apply { border = padding(JBUI.insetsBottom(10)) }, CC().grow())
+                    add(smallInfoPane, CC().grow().hideMode(3))
                     add(linkPanel, CC().grow().hideMode(3))
                     add(ScrollPaneFactory.createScrollPane(descriptionPane, SideBorder.NONE), CC().grow().push())
                 }

@@ -11,6 +11,8 @@ import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
+import tanvd.kex.orFalse
+import tanvd.kex.orTrue
 
 private const val MINIMUM_EXAMPLES_SIMILARITY = 0.2
 private val levenshtein = LevenshteinDistance()
@@ -19,11 +21,16 @@ fun CharSequence.isSimilarTo(sequence: CharSequence): Boolean {
     return levenshtein.apply(this, sequence).toDouble() / length < MINIMUM_EXAMPLES_SIMILARITY
 }
 
-fun getSmallInfoPaneContent(it: Any): String {
+fun GraziSettingsPanel.hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()
+
+fun GraziSettingsPanel.getSmallInfoPaneContent(it: Any): String {
     return when (it) {
-        is Rule -> html {
-            unsafe { +msg("grazi.ui.settings.rules.rule.template", it.description, it.category.name) }
-        }
+        is Rule -> if (!hasDescription(it)) html {
+            p {
+                style = "color: gray;"
+                +msg("grazi.ui.settings.rules.no-description")
+            }
+        } else ""
         is Lang -> html {
             unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
         }
@@ -34,14 +41,14 @@ fun getSmallInfoPaneContent(it: Any): String {
     }
 }
 
-fun getLinkLabelListener(it: Any): LinkListener<Any?>? {
+fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
     return when (it) {
         is Rule -> it.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
         else -> null
     }
 }
 
-fun getDescriptionPaneContent(it: Any): String {
+fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
     return when (it) {
         is Rule -> html {
             table {
@@ -72,14 +79,6 @@ fun getDescriptionPaneContent(it: Any): String {
 
                 it.incorrectExamples?.let { examples ->
                     if (examples.isNotEmpty()) {
-                        tr {
-                            td {
-                                colSpan = "2"
-                                style = "padding-bottom: 5px;"
-                                +msg("grazi.ui.settings.rules.rule.examples")
-                            }
-                        }
-
                         val accepted = ArrayList<IncorrectExample>()
                         // remove very similar examples
                         examples.forEach { example ->
