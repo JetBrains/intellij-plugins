@@ -31,7 +31,7 @@ jobs:
       - checkout
       - run:
           name: Start GUI tests
-          command: ./gradlew :gui-tests:test  -Dorg.gradle.java.home=/usr/lib/jvm/java-8-openjdk-amd64 --stacktrace
+          command: ./gradlew :gui-tests:test
       - store_artifacts:
           path: build/gui-tests/reports
       - store_artifacts:
