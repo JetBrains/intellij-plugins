@@ -7,8 +7,10 @@ import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import java.util.*
 
-data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, var enabledInTree: Boolean) {
+data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, var enabledInTree: Boolean) : Comparable<RuleWithLang> {
     val category: Category = rule.category
+
+    override fun compareTo(other: RuleWithLang) = rule.description.compareTo(other.rule.description)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,9 +34,7 @@ data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, va
 data class ComparableCategory(val category: Category) : Comparable<ComparableCategory> {
     val name: String = category.name
 
-    override fun compareTo(other: ComparableCategory): Int {
-        return name.compareTo(other.name)
-    }
+    override fun compareTo(other: ComparableCategory) = name.compareTo(other.name)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -52,14 +52,14 @@ data class ComparableCategory(val category: Category) : Comparable<ComparableCat
     }
 }
 
-typealias RulesMap = Map<Lang, Map<ComparableCategory, List<RuleWithLang>>>
+typealias RulesMap = Map<Lang, Map<ComparableCategory, SortedSet<RuleWithLang>>>
 
 fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
     val state = GraziConfig.get()
 
-    val result = TreeMap<Lang, SortedMap<ComparableCategory, MutableList<RuleWithLang>>>(Comparator.comparing(Lang::displayName))
+    val result = TreeMap<Lang, SortedMap<ComparableCategory, SortedSet<RuleWithLang>>>(Comparator.comparing(Lang::displayName))
     langs.forEach { lang ->
-        val categories = TreeMap<ComparableCategory, MutableList<RuleWithLang>>()
+        val categories = TreeMap<ComparableCategory, SortedSet<RuleWithLang>>()
 
         with(get(lang)) {
             val activeRules = allActiveRules.toSet()
@@ -69,7 +69,7 @@ fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
 
             allRules.distinctBy { it.id }.forEach {
                 if (!it.isDictionaryBasedSpellingRule) {
-                    categories.getOrPut(ComparableCategory(it.category), ::LinkedList).add(RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
+                    categories.getOrPut(ComparableCategory(it.category), ::TreeSet).add(RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
                 }
             }
 
