@@ -10,14 +10,10 @@ import tanvd.grazi.ide.language.LanguageSupport
 
 
 class XmlSupport : LanguageSupport() {
-    private val ignoredCategories = listOf(Typo.Category.CASING, Typo.Category.PUNCTUATION, Typo.Category.GRAMMAR)
-
     override fun isRelevant(element: PsiElement) = element is XmlText || (element is XmlToken && element.tokenType == XML_ATTRIBUTE_VALUE_TOKEN)
 
     override fun check(element: PsiElement): Set<Typo> {
         require(isRelevant(element)) { "Got non XmlText or XML_ATTRIBUTE_VALUE_TOKEN in XmlSupport" }
-        return GrammarChecker.default.check(element).filterNot { typo ->
-            typo.info.category in ignoredCategories && (typo.location.isAtStart() || typo.location.isAtEnd())
-        }.toSet()
+        return GrammarChecker.default.check(element).filterNot { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }.toSet()
     }
 }

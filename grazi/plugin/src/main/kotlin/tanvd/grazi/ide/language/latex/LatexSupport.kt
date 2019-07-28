@@ -9,8 +9,6 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.parents
 
 class LatexSupport : LanguageSupport() {
-    private val ignoredCategories = listOf(Typo.Category.CASING, Typo.Category.PUNCTUATION, Typo.Category.GRAMMAR)
-
     private fun PsiElement.isNotInMathEnvironment(): Boolean {
         return parents().none { it is LatexMathEnvironment }
     }
@@ -25,8 +23,6 @@ class LatexSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is LatexNormalText) { "Got non LatexNormalText in LatexSupport" }
-        return GrammarChecker.default.check(element).filterNot { typo ->
-            typo.info.category in ignoredCategories && (typo.location.isAtStart() || typo.location.isAtEnd())
-        }.toSet()
+        return GrammarChecker.default.check(element).filterNot { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }.toSet()
     }
 }
