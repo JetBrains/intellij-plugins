@@ -140,7 +140,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     val descriptionPanel = JBPanelWithEmptyText(BorderLayout(0, 0)).withEmptyText(msg("grazi.ui.settings.rules.no-description")).also {
                         it.add(descriptionPane)
                     }
-                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE), CC().grow().push())
+                    add(descriptionPanel, CC().grow().push())
                 }
             }
         }
