@@ -21,8 +21,7 @@ import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
+import javax.swing.*
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
@@ -140,7 +139,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     val descriptionPanel = JBPanelWithEmptyText(BorderLayout(0, 0)).withEmptyText(msg("grazi.ui.settings.rules.no-description")).also {
                         it.add(descriptionPane)
                     }
-                    add(descriptionPanel, CC().grow().push())
+                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE).also { it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER }, CC().grow().push())
                 }
             }
         }
