@@ -23,24 +23,6 @@ fun CharSequence.isSimilarTo(sequence: CharSequence): Boolean {
 
 fun GraziSettingsPanel.hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()
 
-fun GraziSettingsPanel.getSmallInfoPaneContent(it: Any): String {
-    return when (it) {
-        is Rule -> if (!hasDescription(it)) html {
-            p {
-                style = "color: gray;"
-                +msg("grazi.ui.settings.rules.no-description")
-            }
-        } else ""
-        is Lang -> html {
-            unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
-        }
-        is ComparableCategory -> html {
-            unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
-        }
-        else -> ""
-    }
-}
-
 fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
     return when (it) {
         is Rule -> it.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
@@ -50,66 +32,74 @@ fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
 
 fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
     return when (it) {
-        is Rule -> html {
-            table {
-                cellpading = "0"
-                cellspacing = "0"
+        is Lang -> html {
+            unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
+        }
+        is ComparableCategory -> html {
+            unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
+        }
+        is Rule -> if (hasDescription(it)) {
+            html {
+                table {
+                    cellpading = "0"
+                    cellspacing = "0"
 
-                LangTool.getRuleLanguages(it.id)?.let { languages ->
-                    if (languages.size > 1) {
-                        tr {
-                            td {
-                                colSpan = "2"
-                                style = "padding-bottom: 10px;"
+                    LangTool.getRuleLanguages(it.id)?.let { languages ->
+                        if (languages.size > 1) {
+                            tr {
+                                td {
+                                    colSpan = "2"
+                                    style = "padding-bottom: 10px;"
 
-                                +msg("grazi.ui.settings.rules.rule.multilanguage.start")
-                                +" "
-                                strong {
-                                    +languages.first().displayName
-                                    languages.drop(1).forEach {
-                                        +", ${it.displayName}"
+                                    +msg("grazi.ui.settings.rules.rule.multilanguage.start")
+                                    +" "
+                                    strong {
+                                        +languages.first().displayName
+                                        languages.drop(1).forEach {
+                                            +", ${it.displayName}"
+                                        }
                                     }
+                                    +" "
+                                    +msg("grazi.ui.settings.rules.rule.multilanguage.end")
                                 }
-                                +" "
-                                +msg("grazi.ui.settings.rules.rule.multilanguage.end")
                             }
                         }
                     }
-                }
 
-                it.incorrectExamples?.let { examples ->
-                    if (examples.isNotEmpty()) {
-                        val accepted = ArrayList<IncorrectExample>()
-                        // remove very similar examples
-                        examples.forEach { example ->
-                            if (accepted.none { it.text.isSimilarTo(example.text) }) {
-                                accepted.add(example)
-                            }
-                        }
-
-                        accepted.forEach { example ->
-                            tr {
-                                td {
-                                    valign = "top"
-                                    style = "padding-bottom: 5px; padding-right: 5px; color: gray;"
-                                    +msg("grazi.ui.settings.rules.rule.incorrect")
-                                }
-                                td {
-                                    style = "padding-bottom: 5px; width: 100%;"
-                                    toIncorrectHtml(example)
+                    it.incorrectExamples?.let { examples ->
+                        if (examples.isNotEmpty()) {
+                            val accepted = ArrayList<IncorrectExample>()
+                            // remove very similar examples
+                            examples.forEach { example ->
+                                if (accepted.none { it.text.isSimilarTo(example.text) }) {
+                                    accepted.add(example)
                                 }
                             }
 
-                            if (example.corrections.any { it.isNotBlank() }) {
+                            accepted.forEach { example ->
                                 tr {
                                     td {
                                         valign = "top"
-                                        style = "padding-bottom: 10px; padding-right: 5px; color: gray;"
-                                        +msg("grazi.ui.settings.rules.rule.correct")
+                                        style = "padding-bottom: 5px; padding-right: 5px; color: gray;"
+                                        +msg("grazi.ui.settings.rules.rule.incorrect")
                                     }
                                     td {
-                                        style = "padding-bottom: 10px; width: 100%;"
-                                        toCorrectHtml(example)
+                                        style = "padding-bottom: 5px; width: 100%;"
+                                        toIncorrectHtml(example)
+                                    }
+                                }
+
+                                if (example.corrections.any { it.isNotBlank() }) {
+                                    tr {
+                                        td {
+                                            valign = "top"
+                                            style = "padding-bottom: 10px; padding-right: 5px; color: gray;"
+                                            +msg("grazi.ui.settings.rules.rule.correct")
+                                        }
+                                        td {
+                                            style = "padding-bottom: 10px; width: 100%;"
+                                            toCorrectHtml(example)
+                                        }
                                     }
                                 }
                             }
@@ -117,7 +107,7 @@ fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
                     }
                 }
             }
-        }
+        } else ""
         else -> ""
     }
 }

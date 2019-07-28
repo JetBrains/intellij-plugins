@@ -5,12 +5,11 @@ import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SideBorder
-import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.*
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.layout.migLayout.createLayoutConstraints
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
@@ -21,8 +20,8 @@ import tanvd.grazi.ide.ui.components.GraziAddDeleteListPanel
 import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
+import java.awt.BorderLayout
 import javax.swing.JComponent
-import javax.swing.JEditorPane
 import javax.swing.JLabel
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
@@ -39,49 +38,23 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         add(JLabel(AllIcons.Ide.External_link_arrow))
     }
 
-    private val smallInfoPane = JEditorPane().apply {
-        editorKit = UIUtil.getHTMLEditorKit()
-        isEditable = false
-        isOpaque = true
-        border = null
-        background = null
-    }
-
-    private val descriptionPane = JEditorPane().apply {
-        editorKit = UIUtil.getHTMLEditorKit()
-        isEditable = false
-        isOpaque = true
-        border = null
-        background = null
-    }
+    private val descriptionPane = pane()
 
     private val rulesTree by lazy {
         GraziRulesTree {
-            smallInfoPane.text = getSmallInfoPaneContent(it).also {
-                smallInfoPane.isVisible = it.isNotBlank()
-            }
-
             linkPanel.isVisible = getLinkLabelListener(it)?.let { listener ->
                 ruleLink.setListener(listener, null)
                 true
             } ?: false
 
-            descriptionPane.text = getDescriptionPaneContent(it)
+            descriptionPane.text = getDescriptionPaneContent(it).also {
+                descriptionPane.isVisible = it.isNotBlank()
+            }
         }
     }
 
     private val adpEnabledLanguages by lazy {
-        GraziAddDeleteListPanel(object : GraziLanguagePanelUpdateListener {
-            override fun onLanguageAdded(lang: Lang) {
-                rulesTree.langs.add(lang)
-                rulesTree.update()
-            }
-
-            override fun onLanguageRemoved(lang: Lang) {
-                rulesTree.langs.remove(lang)
-                rulesTree.update()
-            }
-        })
+        GraziAddDeleteListPanel({ rulesTree.addLang(it) }, { rulesTree.removeLang(it) })
     }
 
     override fun isModified(settings: GraziConfig): Boolean {
@@ -162,9 +135,12 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
                 panel(MigLayout(createLayoutConstraints().flowY().fillX()), constraint = CC().grow().width("55%")) {
                     border = padding(JBUI.insets(30, 20, 0, 0))
-                    add(smallInfoPane, CC().grow().hideMode(3))
                     add(linkPanel, CC().grow().hideMode(3))
-                    add(ScrollPaneFactory.createScrollPane(descriptionPane, SideBorder.NONE), CC().grow().push())
+
+                    val descriptionPanel = JBPanelWithEmptyText(BorderLayout(0, 0)).withEmptyText(msg("grazi.ui.settings.rules.no-description")).also {
+                        it.add(descriptionPane)
+                    }
+                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE), CC().grow().push())
                 }
             }
         }
