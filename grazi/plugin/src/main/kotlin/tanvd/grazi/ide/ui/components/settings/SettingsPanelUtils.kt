@@ -31,14 +31,14 @@ fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
 }
 
 fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
-    return when (it) {
-        is Lang -> html {
+    return when {
+        it is Lang -> html {
             unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
         }
-        is ComparableCategory -> html {
+        it is ComparableCategory -> html {
             unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
         }
-        is Rule -> if (hasDescription(it)) {
+        it is Rule && hasDescription(it) -> {
             html {
                 table {
                     cellpading = "0"
@@ -107,7 +107,7 @@ fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
                     }
                 }
             }
-        } else ""
+        }
         else -> ""
     }
 }
