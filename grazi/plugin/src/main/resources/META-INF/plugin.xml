@@ -21,6 +21,12 @@
     ]]></description>
 
     <change-notes><![CDATA[
+    <h4>2019.1-4</h4>
+    <ul>
+        <li>Fixes for UI</li>
+        <li>Bug fixes for Markdown</li>
+        <li>Performance improvement of XML</li>
+    </ul>
     <h4>2019.1-3</h4>
     <ul>
         <li>Huge performance improvements for all languages</li>
