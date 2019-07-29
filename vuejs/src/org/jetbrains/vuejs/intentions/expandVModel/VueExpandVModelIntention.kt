@@ -16,7 +16,8 @@ class VueExpandVModelIntention : JavaScriptIntention() {
     private val validModifiers = setOf("lazy", "number", "trim")
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        return element.node.elementType == XmlElementType.XML_NAME &&
+        return org.jetbrains.vuejs.index.isVueContext(element) &&
+                element.node.elementType == XmlElementType.XML_NAME &&
                 element.parent?.node?.elementType == XmlElementType.XML_ATTRIBUTE &&
                 isValid(element)
     }
