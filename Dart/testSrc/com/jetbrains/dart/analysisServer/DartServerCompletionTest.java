@@ -205,4 +205,6 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
+
+  public void testConstructorParens() { doTest(); }
 }
