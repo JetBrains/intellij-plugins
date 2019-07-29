@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ide.BrowserUtil;
@@ -36,7 +36,9 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
 
     if (errorMessage != null) {
-      body += DartBundle.message("dart.feedback.error", errorMessage.trim());
+      // The github servers don't like urls longer than 8k chars; we limit our exception text to 5k
+      // in order to stay under the url limit.
+      body += DartBundle.message("dart.feedback.error", limitTextTo(errorMessage, 5 * 1024).trim());
     }
 
     if (serverLog != null) {
@@ -52,6 +54,22 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     }
 
     openBrowserOnFeedbackForm(url + urlEncode(body), project);
+  }
+
+  /**
+   * Return a string that is no longer than the given length.
+   * <p>
+   * If the string is longer than maxLength, return the longest substring of the string that we can,
+   * with a trailing "..." appended to the last line.
+   */
+  @SuppressWarnings("SameParameterValue")
+  private static String limitTextTo(@NotNull String string, int maxLength) {
+    if (string.length() > maxLength) {
+      return StringUtil.trimTrailing(string.substring(0, maxLength - 4)) + "...\n";
+    }
+    else {
+      return string;
+    }
   }
 
   public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
