@@ -23,7 +23,7 @@ public class GherkinStepRenameHandler extends PsiElementRenameHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
+  public void invoke(@NotNull Project project, Editor editor, PsiFile file, @NotNull DataContext dataContext) {
     final GherkinStep step = getGherkinStep(dataContext);
     if (step == null) {
       return;
