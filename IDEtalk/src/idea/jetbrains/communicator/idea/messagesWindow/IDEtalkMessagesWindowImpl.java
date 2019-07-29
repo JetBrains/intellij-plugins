@@ -1,6 +1,4 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.messagesWindow;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -16,6 +14,7 @@ import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.*;
+import com.intellij.util.ui.TimerUtil;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.IDEtalkProperties;
 import jetbrains.communicator.core.Pico;
@@ -40,7 +39,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 
-public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalkMessagesWindow {
+public final class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalkMessagesWindow {
   @NonNls
   public static final String PLACE_TOOLBAR = "MessageWindowToolbar";
 
@@ -282,7 +281,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   private void installIconBlinker(final ToolWindow toolWindow) {
     final LocalMessageDispatcher dispatcher = getLocalDispatcher();
 
-    myIconBlinker = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk icon blinker", UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
+    myIconBlinker = TimerUtil.createNamedTimer("IDETalk icon blinker", UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
     myIconBlinker.start();
   }
 

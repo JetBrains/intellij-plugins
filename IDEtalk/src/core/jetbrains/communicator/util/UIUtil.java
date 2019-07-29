@@ -1,10 +1,9 @@
-/*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package jetbrains.communicator.util;
 
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.util.ui.TimerUtil;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
@@ -118,7 +117,7 @@ public class UIUtil {
   }
 
   public static void requestFocus(final Component c) {
-    Timer timer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk request focus",150, new ActionListener() {
+    Timer timer = TimerUtil.createNamedTimer("IDETalk request focus", 150, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         c.requestFocus();

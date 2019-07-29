@@ -5,6 +5,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.concurrency.EdtExecutorService;
+import com.intellij.util.ui.TimerUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -63,7 +64,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myLocalMessageDispatcher = localMessageDispatcher;
     myUserModel = userModel;
 
-    myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer", 200, new ActionListener() {
+    myTimer4Renderer = TimerUtil.createNamedTimer("IDETalk renderer", 200, new ActionListener() {
       @Override
       public void
       actionPerformed(ActionEvent e) {
