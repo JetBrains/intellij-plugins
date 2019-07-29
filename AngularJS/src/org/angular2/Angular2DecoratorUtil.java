@@ -12,10 +12,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.AstLoadingFilter;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NonNls;
@@ -23,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
@@ -58,6 +61,9 @@ public class Angular2DecoratorUtil {
   @NonNls public static final String TEMPLATE_PROP = "template";
   @NonNls public static final String STYLE_URLS_PROP = "styleUrls";
   @NonNls public static final String STYLES_PROP = "styles";
+
+  private static final Set<String> ANGULAR_RESOLVED_DECS = ContainerUtil.newHashSet(DIRECTIVE_DEC, COMPONENT_DEC, PIPE_DEC, MODULE_DEC,
+                                                                                    VIEW_CHILD_DEC, VIEW_DEC);
 
   public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
@@ -180,17 +186,19 @@ public class Angular2DecoratorUtil {
 
   public static boolean isAngularDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
     String decoratorName = decorator.getDecoratorName();
-    if (decoratorName == null
-        || !contains(decoratorName, names)
-        || !Angular2LangUtil.isAngular2Context(decorator)) {
-      return false;
-    }
-    String importedModuleName = Optional.ofNullable(JSStubBasedPsiTreeUtil.resolveLocally(decoratorName, decorator))
+    return decoratorName != null
+           && contains(decoratorName, names)
+           && Angular2LangUtil.isAngular2Context(decorator)
+           && hasAngularImport(decoratorName, decorator.getContainingFile());
+  }
+
+  private static boolean hasAngularImport(@NotNull String name, @NotNull PsiFile file) {
+    return Optional.ofNullable(JSStubBasedPsiTreeUtil.resolveLocally(name, file))
       .map(element -> getContextOfType(element, ES6ImportDeclaration.class))
       .map(ES6ImportExportDeclaration::getFromClause)
       .map(ES6FromClause::getReferenceText)
       .map(StringUtil::unquoteString)
-      .orElse(null);
-    return ANGULAR_CORE_PACKAGE.equals(importedModuleName);
+      .map(from -> ANGULAR_CORE_PACKAGE.equals(from))
+      .orElse(false);
   }
 }
