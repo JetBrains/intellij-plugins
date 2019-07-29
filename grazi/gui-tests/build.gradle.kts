@@ -1,30 +1,28 @@
 import org.jetbrains.intellij.tasks.*
 import tanvd.grazi.*
 
-group = rootProject.group
-version = rootProject.version
-
 intellij {
     pluginName = "Grazi"
-    version = Versions.intellij
+    version = "2019.2"
     downloadSources = true
-    type = "IC"
+    type = "IС"
 
     updateSinceUntilBuild = false
 
     setPlugins(
-            "org.intellij.plugins.markdown:191.7479.1",
-            "com.intellij.testGuiFramework:0.9.44.1@nightly"
+            "Kotlin",
+            "com.intellij.testGuiFramework:0.10.1@nightly"
     )
+
+    alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
 }
 
 tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx1g")
-
+    jvmArgs("-Xmx2g")
+    println(jbProperties<String>())
     systemProperties(jbProperties<String>())
     args(execArguments())
 }
-
 
 val testsJar = tasks.create("guiTestJar", Jar::class) {
     group = "build"
@@ -37,7 +35,7 @@ val testsJar = tasks.create("guiTestJar", Jar::class) {
 tasks.withType<PrepareSandboxTask> {
     from(testsJar) {
         exclude("testData/*")
-        into("testGuiFramework/lib")
+        into("Test GUI Framework/lib")
     }
 }
 

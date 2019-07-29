@@ -14,14 +14,14 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
     @Test
     fun `test spellcheck checkbox`() {
         simpleProject {
-            openTestFile()
-            waitAMoment()
             enableGit()
+            waitAMoment()
+            openTestFile()
 
             editor {
                 waitAMoment()
                 moveToLine(1)
-                typeText("text with eror")
+                typeText("// text with eror")
 
                 waitAMoment()
                 waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
@@ -29,6 +29,7 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
             }
 
             settings { } // FIXME workaround for check highlights in git dialog
+            settings { }
 
             gitEditor {
                 waitAMoment()
