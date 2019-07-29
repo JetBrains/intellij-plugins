@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.collect.Lists;
@@ -15,18 +16,19 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.*;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartAsyncMarkerFrame;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
+import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceValue;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.*;
+import org.dartlang.vm.service.element.Stack;
 import org.dartlang.vm.service.element.*;
 import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -380,7 +382,7 @@ public class VmServiceWrapper implements Disposable {
         @Override
         public void onError(RPCError error) {
           myDebugProcess.getSession().getConsoleView()
-                        .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
+            .print("Error from drop frame: " + error.getMessage() + "\n", ConsoleViewContentType.ERROR_OUTPUT);
         }
 
         @Override
@@ -545,5 +547,46 @@ public class VmServiceWrapper implements Disposable {
         callback.errorOccurred(error.getMessage());
       }
     });
+  }
+
+  public void callToString(@NotNull final String isolateId,
+                           @NotNull final String targetId,
+                           @NotNull final InvokeConsumer callback) {
+    // For 3.11 and after we use "invoke"; before that, we use "eval";
+    if (supportsInvoke()) {
+      addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));
+    }
+    else {
+      myDebugProcess.getVmServiceWrapper()
+        .evaluateInTargetContext(isolateId, targetId, "toString()", new EvaluateConsumer() {
+          @Override
+          public void onError(RPCError error) {
+            callback.onError(error);
+          }
+
+          @Override
+          public void received(ErrorRef response) {
+            callback.received(response);
+          }
+
+          @Override
+          public void received(InstanceRef response) {
+            callback.received(response);
+          }
+
+          @Override
+          public void received(Sentinel response) {
+            callback.received(response);
+          }
+        });
+    }
+  }
+
+  /**
+   * Return whether the "invoke" call is supported by this connection.
+   */
+  private boolean supportsInvoke() {
+    final Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() >= 3 && version.getMinor() >= 11;
   }
 }

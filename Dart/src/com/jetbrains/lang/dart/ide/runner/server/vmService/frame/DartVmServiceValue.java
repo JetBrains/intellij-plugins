@@ -320,30 +320,32 @@ public class DartVmServiceValue extends XNamedValue {
   }
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
-    myDebugProcess.getVmServiceWrapper()
-      .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toString()", new VmServiceConsumers.EvaluateConsumerWrapper() {
-        @Override
-        public void received(final InstanceRef toStringInstanceRef) {
-          if (toStringInstanceRef.getKind() == InstanceKind.String) {
-            final String string = toStringInstanceRef.getValueAsString();
-            // default toString() implementation returns "Instance of 'ClassName'" - no interest to show
-            if (string.equals("Instance of '" + myInstanceRef.getClassRef().getName() + "'")) {
-              noGoodResult();
-            }
-            else {
-              node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), string, true);
-            }
+    myDebugProcess.getVmServiceWrapper().callToString(myIsolateId, myInstanceRef.getId(), new VmServiceConsumers.InvokeConsumerWrapper() {
+      @Override
+      public void received(final InstanceRef toStringInstanceRef) {
+        if (toStringInstanceRef.getKind() == InstanceKind.String) {
+          String string = toStringInstanceRef.getValueAsString();
+          // default toString() implementation returns "Instance of 'ClassName'" - no interest to show
+          if (string.equals("Instance of '" + myInstanceRef.getClassRef().getName() + "'")) {
+            noGoodResult();
           }
           else {
-            noGoodResult(); // unlikely possible
+            if (toStringInstanceRef.getValueAsStringIsTruncated()) {
+              addFullStringValueEvaluator(node, toStringInstanceRef);
+            }
+            node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), string, true);
           }
         }
-
-        @Override
-        public void noGoodResult() {
-          node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
+        else {
+          noGoodResult(); // unlikely possible
         }
-      });
+      }
+
+      @Override
+      public void noGoodResult() {
+        node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
+      }
+    });
   }
 
   @Override
