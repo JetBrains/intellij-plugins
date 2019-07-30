@@ -7,7 +7,7 @@ version = rootProject.version
 
 intellij {
     pluginName = "Grazi"
-    version = "2019.1.3"
+    version = Versions.intellij
     downloadSources = true
     type = "IU"
 
@@ -28,7 +28,7 @@ intellij {
 }
 
 tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx2g")
+    jvmArgs("-Xmx1g")
 }
 
 tasks.withType<PublishTask> {
