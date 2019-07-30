@@ -11,9 +11,7 @@ import tanvd.grazi.utils.withOffset
 
 class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     override fun isRelevant(element: PsiElement): Boolean {
-        return element is PsiLiteralExpressionImpl &&
-                ((element.literalElementType == JavaTokenType.STRING_LITERAL && element.innerText != null) ||
-                        (element.literalElementType == JavaTokenType.RAW_STRING_LITERAL && element.rawString != null))
+        return element is PsiLiteralExpressionImpl && (element.literalElementType == JavaTokenType.STRING_LITERAL && element.innerText != null)
     }
 
     override fun check(element: PsiElement): Set<Typo> {
@@ -25,18 +23,9 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
                     val typoElement = typo.location.pointer?.element!!
                     val indexStart = typoElement.text.indexOf((typoElement as PsiLiteralExpressionImpl).innerText!!)
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))
-                }
+                }.toSet()
             }
-            JavaTokenType.RAW_STRING_LITERAL -> {
-                GrammarChecker.default.check(element, getText = { it.rawString!! }).map { typo ->
-                    val typoElement = typo.location.pointer?.element!!
-                    val indexStart = typoElement.text.indexOf((typoElement as PsiLiteralExpressionImpl).rawString!!)
-                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexStart)))
-                }
-            }
-            else -> {
-                error("Got non literal JavaTokenType in JStringSupport")
-            }
-        }.toSet()
+            else -> emptySet()
+        }
     }
 }
