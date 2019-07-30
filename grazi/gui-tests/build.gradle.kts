@@ -1,6 +1,9 @@
 import org.jetbrains.intellij.tasks.*
 import tanvd.grazi.*
 
+group = rootProject.group
+version = rootProject.version
+
 intellij {
     pluginName = "Grazi"
     version = "2019.1.3"
