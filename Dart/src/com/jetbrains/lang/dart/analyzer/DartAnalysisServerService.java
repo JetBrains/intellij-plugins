@@ -108,7 +108,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
+  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_SUGGESTION_DETAILS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
@@ -1230,6 +1230,11 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, POSTFIX_INITIALIZATION_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("edit_listPostfixCompletionTemplates() took too long");
+    }
+
     return resultRef.get();
   }
 
@@ -2212,7 +2217,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void registerPostfixCompletionTemplates() {
-    ApplicationManager.getApplication().invokeLater(() -> DartPostfixTemplateProvider.initializeTemplates(this), ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().executeOnPooledThread(() -> DartPostfixTemplateProvider.initializeTemplates(this));
   }
 
   /**
