@@ -3,19 +3,21 @@ package tanvd.grazi.language
 import org.languagetool.rules.Rule
 import tanvd.grazi.utils.safeSubstring
 
+private fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()
+
 enum class LangToolFixes(private val ruleId: String, private val fix: (suggestion: String) -> String) {
     ARTICLE_MISSING("ARTICLE_MISSING", {
         val suggestion = it.replace("\\s+".toRegex(), " ")
         when {
-            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalize()
-            suggestion.startsWith("A") -> "A " + suggestion.safeSubstring(2).decapitalize()
+            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalizeIfNotAbbreviation()
+            suggestion.startsWith("A") -> "A " + suggestion.safeSubstring(2).decapitalizeIfNotAbbreviation()
             else -> suggestion
         }
     }),
     THE_SUPERLATIVE("THE_SUPERLATIVE", {
         val suggestion = it.replace("\\s+".toRegex(), " ")
         when {
-            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalize()
+            suggestion.startsWith("The") -> "The " + suggestion.safeSubstring(4).decapitalizeIfNotAbbreviation()
             else -> suggestion
         }
     });
