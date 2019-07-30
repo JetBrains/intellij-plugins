@@ -29,10 +29,6 @@ intellij {
 
 tasks.withType<RunIdeTask> {
     jvmArgs("-Xmx2g")
-
-    systemProperties(jbProperties<String>())
-
-    args(execArguments())
 }
 
 tasks.withType<PublishTask> {
@@ -41,7 +37,7 @@ tasks.withType<PublishTask> {
     channels(channel)
 }
 
-val langs = setOf("en", "ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
+val langs = setOf("ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
 
 dependencies {
     compileOnly(kotlin("stdlib"))
@@ -49,11 +45,16 @@ dependencies {
     compile("org.languagetool", "languagetool-core", Versions.languageTool) {
         exclude("org.slf4j", "slf4j-api")
     }
-    for (lang in langs) {
-        compile("org.languagetool", "language-$lang", Versions.languageTool) {
-            exclude("org.slf4j", "slf4j-api")
-        }
+
+    compile("org.languagetool", "language-en", Versions.languageTool) {
+        exclude("org.slf4j", "slf4j-api")
     }
+
+//    for (lang in langs) {
+//        testRuntime("org.languagetool", "language-$lang", Versions.languageTool) {
+//            exclude("org.slf4j", "slf4j-api")
+//        }
+//    }
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 

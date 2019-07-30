@@ -25,7 +25,7 @@ import javax.swing.*
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
-    private val cmbNativeLanguage = ComboBox<Lang>(Lang.sortedValues.toTypedArray())
+    private val cmbNativeLanguage = ComboBox<Lang>(Lang.sortedValues().toTypedArray())
 
     private val ruleLink = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
     private val linkPanel = panel(HorizontalLayout(0)) {

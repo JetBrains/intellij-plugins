@@ -1,18 +1,27 @@
 package tanvd.grazi.ide.ui.components
 
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.ui.*
+import com.intellij.util.download.DownloadableFileService
+import com.intellij.util.lang.UrlClassLoader
 import com.intellij.util.ui.EditableModel
 import com.intellij.util.ui.JBUI
+import org.languagetool.Language
+import org.languagetool.Languages
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.ide.ui.components.dsl.padding
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Component
+import java.net.URL
+import java.nio.file.Paths
 import javax.swing.*
 
 class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit, private val onLanguageRemoved: (lang: Lang) -> Unit) :
@@ -23,7 +32,7 @@ class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit,
                     .setToolbarPosition(ActionToolbarPosition.BOTTOM)
                     .setRemoveAction {
                         myList.selectedValuesList.forEach(onLanguageRemoved)
-                        ListUtil.removeSelectedItems<Lang>(myList as JList<Lang>)
+                        ListUtil.removeSelectedItems(myList as JList<Lang>)
                     }
 
     init {
@@ -54,13 +63,36 @@ class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit,
         }
     }
 
-
     override fun findItemToAdd(): Lang? {
-        val langsInList = listItems.toSet()
+        val langsInList = listItems.map { it as Lang }.toSet()
         val menu = JBPopupFactory.getInstance()
-                .createListPopup(object : BaseListPopupStep<Lang>(msg("grazi.ui.settings.language.dialog.title"), Lang.sortedValues.filter { it !in langsInList }) {
+                .createListPopup(object : BaseListPopupStep<Lang>(msg("grazi.ui.settings.language.dialog.title"),
+                        Lang.sortedValues().filter { it !in langsInList }) {
                     override fun onChosen(selectedValue: Lang?, finalChoice: Boolean): PopupStep<*>? {
-                        return doFinalStep { addElement(selectedValue) }
+                        return doFinalStep {
+                            selectedValue?.let { lang ->
+                                val downloader = DownloadableFileService.getInstance();
+                                val description = downloader.createFileDescription(msg("grazi.languages.download.url", lang.shortCode), msg("grazi.languages.download.jar", lang.shortCode))
+                                val result = downloader.createDownloader(listOf(description), "${lang.displayName} language")
+                                        .downloadWithProgress((PluginManager.getPlugin(PluginId.getId(GraziPlugin.id))!!.path.absolutePath + "/lib"),
+                                                null, this@GraziAddDeleteListPanel)
+
+                                if (result != null && result.size > 0) {
+                                    val loader = PluginManager.getPlugin(PluginId.getId(GraziPlugin.id))!!.pluginClassLoader
+                                    with(UrlClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java)) {
+                                        isAccessible = true
+                                        invoke(loader, Paths.get(result[0].first.presentableUrl).toUri().toURL())
+                                    }
+
+                                    with(Languages::class.java.getDeclaredField("dynLanguages")) {
+                                        isAccessible = true
+                                        (get(null) as MutableList<Language>).add(lang.jLanguage)
+                                    }
+
+                                    addElement(lang)
+                                }
+                            }
+                        }
                     }
                 })
 
