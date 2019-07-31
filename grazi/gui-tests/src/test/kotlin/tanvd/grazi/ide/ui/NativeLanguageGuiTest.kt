@@ -42,6 +42,7 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                 typeText("I love a baton")
 
                 waitAMoment()
+                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "baton &rarr; loafЗначение омонимов: baton")
             }
 
