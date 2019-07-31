@@ -2,8 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
-import com.intellij.lang.javascript.modules.NodeModuleUtil
-import com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -18,8 +16,9 @@ import org.jetbrains.vuejs.index.VUETIFY
 import org.jetbrains.vuejs.model.*
 
 class VueSourcePlugin private constructor(override val components: Map<String, VueComponent>,
-                                          override val source: PsiElement,
-                                          override val moduleName: String?) : VuePlugin {
+                                          override val source: PsiElement) : VuePlugin {
+
+  override val moduleName: String? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val directives: Map<String, VueDirective> = emptyMap()
@@ -46,9 +45,7 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
             .into(mutableMapOf())
 
           CachedValueProvider.Result(if (result.isEmpty()) null
-                                     else VueSourcePlugin(result, psiDirectory,
-                                                          directoryFile.findChild(PACKAGE_JSON)
-                                                            ?.let { NodeModuleUtil.inferNodeModulePackageName(it)}),
+                                     else VueSourcePlugin(result, psiDirectory),
                                      NodeModulesDirectoryManager.getInstance(psiDirectory.project).nodeModulesDirChangeTracker,
                                      psiDirectory)
         }

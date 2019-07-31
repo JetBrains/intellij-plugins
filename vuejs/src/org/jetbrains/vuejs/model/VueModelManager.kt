@@ -14,9 +14,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -38,13 +36,7 @@ class VueModelManager {
   companion object {
 
     fun getGlobal(context: PsiElement): VueGlobal? {
-      return getGlobal(context.project)
-    }
-
-    fun getGlobal(project: Project): VueGlobal? {
-      return CachedValuesManager.getManager(project).getCachedValue(project) {
-        CachedValueProvider.Result.create(VueSourceGlobal(project), ModificationTracker.NEVER_CHANGED)
-      }
+      return VueGlobalImpl.get(context)
     }
 
     fun findEnclosingContainer(templateElement: PsiElement): VueEntitiesContainer? {

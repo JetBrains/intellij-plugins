@@ -1176,6 +1176,7 @@ $script""")
   }
 
   fun testEventsAfterAt() {
+    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"^1.0.0\"")
     myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
     myFixture.configureByText("foo.vue", "<template> <BAlert @<caret> </template>")
     myFixture.completeBasic()
@@ -1488,6 +1489,7 @@ $script""")
   }
 
   fun testCompletionPriorityAndHints() {
+    createPackageJsonWithVueDependency(myFixture, """"vuetify": "0.0.0", "@shards/vue": "0.0.0"""")
     myFixture.copyDirectoryToProject("hierarchy", ".")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
     myFixture.copyDirectoryToProject("../libs/shards-vue/node_modules/shards-vue", "./node_modules/@shards/vue")
@@ -1503,6 +1505,7 @@ $script""")
   }
 
   fun testCompletionPriorityAndHintsBuiltInTags() {
+    createPackageJsonWithVueDependency(myFixture, "")
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1518,6 +1521,7 @@ $script""")
   }
 
   fun testDirectiveCompletionOnComponent() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"^1.0.0\"")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_137/node_modules", "./node_modules")
     myFixture.configureByText("a-component.vue", """
       <template>
@@ -1549,6 +1553,7 @@ $script""")
   }
 
   fun testBindProposalsPriority() {
+    createPackageJsonWithVueDependency(myFixture, """"vuetify": "0.0.0"""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1569,6 +1574,7 @@ $script""")
   }
 
   fun testAttributeNamePriority() {
+    createPackageJsonWithVueDependency(myFixture, """"vuetify": "0.0.0"""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1613,6 +1619,27 @@ $script""")
     myFixture.configureByFile(getTestName(false) + ".vue")
     myFixture.completeBasic()
     assertStartsWith(myFixture.lookupElements!!, "first", "last")
+  }
+
+  fun testWebTypesComplexSetup() {
+    myFixture.copyDirectoryToProject("web-types", ".")
+    listOf(Triple("root.vue",
+                  listOf("root", "root-pkg", "foo1-pkg"),
+                  listOf("bar1-pkg", "root-sibling", "sub1", "sub2", "foo2-pkg")),
+
+           Triple("sub1/sub1.vue",
+                  listOf("sub1", "su1a", "foo1-pkg", "foo2-pkg"),
+                  listOf("root", "root-pkg", "root-sibling", "sub2")),
+
+           Triple("sub2/sub2.vue",
+                  listOf("sub2", "sub2-pkg", "foo1-pkg", "bar1-pkg"),
+                  listOf("root", "root-pkg", "root-sibling", "sub1", "foo2-pkg")))
+      .forEach { (fileName, expected, notExpected) ->
+        myFixture.configureFromTempProjectFile(fileName)
+        myFixture.completeBasic()
+        assertContainsElements(myFixture.lookupElementStrings!!, expected)
+        assertDoesntContain(myFixture.lookupElementStrings!!, notExpected)
+      }
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
