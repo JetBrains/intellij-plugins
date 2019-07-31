@@ -31,6 +31,11 @@ public class DartParameterDescription {
     return result;
   }
 
+  @NotNull
+  public String getText() {
+    return myText;
+  }
+
   @Override
   public String toString() {
     return myText;

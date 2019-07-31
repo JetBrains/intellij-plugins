@@ -25,6 +25,8 @@ import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.ide.index.*;
 import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
+import com.jetbrains.lang.dart.ide.info.DartOptionalParameterDescription;
+import com.jetbrains.lang.dart.ide.info.DartParameterDescription;
 import com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass;
@@ -717,7 +719,7 @@ public class DartResolveUtil {
         parentElement.getParent().getParent() instanceof DartFunctionExpression &&
         parentElement.getParent().getParent().getParent() instanceof DartArgumentList) {
       final int parameterIndex = getParameterIndex(parentElement, ((DartFormalParameterList)parentElement.getParent()));
-      final int argumentIndex = getArgumentIndex(parentElement.getParent().getParent());
+      final int argumentIndex = getArgumentIndex(parentElement.getParent().getParent(), null);
       final DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class);
       final DartReference callReference = callExpression == null ? null : (DartReference)callExpression.getExpression();
       final PsiElement target = callReference == null ? null : callReference.resolve();
@@ -805,15 +807,16 @@ public class DartResolveUtil {
     return finalResult == null ? DartClassResolveResult.EMPTY : finalResult;
   }
 
-  public static int getArgumentIndex(PsiElement place) {
+  public static int getArgumentIndex(PsiElement place, @Nullable DartFunctionDescription functionDescription) {
     int parameterIndex = -1;
     final DartArgumentList argumentList = PsiTreeUtil.getParentOfType(place, DartArgumentList.class, false);
+    String selectedArgumentName = null;
     if (place == argumentList) {
       assert argumentList != null;
-      final DartFunctionDescription functionDescription =
+      final DartFunctionDescription functionDescription2 =
         DartFunctionDescription.tryGetDescription((DartCallExpression)argumentList.getParent());
       // the last one
-      parameterIndex = functionDescription == null ? -1 : functionDescription.getParameters().length - 1;
+      parameterIndex = functionDescription2 == null ? -1 : functionDescription2.getParameters().length - 1;
     }
     else if (argumentList != null) {
       final SmartList<DartPsiCompositeElement> allArguments = new SmartList<>();
@@ -822,6 +825,9 @@ public class DartResolveUtil {
       for (DartPsiCompositeElement expression : allArguments) {
         ++parameterIndex;
         if (expression.getTextRange().getEndOffset() >= place.getTextRange().getStartOffset()) {
+          if (expression instanceof DartNamedArgument) {
+            selectedArgumentName = ((DartNamedArgument)expression).getParameterReferenceExpression().getText();
+          }
           break;
         }
       }
@@ -841,6 +847,18 @@ public class DartResolveUtil {
       // foo(<caret>), new Foo(<caret>) or @Foo(<caret>)
       parameterIndex = 0;
     }
+
+    if (functionDescription != null && selectedArgumentName != null) {
+      final DartParameterDescription[] dartParameterDescriptions = functionDescription.getParameters();
+      final DartOptionalParameterDescription[] dartOptionalParameterDescriptions = functionDescription.getOptionalParameters();
+
+      for (int i = 0; i < dartOptionalParameterDescriptions.length; i++) {
+        if (dartOptionalParameterDescriptions[i].getText().contains(selectedArgumentName)) {
+          return dartParameterDescriptions.length + i;
+        }
+      }
+    }
+
     return parameterIndex;
   }
 

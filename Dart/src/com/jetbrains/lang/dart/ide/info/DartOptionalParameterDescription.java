@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DartOptionalParameterDescription {
+  @NotNull
   private final String myText;
   @Nullable
   private final String myValue;
@@ -54,6 +55,11 @@ public class DartOptionalParameterDescription {
 
     final PsiElement firstChild = formalParameters.getFirstChild();
     return firstChild != null && "[".equals(firstChild.getText());
+  }
+
+  @NotNull
+  public String getText() {
+    return myText;
   }
 
   @Override

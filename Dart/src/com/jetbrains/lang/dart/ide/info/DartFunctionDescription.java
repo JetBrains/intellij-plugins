@@ -38,6 +38,11 @@ public class DartFunctionDescription {
     return myParameters;
   }
 
+  @NotNull
+  public DartOptionalParameterDescription[] getOptionalParameters() {
+    return myOptionalParameters;
+  }
+
   public String getParametersListPresentableText() {
     final StringBuilder result = new StringBuilder();
     for (DartParameterDescription parameterDescription : myParameters) {
