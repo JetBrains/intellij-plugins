@@ -46,7 +46,7 @@ abstract class GraziGuiTestBase : GuiTestCase() {
 
     fun IdeFrameFixture.openTestFile() {
         projectView {
-            path("SimpleProject", "src", "Main.kt").doubleClick()
+            path("SimpleProject", "src", "Main.md").doubleClick()
         }
     }
 

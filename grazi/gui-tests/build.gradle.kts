@@ -14,10 +14,9 @@ intellij {
 
     setPlugins(
             "Kotlin",
+            "org.intellij.plugins.markdown:191.7479.1",
             "com.intellij.testGuiFramework:0.9.44.1@nightly"
     )
-
-    alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
 }
 
 tasks.withType<RunIdeTask> {
@@ -37,11 +36,6 @@ val testsJar = tasks.create("guiTestJar", Jar::class) {
 }
 
 tasks.withType<PrepareSandboxTask> {
-    from(_sourceSets["test"].resources) {
-        exclude("META-INF")
-        into("testGuiFramework/lib")
-    }
-
     from(testsJar) {
         exclude("testData/*")
         into("testGuiFramework/lib")

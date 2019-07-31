@@ -46,14 +46,12 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                 assert(tree.path("Russian").hasPath())
             }
 
-
             openTestFile()
-
             editor {
                 waitAMoment()
                 moveToLine(1)
-                typeText("// Сдесь два ошибка.\n")
-                typeText("// It are eror")
+                typeText(" Сдесь два ошибка.\n\n") // FIXME space in the beginning is needed for printing first word
+                typeText("It are eror")
 
                 waitAMoment()
                 waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 4)

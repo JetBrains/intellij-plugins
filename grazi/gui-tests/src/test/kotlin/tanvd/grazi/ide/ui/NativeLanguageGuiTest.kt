@@ -40,7 +40,7 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
             editor {
                 waitAMoment()
                 moveToLine(1)
-                typeText("// I love a baton")
+                typeText("I love a baton")
 
                 waitAMoment()
                 waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
