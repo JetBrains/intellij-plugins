@@ -16,8 +16,8 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
         simpleProject {
             waitAMoment()
 
-            openTestFile()
             enableGit()
+            openTestFile()
 
             editor {
                 waitAMoment()

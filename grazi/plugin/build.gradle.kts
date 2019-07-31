@@ -23,8 +23,6 @@ intellij {
             "JavaScriptLanguage",
             "properties"
     )
-
-    alternativeIdePath = System.getProperty("idea.gui.test.alternativeIdePath")
 }
 
 tasks.withType<RunIdeTask> {
