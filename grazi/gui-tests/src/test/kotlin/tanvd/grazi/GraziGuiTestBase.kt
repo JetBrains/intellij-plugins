@@ -8,7 +8,7 @@ import com.intellij.ui.SearchTextField
 import org.fest.swing.fixture.JTextComponentFixture
 import org.fest.swing.timing.Timeout
 
-abstract class GraziGuiTestBase : GuiTestCase() {
+abstract class GraziGuiTestBase : GuiTestCase(false) {
     companion object {
         val langs = listOf("Chinese", "Dutch", "English (Canadian)", "English (GB)", "English (US)",
                 "French", "German (Austria)", "German (Germany)", "Greek", "Italian", "Japanese", "Persian", "Polish",
