@@ -18,6 +18,7 @@ import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
+import com.jetbrains.cidr.xcode.model.XCBuildSettings;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     String title = "Show in Reveal";
 
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : XCBuildSettings.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
 
     File lib = null;
     boolean compatible = false;
