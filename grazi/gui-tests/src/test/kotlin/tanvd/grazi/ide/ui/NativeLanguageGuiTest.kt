@@ -17,7 +17,6 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
             with(combobox("Native language:")) {
                 val lang = "English (US)"
                 assertEquals(lang, selectedItem())
-                //assertEquals(langs, listItems())
 
                 with(jTree(lang)) {
                     assert(path(lang, "False friends").hasPath())
@@ -43,7 +42,6 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                 typeText("I love a baton")
 
                 waitAMoment()
-                //waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
                 requireHighlights(HighlightSeverity.INFORMATION, "baton &rarr; loafЗначение омонимов: baton")
             }
 
