@@ -21,7 +21,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
                                final boolean staticContext,
                                @NotNull final PsiElement anchorParent) {
     template.addTextSegment("public ");
-    template.addTextSegment(VAR_STATEMENT_START);
+    template.addTextSegment("var ");
     template.addTextSegment(myReferencedName);
     template.addEndVariable();
     template.addTextSegment(":");
