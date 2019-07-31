@@ -13,7 +13,6 @@ intellij {
     updateSinceUntilBuild = false
 
     setPlugins(
-            "Kotlin",
             "org.intellij.plugins.markdown:191.7479.1",
             "com.intellij.testGuiFramework:0.9.44.1@nightly"
     )
