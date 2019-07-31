@@ -3,106 +3,47 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.search.GlobalSearchScopesCore
+import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.MultiMap
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.getSearchScope
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 
-class VueSourceGlobal(override val project: Project) : VueGlobal {
+class VueSourceGlobal(override val project: Project, private val packageJson: VirtualFile?) : VueGlobal {
 
+  override val global: VueGlobal = this
+  override val plugins: List<VuePlugin> = emptyList()
   override val source: PsiElement? = null
   override val parents: List<VueEntitiesContainer> = emptyList()
-  override val global = this
 
   override val directives: Map<String, VueDirective>
-    get() {
-      return project.let { project ->
-        CachedValuesManager.getManager(project).getCachedValue(project) {
-          val result = StreamEx.of(getForAllKeys(getSearchScope(project), VueGlobalDirectivesIndex.KEY))
-            .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) })
-            // TODO properly support multiple directives with the same name
-            .distinctKeys()
-            .toMap()
-
-          CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
-        }
-      }
+    get() = getCachedValue { searchScope ->
+      StreamEx.of(getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY))
+        .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) })
+        // TODO properly support multiple directives with the same name
+        .distinctKeys()
+        .toMap()
     }
   override val filters: Map<String, VueFilter> = emptyMap()
 
   override val apps: List<VueApp>
-    get() {
-      return project.let { project ->
-        CachedValuesManager.getManager(project).getCachedValue(project) {
-          CachedValueProvider.Result.create(buildAppsList(getSearchScope(project)),
-                                            PsiModificationTracker.MODIFICATION_COUNT)
-        }
-      }
-    }
+    get() = getCachedValue { buildAppsList(it) }
   override val mixins: List<VueMixin>
-    get() {
-      return project.let { project ->
-        CachedValuesManager.getManager(project).getCachedValue(project) {
-          CachedValueProvider.Result.create(buildMixinsList(getSearchScope(project)),
-                                            PsiModificationTracker.MODIFICATION_COUNT)
-        }
-      }
-    }
+    get() = getCachedValue { buildMixinsList(it) }
 
   override val components: Map<String, VueComponent>
     get() {
       return getComponents(true)
     }
-
-  override val plugins: List<VuePlugin>
-    get() {
-      return VueWebTypesRegistry.getInstance().getVuePlugins(project)
-    }
-
-  fun getComponents(global: Boolean): Map<String, VueComponent> {
-    return project.let { project ->
-      CachedValuesManager.getManager(project).getCachedValue(project) {
-        val componentsData = VueComponentsCalculation.calculateScopeComponents(getSearchScope(project), false)
-
-        val moduleComponents = componentsData.map
-
-        val localComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
-          .filterValues { !it.second }
-          .mapValues { VueModelManager.getComponent(it.first) }
-          .nonNullValues()
-          // TODO properly support multiple components with the same name
-          .distinctKeys()
-          .into(mutableMapOf())
-
-        val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
-          .filterValues { it.second }
-          .mapValues { VueModelManager.getComponent(it.first) }
-          .nonNullValues()
-          // TODO properly support multiple components with the same name
-          .distinctKeys()
-          .into(mutableMapOf())
-
-        componentsData.libCompResolveMap.forEach { (alias, target) ->
-          localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
-          globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
-        }
-
-        CachedValueProvider.Result.create(
-          mapOf(Pair(true, globalComponents),
-                Pair(false, localComponents)),
-          PsiModificationTracker.MODIFICATION_COUNT)
-      }[global] ?: emptyMap()
-    }
-  }
 
   override val unregistered: VueEntitiesContainer = object : VueEntitiesContainer {
     override val components: Map<String, VueComponent>
@@ -114,6 +55,66 @@ class VueSourceGlobal(override val project: Project) : VueGlobal {
     override val mixins: List<VueMixin> get() = emptyList()
     override val source: PsiElement? = null
     override val parents: List<VueEntitiesContainer> = emptyList()
+  }
+
+  override fun equals(other: Any?): Boolean {
+    return (other as? VueSourceGlobal)?.let {
+      it.project == project && it.packageJson == packageJson
+    } ?: false
+  }
+
+  override fun hashCode(): Int {
+    return (project.hashCode()) * 31 + packageJson.hashCode()
+  }
+
+  private fun getComponents(global: Boolean): Map<String, VueComponent> {
+    return getCachedValue { scope ->
+      val componentsData = VueComponentsCalculation.calculateScopeComponents(scope, false)
+
+      val moduleComponents = componentsData.map
+
+      val localComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
+        .filterValues { !it.second }
+        .mapValues { VueModelManager.getComponent(it.first) }
+        .nonNullValues()
+        // TODO properly support multiple components with the same name
+        .distinctKeys()
+        .into(mutableMapOf())
+
+      val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
+        .filterValues { it.second }
+        .mapValues { VueModelManager.getComponent(it.first) }
+        .nonNullValues()
+        // TODO properly support multiple components with the same name
+        .distinctKeys()
+        .into(mutableMapOf())
+
+      componentsData.libCompResolveMap.forEach { (alias, target) ->
+        localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
+        globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
+      }
+
+      mapOf(Pair(true, globalComponents),
+            Pair(false, localComponents))
+    }[global] ?: emptyMap()
+  }
+
+  private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
+    val psiFile: PsiFile? = packageJson?.let {
+      PsiManager.getInstance(project).findFile(it)
+    }
+    val searchScope = psiFile?.parent
+                        ?.let {
+                          GlobalSearchScopesCore.directoryScope(it, true)
+                            .intersectWith(GlobalSearchScope.projectScope(project))
+                        }
+                      ?: GlobalSearchScope.projectScope(project)
+    val manager = CachedValuesManager.getManager(project)
+    return CachedValuesManager.getManager(project).getCachedValue(
+      psiFile ?: project,
+      manager.getKeyForClass(provider::class.java),
+      { Result.create(provider(searchScope), PsiModificationTracker.MODIFICATION_COUNT) },
+      false)
   }
 
   companion object {
@@ -136,36 +137,5 @@ class VueSourceGlobal(override val project: Project) : VueGlobal {
         .filter { it.element != null }
         .toList()
     }
-
-    fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> {
-      val global = scopeElement.global ?: return emptyList()
-      return getElementToParentMap(global.project).get(scopeElement).toList()
-    }
-
-    private fun getElementToParentMap(project: Project): MultiMap<VueScopeElement, VueEntitiesContainer> {
-      return CachedValuesManager.getManager(project).getCachedValue(project) {
-        CachedValueProvider.Result.create(buildElementToParentMap(project),
-                                          PsiModificationTracker.MODIFICATION_COUNT)
-      }
-    }
-
-    private fun buildElementToParentMap(project: Project): MultiMap<VueScopeElement, VueEntitiesContainer> {
-      val global = VueModelManager.getGlobal(project) ?: return MultiMap.empty()
-
-      val result = MultiMap<VueScopeElement, VueEntitiesContainer>()
-      StreamEx.of<VueEntitiesContainer>(global)
-        .append(global.plugins)
-        .append(global.apps)
-        .forEach { container ->
-          StreamEx.of(container.components.values,
-                      container.directives.values,
-                      container.filters.values,
-                      container.mixins)
-            .flatMap(Collection<VueScopeElement>::stream)
-            .forEach { el -> result.putValue(el, container) }
-        }
-      return result
-    }
-
   }
 }

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "foo1": "0.0.0",
+    "bar1": "0.0.0"
+  },
+  "web-types": "./web-types.json"
+}

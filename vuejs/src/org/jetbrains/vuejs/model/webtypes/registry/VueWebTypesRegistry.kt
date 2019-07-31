@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.intellij.javaee.ExternalResourceManager
+import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.javascript.nodejs.packageJson.NpmRegistryService
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -19,22 +19,16 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.search.FilenameIndex
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.ParameterizedCachedValue
-import com.intellij.psi.util.ParameterizedCachedValueProvider
+import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.util.text.SemVer
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
 import org.jdom.Element
+import org.jetbrains.vuejs.model.VueGlobal
 import org.jetbrains.vuejs.model.VuePlugin
-import org.jetbrains.vuejs.model.source.VueSourcePlugin
+import org.jetbrains.vuejs.model.webtypes.VueWebTypesGlobal
 import org.jetbrains.vuejs.model.webtypes.VueWebTypesPlugin
 import org.jetbrains.vuejs.model.webtypes.json.WebTypes
 import java.io.IOException
@@ -49,6 +43,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   companion object {
     private val LOG = Logger.getInstance(VueWebTypesRegistry::class.java)
+
     const val PACKAGE_PREFIX = "@web-types"
 
     internal val STATE_UPDATE_INTERVAL = TimeUnit.MINUTES.toNanos(10)
@@ -61,13 +56,36 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     internal val NON_EDT_TIMEOUT = TimeUnit.SECONDS.toNanos(10)
     internal val NON_EDT_RETRY_INTERVAL = TimeUnit.MINUTES.toNanos(1)
 
-    private val PLUGINS_CACHE_KEY: Key<ParameterizedCachedValue<List<VuePlugin>, Pair<State, ModificationTracker>>> = Key(
-      "vue.web-types.plugins")
+    val MODIFICATION_TRACKER = ModificationTracker { instance.myStateTimestamp }
 
-    fun getInstance(): VueWebTypesRegistry {
-      return ServiceManager.getService(VueWebTypesRegistry::class.java)
+    val instance: VueWebTypesRegistry get() = ServiceManager.getService(VueWebTypesRegistry::class.java)
+
+    fun createWebTypesGlobal(project: Project, packageJsonFile: VirtualFile, owner: VueGlobal): Result<VueGlobal>? =
+      loadWebTypes(packageJsonFile)?.let { (webTypes, file) ->
+        Result.create(VueWebTypesGlobal(project, packageJsonFile, webTypes, owner), packageJsonFile, file)
+      }
+
+    fun createWebTypesPlugin(project: Project, packageJsonFile: VirtualFile, owner: VuePlugin): Result<VuePlugin>? {
+      val data = PackageJsonUtil.getOrCreateData(packageJsonFile)
+      loadWebTypes(packageJsonFile, data)?.let { (webTypes, file) ->
+        return Result.create(VueWebTypesPlugin(project, packageJsonFile, webTypes, owner),
+                             packageJsonFile, file, MODIFICATION_TRACKER)
+      }
+      return instance.getWebTypesPlugin(project, packageJsonFile, data, owner)
     }
 
+    private fun loadWebTypes(packageJsonFile: VirtualFile,
+                             packageJson: PackageJsonData = PackageJsonUtil.getOrCreateData(packageJsonFile))
+      : Pair<WebTypes, VirtualFile>? {
+      val webTypesFile = packageJson.webTypes?.let {
+        packageJsonFile.parent?.findFileByRelativePath(it)
+      }
+      return webTypesFile?.inputStream?.let {
+        Pair(createObjectMapper().readValue(it, WebTypes::class.java), webTypesFile)
+      }
+    }
+
+    private fun createObjectMapper() = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   }
 
   private var myStateLock = Object()
@@ -77,11 +95,11 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   private var myStateTimestamp = 0L
   private var myStateUpdate: FutureResultProvider<Boolean>? = null
 
-  private var myPluginLoadMap = HashMap<String, FutureResultProvider<VuePlugin>>()
+  private var myPluginLoadMap = HashMap<String, FutureResultProvider<WebTypes>>()
   private var myPluginCache = CacheBuilder.newBuilder()
     .maximumSize(20)
     .expireAfterAccess(30, TimeUnit.MINUTES)
-    .build(CacheLoader.from(this::buildPlugin))
+    .build(CacheLoader.from(this::buildPackageWebTypes))
 
   override fun getState(): Element {
     synchronized(myState) {
@@ -96,58 +114,28 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     }
   }
 
-  fun getVuePlugins(project: Project): List<VuePlugin> {
+  private fun getWebTypesPlugin(project: Project,
+                                packageJsonFile: VirtualFile,
+                                packageJson: PackageJsonData,
+                                owner: VuePlugin): Result<VuePlugin>? {
     return processState { state, tracker ->
-      CachedValuesManager.getManager(project)
-        .getParameterizedCachedValue(project, PLUGINS_CACHE_KEY, ParameterizedCachedValueProvider { params ->
-          @Suppress("UNCHECKED_CAST")
-          val result: List<VuePlugin> =
-            StreamEx.of(
-              FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME,
-                                                  GlobalSearchScope.allScope(project)))
-              .filter { JSLibraryUtil.isProbableLibraryFile(it) && isVueLibrary(it) }
-              .map { getWebTypesPlugin(params.first, it) ?: VueSourcePlugin.create(project, it) }
-              .nonNull()
-              .toList() as List<VuePlugin>
+      val webTypesPackageName = packageJson.name!!.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+      val versions = state.availableVersions["@web-types/$webTypesPackageName"]
+      if (versions == null || versions.isEmpty()) return@processState null
 
-          CachedValueProvider.Result.create(result, params.second,
-                                            VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
-        }, false, Pair(state, tracker))
+      val pkgVersion = packageJson.version
+
+      val webTypesVersionEntry = versions.entries.find {
+        pkgVersion == null || it.key <= pkgVersion
+      } ?: return@processState null
+
+      return@processState loadPackageWebTypes(webTypesVersionEntry.value)
+        ?.let { VueWebTypesPlugin(project, packageJsonFile, it, owner) }
+        ?.let { Result.create(it, tracker, packageJsonFile) }
     }
   }
 
-  private fun isVueLibrary(it: VirtualFile): Boolean {
-    val data = PackageJsonUtil.getOrCreateData(it)
-    return data.name == "vue"
-           || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
-  }
-
-  private fun getWebTypesPlugin(state: State, packageJsonFile: VirtualFile): VuePlugin? {
-    val packageJson = PackageJsonUtil.getOrCreateData(packageJsonFile)
-
-    packageJson.name ?: return null
-
-    // Check if there is plugin local web-types definition
-    packageJson.webTypes?.let {
-      packageJsonFile.parent?.findFileByRelativePath(it)
-    }?.inputStream?.let {
-      return VueWebTypesPlugin(createObjectMapper().readValue(it, WebTypes::class.java))
-    }
-
-    val webTypesPackageName = packageJson.name!!.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
-    val versions = state.availableVersions["@web-types/$webTypesPackageName"]
-    if (versions == null || versions.isEmpty()) return null
-
-    val pkgVersion = packageJson.version
-
-    val webTypesVersionEntry = versions.entries.find {
-      pkgVersion == null || it.key <= pkgVersion
-    } ?: return null
-
-    return loadWebTypesPlugin(webTypesVersionEntry.value)
-  }
-
-  private fun loadWebTypesPlugin(tarballUrl: String): VuePlugin? {
+  private fun loadPackageWebTypes(tarballUrl: String): WebTypes? {
     synchronized(myPluginLoadMap) {
       myPluginCache.getIfPresent(tarballUrl)?.let { return it }
       myPluginLoadMap.computeIfAbsent(tarballUrl) {
@@ -165,14 +153,12 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     ?: return null
   }
 
-  private fun buildPlugin(tarballUrl: String?): VuePlugin? {
+  private fun buildPackageWebTypes(tarballUrl: String?): WebTypes? {
     tarballUrl ?: return null
     val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
     incStateVersion()
-    return VueWebTypesPlugin(webTypesJson)
+    return webTypesJson
   }
-
-  private fun createObjectMapper() = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
   private fun <T> processState(processor: (State, ModificationTracker) -> T): T {
     val state: State
@@ -300,13 +286,13 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     }
   }
 
-  inner class StateModificationTracker(private val stateVersion: Int) : ModificationTracker {
+  private inner class StateModificationTracker(private val stateVersion: Int) : ModificationTracker {
     override fun getModificationCount(): Long {
       return if (stateVersion != myStateVersion) -1 else 0
     }
   }
 
-  class FutureResultProvider<T>(private val operation: Callable<T>) {
+  private class FutureResultProvider<T>(private val operation: Callable<T>) {
     private val myLock = Object()
     private var myFuture: Future<*>? = null
     private var myRetryTime = 0L
