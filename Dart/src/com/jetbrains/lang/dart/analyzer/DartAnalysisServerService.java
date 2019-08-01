@@ -32,6 +32,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -717,7 +718,8 @@ public class DartAnalysisServerService implements Disposable {
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
+        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) ||
+            FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
           DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
         }
 
