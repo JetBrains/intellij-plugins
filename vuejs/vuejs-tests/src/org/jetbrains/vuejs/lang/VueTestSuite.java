@@ -32,6 +32,7 @@ import org.junit.runners.Suite;
   VueInjectionTest.class,
   VueHighlightingTest.class,
   VueFormatterTest.class,
+  VueRearrangerTest.class,
   VueExtractComponentTest.class,
   VueDocumentationTest.class,
   VueCreateTsVariableTest.class,
