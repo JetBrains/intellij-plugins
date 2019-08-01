@@ -22,6 +22,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.getEditor;
 import static com.intellij.lang.javascript.validation.fixes.BaseCreateFix.navigate;
@@ -40,7 +41,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
     assert psiElement instanceof XmlAttribute;
 
     final XmlTag tag = (XmlTag)psiElement.getParent();

@@ -108,7 +108,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, PsiFile file, Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
     final AtomicInteger count = new AtomicInteger();
     JSClass jsClass = myClass.getElement();
     JSCallExpression node = myNode.getElement();

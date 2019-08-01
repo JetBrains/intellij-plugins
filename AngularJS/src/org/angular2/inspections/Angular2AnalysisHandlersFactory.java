@@ -133,7 +133,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
     }
 
     @Override
-    protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
+    protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
       JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
@@ -171,7 +171,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
     }
 
     @Override
-    protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
+    protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
       JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);

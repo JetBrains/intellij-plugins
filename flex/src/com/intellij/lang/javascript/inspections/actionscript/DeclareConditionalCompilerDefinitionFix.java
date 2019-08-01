@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionAction {
 
@@ -35,7 +36,7 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
   }
 
   @Override
-  protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
+  protected void applyFix(final Project project, final PsiElement psiElement, @NotNull final PsiFile file, @Nullable final Editor editor) {
     final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(project);
 
     ShowSettingsUtil.getInstance().editConfigurable(project, configurable, () -> {
