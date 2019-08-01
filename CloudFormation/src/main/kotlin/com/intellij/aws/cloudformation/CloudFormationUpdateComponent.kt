@@ -7,12 +7,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PermanentInstallationID
 import com.intellij.openapi.application.ex.ApplicationInfoEx
-import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.event.EditorFactoryAdapter
 import com.intellij.openapi.editor.event.EditorFactoryEvent
+import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.FocusChangeListener
 import com.intellij.openapi.extensions.PluginId
@@ -50,16 +49,13 @@ import java.util.concurrent.TimeUnit
 /**
  * Based on org.rust.ide.update.UpdateComponent
  */
-class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable {
-
+class CloudFormationUpdateComponent : Disposable {
   init {
     Disposer.register(ApplicationManager.getApplication(), this)
     val pluginId = PluginManager.getPluginByClassName(this.javaClass.name)
     val descriptor = PluginManager.getPlugin(pluginId)
     ourCurrentPluginVersion = descriptor?.version
-  }
 
-  override fun initComponent() {
     val application = ApplicationManager.getApplication()
     if (!application.isUnitTestMode) {
       EditorFactory.getInstance().addEditorFactoryListener(EditorListener(this), this)
@@ -69,7 +65,7 @@ class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable
   override fun dispose() {
   }
 
-  private class EditorListener(val parentDisposable: Disposable) : EditorFactoryAdapter() {
+  private class EditorListener(val parentDisposable: Disposable) : EditorFactoryListener {
     private fun checkPsi(project: Project, file: VirtualFile): Boolean {
       if (file.fileType === YamlCloudFormationFileType.INSTANCE ||
           file.fileType === JsonCloudFormationFileType.INSTANCE)
@@ -104,9 +100,9 @@ class CloudFormationUpdateComponent : ApplicationComponent.Adapter(), Disposable
 
   companion object {
     private val lock: Any = Any()
-    private val PLUGIN_ID: String = "AWSCloudFormation"
-    private val LAST_UPDATE: String = "$PLUGIN_ID.LAST_UPDATE"
-    private val LAST_VERSION: String = "$PLUGIN_ID.LAST_VERSION"
+    private const val PLUGIN_ID: String = "AWSCloudFormation"
+    private const val LAST_UPDATE: String = "$PLUGIN_ID.LAST_UPDATE"
+    private const val LAST_VERSION: String = "$PLUGIN_ID.LAST_VERSION"
 
     private val FILE_TYPES: Set<FileType> = setOf(
         YAMLFileType.YML,
