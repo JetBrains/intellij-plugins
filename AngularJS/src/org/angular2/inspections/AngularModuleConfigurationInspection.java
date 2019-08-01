@@ -14,6 +14,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Stack;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
@@ -21,8 +22,7 @@ import org.angular2.entities.Angular2Module;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.*;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
@@ -104,36 +104,41 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
     }
 
     protected void checkCyclicDependencies(@NotNull Angular2Module module) {
-      try {
-        checkCyclicDependencies(ContainerUtil.newLinkedHashSet(myModule), module);
-      }
-      catch (RecurrentImportException e) {
-        registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, e.getMessage());
-      }
-    }
+      Stack<Angular2Module> cycleTrack = new Stack<>();
+      Set<Angular2Module> processedModules = new HashSet<>();
+      Stack<List<Angular2Module>> dfsStack = new Stack<>();
 
-    private void checkCyclicDependencies(@NotNull LinkedHashSet<Angular2Module> visitedModules,
-                                         @NotNull Angular2Module module) throws RecurrentImportException {
-      if (!visitedModules.add(module)) {
-        if (module == myModule) {
-          throw new RecurrentImportException(Angular2Bundle.message(
-            "angular.inspection.decorator.cyclic-module-dependency",
-            StringUtil.join(visitedModules,
-                            Angular2Module::getName,
-                            " " + Angular2Bundle.message("angular.inspection.decorator.cyclic-module-dependency.separator") + " "),
-            module.getName()));
+      cycleTrack.push(myModule);
+      dfsStack.push(ContainerUtil.newArrayList(module));
+      while (!dfsStack.isEmpty()) {
+        List<Angular2Module> curNode = dfsStack.peek();
+        if (curNode.isEmpty()) {
+          dfsStack.pop();
+          cycleTrack.pop();
         }
-        return;
-      }
-      for (Angular2Module child : module.getImports()) {
-        checkCyclicDependencies(visitedModules, child);
-      }
-      for (Angular2Entity child : module.getExports()) {
-        if (child instanceof Angular2Module) {
-          checkCyclicDependencies(visitedModules, (Angular2Module)child);
+        else {
+          Angular2Module toProcess = curNode.remove(curNode.size() - 1);
+          if (toProcess == myModule) {
+            cycleTrack.push(myModule);
+            registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, Angular2Bundle.message(
+              "angular.inspection.decorator.cyclic-module-dependency",
+              StringUtil.join(cycleTrack, Angular2Module::getName,
+                              " " + Angular2Bundle.message("angular.inspection.decorator.cyclic-module-dependency.separator") + " ")));
+            return;
+          }
+          if (processedModules.add(toProcess)) {
+            cycleTrack.push(toProcess);
+            List<Angular2Module> dependencies = new ArrayList<>();
+            for (Angular2Entity child: toProcess.getExports()) {
+              if (child instanceof Angular2Module) {
+                dependencies.add((Angular2Module)child);
+              }
+            }
+            dependencies.addAll(toProcess.getImports());
+            dfsStack.push(dependencies);
+          }
         }
       }
-      visitedModules.remove(module);
     }
   }
 
@@ -202,12 +207,6 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
       else {
         throw new IllegalArgumentException(entity.getClass().getName());
       }
-    }
-  }
-
-  private static final class RecurrentImportException extends Exception {
-    private RecurrentImportException(String message) {
-      super(message);
     }
   }
 }
