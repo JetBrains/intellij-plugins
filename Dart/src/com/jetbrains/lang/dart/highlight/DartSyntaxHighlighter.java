@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.ide.highlighter.EmbeddedTokenHighlighter;
@@ -48,6 +49,7 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase implements Embe
     ATTRIBUTES.put(COMMA, DartSyntaxHighlighterColors.COMMA);
     ATTRIBUTES.put(DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(DOT_DOT, DartSyntaxHighlighterColors.DOT);
+    ATTRIBUTES.put(QUEST_DOT_DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(QUEST_DOT, DartSyntaxHighlighterColors.DOT);
     ATTRIBUTES.put(SEMICOLON, DartSyntaxHighlighterColors.SEMICOLON);
     ATTRIBUTES.put(COLON, DartSyntaxHighlighterColors.COLON);

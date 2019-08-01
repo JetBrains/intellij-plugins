@@ -22,6 +22,7 @@ import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -51,9 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -97,7 +96,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file == null) return;
 
-               if (file.getFileType() == HtmlFileType.INSTANCE &&
+               if (FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
                    !Registry.is("dart.projects.without.pubspec", false)) {
                  return;
@@ -141,15 +140,33 @@ public class DartServerCompletionContributor extends CompletionContributor {
                  }
 
                  updatedResultSet.addElement(lookupElement);
-               }, (includedSet, includedKinds, includedRelevanceTags) -> {
+               }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
                  final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
                  if (suggestionSet == null) {
                    return;
                  }
 
+                 Map<String, Map<String, Set<String>>> existingImports = das.getExistingImports(libraryFilePathSD);
                  for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
                    final String kind = suggestion.getElement().getKind();
                    if (!includedKinds.contains(kind)) {
+                     continue;
+                   }
+
+                   Set<String> importedLibraries = new HashSet<>();
+                   if (existingImports != null) {
+                     for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
+                       String importedLibraryUri = entry.getKey();
+                       Map<String, Set<String>> importedLibrary = entry.getValue();
+                       Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
+                       if (names != null && names.contains(suggestion.getLabel())) {
+                         importedLibraries.add(importedLibraryUri);
+                       }
+                     }
+                   }
+
+                   if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
+                     // If some library exports this label but the current suggestion set does not, we should filter.
                      continue;
                    }
 
@@ -453,7 +470,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
           return;
         }
 
-        if (element != null && ElementKind.FUNCTION.equals(element.getKind()) && suggestion.getParameterNames() != null) {
+        if (element != null &&
+            (ElementKind.FUNCTION.equals(element.getKind()) || ElementKind.CONSTRUCTOR.equals(element.getKind())) &&
+            suggestion.getParameterNames() != null) {
           handleFunctionInvocationInsertion(context, item, suggestion);
         }
       });

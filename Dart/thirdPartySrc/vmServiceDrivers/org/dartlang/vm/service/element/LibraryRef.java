@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link LibraryRef} is a reference to a {@link Library}.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryRef extends ObjRef {
 
   public LibraryRef(JsonObject json) {

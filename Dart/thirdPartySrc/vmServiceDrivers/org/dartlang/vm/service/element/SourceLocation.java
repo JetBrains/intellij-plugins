@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * The {@link SourceLocation} class is used to designate a position or range in some script.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SourceLocation extends Response {
 
   public SourceLocation(JsonObject json) {

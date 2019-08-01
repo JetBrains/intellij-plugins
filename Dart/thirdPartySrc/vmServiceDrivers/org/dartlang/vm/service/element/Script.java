@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A {@link Script} provides information about a Dart language script.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class Script extends Obj {
 
   public Script(JsonObject json) {
@@ -29,10 +29,24 @@ public class Script extends Obj {
   }
 
   /**
+   * Can return <code>null</code>.
+   */
+  public int getColumnOffset() {
+    return json.get("columnOffset") == null ? -1 : json.get("columnOffset").getAsInt();
+  }
+
+  /**
    * The library which owns this script.
    */
   public LibraryRef getLibrary() {
     return new LibraryRef((JsonObject) json.get("library"));
+  }
+
+  /**
+   * Can return <code>null</code>.
+   */
+  public int getLineOffset() {
+    return json.get("lineOffset") == null ? -1 : json.get("lineOffset").getAsInt();
   }
 
   /**
@@ -45,7 +59,10 @@ public class Script extends Obj {
   }
 
   /**
-   * A table encoding a mapping from token position to line and column.
+   * A table encoding a mapping from token position to line and column. This field is null if
+   * sources aren't available.
+   *
+   * Can return <code>null</code>.
    */
   public List<List<Integer>> getTokenPosTable() {
     return getListListInt("tokenPosTable");

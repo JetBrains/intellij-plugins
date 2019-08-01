@@ -1,5 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
 
@@ -8,6 +6,7 @@ import com.intellij.lang.PsiBuilder.Marker;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartGeneratedParserUtilBase.*;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IFileElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
@@ -25,436 +24,24 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == ADDITIVE_EXPRESSION) {
-      r = additiveExpression(b, 0);
-    }
-    else if (t == ADDITIVE_OPERATOR) {
-      r = additiveOperator(b, 0);
-    }
-    else if (t == ARGUMENT_LIST) {
-      r = argumentList(b, 0);
-    }
-    else if (t == ARGUMENTS) {
-      r = arguments(b, 0);
-    }
-    else if (t == ARRAY_ACCESS_EXPRESSION) {
-      r = arrayAccessExpression(b, 0);
-    }
-    else if (t == AS_EXPRESSION) {
-      r = asExpression(b, 0);
-    }
-    else if (t == ASSERT_STATEMENT) {
-      r = assertStatement(b, 0);
-    }
-    else if (t == ASSIGN_EXPRESSION) {
-      r = assignExpression(b, 0);
-    }
-    else if (t == ASSIGNMENT_OPERATOR) {
-      r = assignmentOperator(b, 0);
-    }
-    else if (t == AWAIT_EXPRESSION) {
-      r = awaitExpression(b, 0);
-    }
-    else if (t == BITWISE_EXPRESSION) {
-      r = bitwiseExpression(b, 0);
-    }
-    else if (t == BITWISE_OPERATOR) {
-      r = bitwiseOperator(b, 0);
-    }
-    else if (t == BLOCK) {
-      r = block(b, 0);
-    }
-    else if (t == BREAK_STATEMENT) {
-      r = breakStatement(b, 0);
-    }
-    else if (t == CALL_EXPRESSION) {
-      r = callExpression(b, 0);
-    }
-    else if (t == CASCADE_REFERENCE_EXPRESSION) {
-      r = cascadeReferenceExpression(b, 0);
-    }
-    else if (t == CATCH_PART) {
-      r = catchPart(b, 0);
-    }
-    else if (t == CLASS_BODY) {
-      r = classBody(b, 0);
-    }
-    else if (t == CLASS_DEFINITION) {
-      r = classDefinition(b, 0);
-    }
-    else if (t == CLASS_MEMBERS) {
-      r = classMembers(b, 0);
-    }
-    else if (t == COMPARE_EXPRESSION) {
-      r = compareExpression(b, 0);
-    }
-    else if (t == COMPONENT_NAME) {
-      r = componentName(b, 0);
-    }
-    else if (t == CONTINUE_STATEMENT) {
-      r = continueStatement(b, 0);
-    }
-    else if (t == DEFAULT_CASE) {
-      r = defaultCase(b, 0);
-    }
-    else if (t == DEFAULT_FORMAL_NAMED_PARAMETER) {
-      r = defaultFormalNamedParameter(b, 0);
-    }
-    else if (t == DO_WHILE_STATEMENT) {
-      r = doWhileStatement(b, 0);
-    }
-    else if (t == ELEMENT) {
-      r = element(b, 0);
-    }
-    else if (t == ENUM_CONSTANT_DECLARATION) {
-      r = enumConstantDeclaration(b, 0);
-    }
-    else if (t == ENUM_DEFINITION) {
-      r = enumDefinition(b, 0);
-    }
-    else if (t == EQUALITY_OPERATOR) {
-      r = equalityOperator(b, 0);
-    }
-    else if (t == EXPORT_STATEMENT) {
-      r = exportStatement(b, 0);
-    }
-    else if (t == EXPRESSION) {
-      r = expression(b, 0);
-    }
-    else if (t == EXPRESSION_LIST) {
-      r = expressionList(b, 0);
-    }
-    else if (t == FACTORY_CONSTRUCTOR_DECLARATION) {
-      r = factoryConstructorDeclaration(b, 0);
-    }
-    else if (t == FIELD_FORMAL_PARAMETER) {
-      r = fieldFormalParameter(b, 0);
-    }
-    else if (t == FIELD_INITIALIZER) {
-      r = fieldInitializer(b, 0);
-    }
-    else if (t == FINALLY_PART) {
-      r = finallyPart(b, 0);
-    }
-    else if (t == FOR_ELEMENT) {
-      r = forElement(b, 0);
-    }
-    else if (t == FOR_IN_PART) {
-      r = forInPart(b, 0);
-    }
-    else if (t == FOR_LOOP_PARTS) {
-      r = forLoopParts(b, 0);
-    }
-    else if (t == FOR_LOOP_PARTS_IN_BRACES) {
-      r = forLoopPartsInBraces(b, 0);
-    }
-    else if (t == FOR_STATEMENT) {
-      r = forStatement(b, 0);
-    }
-    else if (t == FORMAL_PARAMETER_LIST) {
-      r = formalParameterList(b, 0);
-    }
-    else if (t == FUNCTION_BODY) {
-      r = functionBody(b, 0);
-    }
-    else if (t == FUNCTION_DECLARATION_WITH_BODY) {
-      r = functionDeclarationWithBody(b, 0);
-    }
-    else if (t == FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE) {
-      r = functionDeclarationWithBodyOrNative(b, 0);
-    }
-    else if (t == FUNCTION_EXPRESSION) {
-      r = functionExpression(b, 0);
-    }
-    else if (t == FUNCTION_EXPRESSION_BODY) {
-      r = functionExpressionBody(b, 0);
-    }
-    else if (t == FUNCTION_FORMAL_PARAMETER) {
-      r = functionFormalParameter(b, 0);
-    }
-    else if (t == FUNCTION_TYPE_ALIAS) {
-      r = functionTypeAlias(b, 0);
-    }
-    else if (t == GETTER_DECLARATION) {
-      r = getterDeclaration(b, 0);
-    }
-    else if (t == HIDE_COMBINATOR) {
-      r = hideCombinator(b, 0);
-    }
-    else if (t == ID) {
-      r = id(b, 0);
-    }
-    else if (t == IF_ELEMENT) {
-      r = ifElement(b, 0);
-    }
-    else if (t == IF_NULL_EXPRESSION) {
-      r = ifNullExpression(b, 0);
-    }
-    else if (t == IF_STATEMENT) {
-      r = ifStatement(b, 0);
-    }
-    else if (t == IMPORT_STATEMENT) {
-      r = importStatement(b, 0);
-    }
-    else if (t == INCOMPLETE_DECLARATION) {
-      r = incompleteDeclaration(b, 0);
-    }
-    else if (t == INITIALIZERS) {
-      r = initializers(b, 0);
-    }
-    else if (t == INTERFACES) {
-      r = interfaces(b, 0);
-    }
-    else if (t == IS_EXPRESSION) {
-      r = isExpression(b, 0);
-    }
-    else if (t == LABEL) {
-      r = label(b, 0);
-    }
-    else if (t == LIBRARY_COMPONENT_REFERENCE_EXPRESSION) {
-      r = libraryComponentReferenceExpression(b, 0);
-    }
-    else if (t == LIBRARY_ID) {
-      r = libraryId(b, 0);
-    }
-    else if (t == LIBRARY_NAME_ELEMENT) {
-      r = libraryNameElement(b, 0);
-    }
-    else if (t == LIBRARY_REFERENCE_LIST) {
-      r = libraryReferenceList(b, 0);
-    }
-    else if (t == LIBRARY_STATEMENT) {
-      r = libraryStatement(b, 0);
-    }
-    else if (t == LIST_LITERAL_EXPRESSION) {
-      r = listLiteralExpression(b, 0);
-    }
-    else if (t == LITERAL_EXPRESSION) {
-      r = literalExpression(b, 0);
-    }
-    else if (t == LOGIC_AND_EXPRESSION) {
-      r = logicAndExpression(b, 0);
-    }
-    else if (t == LOGIC_OR_EXPRESSION) {
-      r = logicOrExpression(b, 0);
-    }
-    else if (t == LONG_TEMPLATE_ENTRY) {
-      r = longTemplateEntry(b, 0);
-    }
-    else if (t == MAP_ENTRY) {
-      r = mapEntry(b, 0);
-    }
-    else if (t == METADATA) {
-      r = metadata(b, 0);
-    }
-    else if (t == METHOD_DECLARATION) {
-      r = methodDeclaration(b, 0);
-    }
-    else if (t == MIXIN_APPLICATION) {
-      r = mixinApplication(b, 0);
-    }
-    else if (t == MIXIN_DECLARATION) {
-      r = mixinDeclaration(b, 0);
-    }
-    else if (t == MIXINS) {
-      r = mixins(b, 0);
-    }
-    else if (t == MULTIPLICATIVE_EXPRESSION) {
-      r = multiplicativeExpression(b, 0);
-    }
-    else if (t == MULTIPLICATIVE_OPERATOR) {
-      r = multiplicativeOperator(b, 0);
-    }
-    else if (t == NAMED_ARGUMENT) {
-      r = namedArgument(b, 0);
-    }
-    else if (t == NAMED_CONSTRUCTOR_DECLARATION) {
-      r = namedConstructorDeclaration(b, 0);
-    }
-    else if (t == NEW_EXPRESSION) {
-      r = newExpression(b, 0);
-    }
-    else if (t == NORMAL_FORMAL_PARAMETER) {
-      r = normalFormalParameter(b, 0);
-    }
-    else if (t == NORMAL_PARAMETER_TYPE) {
-      r = normalParameterType(b, 0);
-    }
-    else if (t == ON_MIXINS) {
-      r = onMixins(b, 0);
-    }
-    else if (t == ON_PART) {
-      r = onPart(b, 0);
-    }
-    else if (t == OPTIONAL_FORMAL_PARAMETERS) {
-      r = optionalFormalParameters(b, 0);
-    }
-    else if (t == OPTIONAL_PARAMETER_TYPES) {
-      r = optionalParameterTypes(b, 0);
-    }
-    else if (t == PARAMETER_NAME_REFERENCE_EXPRESSION) {
-      r = parameterNameReferenceExpression(b, 0);
-    }
-    else if (t == PARAMETER_TYPE_LIST) {
-      r = parameterTypeList(b, 0);
-    }
-    else if (t == PARENTHESIZED_EXPRESSION) {
-      r = parenthesizedExpression(b, 0);
-    }
-    else if (t == PART_OF_STATEMENT) {
-      r = partOfStatement(b, 0);
-    }
-    else if (t == PART_STATEMENT) {
-      r = partStatement(b, 0);
-    }
-    else if (t == PREFIX_EXPRESSION) {
-      r = prefixExpression(b, 0);
-    }
-    else if (t == PREFIX_OPERATOR) {
-      r = prefixOperator(b, 0);
-    }
-    else if (t == REDIRECTION) {
-      r = redirection(b, 0);
-    }
-    else if (t == REFERENCE_EXPRESSION) {
-      r = referenceExpression(b, 0);
-    }
-    else if (t == RELATIONAL_OPERATOR) {
-      r = relationalOperator(b, 0);
-    }
-    else if (t == RETHROW_STATEMENT) {
-      r = rethrowStatement(b, 0);
-    }
-    else if (t == RETURN_STATEMENT) {
-      r = returnStatement(b, 0);
-    }
-    else if (t == RETURN_TYPE) {
-      r = returnType(b, 0);
-    }
-    else if (t == SET_OR_MAP_LITERAL_EXPRESSION) {
-      r = setOrMapLiteralExpression(b, 0);
-    }
-    else if (t == SETTER_DECLARATION) {
-      r = setterDeclaration(b, 0);
-    }
-    else if (t == SHIFT_EXPRESSION) {
-      r = shiftExpression(b, 0);
-    }
-    else if (t == SHIFT_OPERATOR) {
-      r = shiftOperator(b, 0);
-    }
-    else if (t == SHORT_TEMPLATE_ENTRY) {
-      r = shortTemplateEntry(b, 0);
-    }
-    else if (t == SHOW_COMBINATOR) {
-      r = showCombinator(b, 0);
-    }
-    else if (t == SIMPLE_FORMAL_PARAMETER) {
-      r = simpleFormalParameter(b, 0);
-    }
-    else if (t == SIMPLE_TYPE) {
-      r = simpleType(b, 0);
-    }
-    else if (t == SPREAD_ELEMENT) {
-      r = spreadElement(b, 0);
-    }
-    else if (t == STATEMENTS) {
-      r = statements(b, 0);
-    }
-    else if (t == STRING_LITERAL_EXPRESSION) {
-      r = stringLiteralExpression(b, 0);
-    }
-    else if (t == SUFFIX_EXPRESSION) {
-      r = suffixExpression(b, 0);
-    }
-    else if (t == SUPER_CALL_OR_FIELD_INITIALIZER) {
-      r = superCallOrFieldInitializer(b, 0);
-    }
-    else if (t == SUPER_EXPRESSION) {
-      r = superExpression(b, 0);
-    }
-    else if (t == SUPERCLASS) {
-      r = superclass(b, 0);
-    }
-    else if (t == SWITCH_CASE) {
-      r = switchCase(b, 0);
-    }
-    else if (t == SWITCH_STATEMENT) {
-      r = switchStatement(b, 0);
-    }
-    else if (t == SYMBOL_LITERAL_EXPRESSION) {
-      r = symbolLiteralExpression(b, 0);
-    }
-    else if (t == TERNARY_EXPRESSION) {
-      r = ternaryExpression(b, 0);
-    }
-    else if (t == THIS_EXPRESSION) {
-      r = thisExpression(b, 0);
-    }
-    else if (t == THROW_EXPRESSION) {
-      r = throwExpression(b, 0);
-    }
-    else if (t == TRY_STATEMENT) {
-      r = tryStatement(b, 0);
-    }
-    else if (t == TYPE) {
-      r = type(b, 0);
-    }
-    else if (t == TYPE_ARGUMENTS) {
-      r = typeArguments(b, 0);
-    }
-    else if (t == TYPE_LIST) {
-      r = typeList(b, 0);
-    }
-    else if (t == TYPE_PARAMETER) {
-      r = typeParameter(b, 0);
-    }
-    else if (t == TYPE_PARAMETERS) {
-      r = typeParameters(b, 0);
-    }
-    else if (t == TYPED_FUNCTION_TYPE) {
-      r = typedFunctionType(b, 0);
-    }
-    else if (t == UNTYPED_FUNCTION_TYPE) {
-      r = untypedFunctionType(b, 0);
-    }
-    else if (t == URI_ELEMENT) {
-      r = uriElement(b, 0);
-    }
-    else if (t == USER_DEFINABLE_OPERATOR) {
-      r = userDefinableOperator(b, 0);
-    }
-    else if (t == VALUE_EXPRESSION) {
-      r = valueExpression(b, 0);
-    }
-    else if (t == VAR_ACCESS_DECLARATION) {
-      r = varAccessDeclaration(b, 0);
-    }
-    else if (t == VAR_DECLARATION_LIST) {
-      r = varDeclarationList(b, 0);
-    }
-    else if (t == VAR_DECLARATION_LIST_PART) {
-      r = varDeclarationListPart(b, 0);
-    }
-    else if (t == VAR_INIT) {
-      r = varInit(b, 0);
-    }
-    else if (t == VOID_TYPE_FUNCTION_TYPE) {
-      r = voidTypeFunctionType(b, 0);
-    }
-    else if (t == WHILE_STATEMENT) {
-      r = whileStatement(b, 0);
-    }
-    else if (t == YIELD_EACH_STATEMENT) {
-      r = yieldEachStatement(b, 0);
-    }
-    else if (t == YIELD_STATEMENT) {
-      r = yieldStatement(b, 0);
-    }
-    else {
+    if (t instanceof IFileElementType) {
       r = parse_root_(t, b, 0);
     }
+    else {
+      r = parse_extra_roots_(t, b, 0);
+    }
     exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
+  }
+
+  static boolean parse_extra_roots_(IElementType t, PsiBuilder b, int l) {
+    boolean r;
+    if (t == BLOCK) {
+      r = block(b, l + 1);
+    }
+    else {
+      r = false;
+    }
+    return r;
   }
 
   protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
@@ -631,23 +218,31 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '[' expression? ']'
+  // '?.'? '[' expression? ']'
   static boolean arrayAccess(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccess")) return false;
-    if (!nextTokenIs(b, LBRACKET)) return false;
+    if (!nextTokenIs(b, "", LBRACKET, QUEST_DOT)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
-    r = consumeToken(b, LBRACKET);
-    p = r; // pin = 1
-    r = r && report_error_(b, arrayAccess_1(b, l + 1));
+    r = arrayAccess_0(b, l + 1);
+    r = r && consumeToken(b, LBRACKET);
+    p = r; // pin = 2
+    r = r && report_error_(b, arrayAccess_2(b, l + 1));
     r = p && consumeToken(b, RBRACKET) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
+  // '?.'?
+  private static boolean arrayAccess_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "arrayAccess_0")) return false;
+    consumeToken(b, QUEST_DOT);
+    return true;
+  }
+
   // expression?
-  private static boolean arrayAccess_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "arrayAccess_1")) return false;
+  private static boolean arrayAccess_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "arrayAccess_2")) return false;
     expression(b, l + 1);
     return true;
   }
@@ -656,9 +251,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   // arrayAccess
   public static boolean arrayAccessExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrayAccessExpression")) return false;
-    if (!nextTokenIs(b, LBRACKET)) return false;
+    if (!nextTokenIs(b, "<array access expression>", LBRACKET, QUEST_DOT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _LEFT_, ARRAY_ACCESS_EXPRESSION, null);
+    Marker m = enter_section_(b, l, _LEFT_, ARRAY_ACCESS_EXPRESSION, "<array access expression>");
     r = arrayAccess(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1083,7 +678,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+  // (callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!')*
   static boolean callOrArrayAccessOrQualifiedRefExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression")) return false;
     while (true) {
@@ -1094,28 +689,42 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // callExpression | arrayAccessExpression | qualifiedReferenceExpression
+  // callExpression | arrayAccessExpression | qualifiedReferenceExpression | '!'
   private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
     boolean r;
+    Marker m = enter_section_(b);
     r = callExpression(b, l + 1);
     if (!r) r = arrayAccessExpression(b, l + 1);
     if (!r) r = qualifiedReferenceExpression(b, l + 1);
+    if (!r) r = consumeToken(b, NOT);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '..' << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
+  // ('?..' | '..') << cascadeStopper >> (arrayAccess | refOrThisOrSuperOrParenExpression callOrArrayAccessOrQualifiedRefExpression) << varInitWrapper >>
   public static boolean cascadeReferenceExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "cascadeReferenceExpression")) return false;
-    if (!nextTokenIs(b, DOT_DOT)) return false;
+    if (!nextTokenIs(b, "<cascade reference expression>", DOT_DOT, QUEST_DOT_DOT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, DOT_DOT);
+    Marker m = enter_section_(b, l, _NONE_, CASCADE_REFERENCE_EXPRESSION, "<cascade reference expression>");
+    r = cascadeReferenceExpression_0(b, l + 1);
     r = r && cascadeStopper(b, l + 1);
     r = r && cascadeReferenceExpression_2(b, l + 1);
     r = r && varInitWrapper(b, l + 1);
-    exit_section_(b, m, CASCADE_REFERENCE_EXPRESSION, r);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '?..' | '..'
+  private static boolean cascadeReferenceExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "cascadeReferenceExpression_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST_DOT_DOT);
+    if (!r) r = consumeToken(b, DOT_DOT);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1466,38 +1075,46 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // normalFormalParameter (('=' | ':') expression)?
+  // 'required'? normalFormalParameter (('=' | ':') expression)?
   public static boolean defaultFormalNamedParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultFormalNamedParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, DEFAULT_FORMAL_NAMED_PARAMETER, "<default formal named parameter>");
-    r = normalFormalParameter(b, l + 1);
-    r = r && defaultFormalNamedParameter_1(b, l + 1);
+    r = defaultFormalNamedParameter_0(b, l + 1);
+    r = r && normalFormalParameter(b, l + 1);
+    r = r && defaultFormalNamedParameter_2(b, l + 1);
     exit_section_(b, l, m, r, false, default_formal_parameter_recover_parser_);
     return r;
   }
 
+  // 'required'?
+  private static boolean defaultFormalNamedParameter_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_0")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
   // (('=' | ':') expression)?
-  private static boolean defaultFormalNamedParameter_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1")) return false;
-    defaultFormalNamedParameter_1_0(b, l + 1);
+  private static boolean defaultFormalNamedParameter_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2")) return false;
+    defaultFormalNamedParameter_2_0(b, l + 1);
     return true;
   }
 
   // ('=' | ':') expression
-  private static boolean defaultFormalNamedParameter_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1_0")) return false;
+  private static boolean defaultFormalNamedParameter_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = defaultFormalNamedParameter_1_0_0(b, l + 1);
+    r = defaultFormalNamedParameter_2_0_0(b, l + 1);
     r = r && expression(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // '=' | ':'
-  private static boolean defaultFormalNamedParameter_1_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_1_0_0")) return false;
+  private static boolean defaultFormalNamedParameter_2_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defaultFormalNamedParameter_2_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, EQ);
@@ -1597,7 +1214,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // element (',' element)* ','?
+  // element (','? element)* ','?
   static boolean elements(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "elements")) return false;
     boolean r;
@@ -1609,7 +1226,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (',' element)*
+  // (','? element)*
   private static boolean elements_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "elements_1")) return false;
     while (true) {
@@ -1620,15 +1237,22 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // ',' element
+  // ','? element
   private static boolean elements_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "elements_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
+    r = elements_1_0_0(b, l + 1);
     r = r && element(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // ','?
+  private static boolean elements_1_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elements_1_0_0")) return false;
+    consumeToken(b, COMMA);
+    return true;
   }
 
   // ','?
@@ -1861,7 +1485,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1882,7 +1506,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '?..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1920,6 +1544,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, DOT);
     if (!r) r = consumeToken(b, DOT_DOT);
+    if (!r) r = consumeToken(b, QUEST_DOT_DOT);
     if (!r) r = consumeToken(b, DOT_DOT_DOT);
     if (!r) r = consumeToken(b, DOT_DOT_DOT_QUEST);
     if (!r) r = consumeToken(b, DIV);
@@ -2201,13 +1826,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'covariant'? 'final' type componentName |
-  //                                                 'covariant'? 'final'      componentName |
-  //                                                 'covariant'? 'const' type componentName |
-  //                                                 'covariant'? 'const'      componentName |
-  //                                                 'covariant'? 'var'        componentName |
-  //                                                 'covariant'          type componentName |
-  //                                                                      type componentName
+  // 'covariant'? 'late'? 'final' type componentName |
+  //                                                 'covariant'? 'late'? 'final'      componentName |
+  //                                                 'covariant'?         'const' type componentName |
+  //                                                 'covariant'?         'const'      componentName |
+  //                                                 'covariant'? 'late'? 'var'        componentName |
+  //                                                 'covariant'  'late'          type componentName |
+  //                                                 'covariant'                  type componentName |
+  //                                                              'late'          type componentName |
+  //                                                                              type componentName
   static boolean finalConstVarOrTypeAndComponentName(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName")) return false;
     boolean r;
@@ -2219,16 +1846,19 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = finalConstVarOrTypeAndComponentName_4(b, l + 1);
     if (!r) r = finalConstVarOrTypeAndComponentName_5(b, l + 1);
     if (!r) r = finalConstVarOrTypeAndComponentName_6(b, l + 1);
+    if (!r) r = finalConstVarOrTypeAndComponentName_7(b, l + 1);
+    if (!r) r = finalConstVarOrTypeAndComponentName_8(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'covariant'? 'final' type componentName
+  // 'covariant'? 'late'? 'final' type componentName
   private static boolean finalConstVarOrTypeAndComponentName_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = finalConstVarOrTypeAndComponentName_0_0(b, l + 1);
+    r = r && finalConstVarOrTypeAndComponentName_0_1(b, l + 1);
     r = r && consumeToken(b, FINAL);
     r = r && type(b, l + 1);
     r = r && componentName(b, l + 1);
@@ -2243,12 +1873,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? 'final'      componentName
+  // 'late'?
+  private static boolean finalConstVarOrTypeAndComponentName_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_0_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'? 'late'? 'final'      componentName
   private static boolean finalConstVarOrTypeAndComponentName_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = finalConstVarOrTypeAndComponentName_1_0(b, l + 1);
+    r = r && finalConstVarOrTypeAndComponentName_1_1(b, l + 1);
     r = r && consumeToken(b, FINAL);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
@@ -2262,7 +1900,14 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? 'const' type componentName
+  // 'late'?
+  private static boolean finalConstVarOrTypeAndComponentName_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_1_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'?         'const' type componentName
   private static boolean finalConstVarOrTypeAndComponentName_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_2")) return false;
     boolean r;
@@ -2282,7 +1927,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? 'const'      componentName
+  // 'covariant'?         'const'      componentName
   private static boolean finalConstVarOrTypeAndComponentName_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_3")) return false;
     boolean r;
@@ -2301,12 +1946,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? 'var'        componentName
+  // 'covariant'? 'late'? 'var'        componentName
   private static boolean finalConstVarOrTypeAndComponentName_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_4")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = finalConstVarOrTypeAndComponentName_4_0(b, l + 1);
+    r = r && finalConstVarOrTypeAndComponentName_4_1(b, l + 1);
     r = r && consumeToken(b, VAR);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
@@ -2320,9 +1966,28 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'          type componentName
+  // 'late'?
+  private static boolean finalConstVarOrTypeAndComponentName_4_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_4_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'  'late'          type componentName
   private static boolean finalConstVarOrTypeAndComponentName_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_5")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, COVARIANT, LATE);
+    r = r && type(b, l + 1);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'covariant'                  type componentName
+  private static boolean finalConstVarOrTypeAndComponentName_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_6")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COVARIANT);
@@ -2332,9 +1997,21 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r;
   }
 
+  // 'late'          type componentName
+  private static boolean finalConstVarOrTypeAndComponentName_7(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_7")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LATE);
+    r = r && type(b, l + 1);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
   // type componentName
-  private static boolean finalConstVarOrTypeAndComponentName_6(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_6")) return false;
+  private static boolean finalConstVarOrTypeAndComponentName_8(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarOrTypeAndComponentName_8")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = type(b, l + 1);
@@ -2344,34 +2021,43 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'final' type? | 'const' type? | 'var' | 'void' | type
+  // 'late'? 'final' type? | 'const' type? | 'late'? 'var' | 'late'? 'void' | 'late' type | type
   static boolean finalConstVarVoidOrType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarVoidOrType")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = finalConstVarVoidOrType_0(b, l + 1);
     if (!r) r = finalConstVarVoidOrType_1(b, l + 1);
-    if (!r) r = consumeToken(b, VAR);
-    if (!r) r = consumeToken(b, VOID);
+    if (!r) r = finalConstVarVoidOrType_2(b, l + 1);
+    if (!r) r = finalConstVarVoidOrType_3(b, l + 1);
+    if (!r) r = finalConstVarVoidOrType_4(b, l + 1);
     if (!r) r = type(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'final' type?
+  // 'late'? 'final' type?
   private static boolean finalConstVarVoidOrType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, FINAL);
-    r = r && finalConstVarVoidOrType_0_1(b, l + 1);
+    r = finalConstVarVoidOrType_0_0(b, l + 1);
+    r = r && consumeToken(b, FINAL);
+    r = r && finalConstVarVoidOrType_0_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // 'late'?
+  private static boolean finalConstVarVoidOrType_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0_0")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
   // type?
-  private static boolean finalConstVarVoidOrType_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0_1")) return false;
+  private static boolean finalConstVarVoidOrType_0_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_0_2")) return false;
     type(b, l + 1);
     return true;
   }
@@ -2392,6 +2078,53 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "finalConstVarVoidOrType_1_1")) return false;
     type(b, l + 1);
     return true;
+  }
+
+  // 'late'? 'var'
+  private static boolean finalConstVarVoidOrType_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = finalConstVarVoidOrType_2_0(b, l + 1);
+    r = r && consumeToken(b, VAR);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'late'?
+  private static boolean finalConstVarVoidOrType_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_2_0")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'late'? 'void'
+  private static boolean finalConstVarVoidOrType_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = finalConstVarVoidOrType_3_0(b, l + 1);
+    r = r && consumeToken(b, VOID);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'late'?
+  private static boolean finalConstVarVoidOrType_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_3_0")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'late' type
+  private static boolean finalConstVarVoidOrType_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "finalConstVarVoidOrType_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LATE);
+    r = r && type(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -2970,12 +2703,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   // !functionTypeWrapper (metadata*                         componentName typeParameters? formalParameterList |
   //                                                   metadata* 'covariant'? returnType componentName typeParameters? formalParameterList |
   //                                                   metadata* 'covariant'             componentName typeParameters? formalParameterList)
+  //                             '?'?
   public static boolean functionFormalParameter(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionFormalParameter")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, FUNCTION_FORMAL_PARAMETER, "<function formal parameter>");
     r = functionFormalParameter_0(b, l + 1);
     r = r && functionFormalParameter_1(b, l + 1);
+    r = r && functionFormalParameter_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -3104,6 +2839,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean functionFormalParameter_1_2_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionFormalParameter_1_2_3")) return false;
     typeParameters(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean functionFormalParameter_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "functionFormalParameter_2")) return false;
+    consumeToken(b, QUEST);
     return true;
   }
 
@@ -4672,46 +4414,62 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '{' typedIdentifier (',' typedIdentifier)* ','? '}'
+  // '{' 'required'? typedIdentifier (',' 'required'? typedIdentifier)* ','? '}'
   static boolean namedParameterTypes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes")) return false;
     if (!nextTokenIs(b, LBRACE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, LBRACE);
+    r = r && namedParameterTypes_1(b, l + 1);
     r = r && typedIdentifier(b, l + 1);
-    r = r && namedParameterTypes_2(b, l + 1);
     r = r && namedParameterTypes_3(b, l + 1);
+    r = r && namedParameterTypes_4(b, l + 1);
     r = r && consumeToken(b, RBRACE);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // (',' typedIdentifier)*
-  private static boolean namedParameterTypes_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_2")) return false;
+  // 'required'?
+  private static boolean namedParameterTypes_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
+  // (',' 'required'? typedIdentifier)*
+  private static boolean namedParameterTypes_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!namedParameterTypes_2_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "namedParameterTypes_2", c)) break;
+      if (!namedParameterTypes_3_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "namedParameterTypes_3", c)) break;
     }
     return true;
   }
 
-  // ',' typedIdentifier
-  private static boolean namedParameterTypes_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_2_0")) return false;
+  // ',' 'required'? typedIdentifier
+  private static boolean namedParameterTypes_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
+    r = r && namedParameterTypes_3_0_1(b, l + 1);
     r = r && typedIdentifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
+  // 'required'?
+  private static boolean namedParameterTypes_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_3_0_1")) return false;
+    consumeToken(b, REQUIRED);
+    return true;
+  }
+
   // ','?
-  private static boolean namedParameterTypes_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "namedParameterTypes_3")) return false;
+  private static boolean namedParameterTypes_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "namedParameterTypes_4")) return false;
     consumeToken(b, COMMA);
     return true;
   }
@@ -5879,13 +5637,14 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // simpleQualifiedReferenceExpression typeArguments?
+  // simpleQualifiedReferenceExpression typeArguments? '?'?
   public static boolean simpleType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleType")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SIMPLE_TYPE, "<simple type>");
     r = simpleQualifiedReferenceExpression(b, l + 1);
     r = r && simpleType_1(b, l + 1);
+    r = r && simpleType_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -5894,6 +5653,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean simpleType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleType_1")) return false;
     typeArguments(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean simpleType_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleType_2")) return false;
+    consumeToken(b, QUEST);
     return true;
   }
 
@@ -6802,7 +6568,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<functionId>> typeParameters? parameterTypeList
+  // <<functionId>> typeParameters? parameterTypeList '?'?
   public static boolean typedFunctionType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typedFunctionType")) return false;
     boolean r;
@@ -6810,6 +6576,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = functionId(b, l + 1);
     r = r && typedFunctionType_1(b, l + 1);
     r = r && parameterTypeList(b, l + 1);
+    r = r && typedFunctionType_3(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -6818,6 +6585,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean typedFunctionType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typedFunctionType_1")) return false;
     typeParameters(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean typedFunctionType_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedFunctionType_3")) return false;
+    consumeToken(b, QUEST);
     return true;
   }
 
@@ -6834,7 +6608,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<functionId>> typeParameters? parameterTypeList
+  // <<functionId>> typeParameters? parameterTypeList '?'?
   public static boolean untypedFunctionType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "untypedFunctionType")) return false;
     boolean r;
@@ -6842,6 +6616,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = functionId(b, l + 1);
     r = r && untypedFunctionType_1(b, l + 1);
     r = r && parameterTypeList(b, l + 1);
+    r = r && untypedFunctionType_3(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -6850,6 +6625,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean untypedFunctionType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "untypedFunctionType_1")) return false;
     typeParameters(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean untypedFunctionType_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "untypedFunctionType_3")) return false;
+    consumeToken(b, QUEST);
     return true;
   }
 
@@ -6940,11 +6722,13 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // metadata* 'static'? ('covariant'? finalOrConst type               componentName |
-  //                                               'covariant'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
-  //                                               'covariant'               type !asExpression componentName |
-  //                                                                         type !asExpression componentName |
-  //                                               'covariant'? 'var'                           componentName) !'.'
+  // metadata* 'static'? ('covariant'? 'late'? finalOrConst type               componentName |
+  //                                               'covariant'? 'late'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
+  //                                               'covariant'? 'late'? 'var'                           componentName |
+  //                                               'covariant'  'late'               type !asExpression componentName |
+  //                                               'covariant'                       type !asExpression componentName |
+  //                                                            'late'               type !asExpression componentName |
+  //                                                                                 type !asExpression componentName) !'.' !':'
   public static boolean varAccessDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration")) return false;
     boolean r;
@@ -6953,6 +6737,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && varAccessDeclaration_1(b, l + 1);
     r = r && varAccessDeclaration_2(b, l + 1);
     r = r && varAccessDeclaration_3(b, l + 1);
+    r = r && varAccessDeclaration_4(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -6975,11 +6760,13 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? finalOrConst type               componentName |
-  //                                               'covariant'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
-  //                                               'covariant'               type !asExpression componentName |
-  //                                                                         type !asExpression componentName |
-  //                                               'covariant'? 'var'                           componentName
+  // 'covariant'? 'late'? finalOrConst type               componentName |
+  //                                               'covariant'? 'late'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>> |
+  //                                               'covariant'? 'late'? 'var'                           componentName |
+  //                                               'covariant'  'late'               type !asExpression componentName |
+  //                                               'covariant'                       type !asExpression componentName |
+  //                                                            'late'               type !asExpression componentName |
+  //                                                                                 type !asExpression componentName
   private static boolean varAccessDeclaration_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2")) return false;
     boolean r;
@@ -6989,16 +6776,19 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = varAccessDeclaration_2_2(b, l + 1);
     if (!r) r = varAccessDeclaration_2_3(b, l + 1);
     if (!r) r = varAccessDeclaration_2_4(b, l + 1);
+    if (!r) r = varAccessDeclaration_2_5(b, l + 1);
+    if (!r) r = varAccessDeclaration_2_6(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // 'covariant'? finalOrConst type               componentName
+  // 'covariant'? 'late'? finalOrConst type               componentName
   private static boolean varAccessDeclaration_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = varAccessDeclaration_2_0_0(b, l + 1);
+    r = r && varAccessDeclaration_2_0_1(b, l + 1);
     r = r && finalOrConst(b, l + 1);
     r = r && type(b, l + 1);
     r = r && componentName(b, l + 1);
@@ -7013,12 +6803,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>>
+  // 'late'?
+  private static boolean varAccessDeclaration_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_0_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'? 'late'? finalOrConst                    componentName <<failIfItLooksLikeConstantObjectExpression>>
   private static boolean varAccessDeclaration_2_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = varAccessDeclaration_2_1_0(b, l + 1);
+    r = r && varAccessDeclaration_2_1_1(b, l + 1);
     r = r && finalOrConst(b, l + 1);
     r = r && componentName(b, l + 1);
     r = r && failIfItLooksLikeConstantObjectExpression(b, l + 1);
@@ -7033,22 +6831,102 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // 'covariant'               type !asExpression componentName
+  // 'late'?
+  private static boolean varAccessDeclaration_2_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_1_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'? 'late'? 'var'                           componentName
   private static boolean varAccessDeclaration_2_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_2_2")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, COVARIANT);
+    r = varAccessDeclaration_2_2_0(b, l + 1);
+    r = r && varAccessDeclaration_2_2_1(b, l + 1);
+    r = r && consumeToken(b, VAR);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // 'covariant'?
+  private static boolean varAccessDeclaration_2_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_2_0")) return false;
+    consumeToken(b, COVARIANT);
+    return true;
+  }
+
+  // 'late'?
+  private static boolean varAccessDeclaration_2_2_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_2_1")) return false;
+    consumeToken(b, LATE);
+    return true;
+  }
+
+  // 'covariant'  'late'               type !asExpression componentName
+  private static boolean varAccessDeclaration_2_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, COVARIANT, LATE);
     r = r && type(b, l + 1);
-    r = r && varAccessDeclaration_2_2_2(b, l + 1);
+    r = r && varAccessDeclaration_2_3_3(b, l + 1);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // !asExpression
-  private static boolean varAccessDeclaration_2_2_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varAccessDeclaration_2_2_2")) return false;
+  private static boolean varAccessDeclaration_2_3_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_3_3")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !asExpression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'covariant'                       type !asExpression componentName
+  private static boolean varAccessDeclaration_2_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COVARIANT);
+    r = r && type(b, l + 1);
+    r = r && varAccessDeclaration_2_4_2(b, l + 1);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !asExpression
+  private static boolean varAccessDeclaration_2_4_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_4_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !asExpression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // 'late'               type !asExpression componentName
+  private static boolean varAccessDeclaration_2_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_5")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, LATE);
+    r = r && type(b, l + 1);
+    r = r && varAccessDeclaration_2_5_2(b, l + 1);
+    r = r && componentName(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !asExpression
+  private static boolean varAccessDeclaration_2_5_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_5_2")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
     r = !asExpression(b, l + 1);
@@ -7057,44 +6935,25 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // type !asExpression componentName
-  private static boolean varAccessDeclaration_2_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varAccessDeclaration_2_3")) return false;
+  private static boolean varAccessDeclaration_2_6(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_6")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = type(b, l + 1);
-    r = r && varAccessDeclaration_2_3_1(b, l + 1);
+    r = r && varAccessDeclaration_2_6_1(b, l + 1);
     r = r && componentName(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // !asExpression
-  private static boolean varAccessDeclaration_2_3_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varAccessDeclaration_2_3_1")) return false;
+  private static boolean varAccessDeclaration_2_6_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_2_6_1")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
     r = !asExpression(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
-  }
-
-  // 'covariant'? 'var'                           componentName
-  private static boolean varAccessDeclaration_2_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varAccessDeclaration_2_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = varAccessDeclaration_2_4_0(b, l + 1);
-    r = r && consumeToken(b, VAR);
-    r = r && componentName(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // 'covariant'?
-  private static boolean varAccessDeclaration_2_4_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varAccessDeclaration_2_4_0")) return false;
-    consumeToken(b, COVARIANT);
-    return true;
   }
 
   // !'.'
@@ -7103,6 +6962,16 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NOT_);
     r = !consumeToken(b, DOT);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // !':'
+  private static boolean varAccessDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "varAccessDeclaration_4")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !consumeToken(b, COLON);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

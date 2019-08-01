@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.ScriptList;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface ScriptListConsumer extends Consumer {
 
-  public void received(ScriptList response);
+  void received(ScriptList response);
 }

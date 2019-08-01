@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -22,7 +23,6 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugParameters;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,13 +45,9 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   private PortField myPortField;
   private ComboboxWithBrowseButton myDartProjectCombo;
 
-  @Nullable private final DartSdk mySdk;
-
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
-    mySdk = DartSdk.getDartSdk(project);
-
     myHostField.getDocument().addDocumentListener(new DocumentAdapter() {
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
@@ -69,7 +65,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new AnAction("Copy") {
       {
-        copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
+        ActionUtil.copyFrom(this, IdeActions.ACTION_COPY);
       }
 
       @Override
@@ -87,7 +83,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
     );
 
-    myCopyButton.setSize(22);
+    myCopyButton.setSize(ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
     myCopyButton.setIcon(PlatformIcons.COPY_ICON);
     myCopyButton.addActionListener(e -> CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim())));
   }

@@ -11,28 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dartlang.vm.service.element;
+package org.dartlang.vm.service.consumer;
 
 // This is a generated file.
 
-import com.google.gson.JsonObject;
+import org.dartlang.vm.service.element.Timeline;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
-public class Tag extends Response {
+@SuppressWarnings({"WeakerAccess", "unused"})
+public interface TimelineConsumer extends Consumer {
 
-  public Tag(JsonObject json) {
-    super(json);
-  }
-
-  public CodeRef getCode() {
-    return new CodeRef((JsonObject) json.get("code"));
-  }
-
-  public int getExclusiveTicks() {
-    return json.get("exclusiveTicks") == null ? -1 : json.get("exclusiveTicks").getAsInt();
-  }
-
-  public int getInclusiveTicks() {
-    return json.get("inclusiveTicks") == null ? -1 : json.get("inclusiveTicks").getAsInt();
-  }
+  void received(Timeline response);
 }

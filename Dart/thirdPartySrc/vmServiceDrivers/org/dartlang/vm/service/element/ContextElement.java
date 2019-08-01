@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ContextElement extends Element {
 
   public ContextElement(JsonObject json) {
@@ -29,10 +29,10 @@ public class ContextElement extends Element {
    * @return one of <code>InstanceRef</code> or <code>Sentinel</code>
    */
   public InstanceRef getValue() {
-    JsonElement elem = json.get("value");
+    final JsonElement elem = json.get("value");
     if (!elem.isJsonObject()) return null;
-    JsonObject child = elem.getAsJsonObject();
-    String type = child.get("type").getAsString();
+    final JsonObject child = elem.getAsJsonObject();
+    final String type = child.get("type").getAsString();
     if ("Sentinel".equals(type)) return null;
     return new InstanceRef(child);
   }

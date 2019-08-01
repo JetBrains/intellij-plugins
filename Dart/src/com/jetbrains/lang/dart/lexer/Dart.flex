@@ -7,41 +7,42 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 import static com.jetbrains.lang.dart.lexer.DartLexer.*;
 
+@SuppressWarnings("DuplicateBranchesInSwitch")
 %%
 %{
-    private static final class State {
-        final int lBraceCount;
-        final int state;
+  private static final class State {
+    final int lBraceCount;
+    final int state;
 
-        public State(int state, int lBraceCount) {
-            this.state = state;
-            this.lBraceCount = lBraceCount;
-        }
-
-        @Override
-        public String toString() {
-            return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
-        }
+    private State(int state, int lBraceCount) {
+      this.state = state;
+      this.lBraceCount = lBraceCount;
     }
 
-    protected final Stack<State> myStateStack = new Stack<State>();
-    protected int myLeftBraceCount;
-
-    private void pushState(int state) {
-        myStateStack.push(new State(yystate(), myLeftBraceCount));
-        myLeftBraceCount = 0;
-        yybegin(state);
+    @Override
+    public String toString() {
+      return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
     }
+  }
 
-    private void popState() {
-        State state = myStateStack.pop();
-        myLeftBraceCount = state.lBraceCount;
-        yybegin(state.state);
-    }
+  protected final Stack<State> myStateStack = new Stack<>();
+  protected int myLeftBraceCount;
 
-    public _DartLexer() {
-      this((java.io.Reader)null);
-    }
+  private void pushState(int state) {
+    myStateStack.push(new State(yystate(), myLeftBraceCount));
+    myLeftBraceCount = 0;
+    yybegin(state);
+  }
+
+  private void popState() {
+    State state = myStateStack.pop();
+    myLeftBraceCount = state.lBraceCount;
+    yybegin(state.state);
+  }
+
+  _DartLexer() {
+    this(null);
+  }
 %}
 
 %class _DartLexer
@@ -160,11 +161,10 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "true"                 { return TRUE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "try"                  { return TRY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "var"                  { return VAR; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
-// 'void' is not listed as reserved word in spec but it may only be used as the return type of a function
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "void"                 { return VOID; }
 
 // BUILT_IN_IDENTIFIER (can be used as normal identifiers)
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
@@ -195,6 +195,8 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "native"               { return NATIVE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "show"                 { return SHOW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "hide"                 { return HIDE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "late"                 { return LATE; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "required"             { return REQUIRED; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {IDENTIFIER}           { return IDENTIFIER; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "["                { return LBRACKET; }
@@ -225,6 +227,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "!="               { return NEQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "."                { return DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ".."               { return DOT_DOT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "?.."              { return QUEST_DOT_DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "..."              { return DOT_DOT_DOT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "...?"             { return DOT_DOT_DOT_QUEST; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> ","                { return COMMA; }

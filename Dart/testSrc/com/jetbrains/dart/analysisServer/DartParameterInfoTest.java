@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiElement;
@@ -35,7 +36,7 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     assertNotNull(elt);
     parameterInfoHandler.showParameterInfo(elt, createContext);
     Object[] items = createContext.getItemsToShow();
-    assertTrue(items != null);
+    assertNotNull(items);
     assertTrue(items.length > 0);
     MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
@@ -79,12 +80,12 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("int x, int y", 1);
   }
 
-  public void _testParamInfo6() {
-    doTest("int x, int y = 239", 1);
+  public void testParamInfo6() {
+    doTest("int x, {int y: 239}", 1);
   }
 
-  public void _testParamInfo7() {
-    doTest("int x, int y = 239", 0);
+  public void testParamInfo7() {
+    doTest("int x, {int y: 239}", 0);
   }
 
   public void testParamInfo8() {
@@ -125,6 +126,34 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
 
   public void testParamInfo18() {
     doTest("[String s = 'foo']", 0, 1, 17);
+  }
+
+  public void testParamInfo19() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo20() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo21() {
+    doTest("[String str]", 0);
+  }
+
+  public void testParamInfo22() {
+    doTest("{String str}", 0);
+  }
+
+  public void testParamInfo23() {
+    doTest("{String str}", 0);
+  }
+
+  public void testParamInfo24() {
+    doTest("{String str}", 0);
+  }
+
+  public void _testParamInfo25() {
+    doTest("{String str1: '1', String str2: '2'}", 1);
   }
 
   public void testParamInfo_call_localVariable() {

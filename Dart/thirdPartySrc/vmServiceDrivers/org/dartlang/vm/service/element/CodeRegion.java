@@ -17,7 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonObject;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class CodeRegion extends Element {
 
   public CodeRegion(JsonObject json) {

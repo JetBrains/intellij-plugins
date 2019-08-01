@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 /**
  * {@link CodeRef} is a reference to a {@link Code} object.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class CodeRef extends ObjRef {
 
   public CodeRef(JsonObject json) {
@@ -32,7 +32,7 @@ public class CodeRef extends ObjRef {
    * What kind of code object is this?
    */
   public CodeKind getKind() {
-    JsonElement value = json.get("kind");
+    final JsonElement value = json.get("kind");
     try {
       return value == null ? CodeKind.Unknown : CodeKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {

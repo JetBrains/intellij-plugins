@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -23,8 +24,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartRemoteDebugConfiguration extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction {
-
+public class DartRemoteDebugConfiguration extends RunConfigurationBase<Element> implements RunConfigurationWithSuppressedDefaultRunAction {
   @NotNull DartRemoteDebugParameters myParameters = new DartRemoteDebugParameters();
 
   protected DartRemoteDebugConfiguration(@NotNull final Project project,

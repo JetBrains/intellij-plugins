@@ -43,17 +43,24 @@ Dart File
                         PsiElement(IDENTIFIER)('a')
                   VAR_INIT
                     PsiElement(=)('=')
-                    REFERENCE_EXPRESSION
-                      PARENTHESIZED_EXPRESSION
-                        PsiElement(()('(')
+                    ARRAY_ACCESS_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PARENTHESIZED_EXPRESSION
+                          PsiElement(()('(')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('x')
+                          PsiElement())(')')
+                        PsiElement(?.)('?.')
                         REFERENCE_EXPRESSION
                           ID
-                            PsiElement(IDENTIFIER)('x')
-                        PsiElement())(')')
+                            PsiElement(IDENTIFIER)('y')
                       PsiElement(?.)('?.')
+                      PsiElement([)('[')
                       REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('y')
+                          PsiElement(IDENTIFIER)('b')
+                      PsiElement(])(']')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
                   VAR_ACCESS_DECLARATION
@@ -294,6 +301,56 @@ Dart File
                             PsiElement(IDENTIFIER)('h')
                     PsiElement())(')')
                 PsiElement(;)(';')
+                VALUE_EXPRESSION
+                  AS_EXPRESSION
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('aaa')
+                        PsiElement(!)('!')
+                        PsiElement(.)('.')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('bcc')
+                      PsiElement(!)('!')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                    PsiElement(!)('!')
+                    PsiElement(as)('as')
+                    TYPE
+                      SIMPLE_TYPE
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('CCC')
+                  CASCADE_REFERENCE_EXPRESSION
+                    PsiElement(..)('..')
+                    CALL_EXPRESSION
+                      ARRAY_ACCESS_EXPRESSION
+                        ARRAY_ACCESS_EXPRESSION
+                          ARRAY_ACCESS_EXPRESSION
+                            CALL_EXPRESSION
+                              REFERENCE_EXPRESSION
+                                ID
+                                  PsiElement(IDENTIFIER)('ddd')
+                              ARGUMENTS
+                                PsiElement(()('(')
+                                PsiElement())(')')
+                            PsiElement(!)('!')
+                            PsiElement(!)('!')
+                            PsiElement([)('[')
+                            PsiElement(])(']')
+                          PsiElement([)('[')
+                          PsiElement(])(']')
+                        PsiElement(!)('!')
+                        PsiElement([)('[')
+                        PsiElement(])(']')
+                      PsiElement(!)('!')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                PsiElement(;)(';')
               PsiElement(})('}')
       PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
@@ -365,6 +422,67 @@ Dart File
         STATEMENTS
           VAR_DECLARATION_LIST
             VAR_ACCESS_DECLARATION
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('b')
+                  PsiElement(?)('?')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('c')
+          PsiElement(;)(';')
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('b')
+                  PsiElement(?)('?')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('c')
+            VAR_INIT
+              PsiElement(=)('=')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('d')
+          PsiElement(;)(';')
+          TERNARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('b')
+            PsiElement(?)('?')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('c')
+            PsiElement(:)(':')
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('d')
+          PsiElement(;)(';')
+          ASSIGN_EXPRESSION
+            REFERENCE_EXPRESSION
+              ID
+                PsiElement(IDENTIFIER)('e')
+            ASSIGNMENT_OPERATOR
+              PsiElement(=)('=')
+            TERNARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('f')
+              PsiElement(?)('?')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('g')
+              PsiElement(:)(':')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('h')
+          PsiElement(;)(';')
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
               PsiElement(var)('var')
               COMPONENT_NAME
                 ID
@@ -387,3 +505,51 @@ Dart File
                 PsiElement(IDENTIFIER)('y')
             PsiElement(;)(';')
         PsiElement(})('}')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(static)('static')
+      PsiElement(final)('final')
+      TYPE
+        SIMPLE_TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Map')
+          TYPE_ARGUMENTS
+            PsiElement(<)('<')
+            TYPE_LIST
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('String')
+                  PsiElement(?)('?')
+              PsiElement(,)(',')
+              TYPE
+                SIMPLE_TYPE
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('Map')
+                  TYPE_ARGUMENTS
+                    PsiElement(<)('<')
+                    TYPE_LIST
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('int')
+                          PsiElement(?)('?')
+                      PsiElement(,)(',')
+                      TYPE
+                        SIMPLE_TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('bool')
+                          PsiElement(?)('?')
+                    PsiElement(>)('>')
+                  PsiElement(?)('?')
+            PsiElement(>)('>')
+          PsiElement(?)('?')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('a')
+  PsiElement(;)(';')

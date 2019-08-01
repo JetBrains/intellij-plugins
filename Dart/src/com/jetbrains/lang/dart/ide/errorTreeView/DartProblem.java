@@ -171,8 +171,8 @@ public class DartProblem {
     if (StringUtil.isNotEmpty(correction)) {
       tooltip.append("<br/><p>").append(XmlStringUtil.escapeString(correction)).append("</p>");
     }
-    if (!StringUtil.isEmpty(url)) {
-      tooltip.append("<a href='").append(url).append("'>Documentation</a>");
+    if (StringUtil.isNotEmpty(url)) {
+      tooltip.append("<a href='").append(url).append("'>Open documentation</a>");
     }
     tooltip.append("</html>");
     return tooltip.toString();

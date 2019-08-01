@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 /**
  * A {@link LibraryDependency} provides information about an import or export.
  */
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryDependency extends Element {
 
   public LibraryDependency(JsonObject json) {

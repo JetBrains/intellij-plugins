@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -18,12 +18,14 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -40,7 +42,10 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Enumeration;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
@@ -63,12 +68,14 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JButton myCheckSdkUpdateButton;
   private PortField myPortField;
 
+  private JBLabel myModulesPanelLabel;
   private JPanel myModulesPanel;
 
   private CheckboxTreeTable myModulesCheckboxTreeTable;
   private JBLabel myErrorLabel;
 
   private final @NotNull Project myProject;
+  private final boolean myShowModulesPanel;
 
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
@@ -76,6 +83,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
+    myShowModulesPanel = DartSdkLibUtil.isIdeWithMultipleModuleSupport() || ModuleManager.getInstance(project).getModules().length > 1;
     initEnableDartSupportCheckBox();
     initDartSdkControls();
     initModulesPanel();
@@ -83,7 +91,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   }
 
   private void initEnableDartSupportCheckBox() {
-    myEnableDartSupportCheckBox.setText(DartBundle.message("enable.dart.support.for.project.0", myProject.getName()));
+    myEnableDartSupportCheckBox.setText(DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+                                        ? DartBundle.message("enable.dart.support.for.project.0", myProject.getName())
+                                        : DartBundle.message("enable.dart.support.check.box"));
     myEnableDartSupportCheckBox.addActionListener(e -> {
       updateControlsEnabledState();
       updateErrorLabel();
@@ -167,18 +177,23 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   }
 
   private void initModulesPanel() {
-    if (!DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (!myShowModulesPanel) {
       myModulesPanel.setVisible(false);
       return;
     }
 
+    myModulesPanelLabel.setText(DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+                                ? DartBundle.message("enable.dart.support.for.following.modules")
+                                : DartBundle.message("enable.dart.support.for.following.projects"));
+
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
-    Arrays.sort(modules, Comparator.comparing(module -> module.getName().toLowerCase(Locale.US)));
+    Arrays.sort(modules, Comparator.comparing(module -> StringUtil.toLowerCase(module.getName())));
 
     final CheckedTreeNode rootNode = new CheckedTreeNode(myProject);
     ((DefaultTreeModel)myModulesCheckboxTreeTable.getTree().getModel()).setRoot(rootNode);
-    myModulesCheckboxTreeTable.getTree().setRootVisible(true);
+    myModulesCheckboxTreeTable.getTree().setRootVisible(DartSdkLibUtil.isIdeWithMultipleModuleSupport());
     myModulesCheckboxTreeTable.getTree().setShowsRootHandles(false);
+    myModulesCheckboxTreeTable.getTree().setBorder(JBUI.Borders.emptyLeft(5));
 
     for (final Module module : modules) {
       rootNode.add(new CheckedTreeNode(module));
@@ -235,7 +250,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
 
-    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (myShowModulesPanel) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
 
@@ -281,7 +296,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     myPortField.setNumber(getWebdevPort(myProject));
 
-    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (myShowModulesPanel) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
       rootNode.setChecked(false);
       final Enumeration children = rootNode.children();
@@ -326,7 +341,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           DartSdkLibUtil.ensureDartSdkConfigured(myProject, sdkHomePath);
           DaemonCodeAnalyzer.getInstance(myProject).restart();
 
-          final Module[] modules = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+          final Module[] modules = myShowModulesPanel
                                    ? myModulesCheckboxTreeTable.getCheckedNodes(Module.class)
                                    : ModuleManager.getInstance(myProject).getModules();
           DartSdkLibUtil.enableDartSdkForSpecifiedModulesAndDisableForOthers(myProject, modules);
@@ -391,10 +406,12 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(getTextFromCombo(mySdkPathComboWithBrowse));
     if (message != null) return message;
 
-    if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
+    if (myShowModulesPanel) {
       final Module[] modules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (modules.length == 0) {
-        return DartBundle.message("warning.no.modules.selected.dart.support.will.be.disabled");
+        return DartSdkLibUtil.isIdeWithMultipleModuleSupport()
+               ? DartBundle.message("warning.no.modules.selected.dart.support.will.be.disabled")
+               : DartBundle.message("warning.no.projects.selected.dart.support.will.be.disabled");
       }
     }
 

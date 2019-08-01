@@ -55,13 +55,13 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="edcfd" class="com.intellij.ui.components.JBLabel">
+                  <component id="edcfd" class="com.intellij.ui.components.JBLabel" binding="myModulesPanelLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <labelFor value="468b0"/>
-                      <text value="E&amp;nable Dart support for the following modules:"/>
+                      <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="enable.dart.support.for.following.modules"/>
                     </properties>
                   </component>
                   <scrollpane id="39c00" class="com.intellij.ui.components.JBScrollPane">
@@ -195,6 +195,7 @@
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
+            <properties/>
           </component>
         </children>
       </grid>

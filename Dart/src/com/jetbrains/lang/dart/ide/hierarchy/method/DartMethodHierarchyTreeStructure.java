@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.google.common.collect.Lists;
@@ -9,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
@@ -38,10 +39,10 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
   protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descript) {
     final DartMethodHierarchyNodeDescriptor descriptor = (DartMethodHierarchyNodeDescriptor)descript;
     final DartClass dartClass = descriptor.getType();
-    if (dartClass == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    if (dartClass == null) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
     final List<TypeHierarchyItem> items = getTypeHierarchyItems(dartClass);
-    if (items.isEmpty()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    if (items.isEmpty()) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
     addAllVisibleSubclasses(Sets.newHashSet(), myProject, items, items.get(0), descriptor);
     return descriptor.getCachedChildren();
@@ -53,7 +54,7 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
                                        @NotNull final TypeHierarchyItem item,
                                        @NotNull final DartMethodHierarchyNodeDescriptor descriptor) {
     if (!stackItems.add(item)) {
-      descriptor.setCachedChildren(ArrayUtil.EMPTY_OBJECT_ARRAY);
+      descriptor.setCachedChildren(ArrayUtilRt.EMPTY_OBJECT_ARRAY);
       return;
     }
     HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(myProject).getState();

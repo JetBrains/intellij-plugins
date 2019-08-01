@@ -17,8 +17,8 @@ package org.dartlang.vm.service.consumer;
 
 import org.dartlang.vm.service.element.ObjRef;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public interface ObjRefConsumer extends Consumer {
 
-  public void received(ObjRef response);
+  void received(ObjRef response);
 }
