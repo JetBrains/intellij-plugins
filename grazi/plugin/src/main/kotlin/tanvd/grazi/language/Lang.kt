@@ -1,20 +1,24 @@
 package tanvd.grazi.language
 
-import com.intellij.ide.plugins.PluginManager
-import com.intellij.openapi.extensions.PluginId
+import com.intellij.openapi.application.ApplicationManager
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
+import tanvd.kex.tryRun
 
 @Suppress("unused")
 enum class Lang(val displayName: String, val shortCode: String, val className: String,
                 private val enabledRules: Set<String> = emptySet(),
-                private val disabledRules: Set<String> = emptySet()) {
-    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish",GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
-    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish", GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
-    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", GraziBundle.langConfig("en.enabled"), GraziBundle.langConfig("en.disabled")),
-    RUSSIAN("Russian", "ru", "Russian", GraziBundle.langConfig("ru.enabled")),
+                private val disabledRules: Set<String> = emptySet(),
+                private val disabledCategories: Set<String> = emptySet()) {
+    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish",
+            GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
+    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish",
+            GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
+    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish",
+            GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
+    RUSSIAN("Russian", "ru", "Russian", GraziBundle.langConfig("ru.rules.enabled")),
     PERSIAN("Persian", "fa", "Persian"),
     FRENCH("French", "fr", "French"),
     GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman"),
@@ -39,10 +43,14 @@ enum class Lang(val displayName: String, val shortCode: String, val className: S
         fun sortedValues() = values().sortedBy(Lang::displayName)
     }
 
-    val jLanguage: Language by lazy {
-        val loader = PluginManager.getPlugin(PluginId.getId(GraziPlugin.id))!!.pluginClassLoader
-        Class.forName("org.languagetool.language.$className", true, loader).newInstance() as Language
-    }
+    val jLanguage: Language?
+        get() = tryRun {
+            if (ApplicationManager.getApplication().isUnitTestMode) {
+                Class.forName("org.languagetool.language.$className").newInstance() as Language
+            } else {
+                Class.forName("org.languagetool.language.$className", true, GraziPlugin.classLoader).newInstance() as Language
+            }
+        }
 
     fun isEnglish() = shortCode == "en"
 
@@ -53,7 +61,9 @@ enum class Lang(val displayName: String, val shortCode: String, val className: S
             tool.enableRule(it.id)
         }
 
-        tool.allRules.filter { rule -> disabledRules.any { rule.id.contains(it) } }.forEach {
+        tool.allRules.filter { rule ->
+            disabledRules.any { rule.id.contains(it) } || disabledCategories.any { rule.category.id.toString().contains(it) }
+        }.forEach {
             tool.disableRule(it.id)
         }
     }

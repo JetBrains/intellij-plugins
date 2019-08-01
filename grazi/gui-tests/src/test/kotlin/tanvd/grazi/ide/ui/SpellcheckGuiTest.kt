@@ -14,10 +14,9 @@ class SpellcheckGuiTest : GraziGuiTestBase() {
     @Test
     fun `test spellcheck checkbox`() {
         simpleProject {
-            waitAMoment()
-
-            enableGit()
             openTestFile()
+            waitAMoment()
+            enableGit()
 
             editor {
                 waitAMoment()

@@ -58,10 +58,10 @@ fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
     val state = GraziConfig.get()
 
     val result = TreeMap<Lang, SortedMap<ComparableCategory, SortedSet<RuleWithLang>>>(Comparator.comparing(Lang::displayName))
-    langs.forEach { lang ->
+    langs.filter { it.jLanguage != null }.forEach { lang ->
         val categories = TreeMap<ComparableCategory, SortedSet<RuleWithLang>>()
 
-        with(get(lang)) {
+        with(get(lang)!!) {
             val activeRules = allActiveRules.toSet()
 
             fun Rule.isActive() = (id in state.userEnabledRules && id !in state.userDisabledRules)

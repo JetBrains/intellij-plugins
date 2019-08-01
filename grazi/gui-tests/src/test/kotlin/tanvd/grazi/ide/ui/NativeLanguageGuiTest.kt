@@ -15,6 +15,11 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
     fun `test native language combobox`() {
         simpleProject {
             settings {
+                actionButton("Add").click()
+                popupMenu("Russian").clickSearchedItem()
+
+                waitForBackgroundTasksToFinish()
+
                 with(combobox("Native language:")) {
                     val lang = "English (US)"
                     assertEquals(lang, selectedItem())

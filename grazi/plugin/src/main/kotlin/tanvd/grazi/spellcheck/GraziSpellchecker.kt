@@ -33,7 +33,8 @@ object GraziSpellchecker : GraziStateLifecycle {
 
     private fun createChecker(state: GraziConfig.State): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-        return JLanguageTool(checkerLang.jLanguage, state.nativeLanguage.jLanguage,
+        // AMERICAN_ENGLISH must always be present
+        return JLanguageTool(checkerLang.jLanguage!!, state.nativeLanguage.jLanguage,
                 cache, UserConfig(state.userWords.toList())).apply {
             disableRules(allRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
         }
