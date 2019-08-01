@@ -54,7 +54,7 @@ public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
       if (StringUtil.isNotEmpty(d.getInitializer())) {
         var.append("=").append(d.getInitializer());
       }
-      var.append(JSCodeStyleSettings.getSemicolon(clazz.getContainingFile()));
+      var.append(JSCodeStyleSettings.getSemicolon(clazz));
 
       JSVarStatement varStatement = (JSVarStatement)JSChangeUtil.createStatementFromText(clazz.getProject(), var.toString(),
                                                                                          JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();

@@ -82,7 +82,7 @@ public class ConvertToLocalFix implements LocalQuickFix {
       }
     }
 
-    text.append(JSCodeStyleSettings.getSemicolon(anchorBlock.getContainingFile()));
+    text.append(JSCodeStyleSettings.getSemicolon(anchorBlock));
     final PsiElement varStatement =
       JSChangeUtil.createJSTreeFromText(project, text.toString(), JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
     if (varStatement == null) return false;
