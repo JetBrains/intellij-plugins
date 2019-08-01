@@ -48,7 +48,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
                                       "function toString():String {\nreturn " +
                                       (needOverride[0] ? "super.toString()" : "\"" + ((JSClass)jsClass).getName());
 
-        final String semicolon = JSCodeStyleSettings.getSemicolon(file);
+        final String semicolon = JSCodeStyleSettings.getSemicolon(jsClass);
 
         boolean first = true;
 
