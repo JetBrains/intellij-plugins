@@ -61,27 +61,49 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
+    val enabledPackagesResult = VueWebTypesRegistry.instance.webTypesEnabledPackages
+    val enabledPackages = enabledPackagesResult.value.asSequence()
+      .flatMap { pkgName ->
+        if (pkgName.startsWith('@') && pkgName.contains('/'))
+          sequenceOf(pkgName, pkgName.takeWhile { ch -> ch != '/' })
+        else sequenceOf(pkgName)
+      }
+      .toSet()
     PackageJsonUtil.processUpPackageJsonFilesInAllScope(packageJson) { candidate ->
-      result.addAll(getPlugins(candidate))
+      result.addAll(getPlugins(candidate, enabledPackages))
       true
     }
-    return Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+    return Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, *enabledPackagesResult.dependencyItems)
   }
 
-  private fun getPlugins(packageJson: VirtualFile): List<VuePlugin> =
+  private fun getPlugins(packageJson: VirtualFile,
+                         enabledPackages: Set<String>): List<VuePlugin> =
     NodeModuleUtil.findNodeModulesByPackageJson(packageJson)
-      ?.let { getVuePluginPackageJsons(it) }
+      ?.let { getVuePluginPackageJsons(it, enabledPackages) }
       ?.filter { isVueLibrary(it) }
       ?.map { VuePluginImpl(project, it) }
       ?.toList()
     ?: emptyList()
 
-  private fun getVuePluginPackageJsons(nodeModules: VirtualFile): Sequence<VirtualFile> {
-    // TODO provide a way to include indirect web-types dependencies
-    return FilenameIndex.getVirtualFilesByName(
-       project, PackageJsonUtil.FILE_NAME,
-      GlobalSearchScopesCore.directoryScope(project, nodeModules, true)
-    ).asSequence()
+  private fun getVuePluginPackageJsons(nodeModules: VirtualFile,
+                                       enabledPackages: Set<String>): Sequence<VirtualFile> {
+    return nodeModules.children.asSequence()
+      .filter { enabledPackages.contains(it.name) && it.isDirectory }
+      .flatMap { dir ->
+        val name = dir.name
+        if (name.startsWith("@"))
+          dir.children.asSequence().filter {
+            enabledPackages.contains("$name/${it.name}") && it.isDirectory
+          }
+        else
+          sequenceOf(dir)
+      }
+      .mapNotNull { PackageJsonUtil.findChildPackageJsonFile(it) }
+      .plus(FilenameIndex.getVirtualFilesByName(
+        project, PackageJsonUtil.FILE_NAME,
+        GlobalSearchScopesCore.directoryScope(project, nodeModules, true)
+      ))
+      .distinct()
   }
 
   private fun buildElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
