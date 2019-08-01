@@ -3,6 +3,9 @@ package org.jetbrains.vuejs.model.webtypes.registry
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.intellij.javaee.ExternalResourceManager
@@ -22,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.util.io.HttpRequests
 import com.intellij.util.text.SemVer
 import one.util.streamex.EntryStream
 import one.util.streamex.StreamEx
@@ -43,6 +47,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   companion object {
     private val LOG = Logger.getInstance(VueWebTypesRegistry::class.java)
+    private const val WEB_TYPES_ENABLED_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/web-types/master/packages/registry.json"
 
     const val PACKAGE_PREFIX = "@web-types"
 
@@ -89,7 +94,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   }
 
   private var myStateLock = Object()
-  private var myState = State(emptySortedMap())
+  private var myState = State(emptySortedMap(), emptySet())
   @Volatile
   private var myStateVersion = 0
   private var myStateTimestamp = 0L
@@ -113,6 +118,11 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       incStateVersion()
     }
   }
+
+  val webTypesEnabledPackages: Result<Set<String>>
+    get() = processState { state, tracker ->
+      Result.create(state.enabledPackages, tracker)
+    }
 
   private fun getWebTypesPlugin(project: Project,
                                 packageJsonFile: VirtualFile,
@@ -203,6 +213,17 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   }
 
   private fun createNewState(): State {
+    val enabledPackagesFuture = ApplicationManager.getApplication().executeOnPooledThread(Callable {
+      try {
+        HttpRequests.request(WEB_TYPES_ENABLED_PACKAGES_URL)
+          .productNameAsUserAgent()
+          .gzip(true)
+          .readString(null)
+      }
+      catch (e: Exception) {
+        e
+      }
+    })
     val packageInfo: MutableList<NodePackageBasicInfo> = mutableListOf()
     NpmRegistryService.getInstance().findPackages(null,
                                                   NpmRegistryService.fullTextSearch(PACKAGE_PREFIX),
@@ -226,7 +247,21 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           .into(TreeMap<SemVer, String>(Comparator.reverseOrder()) as SortedMap<SemVer, String>)
       }
       .toSortedMap()
-    return State(availableVersions)
+    val enabledPackages = enabledPackagesFuture.get()
+      ?.let {
+        when (it) {
+          is Exception -> throw it
+          is String -> ObjectMapper().readTree(it) as? ObjectNode
+          else -> null
+        }
+      }
+      ?.get("vue")
+      ?.let { it as? ArrayNode }
+      ?.elements()
+      ?.asSequence()
+      ?.mapNotNull { (it as? TextNode)?.asText() }
+      ?.toSet()
+    return State(availableVersions, enabledPackages ?: emptySet())
   }
 
   private fun incStateVersion() {
@@ -240,13 +275,16 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   private class State {
 
     val availableVersions: SortedMap<String, SortedMap<SemVer, String>>
+    val enabledPackages: Set<String>
 
-    constructor(availableVersions: SortedMap<String, SortedMap<SemVer, String>>) {
+    constructor(availableVersions: SortedMap<String, SortedMap<SemVer, String>>, enabledPackages: Set<String>) {
       this.availableVersions = availableVersions
+      this.enabledPackages = enabledPackages
     }
 
     constructor(root: Element) {
       availableVersions = TreeMap()
+      enabledPackages = mutableSetOf()
 
       for (versions in root.getChildren(PACKAGE_ELEMENT)) {
         val name = versions.getAttributeValue(NAME_ATTR) ?: continue
@@ -256,6 +294,9 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           val url = version.getAttributeValue(URL_ATTR) ?: continue
           map[ver] = url
         }
+      }
+      for (enabled in root.getChild("enabled")?.getChildren(PACKAGE_ELEMENT) ?: emptyList()) {
+        enabled.getAttributeValue(NAME_ATTR)?.let { enabledPackages.add(it) }
       }
     }
 

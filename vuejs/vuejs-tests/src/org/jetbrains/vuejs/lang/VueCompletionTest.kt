@@ -19,7 +19,10 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
+import org.jdom.input.SAXBuilder
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
+import java.io.StringReader
 
 class VueCompletionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/completion/"
@@ -1640,6 +1643,22 @@ $script""")
         assertContainsElements(myFixture.lookupElementStrings!!, expected)
         assertDoesntContain(myFixture.lookupElementStrings!!, notExpected)
       }
+  }
+
+  fun testWebTypesIndirect() {
+    VueWebTypesRegistry.instance.loadState(SAXBuilder().build(StringReader("""
+      <root>
+        <enabled>
+          <package name="@foo/bar"/>
+          <package name="foo"/>
+        </enabled>
+      </root>
+    """)).rootElement)
+    myFixture.copyDirectoryToProject("web-types-indirect", ".")
+    myFixture.configureFromTempProjectFile("root.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foo3", "foo", "foo-bar")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "foo2", "foo-foo", "foo2-bar", "foo2-foo")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
