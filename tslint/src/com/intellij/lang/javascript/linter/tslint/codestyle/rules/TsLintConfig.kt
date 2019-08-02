@@ -120,24 +120,35 @@ class TslintJsonOption(private val element: Any?) {
     return false
   }
 
-  fun getStringValues(): Collection<String> {
-    if (element is List<*>) {
-      return element.drop(1).mapNotNull { it as? String }
+  fun getStringValues(): List<String> {
+    return getOptionsList().filterIsInstance(String::class.java)
+  }
+
+  fun getOptionsList(): List<Any> {
+    val options = getRuleOptions()
+    if (options is List<*>) {
+      return options.filterNotNull()
     }
-    return asStringArrayOrSingleString(getOptionsElement())
+    if (options != null) {
+      return listOf(options)
+    }
+    return emptyList()
   }
 
   fun getNumberValue(): Int? {
-    return asInt(getOptionsElement())
+    return asInt(getRuleOptions())
   }
 
   fun getStringMapValue(): Map<String, String> {
-    return asStringMap(getOptionsElement())
+    return asStringMap(getRuleOptions())
   }
 
-  private fun getOptionsElement(): Any? {
-    if (this.element is List<*> && this.element.size > 1) {
-      return this.element[1]
+  private fun getRuleOptions(): Any? {
+    if (this.element is List<*>) {
+      if (this.element.size == 2) {
+        return this.element[1]
+      }
+      return element.drop(1)
     }
     if (this.element is Map<*, *>) {
       val optionsElement = this.element["options"]
