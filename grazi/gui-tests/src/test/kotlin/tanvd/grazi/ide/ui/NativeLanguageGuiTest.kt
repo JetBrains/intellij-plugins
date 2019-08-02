@@ -1,6 +1,5 @@
 package tanvd.grazi.ide.ui
 
-import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testGuiFramework.framework.RunWithIde
 import com.intellij.testGuiFramework.impl.*
 import com.intellij.testGuiFramework.launcher.ide.CommunityIde
@@ -13,51 +12,31 @@ import kotlin.test.assertEquals
 class NativeLanguageGuiTest : GraziGuiTestBase() {
     @Test
     fun `test native language combobox`() {
-        simpleProject {
-            settings {
-                actionButton("Add").click()
-                popupMenu("Russian").clickSearchedItem()
+        settings {
+            actionButton("Add").click()
+            popupMenu("Russian").clickSearchedItem()
 
-                waitForBackgroundTasksToFinish()
+            waitAMoment()
 
-                with(combobox("Native language:")) {
-                    val lang = "English (US)"
-                    assertEquals(lang, selectedItem())
+            with(combobox("Native language:")) {
+                val lang = "English (US)"
+                assertEquals(lang, selectedItem())
 
-                    with(jTree(lang)) {
-                        assert(path(lang, "False friends").hasPath())
-                        assert(!path(lang, "Омонимы").hasPath())
-                    }
-
-                    selectItem("Russian")
-                    button("Apply").clickWhenEnabled()
-
-                    with(jTree(lang)) {
-                        assert(!path(lang, "False friends").hasPath())
-                        assert(path(lang, "Омонимы").hasPath())
-                    }
+                with(jTree(lang)) {
+                    assert(path(lang, "False friends").hasPath())
+                    assert(!path(lang, "Омонимы").hasPath())
                 }
-            }
 
-            openTestFile()
+                selectItem("Russian")
+                button("Apply").clickWhenEnabled()
 
-            editor {
-                waitAMoment()
-                moveToLine(1)
-                typeText("I love a baton")
+                with(jTree(lang)) {
+                    assert(!path(lang, "False friends").hasPath())
+                    assert(path(lang, "Омонимы").hasPath())
+                }
 
-                waitAMoment()
-                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 1)
-                requireHighlights(HighlightSeverity.INFORMATION, "baton &rarr; loafЗначение омонимов: baton")
-            }
-
-            settings {
-                combobox("Native language:").selectItem("English (US)")
-            }
-
-            editor {
-                waitAMoment()
-                requireCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 0)
+                selectItem("English (US)")
+                actionButton("Remove").click()
             }
         }
     }
