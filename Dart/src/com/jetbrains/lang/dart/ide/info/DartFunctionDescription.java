@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.info;
 
 import com.intellij.openapi.util.TextRange;
@@ -36,6 +37,11 @@ public class DartFunctionDescription {
   @NotNull
   public DartParameterDescription[] getParameters() {
     return myParameters;
+  }
+
+  @NotNull
+  public DartOptionalParameterDescription[] getOptionalParameters() {
+    return myOptionalParameters;
   }
 
   public String getParametersListPresentableText() {
