@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.refactoring.ui.JSEditorTextField;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.ui.JSVisibilityPanel;
@@ -122,7 +123,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
       return Pair.create(JSBundle.message("invalid.identifier.value.0", getFieldName()), true);
     }
     String type = getFieldType().trim();
-    if ("void".equals(type) || type.contains(" ") || JSRefactoringUtil.createTypeElement(type, myTargetClass) == null) {
+    if ("void".equals(type) || type.contains(" ") || JSChangeUtil.tryCreateTypeElement(type, myTargetClass) == null) {
       return Pair.create(JSBundle.message("invalid.field.type.expression", type), true);
     }
     if (isConstant() && StringUtil.isEmpty(getInitializer())) {
