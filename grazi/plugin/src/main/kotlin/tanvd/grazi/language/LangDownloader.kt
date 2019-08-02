@@ -19,32 +19,34 @@ import org.eclipse.aether.graph.DependencyNode
 import org.eclipse.aether.graph.Exclusion
 import org.eclipse.aether.impl.DefaultServiceLocator
 import org.eclipse.aether.repository.LocalRepository
+import org.eclipse.aether.repository.RemoteRepository
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
 import org.eclipse.aether.transport.http.HttpTransporterFactory
 import org.eclipse.aether.util.artifact.JavaScopes
-import org.eclipse.aether.util.repository.JreProxySelector
-import org.jetbrains.idea.maven.aether.ArtifactRepositoryManager
 import org.languagetool.Language
 import org.languagetool.Languages
 import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.GraziLibResolver
 import tanvd.grazi.GraziPlugin
+import tanvd.grazi.JreProxySelector
 import tanvd.grazi.ide.ui.components.dsl.msg
 import java.io.File
 import java.net.URL
 import java.nio.file.Paths
 
 object LangDownloader {
-    private val LOG = LoggerFactory.getLogger(Lang::class.java)
+    private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
     private val repository: RepositorySystem
     private val session: RepositorySystemSession
+    private val proxy = JreProxySelector()
 
-    private val MAVEN_CENTRAL_REPOSITORY = ArtifactRepositoryManager.createRemoteRepository(
-            "central", "http://repo1.maven.org/maven2/"
-    )
+    private val MAVEN_CENTRAL_REPOSITORY =
+            RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
+                    .setProxy(proxy.getProxy(msg("grazi.maven.repo.url"))).build()
 
     init {
         val locator = MavenRepositorySystemUtils.newServiceLocator()
@@ -104,7 +106,7 @@ object LangDownloader {
 
     fun Lang.downloadLanguage(project: Project?): Boolean {
         // check if language lib already loaded
-        if (GraziPlugin.isLibExists("language-$shortCode-${msg("grazi.languagetool.version")}.jar")) {
+        if (GraziLibResolver.isLibExists("language-$shortCode-${msg("grazi.languagetool.version")}.jar")) {
             return true
         }
 
@@ -115,7 +117,7 @@ object LangDownloader {
             try {
                 repository.collectDependencies(session, request).root.traverse { jars.add(it.artifact) }
             } catch (e: Throwable) {
-                LOG.trace("Download error", e)
+                logger.trace("Download error", e)
             }
         }, msg("grazi.ui.settings.language.searching.title"), true, project)
 

@@ -26,7 +26,7 @@ import javax.swing.tree.DefaultTreeModel
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     private val state = HashMap<String, RuleWithLang>()
-    private val langs = HashSet<Lang>(GraziConfig.get().enabledLanguages)
+    private val langs = HashSet(GraziConfig.get().enabledLanguages)
 
     fun addLang(lang: Lang) {
         langs.add(lang)

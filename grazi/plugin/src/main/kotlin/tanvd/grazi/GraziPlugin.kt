@@ -9,7 +9,7 @@ import java.io.File
 object GraziPlugin {
     const val id: String = "tanvd.grazi"
 
-    val descriptor: IdeaPluginDescriptor
+    private val descriptor: IdeaPluginDescriptor
         get() = PluginManager.getPlugin(PluginId.getId(id))!!
 
     val version: String
@@ -20,6 +20,4 @@ object GraziPlugin {
 
     val path: File
         get() = descriptor.path
-
-    fun isLibExists(lib: String) = GraziPlugin.path.resolve("lib/$lib").exists()
 }

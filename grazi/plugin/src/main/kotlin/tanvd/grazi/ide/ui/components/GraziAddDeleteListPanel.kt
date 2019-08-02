@@ -16,6 +16,7 @@ import javax.swing.*
 class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit, private val onLanguageRemoved: (lang: Lang) -> Unit) :
         AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
     private val decorator: ToolbarDecorator =
+            @Suppress("UNCHECKED_CAST")
             GraziListToolbarDecorator(myList as JList<Any>)
                     .setAddAction { addElement(findItemToAdd()) }
                     .setToolbarPosition(ActionToolbarPosition.BOTTOM)

@@ -12,8 +12,12 @@ open class GraziNotificationComponent : StartupActivity, DumbAware {
             when {
                 it.lastSeenVersion == null -> Notification.showInstallationMessage(project)
                 GraziPlugin.version != it.lastSeenVersion -> Notification.showUpdateMessage(project)
-                it.hasMissedLanguages() -> Notification.showLanguagesMessage(project)
             }
+
+            if (it.hasMissedLanguages()) {
+                Notification.showLanguagesMessage(project)
+            }
+
             it.copy(lastSeenVersion = GraziPlugin.version)
         }
     }

@@ -50,7 +50,7 @@ object GrammarEngine {
     private fun getTyposSmall(str: String): LinkedSet<Typo> {
         if (isSmall(str)) return LinkedSet()
 
-        val lang = LangDetector.getLang(str, GraziConfig.get().enabledLanguages.filter { it.jLanguage != null }.toList()) ?: return LinkedSet()
+        val lang = LangDetector.getLang(str, GraziConfig.get().availableAndEnabledLanguages.toList()) ?: return LinkedSet()
 
         return tryRun { LangTool[lang]!!.check(str) }
                 .orEmpty()

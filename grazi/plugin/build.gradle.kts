@@ -54,6 +54,17 @@ dependencies {
 //        }
 //    }
 
+    // for PyCharm and others no Intellij Idea applications
+    compile ("org.eclipse.aether", "aether-connector-basic", "1.1.0")
+    compile ("org.eclipse.aether", "aether-transport-file", "1.1.0")
+    compile ("org.eclipse.aether", "aether-transport-http", "1.1.0") {
+        exclude("org.slf4j", "slf4j-api")
+    }
+    compile("org.apache.maven", "maven-aether-provider", "3.3.9"){
+        exclude("org.slf4j", "slf4j-api")
+    }
+    // ---
+
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 
     compile("org.apache.commons", "commons-lang3", "3.5")
