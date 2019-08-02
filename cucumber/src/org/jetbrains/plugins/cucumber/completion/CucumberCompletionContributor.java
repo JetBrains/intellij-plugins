@@ -54,7 +54,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
     GROUP_TYPE_MAP.put("(-?\\d*[.,]?\\d+)", "<float>");
     GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<float>");
-    GROUP_TYPE_MAP.put("(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]**)\"|'[^'\\\\]*(?:\\\\.[^'\\\\]**)')", "<string>");
+    GROUP_TYPE_MAP.put("(\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)')", "<string>");
     PARAMETERS_MAP.put("\\([^|]*\\|[^|]*(?:\\|[^|]*)*\\)", "<param>");
     PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
   }
@@ -63,7 +63,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
   public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^)]*)\\)");
   public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
-  public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\(\\?:[^)]*\\)");
+  public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\((?:\\?[!:])?([^)]*\\|[^)]*)\\)");
   public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>|<word>|<float>|<any>|\\{[^}]+}");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
@@ -295,9 +295,12 @@ public class CucumberCompletionContributor extends CompletionContributor {
       String mainSample = cucumberRegex;
       int k = 0;
       while (m.find()) {
-        String key = "@key=" + k++ + "@";
-        mainSample = mainSample.replace(m.group(), key);
-        insertions.add(Pair.create(key, Arrays.asList(cucumberRegex.substring(m.start() + 3, m.end() - 1).split("\\|"))));
+        String values = cucumberRegex.substring(m.start(1), m.end(1));
+        if (values.chars().allMatch(c -> Character.isLetterOrDigit(c) || c == '|')) {
+          String key = "@key=" + k++ + "@";
+          mainSample = mainSample.replace(m.group(), key);
+          insertions.add(Pair.create(key, Arrays.asList(values.split("\\|"))));
+        }
       }
 
       // Example: @sampleCounts = [2, 3] when @combinations = [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3]
