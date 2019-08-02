@@ -49,23 +49,24 @@ object LangDownloader {
                     .setProxy(proxy.getProxy(msg("grazi.maven.repo.url"))).build()
 
     init {
-        val locator = MavenRepositorySystemUtils.newServiceLocator()
-        locator.addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java)
-        locator.addService(TransporterFactory::class.java, FileTransporterFactory::class.java)
-        locator.addService(TransporterFactory::class.java, HttpTransporterFactory::class.java)
-        locator.setErrorHandler(object : DefaultServiceLocator.ErrorHandler() {
-            override fun serviceCreationFailed(type: Class<*>?, impl: Class<*>?, exception: Throwable?) {
-                if (exception != null) {
-                    throw RuntimeException(exception)
+        with (MavenRepositorySystemUtils.newServiceLocator()) {
+            addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java)
+            addService(TransporterFactory::class.java, FileTransporterFactory::class.java)
+            addService(TransporterFactory::class.java, HttpTransporterFactory::class.java)
+            setErrorHandler(object : DefaultServiceLocator.ErrorHandler() {
+                override fun serviceCreationFailed(type: Class<*>?, impl: Class<*>?, exception: Throwable?) {
+                    if (exception != null) {
+                        throw RuntimeException(exception)
+                    }
                 }
-            }
-        })
+            })
 
-        repository = locator.getService(RepositorySystem::class.java)
-        session = MavenRepositorySystemUtils.newSession()
-        session.localRepositoryManager = repository.newLocalRepositoryManager(session, LocalRepository(File(GraziPlugin.path, "poms")))
-        session.proxySelector = JreProxySelector()
-        session.setReadOnly()
+            repository = getService(RepositorySystem::class.java)
+            session = MavenRepositorySystemUtils.newSession()
+            session.localRepositoryManager = repository.newLocalRepositoryManager(session, LocalRepository(File(GraziPlugin.installationFolder, "poms")))
+            session.proxySelector = JreProxySelector()
+            session.setReadOnly()
+        }
     }
 
     private fun Artifact.createDependency() = Dependency(this, JavaScopes.COMPILE, false, listOf(
@@ -132,7 +133,7 @@ object LangDownloader {
             val descriptions = jars.map { downloader.createFileDescription(it.url, it.name) }.toList()
 
             val result = downloader.createDownloader(descriptions, "$displayName language")
-                    .downloadFilesWithProgress(GraziPlugin.path.absolutePath + "/lib", project, null)
+                    .downloadFilesWithProgress(GraziPlugin.installationFolder.absolutePath + "/lib", project, null)
 
             // null if canceled or failed, zero result if nothing found
             if (result != null && result.size > 0) {

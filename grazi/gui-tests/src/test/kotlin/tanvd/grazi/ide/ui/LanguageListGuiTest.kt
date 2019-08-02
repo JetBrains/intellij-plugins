@@ -89,6 +89,8 @@ class LanguageListGuiTest : GraziGuiTestBase() {
             val add = actionButton("Add")
             val remove = actionButton("Remove")
 
+            waitAMoment()
+
             add.requireEnabled()
             remove.requireEnabled()
 

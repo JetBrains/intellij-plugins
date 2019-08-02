@@ -44,13 +44,7 @@ enum class Lang(val displayName: String, val shortCode: String, val className: S
     }
 
     val jLanguage: Language?
-        get() = tryRun {
-            if (ApplicationManager.getApplication().isUnitTestMode) {
-                Class.forName("org.languagetool.language.$className").newInstance() as Language
-            } else {
-                Class.forName("org.languagetool.language.$className", true, GraziPlugin.classLoader).newInstance() as Language
-            }
-        }
+        get() = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
 
     fun isEnglish() = shortCode == "en"
 
