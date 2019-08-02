@@ -13,9 +13,9 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang;
 
-import org.jetbrains.vuejs.lang.parser.VueHighlightingLexerTest;
-import org.jetbrains.vuejs.lang.parser.VueLexerTest;
-import org.jetbrains.vuejs.lang.parser.VueParserTest;
+import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest;
+import org.jetbrains.vuejs.lang.html.VueLexerTest;
+import org.jetbrains.vuejs.lang.html.VueParserTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
