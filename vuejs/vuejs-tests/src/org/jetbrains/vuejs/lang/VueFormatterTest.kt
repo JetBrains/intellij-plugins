@@ -1,31 +1,42 @@
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JavaScriptFormatterTest
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavaScriptFormatterTestBase
-import com.intellij.lang.javascript.JavascriptLanguage
-import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
-import com.intellij.util.Consumer
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 
 class VueFormatterTest : JavaScriptFormatterTestBase() {
-  fun testTypeScriptTag() {
-    TypeScriptFormatterTest.setTempSettings(getProject(), Consumer { settings ->
-      settings.FORCE_QUOTE_STYlE = true
-      settings.USE_DOUBLE_QUOTES = true
-    })
+  fun testTypeScriptWithEnforceCodeStyleSettings() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+      val jsSettings = it.getCustomSettings(JSCodeStyleSettings::class.java)
+      val typeScriptSettings = it.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
+      jsSettings.FORCE_SEMICOLON_STYLE = true
+      jsSettings.USE_SEMICOLON_AFTER_STATEMENT = true
+      jsSettings.FORCE_QUOTE_STYlE = true
+      jsSettings.USE_DOUBLE_QUOTES = true
 
-    JavaScriptFormatterTest.setTempSettings(getProject(), JavascriptLanguage.INSTANCE, Consumer { settings ->
-      settings.FORCE_QUOTE_STYlE = false
-      settings.USE_DOUBLE_QUOTES = true
-    })
+      typeScriptSettings.FORCE_SEMICOLON_STYLE = true
+      typeScriptSettings.USE_SEMICOLON_AFTER_STATEMENT = false
+      typeScriptSettings.FORCE_QUOTE_STYlE = true
+      typeScriptSettings.USE_DOUBLE_QUOTES = false
 
-    doTest("<script lang=\"ts\">\n" +
-           "        import {Foo} from './bar'\n" +
-           "\n" +
-           "</script>",
-           "<script lang=\"ts\">\n" +
-           "    import {Foo} from \"./bar\"\n" +
-           "\n" +
-           "</script>", "vue")
+      doTest("""<script lang="ts">
+    import {Foo} from './singleQuotes';
+    import {Foo} from "./doubleQuotes"
+
+    console.log('semicolon');
+    console.log('no_semicolon')
+
+</script>""",
+             """<script lang="ts">
+    import {Foo} from './singleQuotes'
+    import {Foo} from './doubleQuotes'
+
+    console.log('semicolon')
+    console.log('no_semicolon')
+
+</script>""", "vue")
+    }
   }
 
   fun testScriptTagWithinTemplateTag() {
