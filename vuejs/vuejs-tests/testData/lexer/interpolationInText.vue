@@ -1,1 +1,0 @@
-<template>This is {{interpolation}} in text</template>

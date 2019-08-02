@@ -1,1 +1,0 @@
-<template>{{interpolation}}</template>
