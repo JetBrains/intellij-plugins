@@ -6,7 +6,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.util.LineSeparator
 
-val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSpacingRule(),
+val TslintRulesSet: Set<TsLintRule> = setOf(ImportDestructuringSpacingRule(),
                                                            QuotemarkRule(),
                                                            ForceQuotemarkRule(),
                                                            SemicolonRule(),

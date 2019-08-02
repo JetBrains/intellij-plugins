@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWrapper;
-import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintSimpleRule;
+import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintRule;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.openapi.options.Configurable;
@@ -86,13 +86,13 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
   @Override
   protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
     Project project = configPsi.getProject();
-    Collection<TsLintSimpleRule<?>> rules = configWrapper.getRulesToApply(project);
+    Collection<TsLintRule> rules = configWrapper.getRulesToApply(project);
     if (rules.isEmpty()) {
       return ImportResult.alreadyImported();
     }
     configWrapper.applyRules(project, rules);
     List<String> appliedRuleCodes = rules.stream()
-      .map(TsLintSimpleRule::getOptionId)
+      .map(TsLintRule::getOptionId)
       //in the current implementation, a single TSLint rule code will be duplicated if it changes several IDE settings
       .distinct()
       .collect(Collectors.toList());

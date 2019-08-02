@@ -18,29 +18,37 @@ import org.yaml.snakeyaml.Yaml
 private val LOG = Logger.getInstance(TsLintConfigWrapper::class.java)
 class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, private val extends: List<String>) {
 
-  fun hasExtends(): Boolean = !extends.isEmpty()
+  fun hasExtends(): Boolean = extends.isNotEmpty()
 
-  fun getOption(name: String): TslintJsonOption? = rules[name]
+  private fun getOption(name: String): TslintJsonOption? = rules[name]
 
-  fun getRulesToApply(project: Project): Collection<TsLintSimpleRule<*>> {
+  fun getRulesToApply(project: Project): Collection<TsLintRule> {
     ApplicationManager.getApplication().assertReadAccessAllowed()
     val settings = current(project)
     val languageSettings = language(settings)
     val jsCodeStyleSettings = custom(settings)
 
-    return TslintRulesSet.filter { it.isAvailable(project, languageSettings, jsCodeStyleSettings, this) }
+    return TslintRulesSet.filter {
+      val option = getOption(it.optionId)
+      option != null && option.isEnabled() && it.isAvailable(languageSettings, jsCodeStyleSettings, option)
+    }
   }
 
   private fun current(project: Project) = CodeStyle.getSettings(project)
   private fun language(settings: CodeStyleSettings) = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
   private fun custom(settings: CodeStyleSettings) = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
-  fun applyRules(project: Project, rules: Collection<TsLintSimpleRule<*>>) {
+  fun applyRules(project: Project, rules: Collection<TsLintRule>) {
     JSCodeStyleUtil.updateProjectCodeStyle(project) { newSettings ->
       WriteAction.run<RuntimeException> {
         val newLanguageSettings = language(newSettings)
         val newJsCodeStyleSettings = custom(newSettings)
-        rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
+        rules.forEach {
+          val option = getOption(it.optionId)
+          if (option != null) {
+            it.apply(newLanguageSettings, newJsCodeStyleSettings, option)
+          }
+        }
       }
     }
   }
