@@ -36,6 +36,7 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                 }
 
                 selectItem("English (US)")
+                jList("English (US)").selectItems("Russian")
                 actionButton("Remove").click()
             }
         }
