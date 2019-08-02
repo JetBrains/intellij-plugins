@@ -86,7 +86,7 @@ dependencies {
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 
-    //compile("org.apache.commons", "commons-lang3", "3.5")
+    compile("org.apache.commons", "commons-lang3", "3.5")
 
     compile("tanvd.kex", "kex", "0.1.1")
 }
