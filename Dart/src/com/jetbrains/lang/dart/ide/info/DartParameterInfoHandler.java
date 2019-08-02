@@ -97,7 +97,12 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
 
   @Override
   public void updateParameterInfo(@NotNull PsiElement place, @NotNull UpdateParameterInfoContext context) {
-    int parameterIndex = DartResolveUtil.getArgumentIndex(place);
+    DartFunctionDescription functionDescription =
+      context.getObjectsToView().length > 0 && context.getObjectsToView()[0] instanceof DartFunctionDescription
+      ? (DartFunctionDescription)context.getObjectsToView()[0]
+      : null;
+
+    int parameterIndex = DartResolveUtil.getArgumentIndex(place, functionDescription);
     context.setCurrentParameter(parameterIndex);
 
     if (context.getParameterOwner() == null) {

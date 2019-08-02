@@ -152,10 +152,6 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     doTest("{String str}", 0);
   }
 
-  public void _testParamInfo25() {
-    doTest("{String str1: '1', String str2: '2'}", 1);
-  }
-
   public void testParamInfo_call_localVariable() {
     doTest("int a, double b", 0);
   }
