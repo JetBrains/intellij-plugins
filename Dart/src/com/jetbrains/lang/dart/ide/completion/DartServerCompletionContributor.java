@@ -70,12 +70,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                            @NotNull final CompletionResultSet originalResultSet) {
                final PsiFile originalFile = parameters.getOriginalFile();
                final Project project = originalFile.getProject();
-
-               if (originalResultSet.getPrefixMatcher().getPrefix().isEmpty() &&
-                   isRightAfterBadIdentifier(parameters.getEditor().getDocument().getImmutableCharSequence(), parameters.getOffset())) {
-                 return;
-               }
-
                final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null
@@ -180,19 +174,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
-  }
-
-  private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
-    if (offset == 0 || offset >= text.length()) return false;
-
-    int currentOffset = offset - 1;
-    if (!Character.isJavaIdentifierPart(text.charAt(currentOffset))) return false;
-
-    while (currentOffset > 0 && Character.isJavaIdentifierPart(text.charAt(currentOffset - 1))) {
-      currentOffset--;
-    }
-
-    return !Character.isJavaIdentifierStart(text.charAt(currentOffset));
   }
 
   private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
