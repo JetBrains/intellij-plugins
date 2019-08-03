@@ -16,8 +16,7 @@
     <p>English is enabled by default when you install the plugin. To enable other languages, open Settings/Preferences
        and select <strong>Tools</strong> > <strong>Grazi</strong>.</p>
 
-    <p><strong>NOTE:</strong> All verification is performed locally, inside your IDE. The plugin does not send any of
-       your data anywhere.</p>
+    <p><strong>NOTE:</strong> All verification is performed locally, inside your IDE.</p>
     ]]></description>
 
     <change-notes><![CDATA[

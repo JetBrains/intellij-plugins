@@ -12,8 +12,6 @@ It uses one of the leading proofreaders - [LanguageTool](https://github.com/lang
 under the hood, so it supports over 15 languages and provides the best performance and 
 accuracy among free (and even non-free) alternatives.
 
-In general, *Grazi is a Grammarly inside your IDE*. 
-
 <p align="center">
   <img src="https://plugins.jetbrains.com/files/12175/screenshot_20039.png" width="75%" />
 </p>
