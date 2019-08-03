@@ -67,6 +67,7 @@ workflows:
           filters:
             branches:
               ignore:
+                - /master/
                 - /dev-.*/
                 - /stable-.*/
   release:
