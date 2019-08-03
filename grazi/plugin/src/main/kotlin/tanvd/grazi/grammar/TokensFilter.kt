@@ -28,7 +28,7 @@ class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
         }
     }
 
-    fun <T : PsiElement> populate(elements: Collection<T>, addAsLeftIf: (T) -> Boolean, addAsRightIf: (T) -> Boolean) {
+    private fun <T : PsiElement> populate(elements: Collection<T>, addAsLeftIf: (T) -> Boolean, addAsRightIf: (T) -> Boolean) {
         for (element in elements) {
             if (addAsLeftIf(element)) addLeft(element)
             if (addAsRightIf(element)) addRight(element)

@@ -18,8 +18,6 @@ fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) =
 fun Container.panel(layout: LayoutManager = BorderLayout(0, 0), constraint: Any,
                     body: JPanel.() -> Unit): JPanel = JPanel(layout).apply(body).also { add(it, constraint) }
 
-fun Container.panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit): JPanel = JPanel(layout).apply(body).also { add(it) }
-
 fun border(text: String, hasIndent: Boolean, insets: Insets, showLine: Boolean = true): Border = IdeBorderFactory.createTitledBorder(text, hasIndent, insets).setShowLine(showLine)
 
 fun padding(insets: Insets): Border = IdeBorderFactory.createEmptyBorder(insets)

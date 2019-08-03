@@ -2,7 +2,6 @@ package tanvd.grazi.ide.language.latex
 
 import com.intellij.psi.PsiElement
 import nl.hannahsten.texifyidea.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport

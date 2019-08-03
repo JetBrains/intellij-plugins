@@ -40,6 +40,3 @@ object MarkdownPsiUtils {
 inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType, excludeParents: TokenSet? = null): Collection<T> = filterFor { token ->
     tokens.contains(token.node.elementType) && excludeParents?.let { token.node.noParentOfTypes(it) }.orTrue()
 }
-
-fun PsiElement.filterForTextTokensExcluding(vararg excludeParents: IElementType) = filterForTokens<PsiElement>(MarkdownTokenTypes.TEXT,
-        excludeParents = TokenSet.create(*excludeParents))

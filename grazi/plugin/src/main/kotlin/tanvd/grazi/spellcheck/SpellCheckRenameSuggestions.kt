@@ -10,14 +10,11 @@ import tanvd.grazi.utils.withOffset
 class SpellCheckRenameSuggestions : PreferrableNameSuggestionProvider() {
     var active: Boolean = false
 
-    override fun shouldCheckOthers(): Boolean {
-        return !active
-    }
+    override fun shouldCheckOthers() = !active
 
     override fun getSuggestedNames(element: PsiElement, nameSuggestionContext: PsiElement?, result: MutableSet<String>): SuggestedNameInfo? {
-        if (!active || nameSuggestionContext == null) {
-            return null
-        }
+        if (!active || nameSuggestionContext == null) return null
+
         val text: String = if (element is PsiNamedElement) {
             element.name
         } else {

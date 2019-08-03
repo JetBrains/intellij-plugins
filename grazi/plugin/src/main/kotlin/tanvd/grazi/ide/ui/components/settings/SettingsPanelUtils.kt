@@ -12,7 +12,6 @@ import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
 import tanvd.kex.orFalse
-import tanvd.kex.orTrue
 
 private const val MINIMUM_EXAMPLES_SIMILARITY = 0.2
 private val levenshtein = LevenshteinDistance()

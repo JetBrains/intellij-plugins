@@ -14,6 +14,7 @@ import tanvd.grazi.utils.toIntRange
 import tanvd.grazi.utils.typoCategory
 import tanvd.grazi.utils.withOffset
 
+@Suppress("unused")
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
     data class Location(val range: IntRange, val pointer: SmartPsiElementPointer<PsiElement>? = null,
                         val shouldUseRename: Boolean = false) {

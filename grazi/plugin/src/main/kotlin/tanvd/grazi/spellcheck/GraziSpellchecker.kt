@@ -74,11 +74,7 @@ object GraziSpellchecker : GraziStateLifecycle {
 
     /**
      * Checks text for spelling mistakes.
-     * It separates text by whitespaces, then words in it by default name separators (like `_`, `.`), then trims the word.
-     * Firstly word is checked with LanguageTool spellcheck, then with IDEA built-in (if typos were found).
-     * If LanguageTool considers word as a mistake and IDEA built-in spellcheck agrees typo is returned.
-     *
-     * Note, that casing typos (suggestion includes the same word but in different casing) are ignored.
+     * Note, that casing and plural typos are ignored.
      */
     private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
         val typo = tryRun { checker.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
@@ -88,13 +84,9 @@ object GraziSpellchecker : GraziStateLifecycle {
         }
     }
 
-    private fun isCasingProblem(word: String, typo: Typo): Boolean {
-        return typo.fixes.any { it.toLowerCase() == word.toLowerCase() }
-    }
+    private fun isCasingProblem(word: String, typo: Typo) = typo.fixes.any { it.toLowerCase() == word.toLowerCase() }
 
-    private fun isPluralProblem(word: String, typo: Typo): Boolean {
-        return typo.fixes.any { "${it.toLowerCase()}s" == word.toLowerCase() }
-    }
+    private fun isPluralProblem(word: String, typo: Typo) = typo.fixes.any { "${it.toLowerCase()}s" == word.toLowerCase() }
 
     override fun init(state: GraziConfig.State, project: Project) {
         checker = createChecker(state)
