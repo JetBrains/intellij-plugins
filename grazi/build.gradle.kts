@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import tanvd.grazi.channel
 
 group = "tanvd.grazi"
-version = "2019.1-4.$channel"
+version = "2019.2-5.1.$channel"
 
 plugins {
     id("tanvd.kosogor") version "1.0.7" apply true
