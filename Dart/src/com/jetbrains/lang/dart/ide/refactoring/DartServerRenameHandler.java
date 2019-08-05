@@ -60,11 +60,6 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
     return elementAtOffset != null && elementAtOffset.getLanguage() == DartLanguage.INSTANCE;
   }
 
-  @Override
-  public boolean isRenaming(@NotNull DataContext dataContext) {
-    return isAvailableOnDataContext(dataContext);
-  }
-
   private static void showRenameDialog(@NotNull Project project, @NotNull Editor editor, DataContext context) {
     final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(context);
     final VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(context);

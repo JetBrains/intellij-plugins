@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.refactoring.rename;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
-public class GherkinStepRenameHandler extends PsiElementRenameHandler {
+public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
   @Override
   public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
     PsiElement element = getGherkinStep(dataContext);
@@ -38,13 +39,6 @@ public class GherkinStepRenameHandler extends PsiElementRenameHandler {
     final CucumberStepRenameDialog dialog = new CucumberStepRenameDialog(project, step, null, editor);
     Disposer.register(project, dialog.getDisposable());
     RenameDialog.showRenameDialog(dataContext, dialog);
-  }
-
-
-  @Override
-  public boolean isRenaming(@NotNull DataContext dataContext) {
-    PsiElement element = getGherkinStep(dataContext);
-    return element != null;
   }
 
   @Nullable
