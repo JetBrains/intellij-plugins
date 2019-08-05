@@ -2,10 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
-import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
+import com.intellij.lang.javascript.inspections.*;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -93,4 +90,9 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testDuplicateDeclarationOff() {
+    myFixture.enableInspections(new JSDuplicatedDeclarationInspection());
+    myFixture.configureByFiles("duplicateDeclarationOff.html", "duplicateDeclarationOff.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }
