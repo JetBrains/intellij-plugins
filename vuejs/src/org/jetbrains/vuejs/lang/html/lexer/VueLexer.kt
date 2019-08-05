@@ -8,102 +8,65 @@ import com.intellij.lexer.HtmlHighlightingLexer
 import com.intellij.lexer.HtmlLexer
 import com.intellij.lexer._HtmlLexer
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.vuejs.lang.expr.VueElementTypes
 
-class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHandledLexer {
+class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer() {
 
-  companion object {
-    const val SEEN_VUE_ATTRIBUTE: Int = 0x10000
-  }
+  private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {
 
-  private var seenTemplate: Boolean = false
-  private var seenVueAttribute: Boolean = false
+    override var scriptType: String?
+      get() = this@VueLexer.scriptType
+      set(value) {
+        this@VueLexer.scriptType = value
+      }
 
-  init {
-    registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueAttributesHandler())
-    registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
-    val scriptCleaner = VueTemplateCleaner()
-    registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
-    registerHandler(XmlTokenType.XML_EMPTY_ELEMENT_END, scriptCleaner)
-  }
+    override var seenTag: Boolean
+      get() = this@VueLexer.seenTag
+      set(value) {
+        this@VueLexer.seenTag = value
+      }
+
+    override var seenStyleType: Boolean
+      get() = this@VueLexer.seenStylesheetType
+      set(value) {
+        this@VueLexer.seenStylesheetType = value
+      }
+
+    override var seenScriptType: Boolean
+      get() = this@VueLexer.seenContentType
+      set(value) {
+        this@VueLexer.seenContentType = value
+      }
+    override var seenScript: Boolean
+      get() = this@VueLexer.seenScript
+      set(value) {
+        this@VueLexer.seenScript = value
+      }
+
+    override val seenStyle: Boolean get() = this@VueLexer.seenStyle
+    override val styleType: String? get() = this@VueLexer.styleType
+    override val inTagState: Boolean get() = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
+
+    override fun registerHandler(elementType: IElementType, value: TokenHandler) {
+      this@VueLexer.registerHandler(elementType, value)
+    }
+  })
 
   override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? =
-    findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
+    helper.findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
 
-  override fun getStyleLanguage(): Language? = styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
-
-  override fun seenScript(): Boolean = seenScript
-  override fun seenStyle(): Boolean = seenStyle
-  override fun seenTemplate(): Boolean = seenTemplate
-  override fun seenTag(): Boolean = seenTag
-  override fun seenAttribute(): Boolean = seenAttribute
-  override fun seenVueAttribute(): Boolean = seenVueAttribute
-  override fun getScriptType(): String? = scriptType
-  override fun getStyleType(): String? = styleType
-  override fun inTagState(): Boolean = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
-
-  override fun setSeenScriptType() {
-    seenContentType = true
-  }
-
-  override fun setSeenScript() {
-    seenScript = true
-  }
-
-  override fun setSeenStyleType() {
-    seenStylesheetType = true
-  }
-
-  override fun setSeenTemplate(template: Boolean) {
-    seenTemplate = template
-  }
-
-  override fun setSeenTag(tag: Boolean) {
-    seenTag = tag
-  }
-
-  override fun setSeenAttribute(attribute: Boolean) {
-    seenAttribute = attribute
-  }
-
-  override fun setSeenVueAttribute(value: Boolean) {
-    seenVueAttribute = value
-  }
+  override fun getStyleLanguage(): Language? = helper.styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
-    seenTemplate = initialState and VueTemplateTagHandler.SEEN_TEMPLATE != 0
-    seenVueAttribute = initialState and SEEN_VUE_ATTRIBUTE != 0
-    super.start(buffer, startOffset, endOffset, initialState)
+    super.start(buffer, startOffset, endOffset, helper.start(initialState))
   }
 
-  override fun getState(): Int {
-    val state = super.getState()
-    return state or when {
-      seenTemplate -> VueTemplateTagHandler.SEEN_TEMPLATE
-      seenVueAttribute -> SEEN_VUE_ATTRIBUTE
-      else -> 0
-    }
-  }
+  override fun getState(): Int = helper.getState(super.getState())
+
+  override fun getTokenType(): IElementType? = helper.getTokenType(super.getTokenType())
 
   override fun endOfTheEmbeddment(name: String?): Boolean {
-    return super.endOfTheEmbeddment(name) ||
-           seenTemplate && "template" == name
+    return super.endOfTheEmbeddment(name) || helper.endOfTheEmbeddment(name)
   }
 
-  override fun getTokenType(): IElementType? {
-    if (seenTemplate && "html".equals(scriptType, true)) {
-      seenContentType = false
-      scriptType = null
-      seenScript = false
-    }
-    val type = super.getTokenType()
-    if (seenVueAttribute && type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-      return VueElementTypes.EMBEDDED_JS
-    }
-    return type
-  }
 }
 

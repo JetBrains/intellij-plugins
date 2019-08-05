@@ -31,12 +31,11 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl
 import com.intellij.psi.impl.BlockSupportImpl
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ObjectUtils
-import org.jetbrains.vuejs.lang.expr.VueJSParserDefinition
+import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
-class VueParserTest : HtmlParsingTest("", "html",
+class VueParserTest : HtmlParsingTest("", "vue",
                                       VueParserDefinition(),
                                       VueJSParserDefinition(),
                                       HTMLParserDefinition(),
@@ -83,12 +82,22 @@ class VueParserTest : HtmlParsingTest("", "html",
       val diffLog = BlockSupportImpl(file.project).reparseRange(
         file, file.node, TextRange.allOf(fileText), fileText, EmptyProgressIndicator(), fileText)
       val event = diffLog.performActualPsiChange(file)
-      UsefulTestCase.assertEmpty(event.changedElements)
+      assertEmpty(event.changedElements)
     }
   }
 
   private fun doTestVue(text: String) {
-    doTest(text, "test.vue")
+    doTest(text.trimIndent(), "test.vue")
+  }
+
+  override fun doTest(text: String, fileName: String) {
+    super.doTest(if (fileName.endsWith(".vue")
+                     || text.trimStart().startsWith("<!DOCTYPE")
+                     || text.trimStart().startsWith("<?"))
+                   text
+                 else
+                   "<template>\n$text\n</template>",
+                 "${fileName.substring(0, fileName.lastIndexOf('.'))}.vue")
   }
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/html/parser"
@@ -105,6 +114,44 @@ class VueParserTest : HtmlParsingTest("", "html",
     doTestVue("""
       <template>
         <script type="text/template"><div></script></div>
+      </template>
+    """)
+  }
+
+  fun testPropBinding() {
+    doTestVue("""
+      <template>
+        <a v-bind:href="url"></a>
+        <a :href="url"></a>
+        <a href="https://foo.bar"></a>
+      </template>
+    """)
+  }
+
+  fun testEventBinding() {
+    doTestVue("""
+      <template>
+        <a v-on:click="doSomething"></a>
+        <a @click="doSomething"></a>
+        <a onclick="doSomething()"></a>
+      </template>
+    """)
+  }
+
+  fun testVFor() {
+    doTestVue("""
+      <template>
+        <div v-for="(item, index) in items">
+          {{ parentMessage }} - {{ index }} - {{ item.message }}
+        </div>
+      </template>
+    """)
+  }
+
+  fun testCustomDirective() {
+    doTestVue("""
+      <template>
+        <a v-foo:smth="{a: 12, b: true}"></a>
       </template>
     """)
   }

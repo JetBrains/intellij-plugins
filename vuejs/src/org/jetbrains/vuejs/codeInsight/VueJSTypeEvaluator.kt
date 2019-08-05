@@ -7,8 +7,8 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.lang.expr.VueVForExpression
-import org.jetbrains.vuejs.lang.expr.VueVForVariable
+import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.parser.VueVForVariable
 
 class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor, helper: JSTypeEvaluationHelper)
   : JSTypeEvaluator(context, processor, helper) {
