@@ -21,7 +21,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
@@ -54,12 +54,12 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
   }
 
   private fun getCachedVForInsideAttribute(valueElement: XmlAttributeValue,
-                                           injectedLanguageManager: InjectedLanguageManager): VueVForExpression? {
+                                           injectedLanguageManager: InjectedLanguageManager): VueJSVForExpression? {
     // <template lang="jade">, vue injected inside js string embedded in jade tag
     // or vue injected into xml attribute value directly - in html
     return CachedValuesManager.getCachedValue(valueElement, CachedValueProvider {
       var vFor = PsiTreeUtil.findChildOfType(valueElement,
-                                             VueVForExpression::class.java)
+                                             VueJSVForExpression::class.java)
       if (vFor == null) {
         var lookForInjectedInside: PsiElement = valueElement
         if (HTMLLanguage.INSTANCE != valueElement.language) {
@@ -72,7 +72,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
         }
         vFor = injectedLanguageManager.getInjectedPsiFiles(lookForInjectedInside)
           ?.map {
-            PsiTreeUtil.findChildOfType(it.first, VueVForExpression::class.java)
+            PsiTreeUtil.findChildOfType(it.first, VueJSVForExpression::class.java)
           }?.firstOrNull()
       }
       return@CachedValueProvider CachedValueProvider.Result(vFor, valueElement)

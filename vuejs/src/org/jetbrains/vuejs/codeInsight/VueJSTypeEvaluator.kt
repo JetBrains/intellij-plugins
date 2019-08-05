@@ -7,8 +7,8 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
-import org.jetbrains.vuejs.lang.expr.parser.VueVForVariable
+import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
 class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor, helper: JSTypeEvaluationHelper)
   : JSTypeEvaluator(context, processor, helper) {
@@ -18,8 +18,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
   }
 
   private fun evaluateTypeFromVForVariable(jsVariable: JSFieldVariable): Boolean {
-    if (jsVariable !is VueVForVariable) return false
-    val vForExpression = PsiTreeUtil.getParentOfType(jsVariable, VueVForExpression::class.java) ?: return false
+    if (jsVariable !is VueJSVForVariable) return false
+    val vForExpression = PsiTreeUtil.getParentOfType(jsVariable, VueJSVForExpression::class.java) ?: return false
     pushDestructuringContext(jsVariable)
     val expression = myContext.processedExpression
     getComponentTypeFromArrayExpression(expression, vForExpression.getCollectionExpression()).forEach { addType(it, expression) }
