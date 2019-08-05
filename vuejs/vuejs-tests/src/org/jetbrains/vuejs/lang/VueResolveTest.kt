@@ -26,7 +26,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
-import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
@@ -462,7 +462,7 @@ export default {
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
     TestCase.assertNotNull(variable)
-    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable!!.parent.parent is VueJSVForExpression)
   }
 
   fun testVForDetailsResolve() {
@@ -532,7 +532,7 @@ export default {
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
     TestCase.assertNotNull(variable)
-    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable!!.parent.parent is VueJSVForExpression)
   }
 
   fun testVForDetailsResolveInPug() {
@@ -600,7 +600,7 @@ export default {
     TestCase.assertNotNull(reference)
     val variable = reference!!.resolve()
     TestCase.assertNotNull(variable)
-    TestCase.assertTrue(variable!!.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable!!.parent.parent is VueJSVForExpression)
   }
 
   fun testKeyIntoForResolve() {
@@ -628,7 +628,7 @@ export default {
     TestCase.assertNotNull(variable)
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
-    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueJSVForExpression)
   }
 
   fun testVIfIntoForResolve() {
@@ -656,7 +656,7 @@ export default {
     TestCase.assertNotNull(variable)
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
-    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueJSVForExpression)
   }
 
   fun testKeyIntoForResolveHtml() {
@@ -674,7 +674,7 @@ export default {
     TestCase.assertNotNull(variable)
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
-    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueJSVForExpression)
   }
 
   fun testResolveByMountedVueInstanceInData() {
@@ -781,7 +781,7 @@ new Vue({
     TestCase.assertNotNull(variable)
     TestCase.assertTrue(variable!!.parent is JSVarStatement)
     TestCase.assertTrue(variable.parent.parent is JSParenthesizedExpression)
-    TestCase.assertTrue(variable.parent.parent.parent is VueVForExpression)
+    TestCase.assertTrue(variable.parent.parent.parent is VueJSVForExpression)
   }
 
   fun testResolveForRenamedGlobalComponent() {
