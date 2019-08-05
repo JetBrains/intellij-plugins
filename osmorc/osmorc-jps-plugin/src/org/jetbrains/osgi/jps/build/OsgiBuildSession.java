@@ -182,7 +182,7 @@ public class OsgiBuildSession implements Reporter {
       }
       finally {
         if (!FileUtil.delete(tempFile)) {
-          warning("Can't delete temporary file '" + tempFile + "'", null, null, -1);
+          warning("Can't delete a temporary file '" + tempFile + "'", null, null, -1);
         }
       }
     }
