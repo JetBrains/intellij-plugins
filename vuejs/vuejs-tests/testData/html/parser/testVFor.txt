@@ -19,15 +19,15 @@ HtmlFile:test.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                VueVForExpression
+                VueJSVForExpression
                   JSParenthesizedExpression
                     PsiElement(JS:LPAR)('(')
                     JSVarStatement
-                      VueVForVariable
+                      VueJSVForVariable
                         PsiElement(JS:IDENTIFIER)('item')
                       PsiElement(JS:COMMA)(',')
                       PsiWhiteSpace(' ')
-                      VueVForVariable
+                      VueJSVForVariable
                         PsiElement(JS:IDENTIFIER)('index')
                     PsiElement(JS:RPAR)(')')
                   PsiWhiteSpace(' ')
