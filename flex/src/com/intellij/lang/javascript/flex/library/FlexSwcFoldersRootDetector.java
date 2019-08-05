@@ -31,7 +31,7 @@ class FlexSwcFoldersRootDetector extends RootDetector {
   private static void collectRoots(VirtualFile file, final List<VirtualFile> result, final ProgressIndicator progressIndicator) {
     if (!file.isDirectory() || file.getFileSystem() instanceof JarFileSystem) return;
 
-    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
       @NotNull
       @Override
       public Result visitFileEx(@NotNull VirtualFile child) {

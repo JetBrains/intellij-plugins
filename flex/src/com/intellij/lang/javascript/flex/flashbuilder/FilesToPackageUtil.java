@@ -43,7 +43,7 @@ public class FilesToPackageUtil {
     final Map<VirtualFile, Node> map = new THashMap<>();
     map.put(rootFolder, rootFolderNode);
 
-    VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor<Void>() {
       @Override
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {

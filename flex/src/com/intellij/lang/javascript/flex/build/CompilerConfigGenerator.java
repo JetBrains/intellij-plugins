@@ -636,7 +636,7 @@ public class CompilerConfigGenerator {
         final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
         assert baseRelativePath != null;
 
-        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
+        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor<Void>() {
           @Override
           public boolean visitFile(@NotNull final VirtualFile file) {
             if (FileTypeManager.getInstance().isFileIgnored(file)) return false;

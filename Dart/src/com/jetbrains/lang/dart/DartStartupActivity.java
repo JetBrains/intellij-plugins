@@ -153,7 +153,7 @@ public class DartStartupActivity implements StartupActivity {
                                             final @NotNull ProjectFileIndex fileIndex) {
     if (folder == null) return;
 
-    VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(folder, new VirtualFileVisitor<Void>() {
       @Override
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {
