@@ -15,7 +15,7 @@ class NativeLanguageGuiTest : GraziGuiTestBase() {
                 actionButton("Add").click()
                 popupMenu("Russian").clickSearchedItem()
 
-                waitAMoment()
+                waitADecentMoment()
 
                 with(combobox("Native language:")) {
                     val lang = "English (US)"
