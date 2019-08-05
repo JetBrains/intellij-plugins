@@ -41,7 +41,7 @@ object LangDownloader {
     private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
     private val repository: RepositorySystem by lazy {
-        with (MavenRepositorySystemUtils.newServiceLocator()) {
+        with(MavenRepositorySystemUtils.newServiceLocator()) {
             addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java)
             addService(TransporterFactory::class.java, FileTransporterFactory::class.java)
             addService(TransporterFactory::class.java, HttpTransporterFactory::class.java)
@@ -108,6 +108,14 @@ object LangDownloader {
         }
     }
 
+    private fun Lang.registerInLanguageTool() {
+        with(Languages::class.java.getDeclaredField("dynLanguages")) {
+            isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            (get(null) as MutableList<Language>).add(jLanguage!!)
+        }
+    }
+
     fun Lang.downloadLanguage(project: Project?): Boolean {
         // check if language lib already loaded
         if (GraziLibResolver.hasAllLibs(this)) {
@@ -147,12 +155,7 @@ object LangDownloader {
                     }
                 }
 
-                // register new Language at LanguageTool
-                with(Languages::class.java.getDeclaredField("dynLanguages")) {
-                    isAccessible = true
-                    @Suppress("UNCHECKED_CAST")
-                    (get(null) as MutableList<Language>).add(jLanguage!!)
-                }
+                registerInLanguageTool()
 
                 return true
             }
