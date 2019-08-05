@@ -65,7 +65,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         DartSetOrMapLiteralExpression.class,
         DartNewExpression.class,
         DartCallExpression.class,
-        DartAssertStatement.class});
+        DartAssertStatement.class,
+        DartIfStatement.class,});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
@@ -74,6 +75,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
     foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
+    foldIfStatements(descriptors, psiElements);                                        // 12. If statements
   }
 
   @Override
@@ -101,6 +103,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
     if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
     if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10. Constructor invocations
+    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12. If statements
 
     return DOT_DOT_DOT;
   }
@@ -347,6 +350,19 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                                            endOffset - psiElement.getTextRange().getStartOffset());
         if (text.contains("\n")) {
           descriptors.add(new FoldingDescriptor(psiElement, TextRange.create(startOffset, endOffset)));
+        }
+      }
+    }
+  }
+
+  private static void foldIfStatements(@NotNull final List<FoldingDescriptor> descriptors,
+                                       @NotNull final Collection<PsiElement> psiElements) {
+    for (PsiElement psiElement : psiElements) {
+      if (psiElement instanceof DartIfStatement) {
+        final DartIfStatement dartIfStatement = (DartIfStatement)psiElement;
+        final List<DartBlock> dartBlockList = dartIfStatement.getBlockList();
+        for (DartBlock dartBlock : dartBlockList) {
+          descriptors.add(new FoldingDescriptor(dartBlock, dartBlock.getTextRange()));
         }
       }
     }
