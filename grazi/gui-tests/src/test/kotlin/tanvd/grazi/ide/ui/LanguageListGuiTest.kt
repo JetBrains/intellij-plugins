@@ -34,6 +34,8 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                         clickItem("Chinese")
                     }
 
+                    waitADecentMoment()
+
                     list.requireSelectedItems("Chinese")
                     assertEquals(3, list.contents().size)
 
