@@ -59,22 +59,22 @@ class VueInjectionTest : BasePlatformTestCase() {
   fun testCustomDelimitersInterpolationInVue() {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
-      [[ 1 + <caret>2 ]
+      [[ 1 + 2 ]]
     </div>
 </template>
 <script>
 new Vue({
-  delimiters: ['[[', ']']
+  delimiters: ['[[', ']]']
 })
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testCustomDelimitersInterpolationInVueVariant() {
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
-      <% 1 + <caret>2 %>
+      <% 1 +2 %>
     </div>
 </template>
 <script>
@@ -83,7 +83,7 @@ new Vue({
 })
 </script>
 """)
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testCustomDelimitersInterpolationInVueVariantJS() {
@@ -94,11 +94,11 @@ new Vue({
 """)
     myFixture.configureByText("CustomDelimitersInterpolationInVue.vue", """<template>
     <div>
-      <% 1 + <caret>2 %>
+      <% 1 + 2 %>
     </div>
 </template>
 """)
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testNoCommentDelimitersInterpolationInVue() {
@@ -114,6 +114,7 @@ new Vue({
 </script>
 """)
     TestCase.assertEquals(VueLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testCustomDelimitersInterpolationInHtml() {
@@ -151,6 +152,7 @@ new Vue({
   </body>
 </html>""")
     TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testCustomDelimitersOldDoNotWorkInHtml() {
@@ -163,7 +165,7 @@ new Vue({
   <body>
     <div>
       $ 1 + 2 $
-      {{<caret>1 + 2}}
+      {{<caret>3 + 4}}
     </div>
   </body>
 <script>
@@ -173,38 +175,23 @@ new Vue({
 </script>
 </html>""")
     TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.file.language)
+    checkParseTree()
   }
 
   fun testMultipleInterpolationsInVue() {
-    val text = "This is {{<caret>interpolation}} in text, and {{another}}{{two}}"
+    val text = "This is {{interpolation}} in text, and {{another}}{{two}}"
     myFixture.configureByText("MultipleInterpolationsInVue.vue", "<template>${text}</template>")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
-    val host = com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.findInjectionHost(myFixture.file.virtualFile)
-    TestCase.assertNotNull(host)
-    TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
-    val expected = mutableSetOf("interpolation", "another", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host) { injectedPsi, _ -> expected.remove(injectedPsi.text) }
-    TestCase.assertEquals(emptySet<String>(), expected)
+    checkParseTree()
   }
 
   fun testMultipleInterpolationsWithNewLinesInVue() {
     val text = """
-This is {{<caret>interpolation
+This is {{interpolation
 
 }} in text, and {{
 another}}{{two}}"""
     myFixture.configureByText("MultipleInterpolationsWithNewLinesInVue.vue", "<template>${text}</template>")
-    TestCase.assertEquals(VueJSLanguage.INSTANCE, myFixture.file.language)
-    val host = com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.findInjectionHost(myFixture.file.virtualFile)
-    TestCase.assertNotNull(host)
-    TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
-    val expected = mutableSetOf(
-      """interpolation
-
-""", """
-another""", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host) { injectedPsi, _ -> expected.remove(injectedPsi.text) }
-    TestCase.assertEquals(emptySet<String>(), expected)
+    checkParseTree()
   }
 
   fun testInjectionByConfigDelimitersAssignmentJS() {
@@ -241,16 +228,20 @@ Vue.options.delimiters = ['<%', '%>']
 
   fun testAttrValueInjection() {
     myFixture.configureByFile(getTestName(false) + ".vue")
-    ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
+    checkParseTree()
   }
 
   fun testPugAttrValueInjection() {
     myFixture.configureByFile(getTestName(false) + ".vue")
-    ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
+    checkParseTree()
   }
 
   fun testNoInjectionInXml() {
     myFixture.configureByFile(getTestName(false) + ".xml")
+    checkParseTree()
+  }
+
+  private fun checkParseTree() {
     ParsingTestCase.doCheckResult(testDataPath, getTestName(false) + "." + "txt", toParseTreeText(myFixture.file))
   }
 

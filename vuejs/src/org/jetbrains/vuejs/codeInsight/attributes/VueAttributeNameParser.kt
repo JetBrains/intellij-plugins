@@ -113,6 +113,24 @@ class VueAttributeNameParser {
     open val requiresValue: Boolean get() = kind.requiresValue && modifiers.isEmpty()
 
     open val injectJS: Boolean get() = kind.injectJS
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+
+      other as VueAttributeInfo
+
+      return name == other.name
+             && kind === other.kind
+             && modifiers == other.modifiers
+    }
+
+    override fun hashCode(): Int {
+      var result = name.hashCode()
+      result = 31 * result + kind.hashCode()
+      result = 31 * result + modifiers.hashCode()
+      return result
+    }
   }
 
   class VueDirectiveInfo internal constructor(name: String,
@@ -127,6 +145,25 @@ class VueAttributeNameParser {
       }
 
     override val injectJS: Boolean get() = directiveKind.injectJS
+
+    override fun equals(other: Any?): Boolean {
+      if (this === other) return true
+      if (javaClass != other?.javaClass) return false
+      if (!super.equals(other)) return false
+
+      other as VueDirectiveInfo
+
+      return directiveKind === other.directiveKind
+             && arguments == other.arguments
+    }
+
+    override fun hashCode(): Int {
+      var result = super.hashCode()
+      result = 31 * result + directiveKind.hashCode()
+      result = 31 * result + arguments.hashCode()
+      return result
+    }
+
 
   }
 

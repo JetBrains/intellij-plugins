@@ -1,7 +1,17 @@
-HtmlFile:test.html
+HtmlFile:test.vue
   PsiElement(HTML_DOCUMENT)
-    PsiElement(XML_COMMENT)
-      XmlToken:XML_COMMENT_START('<!--')
-      XmlToken:XML_COMMENT_END('-->')
     PsiElement(XML_PROLOG)
       <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+        PsiElement(XML_COMMENT)
+          XmlToken:XML_COMMENT_START('<!--')
+          XmlToken:XML_COMMENT_END('-->')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')

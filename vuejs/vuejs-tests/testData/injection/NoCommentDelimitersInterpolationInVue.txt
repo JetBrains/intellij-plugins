@@ -1,0 +1,73 @@
+HtmlFile:CustomDelimitersInterpolationInVue.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n    ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n      ')
+          XmlToken:XML_DATA_CHARACTERS('[[')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('1')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('+')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('2')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS(']')
+          PsiWhiteSpace('\n    ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')
+    HtmlTag:script
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+      JSEmbeddedContent:MOD_ES6_EMBEDDED_CONTENT
+        PsiWhiteSpace('\n')
+        JSExpressionStatement
+          JSNewExpression
+            PsiElement(JS:NEW_KEYWORD)('new')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('Vue')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSObjectLiteralExpression
+                PsiElement(JS:LBRACE)('{')
+                PsiWhiteSpace('\n  ')
+                JSProperty
+                  PsiElement(JS:IDENTIFIER)('delimiters')
+                  PsiElement(JS:COLON)(':')
+                  PsiWhiteSpace(' ')
+                  JSArrayLiteralExpression
+                    PsiElement(JS:LBRACKET)('[')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''//'')
+                    PsiElement(JS:COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)(''//'')
+                    PsiElement(JS:RBRACKET)(']')
+                PsiWhiteSpace('\n')
+                PsiElement(JS:RBRACE)('}')
+              PsiElement(JS:RPAR)(')')
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('script')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')

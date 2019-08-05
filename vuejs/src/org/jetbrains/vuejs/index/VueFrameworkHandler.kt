@@ -41,7 +41,7 @@ import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
@@ -381,7 +381,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                         result: PsiElement): Boolean {
     if (!isVueContext(result)) return false
     if (result is JSVariable && result.language is VueJSLanguage) {
-      val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression
+      val vFor = result.parent as? VueVForExpression
+                 ?: result.parent.parent as? VueVForExpression
       val vForRef = vFor?.getReferenceExpression()
       val variables = vFor?.getVarStatement()?.variables
       if (vForRef != null && variables != null && variables.isNotEmpty() && result == variables[0]) {

@@ -3,100 +3,119 @@ package org.jetbrains.vuejs.lang.html.highlighting
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lexer.HtmlHighlightingLexer
-import com.intellij.lexer._HtmlLexer
+import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.vuejs.lang.expr.VueElementTypes
-import org.jetbrains.vuejs.lang.html.lexer.*
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerHandle
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
 
-class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHighlightingLexer(), VueHandledLexer {
-  private var seenTemplate: Boolean = false
-  private var seenVueAttribute: Boolean = false
-
-  init {
-    registerHandler(XmlTokenType.XML_NAME, VueLangAttributeHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueTemplateTagHandler())
-    registerHandler(XmlTokenType.XML_NAME, VueAttributesHandler())
-    registerHandler(XmlTokenType.XML_TAG_END, VueTagClosedHandler())
-    val scriptCleaner = VueTemplateCleaner()
-    registerHandler(XmlTokenType.XML_END_TAG_START, scriptCleaner)
-    registerHandler(XmlTokenType.XML_EMPTY_ELEMENT_END, scriptCleaner)
+class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHighlightingLexer() {
+  companion object {
+    @NonNls
+    val EXPRESSION_WHITE_SPACE = IElementType("VueJS:EXPRESSION_WHITE_SPACE", VueJSLanguage.INSTANCE)
   }
 
-  override fun getTokenType(): IElementType? {
-    val type = super.getTokenType()
-    if (type == XmlTokenType.TAG_WHITE_SPACE && baseState() == 0) return XmlTokenType.XML_REAL_WHITE_SPACE
-    if (seenVueAttribute && type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) return VueElementTypes.EMBEDDED_JS
-    return type
+  private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {
+
+    override var scriptType: String?
+      get() = this@VueHighlightingLexer.scriptType
+      set(value) {
+        this@VueHighlightingLexer.scriptType = value
+      }
+
+    override var seenTag: Boolean
+      get() = this@VueHighlightingLexer.seenTag
+      set(value) {
+        this@VueHighlightingLexer.seenTag = value
+      }
+
+    override var seenStyleType: Boolean
+      get() = this@VueHighlightingLexer.seenStylesheetType
+      set(value) {
+        this@VueHighlightingLexer.seenStylesheetType = value
+      }
+
+    override var seenScriptType: Boolean
+      get() = this@VueHighlightingLexer.seenContentType
+      set(value) {
+        this@VueHighlightingLexer.seenContentType = value
+      }
+    override var seenScript: Boolean
+      get() = this@VueHighlightingLexer.seenScript
+      set(value) {
+        this@VueHighlightingLexer.seenScript = value
+      }
+
+    override val seenStyle: Boolean get() = this@VueHighlightingLexer.seenStyle
+    override val styleType: String? get() = this@VueHighlightingLexer.styleType
+    override val inTagState: Boolean get() = baseState() == _HtmlLexer.START_TAG_NAME
+
+    override fun registerHandler(elementType: IElementType, value: TokenHandler) {
+      this@VueHighlightingLexer.registerHandler(elementType, value)
+    }
+  })
+
+  init {
+    registerHandler(XmlTokenType.XML_NAME, HtmlAttributeNameHandler())
   }
 
   override fun findScriptContentProvider(mimeType: String?): HtmlScriptContentProvider? =
-    findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
+    helper.findScriptContentProviderVue(mimeType, { super.findScriptContentProvider(mimeType) }, languageLevel)
 
-  override fun getStyleLanguage(): Language? {
-    return styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
-  }
-
-  override fun seenScript(): Boolean = seenScript
-  override fun seenStyle(): Boolean = seenStyle
-  override fun seenTemplate(): Boolean = seenTemplate
-  override fun seenTag(): Boolean = seenTag
-  override fun seenAttribute(): Boolean = seenAttribute
-  override fun seenVueAttribute(): Boolean = seenVueAttribute
-  override fun getScriptType(): String? = scriptType
-  override fun getStyleType(): String? = styleType
-  override fun inTagState(): Boolean = baseState() == _HtmlLexer.START_TAG_NAME
-
-  override fun setSeenScriptType() {
-    seenContentType = true
-  }
-
-  override fun setSeenScript() {
-    seenScript = true
-  }
-
-  override fun setSeenStyleType() {
-    seenStylesheetType = true
-  }
-
-  override fun setSeenTemplate(template: Boolean) {
-    seenTemplate = template
-  }
-
-  override fun setSeenTag(tag: Boolean) {
-    seenTag = tag
-  }
-
-  override fun setSeenAttribute(attribute: Boolean) {
-    seenAttribute = attribute
-  }
-
-  override fun setSeenVueAttribute(value: Boolean) {
-    seenVueAttribute = value
-  }
+  override fun getStyleLanguage(): Language? = helper.styleViaLang(HtmlLexer.ourDefaultStyleLanguage) ?: super.getStyleLanguage()
 
   override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
-    seenTemplate = initialState and VueTemplateTagHandler.SEEN_TEMPLATE != 0
-    seenVueAttribute = initialState and VueLexer.SEEN_VUE_ATTRIBUTE != 0
-    super.start(buffer, startOffset, endOffset, initialState)
+    super.start(buffer, startOffset, endOffset, helper.start(initialState))
   }
 
-  override fun getState(): Int {
-    val state = super.getState()
-    return state or when {
-      seenTemplate -> VueTemplateTagHandler.SEEN_TEMPLATE
-      seenVueAttribute -> VueLexer.SEEN_VUE_ATTRIBUTE
-      else -> 0
+  override fun getState(): Int = helper.getState(super.getState())
+
+  override fun endOfTheEmbeddment(name: String?): Boolean {
+    return super.endOfTheEmbeddment(name) || helper.endOfTheEmbeddment(name)
+  }
+
+  override fun getTokenType(): IElementType? {
+    val type = helper.getTokenType(super.getTokenType())
+    if (type == XmlTokenType.TAG_WHITE_SPACE && baseState() == 0)
+      return XmlTokenType.XML_REAL_WHITE_SPACE
+    if (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript() && hasSeenAttribute())
+      return EXPRESSION_WHITE_SPACE
+    return type
+  }
+
+  override fun getInlineScriptHighlightingLexer(): Lexer? {
+    return object : MergingLexerAdapterBase(VueJSSyntaxHighlighter().highlightingLexer) {
+      override fun getMergeFunction(): MergeFunction {
+        return MergeFunction { type, _ -> if (type === JSTokenTypes.WHITE_SPACE) EXPRESSION_WHITE_SPACE else type }
+      }
     }
   }
 
-  override fun endOfTheEmbeddment(name: String?): Boolean {
-    return super.endOfTheEmbeddment(name) ||
-           seenTemplate && "template" == name
+  override fun createELLexer(newLexer: Lexer): Lexer? {
+    return inlineScriptHighlightingLexer
   }
 
-  private fun baseState() = state and BASE_STATE_MASK
+  private fun baseState() = state and (BASE_STATE_MASK or (0x1 shl BaseHtmlLexer.BASE_STATE_SHIFT))
+
+  private inner class HtmlAttributeNameHandler : TokenHandler {
+    override fun handleElement(lexer: Lexer) {
+      if (lexer.state and BaseHtmlLexer.BASE_STATE_MASK == _HtmlLexer.TAG_ATTRIBUTES) {
+        val info = VueAttributeNameParser.parse(tokenText, null)
+        if (info.injectJS) {
+          if (seenAttribute) {
+            popScriptStyle()
+          }
+          pushScriptStyle(true, false)
+          seenAttribute = true
+        }
+      }
+    }
+  }
 }
 

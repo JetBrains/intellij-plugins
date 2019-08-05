@@ -14,6 +14,7 @@
 package org.jetbrains.vuejs.lang;
 
 import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest;
+import org.jetbrains.vuejs.lang.html.VueIndexerTest;
 import org.jetbrains.vuejs.lang.html.VueLexerTest;
 import org.jetbrains.vuejs.lang.html.VueParserTest;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import org.junit.runners.Suite;
   VueIntentionsTest.class,
   VueInjectionTest.class,
   VueHighlightingTest.class,
+  VueIndexerTest.class,
   VueFormatterTest.class,
   VueRearrangerTest.class,
   VueExtractComponentTest.class,

@@ -1,4 +1,4 @@
-HtmlFile:test.html
+HtmlFile:test.vue
   PsiElement(HTML_DOCUMENT)
     PsiWhiteSpace(' ')
     PsiElement(XML_PROLOG)

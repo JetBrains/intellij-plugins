@@ -21,7 +21,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.lang.expr.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
 import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor

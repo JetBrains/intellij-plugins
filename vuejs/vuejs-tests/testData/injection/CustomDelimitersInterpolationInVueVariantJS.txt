@@ -1,0 +1,47 @@
+HtmlFile:CustomDelimitersInterpolationInVue.vue
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n    ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n      ')
+          XmlToken:XML_DATA_CHARACTERS('<%')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('1')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('+')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('2')
+          PsiWhiteSpace(' ')
+          XmlToken:XML_DATA_CHARACTERS('%>')
+          PsiWhiteSpace('\n    ')
+          JSFile:CustomDelimitersInterpolationInVue.vue.int
+            PsiWhiteSpace(' ')
+            VueJSEmbeddedExpression
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('1')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('2')
+            PsiWhiteSpace(' ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('template')
+      XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')

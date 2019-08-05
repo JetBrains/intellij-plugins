@@ -8,7 +8,7 @@ import com.intellij.psi.css.resolve.CssReferenceProviderUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.ProcessingContext
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.lang.html.lexer.VueHandledLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
 
 class VueReferenceContributor : PsiReferenceContributor() {
   companion object {
@@ -23,7 +23,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
           val xmlTag = (element.parent as? XmlAttribute)?.parent
           val langValue = xmlTag?.getAttribute("lang")?.value
           if (langValue != null) {
-            val lang = VueHandledLexer.styleViaLang(Language.findLanguageByID("CSS"), langValue)
+            val lang = VueLexerHelper.styleViaLang(Language.findLanguageByID("CSS"), langValue)
             val fileType = lang?.associatedFileType
             if (fileType != null) {
               return CssReferenceProviderUtil.getFileReferences(element, true, false, fileType)

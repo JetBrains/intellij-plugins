@@ -26,7 +26,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
-import org.jetbrains.vuejs.lang.expr.VueVForExpression
+import org.jetbrains.vuejs.lang.expr.parser.VueVForExpression
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueNamedSymbol
 import org.jetbrains.vuejs.model.VueRegularComponent
