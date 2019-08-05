@@ -70,6 +70,7 @@ dependencies {
         excludesForLT()
     }
 
+    // region aether-for-non-idea-ide
     // for PyCharm and others no Intellij Idea applications
     compile ("org.eclipse.aether", "aether-connector-basic", "1.1.0")
     compile ("org.eclipse.aether", "aether-transport-file", "1.1.0")
@@ -82,7 +83,7 @@ dependencies {
         exclude("com.google.guava", "guava")
         exclude("org.apache.commons", "commons-lang3")
     }
-    // ---
+    // endregion aether-for-non-idea-ide
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 

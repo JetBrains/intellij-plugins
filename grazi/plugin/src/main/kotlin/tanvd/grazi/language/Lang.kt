@@ -43,8 +43,15 @@ enum class Lang(val displayName: String, val shortCode: String, val className: S
         fun sortedValues() = values().sortedBy(Lang::displayName)
     }
 
+    private var _jLanguage: Language? = null
     val jLanguage: Language?
-        get() = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
+        get() {
+            if (_jLanguage == null) {
+                _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
+            }
+
+            return _jLanguage
+        }
 
     fun isEnglish() = shortCode == "en"
 

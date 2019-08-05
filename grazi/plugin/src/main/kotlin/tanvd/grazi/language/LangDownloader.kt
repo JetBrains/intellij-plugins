@@ -40,15 +40,7 @@ import java.nio.file.Paths
 object LangDownloader {
     private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
-    private val repository: RepositorySystem
-    private val session: RepositorySystemSession
-    private val proxy = JreProxySelector()
-
-    private val MAVEN_CENTRAL_REPOSITORY =
-            RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
-                    .setProxy(proxy.getProxy(msg("grazi.maven.repo.url"))).build()
-
-    init {
+    private val repository: RepositorySystem by lazy {
         with (MavenRepositorySystemUtils.newServiceLocator()) {
             addService(RepositoryConnectorFactory::class.java, BasicRepositoryConnectorFactory::class.java)
             addService(TransporterFactory::class.java, FileTransporterFactory::class.java)
@@ -61,13 +53,22 @@ object LangDownloader {
                 }
             })
 
-            repository = getService(RepositorySystem::class.java)
-            session = MavenRepositorySystemUtils.newSession()
-            session.localRepositoryManager = repository.newLocalRepositoryManager(session, LocalRepository(File(GraziPlugin.installationFolder, "poms")))
-            session.proxySelector = JreProxySelector()
-            session.setReadOnly()
+            getService(RepositorySystem::class.java)
         }
     }
+
+    private val session: RepositorySystemSession by lazy {
+        with(MavenRepositorySystemUtils.newSession()) {
+            localRepositoryManager = repository.newLocalRepositoryManager(this, LocalRepository(File(GraziPlugin.installationFolder, "poms")))
+            setProxySelector(JreProxySelector())
+        }
+    }
+
+    private val proxy = JreProxySelector()
+
+    private val MAVEN_CENTRAL_REPOSITORY =
+            RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
+                    .setProxy(proxy.getProxy(msg("grazi.maven.repo.url"))).build()
 
     private fun Artifact.createDependency() = Dependency(this, JavaScopes.COMPILE, false, listOf(
             Exclusion("org.languagetool", "languagetool-core", "", "jar"),
@@ -81,6 +82,8 @@ object LangDownloader {
 
     private val Artifact.url
         get() = "${MAVEN_CENTRAL_REPOSITORY.url}${groupId.replace(".", "/")}/$artifactId/$version/$name"
+
+    private val downloader by lazy { DownloadableFileService.getInstance() }
 
     private fun DependencyNode.traverse(action: (DependencyNode) -> Unit) {
         action(this)
@@ -107,7 +110,7 @@ object LangDownloader {
 
     fun Lang.downloadLanguage(project: Project?): Boolean {
         // check if language lib already loaded
-        if (GraziLibResolver.isLibExists("language-$shortCode-${msg("grazi.languagetool.version")}.jar")) {
+        if (GraziLibResolver.hasAllLibs(this)) {
             return true
         }
 
@@ -119,6 +122,7 @@ object LangDownloader {
                 repository.collectDependencies(session, request).root.traverse { jars.add(it.artifact) }
             } catch (e: Throwable) {
                 logger.trace("Download error", e)
+                throw RuntimeException(e)
             }
         }, msg("grazi.ui.settings.language.searching.title"), true, project)
 
@@ -129,7 +133,6 @@ object LangDownloader {
         }
 
         if (isNotCancelled && jars.isNotEmpty()) {
-            val downloader = DownloadableFileService.getInstance()
             val descriptions = jars.map { downloader.createFileDescription(it.url, it.name) }.toList()
 
             val result = downloader.createDownloader(descriptions, "$displayName language")
