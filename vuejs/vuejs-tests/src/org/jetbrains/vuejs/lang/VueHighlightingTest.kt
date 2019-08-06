@@ -576,7 +576,7 @@ Vue.component('global-comp-literal', {
   fun testVBindVOnHighlighting() {
     myFixture.configureByText("VBindHighlighting.vue", """
 <template>
-    <for-v-bind :class="2" v-bind:style="" :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
+    <for-v-bind :class="2" v-bind:style="<error descr="expression expected">"</error> :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
     <for-v-bind class="" style="" v-on:submit.prevent></for-v-bind>
 </template>
 
@@ -1254,8 +1254,8 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
                   <li v-for="({name, price}, i) in list"> {{ i }}:{{ name }} - {{ price }}</li>
                   <li v-for="{name, price} in list"> {{ 111 }}:{{ name }} - {{ price }}</li>
                   <li v-for="(x, k, i) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
-                  <li v-for="(x, k, i<error descr="closing parenthesis expected"> </error>in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
-                  <li v-for="(x, k, i<error descr="closing parenthesis expected">,</error> j) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr=") expected"> </error>in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
+                  <li v-for="(x, k, i<error descr=") expected">,</error> j) in list"> {{ k + i }}:{{ x.name }} - {{ x.price }}</li>
               </ul>
           </div>
       </template> 
