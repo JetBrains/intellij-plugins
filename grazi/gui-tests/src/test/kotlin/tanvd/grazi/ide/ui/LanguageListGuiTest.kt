@@ -22,7 +22,7 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                     actionButton("Add").click()
 
                     with(popupMenu("Russian")) {
-                        assertEquals(langs.filter { it != "English (US)" }, listItems())
+                        assert(listItems().none { it == "English (US)" })
                         clickItem("Russian")
                     }
 
@@ -30,7 +30,7 @@ class LanguageListGuiTest : GraziGuiTestBase() {
 
                     actionButton("Add").click()
                     with(popupMenu("Chinese")) {
-                        assertEquals(langs.filter { it != "English (US)" && it != "Russian" }, listItems())
+                        assert(listItems().none { it == "Russian" || it == "English (US)" })
                         clickItem("Chinese")
                     }
 
