@@ -38,6 +38,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   private static final String SINGLE_LINE_DOC_COMMENT = "///...";
   private static final String SINGLE_LINE_COMMENT = "//...";
 
+  private static final String TEST_METHOD_NAME = "test";
+  private static final String GROUP_METHOD_NAME = "group";
+
   @Override
   protected boolean isCustomFoldingRoot(@NotNull final ASTNode node) {
     final IElementType type = node.getElementType();
@@ -72,7 +75,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
-    foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
+    foldSomeDartCallExpressions(descriptors, psiElements);                             // 10. Constructor, "test", "group" invocations
     foldAssertExpressions(descriptors, psiElements);                                   // 11. Assert statements
     foldIfStatements(descriptors, psiElements);                                        // 12. If statements
   }
@@ -313,8 +316,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     }
   }
 
-  private static void foldNewDartExpressions(@NotNull final List<FoldingDescriptor> descriptors,
-                                             @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldSomeDartCallExpressions(@NotNull final List<FoldingDescriptor> descriptors,
+                                                  @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartNewExpression) {
         DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
@@ -326,6 +329,9 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         final String methodName = dartCallExpression.getExpression().getText();
         if (StringUtil.isCapitalized(methodName)) {
           foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
+        }
+        else if (TEST_METHOD_NAME.equals(methodName) || GROUP_METHOD_NAME.equals(methodName)) {
+          foldTestDartArguments(descriptors, dartCallExpression.getArguments());
         }
       }
     }
@@ -373,6 +379,16 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
 
     DartArgumentList dartArgumentList = dartArguments.getArgumentList();
     if (dartArgumentList.getExpressionList().isEmpty() && dartArgumentList.getNamedArgumentList().isEmpty()) return;
+
+    descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
+  }
+
+  private static void foldTestDartArguments(@NotNull final List<FoldingDescriptor> descriptors,
+                                            @Nullable final DartArguments dartArguments) {
+    if (dartArguments == null || dartArguments.getArgumentList() == null) return;
+
+    DartArgumentList dartArgumentList = dartArguments.getArgumentList();
+    if (dartArgumentList.getExpressionList().size() != 2) return;
 
     descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
   }
