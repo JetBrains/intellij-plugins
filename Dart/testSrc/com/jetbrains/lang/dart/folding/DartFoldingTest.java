@@ -134,6 +134,10 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testIfStatements() {
+    doTest();
+  }
+
   public void testCustomRegions() {
     doTest();
   }
