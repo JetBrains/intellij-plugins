@@ -31,6 +31,7 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
   }
 
   companion object {
+    @JvmField
     val INSTANCE = YamlCloudFormationFileType()
 
     private const val EXTENSION1 = "yml"

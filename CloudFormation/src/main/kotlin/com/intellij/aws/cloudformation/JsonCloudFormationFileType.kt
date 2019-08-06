@@ -38,6 +38,7 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
   }
 
   companion object {
+    @JvmField
     val INSTANCE = JsonCloudFormationFileType()
 
     private const val EXTENSION = "template"

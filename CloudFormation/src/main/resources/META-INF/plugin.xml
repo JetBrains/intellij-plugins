@@ -49,7 +49,9 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
-    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
+
+    <fileType name="AWSCloudFormation (JSON)" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationFileType" fieldName="INSTANCE" language="JSON" extensions="template"/>
+    <fileType name="AWSCloudFormation (YAML)" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationFileType" fieldName="INSTANCE" language="yaml" extensions="yml;yaml"/>
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
 
