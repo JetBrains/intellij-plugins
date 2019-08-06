@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.linter.tslint;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -190,12 +189,6 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {
-    String testDir = getTestName(false);
-    doEditorHighlightingTest(mainFileName + ".ts");
-
-    IntentionAction intention = myFixture.getAvailableIntention(intentionDescription);
-    assertNotNull(String.format("Expected intention with description %s to be available", intentionDescription), intention);
-    myFixture.launchAction(intention);
-    myFixture.checkResultByFile(testDir + "/" + mainFileName + "_after.ts");
+    doFixTestForDirectory(mainFileName, ".ts", intentionDescription);
   }
 }
