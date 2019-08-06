@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang;
 
+import org.jetbrains.vuejs.lang.expr.VueJSParserTest;
 import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest;
 import org.jetbrains.vuejs.lang.html.VueIndexerTest;
 import org.jetbrains.vuejs.lang.html.VueLexerTest;
@@ -22,6 +23,13 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+  VueJSParserTest.class,
+  VueLexerTest.class,
+  VueHighlightingLexerTest.class,
+  VueIndexerTest.class,
+  VueParserTest.class,
+  VueCompletionTest.class,
+  VueHighlightingTest.class,
   VueTypedHandlerTest.class,
   VueAttributeNameParserTest.class,
   VueResolveTest.class,
@@ -31,19 +39,13 @@ import org.junit.runners.Suite;
   VueLiveTemplatesTest.class,
   VueIntentionsTest.class,
   VueInjectionTest.class,
-  VueHighlightingTest.class,
-  VueIndexerTest.class,
   VueFormatterTest.class,
   VueRearrangerTest.class,
   VueExtractComponentTest.class,
   VueDocumentationTest.class,
   VueCreateTsVariableTest.class,
   VueCopyrightTest.class,
-  VueCompletionTest.class,
   VueAutoPopupTest.class,
-  VueHighlightingLexerTest.class,
-  VueLexerTest.class,
-  VueParserTest.class,
   VueEmmetTest.class,
   VueModuleImportTest.class,
   VueTypeScriptHighlightingTest.class,

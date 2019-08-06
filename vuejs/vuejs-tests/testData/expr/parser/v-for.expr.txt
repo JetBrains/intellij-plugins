@@ -1,0 +1,373 @@
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('c')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      PsiErrorElement:identifier expected
+        <empty list>
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:OF_KEYWORD)('of')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiErrorElement:) expected
+            <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiErrorElement:) expected
+            <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('c')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('d')
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiErrorElement:expression expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiErrorElement:) expected
+            <empty list>
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiElement(JS:COMMA)(',')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('c')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiElement(JS:COMMA)(',')
+          PsiElement(JS:IDENTIFIER)('d')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('bar')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSLiteralExpression
+      PsiElement(JS:NUMERIC_LITERAL)('12')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiErrorElement:expression expected
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Statements are not allowed in Vue expressions
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('boo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:IDENTIFIER)('c')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('a')
+          PsiElement(JS:COMMA)(',')
+          PsiWhiteSpace(' ')
+          VueJSVForVariable
+            PsiElement(JS:IDENTIFIER)('f')
+          PsiErrorElement:) expected
+            <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(JS:SHARP)('#')
+          PsiElement(JS:IDENTIFIER)('$')
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OF_KEYWORD)('of')
+      PsiWhiteSpace(' ')
+      JSAttributeList
+        ES6Decorator
+          PsiElement(JS:AT)('@')
+      PsiErrorElement:class expected
+        <empty list>
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:OF_KEYWORD)('of')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        VueJSVForVariable
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiErrorElement:'in' or 'of' expected
+        <empty list>
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('c')
+    PsiErrorElement:Expected end of expression
+      <empty list>
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('d')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSVarStatement
+        JSDestructuringElement
+          JSDestructuringObject
+            PsiElement(JS:LBRACE)('{')
+            JSDestructuringShorthandedProperty
+              VueJSVForVariable
+                PsiElement(JS:IDENTIFIER)('a')
+            PsiElement(JS:COMMA)(',')
+            JSDestructuringShorthandedProperty
+              VueJSVForVariable
+                PsiElement(JS:IDENTIFIER)('b')
+            PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-for.expr
+  VueJSEmbeddedExpression
+    VueJSVForExpression
+      JSParenthesizedExpression
+        PsiElement(JS:LPAR)('(')
+        JSVarStatement
+          JSDestructuringElement
+            JSDestructuringObject
+              PsiElement(JS:LBRACE)('{')
+              JSDestructuringShorthandedProperty
+                VueJSVForVariable
+                  PsiElement(JS:IDENTIFIER)('a')
+              PsiElement(JS:COMMA)(',')
+              PsiWhiteSpace(' ')
+              JSDestructuringShorthandedProperty
+                VueJSVForVariable
+                  PsiElement(JS:IDENTIFIER)('b')
+              PsiErrorElement:, expected
+                <empty list>
+        PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:IN_KEYWORD)('in')
+      PsiWhiteSpace(' ')
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')

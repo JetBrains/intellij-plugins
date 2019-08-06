@@ -33,8 +33,8 @@ HtmlFile:test.vue
                     PsiElement(JS:IDENTIFIER)('b')
                     PsiElement(JS:COLON)(':')
                     PsiWhiteSpace(' ')
-                    JSReferenceExpression
-                      PsiElement(JS:IDENTIFIER)('true')
+                    JSLiteralExpression
+                      PsiElement(JS:TRUE_KEYWORD)('true')
                   PsiElement(JS:RBRACE)('}')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
