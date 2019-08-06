@@ -5,8 +5,10 @@ import com.intellij.notification.*
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.Project
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangDownloader
 
 object Notification {
@@ -29,11 +31,40 @@ object Notification {
                     NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
             .notify(project)
 
-    fun showLanguagesMessage(project: Project) = NOTIFICATION_GROUP_LANGUAGES
-            .createNotification(msg("grazi.languages.title"), msg("grazi.languages.body"), NotificationType.INFORMATION, null)
-            .addAction(object : NotificationAction(msg("grazi.languages.action")) {
-                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                    LangDownloader.downloadMissingLanguages(project)
-                }
-            }).notify(project)
+    fun showLanguagesMessage(project: Project) {
+        val langs = GraziConfig.get().getMissedLanguages()
+        val list = if (langs.size > 1) {
+            langs.dropLast(1).joinToString(", ", postfix = ", ") + "and ${langs.last()}"
+        } else {
+            langs.last().toString()
+        }
+
+        val s = if (langs.size > 1) "s" else ""
+        NOTIFICATION_GROUP_LANGUAGES
+                .createNotification(msg("grazi.languages.title", s), msg("grazi.languages.body", list), NotificationType.WARNING, null)
+                .addAction(object : NotificationAction(msg("grazi.languages.action.download", s)) {
+                    override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+                        LangDownloader.downloadMissingLanguages(project)
+                        notification.hideBalloon()
+                    }
+                })
+                .addAction(object : NotificationAction(msg("grazi.languages.action.disable", s)) {
+                    override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+                        GraziConfig.update { state ->
+                            val enabledLanguages = state.enabledLanguages.toMutableSet()
+                            enabledLanguages.removeAll(state.getMissedLanguages())
+
+                            val native = if (state.nativeLanguage.jLanguage == null) {
+                                Lang.AMERICAN_ENGLISH
+                            } else {
+                                state.nativeLanguage
+                            }
+
+                            state.copy(enabledLanguages = enabledLanguages, nativeLanguage = native)
+                        }
+                        notification.hideBalloon()
+                    }
+                })
+                .notify(project)
+    }
 }

@@ -1,8 +1,8 @@
 package tanvd.grazi.ide.ui.components
 
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.*
+import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.util.ui.EditableModel
 import com.intellij.util.ui.JBUI
 import tanvd.grazi.GraziConfig
@@ -12,6 +12,7 @@ import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
+
 
 class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit, private val onLanguageRemoved: (lang: Lang) -> Unit) :
         AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
@@ -55,8 +56,12 @@ class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit,
 
     override fun findItemToAdd(): Lang? {
         val langsInList = listItems.map { it as Lang }.toSet()
-        val menu = JBPopupFactory.getInstance()
-                .createListPopup(GraziListPopupStep(msg("grazi.ui.settings.language.dialog.title"), Lang.sortedValues().filter { it !in langsInList }, this, ::addElement))
+        val (downloadedLangs, otherLangs) = Lang.sortedValues().filter { it !in langsInList }.partition { it.jLanguage != null }
+        val step = GraziListPopupStep(msg("grazi.ui.settings.language.dialog.title"), downloadedLangs, otherLangs, this, ::addElement)
+        val menu = object : ListPopupImpl(null, step) {
+            override fun getListElementRenderer() = GraziPopupListElementRenderer(this)
+        }
+
         decorator.actionsPanel?.getAnActionButton(CommonActionsPanel.Buttons.ADD)?.preferredPopupPoint?.let(menu::show)
         return null
     }

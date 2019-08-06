@@ -112,7 +112,16 @@ object LangDownloader {
         with(Languages::class.java.getDeclaredField("dynLanguages")) {
             isAccessible = true
             @Suppress("UNCHECKED_CAST")
-            (get(null) as MutableList<Language>).add(jLanguage!!)
+            val langs = get(null) as MutableList<Language>
+
+            langs.add(jLanguage!!)
+            when (this@registerInLanguageTool) {
+                Lang.BRAZILIAN_PORTUGUESE -> langs.add(Lang.PORTUGAL_PORTUGUESE.jLanguage!!)
+                Lang.PORTUGAL_PORTUGUESE -> langs.add(Lang.BRAZILIAN_PORTUGUESE.jLanguage!!)
+                Lang.GERMANY_GERMAN -> langs.add(Lang.AUSTRIAN_GERMAN.jLanguage!!)
+                Lang.AUSTRIAN_GERMAN -> langs.add(Lang.GERMANY_GERMAN.jLanguage!!)
+                else -> { }
+            }
         }
     }
 
@@ -130,7 +139,6 @@ object LangDownloader {
                 repository.collectDependencies(session, request).root.traverse { jars.add(it.artifact) }
             } catch (e: Throwable) {
                 logger.trace("Download error", e)
-                throw RuntimeException(e)
             }
         }, msg("grazi.ui.settings.language.searching.title"), true, project)
 
