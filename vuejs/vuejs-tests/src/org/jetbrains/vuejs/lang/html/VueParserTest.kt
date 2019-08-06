@@ -44,23 +44,17 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun setUp() {
     super.setUp()
-    addExplicitExtension<HtmlInlineScriptTokenTypesProvider>(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE,
-                                                             JavascriptLanguage.INSTANCE,
-                                                             HtmlInlineJSScriptTokenTypesProvider())
-    addExplicitExtension<HtmlScriptContentProvider>(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
-                                                    JSScriptContentProvider())
-    registerExtensionPoint<EmbeddedTokenTypesProvider>(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME,
-                                                       EmbeddedTokenTypesProvider::class.java)
-    registerExtension<EmbeddedTokenTypesProvider>(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, CssEmbeddedTokenTypesProvider())
-    registerExtension<EmbeddedTokenTypesProvider>(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME,
-                                                  CssRulesetBlockEmbeddedTokenTypesProvider())
+
+    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE, HtmlInlineJSScriptTokenTypesProvider())
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, JSScriptContentProvider())
+
+    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
+                       listOf(CssEmbeddedTokenTypesProvider(), CssRulesetBlockEmbeddedTokenTypesProvider()))
 
     addExplicitExtension<ASTFactory>(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
-    registerExtensionPoint<CssElementDescriptorProvider>(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
-    registerExtension<CssElementDescriptorProvider>(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
-    registerApplicationService<CssElementDescriptorFactory2>(CssElementDescriptorFactory2::class.java,
-                                                             CssElementDescriptorFactory2(ProgressManager.getInstance(),
-                                                                                          "css-parsing-tests.xml"))
+    registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
+    registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
+    application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"))
 
     // Update parser definition if version is changed
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)
@@ -68,7 +62,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
 
-    registerApplicationService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
+    project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
   }
 
   override fun checkResult(targetDataName: String, file: PsiFile) {

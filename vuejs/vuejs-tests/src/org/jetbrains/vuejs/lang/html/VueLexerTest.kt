@@ -9,23 +9,23 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import kotlin.properties.Delegates.notNull
 
 open class VueLexerTest : LexerTestCase() {
-
-  private var myFixture: IdeaProjectTestFixture? = null
+  private var fixture: IdeaProjectTestFixture by notNull()
 
   override fun setUp() {
     super.setUp()
 
     // needed for various XML extension points registration
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory()
+    fixture = IdeaTestFixtureFactory.getFixtureFactory()
       .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR).fixture
-    myFixture!!.setUp()
+    fixture.setUp()
   }
 
   override fun tearDown() {
     try {
-      myFixture!!.tearDown()
+      fixture.tearDown()
     }
     catch (e: Throwable) {
       addSuppressedException(e)
@@ -324,7 +324,7 @@ open class VueLexerTest : LexerTestCase() {
     doTest(text, true)
   }
 
-  protected fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
+  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
     val withoutMargin = text.trimMargin()
     super.doTest(withoutMargin)
     if (checkRestartOnEveryToken) {

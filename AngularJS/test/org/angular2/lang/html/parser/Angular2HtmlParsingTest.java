@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
@@ -7,7 +7,6 @@ import com.intellij.javascript.JSScriptContentProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
 import com.intellij.lang.LanguageHtmlScriptContentProvider;
-import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
@@ -34,6 +33,7 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
@@ -52,19 +52,17 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                          new HtmlInlineJSScriptTokenTypesProvider());
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
                          new JSScriptContentProvider());
-    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
-    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
-    registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
+    registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class, Arrays.asList(new CssEmbeddedTokenTypesProvider(), new CssRulesetBlockEmbeddedTokenTypesProvider()));
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
-    registerApplicationService(CssElementDescriptorFactory2.class,
-                               new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+    getApplication().registerService(CssElementDescriptorFactory2.class,
+                                     new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
 
     // Update parser definition if version is changed
     assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.getDialect(), new ECMA6ParserDefinition());
+    registerParserDefinition(new ECMA6ParserDefinition());
   }
 
   @Override

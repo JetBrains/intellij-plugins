@@ -1,9 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.parsing;
 
-import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.util.HbTestUtils;
-import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.ide.util.PropertiesComponentImpl;
+import com.intellij.mock.MockApplication;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
 import com.intellij.testFramework.ParsingTestCase;
@@ -20,12 +21,11 @@ import org.picocontainer.MutablePicoContainer;
  * public void testMyTestName() { doTest(true); }
  * }</pre>
  * <p/>
- * <b>TIP:</b> if you create a .hbs file without a .txt file, the test will autogenerate .txt file from the current
+ * <b>TIP:</b> if you create a .hbs file without a .txt file, the test will auto generate .txt file from the current
  * parser. So, in practice when creating parser tests, you create the .hbs file, run the test, validate that
  * the .txt represents the desired Psi structure, then call it a day.
  */
 public abstract class HbParserTest extends ParsingTestCase {
-
   public HbParserTest() {
     super("parser", "hbs", new HbParseDefinition());
   }
@@ -44,11 +44,17 @@ public abstract class HbParserTest extends ParsingTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    final MutablePicoContainer appContainer = getApplication().getPicoContainer();
+    MockApplication app = getApplication();
+    MutablePicoContainer appContainer = app.getPicoContainer();
 
     myProject.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
-    registerApplicationService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
-    registerComponentImplementation(appContainer, TemplateDataLanguagePatterns.class, TemplateDataLanguagePatterns.class);
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, HbLanguage.INSTANCE, new HbParseDefinition());
+
+    // PropertiesComponent is used by HbConfig
+    app.registerService(PropertiesComponent.class, PropertiesComponentImpl.class);
+    myProject.registerService(PropertiesComponent.class, PropertiesComponentImpl.class);
+
+    app.registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
+    appContainer.registerComponentImplementation(TemplateDataLanguagePatterns.class, TemplateDataLanguagePatterns.class);
+    registerParserDefinition(new HbParseDefinition());
   }
 }

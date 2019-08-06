@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.file;
 
 import com.dmarcotte.handlebars.HbLanguage;
@@ -81,7 +82,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
     }
 
-    Language substituteLang = LanguageSubstitutors.INSTANCE.substituteLanguage(dataLang, file, manager.getProject());
+    Language substituteLang = LanguageSubstitutors.getInstance().substituteLanguage(dataLang, file, manager.getProject());
 
     // only use a substituted language if it's templateable
     if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {

@@ -30,7 +30,7 @@ public abstract class PostCssParsingTest extends ParsingTestCase {
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     registerExtension(CssElementDescriptorProvider.EP_NAME, new PostCssElementDescriptorProvider());
 
-    registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+    getApplication().registerService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
 
     addExplicitExtension(LanguageASTFactory.INSTANCE, PostCssLanguage.INSTANCE, new PostCssTreeElementFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
