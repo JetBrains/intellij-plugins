@@ -233,16 +233,28 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someFor"')
                       JSFile:PugAttrValueInjection.vue.v-for.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someFor')
+                          VueJSVForExpression
+                            JSVarStatement
+                              VueJSVForVariable
+                                PsiElement(JS:IDENTIFIER)('someFor')
+                            PsiErrorElement:'in' or 'of' expected
+                              <empty list>
                     JSFile:PugAttrValueInjection.vue.v-for.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someFor')
+                        VueJSVForExpression
+                          JSVarStatement
+                            VueJSVForVariable
+                              PsiElement(JS:IDENTIFIER)('someFor')
+                          PsiErrorElement:'in' or 'of' expected
+                            <empty list>
                   JSFile:PugAttrValueInjection.vue.v-for.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someFor')
+                      VueJSVForExpression
+                        JSVarStatement
+                          VueJSVForVariable
+                            PsiElement(JS:IDENTIFIER)('someFor')
+                        PsiErrorElement:'in' or 'of' expected
+                          <empty list>
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)

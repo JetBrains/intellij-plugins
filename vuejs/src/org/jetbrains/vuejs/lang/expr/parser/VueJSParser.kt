@@ -13,32 +13,39 @@ import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 
-class VueJSParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>, ES6StatementParser<*>,
-  ES6FunctionParser<*>, JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
+class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
+  : ES6Parser<ES6ExpressionParser<*>, VueJSParser.VueJSStatementParser, ES6FunctionParser<*>,
+  JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
+
+  constructor(builder: PsiBuilder) : this(builder, true)
 
   companion object {
-    fun parseEmbeddedExpression(builder: PsiBuilder, root: IElementType, attributeInfo: VueAttributeNameParser.VueAttributeInfo) {
-      // TODO - specialize parsing according to attribute info
+    fun parseEmbeddedExpression(builder: PsiBuilder, root: IElementType, attributeInfo: VueAttributeInfo?) {
       val rootMarker = builder.mark()
       val statementMarker = builder.mark()
-      while (!builder.eof()) {
-        VueJSParser(builder).parseExpectedExpression(builder, false)
+      val parseAction: (VueJSStatementParser) -> Unit =
+        when (attributeInfo?.kind) {
+          VueAttributeKind.DIRECTIVE ->
+            when ((attributeInfo as VueDirectiveInfo).directiveKind) {
+              VueDirectiveKind.FOR -> VueJSStatementParser::parseVFor
+              VueDirectiveKind.BIND -> VueJSStatementParser::parseVBind
+              else -> VueJSStatementParser::parseRegularExpression
+            }
+          else -> VueJSStatementParser::parseRegularExpression
+        }
+      VueJSParser(builder, false).statementParser.let {
+        parseAction(it)
+        // we need to consume rest of the tokens, even if they are invalid
+        it.parseRest()
       }
       statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_STATEMENT)
       rootMarker.done(root)
     }
 
     fun parseInterpolation(builder: PsiBuilder, root: IElementType) {
-      // TODO - specialize parsing
-      val rootMarker = builder.mark()
-      val statementMarker = builder.mark()
-      while (!builder.eof()) {
-        VueJSParser(builder).parseExpectedExpression(builder, false)
-      }
-      statementMarker.done(VueJSElementTypes.EMBEDDED_EXPR_STATEMENT)
-      rootMarker.done(root)
+      parseEmbeddedExpression(builder, root, null)
     }
 
     fun parseJS(builder: PsiBuilder, root: IElementType) {
@@ -47,106 +54,146 @@ class VueJSParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>, ES6St
   }
 
   init {
-    myStatementParser = object : ES6StatementParser<VueJSParser>(this) {
-      override fun parseSourceElement() {
-        if (builder.currentOffset != 0 || !parseExpectedExpression(builder, false)) {
-          super.parseSourceElement()
+    myStatementParser = VueJSStatementParser(this)
+  }
+
+  inner class VueJSStatementParser(parser: VueJSParser) : ES6StatementParser<VueJSParser>(parser) {
+
+    fun parseRegularExpression() {
+      // TODO support filters
+      if (!myExpressionParser.parseExpressionOptional() && !builder.eof()) {
+        val mark = builder.mark()
+        if (!builder.eof()) {
+          builder.advanceLexer()
         }
+        mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+        parseRest(true)
       }
     }
-  }
 
-  private fun parseVForLoopVariableStatement(): Boolean {
-    val statement = builder.mark()
-    if (parseVForLoopVariable()) {
-      statement.done(JSStubElementTypes.VAR_STATEMENT)
-      return true
+    fun parseVBind() {
+      // TODO support filters
+      if (!myExpressionParser.parseExpressionOptional()) {
+        val mark = builder.mark()
+        if (!builder.eof()) {
+          builder.advanceLexer()
+        }
+        mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+        parseRest(true)
+      }
     }
-    else {
-      statement.drop()
-      return false
-    }
-  }
 
-  private fun parseVForLoopVariable(): Boolean {
-    if (isIdentifierToken(builder.tokenType)) {
-      buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
-      return true
-    }
-    else if (myFunctionParser.willParseDestructuringAssignment()) {
-      myExpressionParser.parseDestructuringElement(VueJSElementTypes.V_FOR_VARIABLE, false, false)
-      return true
-    }
-    return false
-  }
-
-  private fun parseVForContents(): Boolean {
-    val vForExpr = builder.mark()
-    if (builder.tokenType == JSTokenTypes.LPAR) {
-      parseVForVariables()
-    }
-    else if (!parseVForLoopVariableStatement()) {
-      builder.error("identifier(s) expected")
-      builder.advanceLexer()
-    }
-    if (builder.tokenType !== JSTokenTypes.IN_KEYWORD && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
-      vForExpr.rollbackTo()
-      return false
-    }
-    else {
-      builder.advanceLexer()
-    }
-    if (parseExpectedExpression(builder, true)) {
+    fun parseVFor() {
+      val vForExpr = builder.mark()
+      if (builder.tokenType == JSTokenTypes.LPAR) {
+        parseVForVariables()
+      }
+      else if (!parseVForLoopVariableStatement()) {
+        val marker = builder.mark()
+        if (!builder.eof()
+            && builder.tokenType !== JSTokenTypes.IN_KEYWORD
+            && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
+          builder.advanceLexer()
+        }
+        marker.error(JSBundle.message("javascript.parser.message.expected.identifier"))
+      }
+      if (builder.tokenType !== JSTokenTypes.IN_KEYWORD && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
+        builder.error("'in' or 'of' expected")
+      }
+      else {
+        builder.advanceLexer()
+      }
+      myExpressionParser.parseExpression()
       vForExpr.done(VueJSElementTypes.V_FOR_EXPRESSION)
     }
-    else {
-      vForExpr.rollbackTo()
-      return false
-    }
-    return true
-  }
 
-  private val EXTRA_VAR_COUNT = 2
-  private fun parseVForVariables(): Boolean {
-    val parenthesis = builder.mark()
-    builder.advanceLexer() //LPAR
-    val varStatement = builder.mark()
-    if (parseVForLoopVariable()) {
-      var i = 0
-      while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
-        builder.advanceLexer()
-        if (isIdentifierToken(builder.tokenType)) {
-          buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
+    internal fun parseRest(initialReported: Boolean = false) {
+      var reported = initialReported
+      while (!builder.eof()) {
+        if (builder.tokenType === JSTokenTypes.SEMICOLON) {
+          val mark = builder.mark()
+          builder.advanceLexer()
+          mark.error("Statements are not allowed in Vue expressions")
+          reported = true
         }
-        i++
+        else {
+          var justReported = false
+          if (!reported) {
+            builder.error("Expected end of expression")
+            reported = true
+            justReported = true
+          }
+          if (!myExpressionParser.parseExpressionOptional()) {
+            if (reported && !justReported) {
+              val mark = builder.mark()
+              builder.advanceLexer()
+              mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+            } else {
+              builder.advanceLexer()
+            }
+          } else {
+            reported = false
+          }
+        }
       }
     }
-    if (builder.tokenType != JSTokenTypes.RPAR) {
-      builder.error("closing parenthesis expected")
-      while (!builder.eof() && builder.tokenType != JSTokenTypes.RPAR &&
-             builder.tokenType != JSTokenTypes.IN_KEYWORD &&
-             builder.tokenType != JSTokenTypes.OF_KEYWORD) {
-        builder.advanceLexer()
+
+    private fun parseVForLoopVariableStatement(): Boolean {
+      val statement = builder.mark()
+      if (parseVForLoopVariable()) {
+        statement.done(JSStubElementTypes.VAR_STATEMENT)
+        return true
       }
-      if (builder.tokenType != JSTokenTypes.RPAR) {
-        varStatement.done(JSStubElementTypes.VAR_STATEMENT)
-        parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
+      else {
+        statement.drop()
         return false
       }
     }
-    varStatement.done(JSStubElementTypes.VAR_STATEMENT)
-    builder.advanceLexer()
-    parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
-    return true
-  }
 
-  private fun parseExpectedExpression(builder: PsiBuilder, isOnlyStandardJS: Boolean): Boolean {
-    if (!isOnlyStandardJS && parseVForContents()) return true
-    if (!myExpressionParser.parseExpressionOptional()) {
-      builder.error(JSBundle.message("javascript.parser.message.expected.expression"))
-      builder.advanceLexer()
+    private fun parseVForLoopVariable(): Boolean {
+      if (isIdentifierToken(builder.tokenType)) {
+        buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
+        return true
+      }
+      else if (myFunctionParser.willParseDestructuringAssignment()) {
+        myExpressionParser.parseDestructuringElement(VueJSElementTypes.V_FOR_VARIABLE, false, false)
+        return true
+      }
       return false
     }
-    return true
+
+    private val EXTRA_VAR_COUNT = 2
+    private fun parseVForVariables() {
+      val parenthesis = builder.mark()
+      builder.advanceLexer() //LPAR
+      val varStatement = builder.mark()
+      if (parseVForLoopVariable()) {
+        var i = 0
+        while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
+          builder.advanceLexer()
+          if (isIdentifierToken(builder.tokenType)) {
+            buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
+          }
+          i++
+        }
+      }
+      if (builder.tokenType != JSTokenTypes.RPAR) {
+        builder.error(JSBundle.message("javascript.parser.message.expected.rparen"))
+        while (!builder.eof()
+               && builder.tokenType != JSTokenTypes.RPAR
+               && builder.tokenType != JSTokenTypes.IN_KEYWORD
+               && builder.tokenType != JSTokenTypes.OF_KEYWORD) {
+          builder.advanceLexer()
+        }
+        if (builder.tokenType != JSTokenTypes.RPAR) {
+          varStatement.done(JSStubElementTypes.VAR_STATEMENT)
+          parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
+          return
+        }
+      }
+      varStatement.done(JSStubElementTypes.VAR_STATEMENT)
+      builder.advanceLexer()
+      parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
+    }
   }
 }
