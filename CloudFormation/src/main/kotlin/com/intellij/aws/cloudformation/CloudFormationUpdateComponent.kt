@@ -1,6 +1,6 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.json.JsonFileType
 import com.intellij.openapi.Disposable
@@ -52,8 +52,8 @@ import java.util.concurrent.TimeUnit
 class CloudFormationUpdateComponent : Disposable {
   init {
     Disposer.register(ApplicationManager.getApplication(), this)
-    val pluginId = PluginManager.getPluginByClassName(this.javaClass.name)
-    val descriptor = PluginManager.getPlugin(pluginId)
+    val pluginId = PluginManagerCore.getPluginByClassName(this.javaClass.name)
+    val descriptor = PluginManagerCore.getPlugin(pluginId)
     ourCurrentPluginVersion = descriptor?.version
 
     val application = ApplicationManager.getApplication()
@@ -154,7 +154,7 @@ class CloudFormationUpdateComponent : Disposable {
     private val updateUrl: String get() {
       val applicationInfo = ApplicationInfoEx.getInstanceEx()
       val buildNumber = applicationInfo.build.asString()
-      val plugin = PluginManager.getPlugin(PluginId.getId(PLUGIN_ID))!!
+      val plugin = PluginManagerCore.getPlugin(PluginId.getId(PLUGIN_ID))!!
       val pluginId = plugin.pluginId.idString
       val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8.name())
       val uid = PermanentInstallationID.get()
