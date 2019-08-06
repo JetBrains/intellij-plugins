@@ -162,6 +162,9 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
       if (next != null) {
         element = PsiTreeUtil.getDeepestFirst(next);
       }
+      else {
+        break;
+      }
     }
 
     if (element != null) {
