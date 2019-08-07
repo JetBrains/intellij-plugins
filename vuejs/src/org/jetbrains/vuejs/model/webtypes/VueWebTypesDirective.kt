@@ -14,5 +14,5 @@ class VueWebTypesDirective(attribute: Attribute_,
   override val parents: List<VueEntitiesContainer> = listOf(parent)
   override val defaultName: String? = attribute.name
 
-  private val sourceFile: String? = attribute.sourceFile
+  private val sourceFile: String? = null
 }

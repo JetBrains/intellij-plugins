@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url", "type")
-class Argument {
+@JsonPropertyOrder("name", "description", "doc-url", "accepts", "returns", "arguments")
+class VueFilter {
 
   /**
    *
@@ -75,11 +76,46 @@ class Argument {
    * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *
    */
-  @JsonProperty("type")
+  @JsonProperty("accepts")
   @JsonPropertyDescription(
     "Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.")
-  @get:JsonProperty("type")
-  @set:JsonProperty("type")
-  var type: Any? = null
+  @get:JsonProperty("accepts")
+  @set:JsonProperty("accepts")
+  var accepts: Any? = null
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  @JsonProperty("returns")
+  @JsonPropertyDescription(
+    "Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.")
+  @get:JsonProperty("returns")
+  @set:JsonProperty("returns")
+  var returns: Any? = null
+  /**
+   * List of arguments accepted by the filter. All arguments are non-optional by default.
+   *
+   */
+  /**
+   * List of arguments accepted by the filter. All arguments are non-optional by default.
+   *
+   */
+  /**
+   * List of arguments accepted by the filter. All arguments are non-optional by default.
+   *
+   */
+  @JsonProperty("arguments")
+  @JsonPropertyDescription("List of arguments accepted by the filter. All arguments are non-optional by default.")
+  @get:JsonProperty("arguments")
+  @set:JsonProperty("arguments")
+  var arguments: List<Argument_> = ArrayList()
 
 }
