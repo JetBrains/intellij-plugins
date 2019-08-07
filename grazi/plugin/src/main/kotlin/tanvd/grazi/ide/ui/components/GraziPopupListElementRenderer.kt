@@ -21,9 +21,10 @@ class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRende
         val panel = JPanel(BorderLayout())
         createLabel()
         panel.add(myTextLabel, BorderLayout.CENTER)
-        size = JLabel()
-        size.border = JBUI.Borders.emptyLeft(5)
-        size.foreground = JBColor.GRAY
+        size = JLabel().apply {
+            border = JBUI.Borders.emptyLeft(5)
+            foreground = JBColor.GRAY
+        }
         panel.add(size, BorderLayout.EAST)
         return layoutComponent(panel)
     }
@@ -50,7 +51,7 @@ class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRende
         setSelected(myTextLabel, isSelected && isSelectable)
         setSelected(size, isSelected && isSelectable)
 
-        size.text = if (lang?.jLanguage != null) "" else lang?.size ?: ""
+        size.text = if (lang?.jLanguage != null) "" else lang?.descriptor?.size ?: ""
         size.foreground =  if (!isSelected) Color.GRAY else myTextLabel.foreground
     }
 }

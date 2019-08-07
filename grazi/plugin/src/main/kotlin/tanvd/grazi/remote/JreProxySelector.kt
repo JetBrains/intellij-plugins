@@ -1,4 +1,4 @@
-package tanvd.grazi
+package tanvd.grazi.remote
 
 import org.eclipse.aether.repository.*
 import org.eclipse.aether.repository.Proxy
@@ -7,10 +7,11 @@ import java.net.*
 import java.util.*
 
 
-/** Copied from org.jetbrains.idea.maven.aether.JreProxySelector
+/**
+ * Copied from org.jetbrains.idea.maven.aether.JreProxySelector
  * This is a modified copy of the corresponding Aether class that adds support for https proxy types
  */
-class JreProxySelector : ProxySelector {
+object JreProxySelector : ProxySelector {
     override fun getProxy(repository: RemoteRepository) = getProxy(repository.url)
 
     fun getProxy(url: String): Proxy? {

@@ -89,28 +89,32 @@ class EditorGuiTest : GraziGuiTestBase() {
                 }
             }
 
-            settings {
-                toggleTestRules()
+            step("Check disabling/enabling rules") {
+                settings {
+                    toggleTestRules()
+                }
+
+                editor {
+                    waitAMoment()
+                    waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 6)
+                    requireHighlights(HighlightSeverity.INFORMATION,
+                            "БОЛЬШИЕ &rarr; большиеВсе буквы в слове ЗАГЛАВНЫЕIncorrect:Не выделяйте текст ЗАГЛАВНЫМИ буквами.Correct:Не выделяйте текст заглавными буквами.",
+                            "Актуальный &rarr; Настоящий/Фактический/Реальныйfalse friend hint for: актуальный",
+                            "химия, история &rarr; химии, историиСогласование с обобщающим словомIncorrect:На конференции работали  советы по секциям: химия, история.Correct:На конференции работали  советы по секциям: химии, истории.",
+                            "it &rarr; ItChecks that a sentence starts with an uppercase letterIncorrect:This house is old. it was built in 1950.Correct:This house is old. It was built in 1950.",
+                            "pencil, and &rarr; pencil andWarn when the serial comma is used (incomplete)Incorrect:The pen, pencil, and book are on the desk.Correct:The pen, pencil and book are on the desk.",
+                            "is an easy one &rarr; is easyPossible wordiness: be a X oneIncorrect:This test is an easy one.Correct:This test is easy.")
+                }
             }
 
-            editor {
-                waitAMoment()
-                waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 6)
-                requireHighlights(HighlightSeverity.INFORMATION,
-                        "БОЛЬШИЕ &rarr; большиеВсе буквы в слове ЗАГЛАВНЫЕIncorrect:Не выделяйте текст ЗАГЛАВНЫМИ буквами.Correct:Не выделяйте текст заглавными буквами.",
-                        "Актуальный &rarr; Настоящий/Фактический/Реальныйfalse friend hint for: актуальный",
-                        "химия, история &rarr; химии, историиСогласование с обобщающим словомIncorrect:На конференции работали  советы по секциям: химия, история.Correct:На конференции работали  советы по секциям: химии, истории.",
-                        "it &rarr; ItChecks that a sentence starts with an uppercase letterIncorrect:This house is old. it was built in 1950.Correct:This house is old. It was built in 1950.",
-                        "pencil, and &rarr; pencil andWarn when the serial comma is used (incomplete)Incorrect:The pen, pencil, and book are on the desk.Correct:The pen, pencil and book are on the desk.",
-                        "is an easy one &rarr; is easyPossible wordiness: be a X oneIncorrect:This test is an easy one.Correct:This test is easy.")
-            }
+            step("Returning state back") {
+                settings {
+                    toggleTestRules()
+                    button("Apply").click()
 
-            settings {
-                toggleTestRules()
-                button("Apply").click()
-
-                jList("English (US)").selectItems("Russian")
-                actionButton("Remove").click()
+                    jList("English (US)").selectItems("Russian")
+                    actionButton("Remove").click()
+                }
             }
         }
     }

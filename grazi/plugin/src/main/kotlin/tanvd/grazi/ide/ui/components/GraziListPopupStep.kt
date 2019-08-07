@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.popup.ListSeparator
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import tanvd.grazi.language.Lang
-import tanvd.grazi.language.LangDownloader
+import tanvd.grazi.remote.LangDownloader
 import tanvd.kex.ifTrue
 import javax.swing.JComponent
 

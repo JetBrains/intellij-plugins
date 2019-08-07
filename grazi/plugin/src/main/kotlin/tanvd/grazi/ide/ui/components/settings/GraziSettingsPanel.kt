@@ -23,7 +23,7 @@ import tanvd.grazi.ide.ui.components.GraziAddDeleteListPanel
 import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
-import tanvd.grazi.language.LangDownloader
+import tanvd.grazi.remote.LangDownloader
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -92,11 +92,11 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     private val adpEnabledLanguages by lazy {
-        GraziAddDeleteListPanel({ rulesTree.addLang(it) }, { rulesTree.removeLang(it) })
+        GraziAddDeleteListPanel({ rulesTree.addLang(it) }, { rulesTree.removeLang(it); updateWarnings() })
     }
 
     private fun updateWarnings() {
-        langLink.isVisible = GraziConfig.get().hasMissedLanguagesWithoutNative()
+        langLink.isVisible = GraziConfig.get().hasMissedLanguages(false)
         nativeLangLink.isVisible = (cmbNativeLanguage.selectedItem as Lang).jLanguage == null
     }
 
@@ -172,14 +172,14 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
                     panel(MigLayout(createLayoutConstraints(), AC()), constraint = "") {
                         border = padding(JBUI.insetsBottom(10))
-                        add(wrapL(cmbNativeLanguage, msg("grazi.ui.settings.languages.native.text")), CC().minWidth("220px").maxWidth("380px"))
+                        add(wrapWithLabel(cmbNativeLanguage, msg("grazi.ui.settings.languages.native.text")), CC().minWidth("220px").maxWidth("380px"))
                         val help = ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help"))
                         help.border = padding(JBUI.insetsLeft(5))
                         add(help, CC().width("30px").alignX("left").wrap())
                         add(nativeLangLink, CC().hideMode(3))
                     }
 
-                    add(wrap(cbEnableGraziSpellcheck, msg("grazi.ui.settings.enable.note")))
+                    add(wrapWithComment(cbEnableGraziSpellcheck, msg("grazi.ui.settings.enable.note")))
                 }
 
                 updateWarnings()

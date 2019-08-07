@@ -1,4 +1,4 @@
-package tanvd.grazi.language
+package tanvd.grazi.remote
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.progress.impl.CoreProgressManager
@@ -29,10 +29,9 @@ import org.languagetool.Language
 import org.languagetool.Languages
 import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.GraziLibResolver
 import tanvd.grazi.GraziPlugin
-import tanvd.grazi.JreProxySelector
 import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.language.Lang
 import java.io.File
 import java.net.URL
 import java.nio.file.Paths
@@ -47,9 +46,7 @@ object LangDownloader {
             addService(TransporterFactory::class.java, HttpTransporterFactory::class.java)
             setErrorHandler(object : DefaultServiceLocator.ErrorHandler() {
                 override fun serviceCreationFailed(type: Class<*>?, impl: Class<*>?, exception: Throwable?) {
-                    if (exception != null) {
-                        throw RuntimeException(exception)
-                    }
+                    exception?.let { throw RuntimeException(it) }
                 }
             })
 
@@ -60,11 +57,11 @@ object LangDownloader {
     private val session: RepositorySystemSession by lazy {
         with(MavenRepositorySystemUtils.newSession()) {
             localRepositoryManager = repository.newLocalRepositoryManager(this, LocalRepository(File(GraziPlugin.installationFolder, "poms")))
-            setProxySelector(JreProxySelector())
+            setProxySelector(JreProxySelector)
         }
     }
 
-    private val proxy = JreProxySelector()
+    private val proxy = JreProxySelector
 
     private val MAVEN_CENTRAL_REPOSITORY =
             RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
@@ -114,13 +111,8 @@ object LangDownloader {
             @Suppress("UNCHECKED_CAST")
             val langs = get(null) as MutableList<Language>
 
-            langs.add(jLanguage!!)
-            when (this@registerInLanguageTool) {
-                Lang.BRAZILIAN_PORTUGUESE -> langs.add(Lang.PORTUGAL_PORTUGUESE.jLanguage!!)
-                Lang.PORTUGAL_PORTUGUESE -> langs.add(Lang.BRAZILIAN_PORTUGUESE.jLanguage!!)
-                Lang.GERMANY_GERMAN -> langs.add(Lang.AUSTRIAN_GERMAN.jLanguage!!)
-                Lang.AUSTRIAN_GERMAN -> langs.add(Lang.GERMANY_GERMAN.jLanguage!!)
-                else -> { }
+            descriptor.langsClasses.forEach {
+                langs.add(GraziPlugin.loadClass("org.languagetool.language.$it")!!.newInstance() as Language)
             }
         }
     }

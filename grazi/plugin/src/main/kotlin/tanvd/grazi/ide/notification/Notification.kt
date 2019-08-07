@@ -9,7 +9,7 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
-import tanvd.grazi.language.LangDownloader
+import tanvd.grazi.remote.LangDownloader
 
 object Notification {
     private val NOTIFICATION_GROUP_INSTALL = NotificationGroup(msg("grazi.install.group"),
@@ -32,8 +32,8 @@ object Notification {
             .notify(project)
 
     fun showLanguagesMessage(project: Project) {
-        val langs = GraziConfig.get().getMissedLanguages()
-        val list = if (langs.size > 1) {
+        val langs = GraziConfig.get().getMissedLanguages().toList()
+        val names = if (langs.size > 1) {
             langs.dropLast(1).joinToString(", ", postfix = ", ") + "and ${langs.last()}"
         } else {
             langs.last().toString()
@@ -41,7 +41,7 @@ object Notification {
 
         val s = if (langs.size > 1) "s" else ""
         NOTIFICATION_GROUP_LANGUAGES
-                .createNotification(msg("grazi.languages.title", s), msg("grazi.languages.body", list), NotificationType.WARNING, null)
+                .createNotification(msg("grazi.languages.title", s), msg("grazi.languages.body", names), NotificationType.WARNING, null)
                 .addAction(object : NotificationAction(msg("grazi.languages.action.download", s)) {
                     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
                         LangDownloader.downloadMissingLanguages(project)

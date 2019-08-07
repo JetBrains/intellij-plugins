@@ -1,40 +1,39 @@
 package tanvd.grazi.language
 
-import com.intellij.openapi.application.ApplicationManager
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
-import tanvd.kex.tryRun
+import tanvd.grazi.remote.LangToolLibDescriptor
 
 @Suppress("unused")
-enum class Lang(val displayName: String, val shortCode: String, val className: String, val size: String = "",
+enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: LangToolLibDescriptor,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet(),
                 private val disabledCategories: Set<String> = emptySet()) {
-    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish", "14 MB",
+    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish", LangToolLibDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish", "14 MB",
+    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish", LangToolLibDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", "14 MB",
+    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", LangToolLibDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    RUSSIAN("Russian", "ru", "Russian", "3 MB", GraziBundle.langConfig("ru.rules.enabled")),
-    PERSIAN("Persian", "fa", "Persian", "1 MB"),
-    FRENCH("French", "fr", "French", "4 MB"),
-    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", "19 MB"),
-    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", "19 MB"),
-    POLISH("Polish", "pl", "Polish", "5 MB"),
-    ITALIAN("Italian", "it", "Italian", "1 MB"),
-    DUTCH("Dutch", "nl", "Dutch", "17 MB"),
-    PORTUGAL_PORTUGUESE("Portuguese (Portugal)", "pt", "PortugalPortuguese", "5 MB"),
-    BRAZILIAN_PORTUGUESE("Portuguese (Brazil)", "pt", "BrazilianPortuguese", "5 MB"),
-    CHINESE("Chinese", "zh", "Chinese", "3 MB"),
-    GREEK("Greek", "el", "Greek", "1 MB"),
-    JAPANESE("Japanese", "ja", "Japanese", "1 MB"),
-    ROMANIAN("Romanian", "ro", "Romanian", "1 MB"),
-    SLOVAK("Slovak", "sk", "Slovak", "3 MB"),
-    SPANISH("Spanish", "es", "Spanish", "2 MB"),
-    UKRAINIAN("Ukrainian", "uk", "Ukrainian", "6 MB");
+    RUSSIAN("Russian", "ru", "Russian", LangToolLibDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
+    PERSIAN("Persian", "fa", "Persian", LangToolLibDescriptor.PERSIAN),
+    FRENCH("French", "fr", "French", LangToolLibDescriptor.FRENCH),
+    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", LangToolLibDescriptor.GERMAN),
+    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", LangToolLibDescriptor.GERMAN),
+    POLISH("Polish", "pl", "Polish", LangToolLibDescriptor.POLISH),
+    ITALIAN("Italian", "it", "Italian", LangToolLibDescriptor.ITALIAN),
+    DUTCH("Dutch", "nl", "Dutch", LangToolLibDescriptor.DUTCH),
+    PORTUGAL_PORTUGUESE("Portuguese (Portugal)", "pt", "PortugalPortuguese", LangToolLibDescriptor.PORTUGUESE),
+    BRAZILIAN_PORTUGUESE("Portuguese (Brazil)", "pt", "BrazilianPortuguese", LangToolLibDescriptor.PORTUGUESE),
+    CHINESE("Chinese", "zh", "Chinese", LangToolLibDescriptor.CHINESE),
+    GREEK("Greek", "el", "Greek", LangToolLibDescriptor.GREEK),
+    JAPANESE("Japanese", "ja", "Japanese", LangToolLibDescriptor.JAPANESE),
+    ROMANIAN("Romanian", "ro", "Romanian", LangToolLibDescriptor.ROMANIAN),
+    SLOVAK("Slovak", "sk", "Slovak", LangToolLibDescriptor.SLOVAK),
+    SPANISH("Spanish", "es", "Spanish", LangToolLibDescriptor.SPANISH),
+    UKRAINIAN("Ukrainian", "uk", "Ukrainian", LangToolLibDescriptor.UKRAINIAN);
 
     companion object {
         operator fun get(lang: Language): Lang? = values().find { lang.name == it.displayName }

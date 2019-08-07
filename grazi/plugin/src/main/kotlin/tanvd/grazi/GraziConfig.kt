@@ -17,7 +17,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property val userEnabledRules: Set<String> = HashSet(),
                      @Property val lastSeenVersion: String? = null) {
 
-        val availableAndEnabledLanguages: Set<Lang>
+        val enabledLanguagesAvailable: Set<Lang>
             get() = enabledLanguages.filter { it.jLanguage != null }.toSet()
 
         fun clone() = State(
@@ -25,12 +25,10 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                 userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
                 lastSeenVersion = lastSeenVersion)
 
-        fun hasMissedLanguages() = nativeLanguage.jLanguage == null || hasMissedLanguagesWithoutNative()
+        fun hasMissedLanguages(withNative: Boolean = true) = nativeLanguage.jLanguage == null || enabledLanguages.any { it.jLanguage == null }
 
-        fun hasMissedLanguagesWithoutNative() = enabledLanguages.any { it.jLanguage == null }
-
-        fun getMissedLanguages(): List<Lang> {
-            val missed = enabledLanguages.filter { it.jLanguage == null } as MutableList
+        fun getMissedLanguages(): Set<Lang> {
+            val missed = enabledLanguages.filter { it.jLanguage == null }.toMutableSet()
             if (nativeLanguage.jLanguage == null ) missed.add(nativeLanguage)
             return missed
         }

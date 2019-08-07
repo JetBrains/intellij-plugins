@@ -22,8 +22,8 @@ fun border(text: String, hasIndent: Boolean, insets: Insets, showLine: Boolean =
 
 fun padding(insets: Insets): Border = IdeBorderFactory.createEmptyBorder(insets)
 
-fun wrap(component: JComponent, comment: String) = ComponentPanelBuilder(component).withComment(comment).resizeY(true).createPanel()
-fun wrapL(component: JComponent, label: String) = ComponentPanelBuilder(component).withLabel(label).resizeY(true).createPanel()
+fun wrapWithComment(component: JComponent, comment: String) = ComponentPanelBuilder(component).withComment(comment).resizeY(true).createPanel()
+fun wrapWithLabel(component: JComponent, label: String) = ComponentPanelBuilder(component).withLabel(label).resizeY(true).createPanel()
 fun wrap(component: JComponent, comment: String, label: String) = ComponentPanelBuilder(component).withComment(comment).withLabel(label).resizeY(true).createPanel()
 
 fun msg(@PropertyKey(resourceBundle = GraziBundle.bundleName) key: String, vararg params: String): String = GraziBundle.message(key, *params)
