@@ -4,36 +4,36 @@ import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
-import tanvd.grazi.remote.LangLibDescriptor
+import tanvd.grazi.remote.RemoteLangDescriptor
 
 @Suppress("unused")
-enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: LangLibDescriptor,
+enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: RemoteLangDescriptor,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet(),
                 private val disabledCategories: Set<String> = emptySet()) {
-    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish", LangLibDescriptor.ENGLISH,
+    BRITISH_ENGLISH("English (GB)", "en", "BritishEnglish", RemoteLangDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish", LangLibDescriptor.ENGLISH,
+    AMERICAN_ENGLISH("English (US)", "en", "AmericanEnglish", RemoteLangDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", LangLibDescriptor.ENGLISH,
+    CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", RemoteLangDescriptor.ENGLISH,
             GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    RUSSIAN("Russian", "ru", "Russian", LangLibDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
-    PERSIAN("Persian", "fa", "Persian", LangLibDescriptor.PERSIAN),
-    FRENCH("French", "fr", "French", LangLibDescriptor.FRENCH),
-    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", LangLibDescriptor.GERMAN),
-    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", LangLibDescriptor.GERMAN),
-    POLISH("Polish", "pl", "Polish", LangLibDescriptor.POLISH),
-    ITALIAN("Italian", "it", "Italian", LangLibDescriptor.ITALIAN),
-    DUTCH("Dutch", "nl", "Dutch", LangLibDescriptor.DUTCH),
-    PORTUGAL_PORTUGUESE("Portuguese (Portugal)", "pt", "PortugalPortuguese", LangLibDescriptor.PORTUGUESE),
-    BRAZILIAN_PORTUGUESE("Portuguese (Brazil)", "pt", "BrazilianPortuguese", LangLibDescriptor.PORTUGUESE),
-    CHINESE("Chinese", "zh", "Chinese", LangLibDescriptor.CHINESE),
-    GREEK("Greek", "el", "Greek", LangLibDescriptor.GREEK),
-    JAPANESE("Japanese", "ja", "Japanese", LangLibDescriptor.JAPANESE),
-    ROMANIAN("Romanian", "ro", "Romanian", LangLibDescriptor.ROMANIAN),
-    SLOVAK("Slovak", "sk", "Slovak", LangLibDescriptor.SLOVAK),
-    SPANISH("Spanish", "es", "Spanish", LangLibDescriptor.SPANISH),
-    UKRAINIAN("Ukrainian", "uk", "Ukrainian", LangLibDescriptor.UKRAINIAN);
+    RUSSIAN("Russian", "ru", "Russian", RemoteLangDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
+    PERSIAN("Persian", "fa", "Persian", RemoteLangDescriptor.PERSIAN),
+    FRENCH("French", "fr", "French", RemoteLangDescriptor.FRENCH),
+    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", RemoteLangDescriptor.GERMAN),
+    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", RemoteLangDescriptor.GERMAN),
+    POLISH("Polish", "pl", "Polish", RemoteLangDescriptor.POLISH),
+    ITALIAN("Italian", "it", "Italian", RemoteLangDescriptor.ITALIAN),
+    DUTCH("Dutch", "nl", "Dutch", RemoteLangDescriptor.DUTCH),
+    PORTUGAL_PORTUGUESE("Portuguese (Portugal)", "pt", "PortugalPortuguese", RemoteLangDescriptor.PORTUGUESE),
+    BRAZILIAN_PORTUGUESE("Portuguese (Brazil)", "pt", "BrazilianPortuguese", RemoteLangDescriptor.PORTUGUESE),
+    CHINESE("Chinese", "zh", "Chinese", RemoteLangDescriptor.CHINESE),
+    GREEK("Greek", "el", "Greek", RemoteLangDescriptor.GREEK),
+    JAPANESE("Japanese", "ja", "Japanese", RemoteLangDescriptor.JAPANESE),
+    ROMANIAN("Romanian", "ro", "Romanian", RemoteLangDescriptor.ROMANIAN),
+    SLOVAK("Slovak", "sk", "Slovak", RemoteLangDescriptor.SLOVAK),
+    SPANISH("Spanish", "es", "Spanish", RemoteLangDescriptor.SPANISH),
+    UKRAINIAN("Ukrainian", "uk", "Ukrainian", RemoteLangDescriptor.UKRAINIAN);
 
     companion object {
         operator fun get(lang: Language): Lang? = values().find { lang.name == it.displayName }

@@ -1,9 +1,9 @@
 package tanvd.grazi.language
 
 import org.languagetool.rules.Rule
+import tanvd.grazi.utils.decapitalizeIfNotAbbreviation
 import tanvd.grazi.utils.safeSubstring
 
-private fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()
 
 enum class LangToolFixes(private val ruleId: String, private val fix: (suggestion: String) -> String) {
     ARTICLE_MISSING("ARTICLE_MISSING", {

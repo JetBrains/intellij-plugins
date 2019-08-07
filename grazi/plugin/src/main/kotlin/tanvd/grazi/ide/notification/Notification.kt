@@ -9,7 +9,7 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
-import tanvd.grazi.remote.LangDownloader
+import tanvd.grazi.remote.GraziRemote
 import tanvd.grazi.utils.joinToStringWithOxfordComma
 
 object Notification {
@@ -41,7 +41,7 @@ object Notification {
                         NotificationType.WARNING, null)
                 .addAction(object : NotificationAction(msg("grazi.languages.action.download", s)) {
                     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                        LangDownloader.downloadMissingLanguages(project)
+                        GraziRemote.resolveMissing(project)
                         notification.hideBalloon()
                     }
                 })

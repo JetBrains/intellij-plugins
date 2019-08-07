@@ -1,4 +1,4 @@
-package tanvd.grazi.remote
+package tanvd.grazi.remote.downloader
 
 import org.eclipse.aether.repository.*
 import org.eclipse.aether.repository.Proxy

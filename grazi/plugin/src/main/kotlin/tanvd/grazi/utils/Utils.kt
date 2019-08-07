@@ -13,3 +13,4 @@ fun String.filterOutNewLines() = this.replace("\n", "")
 fun String.safeSubstring(startIndex: Int) = if (this.length <= startIndex) "" else substring(startIndex)
 
 fun List<*>.joinToStringWithOxfordComma(separator: String = ", ") = if (size > 1) dropLast(1).joinToString(separator, postfix = ", ") + "and ${last()}" else last().toString()
+

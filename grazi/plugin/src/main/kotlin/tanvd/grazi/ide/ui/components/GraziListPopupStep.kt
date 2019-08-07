@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.popup.ListSeparator
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import tanvd.grazi.language.Lang
-import tanvd.grazi.remote.LangDownloader
+import tanvd.grazi.remote.GraziRemote
 import tanvd.kex.ifTrue
 import javax.swing.JComponent
 
@@ -19,9 +19,7 @@ class GraziListPopupStep(title: String, private val downloadedLangs: List<Lang>,
 
     override fun onChosen(selectedValue: Lang?, finalChoice: Boolean): PopupStep<*>? = selectedValue?.let { lang ->
         doFinalStep {
-            with(LangDownloader) {
-                lang.downloadLanguage(guessCurrentProject(panel)).ifTrue { onResult(lang) }
-            }
+            GraziRemote.resolve(lang, guessCurrentProject(panel)).ifTrue { onResult(lang) }
         }
     } ?: PopupStep.FINAL_CHOICE
 }

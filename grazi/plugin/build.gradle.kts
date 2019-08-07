@@ -40,17 +40,17 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 
     compile("org.languagetool", "languagetool-core", Versions.languageTool) {
-        excludesForLT()
+        ltExcludes()
     }
 
     compile("org.languagetool", "language-en", Versions.languageTool) {
-        excludesForLT()
+        ltExcludes()
     }
 
     testRuntime("org.languagetool", "language-ru", Versions.languageTool)
 
     // for PyCharm and others no Intellij Idea applications
-    addAetherDependencies()
+    aetherDependencies()
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 

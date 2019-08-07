@@ -9,10 +9,7 @@ import com.intellij.util.ui.UIUtil
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Color
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JList
-import javax.swing.JPanel
+import javax.swing.*
 
 class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRenderer<Lang>(list) {
     private lateinit var size: JLabel
@@ -52,6 +49,6 @@ class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRende
         setSelected(size, isSelected && isSelectable)
 
         size.text = if (lang?.jLanguage != null) "" else lang?.descriptor?.size ?: ""
-        size.foreground =  if (!isSelected) Color.GRAY else myTextLabel.foreground
+        size.foreground = if (!isSelected) Color.GRAY else myTextLabel.foreground
     }
 }

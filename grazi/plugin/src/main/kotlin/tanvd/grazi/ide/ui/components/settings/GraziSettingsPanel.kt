@@ -4,9 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.ContextHelpLabel
-import com.intellij.ui.ScrollPaneFactory
-import com.intellij.ui.SideBorder
+import com.intellij.ui.*
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.labels.LinkLabel
@@ -23,22 +21,19 @@ import tanvd.grazi.ide.ui.components.GraziAddDeleteListPanel
 import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
-import tanvd.grazi.remote.LangDownloader
+import tanvd.grazi.remote.GraziRemote
 import java.awt.BorderLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.ScrollPaneConstants
+import javax.swing.*
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
 
     private val nativeLangLink: LinkLabel<Any?> = LinkLabel<Any?>("", AllIcons.General.Warning).apply {
-        setListener(
-                { _, _ ->
-                    with(LangDownloader) { (cmbNativeLanguage.selectedItem as Lang).downloadLanguage(guessCurrentProject(cmbNativeLanguage)) }
-                    updateWarnings()
-                    rulesTree.reset()
-                }, null)
+        setListener({ _, _ ->
+            GraziRemote.resolve((cmbNativeLanguage.selectedItem as Lang), guessCurrentProject(cmbNativeLanguage))
+            updateWarnings()
+            rulesTree.reset()
+        }, null)
     }
 
     private val cmbNativeLanguage = ComboBox(Lang.sortedValues().toTypedArray()).apply {
@@ -56,12 +51,11 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val langLink: LinkLabel<Any?> = LinkLabel<Any?>(msg("grazi.languages.action"), AllIcons.General.Warning).apply {
         border = padding(JBUI.insetsTop(10))
-        setListener(
-                { _, _ ->
-                    LangDownloader.downloadMissingLanguages(guessCurrentProject(descriptionPane))
-                    updateWarnings()
-                    rulesTree.reset()
-                }, null)
+        setListener({ _, _ ->
+            GraziRemote.resolveMissing(guessCurrentProject(descriptionPane))
+            updateWarnings()
+            rulesTree.reset()
+        }, null)
     }
     private val ruleLink = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
     private val linkPanel = panel(HorizontalLayout(0)) {
