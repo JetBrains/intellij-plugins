@@ -1,7 +1,6 @@
 package training.statistic
 
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
-import com.intellij.internal.statistic.eventLog.FeatureUsageGroup
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -9,6 +8,11 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.annotations.Transient
 import training.learn.interfaces.Lesson
+import training.statistic.FeatureUsageStatisticConsts.DURATION
+import training.statistic.FeatureUsageStatisticConsts.LANGUAGE
+import training.statistic.FeatureUsageStatisticConsts.LESSON_ID
+import training.statistic.FeatureUsageStatisticConsts.PASSED
+import training.statistic.FeatureUsageStatisticConsts.START
 import training.util.trainerPluginConfigName
 
 @State(name = "StatisticBase", storages = arrayOf(Storage(value = trainerPluginConfigName)))
@@ -25,19 +29,15 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
   @Transient
   val sessionLessonId2State: MutableList<Pair<String, StatisticData>> = ArrayList()
 
-  init {
-    FUCounterUsageLogger.getInstance().register(FeatureUsageGroup(GROUP_ID, VERSION))
-  }
-
   companion object {
     private var cachedService: StatisticBase? = null
 
     val instance: StatisticBase
       get() {
-        if (StatisticBase.cachedService == null) {
-          StatisticBase.cachedService = ServiceManager.getService(StatisticBase::class.java)
+        if (cachedService == null) {
+          cachedService = ServiceManager.getService(StatisticBase::class.java)
         }
-        return StatisticBase.cachedService!!
+        return cachedService!!
       }
   }
 
@@ -51,8 +51,9 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
     val statisticData = StatisticData(StatisticState.STARTED, System.currentTimeMillis())
     persistedLessonId2State[lesson.id] = statisticData
     sessionLessonId2State.add(Pair(lesson.id, statisticData))
-    logEvent("start.${lesson.id.sanitizeId()}",
-        FeatureUsageData().addData("id", lesson.id.sanitizeId()).addData("lang", lesson.lang))
+    logEvent(START, FeatureUsageData()
+        .addData(LESSON_ID, lesson.id)
+        .addData(LANGUAGE, lesson.lang.toLowerCase()))
   }
 
   fun onPassLesson(lesson: Lesson) {
@@ -65,7 +66,10 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
       val statisticData = StatisticData(StatisticState.PASSED, delta)
       persistedLessonId2State[lesson.id] = statisticData
       sessionLessonId2State.add(Pair(lesson.id, statisticData))
-      logEvent("passed.${lesson.id.sanitizeId()}", FeatureUsageData().addData("duration", delta).addData("id", lesson.id.sanitizeId()).addData("lang", lesson.lang))
+      logEvent(PASSED, FeatureUsageData()
+          .addData(LESSON_ID, lesson.id)
+          .addData(LANGUAGE, lesson.lang.toLowerCase())
+          .addData(DURATION, delta))
     }
   }
 }
@@ -74,14 +78,6 @@ private fun logEvent(event: String, featureUsageData: FeatureUsageData) {
   FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event, featureUsageData)
 }
 
+//should be the same as res/META-INF/plugin.xml <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="2"/>
 private const val GROUP_ID = "ideFeaturesTrainer"
-private const val VERSION = 1
-
-private fun String.sanitizeId(): String {
-  return this.toLowerCase()
-      .replace(" ", "")
-      .replace("_", "")
-      .replace("/", "")
-      .replace("-", "")
-}
 
