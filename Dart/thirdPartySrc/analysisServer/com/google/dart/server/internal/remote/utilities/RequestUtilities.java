@@ -188,6 +188,9 @@ public class RequestUtilities {
     else if (object instanceof ImportedElements) {
       return ((ImportedElements)object).toJson();
     }
+    else if (object instanceof LibraryPathSet) {
+      return ((LibraryPathSet)object).toJson();
+    }
     throw new IllegalArgumentException("Unable to convert to JSON: " + object);
   }
 
