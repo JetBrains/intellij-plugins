@@ -25,7 +25,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                 userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
                 lastSeenVersion = lastSeenVersion)
 
-        fun hasMissedLanguages(withNative: Boolean = true) = nativeLanguage.jLanguage == null || enabledLanguages.any { it.jLanguage == null }
+        fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) || enabledLanguages.any { it.jLanguage == null }
 
         fun getMissedLanguages(): Set<Lang> {
             val missed = enabledLanguages.filter { it.jLanguage == null }.toMutableSet()

@@ -61,11 +61,9 @@ object LangDownloader {
         }
     }
 
-    private val proxy = JreProxySelector
-
     private val MAVEN_CENTRAL_REPOSITORY =
             RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
-                    .setProxy(proxy.getProxy(msg("grazi.maven.repo.url"))).build()
+                    .setProxy(JreProxySelector.getProxy(msg("grazi.maven.repo.url"))).build()
 
     private fun Artifact.createDependency() = Dependency(this, JavaScopes.COMPILE, false, listOf(
             Exclusion("org.languagetool", "languagetool-core", "", "jar"),

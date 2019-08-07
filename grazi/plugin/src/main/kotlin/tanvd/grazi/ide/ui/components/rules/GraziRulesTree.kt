@@ -68,7 +68,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
                 }
             }
 
-            addCheckboxTreeListener(object : CheckboxTreeAdapter() {
+            addCheckboxTreeListener(object : CheckboxTreeListener {
                 override fun nodeStateChanged(node: CheckedTreeNode) {
                     val meta = node.userObject
                     if (meta is RuleWithLang) {
