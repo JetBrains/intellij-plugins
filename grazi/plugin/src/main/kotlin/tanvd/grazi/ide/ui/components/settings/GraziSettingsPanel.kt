@@ -35,10 +35,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val nativeLangLink: LinkLabel<Any?> = LinkLabel<Any?>("", AllIcons.General.Warning).apply {
         setListener(
                 { _, _ ->
-                    with(LangDownloader) {
-                        val lang = (cmbNativeLanguage.selectedItem as Lang)
-                        lang.downloadLanguage(guessCurrentProject(cmbNativeLanguage))
-                    }
+                    with(LangDownloader) { (cmbNativeLanguage.selectedItem as Lang).downloadLanguage(guessCurrentProject(cmbNativeLanguage)) }
                     updateWarnings()
                     rulesTree.reset()
                 }, null)
@@ -96,7 +93,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     private fun updateWarnings() {
-        langLink.isVisible = GraziConfig.get().hasMissedLanguages(false)
+        langLink.isVisible = GraziConfig.get().hasMissedLanguages(withNative = false)
         nativeLangLink.isVisible = (cmbNativeLanguage.selectedItem as Lang).jLanguage == null
     }
 

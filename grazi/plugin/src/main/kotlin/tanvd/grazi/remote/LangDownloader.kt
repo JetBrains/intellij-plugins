@@ -61,9 +61,8 @@ object LangDownloader {
         }
     }
 
-    private val MAVEN_CENTRAL_REPOSITORY =
-            RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
-                    .setProxy(JreProxySelector.getProxy(msg("grazi.maven.repo.url"))).build()
+    private val MAVEN_CENTRAL_REPOSITORY = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
+            .setProxy(JreProxySelector.getProxy(msg("grazi.maven.repo.url"))).build()
 
     private fun Artifact.createDependency() = Dependency(this, JavaScopes.COMPILE, false, listOf(
             Exclusion("org.languagetool", "languagetool-core", "", "jar"),
@@ -82,7 +81,7 @@ object LangDownloader {
 
     private fun DependencyNode.traverse(action: (DependencyNode) -> Unit) {
         action(this)
-        this.children.forEach(action)
+        children.forEach(action)
     }
 
     fun downloadMissingLanguages(project: Project?) {

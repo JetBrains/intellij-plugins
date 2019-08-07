@@ -1,13 +1,17 @@
 package tanvd.grazi.grammar
 
 import com.intellij.openapi.progress.ProgressManager
+import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.LangDetector
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.splitWithRanges
-import tanvd.kex.*
+import tanvd.kex.LinkedSet
+import tanvd.kex.buildSet
 
 object GrammarEngine {
+    private val logger = LoggerFactory.getLogger(GrammarEngine::class.java)
+
     //TODO In case of very big texts we may analyze only visible by user text, not all. Then we will not need such limitations
     private const val tooBigChars = 50_000
     private const val maxChars = 10_000
@@ -52,10 +56,15 @@ object GrammarEngine {
 
         val lang = LangDetector.getLang(str, GraziConfig.get().enabledLanguagesAvailable.toList()) ?: return LinkedSet()
 
-        return tryRun { LangTool[lang]!!.check(str) }
-                .orEmpty()
-                .filterNotNull()
-                .map { Typo(it, lang) }
-                .let { LinkedSet(it) }
+        return try {
+            LangTool[lang]!!.check(str)
+                    .orEmpty()
+                    .filterNotNull()
+                    .map { Typo(it, lang) }
+                    .let { LinkedSet(it) }
+        } catch (e: Throwable) {
+            logger.trace("LangTool exception", e)
+            LinkedSet()
+        }
     }
 }

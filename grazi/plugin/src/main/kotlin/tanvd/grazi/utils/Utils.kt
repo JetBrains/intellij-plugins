@@ -9,3 +9,7 @@ fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + o
 fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.firstOrNull()?.let { if (body(it)) drop(1) else this } ?: this
 
 fun String.filterOutNewLines() = this.replace("\n", "")
+
+fun String.safeSubstring(startIndex: Int) = if (this.length <= startIndex) "" else substring(startIndex)
+
+fun List<*>.joinToStringWithOxfordComma(separator: String = ", ") = if (size > 1) dropLast(1).joinToString(separator, postfix = ", ") + "and ${last()}" else last().toString()
