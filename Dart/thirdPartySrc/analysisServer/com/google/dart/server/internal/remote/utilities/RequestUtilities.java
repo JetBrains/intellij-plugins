@@ -155,7 +155,7 @@ public class RequestUtilities {
           keyString = (String)key;
         }
         else {
-          throw new IllegalArgumentException("Unable to convert to string: " + getClassName(key));
+          throw new IllegalArgumentException("Unable to convert to string, expected a String, but received: " + getClassName(key));
         }
         // prepare JsonElement value
         Object value = entry.getValue();
@@ -191,7 +191,7 @@ public class RequestUtilities {
     else if (object instanceof LibraryPathSet) {
       return ((LibraryPathSet)object).toJson();
     }
-    throw new IllegalArgumentException("Unable to convert to JSON: " + object);
+    throw new IllegalArgumentException("Unable to convert to this type to JSON: " + getClassName(object) + ", content: \"" + object + "\"");
   }
 
   /**
