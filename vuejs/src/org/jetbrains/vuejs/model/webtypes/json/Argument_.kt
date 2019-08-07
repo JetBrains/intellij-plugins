@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url")
-class Slot {
+@JsonPropertyOrder("name", "description", "doc-url", "type", "optional")
+class Argument_ {
 
   /**
    *
@@ -63,5 +63,27 @@ class Slot {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   var docUrl: String? = null
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  /**
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
+   *
+   */
+  @JsonProperty("type")
+  @JsonPropertyDescription(
+    "Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.")
+  @get:JsonProperty("type")
+  @set:JsonProperty("type")
+  var type: Any? = null
+  @JsonProperty("optional")
+  @get:JsonProperty("optional")
+  @set:JsonProperty("optional")
+  var optional: Boolean? = false
 
 }

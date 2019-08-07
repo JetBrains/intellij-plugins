@@ -5,10 +5,23 @@ import com.fasterxml.jackson.annotation.*
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("types-syntax", "tags", "attributes")
+@JsonPropertyOrder("types-syntax", "tags", "attributes", "vue-filters")
 class Html {
 
+  /**
+   * Language in which types as specified.
+   *
+   */
+  /**
+   * Language in which types as specified.
+   *
+   */
+  /**
+   * Language in which types as specified.
+   *
+   */
   @JsonProperty("types-syntax")
+  @JsonPropertyDescription("Language in which types as specified.")
   @get:JsonProperty("types-syntax")
   @set:JsonProperty("types-syntax")
   var typesSyntax: TypesSyntax? = null
@@ -20,18 +33,10 @@ class Html {
   @get:JsonProperty("attributes")
   @set:JsonProperty("attributes")
   var attributes: List<Attribute_> = ArrayList()
-  @JsonIgnore
-  private val additionalProperties = HashMap<String, Any>()
-
-  @JsonAnyGetter
-  fun getAdditionalProperties(): Map<String, Any> {
-    return this.additionalProperties
-  }
-
-  @JsonAnySetter
-  fun setAdditionalProperty(name: String, value: Any) {
-    this.additionalProperties[name] = value
-  }
+  @JsonProperty("vue-filters")
+  @get:JsonProperty("vue-filters")
+  @set:JsonProperty("vue-filters")
+  var vueFilters: List<VueFilter> = ArrayList()
 
   enum class TypesSyntax(private val value: String) {
 
