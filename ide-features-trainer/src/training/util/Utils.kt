@@ -5,6 +5,8 @@ import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
@@ -19,6 +21,7 @@ import java.io.File
 import java.io.FileFilter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.swing.Icon
 
 abstract class UrlProvider {
   abstract val statsServerPostUrl: String
@@ -160,4 +163,11 @@ val featureTrainerVersion: String by lazy {
 
 val isFeatureTrainerSnapshot: Boolean by lazy {
   featureTrainerVersion.contains("SNAPSHOT")
+}
+
+fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
+  return object: AnAction(icon) {
+    override fun isDumbAware() = true
+    override fun actionPerformed(e: AnActionEvent) { action(e) }
+  }
 }
