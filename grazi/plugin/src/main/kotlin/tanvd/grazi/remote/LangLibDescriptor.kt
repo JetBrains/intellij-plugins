@@ -1,6 +1,6 @@
 package tanvd.grazi.remote
 
-enum class LangToolLibDescriptor(val langsClasses: List<String>, val size: String) {
+enum class LangLibDescriptor(val langsClasses: List<String>, val size: String) {
     ENGLISH(listOf("BritishEnglish", "AmericanEnglish", "CanadianEnglish", "AustralianEnglish", "NewZealandEnglish", "SouthAfricanEnglish"), "14 MB"),
     RUSSIAN(listOf("Russian"), "3 MB"),
     PERSIAN(listOf("Persian"), "1 MB"),
