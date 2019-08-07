@@ -173,9 +173,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     panel(MigLayout(createLayoutConstraints(), AC()), constraint = "") {
                         border = padding(JBUI.insetsBottom(10))
                         add(wrapWithLabel(cmbNativeLanguage, msg("grazi.ui.settings.languages.native.text")), CC().minWidth("220px").maxWidth("380px"))
-                        val help = ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help"))
-                        help.border = padding(JBUI.insetsLeft(5))
-                        add(help, CC().width("30px").alignX("left").wrap())
+                        add(ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help")).apply { border = padding(JBUI.insetsLeft(5)) }, CC().width("30px").alignX("left").wrap())
                         add(nativeLangLink, CC().hideMode(3))
                     }
 

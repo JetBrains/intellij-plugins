@@ -1,6 +1,9 @@
 package tanvd.grazi
 
-import com.intellij.openapi.components.*
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.ide.msg.GraziStateLifecycle
@@ -27,10 +30,8 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
 
         fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) || enabledLanguages.any { it.jLanguage == null }
 
-        fun getMissedLanguages(): Set<Lang> {
-            val missed = enabledLanguages.filter { it.jLanguage == null }.toMutableSet()
-            if (nativeLanguage.jLanguage == null ) missed.add(nativeLanguage)
-            return missed
+        fun getMissedLanguages() = enabledLanguages.filter { it.jLanguage == null }.toMutableSet().apply {
+            if (nativeLanguage.jLanguage == null) add(nativeLanguage)
         }
     }
 

@@ -106,6 +106,7 @@ object LangDownloader {
     private fun Lang.registerInLanguageTool() {
         with(Languages::class.java.getDeclaredField("dynLanguages")) {
             isAccessible = true
+
             @Suppress("UNCHECKED_CAST")
             val langs = get(null) as MutableList<Language>
 
