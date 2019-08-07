@@ -33,12 +33,12 @@ class VueWebTypesComponent(tag: Tag,
   override val model: VueModelDirectiveProperties = tag.vueModel
                                                       ?.let {
                                                         VueModelDirectiveProperties(
-                                                          it.prop ?: VueModelDirectiveProperties.DEFAULT_PROP,
-                                                          it.event ?: VueModelDirectiveProperties.DEFAULT_EVENT)
+                                                          it.prop,
+                                                          it.event)
                                                       }
                                                     ?: VueModelDirectiveProperties()
   override val defaultName: String = tag.name!!
 
-  private val sourceFile: String? = tag.sourceFile
+  private val sourceFile: String? = null
 
 }
