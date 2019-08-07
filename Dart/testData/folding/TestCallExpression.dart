@@ -3,38 +3,41 @@ import "package:test/test.dart";
 
 // example from https://pub.dev/packages/test/
 void main() <fold text='{...}' expand='true'>{
-  group<fold text='(...)' expand='true'>("String", () {
-    test<fold text='(...)' expand='true'>(".split() splits the string on the delimiter", () {
+  group("String", <fold text='...' expand='true'>() {
+    test(".split() splits the string on the delimiter", <fold text='...' expand='true'>() {
       var string = "foo,bar,baz";
       expect(string.split(","), equals(["foo", "bar", "baz"]));
-    })</fold>;
+    }</fold>);
 
-    test<fold text='(...)' expand='true'>(".trim() removes surrounding whitespace", () {
+    test(".trim() removes surrounding whitespace", <fold text='...' expand='true'>() {
       var string = "  foo ";
       expect(string.trim(), equals("foo"));
-    }, retry: 3)</fold>;
-  }, retry: 4)</fold>;
+    }</fold>, retry: 3);
+  }</fold>, retry: 4);
 
-  group<fold text='(...)' expand='true'>("int", () {
-    test<fold text='(...)' expand='true'>(".remainder() returns the remainder of division", () {
+  group("int", <fold text='...' expand='true'>() {
+    test(".remainder() returns the remainder of division", <fold text='...' expand='true'>() {
       expect(11.remainder(3), equals(2));
-    })</fold>;
+    }</fold>);
 
-    test<fold text='(...)' expand='true'>(".toRadixString() returns a hex string", () {
+    test(".toRadixString() returns a hex string", <fold text='...' expand='true'>() {
       expect(11.toRadixString(16), equals("b"));
-    })</fold>;
-  })</fold>;
+    }</fold>);
+  }</fold>);
 
   // some test methods not in a group:
-  test<fold text='(...)' expand='true'>("String.split() splits the string on the delimiter - 2", () {
+  test("String.split() splits the string on the delimiter - 2", <fold text='...' expand='true'>() {
     var string = "foo,bar,baz";
     expect(string.split(","), equals(["foo", "bar", "baz"]));
-  })</fold>;
+  }</fold>);
 
-  test<fold text='(...)' expand='true'>("String.trim() removes surrounding whitespace - 2", () {
+  test("String.trim() removes surrounding whitespace - 2", <fold text='...' expand='true'>() {
     var string = "  foo ";
     expect(string.trim(), equals("foo"));
-  })</fold>;
+  }</fold>);
+
+  // test method that is a single line, not folded
+  test("one-line test", () { expect("  foo ".trim, equals("foo")); });
 
   // Some malformed, and thus not-folded, examples:
   group("String", 2, () {

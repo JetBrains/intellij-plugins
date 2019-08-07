@@ -104,8 +104,10 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       return multilineStringPlaceholder(node);                                                   // 8.   Multi-line strings
     }
     if (psiElement instanceof DartSetOrMapLiteralExpression) return BRACE_DOTS;                  // 9.   Set or Map literals
-    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10. Constructor invocations
-    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12. If statements
+    if (psiElement instanceof DartArguments) return PAREN_DOTS;                                  // 10.1 Constructor invocations
+    if (psiElement instanceof DartExpression) return DOT_DOT_DOT;                                // 10.2 Second arg in test methods
+
+    if (psiElement instanceof DartBlock) return BRACE_DOTS;                                      // 12.  If statements
 
     return DOT_DOT_DOT;
   }
@@ -320,11 +322,11 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
                                                   @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartNewExpression) {
-        DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
+        final DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
         foldNonEmptyDartArguments(descriptors, dartNewExpression.getArguments());
       }
       else if (psiElement instanceof DartCallExpression) {
-        DartCallExpression dartCallExpression = (DartCallExpression)psiElement;
+        final DartCallExpression dartCallExpression = (DartCallExpression)psiElement;
         // test for capitalization test
         final String methodName = dartCallExpression.getExpression().getText();
         if (StringUtil.isCapitalized(methodName)) {
@@ -390,7 +392,13 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     DartArgumentList dartArgumentList = dartArguments.getArgumentList();
     if (dartArgumentList.getExpressionList().size() != 2) return;
 
-    descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
+    final DartExpression secondExpression = dartArgumentList.getExpressionList().get(1);
+    if (secondExpression == null) return;
+
+    final String text = secondExpression.getText();
+    if (text != null && text.contains("\n")) {
+      descriptors.add(new FoldingDescriptor(secondExpression, secondExpression.getTextRange()));
+    }
   }
 
   @NotNull
