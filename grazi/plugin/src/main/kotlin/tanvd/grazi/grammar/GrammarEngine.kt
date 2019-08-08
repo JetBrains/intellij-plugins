@@ -12,7 +12,6 @@ import tanvd.kex.buildSet
 object GrammarEngine {
     private val logger = LoggerFactory.getLogger(GrammarEngine::class.java)
 
-    //TODO In case of very big texts we may analyze only visible by user text, not all. Then we will not need such limitations
     private const val tooBigChars = 50_000
     private const val maxChars = 10_000
     private const val minChars = 2
@@ -63,7 +62,7 @@ object GrammarEngine {
                     .map { Typo(it, lang) }
                     .let { LinkedSet(it) }
         } catch (e: Throwable) {
-            logger.trace("LangTool exception", e)
+            logger.trace("Got exception during check for typos by LanguageTool", e)
             LinkedSet()
         }
     }

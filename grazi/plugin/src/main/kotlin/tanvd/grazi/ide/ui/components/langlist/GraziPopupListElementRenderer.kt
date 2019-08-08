@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui.components
+package tanvd.grazi.ide.ui.components.langlist
 
 import com.intellij.openapi.util.Comparing
 import com.intellij.ui.JBColor

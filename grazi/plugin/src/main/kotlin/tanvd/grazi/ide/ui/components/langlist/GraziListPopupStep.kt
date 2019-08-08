@@ -1,4 +1,4 @@
-package tanvd.grazi.ide.ui.components
+package tanvd.grazi.ide.ui.components.langlist
 
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.ui.popup.ListSeparator

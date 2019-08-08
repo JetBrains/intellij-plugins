@@ -44,4 +44,3 @@ fun String.splitWithRanges(separators: List<Char>, insideOf: IntRange? = null, i
 
 fun Regex.matches(char: Char) = this.matches(char.toString())
 
-fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()
