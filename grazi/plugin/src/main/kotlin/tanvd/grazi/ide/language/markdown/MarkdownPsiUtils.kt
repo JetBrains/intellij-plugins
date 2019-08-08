@@ -36,7 +36,3 @@ object MarkdownPsiUtils {
     fun isWhitespace(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.WHITE_SPACE)
     fun isEOL(element: PsiElement) = element.node.hasType(MarkdownTokenTypes.EOL)
 }
-
-inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType, excludeParents: TokenSet? = null): Collection<T> = filterFor { token ->
-    tokens.contains(token.node.elementType) && excludeParents?.let { token.node.noParentOfTypes(it) }.orTrue()
-}

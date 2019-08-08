@@ -38,6 +38,7 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         update()
     }
 
+    @Suppress("EqualsOrHashCode")
     private class GraziTreeNode(userObject: Any? = null) : CheckedTreeNode(userObject) {
         override fun equals(other: Any?): Boolean {
             if (other is GraziTreeNode) {

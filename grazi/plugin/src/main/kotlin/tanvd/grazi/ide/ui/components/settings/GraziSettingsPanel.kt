@@ -164,7 +164,9 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     panel(MigLayout(createLayoutConstraints(), AC()), constraint = "") {
                         border = padding(JBUI.insetsBottom(10))
                         add(wrapWithLabel(cmbNativeLanguage, msg("grazi.ui.settings.languages.native.text")), CC().minWidth("220px").maxWidth("380px"))
-                        add(ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help")).apply { border = padding(JBUI.insetsLeft(5)) }, CC().width("30px").alignX("left").wrap())
+                        add(ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help")).apply {
+                            border = padding(JBUI.insetsLeft(5))
+                        }, CC().width("30px").alignX("left").wrap())
                         add(nativeLangLink, CC().hideMode(3))
                     }
 
@@ -188,7 +190,9 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     val descriptionPanel = JBPanelWithEmptyText(BorderLayout(0, 0)).withEmptyText(msg("grazi.ui.settings.rules.no-description")).also {
                         it.add(descriptionPane)
                     }
-                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE).also { it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER }, CC().grow().push())
+                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE).also {
+                        it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+                    }, CC().grow().push())
                 }
             }
         }

@@ -76,7 +76,6 @@ object LangDownloader {
 
         // jars must have at least one jar with language
         if (jars.isEmpty()) {
-            // FIXME very ugly
             Messages.showWarningDialog(project, "Failed to download ${lang.displayName}", "Download error")
         }
 
@@ -96,11 +95,9 @@ object LangDownloader {
                 }
 
                 LangToolInstrumentation.registerLanguage(lang)
-
                 return true
             }
         }
-
         return false
     }
 }

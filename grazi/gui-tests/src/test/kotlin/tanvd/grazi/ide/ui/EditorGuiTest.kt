@@ -11,6 +11,7 @@ class EditorGuiTest : GraziGuiTestBase() {
     private fun JDialogFixture.toggleTestRules() {
         fun toggle(vararg path: String) {
             with(checkboxTree(*path)) {
+                robot().moveMouse(0, 0)
                 clickCheckbox()
             }
         }
