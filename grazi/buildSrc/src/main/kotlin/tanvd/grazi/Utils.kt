@@ -56,6 +56,12 @@ fun ExternalModuleDependency.excludesForLT() {
     // used only in tests in languagetool-core
     exclude("org.apache.lucene", "lucene-core")
     exclude("org.apache.lucene", "lucene-backward-codecs")
+
+    // exclude opennlp from english
+    exclude("edu.washington.cs.knowitall", "opennlp-postag-models")
+    exclude("edu.washington.cs.knowitall", "opennlp-chunk-models")
+    exclude("edu.washington.cs.knowitall", "opennlp-tokenize-models")
+    exclude("org.apache.opennlp", "opennlp-tools")
 }
 
 fun DependencyHandler.addAetherDependencies() {

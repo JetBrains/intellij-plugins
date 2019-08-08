@@ -50,7 +50,7 @@ dependencies {
     testRuntime("org.languagetool", "language-ru", Versions.languageTool)
 
     // for PyCharm and others no Intellij Idea applications
-    addAetherDependencies()
+    //addAetherDependencies()
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11")
 
