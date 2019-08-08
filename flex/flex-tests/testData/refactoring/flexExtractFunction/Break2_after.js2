@@ -9,7 +9,6 @@ public class Break2
 
     public function get events():ArrayCollection {
         var filteredAC:ArrayCollection = new ArrayCollection();
-        
         created(filteredAC);
         return filteredAC;
     }
