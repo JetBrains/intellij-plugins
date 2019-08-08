@@ -28,7 +28,7 @@ val testsJar = tasks.create("guiTestJar", Jar::class) {
     group = "build"
     classifier = "tests"
 
-    from(_sourceSets["test"].output)
+    from(sourceSets["test"].output)
     exclude("testData/*")
 }
 

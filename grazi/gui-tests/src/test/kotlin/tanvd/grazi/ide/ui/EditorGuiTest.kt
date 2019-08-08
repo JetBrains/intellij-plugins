@@ -11,7 +11,6 @@ class EditorGuiTest : GraziGuiTestBase() {
     private fun JDialogFixture.toggleTestRules() {
         fun toggle(vararg path: String) {
             with(checkboxTree(*path)) {
-                robot().moveMouse(0, 0)
                 clickCheckbox()
             }
         }
@@ -43,15 +42,13 @@ class EditorGuiTest : GraziGuiTestBase() {
             settings {
                 actionButton("Add").click()
                 popupMenu("Russian").clickSearchedItem()
-
-                waitAMoment()
+                //Do not click OK until russian is loaded
+                waitADecentMoment()
             }
 
             openTestFile()
             editor {
-                waitAMoment()
                 step("Check default enabled/disabled rules") {
-                    moveToLine(1)
                     typeText(" В коробке лежало пять карандаша.\n")
                     typeText("А все ли ошибка найдены?\n")
                     typeText("Это случилось 31 ноября 2014 г.\n")
@@ -73,7 +70,6 @@ class EditorGuiTest : GraziGuiTestBase() {
                     typeText("This test is an easy one.\n")
 
 
-                    waitAMoment()
                     waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 10)
                     requireHighlights(HighlightSeverity.INFORMATION,
                             "пять карандаша &rarr; пять карандашейСклонение  «числительное + существительное»Incorrect:В коробке лежало пять карандаша.Correct:В коробке лежало пять карандашей.",
@@ -95,7 +91,6 @@ class EditorGuiTest : GraziGuiTestBase() {
                 }
 
                 editor {
-                    waitAMoment()
                     waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 6)
                     requireHighlights(HighlightSeverity.INFORMATION,
                             "БОЛЬШИЕ &rarr; большиеВсе буквы в слове ЗАГЛАВНЫЕIncorrect:Не выделяйте текст ЗАГЛАВНЫМИ буквами.Correct:Не выделяйте текст заглавными буквами.",
