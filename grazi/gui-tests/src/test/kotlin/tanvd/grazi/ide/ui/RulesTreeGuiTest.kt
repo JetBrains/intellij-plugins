@@ -13,6 +13,7 @@ class RulesTreeGuiTest : GraziGuiTestBase() {
         settings("Cancel") {
             actionButton("Add").click()
             popupMenu("Russian").clickSearchedItem()
+            waitADecentMoment()
 
             val enPath = arrayOf("English (US)", "British English phrases", "master's dissertation (thesis)")
             val ruPath = arrayOf("Russian", "Грамматика", "Глагол и причастие")
@@ -52,6 +53,7 @@ class RulesTreeGuiTest : GraziGuiTestBase() {
             settings("Cancel") {
                 actionButton("Add").click()
                 popupMenu("Russian").clickSearchedItem()
+                waitADecentMoment()
 
                 assert(!checkboxTree("English (US)", "Capitalization", "Checks that a sentence starts with an uppercase letter").isSelected())
                 assert(!checkboxTree("English (US)", "Creative Writing", "Creative Writing: E-Prime: all 'to be' forms").isSelected())

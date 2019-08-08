@@ -24,6 +24,7 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                     with(popupMenu("Russian")) {
                         assert(listItems().none { it == "English (US)" })
                         clickItem("Russian")
+                        waitADecentMoment()
                     }
 
                     list.requireSelectedItems("Russian")

@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testGuiFramework.fixtures.JDialogFixture
 import com.intellij.testGuiFramework.impl.*
 import com.intellij.testGuiFramework.util.step
+import org.junit.Ignore
 import org.junit.Test
 import tanvd.grazi.GraziGuiTestBase
 
@@ -39,6 +40,7 @@ class EditorGuiTest : GraziGuiTestBase() {
         waitADecentMoment()
     }
 
+    //FIXME Fix and enable test
     @Test
     fun `test rules highlightings in ide editor`() {
         project {
