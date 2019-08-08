@@ -93,7 +93,7 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.spellchecker.quickfixes.RenameTo;
 import com.intellij.testFramework.ExpectedHighlightingData;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -160,7 +160,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
-    PlatformTestUtil.maskExtensions(EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(EXTENSION_POINT_NAME, Collections.singletonList(filter), getTestRootDisposable());
   }
 
   @Override
