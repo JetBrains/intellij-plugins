@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @author Kir
  */
-public class VFSUtilTest extends HeavyPlatformTestCase {
+public class CommunicatorVFSUtilTest extends HeavyPlatformTestCase {
   private VirtualFile myContentRoot;
   private VirtualFile mySourceRoot;
   private ContentEntry myContentEntry;
