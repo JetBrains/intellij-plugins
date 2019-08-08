@@ -17,10 +17,6 @@ abstract class GraziGuiTestBase : GuiTestCase(false) {
 
     companion object {
         private val logger = LoggerFactory.getLogger(GraziGuiTestBase::class.java)
-
-        val langs = listOf("Chinese", "Dutch", "English (Canadian)", "English (GB)", "English (US)",
-                "French", "German (Austria)", "German (Germany)", "Greek", "Italian", "Japanese", "Persian", "Polish",
-                "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian", "Russian", "Slovak", "Spanish", "Ukrainian")
     }
 
     private fun waitForFirstIndexing() {

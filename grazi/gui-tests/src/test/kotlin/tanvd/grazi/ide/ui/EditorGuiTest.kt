@@ -35,6 +35,8 @@ class EditorGuiTest : GraziGuiTestBase() {
         toggle("Russian", "Логические ошибки", "Неверная дата, например «31 февраля 2014»")
         toggle("Russian", "Логические ошибки", "Опечатка «не проронила и слово»")
         toggle("Russian", "Общие правила", "Правописание через дефис")
+
+        waitADecentMoment()
     }
 
     @Test
