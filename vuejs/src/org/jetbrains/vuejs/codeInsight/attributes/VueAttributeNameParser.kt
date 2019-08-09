@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.codeInsight.attributes
 import com.intellij.psi.xml.XmlTag
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import java.util.*
 
 class VueAttributeNameParser {
   companion object {
@@ -217,6 +218,6 @@ class VueAttributeNameParser {
     SLOT(requiresValue = false, injectJS = false /* until supports for slots is done */),
     TEXT;
 
-    val directiveName get() = if (hasName) name.toLowerCase().replace('_', '-') else null
+    val directiveName get() = if (hasName) name.toLowerCase(Locale.US).replace('_', '-') else null
   }
 }
