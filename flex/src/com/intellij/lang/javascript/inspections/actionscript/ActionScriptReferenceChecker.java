@@ -266,9 +266,4 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
 
     return JSResolveUtil.getExpressionJSType(qualifier);
   }
-
-  @Override
-  protected boolean isConstAssignable(@NotNull JSReferenceExpression lExpr, PsiElement resolved) {
-    return false;
-  }
 }
