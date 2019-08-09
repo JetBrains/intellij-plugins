@@ -3,17 +3,17 @@ package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.webtypes.json.Source
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
 
 class VueWebTypesComponent(tag: Tag,
                            private val parent: VueEntitiesContainer,
                            typeProvider: (Any?) -> JSType?,
-                           private val pathResolver: (String) -> PsiFile?) : VueRegularComponent {
+                           private val sourceSymbolResolver: WebTypesSourceSymbolResolver) : VueRegularComponent {
 
-  override val source: PsiElement? get() = sourceFile?.let { pathResolver(it) }
+  override val source: PsiElement? get() = sourceInfo?.let { sourceSymbolResolver.resolve(sourceInfo) }
   override val global: VueGlobal? get() = parent.global
   override val parents: List<VueEntitiesContainer> get() = listOf(parent)
 
@@ -38,7 +38,5 @@ class VueWebTypesComponent(tag: Tag,
                                                       }
                                                     ?: VueModelDirectiveProperties()
   override val defaultName: String = tag.name!!
-
-  private val sourceFile: String? = null
-
+  private val sourceInfo: Source? = tag.source
 }
