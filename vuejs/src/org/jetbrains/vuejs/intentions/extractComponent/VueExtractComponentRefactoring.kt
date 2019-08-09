@@ -18,6 +18,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.tags.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
+import java.util.*
 
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,
@@ -70,8 +71,8 @@ class VueExtractComponentRefactoring(private val project: Project,
       val normalized = fromAsset(text.trim())
       val fileName = toAsset(text.trim()).capitalize() + ".vue"
       if (normalized.isEmpty() || !PathUtilRt.isValidFileName(fileName, false) ||
-          normalized.contains(' ') || forbidden.contains(normalized.toLowerCase())) return "Invalid component name: $normalized"
-      if (alreadyExisting.contains(normalized.toLowerCase())) return "Component $normalized already exists"
+          normalized.contains(' ') || forbidden.contains(normalized.toLowerCase(Locale.US))) return "Invalid component name: $normalized"
+      if (alreadyExisting.contains(normalized.toLowerCase(Locale.US))) return "Component $normalized already exists"
       if (folder.findFile(fileName) != null) {
         return "File $fileName already exists"
       }

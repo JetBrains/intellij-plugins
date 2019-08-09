@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
+import java.util.*
 
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
   private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")
@@ -43,7 +44,7 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
     result.add("css")
     CSSLanguage.INSTANCE.dialects.forEach {
       if (it.displayName != "JQuery-CSS") {
-        result.add(it.displayName.toLowerCase())
+        result.add(it.displayName.toLowerCase(Locale.US))
       }
     }
     return result.toSet()
