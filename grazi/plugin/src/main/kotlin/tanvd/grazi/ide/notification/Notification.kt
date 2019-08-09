@@ -41,7 +41,7 @@ object Notification {
                         NotificationType.WARNING, null)
                 .addAction(object : NotificationAction(msg("grazi.languages.action.download", s)) {
                     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                        GraziRemote.resolveMissing(project)
+                        GraziRemote.downloadMissing(project)
                         notification.hideBalloon()
                     }
                 })

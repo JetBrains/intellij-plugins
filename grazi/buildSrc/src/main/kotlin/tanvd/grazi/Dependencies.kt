@@ -27,13 +27,13 @@ fun ExternalModuleDependency.ltExcludes() {
 }
 
 fun DependencyHandler.aetherDependencies() {
-    _compile ("org.eclipse.aether", "aether-connector-basic", "1.1.0")
-    _compile ("org.eclipse.aether", "aether-transport-file", "1.1.0")
-    _compile ("org.eclipse.aether", "aether-transport-http", "1.1.0") {
+    _compile("org.eclipse.aether", "aether-connector-basic", "1.1.0")
+    _compile("org.eclipse.aether", "aether-transport-file", "1.1.0")
+    _compile("org.eclipse.aether", "aether-transport-http", "1.1.0") {
         exclude("org.slf4j", "slf4j-api")
         exclude("org.apache.httpcomponents", "httpclient")
     }
-    _compile("org.apache.maven", "maven-aether-provider", "3.3.9"){
+    _compile("org.apache.maven", "maven-aether-provider", "3.3.9") {
         exclude("org.slf4j", "slf4j-api")
         exclude("com.google.guava", "guava")
         exclude("org.apache.commons", "commons-lang3")

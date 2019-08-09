@@ -1,9 +1,7 @@
 package tanvd.grazi
 
 import com.intellij.testGuiFramework.fixtures.*
-import com.intellij.testGuiFramework.framework.RunWithIde
 import com.intellij.testGuiFramework.impl.*
-import com.intellij.testGuiFramework.launcher.ide.CommunityIde
 import com.intellij.ui.SearchTextField
 import org.fest.swing.exception.WaitTimedOutError
 import org.fest.swing.fixture.JTextComponentFixture

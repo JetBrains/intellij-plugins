@@ -1,9 +1,7 @@
 package tanvd.grazi.ide.ui
 
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.testGuiFramework.framework.RunWithIde
 import com.intellij.testGuiFramework.impl.checkbox
-import com.intellij.testGuiFramework.launcher.ide.CommunityIde
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.testGuiFramework.util.step
 import org.junit.Ignore

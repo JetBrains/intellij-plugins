@@ -1,9 +1,6 @@
 package tanvd.grazi
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ExternalModuleDependency
-import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.kotlin.dsl.exclude
 
 fun Project.gitBranch(): String {
     val process = ProcessBuilder("git", "rev-parse", "--abbrev-ref", "HEAD").directory(rootProject.projectDir).start()

@@ -5,6 +5,7 @@ import kotlinx.html.strong
 import org.languagetool.Language
 import org.languagetool.Languages
 import org.languagetool.rules.*
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.language.Lang
@@ -53,14 +54,19 @@ fun FlowOrPhrasingContent.toCorrectHtml(example: IncorrectExample) {
 
 object LangToolInstrumentation {
     fun registerLanguage(lang: Lang) {
+        if (lang in GraziConfig.get().enabledLanguagesAvailable) return
+
         val dynLanguages = Languages::class.java.getDeclaredField("dynLanguages")
         dynLanguages.isAccessible = true
 
         @Suppress("UNCHECKED_CAST")
         val langs = dynLanguages.get(null) as MutableList<Language>
 
-        lang.descriptor.langsClasses.forEach {
-            langs.add(GraziPlugin.loadClass("org.languagetool.language.$it")!!.newInstance() as Language)
+        lang.descriptor.langsClasses.forEach { className ->
+            val qualifiedName = "org.languagetool.language.$className"
+            if (langs.all { it::class.java.canonicalName != qualifiedName }) {
+                langs.add(GraziPlugin.loadClass(qualifiedName)!!.newInstance() as Language)
+            }
         }
     }
 }

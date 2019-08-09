@@ -16,14 +16,14 @@ object GraziRemote {
     fun isAvailableLocally(lang: Lang) = isLibExists("language-${lang.shortCode}-${msg("grazi.languagetool.version")}.jar")
 
     /** Downloads [lang] to local storage */
-    fun resolve(lang: Lang, project: Project? = null): Boolean {
+    fun download(lang: Lang, project: Project? = null): Boolean {
         if (isAvailableLocally(lang)) return true
 
         return LangDownloader.download(lang, project)
     }
 
     /** Downloads all missing languages to local storage*/
-    fun resolveMissing(project: Project?) {
+    fun downloadMissing(project: Project?) {
         val state = GraziConfig.get()
 
         if (state.hasMissedLanguages()) {

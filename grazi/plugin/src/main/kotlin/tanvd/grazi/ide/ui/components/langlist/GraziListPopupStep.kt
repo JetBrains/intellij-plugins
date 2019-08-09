@@ -19,7 +19,7 @@ class GraziListPopupStep(title: String, private val downloadedLangs: List<Lang>,
 
     override fun onChosen(selectedValue: Lang?, finalChoice: Boolean): PopupStep<*>? = selectedValue?.let { lang ->
         doFinalStep {
-            GraziRemote.resolve(lang, guessCurrentProject(panel)).ifTrue { onResult(lang) }
+            GraziRemote.download(lang, guessCurrentProject(panel)).ifTrue { onResult(lang) }
         }
     } ?: PopupStep.FINAL_CHOICE
 }

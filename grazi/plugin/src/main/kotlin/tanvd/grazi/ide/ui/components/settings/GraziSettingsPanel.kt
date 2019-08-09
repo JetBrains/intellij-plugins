@@ -17,8 +17,8 @@ import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
 import tanvd.grazi.ide.ui.components.dsl.*
+import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
 import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
 import tanvd.grazi.language.Lang
 import tanvd.grazi.remote.GraziRemote
@@ -30,7 +30,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val nativeLangLink: LinkLabel<Any?> = LinkLabel<Any?>("", AllIcons.General.Warning).apply {
         setListener({ _, _ ->
-            GraziRemote.resolve((cmbNativeLanguage.selectedItem as Lang), guessCurrentProject(cmbNativeLanguage))
+            GraziRemote.download((cmbNativeLanguage.selectedItem as Lang), guessCurrentProject(cmbNativeLanguage))
             updateWarnings()
             rulesTree.reset()
         }, null)
@@ -52,7 +52,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val langLink: LinkLabel<Any?> = LinkLabel<Any?>(msg("grazi.languages.action"), AllIcons.General.Warning).apply {
         border = padding(JBUI.insetsTop(10))
         setListener({ _, _ ->
-            GraziRemote.resolveMissing(guessCurrentProject(descriptionPane))
+            GraziRemote.downloadMissing(guessCurrentProject(descriptionPane))
             updateWarnings()
             rulesTree.reset()
         }, null)

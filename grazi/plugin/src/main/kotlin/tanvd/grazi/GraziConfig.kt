@@ -30,8 +30,8 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                 enabledLanguages.any { it.jLanguage == null }
 
         val missedLanguages: Set<Lang>
-                get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
-                        ((nativeLanguage.jLanguage == null).ifTrue { setOf(nativeLanguage) } ?: emptySet())
+            get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
+                    ((nativeLanguage.jLanguage == null).ifTrue { setOf(nativeLanguage) } ?: emptySet())
     }
 
     companion object {
