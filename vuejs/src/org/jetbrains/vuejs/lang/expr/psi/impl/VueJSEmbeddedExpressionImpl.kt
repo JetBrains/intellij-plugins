@@ -5,6 +5,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSSuppressionHolder
 import com.intellij.lang.javascript.psi.impl.JSElementImpl
+import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
@@ -27,5 +28,9 @@ class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(ele
 
   override fun allowTopLevelThis(): Boolean {
     return true
+  }
+
+  override fun getQuoteChar(): Char? {
+    return JSEmbeddedContentImpl.getQuoteChar(this)
   }
 }

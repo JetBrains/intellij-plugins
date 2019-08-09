@@ -14,6 +14,8 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -50,6 +52,14 @@ class VueIntentionsTest : BasePlatformTestCase() {
 
   fun testReplaceIfElseWithElvis() {
     doIntentionTest("Replace if-else with ?:")
+  }
+
+  fun testReplaceWithIndexerAccess() {
+    JSTestUtils.testWithTempCodeStyleSettings<RuntimeException>(project) { settings ->
+      val custom = settings.getCustomSettings(JSCodeStyleSettings::class.java)
+      custom.USE_DOUBLE_QUOTES = true
+      doIntentionTest("Replace with indexer access")
+    }
   }
 
   private fun doIntentionTest(name: String) {
