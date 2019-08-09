@@ -53,6 +53,13 @@ fun ExternalModuleDependency.excludesForLT() {
     exclude("org.glassfish.jaxb", "jaxb-runtime")
     exclude("com.fasterxml.jackson.core", "jackson-databind")
 
+    exclude("com.esotericsoftware.kryo", "kryo")
+    exclude("org.apache.commons", "commons-csv")
+    exclude("org.apache.commons", "commons-lang3")
+    exclude("org.apache.commons", "logging")
+    exclude("javax", "activation-api")
+    exclude("org.ow2.asm", "asm")
+
     // used only in tests in languagetool-core
     exclude("org.apache.lucene", "lucene-core")
     exclude("org.apache.lucene", "lucene-backward-codecs")

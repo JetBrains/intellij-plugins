@@ -1,5 +1,6 @@
 package tanvd.grazi
 
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 
@@ -16,7 +17,12 @@ class EnglishChonker(cv: ClassVisitor) : ClassVisitor(ASM5, cv) {
             val cls = writer.toByteArray()
             with(ClassLoader::class.java.getDeclaredMethod("defineClass", String::class.java, ByteArray::class.java, Int::class.java, Int::class.java)) {
                 isAccessible = true
-                invoke(GraziPlugin.classLoader, "org.languagetool.language.English", cls, 0, cls.size)
+
+                if (ApplicationManager.getApplication().isUnitTestMode) {
+                    invoke(ClassLoader.getSystemClassLoader(), "org.languagetool.language.English", cls, 0, cls.size)
+                } else {
+                    invoke(GraziPlugin.classLoader, "org.languagetool.language.English", cls, 0, cls.size)
+                }
             }
         }
     }

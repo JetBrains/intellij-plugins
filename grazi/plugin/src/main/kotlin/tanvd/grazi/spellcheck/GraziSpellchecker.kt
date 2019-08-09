@@ -10,21 +10,29 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection
 import com.intellij.spellchecker.inspections.Splitter
 import com.intellij.spellchecker.tokenizer.TokenConsumer
 import com.intellij.util.Consumer
-import com.intellij.vcs.commit.CommitMessageInspectionProfile
-import com.intellij.vcs.commit.CommitMessageSpellCheckingInspection
-import org.languagetool.*
+import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
+import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
+import org.languagetool.JLanguageTool
+import org.languagetool.ResultCache
+import org.languagetool.UserConfig
+import org.languagetool.rules.RuleMatch
+import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.Text
+import tanvd.grazi.utils.spellcheckOnly
+import tanvd.grazi.utils.toPointer
+import tanvd.grazi.utils.withOffset
 import tanvd.kex.buildSet
-import tanvd.kex.tryRun
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 
 object GraziSpellchecker : GraziStateLifecycle {
+    private val logger = LoggerFactory.getLogger(GraziSpellchecker::class.java)
+
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
@@ -77,7 +85,12 @@ object GraziSpellchecker : GraziStateLifecycle {
      * Note, that casing and plural typos are ignored.
      */
     private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
-        val typo = tryRun { checker.check(word) }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
+        val typo = try {
+            checker.check(word)
+        } catch (e: Throwable) {
+            logger.trace("GraziSpellchecker exception", e)
+            emptyList<RuleMatch>()
+        }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
         if (typo != null && IdeaSpellchecker.hasProblem(word, project, language)
                 && !isCasingProblem(word, typo) && !isPluralProblem(word, typo)) {
             add(typo)
