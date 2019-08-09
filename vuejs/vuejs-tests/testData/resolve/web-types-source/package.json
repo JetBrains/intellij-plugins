@@ -1,0 +1,7 @@
+{
+  "web-types": "./web-types.json",
+  "dependencies": {
+    "foo": "0.0.0",
+    "vue": "0.0.0"
+  }
+}

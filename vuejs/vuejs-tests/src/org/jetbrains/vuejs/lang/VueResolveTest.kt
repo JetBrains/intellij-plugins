@@ -1850,6 +1850,24 @@ export default class UsageComponent extends Vue {
     assertEquals(component.model.event, "change")
   }
 
+  fun testWebTypesSource() {
+    myFixture.copyDirectoryToProject("web-types-source", ".")
+    myFixture.configureFromTempProjectFile("src/App.vue")
+
+    mapOf(
+      Pair("<relative<caret>-module-ref-local>", "export class RelativeModuleRefLocal {\n\n}"),
+      Pair("<file<caret>-offset-local>", "export class FileOffsetLocal {\n\n}"),
+      Pair("<relative<caret>-module-default-local>", "export default class {\n  def: string\n}"),
+      Pair("<absolute<caret>-module-ref>", "export class AbsoluteModuleRef {\n\n}"),
+      Pair("<implied<caret>-module-ref>", "export class ImpliedModuleRef {\n\n}"),
+      Pair("<file<caret>-offset>", "export class FileOffset {\n\n}"),
+      Pair("<relative-module<caret>-default>", "export default class {\n  def: string\n}")
+    )
+      .forEach { testCase ->
+        TestCase.assertEquals(testCase.value,
+                              resolveReference(testCase.key, myFixture).let { it as JSImplicitElement }.context!!.text)
+      }
+  }
 }
 
 fun globalMixinText(): String {

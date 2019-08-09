@@ -129,7 +129,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
                                 packageJson: PackageJsonData,
                                 owner: VuePlugin): Result<VuePlugin>? {
     return processState { state, tracker ->
-      val webTypesPackageName = packageJson.name!!.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+      val webTypesPackageName = (packageJson.name ?: return@processState null)
+        .replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
       val versions = state.availableVersions["@web-types/$webTypesPackageName"]
       if (versions == null || versions.isEmpty()) return@processState null
 

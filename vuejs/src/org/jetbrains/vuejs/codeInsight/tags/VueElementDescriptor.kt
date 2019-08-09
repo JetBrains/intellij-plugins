@@ -1,6 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.tags
 
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.javascript.psi.JSNamedElement
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.PsiElement
@@ -27,6 +30,14 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   override fun getDeclaration(): JSImplicitElement {
     return StreamEx.of(sources)
       .map { it.source }
+      .map {
+        if (it !is JSImplicitElement
+            && (it is JSNamedElement || it is JSObjectLiteralExpression || it is JSExportAssignment))
+          JSImplicitElementImpl.Builder((it as? JSNamedElement)?.name ?: "<anonymous>", it)
+            .forbidAstAccess().toImplicitElement()
+        else
+          it
+      }
       .select(JSImplicitElement::class.java)
       .findFirst()
       .orElseGet {

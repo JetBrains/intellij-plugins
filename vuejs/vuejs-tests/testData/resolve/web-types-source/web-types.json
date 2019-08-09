@@ -1,0 +1,33 @@
+{
+  "framework": "vue",
+  "name": "my-lib",
+  "version": "1.0.0",
+  "contributions": {
+    "html": {
+      "types-syntax": "typescript",
+      "tags": [
+        {
+          "name": "relative-module-ref-local",
+          "source": {
+            "module": "./src/foo.ts",
+            "symbol": "RelativeModuleRefLocal"
+          }
+        },
+        {
+          "name": "relative-module-default-local",
+          "source": {
+            "module": "./src/foo.ts",
+            "symbol": "default"
+          }
+        },
+        {
+          "name": "file-offset-local",
+          "source": {
+            "file": "./src/bar.ts",
+            "offset": 37
+          }
+        }
+      ]
+    }
+  }
+}

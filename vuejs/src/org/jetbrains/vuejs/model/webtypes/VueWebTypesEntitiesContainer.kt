@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.model.*
@@ -36,24 +35,20 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
         TypeScriptTypeProvider()::getType
       else
         { _: Any? -> null }
-
-    val pathResolver: (String) -> PsiFile? = { path ->
-      packageJson.findFileByRelativePath(path)?.let{
-        PsiManager.getInstance(project).findFile(it)
-      }
-    }
+    val psiPackageJson = PsiManager.getInstance(project).findFile(packageJson)
+    val sourceSymbolResolver = WebTypesSourceSymbolResolver(psiPackageJson!!, webTypes.name ?: "unknown")
 
     components = webTypes.contributions
                    ?.html
                    ?.tags
                    ?.filter { it.name != null }
-                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, owner, typeProvider, pathResolver) })
+                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, owner, typeProvider, sourceSymbolResolver) })
                  ?: Collections.emptyMap()
     directives = webTypes.contributions
                    ?.html
                    ?.attributes
                    ?.filter { it.name?.startsWith("v-") ?: false }
-                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, owner, pathResolver) })
+                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, owner, sourceSymbolResolver) })
                  ?: Collections.emptyMap()
   }
 

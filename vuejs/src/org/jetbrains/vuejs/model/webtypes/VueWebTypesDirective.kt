@@ -2,17 +2,17 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.webtypes.json.Attribute_
+import org.jetbrains.vuejs.model.webtypes.json.Source
 
 class VueWebTypesDirective(attribute: Attribute_,
                            parent: VueEntitiesContainer,
-                           private val pathResolver: (String) -> PsiFile?) : VueDirective {
-  override val source: PsiElement? get() = sourceFile?.let { pathResolver(it) }
+                           private val sourceSymbolResolver: WebTypesSourceSymbolResolver) : VueDirective {
+  override val source: PsiElement? get() = sourceInfo?.let { sourceSymbolResolver.resolve(it) }
   override val parents: List<VueEntitiesContainer> = listOf(parent)
   override val defaultName: String? = attribute.name
 
-  private val sourceFile: String? = null
+  private val sourceInfo: Source? = attribute.source
 }
