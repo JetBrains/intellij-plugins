@@ -92,7 +92,7 @@ class Attribute_ {
   @JsonPropertyDescription("Allows to specify the source of the entity. For Vue.js component this may be for instance a class.")
   @get:JsonProperty("source")
   @set:JsonProperty("source")
-  var source: Source_? = null
+  var source: Source? = null
   @JsonProperty("vue-modifiers")
   @get:JsonProperty("vue-modifiers")
   @set:JsonProperty("vue-modifiers")
