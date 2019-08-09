@@ -20,10 +20,23 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("javax.xml.bind", "jaxb-api")
     exclude("org.glassfish.jaxb", "jaxb-runtime")
     exclude("com.fasterxml.jackson.core", "jackson-databind")
+    exclude("com.esotericsoftware.kryo", "kryo")
 
-    // used only in languagetool-core test
+    exclude("org.apache.commons", "commons-lang3")
+//    exclude("org.apache.commons", "commons-csv")
+//    exclude("org.apache.commons", "logging")
+    exclude("javax", "activation-api")
+    exclude("org.ow2.asm", "asm")
+
+    // used only in tests in languagetool-core
     exclude("org.apache.lucene", "lucene-core")
     exclude("org.apache.lucene", "lucene-backward-codecs")
+
+    // exclude opennlp from english
+    exclude("edu.washington.cs.knowitall", "opennlp-postag-models")
+    exclude("edu.washington.cs.knowitall", "opennlp-chunk-models")
+    exclude("edu.washington.cs.knowitall", "opennlp-tokenize-models")
+    exclude("org.apache.opennlp", "opennlp-tools")
 }
 
 fun DependencyHandler.aetherDependencies() {
