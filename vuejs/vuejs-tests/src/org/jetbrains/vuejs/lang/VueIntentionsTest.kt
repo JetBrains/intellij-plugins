@@ -48,6 +48,10 @@ class VueIntentionsTest : BasePlatformTestCase() {
     doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.depropagate"))
   }
 
+  fun testReplaceIfElseWithElvis() {
+    doIntentionTest("Replace if-else with ?:")
+  }
+
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
     if (intention == null) {
