@@ -67,8 +67,6 @@ public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
   @NotNull
   @Override
   public Set<VirtualFile> getRequiredLibraryFilesToIndex() {
-    Set<VirtualFile> libFiles = new HashSet<>();
-    libFiles.addAll(getActionScriptPredefinedLibraryFiles());
-    return libFiles;
+    return getActionScriptPredefinedLibraryFiles();
   }
 }
