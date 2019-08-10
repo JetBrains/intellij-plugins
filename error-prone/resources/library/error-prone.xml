@@ -6,6 +6,8 @@
     <item url="https://repo1.maven.org/maven2/org/checkerframework/dataflow/2.5.7/dataflow-2.5.7.jar"/>
     <item url="https://repo1.maven.org/maven2/org/checkerframework/javacutil/2.5.7/javacutil-2.5.7.jar"/>
     <item url="https://repo1.maven.org/maven2/com/google/errorprone/javac/9+181-r4173-1/javac-9+181-r4173-1.jar"/>
+
+    <!-- this is a workaround missing dependency in error_prone_core-with-dependencies: https://github.com/google/error-prone/issues/1238 -->
     <item url="https://repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"/>
   </artifact>
 </artifacts>
