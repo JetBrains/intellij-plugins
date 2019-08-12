@@ -18,9 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
-  private static final Logger LOG = Logger.getInstance(ActionScriptLibraryProvider.class);
+
   private static final Map<String, Ref<VirtualFile>> ourLibFileCache = ContainerUtil.newConcurrentMap();
-  private static final String[] ourActionScriptLibraries = new String[]{JavaScriptIndex.ECMASCRIPT_JS2, "E4X.js2"};
 
   @Nullable
   private static VirtualFile getPredefinedLibFile(@NotNull String libFileName) {
@@ -33,15 +32,17 @@ public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvid
   private static VirtualFile findFileByURL(String libFileName) {
     URL libFileUrl = ActionScriptLibraryProvider.class.getResource(libFileName);
     if (libFileUrl == null) {
-      LOG.error("Cannot find " + libFileName + ", the installation is possibly broken.");
+      Logger.getInstance(ActionScriptLibraryProvider.class).error("Cannot find " + libFileName + ", the installation is possibly broken.");
       return null;
     }
     VirtualFile file = VfsUtil.findFileByURL(libFileUrl);
-    if (file != null && file.isValid()) {
-      return file;
+    if (file == null || !file.isValid()) {
+      Logger.getInstance(ActionScriptLibraryProvider.class)
+        .warn("Cannot find virtual file " + libFileName + " by url " + libFileUrl.toExternalForm());
+      return null;
     }
-    LOG.warn("Cannot find virtual file " + libFileName + " by url " + libFileUrl.toExternalForm());
-    return null;
+    
+    return file;
   }
 
   @Nullable
@@ -57,10 +58,9 @@ public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvid
 
   @NotNull
   public static Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
-    Set<VirtualFile> files = new HashSet<>(ourActionScriptLibraries.length);
-    for (String fileName : ourActionScriptLibraries) {
-      ContainerUtil.addIfNotNull(files, getPredefinedLibFile(fileName));
-    }
+    Set<VirtualFile> files = new HashSet<>(2);
+    ContainerUtil.addIfNotNull(files, getPredefinedLibFile(JavaScriptIndex.ECMASCRIPT_JS2));
+    ContainerUtil.addIfNotNull(files, getPredefinedLibFile("E4X.js2"));
     return files;
   }
 
