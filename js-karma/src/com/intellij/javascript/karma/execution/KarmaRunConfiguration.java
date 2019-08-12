@@ -41,6 +41,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
                                                                                  JSRunProfileWithCompileBeforeLaunchOption {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
+  private boolean myWorkingDirectoryDetected = false;
 
   protected KarmaRunConfiguration(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull String name) {
     super(project, factory, name);
@@ -55,19 +56,13 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Override
   public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
-    boolean templateRunConfiguration = isTemplate(element);
-    myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element, getProject(), templateRunConfiguration);
-    NodePackage karmaPackage = myRunSettings.getKarmaPackage();
-    if (templateRunConfiguration && karmaPackage != null && karmaPackage.isEmptyPath()) {
-      myRunSettings = myRunSettings.toBuilder().setKarmaPackage(null).build();
-    }
+    myRunSettings = KarmaRunSettingsSerializationUtil.readXml(element);
   }
 
   @Override
   public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
-    boolean templateRunConfiguration = isTemplate(element);
-    KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings, templateRunConfiguration);
+    KarmaRunSettingsSerializationUtil.writeXml(element, myRunSettings);
   }
 
   @NotNull
@@ -141,18 +136,22 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     return RunManager.getInstance(getProject()).isTemplate(this);
   }
 
-  private static boolean isTemplate(@NotNull Element element) {
-    return "true".equals(element.getAttributeValue("default"));
-  }
-
   @Override
   public void onNewConfigurationCreated() {
-    if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
-      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
-      if (workingDir != null) {
-        myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
-      }
+    detectWorkingDirectoryIfNeeded();
+  }
+
+  private void detectWorkingDirectoryIfNeeded() {
+    if (!myWorkingDirectoryDetected
+        && StringUtil.isEmptyOrSpaces(myRunSettings.getWorkingDirectorySystemDependent())
+        && !getProject().isDefault()
+        && !RunManager.getInstance(getProject()).isTemplate(this)) {
+      String configPath = myRunSettings.getConfigPathSystemIndependent();
+      VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), configPath);
+      String workingDirectory = workingDir != null ? workingDir.getPath() : PathUtil.getParentPath(configPath);
+      myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDirectory).build();
     }
+    myWorkingDirectoryDetected = true;
   }
 
   @Nullable
@@ -170,6 +169,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
+    detectWorkingDirectoryIfNeeded();
     NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
     karmaPackage.validateForRunConfiguration(KarmaUtil.KARMA_PACKAGE_NAME);
     validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
@@ -195,6 +195,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
 
   @NotNull
   public KarmaRunSettings getRunSettings() {
+    detectWorkingDirectoryIfNeeded();
     return myRunSettings;
   }
 
