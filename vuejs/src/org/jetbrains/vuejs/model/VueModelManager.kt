@@ -69,8 +69,8 @@ class VueModelManager {
         is JSObjectLiteralExpression -> VueComponentDescriptor(obj = context)
         is ES6Decorator -> {
           val clazz = when (val parentContext = context.context?.context) {
-            is JSExportAssignment -> parentContext.stubSafeElement as? JSClass<*>
-            is JSClass<*> -> parentContext
+            is JSExportAssignment -> parentContext.stubSafeElement as? JSClass
+            is JSClass -> parentContext
             else -> null
           }
           val obj = VueComponents.getDescriptorFromDecorator(context)
@@ -79,7 +79,7 @@ class VueModelManager {
           else
             null
         }
-        is JSClass<*> -> {
+        is JSClass -> {
           val decorator = VueComponents.getElementComponentDecorator(when (val decoratorContext = context.context) {
                                                                        is JSExportAssignment -> decoratorContext
                                                                        else -> context

@@ -92,7 +92,7 @@ class VueComponents {
       return result.mapNotNull(fun(it: PsiElement): VueComponentDescriptor? {
         val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
         if (element is JSObjectLiteralExpression) return VueComponentDescriptor(obj = element)
-        if (element is JSClassExpression<*>) {
+        if (element is JSClassExpression) {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
@@ -136,7 +136,7 @@ class VueComponents {
               ?.let { return VueComponentDescriptor(it) }
 
         // export default @Component({...}) class MyComponent {...}
-        is JSClassExpression<*> ->
+        is JSClassExpression ->
           return VueComponentDescriptor(getElementComponentDecorator(defaultExport)?.let { getDescriptorFromDecorator(it) },
                                         exportedElement)
       }
@@ -163,7 +163,7 @@ class VueComponents {
 }
 
 class VueComponentDescriptor(val obj: JSObjectLiteralExpression? = null,
-                             val clazz: JSClass<*>? = null) {
+                             val clazz: JSClass? = null) {
   init {
     assert(obj != null || clazz != null)
   }

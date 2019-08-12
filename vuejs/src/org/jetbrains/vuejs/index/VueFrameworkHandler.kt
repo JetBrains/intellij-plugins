@@ -251,7 +251,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (!isComponentDecorator(decorator)) return data
 
     val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
-    val classExpression = exportAssignment.stubSafeElement as? JSClassExpression<*> ?: return data
+    val classExpression = exportAssignment.stubSafeElement as? JSClassExpression ?: return data
 
     val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty("name")
     val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)

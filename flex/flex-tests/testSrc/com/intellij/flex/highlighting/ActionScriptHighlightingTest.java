@@ -39,6 +39,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -405,8 +406,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doTestFor(true, new File(getTestDataPath() + BASE_PATH + getTestName(false)), (Runnable)null, getTestName(false) + "/Main.js2");
     final JSClassResolver resolver =
       JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver();
-    assertNotNull(((JSClass)resolver.findClassByQName("OtherClass", myModule.getModuleScope())).getStub());
-    assertNotNull(((JSClass)resolver.findClassByQName("OtherClass2", myModule.getModuleScope())).getStub());
+    assertNotNull(((ActionScriptClassImpl)resolver.findClassByQName("OtherClass", myModule.getModuleScope())).getStub());
+    assertNotNull(((ActionScriptClassImpl)resolver.findClassByQName("OtherClass2", myModule.getModuleScope())).getStub());
   }
 
   public void testImplicitGetSet() {

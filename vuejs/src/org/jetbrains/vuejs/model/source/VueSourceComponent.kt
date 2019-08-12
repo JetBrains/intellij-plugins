@@ -9,7 +9,7 @@ import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.model.VueRegularComponent
 
 class VueSourceComponent(sourceElement: JSImplicitElement,
-                         clazz: JSClass<*>?,
+                         clazz: JSClass?,
                          declaration: JSObjectLiteralExpression?,
                          private val indexData: VueIndexData?)
   : VueSourceContainer(sourceElement, clazz, declaration), VueRegularComponent {

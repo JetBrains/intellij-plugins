@@ -6,5 +6,5 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import org.jetbrains.vuejs.model.VueMixin
 
-class VueSourceMixin(source: JSImplicitElement, clazz: JSClass<*>?, mixin: JSObjectLiteralExpression?)
+class VueSourceMixin(source: JSImplicitElement, clazz: JSClass?, mixin: JSObjectLiteralExpression?)
   : VueSourceContainer(source, clazz, mixin), VueMixin

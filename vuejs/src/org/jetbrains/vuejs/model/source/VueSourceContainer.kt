@@ -20,7 +20,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
 abstract class VueSourceContainer(sourceElement: JSImplicitElement,
-                                  private val clazz: JSClass<*>?,
+                                  private val clazz: JSClass?,
                                   protected val initializer: JSObjectLiteralExpression?) : VueContainer {
 
   override val source: PsiElement = sourceElement

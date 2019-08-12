@@ -71,7 +71,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
-    val isClass = element.context is JSClassExpression<*>
+    val isClass = element.context is JSClassExpression
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
     }

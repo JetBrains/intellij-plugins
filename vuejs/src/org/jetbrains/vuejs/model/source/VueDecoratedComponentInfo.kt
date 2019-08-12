@@ -18,7 +18,7 @@ import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.model.*
 
-class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
+class VueDecoratedComponentInfo private constructor(clazz: JSClass) {
   val mixins: List<VueMixin>
   val extends: List<VueMixin>
   val data: List<VueDataProperty>
@@ -108,7 +108,7 @@ class VueDecoratedComponentInfo private constructor(clazz: JSClass<*>) {
   }
 
   companion object {
-    fun get(clazz: JSClass<*>?): VueDecoratedComponentInfo? {
+    fun get(clazz: JSClass?): VueDecoratedComponentInfo? {
       return CachedValuesManager.getCachedValue(clazz ?: return null) {
         val dependencies = mutableListOf<Any>()
         JSClassUtils.processClassesInHierarchy(clazz, true) { aClass, _, _ ->
