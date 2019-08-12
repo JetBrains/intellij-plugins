@@ -36,9 +36,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
-                                                                                 PreferableRunConfiguration,
-                                                                                 JSRunProfileWithCompileBeforeLaunchOption {
+public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigurationOptions>
+                                   implements RefactoringListenerProvider,
+                                              PreferableRunConfiguration,
+                                              JSRunProfileWithCompileBeforeLaunchOption {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
   private boolean myWorkingDirectoryDetected = false;
