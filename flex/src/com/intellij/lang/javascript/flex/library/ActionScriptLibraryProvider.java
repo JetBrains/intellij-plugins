@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
+public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
   private static final Logger LOG = Logger.getInstance(ActionScriptLibraryProvider.class);
   private static final Map<String, Ref<VirtualFile>> ourLibFileCache = ContainerUtil.newConcurrentMap();
   private static final String[] ourActionScriptLibraries = new String[]{JavaScriptIndex.ECMASCRIPT_JS2, "E4X.js2"};
