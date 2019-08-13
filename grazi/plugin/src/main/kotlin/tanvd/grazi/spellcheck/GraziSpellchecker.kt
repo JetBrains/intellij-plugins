@@ -31,20 +31,17 @@ import java.util.concurrent.TimeUnit
 
 
 object GraziSpellchecker : GraziStateLifecycle {
-    private const val cacheMaxSize = 25_000L
-    private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
+    private var checkers: Set<Pair<JLanguageTool, Rule>> = emptySet()
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
-    private var checkers: Set<Pair<JLanguageTool, Rule>> = emptySet()
     private val levenshtein = LevenshteinDistance()
 
     private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.enabledLanguagesAvailable.plus(checkerLang)
             .mapNotNull { lang ->
-                val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-                val tool = JLanguageTool(lang.jLanguage, state.nativeLanguage.jLanguage,
-                        cache, UserConfig(state.userWords.toList()))
+                // TODO we probably don't really need to create tools each update
+                val tool = JLanguageTool(lang.jLanguage,null, UserConfig(state.userWords.toList()))
                 val checker = tool.allRules.find { it.isDictionaryBasedSpellingRule }
                 checker?.let { tool to checker }
             }.toSet()
