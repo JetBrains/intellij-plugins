@@ -15,6 +15,8 @@ class LanguageListGuiTest : GraziGuiTestBase() {
         project {
             step("Check initial state of language rules") {
                 settings {
+                    checkbox("Enable Grazi spellchecker").click()
+
                     val tree = jTree("English (US)")
                     val list = jList("English (US)")
                     assertEquals(1, list.contents().size)
@@ -57,9 +59,9 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                     shortcut(Key.ENTER)
 
                     waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 4)
-                    requireHighlights(HighlightSeverity.INFORMATION, "Проверка орфографии с исправлениями",
+                    requireHighlights(HighlightSeverity.INFORMATION, "Possible spelling mistake",
                             "два ошибка &rarr; два ошибкиСклонение  «числительное + существительное»Incorrect:В коробке лежало три карандаш.Correct:В коробке лежало три карандаша.",
-                            "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.", "Typo: In word 'eror'")
+                            "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.", "Possible spelling mistake")
                 }
             }
 
@@ -77,11 +79,14 @@ class LanguageListGuiTest : GraziGuiTestBase() {
                 }
             }
 
+            waitADecentMoment()
+
             step("Check that rules changes behaviour in an editor") {
                 editor {
-                    waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 2)
+                    waitForCodeAnalysisHighlightCount(HighlightSeverity.INFORMATION, 4)
                     requireHighlights(HighlightSeverity.INFORMATION,
-                            "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.", "Typo: In word 'eror'")
+                            "are &rarr; is'it' + non-3rd person verbIncorrect:It only matter to me.Correct:It only matters to me.",
+                            "Possible spelling mistake", "Possible spelling mistake", "Possible spelling mistake")
                 }
             }
         }
