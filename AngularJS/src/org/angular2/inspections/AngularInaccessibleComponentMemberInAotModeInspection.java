@@ -144,7 +144,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     );
   }
 
-  private static class AngularMakePublicQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
+  static class AngularMakePublicQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
