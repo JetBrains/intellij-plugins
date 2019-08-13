@@ -20,6 +20,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
 import org.eclipse.aether.transport.http.HttpTransporterFactory
 import org.slf4j.LoggerFactory
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
@@ -95,6 +96,7 @@ object LangDownloader {
                 }
 
                 LangToolInstrumentation.registerLanguage(lang)
+                GraziConfig.reload()
                 return true
             }
         }

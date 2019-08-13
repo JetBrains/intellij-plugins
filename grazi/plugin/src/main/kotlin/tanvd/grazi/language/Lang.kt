@@ -5,6 +5,9 @@ import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.remote.RemoteLangDescriptor
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
+import java.util.regex.Pattern
 
 @Suppress("unused")
 enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: RemoteLangDescriptor,
@@ -47,6 +50,24 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
         get() {
             if (_jLanguage == null) {
                 _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
+
+                if (_jLanguage != null) {
+                    when {
+                        this == RUSSIAN ->
+                            Class.forName("org.languagetool.rules.ru.MorfologikRussianSpellerRule").getDeclaredField("RUSSIAN_LETTERS")
+                        this == UKRAINIAN ->
+                            Class.forName("org.languagetool.rules.uk.MorfologikUkrainianSpellerRule").getDeclaredField("UKRAINIAN_LETTERS")
+                        else -> null
+                    }?.let { pattern ->
+                        pattern.isAccessible = true
+
+                        val mods = Field::class.java.getDeclaredField("modifiers")
+                        mods.isAccessible = true
+                        mods.setInt(pattern, pattern.modifiers and Modifier.FINAL.inv())
+
+                        pattern.set(null, Pattern.compile(".*"))
+                    }
+                }
             }
 
             return _jLanguage
@@ -61,8 +82,10 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
             tool.enableRule(it.id)
         }
 
+        // disable all spellchecker rules also (use them directly in GraziSpellchecker)
         tool.allRules.filter { rule ->
-            disabledRules.any { rule.id.contains(it) } || disabledCategories.any { rule.category.id.toString().contains(it) }
+            rule.isDictionaryBasedSpellingRule || disabledRules.any { rule.id.contains(it) }
+                    || disabledCategories.any { rule.category.id.toString().contains(it) }
         }.forEach {
             tool.disableRule(it.id)
         }

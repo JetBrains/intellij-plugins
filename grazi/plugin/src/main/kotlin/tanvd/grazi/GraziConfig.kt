@@ -43,6 +43,9 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
         /** Update Grazi config state */
         @Synchronized
         fun update(change: (State) -> State) = instance.loadState(change(get()))
+
+        @Synchronized
+        fun reload() = ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(instance.state, instance.state, it) }
     }
 
     private var myState = State()

@@ -26,11 +26,6 @@ object LangTool : GraziStateLifecycle {
                         if (rule.id in GraziConfig.get().userDisabledRules) disableRule(rule.id)
                         if (rule.id in GraziConfig.get().userEnabledRules) enableRule(rule.id)
                     }
-
-                    // In case of English spellcheck will be done by Grazi spellchecker
-                    if (lang.isEnglish()) {
-                        disableRules(allActiveRules.filter { it.isDictionaryBasedSpellingRule }.map { it.id })
-                    }
                 }
             }
         }
