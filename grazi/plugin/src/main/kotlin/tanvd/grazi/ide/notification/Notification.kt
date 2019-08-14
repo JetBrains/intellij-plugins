@@ -54,7 +54,9 @@ object Notification {
                                 state.nativeLanguage
                             }
 
-                            state.copy(enabledLanguages = state.enabledLanguages - state.missedLanguages, nativeLanguage = native)
+                            val enabledLanguages = state.enabledLanguages - state.missedLanguages
+                            state.copy(enabledLanguages = enabledLanguages, nativeLanguage = native,
+                                    enabledLanguagesAvailable = enabledLanguages.filter { it.jLanguage != null }.toSet())
                         }
                         notification.hideBalloon()
                     }

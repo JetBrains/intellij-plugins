@@ -19,6 +19,8 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property val lastSeenVersion: String? = null,
                      val enabledLanguagesAvailable: Set<Lang> = enabledLanguages.filter { it.jLanguage != null }.toSet()) {
 
+
+
         fun clone() = State(
                 enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
                 userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),

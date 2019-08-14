@@ -130,7 +130,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     userEnabledRules = userEnabledRules,
                     userDisabledRules = userDisabledRules,
                     nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
-                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
+                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected,
+                    enabledLanguagesAvailable = enabledLanguages.filter { it.jLanguage != null }.toSet()
             )
         }
 
