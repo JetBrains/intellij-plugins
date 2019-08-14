@@ -1,5 +1,7 @@
 package tanvd.grazi.utils
 
+import org.apache.commons.text.similarity.LevenshteinDistance
+
 object Text {
     private val newLineCharRegex = Regex("\\n")
 
@@ -15,6 +17,11 @@ object Text {
 
     fun isHiddenFile(str: String) = str.startsWith(".")
     fun isHtmlUnicodeSymbol(str: String) = str.startsWith("&")
+
+    private val levenshtein = LevenshteinDistance()
+    fun levenshteinDistance(str1: CharSequence, str2: CharSequence): Int = levenshtein.apply(str1, str2)
+
+    fun isLatin(str: String) = str.matches(Regex("\\p{IsLatin}+"))
 }
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */

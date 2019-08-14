@@ -37,3 +37,7 @@ val b = "It is <warning descr="ARTICLE_MISSING">friend</warning>"
 За весь вечер она <warning descr="ne_proronila_ni">не проронила и слово</warning>.
 Собрание состоится в <warning descr="RU_COMPOUNDS">конференц зале</warning>.
 <warning descr="WORD_REPEAT_RULE">Он он</warning> ошибка.
+
+Er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
+das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.

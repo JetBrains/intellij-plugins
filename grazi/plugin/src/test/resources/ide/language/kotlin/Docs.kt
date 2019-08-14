@@ -49,5 +49,7 @@ class ExampleClassWithTypos<T>(val name: String) {
  * <warning descr="WORD_REPEAT_RULE">Он он</warning> ошибка.
  */
 class ForMultiLanguageSupport {
-
+    // er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+    // das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
+    // das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
 }

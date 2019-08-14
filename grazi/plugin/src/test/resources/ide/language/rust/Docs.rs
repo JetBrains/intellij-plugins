@@ -70,6 +70,9 @@ impl ExampleClassWithTypos {
     }
 }
 
+/// Er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+/// Das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
+/// Das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
 
 impl ForMultiLanguageSupport {
      /// В коробке лежало <warning descr="Sklonenije_NUM_NN">пять карандаша</warning>.

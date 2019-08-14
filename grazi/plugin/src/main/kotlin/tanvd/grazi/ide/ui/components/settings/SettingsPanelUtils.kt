@@ -14,10 +14,9 @@ import tanvd.grazi.utils.*
 import tanvd.kex.orFalse
 
 private const val MINIMUM_EXAMPLES_SIMILARITY = 0.2
-private val levenshtein = LevenshteinDistance()
 
 fun CharSequence.isSimilarTo(sequence: CharSequence): Boolean {
-    return levenshtein.apply(this, sequence).toDouble() / length < MINIMUM_EXAMPLES_SIMILARITY
+    return Text.levenshteinDistance(this, sequence).toDouble() / length < MINIMUM_EXAMPLES_SIMILARITY
 }
 
 fun GraziSettingsPanel.hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()

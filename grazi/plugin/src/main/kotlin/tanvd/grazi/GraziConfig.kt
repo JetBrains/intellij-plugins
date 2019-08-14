@@ -16,15 +16,13 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                      @Property val userWords: Set<String> = HashSet(),
                      @Property val userDisabledRules: Set<String> = HashSet(),
                      @Property val userEnabledRules: Set<String> = HashSet(),
-                     @Property val lastSeenVersion: String? = null) {
-
-        val enabledLanguagesAvailable: Set<Lang>
-            get() = enabledLanguages.filter { it.jLanguage != null }.toSet()
+                     @Property val lastSeenVersion: String? = null,
+                     val enabledLanguagesAvailable: Set<Lang> = enabledLanguages.filter { it.jLanguage != null }.toSet()) {
 
         fun clone() = State(
                 enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
                 userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
-                lastSeenVersion = lastSeenVersion)
+                lastSeenVersion = lastSeenVersion, enabledLanguagesAvailable = enabledLanguagesAvailable)
 
         fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) ||
                 enabledLanguages.any { it.jLanguage == null }
@@ -43,9 +41,6 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
         /** Update Grazi config state */
         @Synchronized
         fun update(change: (State) -> State) = instance.loadState(change(get()))
-
-        @Synchronized
-        fun reload() = ProjectManager.getInstance().openProjects.forEach { GraziStateLifecycle.publisher.update(instance.state, instance.state, it) }
     }
 
     private var myState = State()

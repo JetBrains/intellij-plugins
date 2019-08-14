@@ -34,10 +34,6 @@ object GraziRemote {
             if (state.nativeLanguage.jLanguage == null) {
                 LangDownloader.download(state.nativeLanguage, project)
             }
-
-            ProjectManager.getInstance().openProjects.forEach {
-                DaemonCodeAnalyzer.getInstance(it).restart()
-            }
         }
     }
 }

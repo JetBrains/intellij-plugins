@@ -36,8 +36,6 @@ object GraziSpellchecker : GraziStateLifecycle {
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
-    private val levenshtein = LevenshteinDistance()
-
     private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.enabledLanguagesAvailable.plus(checkerLang)
             .mapNotNull { lang ->
                 // TODO we probably don't really need to create tools each update
@@ -85,14 +83,14 @@ object GraziSpellchecker : GraziStateLifecycle {
             tryRun { checker.match(tool.getAnalyzedSentence(word)) }?.firstOrNull()?.let { Typo(it, Lang[tool.language]!!, 0) }
         }.filter { typo ->
             !isCasingProblem(word, typo) && !isPluralProblem(word, typo) &&
-                    (IdeaSpellchecker.hasProblem(word, project, language) || !word.matches(Regex("\\p{IsLatin}+")))
+                    (IdeaSpellchecker.hasProblem(word, project, language) || !Text.isLatin(word))
         }.toSet()
 
         if (typos.size == checkers.size) {
             typos.find { it.info.lang == checkerLang }?.let { typo ->
                 val fixes = mutableListOf<String>()
                 typos.flatMap(Typo::fixes).forEach { fixes.add(it) }
-                fixes.sortWith(Comparator { o1, o2 -> levenshtein.apply(o1, word).compareTo(levenshtein.apply(o2, word)) })
+                fixes.sortWith(Comparator { o1, o2 -> Text.levenshteinDistance(o1, word).compareTo(Text.levenshteinDistance(o2, word)) })
                 add(Typo(typo.location, typo.info, fixes))
             }
         }

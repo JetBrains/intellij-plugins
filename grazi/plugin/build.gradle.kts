@@ -48,6 +48,7 @@ dependencies {
     }
 
     testRuntime("org.languagetool", "language-ru", Versions.languageTool)
+    testRuntime("org.languagetool", "language-de", Versions.languageTool)
 
     // for PyCharm and others no Intellij Idea applications
     aetherDependencies()

@@ -5,9 +5,7 @@ import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.remote.RemoteLangDescriptor
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
-import java.util.regex.Pattern
+import tanvd.grazi.utils.LangToolInstrumentation.enableLatinLettersInSpellchecker
 
 @Suppress("unused")
 enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: RemoteLangDescriptor,
@@ -23,8 +21,8 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
     RUSSIAN("Russian", "ru", "Russian", RemoteLangDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
     PERSIAN("Persian", "fa", "Persian", RemoteLangDescriptor.PERSIAN),
     FRENCH("French", "fr", "French", RemoteLangDescriptor.FRENCH),
-    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", RemoteLangDescriptor.GERMAN),
-    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", RemoteLangDescriptor.GERMAN),
+    GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", RemoteLangDescriptor.GERMAN, disabledCategories = GraziBundle.langConfig("de.categories.disabled")),
+    AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", RemoteLangDescriptor.GERMAN, disabledCategories = GraziBundle.langConfig("de.categories.disabled")),
     POLISH("Polish", "pl", "Polish", RemoteLangDescriptor.POLISH),
     ITALIAN("Italian", "it", "Italian", RemoteLangDescriptor.ITALIAN),
     DUTCH("Dutch", "nl", "Dutch", RemoteLangDescriptor.DUTCH),
@@ -51,23 +49,7 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
             if (_jLanguage == null) {
                 _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
 
-                if (_jLanguage != null) {
-                    when {
-                        this == RUSSIAN ->
-                            Class.forName("org.languagetool.rules.ru.MorfologikRussianSpellerRule").getDeclaredField("RUSSIAN_LETTERS")
-                        this == UKRAINIAN ->
-                            Class.forName("org.languagetool.rules.uk.MorfologikUkrainianSpellerRule").getDeclaredField("UKRAINIAN_LETTERS")
-                        else -> null
-                    }?.let { pattern ->
-                        pattern.isAccessible = true
-
-                        val mods = Field::class.java.getDeclaredField("modifiers")
-                        mods.isAccessible = true
-                        mods.setInt(pattern, pattern.modifiers and Modifier.FINAL.inv())
-
-                        pattern.set(null, Pattern.compile(".*"))
-                    }
-                }
+                if (_jLanguage != null) enableLatinLettersInSpellchecker(this)
             }
 
             return _jLanguage
