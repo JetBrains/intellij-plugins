@@ -17,8 +17,8 @@ object GraziPlugin {
     val version: String
         get() = descriptor.version
 
-    val classLoader: PluginClassLoader
-        get() = descriptor.pluginClassLoader as PluginClassLoader
+    val classLoader: ClassLoader
+        get() = if (ApplicationManager.getApplication().isUnitTestMode) ClassLoader.getSystemClassLoader() else descriptor.pluginClassLoader
 
     val installationFolder: File
         get() = descriptor.path

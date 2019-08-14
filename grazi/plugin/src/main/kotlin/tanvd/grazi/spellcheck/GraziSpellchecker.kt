@@ -88,7 +88,7 @@ object GraziSpellchecker : GraziStateLifecycle {
         val typo = try {
             checker.check(word)
         } catch (e: Throwable) {
-            logger.trace("GraziSpellchecker exception", e)
+            logger.trace("Exception occurred during check in GraziSpellchecker", e)
             emptyList<RuleMatch>()
         }?.firstOrNull()?.let { Typo(it, checkerLang, 0) }
         if (typo != null && IdeaSpellchecker.hasProblem(word, project, language)
