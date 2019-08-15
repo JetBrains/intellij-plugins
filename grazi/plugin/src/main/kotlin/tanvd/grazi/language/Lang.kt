@@ -5,7 +5,7 @@ import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.remote.RemoteLangDescriptor
-import tanvd.grazi.utils.LangToolInstrumentation.enableLatinLettersInSpellchecker
+import tanvd.grazi.utils.LangToolInstrumentation
 
 @Suppress("unused")
 enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: RemoteLangDescriptor,
@@ -49,7 +49,7 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
             if (_jLanguage == null) {
                 _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
 
-                if (_jLanguage != null) enableLatinLettersInSpellchecker(this)
+                if (_jLanguage != null) LangToolInstrumentation.enableLatinLettersInSpellchecker(this)
             }
 
             return _jLanguage

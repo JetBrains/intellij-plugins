@@ -12,9 +12,7 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
-import org.apache.commons.text.similarity.LevenshteinDistance
 import org.languagetool.JLanguageTool
-import org.languagetool.ResultCache
 import org.languagetool.UserConfig
 import org.languagetool.rules.Rule
 import tanvd.grazi.GraziConfig
@@ -27,7 +25,6 @@ import tanvd.grazi.utils.toPointer
 import tanvd.grazi.utils.withOffset
 import tanvd.kex.buildSet
 import tanvd.kex.tryRun
-import java.util.concurrent.TimeUnit
 
 
 object GraziSpellchecker : GraziStateLifecycle {
@@ -36,10 +33,10 @@ object GraziSpellchecker : GraziStateLifecycle {
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
-    private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.enabledLanguagesAvailable.plus(checkerLang)
+    private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.availableLanguages.plus(checkerLang)
             .mapNotNull { lang ->
                 // TODO we probably don't really need to create tools each update
-                val tool = JLanguageTool(lang.jLanguage,null, UserConfig(state.userWords.toList()))
+                val tool = JLanguageTool(lang.jLanguage, null, UserConfig(state.userWords.toList()))
                 val checker = tool.allRules.find { it.isDictionaryBasedSpellingRule }
                 checker?.let { tool to checker }
             }.toSet()
@@ -86,11 +83,11 @@ object GraziSpellchecker : GraziStateLifecycle {
                     (IdeaSpellchecker.hasProblem(word, project, language) || !Text.isLatin(word))
         }.toSet()
 
-        if (typos.size == checkers.size) {
+        if (typos.map { it.info.lang }.toSet().size == checkers.size) {
             typos.find { it.info.lang == checkerLang }?.let { typo ->
-                val fixes = mutableListOf<String>()
-                typos.flatMap(Typo::fixes).forEach { fixes.add(it) }
-                fixes.sortWith(Comparator { o1, o2 -> Text.levenshteinDistance(o1, word).compareTo(Text.levenshteinDistance(o2, word)) })
+                val fixes = typos.flatMap(Typo::fixes).sortedWith(
+                        Comparator { o1, o2 -> Text.Levenshtein.distance(o1, word).compareTo(Text.Levenshtein.distance(o2, word)) }
+                ).toList()
                 add(Typo(typo.location, typo.info, fixes))
             }
         }

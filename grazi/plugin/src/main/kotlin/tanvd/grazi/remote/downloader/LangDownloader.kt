@@ -96,7 +96,7 @@ object LangDownloader {
                 }
 
                 LangToolInstrumentation.registerLanguage(lang)
-                GraziConfig.update { state -> state.copy(enabledLanguagesAvailable = state.enabledLanguages.filter { it.jLanguage != null }.toSet()) }
+                GraziConfig.update { state -> state.copy() }
                 return true
             }
         }

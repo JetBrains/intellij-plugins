@@ -18,8 +18,11 @@ object Text {
     fun isHiddenFile(str: String) = str.startsWith(".")
     fun isHtmlUnicodeSymbol(str: String) = str.startsWith("&")
 
-    private val levenshtein = LevenshteinDistance()
-    fun levenshteinDistance(str1: CharSequence, str2: CharSequence): Int = levenshtein.apply(str1, str2)
+    object Levenshtein {
+        private val levenshtein = LevenshteinDistance()
+
+        fun distance(str1: CharSequence, str2: CharSequence): Int = levenshtein.apply(str1, str2)
+    }
 
     fun isLatin(str: String) = str.matches(Regex("\\p{IsLatin}+"))
 }
