@@ -67,11 +67,7 @@ object LangToolInstrumentation {
     fun registerLanguage(lang: Lang) {
         if (lang in GraziConfig.get().enabledLanguagesAvailable) return
 
-        val dynLanguages = Languages::class.java.getDeclaredField("dynLanguages")
-        dynLanguages.isAccessible = true
-
-        @Suppress("UNCHECKED_CAST")
-        val langs = dynLanguages.get(null) as MutableList<Language>
+        val langs = Languages::class.java.getStaticField<MutableList<Language>>("dynLanguages")
 
         lang.descriptor.langsClasses.forEach { className ->
             val qualifiedName = "org.languagetool.language.$className"
@@ -87,16 +83,13 @@ object LangToolInstrumentation {
         reader.accept(EnglishChunkerInstrumentation(writer), 0)
 
         val cls = writer.toByteArray()
-        with(ClassLoader::class.java.getDeclaredMethod("defineClass", String::class.java, ByteArray::class.java, Int::class.java, Int::class.java)) {
-            isAccessible = true
-            invoke(GraziPlugin.classLoader, "org.languagetool.language.English", cls, 0, cls.size)
-        }
+        GraziPlugin.classLoader.defineClass("org.languagetool.language.English", cls, 0, cls.size)
     }
 
-    private class EnglishChunkerInstrumentation(cv: ClassVisitor) : ClassVisitor(Opcodes.ASM5, cv) {
+    private class EnglishChunkerInstrumentation(val classVisitor: ClassVisitor) : ClassVisitor(Opcodes.ASM5, classVisitor) {
         override fun visitMethod(access: Int, name: String?, descriptor: String?, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-            val mv = cv.visitMethod(access, name, descriptor, signature, exceptions)
-            return if (name == "getChunker") GetChunkerMethodVisitor(mv) else mv
+            val methodVisitor = classVisitor.visitMethod(access, name, descriptor, signature, exceptions)
+            return if (name == "getChunker") GetChunkerMethodVisitor(methodVisitor) else methodVisitor
         }
 
         class GetChunkerMethodVisitor(private val visitor: MethodVisitor) : MethodVisitor(Opcodes.ASM5, null) {
