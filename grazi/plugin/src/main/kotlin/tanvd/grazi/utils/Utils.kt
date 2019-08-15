@@ -1,6 +1,9 @@
 package tanvd.grazi.utils
 
 import org.languagetool.rules.RuleMatch
+import tanvd.grazi.GraziPlugin
+import java.io.File
+import java.io.InputStream
 
 fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
@@ -20,3 +23,7 @@ fun Iterable<*>.joinToStringWithOxfordComma(separator: String = ", ") = with(toL
 
 fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()
 
+object Resources {
+    fun getFile(file: String): File = File(GraziPlugin::class.java.getResource(file).file)
+    fun getStream(file: String): InputStream = GraziPlugin::class.java.getResourceAsStream(file)
+}

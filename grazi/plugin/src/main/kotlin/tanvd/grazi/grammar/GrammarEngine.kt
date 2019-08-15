@@ -58,9 +58,10 @@ object GrammarEngine {
         return try {
             LangTool[lang]!!.check(str)
                     .orEmpty()
+                    .asSequence()
                     .filterNotNull()
                     .map { Typo(it, lang) }
-                    .let { LinkedSet(it) }
+                    .toCollection(LinkedSet())
         } catch (e: Throwable) {
             logger.trace("Got exception during check for typos by LanguageTool", e)
             LinkedSet()

@@ -79,8 +79,8 @@ object GraziSpellchecker : GraziStateLifecycle {
     /**
      * Checks text for spelling mistakes.
      */
-    private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
-        if (!IdeaSpellchecker.hasProblem(word, project, language) && Text.isLatin(word)) return@buildSet
+    private fun check(word: String, project: Project, language: Language) : Set<Typo> {
+        if (!IdeaSpellchecker.hasProblem(word, project, language) && Text.isLatin(word)) return emptySet()
 
         var match: RuleMatch? = null
         val fixes = checkers.map { (tool, checker) ->
@@ -89,12 +89,12 @@ object GraziSpellchecker : GraziStateLifecycle {
             } catch (t: Throwable) {
                 logger.trace("Got exception during check for spelling mistakes by LanguageTool", t)
                 null
-            }?.firstOrNull<RuleMatch>() ?: return@buildSet
+            }?.firstOrNull<RuleMatch>() ?: return emptySet()
         }.onEach {
             if (it.rule is MorfologikAmericanSpellerRule) match = it
         }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.sortedWith(Text.Levenshtein.Comparator(word)).toList()
 
-        add(Typo(RuleMatch(match, fixes), BASE_SPELLCHECKER_LANGUAGE, 0))
+        return setOf(Typo(RuleMatch(match, fixes), BASE_SPELLCHECKER_LANGUAGE, 0))
     }
 
     override fun init(state: GraziConfig.State, project: Project) {

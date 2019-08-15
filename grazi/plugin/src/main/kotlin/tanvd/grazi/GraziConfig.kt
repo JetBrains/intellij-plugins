@@ -31,8 +31,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                 userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
                 lastSeenVersion = lastSeenVersion, availableLanguages = availableLanguages)
 
-        fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) ||
-                enabledLanguages.any { it.jLanguage == null }
+        fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) || enabledLanguages.any { it.jLanguage == null }
 
         fun update(enabledLanguages: Set<Lang> = this.enabledLanguages,
                    nativeLanguage: Lang = this.nativeLanguage,
