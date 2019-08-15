@@ -21,7 +21,7 @@ class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction, 
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.update {
-            it.copy(userEnabledRules = it.userEnabledRules - typo.info.rule.id, userDisabledRules = it.userDisabledRules + typo.info.rule.id)
+            it.update(userEnabledRules = it.userEnabledRules - typo.info.rule.id, userDisabledRules = it.userDisabledRules + typo.info.rule.id)
         }
     }
 }

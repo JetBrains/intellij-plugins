@@ -54,7 +54,7 @@ object Notification {
                                 state.nativeLanguage
                             }
 
-                            state.copy(enabledLanguages = state.enabledLanguages - state.missedLanguages, nativeLanguage = native)
+                            state.update(enabledLanguages = state.enabledLanguages - state.missedLanguages, nativeLanguage = native)
                         }
                         notification.hideBalloon()
                     }

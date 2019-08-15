@@ -125,7 +125,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                 userEnabledRules.remove(id)
             }
 
-            state.copy(
+            state.update(
                     enabledLanguages = enabledLanguages,
                     userEnabledRules = userEnabledRules,
                     userDisabledRules = userDisabledRules,

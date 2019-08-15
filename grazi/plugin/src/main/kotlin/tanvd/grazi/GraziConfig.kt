@@ -34,13 +34,13 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
         fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) ||
                 enabledLanguages.any { it.jLanguage == null }
 
-        fun copy(enabledLanguages: Set<Lang> = this.enabledLanguages,
-                 nativeLanguage: Lang = this.nativeLanguage,
-                 enabledSpellcheck: Boolean = this.enabledSpellcheck,
-                 userWords: Set<String> = this.userWords,
-                 userDisabledRules: Set<String> = this.userDisabledRules,
-                 userEnabledRules: Set<String> = this.userEnabledRules,
-                 lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
+        fun update(enabledLanguages: Set<Lang> = this.enabledLanguages,
+                   nativeLanguage: Lang = this.nativeLanguage,
+                   enabledSpellcheck: Boolean = this.enabledSpellcheck,
+                   userWords: Set<String> = this.userWords,
+                   userDisabledRules: Set<String> = this.userDisabledRules,
+                   userEnabledRules: Set<String> = this.userEnabledRules,
+                   lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
                 userWords, userDisabledRules, userEnabledRules, lastSeenVersion, enabledLanguages.filter { it.jLanguage != null }.toSet())
 
         override fun equals(other: Any?): Boolean {

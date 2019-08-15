@@ -22,7 +22,7 @@ class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAc
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.update {
-            it.copy(userWords = it.userWords + typo.word.toLowerCase())
+            it.update(userWords = it.userWords + typo.word.toLowerCase())
         }
     }
 }

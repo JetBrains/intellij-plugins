@@ -21,7 +21,13 @@ object Text {
     object Levenshtein {
         private val levenshtein = LevenshteinDistance()
 
-        fun distance(str1: CharSequence, str2: CharSequence): Int = levenshtein.apply(str1, str2)
+        fun distance(str1: CharSequence?, str2: CharSequence?): Int = levenshtein.apply(str1, str2)
+
+        class Comparator(private val base: CharSequence) : kotlin.Comparator<CharSequence> {
+            override fun compare(o1: CharSequence?, o2: CharSequence?): Int {
+                return distance(o1, base).compareTo(distance(o2, base))
+            }
+        }
     }
 
     fun isLatin(str: String) = str.matches(Regex("\\p{IsLatin}+"))

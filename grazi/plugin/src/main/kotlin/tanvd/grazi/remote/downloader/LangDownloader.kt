@@ -96,7 +96,7 @@ object LangDownloader {
                 }
 
                 LangToolInstrumentation.registerLanguage(lang)
-                GraziConfig.update { state -> state.copy() }
+                GraziConfig.update { state -> state.update() }
                 return true
             }
         }

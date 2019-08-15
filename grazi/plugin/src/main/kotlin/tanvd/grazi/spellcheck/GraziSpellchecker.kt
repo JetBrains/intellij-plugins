@@ -85,9 +85,7 @@ object GraziSpellchecker : GraziStateLifecycle {
 
         if (typos.map { it.info.lang }.toSet().size == checkers.size) {
             typos.find { it.info.lang == checkerLang }?.let { typo ->
-                val fixes = typos.flatMap(Typo::fixes).sortedWith(
-                        Comparator { o1, o2 -> Text.Levenshtein.distance(o1, word).compareTo(Text.Levenshtein.distance(o2, word)) }
-                ).toList()
+                val fixes = typos.flatMap(Typo::fixes).sortedWith(Text.Levenshtein.Comparator(word)).toList()
                 add(Typo(typo.location, typo.info, fixes))
             }
         }
