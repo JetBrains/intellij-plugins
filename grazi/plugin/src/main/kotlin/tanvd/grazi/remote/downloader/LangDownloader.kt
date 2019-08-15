@@ -26,8 +26,8 @@ import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.language.Lang
 import tanvd.grazi.remote.GraziRemote
 import tanvd.grazi.utils.LangToolInstrumentation
+import tanvd.grazi.utils.addUrls
 import java.io.File
-import java.net.URL
 import java.nio.file.Paths
 
 object LangDownloader {
@@ -88,13 +88,7 @@ object LangDownloader {
 
             // null if canceled or failed, zero result if nothing found
             if (result != null && result.size > 0) {
-                with(UrlClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java)) {
-                    isAccessible = true
-                    result.forEach {
-                        invoke(GraziPlugin.classLoader, Paths.get(it.presentableUrl).toUri().toURL())
-                    }
-                }
-
+                (GraziPlugin.classLoader as UrlClassLoader).addUrls(result.map { Paths.get(it.presentableUrl).toUri().toURL() }.toList())
                 LangToolInstrumentation.registerLanguage(lang)
                 GraziConfig.update { state -> state.update() }
                 return true

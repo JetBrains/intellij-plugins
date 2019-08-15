@@ -57,7 +57,9 @@ dependencies {
 
     compile("org.apache.commons", "commons-lang3", "3.5")
 
-    compile("tanvd.kex", "kex", "0.1.1")
+    compile("tanvd.kex", "kex", "0.1.1") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+    }
 }
 
 tasks.withType<Test> {
