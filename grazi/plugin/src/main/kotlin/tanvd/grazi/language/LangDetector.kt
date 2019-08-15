@@ -6,10 +6,11 @@ import com.optimaize.langdetect.profiles.LanguageProfile
 import com.optimaize.langdetect.profiles.LanguageProfileReader
 
 object LangDetector {
-    private const val charsForLangDetection = 500
+    private const val charsForLangDetection = 1_000
     private val detector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-            .minimalConfidence(0.9)
-            .shortTextAlgorithm(50)
+            .minimalConfidence(0.95)
+            .prefixFactor(1.5)
+            .suffixFactor(2.0)
             .withProfiles(profiles)
             .build()
 

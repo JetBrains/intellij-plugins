@@ -28,11 +28,11 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("javax.activation", "javax.activation-api")
     exclude("org.ow2.asm", "asm")
 
-    // used only in tests in languagetool-core
+    // used only in languagetool-core tests
     exclude("org.apache.lucene", "lucene-core")
     exclude("org.apache.lucene", "lucene-backward-codecs")
 
-    // exclude opennlp from english
+    // exclude OpenNLP from English
     exclude("edu.washington.cs.knowitall", "opennlp-postag-models")
     exclude("edu.washington.cs.knowitall", "opennlp-chunk-models")
     exclude("edu.washington.cs.knowitall", "opennlp-tokenize-models")
