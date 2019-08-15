@@ -23,9 +23,9 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("com.esotericsoftware.kryo", "kryo")
 
     exclude("org.apache.commons", "commons-lang3")
-//    exclude("org.apache.commons", "commons-csv")
-//    exclude("org.apache.commons", "logging")
-    exclude("javax", "activation-api")
+    exclude("org.apache.commons", "commons-csv")
+    exclude("commons-logging", "commons-logging")
+    exclude("javax.activation", "javax.activation-api")
     exclude("org.ow2.asm", "asm")
 
     // used only in tests in languagetool-core

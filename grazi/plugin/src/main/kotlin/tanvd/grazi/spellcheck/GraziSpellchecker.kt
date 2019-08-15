@@ -15,6 +15,9 @@ import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
 import org.languagetool.JLanguageTool
 import org.languagetool.UserConfig
 import org.languagetool.rules.Rule
+import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.en.MorfologikAmericanSpellerRule
+import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziStateLifecycle
@@ -24,16 +27,18 @@ import tanvd.grazi.utils.spellcheckOnly
 import tanvd.grazi.utils.toPointer
 import tanvd.grazi.utils.withOffset
 import tanvd.kex.buildSet
-import tanvd.kex.tryRun
 
 
 object GraziSpellchecker : GraziStateLifecycle {
-    private val checkerLang = Lang.AMERICAN_ENGLISH
+    private const val MAX_SUGGESTIONS_COUNT = 5
+    private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
+    private val logger = LoggerFactory.getLogger(GraziSpellchecker::class.java)
+
     private var checkers: Set<Pair<JLanguageTool, Rule>> = emptySet()
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
-    private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.availableLanguages.plus(checkerLang)
+    private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE)
             .mapNotNull { lang ->
                 // TODO we probably don't really need to create tools each update
                 val tool = JLanguageTool(lang.jLanguage, null, UserConfig(state.userWords.toList()))
@@ -73,27 +78,24 @@ object GraziSpellchecker : GraziStateLifecycle {
 
     /**
      * Checks text for spelling mistakes.
-     * Note, that casing and plural typos are ignored.
      */
     private fun check(word: String, project: Project, language: Language) = buildSet<Typo> {
-        val typos = checkers.mapNotNull { (tool, checker) ->
-            tryRun { checker.match(tool.getAnalyzedSentence(word)) }?.firstOrNull()?.let { Typo(it, Lang[tool.language]!!, 0) }
-        }.filter { typo ->
-            !isCasingProblem(word, typo) && !isPluralProblem(word, typo) &&
-                    (IdeaSpellchecker.hasProblem(word, project, language) || !Text.isLatin(word))
-        }.toSet()
+        if (!IdeaSpellchecker.hasProblem(word, project, language) && Text.isLatin(word)) return@buildSet
 
-        if (typos.map { it.info.lang }.toSet().size == checkers.size) {
-            typos.find { it.info.lang == checkerLang }?.let { typo ->
-                val fixes = typos.flatMap(Typo::fixes).sortedWith(Text.Levenshtein.Comparator(word)).toList()
-                add(Typo(typo.location, typo.info, fixes))
-            }
-        }
+        var match: RuleMatch? = null
+        val fixes = checkers.map { (tool, checker) ->
+            try {
+                checker.match(tool.getAnalyzedSentence(word))
+            } catch (t: Throwable) {
+                logger.trace("Got exception during check for spelling mistakes by LanguageTool", t)
+                null
+            }?.firstOrNull<RuleMatch>() ?: return@buildSet
+        }.onEach {
+            if (it.rule is MorfologikAmericanSpellerRule) match = it
+        }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.sortedWith(Text.Levenshtein.Comparator(word)).toList()
+
+        add(Typo(RuleMatch(match, fixes), BASE_SPELLCHECKER_LANGUAGE, 0))
     }
-
-    private fun isCasingProblem(word: String, typo: Typo) = typo.fixes.any { it.toLowerCase() == word.toLowerCase() }
-
-    private fun isPluralProblem(word: String, typo: Typo) = typo.fixes.any { "${it.toLowerCase()}s" == word.toLowerCase() }
 
     override fun init(state: GraziConfig.State, project: Project) {
         checkers = createCheckers(state)
@@ -108,7 +110,6 @@ object GraziSpellchecker : GraziStateLifecycle {
             getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
         }
     }
-
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
         checkers = createCheckers(newState)
