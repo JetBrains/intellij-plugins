@@ -426,12 +426,12 @@ type ::= 'void' !untypedFunctionType | functionTypeWrapper | simpleType  {
   ]
 }
 
-untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
+untypedFunctionType ::= <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
 private functionTypeWrapper ::= (voidTypeFunctionType | untypedFunctionType | simpleType) typedFunctionType+ | untypedFunctionType
-left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList '?'?
+left typedFunctionType ::= <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
 
 voidTypeFunctionType ::= 'void'
-simpleType ::= simpleQualifiedReferenceExpression typeArguments? '?'?
+simpleType ::= simpleQualifiedReferenceExpression typeArguments? ('?' !(expression ':'))?
 
 typeArguments ::= '<' typeList '>'
 typeList ::= type? (',' type)*
