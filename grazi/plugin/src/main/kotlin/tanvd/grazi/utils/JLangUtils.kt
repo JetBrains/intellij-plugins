@@ -12,8 +12,6 @@ import org.languagetool.rules.RuleMatch
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.language.Lang
-import java.io.File
-import java.io.InputStream
 import java.util.regex.Pattern
 
 fun Iterable<Typo>.spellcheckOnly(): Set<Typo> = filter { it.isSpellingTypo }.toSet()

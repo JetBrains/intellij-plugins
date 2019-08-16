@@ -3,7 +3,6 @@ package tanvd.grazi.ide.ui.components.settings
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.components.labels.LinkListener
 import kotlinx.html.*
-import org.apache.commons.text.similarity.LevenshteinDistance
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
 import tanvd.grazi.ide.ui.components.dsl.msg

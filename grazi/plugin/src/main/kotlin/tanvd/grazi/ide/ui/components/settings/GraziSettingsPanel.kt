@@ -41,7 +41,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
             val lang = (e.item as Lang)
 
             if (lang.jLanguage == null) {
-                nativeLangLink.text = "Download ${lang.displayName}"
+                nativeLangLink.text = msg("grazi.ui.settings.languages.native.warning", lang.displayName)
                 nativeLangLink.isVisible = true
             } else {
                 nativeLangLink.isVisible = false

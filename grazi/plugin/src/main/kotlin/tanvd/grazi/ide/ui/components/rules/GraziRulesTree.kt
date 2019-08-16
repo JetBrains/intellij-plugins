@@ -25,7 +25,17 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
+    data class TreeState(val enabled: Set<String>, val disabled: Set<String>)
     private val state = HashMap<String, RuleWithLang>()
+
+    fun state(): TreeState {
+        val (enabled, disabled) = state.values.filter { it.lang in langs }.partition { it.enabledInTree }
+        return TreeState(enabled.map { it.rule.id }.toSet(), disabled.map { it.rule.id }.toSet())
+    }
+
+    val isModified: Boolean
+        get() = state.values.any { it.lang in langs }
+
     private val langs = HashSet(GraziConfig.get().enabledLanguages)
 
     fun addLang(lang: Lang) {
@@ -49,8 +59,9 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    private val tree: CheckboxTree by lazy {
-        CheckboxTree(object : CheckboxTree.CheckboxTreeCellRenderer(true) {
+    private val expansionMonitor by lazy { TreeExpansionMonitor.install(tree) }
+    private val tree: CheckboxTreeBase by lazy {
+        CheckboxTreeBase(object : CheckboxTree.CheckboxTreeCellRenderer(true) {
             override fun customizeRenderer(tree: JTree?, node: Any?, selected: Boolean, expanded: Boolean,
                                            leaf: Boolean, row: Int, hasFocus: Boolean) {
                 if (node !is GraziTreeNode) return
@@ -85,7 +96,39 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    private val expansionMonitor by lazy { TreeExpansionMonitor.install(tree) }
+    private val GraziTreeNode.nodeText: String
+        get() = when (val meta = userObject) {
+            is RuleWithLang -> meta.rule.description
+            is ComparableCategory -> meta.name
+            is Lang -> meta.displayName
+            else -> ""
+        }
+
+    private val GraziTreeNode.attrs: SimpleTextAttributes
+        get() = if (userObject is RuleWithLang) REGULAR_ATTRIBUTES else REGULAR_BOLD_ATTRIBUTES
+
+    val panel by lazy {
+        panel {
+            panel(constraint = BorderLayout.NORTH) {
+                border = JBUI.Borders.emptyBottom(2)
+
+                with(DefaultActionGroup()) {
+                    val actionManager = CommonActionsManager.getInstance()
+                    val treeExpander = DefaultTreeExpander(tree)
+                    add(actionManager.createExpandAllAction(treeExpander, tree))
+                    add(actionManager.createCollapseAllAction(treeExpander, tree))
+
+                    add(ActionManager.getInstance().createActionToolbar("GraziRulesTree", this, true).component, BorderLayout.WEST)
+                }
+
+                add(_filter as Component, BorderLayout.CENTER)
+            }
+
+            panel(constraint = BorderLayout.CENTER) {
+                add(ScrollPaneFactory.createScrollPane(tree))
+            }
+        }
+    }
 
     private val _filter: FilterComponent? by lazy {
         object : FilterComponent("GRAZI_RULES_FILTER", 10) {
@@ -111,48 +154,11 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    val panel by lazy {
-        panel {
-            panel(constraint = BorderLayout.NORTH) {
-                border = JBUI.Borders.emptyBottom(2)
-
-                with(DefaultActionGroup()) {
-                    val actionManager = CommonActionsManager.getInstance()
-                    val treeExpander = DefaultTreeExpander(tree)
-                    add(actionManager.createExpandAllAction(treeExpander, tree))
-                    add(actionManager.createCollapseAllAction(treeExpander, tree))
-
-                    add(ActionManager.getInstance().createActionToolbar("GraziRulesTree", this, true).component, BorderLayout.WEST)
-                }
-
-                add(_filter as Component, BorderLayout.CENTER)
-            }
-
-            panel(constraint = BorderLayout.CENTER) {
-                add(ScrollPaneFactory.createScrollPane(tree))
-            }
-        }
-    }
-
     var filter: String?
         get() = _filter?.filter
         set(value) {
             _filter?.filter = value
         }
-
-    val isModified: Boolean
-        get() = state.values.any { it.lang in langs }
-
-    init {
-        _filter?.reset()
-    }
-
-    data class TreeState(val enabled: Set<String>, val disabled: Set<String>)
-
-    fun state(): TreeState {
-        val (enabled, disabled) = state.values.filter { it.lang in langs }.partition { it.enabledInTree }
-        return TreeState(enabled.map { it.rule.id }.toSet(), disabled.map { it.rule.id }.toSet())
-    }
 
     /** Will filter tree representation in UI */
     fun filterTree(filterString: String?) {
@@ -169,10 +175,6 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
         }
     }
 
-    fun resetSelection() {
-        tree.setSelectionRow(0)
-    }
-
     fun update() {
         _filter?.filter()
         if (tree.isSelectionEmpty) resetSelection()
@@ -181,6 +183,10 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     fun reset() {
         state.clear()
         update()
+    }
+
+    fun resetSelection() {
+        tree.setSelectionRow(0)
     }
 
     private fun reset(rules: RulesMap) {
@@ -228,15 +234,4 @@ class GraziRulesTree(selectionListener: (meta: Any) -> Unit) : Disposable {
     override fun dispose() {
         _filter?.dispose()
     }
-
-    private val GraziTreeNode.nodeText: String
-        get() = when (val meta = userObject) {
-            is RuleWithLang -> meta.rule.description
-            is ComparableCategory -> meta.name
-            is Lang -> meta.displayName
-            else -> ""
-        }
-
-    private val GraziTreeNode.attrs: SimpleTextAttributes
-        get() = if (userObject is RuleWithLang) REGULAR_ATTRIBUTES else REGULAR_BOLD_ATTRIBUTES
 }

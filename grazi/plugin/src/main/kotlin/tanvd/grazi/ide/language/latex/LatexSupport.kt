@@ -22,6 +22,7 @@ class LatexSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is LatexNormalText) { "Got non LatexNormalText in LatexSupport" }
+
         return GrammarChecker.default.check(element).filterNot { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }.toSet()
     }
 }

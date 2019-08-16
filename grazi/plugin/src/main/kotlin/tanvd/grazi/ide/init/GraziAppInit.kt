@@ -11,7 +11,6 @@ import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.LangToolInstrumentation
 
-
 class GraziAppInit : BaseComponent, DumbAware {
     override fun initComponent() {
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)

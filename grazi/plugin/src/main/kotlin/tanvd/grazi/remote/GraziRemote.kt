@@ -1,8 +1,6 @@
 package tanvd.grazi.remote
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.ide.ui.components.dsl.msg

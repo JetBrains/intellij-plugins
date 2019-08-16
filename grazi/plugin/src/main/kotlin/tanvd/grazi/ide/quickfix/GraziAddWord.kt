@@ -8,17 +8,17 @@ import com.intellij.openapi.util.Iconable
 import icons.SpellcheckerIcons
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.ui.components.dsl.msg
 import javax.swing.Icon
 
-
 class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
+    override fun getFamilyName() = msg("grazi.quickfix.addword.family")
+
+    override fun getName() = msg("grazi.quickfix.addword.text", typo.word)
+
     override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Dictionary
 
-    override fun getName() = "Save '${typo.word}' to dictionary"
-
     override fun getPriority() = PriorityAction.Priority.NORMAL
-
-    override fun getFamilyName() = "Save word"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.update {

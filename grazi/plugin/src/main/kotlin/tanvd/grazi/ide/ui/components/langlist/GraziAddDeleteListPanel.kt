@@ -13,7 +13,6 @@ import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
 
-
 class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit, private val onLanguageRemoved: (lang: Lang) -> Unit) :
         AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
     private val decorator: ToolbarDecorator =
@@ -53,9 +52,11 @@ class GraziAddDeleteListPanel(private val onLanguageAdded: (lang: Lang) -> Unit,
     }
 
     override fun findItemToAdd(): Lang? {
-        val langsInList = listItems.map { it as Lang }.toSet()
-        val (downloadedLangs, otherLangs) = Lang.sortedValues().filter { it !in langsInList }.partition { it.jLanguage != null }
-        val step = GraziListPopupStep(msg("grazi.ui.settings.language.dialog.title"), downloadedLangs, otherLangs, this, ::addElement)
+        // remove already enabled languages and their dialects
+        val langsInList = listItems.map { (it as Lang).shortCode }.toSet()
+        val (downloadedLangs, otherLangs) = Lang.sortedValues().filter { it.shortCode !in langsInList }.partition { it.jLanguage != null }
+
+        val step = GraziListPopupStep(msg("grazi.ui.settings.language.popup.title"), downloadedLangs, otherLangs, this, ::addElement)
         val menu = object : ListPopupImpl(null, step) {
             override fun getListElementRenderer() = GraziPopupListElementRenderer(this)
         }

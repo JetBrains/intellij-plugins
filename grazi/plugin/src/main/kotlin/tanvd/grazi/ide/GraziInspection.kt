@@ -98,7 +98,10 @@ class GraziInspection : LocalInspectionTool() {
                         }
                     }
 
-                    add(GraziDisableRule(fix))
+                    // disable spelling rule will not affect anything
+                    if (!fix.isSpellingTypo) {
+                        add(GraziDisableRule(fix))
+                    }
                 }
 
                 manager.createProblemDescriptor(element, fix.toSelectionRange(), getProblemMessage(fix, isOnTheFly),

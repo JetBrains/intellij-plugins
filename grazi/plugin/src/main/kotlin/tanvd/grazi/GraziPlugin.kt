@@ -2,7 +2,6 @@ package tanvd.grazi
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
-import com.intellij.ide.plugins.cl.PluginClassLoader
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.PluginId
 import tanvd.kex.tryRun

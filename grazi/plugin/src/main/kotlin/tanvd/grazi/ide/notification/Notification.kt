@@ -1,6 +1,5 @@
 package tanvd.grazi.ide.notification
 
-
 import com.intellij.notification.*
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -48,13 +47,8 @@ object Notification {
                 .addAction(object : NotificationAction(msg("grazi.languages.action.disable", s)) {
                     override fun actionPerformed(e: AnActionEvent, notification: Notification) {
                         GraziConfig.update { state ->
-                            val native = if (state.nativeLanguage.jLanguage == null) {
-                                Lang.AMERICAN_ENGLISH
-                            } else {
-                                state.nativeLanguage
-                            }
-
-                            state.update(enabledLanguages = state.enabledLanguages - state.missedLanguages, nativeLanguage = native)
+                            state.update(enabledLanguages = state.enabledLanguages - state.missedLanguages,
+                                    nativeLanguage = if (state.nativeLanguage.jLanguage == null) Lang.AMERICAN_ENGLISH else state.nativeLanguage)
                         }
                         notification.hideBalloon()
                     }

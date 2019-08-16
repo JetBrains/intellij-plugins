@@ -6,14 +6,18 @@ import org.gradle.kotlin.dsl.exclude
 
 
 fun ExternalModuleDependency.ltExcludes() {
-    exclude("org.slf4j", "slf4j-api")
+    // already in project
+    exclude("org.apache.commons", "commons-lang3")
 
     // useless for languagetool-core
     exclude("com.typesafe.akka")
     exclude("org.scala-lang")
     exclude("biz.k11i", "xgboost-predictor")
+    exclude("org.apache.commons", "commons-csv")
+    exclude("javax.activation", "javax.activation-api")
 
     // already in IDEA
+    exclude("org.slf4j", "slf4j-api")
     exclude("com.google.guava", "guava")
     exclude("com.intellij", "annotations")
     exclude("net.java.dev.jna", "jna")
@@ -21,11 +25,7 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("org.glassfish.jaxb", "jaxb-runtime")
     exclude("com.fasterxml.jackson.core", "jackson-databind")
     exclude("com.esotericsoftware.kryo", "kryo")
-
-    exclude("org.apache.commons", "commons-lang3")
-    exclude("org.apache.commons", "commons-csv")
     exclude("commons-logging", "commons-logging")
-    exclude("javax.activation", "javax.activation-api")
     exclude("org.ow2.asm", "asm")
 
     // used only in languagetool-core tests

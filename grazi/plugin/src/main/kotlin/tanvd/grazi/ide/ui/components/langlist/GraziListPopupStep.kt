@@ -9,7 +9,6 @@ import tanvd.grazi.remote.GraziRemote
 import tanvd.kex.ifTrue
 import javax.swing.JComponent
 
-
 class GraziListPopupStep(title: String, private val downloadedLangs: List<Lang>, private val otherLangs: List<Lang>,
                          private val panel: JComponent, val onResult: (Lang) -> Unit) : BaseListPopupStep<Lang>(title, downloadedLangs + otherLangs) {
     override fun getSeparatorAbove(value: Lang?) = when (value) {

@@ -1,6 +1,5 @@
 package tanvd.grazi.ide.language.markdown
 
-
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.grammar.GrammarChecker

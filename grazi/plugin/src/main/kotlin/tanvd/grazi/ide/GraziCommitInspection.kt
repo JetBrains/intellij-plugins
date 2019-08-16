@@ -11,7 +11,6 @@ import com.intellij.vcs.commit.CommitMessageInspectionProfile
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 
-
 class GraziCommitInspection : BaseCommitMessageInspection() {
     companion object : GraziStateLifecycle {
         val graziInspection: LocalInspectionTool by lazy { GraziInspection() }

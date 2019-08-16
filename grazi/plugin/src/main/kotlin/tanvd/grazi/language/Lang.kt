@@ -38,6 +38,7 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
 
     companion object {
         operator fun get(lang: Language): Lang? = values().find { lang.name == it.displayName }
+        // NOTE: dialects have same shortcode
         operator fun get(code: String): Lang? = values().find { it.shortCode == code }
 
         fun sortedValues() = values().sortedBy(Lang::displayName)

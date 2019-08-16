@@ -15,6 +15,7 @@ class PropertiesSupport : LanguageSupport() {
 
     override fun check(element: PsiElement): Set<Typo> {
         require(element is PropertyValueImpl) { "Got non PropertyValueImpl in PropsSupport" }
+
         return GrammarChecker.default.check(element).filterNot { it.info.category in tagsIgnoredCategories }.toSet()
     }
 }

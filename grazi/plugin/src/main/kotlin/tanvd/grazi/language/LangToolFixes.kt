@@ -4,7 +4,6 @@ import org.languagetool.rules.Rule
 import tanvd.grazi.utils.decapitalizeIfNotAbbreviation
 import tanvd.grazi.utils.safeSubstring
 
-
 enum class LangToolFixes(private val ruleId: String, private val fix: (suggestion: String) -> String) {
     ARTICLE_MISSING("ARTICLE_MISSING", {
         val suggestion = it.replace("\\s+".toRegex(), " ")

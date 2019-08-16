@@ -1,6 +1,5 @@
 package tanvd.grazi.ide.language.plain
 
-
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPlainText
 import tanvd.grazi.grammar.GrammarChecker

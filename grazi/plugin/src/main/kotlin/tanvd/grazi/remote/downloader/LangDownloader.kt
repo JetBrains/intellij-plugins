@@ -33,7 +33,7 @@ import java.nio.file.Paths
 object LangDownloader {
     private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
-    val MAVEN_CENTRAL_REPOSITORY = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
+    val MAVEN_CENTRAL_REPOSITORY: RemoteRepository = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
             .setProxy(JreProxySelector.getProxy(msg("grazi.maven.repo.url"))).build()
 
     private val repository: RepositorySystem by lazy {
@@ -77,13 +77,14 @@ object LangDownloader {
 
         // jars must have at least one jar with language
         if (jars.isEmpty()) {
-            Messages.showWarningDialog(project, "Failed to download ${lang.displayName}", "Download error")
+            Messages.showWarningDialog(project, msg("grazi.ui.settings.language.download.error.text", lang.displayName),
+                    msg("grazi.ui.settings.language.download.error.title"))
         }
 
         if (isNotCancelled && jars.isNotEmpty()) {
             val descriptions = jars.map { downloader.createFileDescription(it.url, it.name) }.toList()
 
-            val result = downloader.createDownloader(descriptions, "${lang.displayName} language")
+            val result = downloader.createDownloader(descriptions, msg("grazi.ui.settings.language.download.name", lang.displayName))
                     .downloadFilesWithProgress(GraziPlugin.installationFolder.absolutePath + "/lib", project, null)
 
             // null if canceled or failed, zero result if nothing found
@@ -94,6 +95,7 @@ object LangDownloader {
                 return true
             }
         }
+
         return false
     }
 }

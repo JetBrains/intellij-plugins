@@ -28,7 +28,6 @@ import tanvd.grazi.utils.toPointer
 import tanvd.grazi.utils.withOffset
 import tanvd.kex.buildSet
 
-
 object GraziSpellchecker : GraziStateLifecycle {
     private const val MAX_SUGGESTIONS_COUNT = 5
     private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
@@ -85,7 +84,7 @@ object GraziSpellchecker : GraziStateLifecycle {
         var match: RuleMatch? = null
         val fixes = checkers.map { (tool, checker) ->
             try {
-                checker.match(tool.getAnalyzedSentence(word))
+                checker.match(tool.getRawAnalyzedSentence(word))
             } catch (t: Throwable) {
                 logger.trace("Got exception during check for spelling mistakes by LanguageTool", t)
                 null

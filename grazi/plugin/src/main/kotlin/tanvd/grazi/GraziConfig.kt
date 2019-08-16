@@ -10,7 +10,6 @@ import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 import tanvd.kex.ifTrue
 
-
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
