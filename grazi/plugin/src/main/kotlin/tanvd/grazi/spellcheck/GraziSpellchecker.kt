@@ -86,7 +86,7 @@ object GraziSpellchecker : GraziStateLifecycle {
             try {
                 checker.match(tool.getRawAnalyzedSentence(word))
             } catch (t: Throwable) {
-                logger.trace("Got exception during check for spelling mistakes by LanguageTool", t)
+                logger.warn("Got exception during check for spelling mistakes by LanguageTool", t)
                 null
             }?.firstOrNull<RuleMatch>() ?: return emptySet()
         }.onEach {

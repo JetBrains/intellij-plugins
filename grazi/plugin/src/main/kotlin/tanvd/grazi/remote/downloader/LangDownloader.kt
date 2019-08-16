@@ -71,7 +71,7 @@ object LangDownloader {
             try {
                 repository.collectDependencies(session, request).root.traverse { jars.add(it.artifact) }
             } catch (e: Throwable) {
-                logger.trace("Download error", e)
+                logger.warn("Download error", e)
             }
         }, msg("grazi.ui.settings.language.searching.title"), true, project)
 

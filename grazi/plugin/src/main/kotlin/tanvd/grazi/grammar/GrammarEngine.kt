@@ -63,7 +63,7 @@ object GrammarEngine {
                     .map { Typo(it, lang) }
                     .toCollection(LinkedSet())
         } catch (e: Throwable) {
-            logger.trace("Got exception during check for typos by LanguageTool", e)
+            logger.warn("Got exception during check for typos by LanguageTool", e)
             LinkedSet()
         }
     }
