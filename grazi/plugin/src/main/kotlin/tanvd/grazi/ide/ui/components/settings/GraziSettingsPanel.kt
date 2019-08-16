@@ -19,7 +19,7 @@ import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
-import tanvd.grazi.ide.ui.components.rules.GraziRulesTree
+import tanvd.grazi.ide.ui.components.rules.GraziRulesPanel
 import tanvd.grazi.language.Lang
 import tanvd.grazi.remote.GraziRemote
 import java.awt.BorderLayout
@@ -32,7 +32,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         setListener({ _, _ ->
             GraziRemote.download((cmbNativeLanguage.selectedItem as Lang), guessCurrentProject(cmbNativeLanguage))
             updateWarnings()
-            rulesTree.reset()
+            rulesPanel.reset()
         }, null)
     }
 
@@ -54,7 +54,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         setListener({ _, _ ->
             GraziRemote.downloadMissing(guessCurrentProject(descriptionPane))
             updateWarnings()
-            rulesTree.reset()
+            rulesPanel.reset()
         }, null)
     }
     private val ruleLink = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
@@ -69,8 +69,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     private val descriptionPane = pane()
 
-    private val rulesTree by lazy {
-        GraziRulesTree {
+    private val rulesPanel by lazy {
+        GraziRulesPanel {
             linkPanel.isVisible = getLinkLabelListener(it)?.let { listener ->
                 ruleLink.setListener(listener, null)
                 true
@@ -83,7 +83,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     }
 
     private val adpEnabledLanguages by lazy {
-        GraziAddDeleteListPanel({ rulesTree.addLang(it) }, { rulesTree.removeLang(it); updateWarnings() })
+        GraziAddDeleteListPanel({ rulesPanel.addLang(it) }, { rulesPanel.removeLang(it); updateWarnings() })
     }
 
     private fun updateWarnings() {
@@ -95,7 +95,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         return !(settings.state.enabledLanguages == adpEnabledLanguages.listItems.toSet())
                 .and(settings.state.nativeLanguage == cmbNativeLanguage.selectedItem)
                 .and(settings.state.enabledSpellcheck == cbEnableGraziSpellcheck.isSelected)
-                .and(!rulesTree.isModified)
+                .and(!rulesPanel.isModified)
     }
 
     override fun apply(settings: GraziConfig) {
@@ -113,7 +113,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                 }
             }
 
-            val (enabledRules, disabledRules) = rulesTree.state()
+            val (enabledRules, disabledRules) = rulesPanel.state()
 
             enabledRules.forEach { id ->
                 userDisabledRules.remove(id)
@@ -135,15 +135,14 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         }
 
         updateWarnings()
-        rulesTree.reset()
+        rulesPanel.reset()
     }
 
     override fun reset(settings: GraziConfig) {
         cmbNativeLanguage.selectedItem = settings.state.nativeLanguage
         cbEnableGraziSpellcheck.isSelected = settings.state.enabledSpellcheck
         adpEnabledLanguages.reset(settings)
-        rulesTree.reset()
-        rulesTree.resetSelection()
+        rulesPanel.reset()
 
         updateWarnings()
     }
@@ -180,7 +179,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                 border = border(msg("grazi.ui.settings.rules.configuration.text"), false, JBUI.emptyInsets())
 
                 panel(constraint = CC().grow().width("45%").minWidth("250px")) {
-                    add(rulesTree.panel)
+                    add(rulesPanel.panel)
                 }
 
                 panel(MigLayout(createLayoutConstraints().flowY().fillX()), constraint = CC().grow().width("55%")) {
@@ -198,12 +197,9 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
         }
     }
 
-    fun showOption(option: String?) = Runnable {
-        rulesTree.filterTree(option)
-        rulesTree.filter = option
-    }
+    fun showOption(option: String?) = Runnable { rulesPanel.filter(option ?: "") }
 
     override fun dispose() {
-        rulesTree.dispose()
+        rulesPanel.dispose()
     }
 }

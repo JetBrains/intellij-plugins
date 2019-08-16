@@ -7,6 +7,7 @@ import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.ide.ui.components.rules.ComparableCategory
+import tanvd.grazi.ide.ui.components.rules.RuleWithLang
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
@@ -22,7 +23,7 @@ fun GraziSettingsPanel.hasDescription(rule: Rule) = rule.url != null || rule.inc
 
 fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
     return when (it) {
-        is Rule -> it.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
+        is RuleWithLang -> it.rule.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
         else -> null
     }
 }
@@ -35,13 +36,14 @@ fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
         it is ComparableCategory -> html {
             unsafe { +msg("grazi.ui.settings.rules.category.template", it.name) }
         }
-        it is Rule && hasDescription(it) -> {
+        it is RuleWithLang && hasDescription(it.rule) -> {
             html {
                 table {
                     cellpading = "0"
                     cellspacing = "0"
+                    style = "width:100%;"
 
-                    LangTool.getRuleLanguages(it.id)?.let { languages ->
+                    LangTool.getRuleLanguages(it.rule.id)?.let { languages ->
                         if (languages.size > 1) {
                             tr {
                                 td {
@@ -63,7 +65,7 @@ fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
                         }
                     }
 
-                    it.incorrectExamples?.let { examples ->
+                    it.rule.incorrectExamples?.let { examples ->
                         if (examples.isNotEmpty()) {
                             val accepted = ArrayList<IncorrectExample>()
                             // remove very similar examples
