@@ -5637,7 +5637,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // simpleQualifiedReferenceExpression typeArguments? '?'?
+  // simpleQualifiedReferenceExpression typeArguments? ('?' !(expression ':'))?
   public static boolean simpleType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleType")) return false;
     boolean r;
@@ -5656,11 +5656,43 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // '?'?
+  // ('?' !(expression ':'))?
   private static boolean simpleType_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleType_2")) return false;
-    consumeToken(b, QUEST);
+    simpleType_2_0(b, l + 1);
     return true;
+  }
+
+  // '?' !(expression ':')
+  private static boolean simpleType_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleType_2_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST);
+    r = r && simpleType_2_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !(expression ':')
+  private static boolean simpleType_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleType_2_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !simpleType_2_0_1_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // expression ':'
+  private static boolean simpleType_2_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "simpleType_2_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = expression(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -6568,7 +6600,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<functionId>> typeParameters? parameterTypeList '?'?
+  // <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
   public static boolean typedFunctionType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typedFunctionType")) return false;
     boolean r;
@@ -6588,11 +6620,43 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // '?'?
+  // ('?' !(expression ':'))?
   private static boolean typedFunctionType_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typedFunctionType_3")) return false;
-    consumeToken(b, QUEST);
+    typedFunctionType_3_0(b, l + 1);
     return true;
+  }
+
+  // '?' !(expression ':')
+  private static boolean typedFunctionType_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedFunctionType_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST);
+    r = r && typedFunctionType_3_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !(expression ':')
+  private static boolean typedFunctionType_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedFunctionType_3_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !typedFunctionType_3_0_1_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // expression ':'
+  private static boolean typedFunctionType_3_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "typedFunctionType_3_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = expression(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -6608,7 +6672,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<functionId>> typeParameters? parameterTypeList '?'?
+  // <<functionId>> typeParameters? parameterTypeList ('?' !(expression ':'))?
   public static boolean untypedFunctionType(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "untypedFunctionType")) return false;
     boolean r;
@@ -6628,11 +6692,43 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // '?'?
+  // ('?' !(expression ':'))?
   private static boolean untypedFunctionType_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "untypedFunctionType_3")) return false;
-    consumeToken(b, QUEST);
+    untypedFunctionType_3_0(b, l + 1);
     return true;
+  }
+
+  // '?' !(expression ':')
+  private static boolean untypedFunctionType_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "untypedFunctionType_3_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, QUEST);
+    r = r && untypedFunctionType_3_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // !(expression ':')
+  private static boolean untypedFunctionType_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "untypedFunctionType_3_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !untypedFunctionType_3_0_1_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // expression ':'
+  private static boolean untypedFunctionType_3_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "untypedFunctionType_3_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = expression(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
