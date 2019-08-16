@@ -8,7 +8,7 @@ import com.optimaize.langdetect.profiles.LanguageProfileReader
 object LangDetector {
     private const val charsForLangDetection = 1_000
     private val detector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-            .probabilityThreshold(0.95)
+            .probabilityThreshold(0.90)
             .prefixFactor(1.5)
             .suffixFactor(2.0)
             .withProfiles(profiles)

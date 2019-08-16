@@ -57,7 +57,7 @@ class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test one line of text with multiple typos`() {
-        val text = "Hello. world,, tot he"
+        val text = "Hello. world,, tot he. text for english."
         val tokens = plain(text)
         val fixes = GrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(2, fixes.size)
