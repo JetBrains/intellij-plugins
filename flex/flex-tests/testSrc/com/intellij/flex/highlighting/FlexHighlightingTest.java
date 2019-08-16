@@ -17,6 +17,7 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.idea.Bombed;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.lang.css.CssDialect;
@@ -285,6 +286,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     }
   }
 
+  @Bombed(user = "Roman Shevchenko", day = 22, month = Calendar.AUGUST)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToFlexCssQuickFix1() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
@@ -298,6 +300,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     }
   }
 
+  @Bombed(user = "Roman Shevchenko", day = 22, month = Calendar.AUGUST)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToFlexCssQuickFix2() throws Exception {
     try {
@@ -329,6 +332,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     }
   }
 
+  @Bombed(user = "Roman Shevchenko", day = 22, month = Calendar.AUGUST)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToClassicCssQuickFix1() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
@@ -336,6 +340,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       CssBundle.message("switch.to.css.dialect.quickfix.name", CssDialect.CLASSIC.getDisplayName()), "css");
   }
 
+  @Bombed(user = "Roman Shevchenko", day = 22, month = Calendar.AUGUST)
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToClassicCssQuickFix2() throws Exception {
     enableInspectionTool(new CssUnknownPropertyInspection());
