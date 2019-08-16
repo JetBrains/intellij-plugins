@@ -28,6 +28,7 @@ object GrammarEngine {
     fun getTypos(str: String, seps: List<Char> = separators.filter { it in str }): Set<Typo> = buildSet {
         if (str.isBlank() || isTooBig(str)) return@buildSet
 
+        // FIXME not useful for chinese/japanese
         if (str.split(Regex("\\s+")).size < minNumberOfWords) {
             return@buildSet
         }

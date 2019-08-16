@@ -8,7 +8,7 @@ import com.optimaize.langdetect.profiles.LanguageProfileReader
 object LangDetector {
     private const val charsForLangDetection = 1_000
     private val detector = LanguageDetectorBuilder.create(NgramExtractors.standard())
-            .minimalConfidence(0.95)
+            .probabilityThreshold(0.95)
             .prefixFactor(1.5)
             .suffixFactor(2.0)
             .withProfiles(profiles)
@@ -20,5 +20,5 @@ object LangDetector {
             ?.let { detectedLanguage -> enabledLanguages.find { it.shortCode == detectedLanguage.locale.language } }
 
     private val profiles: List<LanguageProfile>
-        get() = LanguageProfileReader().read((Lang.values().filter { it.shortCode != "zh" }.map { it.shortCode } + listOf("zh-CN", "zh-TW")).toSet())
+        get() = LanguageProfileReader().read((Lang.values().filter { it.shortCode != "zh" }.map { it.shortCode } + "zh-CN").toSet())
 }
