@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.picocontainer.Disposable
+import tanvd.grazi.ide.ui.components.dsl.actionGroup
 import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
@@ -29,7 +30,7 @@ class GraziRulesPanel(onSelectionChanged: (meta: Any) -> Unit) : Disposable {
             panel(constraint = BorderLayout.NORTH) {
                 border = JBUI.Borders.emptyBottom(2)
 
-                with(DefaultActionGroup()) {
+                actionGroup {
                     val actionManager = CommonActionsManager.getInstance()
                     val treeExpander = DefaultTreeExpander(tree)
                     add(actionManager.createExpandAllAction(treeExpander, tree))

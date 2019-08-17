@@ -5,7 +5,7 @@
     "popup": {
       "menu_item": [
         {
-          "<warning descr="MORFOLOGIK_RULE_EN_US">valu</warning>": "New",
+          "<warning descr="MORFOLOGIK_RULE_EN_US">valuue</warning>": "New",
           "onclick": "CreateNewDoc()"
         },
         {

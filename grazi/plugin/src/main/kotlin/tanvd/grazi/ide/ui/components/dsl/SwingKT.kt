@@ -1,12 +1,18 @@
 package tanvd.grazi.ide.ui.components.dsl
 
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.PropertyKey
 import tanvd.grazi.GraziBundle
-import java.awt.*
-import javax.swing.*
+import java.awt.BorderLayout
+import java.awt.Container
+import java.awt.Insets
+import java.awt.LayoutManager
+import javax.swing.JComponent
+import javax.swing.JEditorPane
+import javax.swing.JPanel
 import javax.swing.border.Border
 
 fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)
@@ -30,3 +36,5 @@ fun pane() = JEditorPane().apply {
     border = null
     background = null
 }
+
+fun actionGroup(body: DefaultActionGroup.() -> Unit) = DefaultActionGroup().apply(body)

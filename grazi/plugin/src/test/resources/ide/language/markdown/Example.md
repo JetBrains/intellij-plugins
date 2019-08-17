@@ -18,7 +18,7 @@ val a = "So big!"
 
 It <warning descr="IT_VBZ">are</warning> written not <warning descr="MANY_NN_U">many good</warning> .
 
-Of <warning descr="MISSING_COMMA_AFTER_INTRODUCTORY_PHRASE">course it</warning> has <warning descr="MORFOLOGIK_RULE_EN_US">erros</warning> in lists:
+Of <warning descr="MISSING_COMMA_AFTER_INTRODUCTORY_PHRASE">course it</warning> has <warning descr="MORFOLOGIK_RULE_EN_US">errosr</warning> in lists:
 * so much <warning descr="MORFOLOGIK_RULE_EN_US">errorsss</warning>!
 * even here it is <warning descr="ARTICLE_MISSING">friend</warning> of error
 

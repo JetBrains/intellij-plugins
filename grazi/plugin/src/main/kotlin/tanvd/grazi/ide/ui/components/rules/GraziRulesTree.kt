@@ -9,9 +9,9 @@ import tanvd.grazi.language.LangTool
 import java.util.*
 import javax.swing.tree.DefaultTreeModel
 
-data class TreeState(val enabled: Set<String>, val disabled: Set<String>)
-
 class GraziRulesTree(renderer: CheckboxTreeCellRenderer) : CheckboxTree(renderer, GraziTreeNode()) {
+    data class TreeState(val enabled: Set<String>, val disabled: Set<String>)
+
     init {
         addCheckboxTreeListener(object : CheckboxTreeListener {
             override fun nodeStateChanged(node: CheckedTreeNode) {
@@ -32,7 +32,7 @@ class GraziRulesTree(renderer: CheckboxTreeCellRenderer) : CheckboxTree(renderer
     private val state = HashMap<String, RuleWithLang>()
 
     val isModified: Boolean
-        get() = state.values.onEach { println(it.rule.description) }. any { it.lang in langs }
+        get() = state.values.any { it.lang in langs }
 
     fun addLang(lang: Lang) = langs.add(lang)
     fun removeLang(lang: Lang) = langs.remove(lang)

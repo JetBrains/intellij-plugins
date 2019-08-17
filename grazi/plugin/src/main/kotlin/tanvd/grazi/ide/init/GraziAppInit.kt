@@ -7,6 +7,7 @@ import com.intellij.openapi.project.DumbAware
 import tanvd.grazi.ide.GraziCommitInspection
 import tanvd.grazi.ide.GraziInspection
 import tanvd.grazi.ide.msg.GraziStateLifecycle
+import tanvd.grazi.language.LangDetector
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.LangToolInstrumentation
@@ -14,6 +15,7 @@ import tanvd.grazi.utils.LangToolInstrumentation
 class GraziAppInit : BaseComponent, DumbAware {
     override fun initComponent() {
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
+        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangDetector)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziCommitInspection)

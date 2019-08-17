@@ -1,21 +1,18 @@
 package tanvd.grazi.grammar
 
 import tanvd.grazi.GraziTestBase
-import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangDetector
 
 class LangDetectorTest : GraziTestBase(true) {
-    private val langs = Lang.values().toList()
-
     fun `test english detection`() {
         var lang = LangDetector.getLang("The manager wants to speak to every employees in his office." +
                 " The reason we were late is because there was an accident." +
                 "We describe an unusual of benign prostatic hyperplasia that demonstrated florid sclerosing." +
                 "At the time, Guider was working just two day's drive from Narooma, in a Canberra suburb." +
-                "Your action with regarding to the decision of the committee is not satisfactory.", langs)
+                "Your action with regarding to the decision of the committee is not satisfactory.")
         assertEquals("en", lang?.shortCode)
 
-        lang = LangDetector.getLang("It is baton", langs)
+        lang = LangDetector.getLang("It is baton")
         assertEquals("en", lang?.shortCode)
     }
 
@@ -24,10 +21,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Применение численных методов оптимизации никогда не может гарантировать, что получится найден глобальный экстремум." +
                 "Когда я шёл по улице, у меня развязался шнурок." +
                 "В ведение организации было передано имущество." +
-                "Лаборатория была создана при исследовательском центре.", langs)
+                "Лаборатория была создана при исследовательском центре.")
         assertEquals("ru", lang?.shortCode)
 
-        lang = LangDetector.getLang("Это батон", langs)
+        lang = LangDetector.getLang("Это батон")
         assertEquals("ru", lang?.shortCode)
     }
 
@@ -36,10 +33,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Die Delfine gehören zu den Zahnwalen. Delfine sind in allen Meeren verbreitet." +
                 "Dann hatten wir Freizeit. Dann gab es Essen. Schließlich gingen wir schlafen." +
                 "Sie fand das ein passenderes Wort mit Hilfe des Synonymlexikons." +
-                "Es wurde mir nicht an der wiege gesungen, dass ich mal an LanguageTool mitarbeiten würde.", langs)
+                "Es wurde mir nicht an der wiege gesungen, dass ich mal an LanguageTool mitarbeiten würde.")
         assertEquals("de", lang?.shortCode)
 
-        lang = LangDetector.getLang("Er gab ihm recht", langs)
+        lang = LangDetector.getLang("Er gab ihm recht")
         assertEquals("de", lang?.shortCode)
     }
 
@@ -48,10 +45,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "让我们执行一个合格公民应尽的责任" +
                 "在这方面，一定要 加强 打击的力度." +
                 "那只狗躺在门 门前 或 门以前 或 门的前边 前" +
-                "我没考好的原因是因为我没有仔细审题", langs)
+                "我没考好的原因是因为我没有仔细审题")
         assertEquals("zh", lang?.shortCode)
 
-        lang = LangDetector.getLang("两 天", langs)
+        lang = LangDetector.getLang("两 天")
         assertEquals("zh", lang?.shortCode)
     }
 
@@ -60,10 +57,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Kinderwagens met ten minste twee afmetingen van meer dan 80 cm worden in T-treinen niet aangenomen." +
                 "Godverdomme wat een bende, niks dan ma-juscule smurrie, chemisch spul dat giftig stonk." +
                 "In de film zit zelfs een kleine scène in een badkamertje die de vernedering van fysieke menselijke zwakheid blootlegt." +
-                "Indertijd in de jaren '60 was het knippen en plakken met de bandopnemer.", langs)
+                "Indertijd in de jaren '60 was het knippen en plakken met de bandopnemer.")
         assertEquals("nl", lang?.shortCode)
 
-        lang = LangDetector.getLang("Vermoedelijk uit", langs)
+        lang = LangDetector.getLang("Vermoedelijk uit")
         assertEquals("nl", lang?.shortCode)
     }
 
@@ -72,10 +69,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "L’équipe m’a demandé mon pronostique pour le match de demain." +
                 "C’est le MIT qui a publié la première version de X Windows en juin 1984." +
                 "Dicollecte vise à améliorer les dictionnaires orthographiques français." +
-                "Vous devez vous adresser auprès du responsable.", langs)
+                "Vous devez vous adresser auprès du responsable.")
         assertEquals("fr", lang?.shortCode)
 
-        lang = LangDetector.getLang("a ce jour", langs)
+        lang = LangDetector.getLang("a ce jour")
         assertEquals("fr", lang?.shortCode)
     }
 
@@ -84,10 +81,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Προσθέτουμε στο τρέχον έτος 1 μέρα και ο χρόνος αυτός ονομάζεται δίσεκτος." +
                 "Το υπερρεαλιστικό κίνημα δεν είχε ποτέ κάποιο αποτέλεσμα σε ό,τι αφορά τις πολιτικές του τοποθετήσεις και προσπάθειες." +
                 "Όσο μεγαλύτερη ροπή θέλουμε να μεταφέρουμε τόσο ισχυρότερα και περισσότερα πρέπει να είναι τα ελατήρια." +
-                "Οι Έλληνες ήταν ανέκαθεν οι παραδοσιακοί έμποροι της Μεσογείου.", langs)
+                "Οι Έλληνες ήταν ανέκαθεν οι παραδοσιακοί έμποροι της Μεσογείου.")
         assertEquals("el", lang?.shortCode)
 
-        lang = LangDetector.getLang("Είχα πάει", langs)
+        lang = LangDetector.getLang("Είχα πάει")
         assertEquals("el", lang?.shortCode)
     }
 
@@ -96,10 +93,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Ti avviso affinché tu puoi rimediare." +
                 "Non sono vengono preparate con le tecnologie e le infrastrutture adatte." +
                 "Bisogna cogliere la occasione migliore." +
-                "E non si capisce il perché di tanta paura.", langs)
+                "E non si capisce il perché di tanta paura.")
         assertEquals("it", lang?.shortCode)
 
-        lang = LangDetector.getLang("Mi aspetti", langs)
+        lang = LangDetector.getLang("Mi aspetti")
         assertEquals("it", lang?.shortCode)
     }
 
@@ -108,11 +105,11 @@ class LangDetectorTest : GraziTestBase(true) {
                 "この件に関しては言わずもがなだ。" +
                 "鼻にも掛けない。" +
                 "取り沙汰される。" +
-                "アルプス一万尺", langs)
+                "アルプス一万尺")
         assertEquals("ja", lang?.shortCode)
 
         // FIXME japanese detection is awful
-//        lang = LangDetector.getLang("しつこい", langs)
+//        lang = LangDetector.getLang("しつこい")
 //        assertEquals("ja", lang?.shortCode)
     }
 
@@ -121,10 +118,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "خون\u200Cآشام" +
                 "سرشناس\u200Cتر" +
                 "ر برای تو بود" +
-                "چگونه به کار تو رسیدگی کنم؟", langs)
+                "چگونه به کار تو رسیدگی کنم؟")
         assertEquals("fa", lang?.shortCode)
 
-        lang = LangDetector.getLang("قرمزفام", langs)
+        lang = LangDetector.getLang("قرمزفام")
         assertEquals("fa", lang?.shortCode)
     }
 
@@ -133,10 +130,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Odwrotna strona medalu jest taka, że nie chce być wyśmiana przez innych." +
                 "Nie chodzi tu o temat, ale o sam fakt krępacji wynikający z uczestniczenia w dialogu z dziewczyną." +
                 "Bogiem a prawdą jedynymi osobami, które mogą mieć niekłamaną satysfakcję ze zdobycia Everestu, są Hilary i Tenzing." +
-                "Nie ulega wątpliwości, że znany aktor skutecznie odebrał premierowi i jego świcie powagę.", langs)
+                "Nie ulega wątpliwości, że znany aktor skutecznie odebrał premierowi i jego świcie powagę.")
         assertEquals("pl", lang?.shortCode)
 
-        lang = LangDetector.getLang("za pomocą", langs)
+        lang = LangDetector.getLang("za pomocą")
         assertEquals("pl", lang?.shortCode)
     }
 
@@ -145,10 +142,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Algumas pessoas e ideias parecem fora do lugar ou há frente do seu tempo." +
                 "Os sensos demográficos têm particular interesse para a coordenação dos governos." +
                 "As estirpes destas raças de cães são adequadas à sua personalidade." +
-                "O Mário além de ter pedido uma indemnização, exigiu um pedido de desculpas.", langs)
+                "O Mário além de ter pedido uma indemnização, exigiu um pedido de desculpas.")
         assertEquals("pt", lang?.shortCode)
 
-        lang = LangDetector.getLang("criou novas", langs)
+        lang = LangDetector.getLang("criou novas")
         assertEquals("pt", lang?.shortCode)
     }
 
@@ -157,10 +154,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "El a captat atenția celor mai multor persoane cu studii superioare." +
                 "El este unul dintre cei mai remarcabil cățărători ai tuturor timpurilor." +
                 "A existat un permanent control al domniei reprezentată de orlicul de târg." +
-                "Este un reprezentant al hoților, al clasei hulită de oamenii cinstiți", langs)
+                "Este un reprezentant al hoților, al clasei hulită de oamenii cinstiți")
         assertEquals("ro", lang?.shortCode)
 
-        lang = LangDetector.getLang("este rezolvabil", langs)
+        lang = LangDetector.getLang("este rezolvabil")
         assertEquals("ro", lang?.shortCode)
     }
 
@@ -169,10 +166,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Neučila sa, a predsa si poradila." +
                 "Všetci ľudia sa rodia slobodní a sebe rovní, čo sa týka ich dôstojnosti a práv. " +
                 "Sú obdarení rozumom a majú navzájom jednať v bratskom duchu." +
-                "Pobelavé kaderie šije im obtáča, modré ich oči bystro v okolo si páča.", langs)
+                "Pobelavé kaderie šije im obtáča, modré ich oči bystro v okolo si páča.")
         assertEquals("sk", lang?.shortCode)
 
-        lang = LangDetector.getLang("Aké pekné", langs)
+        lang = LangDetector.getLang("Aké pekné")
         assertEquals("sk", lang?.shortCode)
     }
 
@@ -181,10 +178,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Las cifras indican a grosso modo que la gestión es correcta." +
                 "Se puede regresar a la zona basándonos en lo expuesto por las autoridades." +
                 "Tuvo que afrontar muchos problemas con la mudanza." +
-                "Tanto es así que los resultados fueron positivos", langs)
+                "Tanto es así que los resultados fueron positivos")
         assertEquals("es", lang?.shortCode)
 
-        lang = LangDetector.getLang("los mozos", langs)
+        lang = LangDetector.getLang("los mozos")
         assertEquals("es", lang?.shortCode)
     }
 
@@ -193,10 +190,10 @@ class LangDetectorTest : GraziTestBase(true) {
                 "Я ніколи не встигаю прочитати рухомий рядок на електронних рекламах." +
                 "Шухевич знав про це, ще ж і надто, він допоміг виробити. " +
                 "Виробнича слава України дорогого коштує марганчанам кажучи" +
-                "Якщо потрібно з кимось порадитись, то це треба робити один на один.", langs)
+                "Якщо потрібно з кимось порадитись, то це треба робити один на один.")
         assertEquals("uk", lang?.shortCode)
 
-        lang = LangDetector.getLang("по крайній мірі", langs)
+        lang = LangDetector.getLang("по крайній мірі")
         assertEquals("uk", lang?.shortCode)
     }
 }

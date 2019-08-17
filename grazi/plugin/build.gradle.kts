@@ -36,6 +36,8 @@ tasks.withType<PublishTask> {
     channels(channel)
 }
 
+val langs = setOf("ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
+
 dependencies {
     compile(kotlin("stdlib", "1.3.31"))
 
@@ -46,9 +48,6 @@ dependencies {
     compile("org.languagetool", "language-en", Versions.languageTool) {
         ltExcludes()
     }
-
-    testRuntime("org.languagetool", "language-ru", Versions.languageTool)
-    testRuntime("org.languagetool", "language-de", Versions.languageTool)
 
     // for PyCharm and others no Intellij Idea applications
     aetherDependencies()
@@ -63,10 +62,18 @@ dependencies {
     compile("tanvd.kex", "kex", "0.1.1") {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
     }
+
+    for (lang in langs) {
+        testRuntime("org.languagetool", "language-$lang", Versions.languageTool) {
+            exclude("org.slf4j", "slf4j-api")
+        }
+    }
 }
 
 tasks.withType<Test> {
     useJUnit()
+    // need for enabling all 16 languages for tests
+    jvmArgs("-Xmx1g")
 
     testLogging {
         events("passed", "skipped", "failed")
