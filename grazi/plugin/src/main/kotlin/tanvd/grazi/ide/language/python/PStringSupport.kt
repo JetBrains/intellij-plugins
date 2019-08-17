@@ -13,12 +13,12 @@ class PStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
     override fun check(element: PsiElement): Set<Typo> {
         require(element is PyStringLiteralExpression) { "Got non literal PyStringLiteralExpression in a PDocSupport" }
 
-        return GrammarChecker.ignoringQuotes.check(element.stringElements, indexBasedIgnore = { token, index ->
+        return GrammarChecker.default.check(element.stringElements, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ token, index ->
             when (token) {
                 is PyFormattedStringElement -> token.literalPartRanges.all { index !in it }
                 is PyPlainStringElement -> false
                 else -> false
             }
-        })
+        })))
     }
 }

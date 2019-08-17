@@ -9,6 +9,8 @@ object Text {
 
     fun isNewline(char: Char) = newLineCharRegex.matches(char)
 
+    fun isQuote(char: Char) = char in setOf('\'', '\"')
+
     private val urlRegex = Regex("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)")
     fun isURL(str: String) = urlRegex.matches(str)
 

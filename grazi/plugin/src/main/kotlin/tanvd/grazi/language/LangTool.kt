@@ -1,11 +1,11 @@
 package tanvd.grazi.language
 
 import com.intellij.openapi.project.Project
-import org.languagetool.*
+import org.languagetool.JLanguageTool
+import org.languagetool.UserConfig
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 
 object LangTool : GraziStateLifecycle {
     private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()

@@ -5,10 +5,7 @@ import kotlinx.html.strong
 import org.jetbrains.org.objectweb.asm.*
 import org.languagetool.Language
 import org.languagetool.Languages
-import org.languagetool.rules.ExampleSentence
-import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.Rule
-import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.*
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.language.Lang

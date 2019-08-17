@@ -17,10 +17,10 @@ class MarkdownSupport : LanguageSupport() {
     override fun check(element: PsiElement): Set<Typo> {
         require(isRelevant(element)) { "Got non Markdown header, paragraph or code in MarkdownSupport" }
 
-        return GrammarChecker.default.check(listOf(element), indexBasedIgnore = { token, index ->
+        return GrammarChecker.default.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ token, index ->
             val elementInToken = token.findElementAt(index)!!
             !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
-        }).filter { typo ->
+        }))).filter { typo ->
             val startElement = element.findElementAt(typo.location.range.start)!!
             val endElement = element.findElementAt(typo.location.range.last)!!
 

@@ -15,6 +15,6 @@ class RsStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_s
     override fun check(element: PsiElement): Set<Typo> {
         require(element is RsLitExpr) { "Got not RsLitExpr in a RsStringSupport" }
 
-        return GrammarChecker.ignoringQuotes.check(element)
+        return GrammarChecker.default.check(element)
     }
 }

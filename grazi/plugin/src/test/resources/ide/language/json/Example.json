@@ -19,7 +19,7 @@
         {
           "value": "В коробке лежало <warning descr="Sklonenije_NUM_NN">пять карандаша</warning>.",
           "onclick": "А <warning descr="grammar_vse_li_noun">все ли ошибка</warning> найдены?",
-          "de": "er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>"
+          "de": "er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>"
         }
       ]
     }

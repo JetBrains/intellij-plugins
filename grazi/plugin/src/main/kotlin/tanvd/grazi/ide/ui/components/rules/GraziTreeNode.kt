@@ -3,7 +3,7 @@ package tanvd.grazi.ide.ui.components.rules
 import com.intellij.ui.CheckedTreeNode
 import com.intellij.ui.SimpleTextAttributes
 import tanvd.grazi.language.Lang
-import java.util.HashMap
+import java.util.*
 
 @Suppress("EqualsOrHashCode")
 class GraziTreeNode(userObject: Any? = null) : CheckedTreeNode(userObject) {

@@ -5,61 +5,91 @@ import tanvd.grazi.utils.Text
 import tanvd.grazi.utils.toPointer
 import tanvd.kex.*
 
-class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
-                     private val replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
-                     private val ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet()) {
+class GrammarChecker(private val charRules: CharRules = CharRules(), private val textRules: TextRules = TextRules()) {
 
-    constructor(checker: GrammarChecker,
-                ignoreChar: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
-                replaceChar: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet(),
-                ignoreToken: LinkedSet<(String) -> Boolean> = LinkedSet())
-            : this(LinkedSet(checker.ignoreChar + ignoreChar), LinkedSet(checker.replaceChar + replaceChar),
-            LinkedSet(checker.ignoreToken + ignoreToken))
+    /** Rules working on a level of chars and previous part of string */
+    data class CharRules(val ignore: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
+                         val replace: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet()) {
+        constructor(fst: CharRules, snd: CharRules) : this(LinkedSet(fst.ignore + snd.ignore), LinkedSet(fst.replace + snd.replace))
+    }
+
+    /** Rules working on a level of the whole text */
+    data class TextRules(val ignoreFully: LinkedSet<(String) -> Boolean> = LinkedSet(),
+                         val ignoreByIndex: LinkedSet<(String, Int) -> Boolean> = LinkedSet()) {
+        constructor(fst: TextRules, snd: TextRules) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully), LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
+    }
+
+    data class TokenRules<T : PsiElement>(val ignoreFully: LinkedSet<(T) -> Boolean> = LinkedSet(),
+                                          val ignoreByIndex: LinkedSet<(T, Int) -> Boolean> = LinkedSet()) {
+        constructor(fst: TokenRules<T>, snd: TokenRules<T>) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully), LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
+    }
+
+
+    constructor(checker: GrammarChecker, charRules: CharRules = CharRules(), textRules: TextRules = TextRules())
+            : this(CharRules(checker.charRules, charRules), TextRules(checker.textRules, textRules))
 
     companion object {
         object Rules {
-            val deduplicateBlanks: (CharSequence, Char) -> Boolean = { prefix, cur ->
+            /** Deduplicate sequential blanks */
+            val flatBlanks: (CharSequence, Char) -> Boolean = { prefix, cur ->
                 prefix.lastOrNull()?.isWhitespace().orTrue() && cur.isWhitespace()
             }
+
             //TODO probably we need to flat them only if previous char is not end of sentence punctuation mark
+            /** Replace all newlines with space characters */
             val flatNewlines: (CharSequence, Char) -> Char? = { _, cur ->
                 Text.isNewline(cur).ifTrue { ' ' }
             }
 
-            val ignoreQuotesAtBorders: (CharSequence, Char) -> Boolean = { prev, cur ->
-                (cur == '\'' || cur == '\"') && (prev.isNotEmpty() && prev.last() == cur)
+            val ignoreFullyBlank: (String) -> Boolean = { it.isBlank() }
+
+            val ignoreBorderQuotes: (String, Int) -> Boolean = { text, idx ->
+                fun isSymmetricallyQuotedPart(idx: Int): Boolean {
+                    val prev = text[idx]
+                    val oppositePrev = text[text.length - idx - 1]
+                    return prev == oppositePrev && Text.isQuote(prev)
+                }
+
+                val leftRange = (0 until idx)
+                val rightRange = (idx + 1) until text.length
+
+                //Trim quotes only if all previous were quotes that should be trimmed too
+                //`all` is lazy and will return false once see not quote
+                isSymmetricallyQuotedPart(idx) && (leftRange.all { isSymmetricallyQuotedPart(it) } || rightRange.all { isSymmetricallyQuotedPart(it) })
             }
         }
 
-        val default = GrammarChecker(ignoreChar = linkedSetOf(Rules.deduplicateBlanks), replaceChar = linkedSetOf(Rules.flatNewlines))
-        val ignoringQuotes = GrammarChecker(default, ignoreChar = linkedSetOf(Rules.ignoreQuotesAtBorders))
+        val default = GrammarChecker(
+                CharRules(linkedSetOf(Rules.flatBlanks), linkedSetOf(Rules.flatNewlines)),
+                TextRules(ignoreFully = linkedSetOf(Rules.ignoreFullyBlank), ignoreByIndex = linkedSetOf(Rules.ignoreBorderQuotes))
+        )
     }
 
-    fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text },
-                               indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }) = check(tokens.toList(), getText, indexBasedIgnore)
+    fun <T : PsiElement> check(vararg tokens: T, tokenRules: TokenRules<T> = TokenRules()): Set<Typo> = check(tokens.toList(), tokenRules)
 
-    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text },
-                               indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }): Set<Typo> {
+    fun <T : PsiElement> check(tokens: Collection<T>, tokenRules: TokenRules<T> = TokenRules()): Set<Typo> {
         if (tokens.isEmpty()) return emptySet()
 
-        val indexesShift = HashMap<Int, Int>()
+        val indicesShift = HashMap<Int, Int>()
         val tokenMapping = HashMap<IntRange, T>()
 
         val resultText = buildString {
             var index = 0
             //iterate through non-ignored tokens
-            for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }) {
+            for ((token, text) in tokens.map { it to it.text }.filter { (token, text) -> !textRules.ignoreFully.any { it(text) } && !tokenRules.ignoreFully.any { it(token) } }) {
                 val tokenStartIndex = index
 
-                var totalExcluded = 0
-                indexesShift[index] = totalExcluded
-                for ((tokenIndex, char) in getText(token).withIndex()) {
+                var excluded = 0
+                indicesShift[index] = excluded
+                for ((tokenIndex, char) in text.withIndex()) {
                     //perform replacing of char (depending on already seen string)
-                    @Suppress("NAME_SHADOWING") val char = replaceChar.untilNotNull { it(this, char) } ?: char
+                    @Suppress("NAME_SHADOWING") val char = charRules.replace.untilNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignoreChar.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
-                        indexesShift[index] = ++totalExcluded
+                    if (charRules.ignore.any { it(this, char) }
+                            || textRules.ignoreByIndex.any { it(text, tokenIndex) }
+                            || tokenRules.ignoreByIndex.any { it(token, tokenIndex) }) {
+                        indicesShift[index] = ++excluded
                         continue
                     }
 
@@ -80,7 +110,7 @@ class GrammarChecker(private val ignoreChar: LinkedSet<(CharSequence, Char) -> B
 
         val typos = GrammarEngine.getTypos(resultText)
 
-        val sortedIndexesShift = indexesShift.toList().sortedBy { it.first }
+        val sortedIndexesShift = indicesShift.toList().sortedBy { it.first }
 
         return typos.mapNotNull { typo ->
             tokenMapping.filter { typo.location.range.start in it.key }.entries.firstOrNull()?.let { (range, firstToken) ->

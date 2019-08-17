@@ -22,11 +22,7 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
-import tanvd.grazi.utils.Text
-import tanvd.grazi.utils.spellcheckOnly
-import tanvd.grazi.utils.toPointer
-import tanvd.grazi.utils.withOffset
-import tanvd.kex.buildSet
+import tanvd.grazi.utils.*
 
 object GraziSpellchecker : GraziStateLifecycle {
     private const val MAX_SUGGESTIONS_COUNT = 5
@@ -78,7 +74,7 @@ object GraziSpellchecker : GraziStateLifecycle {
     /**
      * Checks text for spelling mistakes.
      */
-    private fun check(word: String, project: Project, language: Language) : Set<Typo> {
+    private fun check(word: String, project: Project, language: Language): Set<Typo> {
         if (!IdeaSpellchecker.hasProblem(word, project, language) && Text.isLatin(word)) return emptySet()
 
         var match: RuleMatch? = null
