@@ -48,7 +48,7 @@ object GrammarEngine {
         val lang = LangDetector.getLang(str) ?: return LinkedSet()
 
         return try {
-            LangTool[lang]!!.check(str)
+            LangTool.getTool(lang).check(str)
                     .orEmpty()
                     .asSequence()
                     .filterNotNull()

@@ -61,7 +61,7 @@ fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
     langs.filter { it.jLanguage != null }.forEach { lang ->
         val categories = TreeMap<ComparableCategory, SortedSet<RuleWithLang>>()
 
-        with(get(lang)!!) {
+        with(getTool(lang)) {
             val activeRules = allActiveRules.toSet()
 
             fun Rule.isActive() = (id in state.userEnabledRules && id !in state.userDisabledRules)

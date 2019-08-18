@@ -3,6 +3,7 @@ package tanvd.grazi.language
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.UserConfig
+import org.languagetool.rules.Rule
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import java.util.concurrent.ConcurrentHashMap
@@ -12,28 +13,25 @@ object LangTool : GraziStateLifecycle {
 
     private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
-    operator fun get(lang: Lang): JLanguageTool? {
-        return lang.jLanguage?.let {
-            langs.getOrPut(lang) {
-                JLanguageTool(it, GraziConfig.get().nativeLanguage.jLanguage,
-                        null, UserConfig(GraziConfig.get().userWords.toList())).apply {
-                    lang.configure(this)
+    fun getTool(lang: Lang): JLanguageTool {
+        require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 
-                    allRules.forEach { rule ->
-                        if (rule.id in GraziConfig.get().userDisabledRules) disableRule(rule.id)
-                        if (rule.id in GraziConfig.get().userEnabledRules) enableRule(rule.id)
-                    }
-                }
+        return langs.getOrPut(lang) {
+            JLanguageTool(lang.jLanguage!!, GraziConfig.get().nativeLanguage.jLanguage, null, UserConfig(GraziConfig.get().userWords.toList())).apply {
+                lang.configure(this)
+
+                GraziConfig.get().userDisabledRules.forEach { id -> disableRule(id) }
+                GraziConfig.get().userEnabledRules.forEach { id -> enableRule(id) }
             }
         }
     }
 
+    fun getSpeller(lang: Lang): Rule? = getTool(lang).allRules.find { it.isDictionaryBasedSpellingRule }
+
     override fun init(state: GraziConfig.State, project: Project) {
-        for (lang in state.enabledLanguages) {
-            get(lang)?.let { tool ->
-                tool.allRules.distinctBy { it.id }.forEach { rule ->
-                    rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
-                }
+        for (lang in state.availableLanguages) {
+            getTool(lang).allRules.distinctBy { it.id }.forEach { rule ->
+                rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
             }
         }
     }

@@ -13,7 +13,6 @@ import com.intellij.util.Consumer
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
 import org.languagetool.JLanguageTool
-import org.languagetool.UserConfig
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
 import org.languagetool.rules.en.MorfologikAmericanSpellerRule
@@ -22,6 +21,7 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
+import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
 
 object GraziSpellchecker : GraziStateLifecycle {
@@ -29,17 +29,18 @@ object GraziSpellchecker : GraziStateLifecycle {
     private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
     private val logger = LoggerFactory.getLogger(GraziSpellchecker::class.java)
 
-    private var checkers: Set<Pair<JLanguageTool, Rule>> = emptySet()
+    data class SpellerTool(val tool: JLanguageTool, val speller: Rule) {
+        fun check(text: String): Set<RuleMatch> = speller.match(tool.getRawAnalyzedSentence(text)).toSet()
+    }
+
+    private val checkers: Set<SpellerTool>
+        get() = GraziConfig.get().availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
+            val tool = LangTool.getTool(lang)
+            val rule = LangTool.getSpeller(lang)
+            rule?.let { SpellerTool(tool, rule) }
+        }.toSet()
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
-
-    private fun createCheckers(state: GraziConfig.State): Set<Pair<JLanguageTool, Rule>> = state.availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE)
-            .mapNotNull { lang ->
-                // TODO we probably don't really need to create tools each update
-                val tool = JLanguageTool(lang.jLanguage, null, UserConfig(state.userWords.toList()))
-                val checker = tool.allRules.find { it.isDictionaryBasedSpellingRule }
-                checker?.let { tool to checker }
-            }.toSet()
 
     private class GraziTokenConsumer(val project: Project, val language: Language) : TokenConsumer() {
         val result = HashSet<Typo>()
@@ -78,13 +79,13 @@ object GraziSpellchecker : GraziStateLifecycle {
         if (!IdeaSpellchecker.hasProblem(word, project, language) && Text.isLatin(word)) return emptySet()
 
         var match: RuleMatch? = null
-        val fixes = checkers.map { (tool, checker) ->
+        val fixes = checkers.map { speller ->
             try {
-                checker.match(tool.getRawAnalyzedSentence(word))
+                speller.check(word)
             } catch (t: Throwable) {
                 logger.warn("Got exception during check for spelling mistakes by LanguageTool", t)
                 null
-            }?.firstOrNull<RuleMatch>() ?: return emptySet()
+            }?.firstOrNull() ?: return emptySet()
         }.onEach {
             if (it.rule is MorfologikAmericanSpellerRule) match = it
         }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.sortedWith(Text.Levenshtein.Comparator(word)).toList()
@@ -93,8 +94,6 @@ object GraziSpellchecker : GraziStateLifecycle {
     }
 
     override fun init(state: GraziConfig.State, project: Project) {
-        checkers = createCheckers(state)
-
         if (ApplicationManager.getApplication().isUnitTestMode || !state.enabledSpellcheck) return
 
         modifyAndCommitProjectProfile(project, Consumer {
@@ -107,8 +106,6 @@ object GraziSpellchecker : GraziStateLifecycle {
     }
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
-        checkers = createCheckers(newState)
-
         if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck == newState.enabledSpellcheck) return
 
         if (newState.enabledSpellcheck) {
