@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 object LangTool : GraziStateLifecycle {
     private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
+    private val spellers: MutableMap<Lang, Rule?> = ConcurrentHashMap()
 
     private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
@@ -26,7 +27,11 @@ object LangTool : GraziStateLifecycle {
         }
     }
 
-    fun getSpeller(lang: Lang): Rule? = getTool(lang).allRules.find { it.isDictionaryBasedSpellingRule }
+    fun getSpeller(lang: Lang): Rule? {
+        return spellers.getOrPut(lang) {
+            getTool(lang).allRules.find { it.isDictionaryBasedSpellingRule }
+        }
+    }
 
     override fun init(state: GraziConfig.State, project: Project) {
         for (lang in state.availableLanguages) {
@@ -38,6 +43,7 @@ object LangTool : GraziStateLifecycle {
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
         langs.clear()
+        spellers.clear()
         rulesToLanguages.clear()
 
         init(newState, project)
