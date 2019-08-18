@@ -144,9 +144,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
         override fun getProblemName() = description
 
         companion object {
-            operator fun get(value: String): Category {
-                return values().find { it.value == value } ?: OTHER
-            }
+            operator fun get(value: String) = values().find { it.value == value } ?: OTHER
         }
     }
 }

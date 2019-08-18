@@ -6,11 +6,10 @@ import org.languagetool.UserConfig
 import org.languagetool.rules.Rule
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
-import java.util.concurrent.ConcurrentHashMap
 
 object LangTool : GraziStateLifecycle {
-    private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
-    private val spellers: MutableMap<Lang, Rule?> = ConcurrentHashMap()
+    private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
+    private val spellers: MutableMap<Lang, Rule?> = HashMap()
 
     private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 

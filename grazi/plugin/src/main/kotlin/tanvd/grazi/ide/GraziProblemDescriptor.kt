@@ -2,7 +2,6 @@ package tanvd.grazi.ide
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptorBase
-import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
 import tanvd.grazi.grammar.Typo
@@ -98,7 +97,5 @@ class GraziProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescri
         }
     }
 
-    override fun getProblemGroup(): ProblemGroup? {
-        return fix.info.category
-    }
+    override fun getProblemGroup() = fix.info.category
 }
