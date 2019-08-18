@@ -96,6 +96,13 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
       .toList()
   }
 
+  fun getModel(): VueModelDirectiveProperties? {
+    return StreamEx.of(sources)
+            .select(VueContainer::class.java)
+            .map { it.model }
+            .firstOrNull()
+  }
+
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     val info = VueAttributeNameParser.parse(attributeName ?: return null, context)
 

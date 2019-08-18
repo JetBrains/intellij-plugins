@@ -8,63 +8,60 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElementType
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.DIRECTIVE
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
+import org.jetbrains.vuejs.index.isVueContext
 
 class VueExpandVModelIntention : JavaScriptIntention() {
-    override fun getFamilyName(): String = "Expand v-model into :value and @input/@change"
+    override fun getFamilyName(): String = "Expand v-model"
     override fun getText(): String = this.familyName
     private val validModifiers = setOf("lazy", "number", "trim")
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        return org.jetbrains.vuejs.index.isVueContext(element) &&
-                element.node.elementType == XmlElementType.XML_NAME &&
+        return element.node.elementType == XmlElementType.XML_NAME &&
                 element.parent?.node?.elementType == XmlElementType.XML_ATTRIBUTE &&
-                isValid(element)
+                element.parent.isValid &&
+                (element.parent as XmlAttribute).parent.descriptor is VueElementDescriptor &&
+                isValidVModel(element.parent as XmlAttribute) &&
+                isVueContext(element)
     }
 
-    private fun isValid(element: PsiElement): Boolean {
-        val text = element.text
-        if (!text.startsWith("v-model")) {
-            return false
-        }
-        val modifiers = getModifiers(text)
-        return validModifiers.containsAll(modifiers)
-    }
-
-    private fun getModifiers(text: String): List<String> {
-        val split = text.split('.')
-        return split.subList(1, split.size)
+    private fun isValidVModel(attribute: XmlAttribute): Boolean {
+        val info = VueAttributeNameParser.parse((attribute.name), attribute.parent)
+        return info.kind === DIRECTIVE &&
+                (info as? VueDirectiveInfo)?.directiveKind == VueDirectiveKind.MODEL &&
+                validModifiers.containsAll(info.modifiers)
     }
 
     override fun invoke(project: Project, editor: Editor?, psiElement: PsiElement) {
         editor ?: return
         val parent: PsiElement = psiElement.parent
-        val parentAttr = parent as XmlAttribute
-        val parentTag = parentAttr.parent
-        val directiveText = parent.name
-        val isComponent = parentTag.descriptor is VueElementDescriptor
-        var assignedValue = if (isComponent) "\$event" else "\$event.target.value"
-        var eventName = "@input"
-        var nextNeedsParens = false
-        getModifiers(directiveText).forEach {
-            if (nextNeedsParens) {
-                assignedValue = "($assignedValue)"
-                nextNeedsParens = false
-            }
-            when (it) {
-                "trim" -> assignedValue = "$assignedValue.trim()"
-                "number" -> {
-                    assignedValue = "isNaN(parseFloat($assignedValue)) ? $assignedValue : parseFloat($assignedValue)"
-                    nextNeedsParens = true
-                }
-                "lazy" -> eventName = "@change"
-            }
+        val modelAttribute = parent as XmlAttribute
+        val componentTag = modelAttribute.parent
+        val componentDescriptor = componentTag.descriptor as? VueElementDescriptor ?: return
+
+        val model = componentDescriptor.getModel()
+        var event = model?.event ?: "input"
+        val prop = model?.prop ?: "value"
+        val info = VueAttributeNameParser.parse(parent.name, parent.parent)
+
+        val modifiers = info.modifiers
+        var eventValue = "\$event"
+        if (modifiers.contains("trim")) {
+            eventValue = "typeof $eventValue === 'string' ? $eventValue.trim() : $eventValue"
         }
-        val modelVariableName = parentAttr.value
+        if (modifiers.contains("number")) {
+            eventValue = "_n($eventValue)"
+        }
+        if (modifiers.contains("lazy")) {
+            event = "change"
+        }
         CommandProcessor.getInstance().executeCommand(project, {
             WriteAction.run<RuntimeException> {
-                parentAttr.name = ":value"
-                parentTag.setAttribute(eventName, "$modelVariableName = $assignedValue")
+                modelAttribute.name = ":$prop"
+                componentTag.setAttribute("@$event", "${modelAttribute.value} = $eventValue")
             }
         }, "Expand V-Model", "VueExpandVModel")
     }
