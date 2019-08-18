@@ -10,7 +10,7 @@ import tanvd.grazi.utils.isInjectedFragment
 abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) : LanguageExtensionPoint<LanguageSupport>() {
     companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")
 
-    open fun isRelevant(element: PsiElement): Boolean = true
+    abstract fun isRelevant(element: PsiElement): Boolean
 
     fun getTypos(element: PsiElement): Set<Typo> = check(element)
             .asSequence()
