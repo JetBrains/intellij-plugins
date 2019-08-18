@@ -11,17 +11,26 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
     data class CharRules(val ignore: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
                          val replace: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet()) {
         constructor(fst: CharRules, snd: CharRules) : this(LinkedSet(fst.ignore + snd.ignore), LinkedSet(fst.replace + snd.replace))
+
+        fun ignore(prev: CharSequence, cur: Char) = ignore.any { it(prev, cur) }
+        fun replace(prev: CharSequence, cur: Char) = replace.untilNotNull { it(prev, cur) } ?: cur
     }
 
     /** Rules working on a level of the whole text */
     data class TextRules(val ignoreFully: LinkedSet<(String) -> Boolean> = LinkedSet(),
                          val ignoreByIndex: LinkedSet<(String, Int) -> Boolean> = LinkedSet()) {
         constructor(fst: TextRules, snd: TextRules) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully), LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
+
+        fun ignore(text: String): Boolean = ignoreFully.any { it(text) }
+        fun ignore(text: String, idx: Int): Boolean = ignoreByIndex.any { it(text, idx) }
     }
 
     data class TokenRules<T : PsiElement>(val ignoreFully: LinkedSet<(T) -> Boolean> = LinkedSet(),
                                           val ignoreByIndex: LinkedSet<(T, Int) -> Boolean> = LinkedSet()) {
         constructor(fst: TokenRules<T>, snd: TokenRules<T>) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully), LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
+
+        fun ignore(token: T): Boolean = ignoreFully.any { it(token) }
+        fun ignore(token: T, idx: Int): Boolean = ignoreByIndex.any { it(token, idx) }
     }
 
 
@@ -76,19 +85,17 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
         val resultText = buildString {
             var index = 0
             //iterate through non-ignored tokens
-            for ((token, text) in tokens.map { it to it.text }.filter { (token, text) -> !textRules.ignoreFully.any { it(text) } && !tokenRules.ignoreFully.any { it(token) } }) {
+            for ((token, text) in tokens.map { it to it.text }.filterNot { (token, text) -> textRules.ignore(text) || tokenRules.ignore(token) }) {
                 val tokenStartIndex = index
 
                 var excluded = 0
                 indicesShift[index] = excluded
                 for ((tokenIndex, char) in text.withIndex()) {
                     //perform replacing of char (depending on already seen string)
-                    @Suppress("NAME_SHADOWING") val char = charRules.replace.untilNotNull { it(this, char) } ?: char
+                    @Suppress("NAME_SHADOWING") val char = charRules.replace(this, char)
 
                     //check if char should be ignored
-                    if (charRules.ignore.any { it(this, char) }
-                            || textRules.ignoreByIndex.any { it(text, tokenIndex) }
-                            || tokenRules.ignoreByIndex.any { it(token, tokenIndex) }) {
+                    if (charRules.ignore(this, char) || textRules.ignore(text, tokenIndex) || tokenRules.ignore(token, tokenIndex)) {
                         indicesShift[index] = ++excluded
                         continue
                     }
@@ -110,14 +117,14 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
 
         val typos = GrammarEngine.getTypos(resultText)
 
-        val sortedIndexesShift = indicesShift.toList().sortedBy { it.first }
+        val sortedIndexesShift = indicesShift.entries.sortedBy { it.key }
 
         return typos.mapNotNull { typo ->
             tokenMapping.filter { typo.location.range.start in it.key }.entries.firstOrNull()?.let { (range, firstToken) ->
                 val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
                 if (firstToken == secondToken) {
-                    val startShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.start }?.second ?: 0
-                    val endShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.endInclusive }?.second ?: 0
+                    val startShift = sortedIndexesShift.lastOrNull { it.key <= typo.location.range.start }?.value ?: 0
+                    val endShift = sortedIndexesShift.lastOrNull { it.key <= typo.location.range.endInclusive }?.value ?: 0
                     val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
                     typo.copy(location = typo.location.copy(range = newRange, pointer = firstToken.toPointer()))
                 } else null

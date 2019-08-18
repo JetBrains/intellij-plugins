@@ -3,7 +3,6 @@ package tanvd.grazi.ide.ui.components.rules
 import com.intellij.ide.CommonActionsManager
 import com.intellij.ide.DefaultTreeExpander
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.picocontainer.Disposable

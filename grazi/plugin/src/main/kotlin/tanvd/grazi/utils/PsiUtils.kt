@@ -8,6 +8,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 
+internal typealias PsiPointer<E> = SmartPsiElementPointer<E>
+
 inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
 
 fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) == null
@@ -22,7 +24,7 @@ inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IE
     tokens.contains(token.node.elementType)
 }
 
-inline fun <reified T : PsiElement> T.toPointer(): SmartPsiElementPointer<T> = SmartPointerManager.createPointer(this)
+inline fun <reified T : PsiElement> T.toPointer(): PsiPointer<T> = SmartPointerManager.createPointer(this)
 
 fun PsiElement.parents(): Sequence<PsiElement> = generateSequence(this) { it.parent }
 

@@ -6,13 +6,8 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.PropertyKey
 import tanvd.grazi.GraziBundle
-import java.awt.BorderLayout
-import java.awt.Container
-import java.awt.Insets
-import java.awt.LayoutManager
-import javax.swing.JComponent
-import javax.swing.JEditorPane
-import javax.swing.JPanel
+import java.awt.*
+import javax.swing.*
 import javax.swing.border.Border
 
 fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)
