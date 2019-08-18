@@ -5,17 +5,18 @@ import com.intellij.psi.PsiElement
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.utils.filterNotToSet
 
 class PropertiesSupport : LanguageSupport() {
     companion object {
-        private val tagsIgnoredCategories = listOf(Typo.Category.CASING)
+        private val ignoredCategories = listOf(Typo.Category.CASING)
     }
 
     override fun isRelevant(element: PsiElement) = element is PropertyValueImpl
 
     override fun check(element: PsiElement): Set<Typo> {
-        require(element is PropertyValueImpl) { "Got non PropertyValueImpl in PropsSupport" }
+        require(element is PropertyValueImpl) { "Got non PropertyValueImpl in PropertiesSupport" }
 
-        return GrammarChecker.default.check(element).filterNot { it.info.category in tagsIgnoredCategories }.toSet()
+        return GrammarChecker.default.check(element).filterNotToSet { it.info.category in ignoredCategories }
     }
 }

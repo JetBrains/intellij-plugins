@@ -38,12 +38,12 @@ class KDocSupport : LanguageSupport() {
             isTag(element) -> {
                 GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
                         .dropFirstIf { isIdentifier(it) })
-                        .filterNot { it.info.category in tagsIgnoredCategories }
+                        .filterNotToSet { it.info.category in tagsIgnoredCategories }
             }
             else -> {
                 GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
-                        .filter { !isInTag(it) && (isBody(it) || isIdentifier(it)) })
+                        .filterToSet { !isInTag(it) && (isBody(it) || isIdentifier(it)) })
             }
-        }.toSet()
+        }
     }
 }

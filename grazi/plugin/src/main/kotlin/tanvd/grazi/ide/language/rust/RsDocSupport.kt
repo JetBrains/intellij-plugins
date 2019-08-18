@@ -24,6 +24,6 @@ class RsDocSupport : LanguageSupport() {
         require(element is RsDocCommentImpl) { "Got not RsDocCommentImpl in a RsDocSupport" }
 
         val ranges = findDoctestInjectableRanges(element).flatten().toList()
-        return checker.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ _, index -> ranges.any { it.contains(index) } })))
+        return checker.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ _, index -> ranges.any { range -> index in range } })))
     }
 }

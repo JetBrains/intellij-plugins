@@ -1,5 +1,6 @@
 package tanvd.grazi.utils
 
+import com.twelvemonkeys.util.LinkedSet
 import org.languagetool.rules.RuleMatch
 import tanvd.grazi.GraziPlugin
 import java.io.File
@@ -27,3 +28,6 @@ object Resources {
     fun getFile(file: String): File = File(GraziPlugin::class.java.getResource(file).file)
     fun getStream(file: String): InputStream = GraziPlugin::class.java.getResourceAsStream(file)
 }
+
+fun <T> Iterable<T>.filterToSet(filter: (T) -> Boolean) = asSequence().filter(filter).toCollection(LinkedSet())
+fun <T> Iterable<T>.filterNotToSet(filterNot: (T) -> Boolean) = asSequence().filterNot(filterNot).toCollection(LinkedSet())

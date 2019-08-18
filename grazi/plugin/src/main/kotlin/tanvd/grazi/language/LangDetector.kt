@@ -13,7 +13,7 @@ object LangDetector : GraziStateLifecycle {
     private lateinit var languages: Set<Lang>
     private lateinit var detector: LanguageDetector
 
-    fun getLang(str: String) = detector.getProbabilities(str.take(charsForLangDetection))
+    fun getLang(text: String) = detector.getProbabilities(text.take(charsForLangDetection))
             .maxBy { it.probability }
             ?.let { detectedLanguage -> languages.find { it.shortCode == detectedLanguage.locale.language } }
 

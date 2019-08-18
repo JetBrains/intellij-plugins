@@ -17,7 +17,7 @@ class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
         require(element is PsiLiteralExpressionImpl) { "Got non PsiLiteralExpressionImpl in JStringSupport" }
 
         return when (element.literalElementType) {
-            JavaTokenType.STRING_LITERAL -> GrammarChecker.default.check(element).toSet()
+            JavaTokenType.STRING_LITERAL -> GrammarChecker.default.check(element)
             else -> emptySet()
         }
     }

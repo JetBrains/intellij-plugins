@@ -19,7 +19,7 @@ class JsDocSupport : LanguageSupport(GraziBundle.langConfig("global.literal_stri
         val langRanges = element.children.map { it.textRangeInParent }
 
         return GrammarChecker.default.check(setOf(element), GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ _, index ->
-            langRanges.any { it.contains(index) }
+            langRanges.any { range -> index in range }
         })))
     }
 }

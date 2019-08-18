@@ -33,6 +33,6 @@ class JDocSupport : LanguageSupport() {
 
         addAll(GrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
         addAll(GrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
-                .filter { it.info.category !in tagsIgnoredCategories })
+                .filterNot { it.info.category in tagsIgnoredCategories })
     }
 }

@@ -18,12 +18,10 @@ class JsStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_s
             is JSStringTemplateExpression -> {
                 val textRanges = element.stringRanges
                 GrammarChecker.default.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ _, index ->
-                    textRanges.all { !it.contains(index) }
+                    textRanges.all { range -> index !in range }
                 })))
             }
-            else -> {
-                GrammarChecker.default.check(element)
-            }
+            else -> GrammarChecker.default.check(element)
         }
     }
 }

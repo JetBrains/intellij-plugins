@@ -7,6 +7,7 @@ import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterFor
+import tanvd.grazi.utils.filterNotToSet
 
 class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     companion object {
@@ -20,9 +21,9 @@ class KStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_st
 
         val entries = element.filterFor<KtLiteralStringTemplateEntry>()
 
-        return GrammarChecker.default.check(entries).filterNot {
+        return GrammarChecker.default.check(entries).filterNotToSet {
             (it.location.isAtEnd() && isExpressionEntry(it.location.element?.nextSibling))
                     || (it.location.isAtStart() && isExpressionEntry(it.location.element?.prevSibling))
-        }.toSet()
+        }
     }
 }
