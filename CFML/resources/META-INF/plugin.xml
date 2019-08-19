@@ -20,7 +20,6 @@
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.database</depends>
 
-
   <extensions defaultExtensionNs="com.intellij">
     <psi.referenceContributor language="CFML"
                               implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
@@ -35,14 +34,9 @@
                      implementationClass="com.intellij.coldFusion.UI.inspections.CfmlFileReferenceInspection"/>
     <lang.psiStructureViewFactory language="CFML"
                                   implementationClass="com.intellij.coldFusion.UI.editorActions.structureView.CfmlStructureViewProvider"/>
-    <!--<fileBasedIndex implementation="com.intellij.coldFusion.model.files.CfmlFileIndex"/>-->
     <typedHandler implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlTypedHandler" order="first"/>/>
     <backspaceHandlerDelegate
         implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlBackspaceHandler"/>
-    <!--
-    <lang.braceMatcher language="CFML"
-                       implementationClass="com.intellij.coldFusion.UI.editorActions.matchers.CfmlPairedBraceMatcher"/>
-    -->
     <quoteHandler fileType="CFSCRIPT"
                   className="com.intellij.coldFusion.UI.editorActions.matchers.CfmlQuoteHandler"/>
     <quoteHandler fileType="CFML" className="com.intellij.coldFusion.UI.editorActions.matchers.CfmlQuoteHandler"/>
