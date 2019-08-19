@@ -21,17 +21,5 @@ object GraziRemote {
     }
 
     /** Downloads all missing languages to local storage*/
-    fun downloadMissing(project: Project?) {
-        val state = GraziConfig.get()
-
-        if (state.hasMissedLanguages()) {
-            state.enabledLanguages.filter { it.jLanguage == null }.forEach {
-                LangDownloader.download(it, project)
-            }
-
-            if (state.nativeLanguage.jLanguage == null) {
-                LangDownloader.download(state.nativeLanguage, project)
-            }
-        }
-    }
+    fun downloadMissing(project: Project?) = GraziConfig.get().missedLanguages.forEach { LangDownloader.download(it, project) }
 }

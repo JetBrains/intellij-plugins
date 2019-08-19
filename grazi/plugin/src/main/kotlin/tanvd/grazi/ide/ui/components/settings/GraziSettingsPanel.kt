@@ -1,14 +1,7 @@
 package tanvd.grazi.ide.ui.components.settings
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.project.guessCurrentProject
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.*
-import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBPanelWithEmptyText
-import com.intellij.ui.components.labels.LinkLabel
-import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.layout.migLayout.createLayoutConstraints
 import com.intellij.util.ui.JBUI
 import net.miginfocom.layout.AC
@@ -17,86 +10,39 @@ import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.components.dsl.*
-import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
-import tanvd.grazi.ide.ui.components.rules.GraziRulesPanel
+import tanvd.grazi.ide.ui.components.dsl.border
+import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.ide.ui.components.dsl.padding
+import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.language.Lang
 import tanvd.grazi.remote.GraziRemote
-import java.awt.BorderLayout
-import javax.swing.*
+import javax.swing.JComponent
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
-    private val cbEnableGraziSpellcheck = JBCheckBox(msg("grazi.ui.settings.enable.text"))
+    private val spellcheck = GraziSpellcheckComponent()
+    private val native = GraziNativeLanguageComponent(::download)
+    private val description = GraziRuleDescriptionComponent()
+    private val rules = GraziRulesComponent(description.listener)
+    private val languages = GraziLanguagesComponent(::download, rules::addLang, rules::removeLang)
 
-    private val nativeLangLink: LinkLabel<Any?> = LinkLabel<Any?>("", AllIcons.General.Warning).apply {
-        setListener({ _, _ ->
-            GraziRemote.download((cmbNativeLanguage.selectedItem as Lang), guessCurrentProject(cmbNativeLanguage))
-            updateWarnings()
-            rulesPanel.reset()
-        }, null)
+    private fun download(lang: Lang): Boolean {
+        val isSucceed = GraziRemote.download(lang, guessCurrentProject(spellcheck.component))
+        if (isSucceed) update()
+        return isSucceed
     }
 
-    private val cmbNativeLanguage = ComboBox(Lang.sortedValues().toTypedArray()).apply {
-        addItemListener { e ->
-            val lang = (e.item as Lang)
-
-            if (lang.jLanguage == null) {
-                nativeLangLink.text = msg("grazi.ui.settings.languages.native.warning", lang.displayName)
-                nativeLangLink.isVisible = true
-            } else {
-                nativeLangLink.isVisible = false
-            }
-        }
+    private fun update() {
+        native.update()
+        languages.update()
+        rules.reset()
     }
 
-    private val langLink: LinkLabel<Any?> = LinkLabel<Any?>(msg("grazi.languages.action"), AllIcons.General.Warning).apply {
-        border = padding(JBUI.insetsTop(10))
-        setListener({ _, _ ->
-            GraziRemote.downloadMissing(guessCurrentProject(descriptionPane))
-            updateWarnings()
-            rulesPanel.reset()
-        }, null)
-    }
-    private val ruleLink = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
-    private val linkPanel = panel(HorizontalLayout(0)) {
-        border = padding(JBUI.insetsBottom(7))
-        isVisible = false
-        name = "GRAZI_LINK_PANEL"
+    fun showOption(option: String?) = Runnable { rules.filter(option ?: "") }
 
-        add(ruleLink)
-        add(JLabel(AllIcons.Ide.External_link_arrow))
-    }
-
-    private val descriptionPane = pane()
-
-    private val rulesPanel by lazy {
-        GraziRulesPanel {
-            linkPanel.isVisible = getLinkLabelListener(it)?.let { listener ->
-                ruleLink.setListener(listener, null)
-                true
-            } ?: false
-
-            descriptionPane.text = getDescriptionPaneContent(it).also {
-                descriptionPane.isVisible = it.isNotBlank()
-            }
-        }
-    }
-
-    private val adpEnabledLanguages by lazy {
-        GraziAddDeleteListPanel({ rulesPanel.addLang(it) }, { rulesPanel.removeLang(it); updateWarnings() })
-    }
-
-    private fun updateWarnings() {
-        langLink.isVisible = GraziConfig.get().hasMissedLanguages(withNative = false)
-        nativeLangLink.isVisible = (cmbNativeLanguage.selectedItem as Lang).jLanguage == null
-    }
-
-    override fun isModified(settings: GraziConfig): Boolean {
-        return !(settings.state.enabledLanguages == adpEnabledLanguages.listItems.toSet())
-                .and(settings.state.nativeLanguage == cmbNativeLanguage.selectedItem)
-                .and(settings.state.enabledSpellcheck == cbEnableGraziSpellcheck.isSelected)
-                .and(!rulesPanel.isModified)
-    }
+    override fun isModified(settings: GraziConfig) = rules.isModified
+            .or(settings.state.enabledSpellcheck != spellcheck.isSpellcheckEnabled)
+            .or(settings.state.nativeLanguage != native.language)
+            .or(settings.state.enabledLanguages != languages.values)
 
     override fun apply(settings: GraziConfig) {
         GraziConfig.update { state ->
@@ -104,7 +50,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
             val userDisabledRules = state.userDisabledRules.toMutableSet()
             val userEnabledRules = state.userEnabledRules.toMutableSet()
 
-            val chosenEnabledLanguages = adpEnabledLanguages.listItems.toSet()
+            val chosenEnabledLanguages = languages.values
             Lang.values().forEach {
                 if (chosenEnabledLanguages.contains(it)) {
                     enabledLanguages.add(it)
@@ -113,7 +59,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                 }
             }
 
-            val (enabledRules, disabledRules) = rulesPanel.state()
+            val (enabledRules, disabledRules) = rules.state
 
             enabledRules.forEach { id ->
                 userDisabledRules.remove(id)
@@ -129,22 +75,21 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     enabledLanguages = enabledLanguages,
                     userEnabledRules = userEnabledRules,
                     userDisabledRules = userDisabledRules,
-                    nativeLanguage = cmbNativeLanguage.selectedItem as Lang,
-                    enabledSpellcheck = cbEnableGraziSpellcheck.isSelected
+                    nativeLanguage = native.language,
+                    enabledSpellcheck = spellcheck.isSpellcheckEnabled
             )
         }
 
-        updateWarnings()
-        rulesPanel.reset()
+        rules.reset()
     }
 
     override fun reset(settings: GraziConfig) {
-        cmbNativeLanguage.selectedItem = settings.state.nativeLanguage
-        cbEnableGraziSpellcheck.isSelected = settings.state.enabledSpellcheck
-        adpEnabledLanguages.reset(settings)
-        rulesPanel.reset()
+        native.language = settings.state.nativeLanguage
+        spellcheck.isSpellcheckEnabled = settings.state.enabledSpellcheck
+        languages.reset(settings.state.enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName)))
+        rules.reset()
 
-        updateWarnings()
+        update()
     }
 
     override fun getComponent(): JComponent {
@@ -152,54 +97,25 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
             panel(MigLayout(createLayoutConstraints(), AC().grow()), constraint = CC().growX().wrap()) {
                 border = border(msg("grazi.ui.settings.languages.text"), false, JBUI.insetsBottom(10), false)
 
-                panel(BorderLayout(), CC().growX().maxHeight("").width("45%").minWidth("250px").minHeight("120px").maxHeight("120px").alignY("top")) {
-                    add(adpEnabledLanguages, BorderLayout.CENTER)
-                    add(langLink, BorderLayout.SOUTH)
-                }
+                add(languages.component, CC().growX().maxHeight("").width("45%").minWidth("250px").minHeight("120px").maxHeight("120px").alignY("top"))
 
                 panel(VerticalLayout(), CC().grow().width("55%").minWidth("250px").alignY("top")) {
                     border = padding(JBUI.insetsLeft(20))
-
-                    panel(MigLayout(createLayoutConstraints(), AC()), constraint = "") {
-                        border = padding(JBUI.insetsBottom(10))
-                        add(wrapWithLabel(cmbNativeLanguage, msg("grazi.ui.settings.languages.native.text")), CC().minWidth("220px").maxWidth("380px"))
-                        add(ContextHelpLabel.create(msg("grazi.ui.settings.languages.native.help")).apply {
-                            border = padding(JBUI.insetsLeft(5))
-                        }, CC().width("30px").alignX("left").wrap())
-                        add(nativeLangLink, CC().hideMode(3))
-                    }
-
-                    add(wrapWithComment(cbEnableGraziSpellcheck, msg("grazi.ui.settings.enable.note")))
+                    add(native.component)
+                    add(spellcheck.component)
                 }
 
-                updateWarnings()
+                update()
             }
 
             panel(MigLayout(createLayoutConstraints(), AC().grow(), AC().grow()), constraint = CC().grow()) {
                 border = border(msg("grazi.ui.settings.rules.configuration.text"), false, JBUI.emptyInsets())
 
-                panel(constraint = CC().grow().width("45%").minWidth("250px")) {
-                    add(rulesPanel.panel)
-                }
-
-                panel(MigLayout(createLayoutConstraints().flowY().fillX()), constraint = CC().grow().width("55%")) {
-                    border = padding(JBUI.insets(30, 20, 0, 0))
-                    add(linkPanel, CC().grow().hideMode(3))
-
-                    val descriptionPanel = JBPanelWithEmptyText(BorderLayout(0, 0)).withEmptyText(msg("grazi.ui.settings.rules.no-description")).also {
-                        it.add(descriptionPane)
-                    }
-                    add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE).also {
-                        it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-                    }, CC().grow().push())
-                }
+                add(rules.component, CC().grow().width("45%").minWidth("250px"))
+                add(description.component, CC().grow().width("55%"))
             }
         }
     }
 
-    fun showOption(option: String?) = Runnable { rulesPanel.filter(option ?: "") }
-
-    override fun dispose() {
-        rulesPanel.dispose()
-    }
+    override fun dispose() = rules.dispose()
 }

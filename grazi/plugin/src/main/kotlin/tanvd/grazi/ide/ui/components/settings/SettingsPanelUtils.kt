@@ -19,16 +19,16 @@ fun CharSequence.isSimilarTo(sequence: CharSequence): Boolean {
     return Text.Levenshtein.distance(this, sequence).toDouble() / length < MINIMUM_EXAMPLES_SIMILARITY
 }
 
-fun GraziSettingsPanel.hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()
+fun hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()
 
-fun GraziSettingsPanel.getLinkLabelListener(it: Any): LinkListener<Any?>? {
+fun getLinkLabelListener(it: Any): LinkListener<Any?>? {
     return when (it) {
         is RuleWithLang -> it.rule.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
         else -> null
     }
 }
 
-fun GraziSettingsPanel.getDescriptionPaneContent(it: Any): String {
+fun getDescriptionPaneContent(it: Any): String {
     return when {
         it is Lang -> html {
             unsafe { +msg("grazi.ui.settings.rules.language.template", it.displayName) }
