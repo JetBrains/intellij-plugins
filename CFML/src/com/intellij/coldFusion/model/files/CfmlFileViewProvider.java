@@ -38,10 +38,7 @@ import java.util.Set;
  * Created by Lera Nikolaenko
  */
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
-
-  private static final THashSet<Language> ourRelevantLanguages =
-    new THashSet<>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE));
-
+  private static final THashSet<Language> ourRelevantLanguages = new THashSet<>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE));
 
   public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {
     super(manager, virtualFile, physical);
@@ -63,9 +60,7 @@ public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
   @Nullable
   protected PsiFile createFile(@NotNull final Language lang) {
     if (lang == getTemplateDataLanguage()) {
-      // final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-
-      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(StdLanguages.HTML).createFile(this);
+      PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(StdLanguages.HTML).createFile(this);
       file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
       return file;
     }
