@@ -71,8 +71,7 @@
     <lang.documentationProvider language="CFML"
                                 implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlDocumentProvider"/>
     <treeStructureProvider implementation="com.intellij.coldFusion.UI.editorActions.CfmlScriptNodeSuppressor"/>
-    <!--<fileTypeIndentOptionsProvider implementation="com.intellij.coldFusion.UI.editorActions.CfmlIndentOptionsProvider"/>-->
-    <fileTypeFactory implementation="com.intellij.coldFusion.model.files.CfmlFileTypeFactory"/>
+    <fileType name="CFML" extensions="cfm;cfml;cfc" fieldName="INSTANCE" language="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlFileType"/>
     <enterHandlerDelegate implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlEnterHandler"/>
     <breadcrumbsInfoProvider implementation="com.intellij.coldFusion.UI.CfmlBreadcrumbsInfoProvider"/>
     <lang.implementationTextSelectioner language="CFML"
