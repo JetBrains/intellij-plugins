@@ -5,12 +5,15 @@ import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.languagetool.rules.*
+import org.slf4j.LoggerFactory
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangToolFixes
 import tanvd.grazi.utils.*
 
 @Suppress("unused")
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
+    private val logger = LoggerFactory.getLogger(Typo::class.java)
+
     data class Location(val range: IntRange, val pointer: PsiPointer<PsiElement>? = null, val shouldUseRename: Boolean = false) {
         val element: PsiElement?
             get() = pointer?.element
@@ -81,7 +84,14 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
             }
     }
 
-    val word by lazy { location.pointer?.element!!.text.subSequence(location.range).toString() }
+    val word by lazy {
+        try {
+            location.pointer?.element!!.text.subSequence(location.range).toString()
+        } catch (t : Throwable) {
+            logger.warn("Got an exception during getting typo word: " + location.pointer?.element!!.text, t)
+            throw t
+        }
+    }
 
     /** Constructor for LangTool, applies fixes to RuleMatch (Main constructor doesn't apply fixes) */
     constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(

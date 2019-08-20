@@ -4,6 +4,7 @@ import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.RefactoringQuickFix
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
@@ -43,7 +44,7 @@ open class GraziRenameTypo(private val typo: Typo) : RefactoringQuickFix, Iconab
         with (NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckRenameSuggestions }) {
             try {
                 this?.active = true
-                doFix(element)
+                TransactionGuard.submitTransaction(project, Runnable { doFix(element) })
             } catch (t : Throwable) {
                 logger.warn("Got exception during rename refactoring", t)
             } finally {

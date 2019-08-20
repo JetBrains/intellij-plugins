@@ -10,7 +10,7 @@ import tanvd.grazi.ide.language.LanguageSupport
 
 class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
     override fun isRelevant(element: PsiElement): Boolean {
-        return element is PsiLiteralExpressionImpl && (element.literalElementType == JavaTokenType.STRING_LITERAL && element.innerText != null)
+        return element is PsiLiteralExpressionImpl && (element.literalElementType == JavaTokenType.STRING_LITERAL)
     }
 
     override fun check(element: PsiElement): Set<Typo> {

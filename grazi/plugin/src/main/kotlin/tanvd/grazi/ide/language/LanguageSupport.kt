@@ -16,9 +16,7 @@ abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet
             .asSequence()
             .filterNot { it.info.rule.id in disabledRules }
             .filter {
-                it.location.element?.let { gotElement ->
-                    !gotElement.isInjectedFragment() && isAncestor(element, gotElement, false)
-                } ?: false
+                it.location.element?.let { gotElement -> isAncestor(element, gotElement, false) } ?: false
             }.toSet()
 
     /** Don't forget to use ProgressManager.checkCancelled() */

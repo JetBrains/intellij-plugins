@@ -12,6 +12,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.spellcheck.GraziSpellchecker
+import tanvd.grazi.utils.isInjectedFragment
 
 class GraziInspection : LocalInspectionTool() {
     companion object : GraziStateLifecycle {
@@ -27,10 +28,9 @@ class GraziInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement?) {
-                element ?: return
+                if (element == null || element.isInjectedFragment()) return
 
                 val typos = HashSet<Typo>()
-
                 for (ext in LanguageSupport.allForLanguageOrAny(element.language).filter { it.isRelevant(element) }) {
                     typos.addAll(ext.getTypos(element))
                 }
