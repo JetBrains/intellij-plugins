@@ -72,8 +72,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
 
-        <postStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
-        <postStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
+        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
+        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
 
 
         <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection"
