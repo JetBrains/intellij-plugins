@@ -15,8 +15,6 @@ import java.nio.charset.Charset;
 public class PostCssFileType extends LanguageFileType {
   public static final PostCssFileType POST_CSS = new PostCssFileType();
   @NonNls public static final String DEFAULT_EXTENSION = "pcss";
-  @NonNls private static final String NAME = "PostCSS";
-  @NonNls private static final String DESCRIPTION = PostCssBundle.message("filetype.description.postcss");
 
   private PostCssFileType() {
     super(PostCssLanguage.INSTANCE);
@@ -25,13 +23,13 @@ public class PostCssFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getName() {
-    return NAME;
+    return "PostCSS";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return DESCRIPTION;
+    return PostCssBundle.message("filetype.description.postcss");
   }
 
   @NotNull
