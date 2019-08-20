@@ -1,13 +1,10 @@
 package tanvd.grazi.ide.ui.components.settings
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SideBorder
 import com.intellij.ui.components.JBPanelWithEmptyText
-import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
-import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.ui.layout.migLayout.createLayoutConstraints
 import com.intellij.util.ui.JBUI
 import kotlinx.html.*
@@ -21,12 +18,12 @@ import tanvd.grazi.ide.ui.components.dsl.pane
 import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.ide.ui.components.rules.ComparableCategory
 import tanvd.grazi.ide.ui.components.rules.RuleWithLang
+import tanvd.grazi.ide.ui.components.utils.GraziLinkLabel
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
 import tanvd.kex.orFalse
 import java.awt.BorderLayout
-import javax.swing.JLabel
 import javax.swing.ScrollPaneConstants
 
 class GraziRuleDescriptionComponent {
@@ -38,41 +35,25 @@ class GraziRuleDescriptionComponent {
         }
     }
 
-    private class GraziRuleLinkComponent {
-        private val link = LinkLabel<Any?>(msg("grazi.ui.settings.rules.rule.description"), null)
-        var listener: LinkListener<Any?>
-            @Deprecated("Property can only be written", level = DeprecationLevel.ERROR)
-            get() = throw NotImplementedError()
-            set(value) {
-                link.setListener(value, null)
-            }
-
-        val component = panel(HorizontalLayout(0)) {
-            border = padding(JBUI.insetsBottom(7))
-            name = "GRAZI_LINK_PANEL"
-            isVisible = false
-
-            add(link)
-            add(JLabel(AllIcons.Ide.External_link_arrow))
-        }
-    }
-
-    private val link = GraziRuleLinkComponent()
     private val description = pane()
+    private val link = GraziLinkLabel(msg("grazi.ui.settings.rules.rule.description")).apply {
+        component.name = "GRAZI_LINK_PANEL"
+        component.isVisible = false
+    }
 
     val listener: (Any) -> Unit
         get() = { selection ->
-            link.component.isVisible = getLinkLabelListener(selection)?.let { listener ->
-                link.listener = listener
+            link.component.isVisible = if (selection is RuleWithLang && selection.rule.url != null) {
+                link.listener = LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(selection.rule.url!!) }
                 true
-            } ?: false
+            } else false
 
             description.text = getDescriptionPaneContent(selection).also {
                 description.isVisible = it.isNotBlank()
             }
         }
 
-    val component = panel(MigLayout(createLayoutConstraints().flowY().fillX())) {
+    val component = panel(MigLayout(createLayoutConstraints().flowY().fillX().gridGapY("7"))) {
         border = padding(JBUI.insets(30, 20, 0, 0))
         add(link.component, CC().grow().hideMode(3))
 
@@ -81,14 +62,6 @@ class GraziRuleDescriptionComponent {
         add(ScrollPaneFactory.createScrollPane(descriptionPanel, SideBorder.NONE).also {
             it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         }, CC().grow().push())
-    }
-
-
-    private fun getLinkLabelListener(it: Any): LinkListener<Any?>? {
-        return when (it) {
-            is RuleWithLang -> it.rule.url?.let { LinkListener { _: Any?, _: Any? -> BrowserUtil.browse(it) } }
-            else -> null
-        }
     }
 
     private fun hasDescription(rule: Rule) = rule.url != null || rule.incorrectExamples?.isNotEmpty().orFalse() || LangTool.getRuleLanguages(rule.id)?.let { it.size > 1 }.orFalse()
