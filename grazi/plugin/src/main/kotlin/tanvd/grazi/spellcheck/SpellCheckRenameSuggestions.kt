@@ -21,10 +21,9 @@ class SpellCheckRenameSuggestions : PreferrableNameSuggestionProvider() {
             element.text
         } ?: return null
 
-        val indexInName = element.text.indexOf(text)
-
         GraziSpellchecker.getTypos(element).forEach { typo ->
             typo.fixes.filterNot { Text.containsBlank(it) }.forEach {
+                val indexInName = typo.location.element!!.text.indexOf(text)
                 result.add(text.replaceRange(typo.location.range.withOffset(-indexInName), it))
             }
         }
