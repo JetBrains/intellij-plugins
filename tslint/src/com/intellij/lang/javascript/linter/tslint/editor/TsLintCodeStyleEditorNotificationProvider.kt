@@ -39,8 +39,8 @@ class TsLintCodeStyleEditorNotificationProvider(project: Project) : EditorNotifi
     return object : EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND) {
       init {
         setText(TsLintBundle.message("tslint.code.style.apply.message"))
-        createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), TsLintImportCodeStyleAction.ACTION_ID)
-        createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), sourceTracker.dismissAction)
+        createActionLabel(TsLintBundle.message("tslint.code.style.apply.text"), TsLintImportCodeStyleAction.ACTION_ID, false)
+        createActionLabel(TsLintBundle.message("tslint.code.style.dismiss.text"), sourceTracker.dismissAction, false)
       }
     }
   }
