@@ -23,7 +23,9 @@ import tanvd.kex.untilNotNull
 import javax.swing.Icon
 
 open class GraziRenameTypo(private val typo: Typo) : RefactoringQuickFix, Iconable, PriorityAction {
-    private val logger = LoggerFactory.getLogger(GraziRenameTypo::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(GraziRenameTypo::class.java)
+    }
 
     override fun getFamilyName() = msg("grazi.quickfix.renametypo.family")
 
@@ -41,11 +43,11 @@ open class GraziRenameTypo(private val typo: Typo) : RefactoringQuickFix, Iconab
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement ?: return
 
-        with (NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckRenameSuggestions }) {
+        with(NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckRenameSuggestions }) {
             try {
                 this?.active = true
                 TransactionGuard.submitTransaction(project, Runnable { doFix(element) })
-            } catch (t : Throwable) {
+            } catch (t: Throwable) {
                 logger.warn("Got exception during rename refactoring", t)
             } finally {
                 this?.active = false

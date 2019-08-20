@@ -5,10 +5,9 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import tanvd.grazi.language.Lang
 import tanvd.kex.ifTrue
-import javax.swing.JComponent
 
-class GraziListPopupStep(title: String, downloadedLangs: List<Lang>, private val otherLangs: List<Lang>, private val download: (Lang) -> Boolean,
-                         private val panel: JComponent, val onResult: (Lang) -> Unit) : BaseListPopupStep<Lang>(title, downloadedLangs + otherLangs) {
+class GraziListPopupStep(title: String, downloadedLangs: List<Lang>, private val otherLangs: List<Lang>,
+                         private val download: (Lang) -> Boolean, val onResult: (Lang) -> Unit) : BaseListPopupStep<Lang>(title, downloadedLangs + otherLangs) {
     override fun getSeparatorAbove(value: Lang?) = when (value) {
         otherLangs.firstOrNull() -> ListSeparator()
         else -> null

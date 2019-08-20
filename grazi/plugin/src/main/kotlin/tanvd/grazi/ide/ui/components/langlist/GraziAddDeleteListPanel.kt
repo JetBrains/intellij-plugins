@@ -56,7 +56,7 @@ class GraziAddDeleteListPanel(private val download: (Lang) -> Boolean, private v
         val langsInList = listItems.map { (it as Lang).shortCode }.toSet()
         val (downloadedLangs, otherLangs) = Lang.sortedValues().filter { it.shortCode !in langsInList }.partition { it.jLanguage != null }
 
-        val step = GraziListPopupStep(msg("grazi.ui.settings.language.popup.title"), downloadedLangs, otherLangs, download, this, ::addElement)
+        val step = GraziListPopupStep(msg("grazi.ui.settings.language.popup.title"), downloadedLangs, otherLangs, download, ::addElement)
         val menu = object : ListPopupImpl(null, step) {
             override fun getListElementRenderer() = GraziPopupListElementRenderer(this)
         }
@@ -65,7 +65,7 @@ class GraziAddDeleteListPanel(private val download: (Lang) -> Boolean, private v
         return null
     }
 
-    fun reset(langs: Collection<Lang>) {
+    fun reset(langs: Iterable<Lang>) {
         val model = myList.model as DefaultListModel<Lang>
         model.elements().asSequence().forEach(onLanguageRemoved)
         model.clear()

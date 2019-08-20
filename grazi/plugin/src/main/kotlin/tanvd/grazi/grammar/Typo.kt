@@ -12,7 +12,9 @@ import tanvd.grazi.utils.*
 
 @Suppress("unused")
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
-    private val logger = LoggerFactory.getLogger(Typo::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(Typo::class.java)
+    }
 
     data class Location(val range: IntRange, val pointer: PsiPointer<PsiElement>? = null, val shouldUseRename: Boolean = false) {
         val element: PsiElement?
@@ -84,12 +86,12 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
             }
     }
 
-    val word by lazy {
+    val word: String by lazy {
         try {
             location.pointer?.element!!.text.subSequence(location.range).toString()
         } catch (t : Throwable) {
             logger.warn("Got an exception during getting typo word: " + location.pointer?.element!!.text, t)
-            "word"
+            throw t
         }
     }
 
