@@ -9,7 +9,7 @@ import tanvd.kex.ifTrue
 
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
-    class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
+    data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                 @Property val nativeLanguage: Lang = enabledLanguages.first(),
                 @Property val enabledSpellcheck: Boolean = false,
                 @Property val userWords: Set<String> = HashSet(),
@@ -37,36 +37,6 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                    userEnabledRules: Set<String> = this.userEnabledRules,
                    lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
                 userWords, userDisabledRules, userEnabledRules, lastSeenVersion, enabledLanguages.filter { it.jLanguage != null }.toSet())
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as State
-
-            if (enabledLanguages != other.enabledLanguages) return false
-            if (nativeLanguage != other.nativeLanguage) return false
-            if (enabledSpellcheck != other.enabledSpellcheck) return false
-            if (userWords != other.userWords) return false
-            if (userDisabledRules != other.userDisabledRules) return false
-            if (userEnabledRules != other.userEnabledRules) return false
-            if (lastSeenVersion != other.lastSeenVersion) return false
-            if (availableLanguages != other.availableLanguages) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = enabledLanguages.hashCode()
-            result = 31 * result + nativeLanguage.hashCode()
-            result = 31 * result + enabledSpellcheck.hashCode()
-            result = 31 * result + userWords.hashCode()
-            result = 31 * result + userDisabledRules.hashCode()
-            result = 31 * result + userEnabledRules.hashCode()
-            result = 31 * result + (lastSeenVersion?.hashCode() ?: 0)
-            result = 31 * result + availableLanguages.hashCode()
-            return result
-        }
     }
 
     companion object {
