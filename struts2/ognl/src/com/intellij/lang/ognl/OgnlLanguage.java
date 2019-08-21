@@ -17,13 +17,8 @@ package com.intellij.lang.ognl;
 
 import com.intellij.lang.InjectableLanguage;
 import com.intellij.lang.Language;
-import com.intellij.lang.ognl.highlight.OgnlHighlighter;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann C&eacute;bron
@@ -42,15 +37,6 @@ public class OgnlLanguage extends Language implements InjectableLanguage {
 
   private OgnlLanguage() {
     super(ID);
-
-    SyntaxHighlighterFactory.LANGUAGE_FACTORY
-        .addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
-          @Override
-          @NotNull
-          protected SyntaxHighlighter createHighlighter() {
-            return new OgnlHighlighter();
-          }
-        });
   }
 
   @Override
