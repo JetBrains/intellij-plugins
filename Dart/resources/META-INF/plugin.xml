@@ -225,6 +225,9 @@
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
     <search.optionContributor implementation="com.jetbrains.lang.dart.DartSearchableOptionContributor"/>
+
+    <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
+    <lang.parserDefinition language="Dart in Html" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">

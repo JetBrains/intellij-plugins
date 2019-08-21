@@ -104,6 +104,7 @@
                              implementationClass="com.intellij.coldFusion.UI.editorActions.surroundWith.CfmlVariableSurroundDescriptor"/>
 
     <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSqlMultiHostInjector" order="first"/>
+    <editorHighlighterProvider filetype="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlEditorHighlighterProvider"/>
   </extensions>
 
   <actions>
