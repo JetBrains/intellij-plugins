@@ -30,7 +30,8 @@ object GraziSpellchecker : GraziStateLifecycle {
     private val logger = LoggerFactory.getLogger(GraziSpellchecker::class.java)
 
     data class SpellerTool(val tool: JLanguageTool, val speller: Rule) {
-        fun check(text: String): Set<RuleMatch> = speller.match(tool.getRawAnalyzedSentence(text)).toSet()
+        // FIXME: Synchronized because morfologik.speller.Speller can't work in concurrent mode
+        fun check(text: String): Set<RuleMatch> = synchronized(speller) { speller.match(tool.getRawAnalyzedSentence(text)).toSet() }
     }
 
     private val checkers: Set<SpellerTool>
@@ -83,7 +84,7 @@ object GraziSpellchecker : GraziStateLifecycle {
             try {
                 speller.check(word)
             } catch (t: Throwable) {
-                logger.warn("Got exception during check for spelling mistakes by LanguageTool", t)
+                logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
                 null
             }?.firstOrNull() ?: return emptySet()
         }.onEach {

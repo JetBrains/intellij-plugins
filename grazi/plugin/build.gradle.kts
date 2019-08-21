@@ -65,7 +65,7 @@ dependencies {
 
     for (lang in langs) {
         testRuntime("org.languagetool", "language-$lang", Versions.languageTool) {
-            exclude("org.slf4j", "slf4j-api")
+            ltExcludes()
         }
     }
 }

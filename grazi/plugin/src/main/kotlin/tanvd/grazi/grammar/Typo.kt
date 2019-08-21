@@ -90,7 +90,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
         try {
             location.pointer?.element!!.text.subSequence(location.range).toString()
         } catch (t : Throwable) {
-            logger.warn("Got an exception during getting typo word: " + location.pointer?.element!!.text)
+            logger.warn("Got an exception during getting typo word:\n${location.pointer?.element!!.text}\n${info.match.sentence.text}")
             throw t
         }
     }
