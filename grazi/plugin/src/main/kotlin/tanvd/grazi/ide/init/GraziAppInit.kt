@@ -17,8 +17,8 @@ class GraziAppInit : BaseComponent, DumbAware {
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangDetector)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
         GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziCommitInspection)
+        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
 
         LangToolInstrumentation.reloadEnglish()
     }

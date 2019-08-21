@@ -16,12 +16,14 @@ import tanvd.grazi.utils.isInjectedFragment
 
 class GraziInspection : LocalInspectionTool() {
     companion object : GraziStateLifecycle {
-        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
-            if (prevState == newState) return
-
+        override fun init(state: GraziConfig.State, project: Project) {
             ProjectManager.getInstance().openProjects.forEach {
                 DaemonCodeAnalyzer.getInstance(it).restart()
             }
+        }
+
+        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
+            if (prevState != newState) init(newState, project)
         }
     }
 

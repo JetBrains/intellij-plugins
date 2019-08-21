@@ -11,10 +11,10 @@ import tanvd.grazi.ide.msg.GraziStateLifecycle
 object LangDetector : GraziStateLifecycle {
     private const val charsForLangDetection = 1_000
     private lateinit var languages: Set<Lang>
-    private lateinit var detector: LanguageDetector
+    private var detector: LanguageDetector? = null
 
-    fun getLang(text: String) = detector.getProbabilities(text.take(charsForLangDetection))
-            .maxBy { it.probability }
+    fun getLang(text: String) = detector?.getProbabilities(text.take(charsForLangDetection))
+            ?.maxBy { it.probability }
             ?.let { detectedLanguage -> languages.find { it.shortCode == detectedLanguage.locale.language } }
 
     override fun init(state: GraziConfig.State, project: Project) {
