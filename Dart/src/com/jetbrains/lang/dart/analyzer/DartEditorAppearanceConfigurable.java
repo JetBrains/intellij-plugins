@@ -1,10 +1,9 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.openapi.options.UnnamedConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
 
-public class DartEditorAppearanceConfigurable extends BeanConfigurable<DartClosingLabelManager> implements UnnamedConfigurable {
+public class DartEditorAppearanceConfigurable extends BeanConfigurable<DartClosingLabelManager> {
   public DartEditorAppearanceConfigurable() {
     super(DartClosingLabelManager.getInstance());
 
