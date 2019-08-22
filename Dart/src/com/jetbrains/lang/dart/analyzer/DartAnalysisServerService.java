@@ -1317,7 +1317,7 @@ public class DartAnalysisServerService implements Disposable {
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,
-                                                      @NotNull final Consumer<List<AnalysisErrorFixes>> consumer) {
+                                                      @NotNull final Consumer<? super List<AnalysisErrorFixes>> consumer) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
 
     final AnalysisServer server = myServer;
@@ -1345,7 +1345,7 @@ public class DartAnalysisServerService implements Disposable {
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
                                            final int _offset,
-                                           @NotNull final Consumer<SearchResult> consumer) {
+                                           @NotNull final Consumer<? super SearchResult> consumer) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<String> searchIdRef = new Ref<>();
 
