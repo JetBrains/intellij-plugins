@@ -75,6 +75,12 @@ Prerequisites:
      - intellij-community/.idea/modules.xml (line `<module fileurl="file://$PROJECT_DIR$/../intellij-plugins/Dart/Dart-community.iml" ... />`)
      - intellij-community/.idea/vcs.xml (line `<mapping directory="$PROJECT_DIR$/../intellij-plugins" vcs="Git" />`)
 
+10. All contributed PRs should:
+     - be formatted with the Java formatter (Code -> Reformat Code)
+     - not break any of the tests mentioned above
+     - if possible, additional tests for the change in functionality should be included
+     - include "Dart" in the git message
+
 ---
 
 ## Alternative way of the Dart-plugin project setup
