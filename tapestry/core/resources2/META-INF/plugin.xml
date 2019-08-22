@@ -20,7 +20,7 @@
     <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
     <standardResourceProvider implementation="com.intellij.tapestry.intellij.TapestryResourceProvider"/>
 
-    <fileTypeFactory implementation="com.intellij.tapestry.lang.TmlFileTypeFactory"/>
+    <fileType name="TML" implementationClass="com.intellij.tapestry.lang.TmlFileType" fieldName="INSTANCE" language="TML" extensions="tml"/>
     <typedHandler implementation="com.intellij.tapestry.lang.TmlTypedHandler"/>
     <syntaxHighlighter key="TML" implementationClass="com.intellij.tapestry.lang.TmlHighlighter"/>
     <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>
