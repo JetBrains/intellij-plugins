@@ -16,7 +16,7 @@ public class IntentionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testComputeConstantInTemplate() {
-    doTestForFile(getTestName(true), JSIntentionBundle.message("constant.constant-expression.display-name"));
+    doTestForFile(getTestName(true), JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"));
   }
 
   public void testFlipConditionalInTemplate() {

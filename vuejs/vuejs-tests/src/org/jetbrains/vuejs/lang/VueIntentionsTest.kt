@@ -31,7 +31,7 @@ class VueIntentionsTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/intentions"
 
   fun testComputeConstant() {
-    doIntentionTest(JSIntentionBundle.message("constant.constant-expression.display-name"))
+    doIntentionTest(JSIntentionBundle.message("string.join-concatenated-string-literals.display-name"))
   }
 
   fun testFlipConditional() {
