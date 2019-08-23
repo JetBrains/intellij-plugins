@@ -74,7 +74,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   private static void ensureReparsingConsistent(@NotNull PsiFile file) {
     DebugUtil.performPsiModification("ensureReparsingConsistent", () -> {
       final String fileText = file.getText();
-      final DiffLog diffLog = new BlockSupportImpl(file.getProject()).reparseRange(
+      final DiffLog diffLog = new BlockSupportImpl().reparseRange(
         file, file.getNode(), TextRange.allOf(fileText), fileText, new EmptyProgressIndicator(), fileText);
       TreeChangeEvent event = diffLog.performActualPsiChange(file);
       assertEmpty(event.getChangedElements());

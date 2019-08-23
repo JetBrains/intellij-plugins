@@ -73,7 +73,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
   private fun ensureReparsingConsistent(file: PsiFile) {
     DebugUtil.performPsiModification<RuntimeException>("ensureReparsingConsistent") {
       val fileText = file.text
-      val diffLog = BlockSupportImpl(file.project).reparseRange(
+      val diffLog = BlockSupportImpl().reparseRange(
         file, file.node, TextRange.allOf(fileText), fileText, EmptyProgressIndicator(), fileText)
       val event = diffLog.performActualPsiChange(file)
       assertEmpty(event.changedElements)
