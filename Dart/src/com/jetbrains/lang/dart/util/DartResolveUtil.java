@@ -78,6 +78,9 @@ public class DartResolveUtil {
     if (nextSibling instanceof LeafPsiElement) {
       return DartTokenTypesSets.ASSIGNMENT_OPERATORS.contains(((LeafPsiElement)nextSibling).getElementType());
     }
+    else if (nextSibling instanceof DartVarInit) {
+      return true;
+    }
     return nextSibling instanceof DartAssignmentOperator;
   }
 
