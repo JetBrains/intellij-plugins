@@ -11,7 +11,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.ui.components.dsl.msg
 import javax.swing.Icon
 
-class GraziDisableRule(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
+class GraziDisableRuleQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getFamilyName(): String = msg("grazi.quickfix.disablerule.family")
 
     override fun getName() = msg("grazi.quickfix.disablerule.text", typo.info.rule.description)

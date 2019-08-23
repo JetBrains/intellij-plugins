@@ -33,8 +33,7 @@ import java.nio.file.Paths
 object LangDownloader {
     private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
-    val MAVEN_CENTRAL_REPOSITORY: RemoteRepository = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url"))
-            .setProxy(JreProxySelector.getProxy(msg("grazi.maven.repo.url"))).build()
+    val MAVEN_CENTRAL_REPOSITORY: RemoteRepository = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url")).build()
 
     private val repository: RepositorySystem by lazy {
         with(MavenRepositorySystemUtils.newServiceLocator()) {
@@ -54,7 +53,7 @@ object LangDownloader {
     private val session: RepositorySystemSession by lazy {
         with(MavenRepositorySystemUtils.newSession()) {
             localRepositoryManager = repository.newLocalRepositoryManager(this, LocalRepository(File(GraziPlugin.installationFolder, "poms")))
-            setProxySelector(JreProxySelector)
+            this
         }
     }
 

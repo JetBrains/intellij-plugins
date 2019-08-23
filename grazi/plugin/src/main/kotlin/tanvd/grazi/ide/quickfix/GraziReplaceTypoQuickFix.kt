@@ -21,7 +21,7 @@ import tanvd.kex.trimToNull
 import javax.swing.Icon
 import kotlin.math.min
 
-class GraziReplaceTypo(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
+class GraziReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getFamilyName() = msg("grazi.quickfix.replacetypo.family")
 
     override fun getName() = msg("grazi.quickfix.replacetypo.text", (typo.info.match.shortMessage.trimToNull() ?: typo.info.category.description).toLowerCase())

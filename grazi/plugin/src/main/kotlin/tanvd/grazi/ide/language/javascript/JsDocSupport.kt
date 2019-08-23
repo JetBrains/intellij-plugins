@@ -11,8 +11,6 @@ class JsDocSupport : LanguageSupport(GraziBundle.langConfig("global.literal_stri
     override fun isRelevant(element: PsiElement) = element is JSDocComment
 
     override fun check(element: PsiElement): Set<Typo> {
-        require(element is JSDocComment) { "Got not JSDocComment in a JsDocSupport" }
-
         //Ranges of elements that have been parsed by dialect (not general JS).
         //Mostly it is non-text elements, like parameters and document tags.
         //All of them should be considered as `inline elements` and must be ignored.

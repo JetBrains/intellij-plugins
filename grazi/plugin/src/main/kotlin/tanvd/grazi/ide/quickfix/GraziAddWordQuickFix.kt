@@ -11,7 +11,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.ui.components.dsl.msg
 import javax.swing.Icon
 
-class GraziAddWord(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
+class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
     override fun getFamilyName() = msg("grazi.quickfix.addword.family")
 
     override fun getName() = msg("grazi.quickfix.addword.text", typo.word)

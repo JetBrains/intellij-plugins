@@ -31,19 +31,15 @@ class KDocSupport : LanguageSupport() {
      *
      * Note: Tag lines ignores casing.
      */
-    override fun check(element: PsiElement): Set<Typo> {
-        require(element is KDocTag) { "Got non KDocTag in a KDocSupport" }
-
-        return when {
-            isTag(element) -> {
-                GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
-                        .dropFirstIf { isIdentifier(it) })
-                        .filterNotToSet { it.info.category in tagsIgnoredCategories }
-            }
-            else -> {
-                GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
-                        .filterToSet { !isInTag(it) && (isBody(it) || isIdentifier(it)) })
-            }
+    override fun check(element: PsiElement) = when {
+        isTag(element) -> {
+            GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
+                    .dropFirstIf { isIdentifier(it) })
+                    .filterNotToSet { it.info.category in tagsIgnoredCategories }
+        }
+        else -> {
+            GrammarChecker.default.check(element.filterForTokens<PsiElement>(KDocTokens.TEXT, KtTokens.IDENTIFIER)
+                    .filterToSet { !isInTag(it) && (isBody(it) || isIdentifier(it)) })
         }
     }
 }

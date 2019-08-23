@@ -22,9 +22,9 @@ import tanvd.kex.trimToNull
 import tanvd.kex.untilNotNull
 import javax.swing.Icon
 
-open class GraziRenameTypo(private val typo: Typo) : RefactoringQuickFix, Iconable, PriorityAction {
+open class GraziRenameTypoQuickFix(private val typo: Typo) : RefactoringQuickFix, Iconable, PriorityAction {
     companion object {
-        private val logger = LoggerFactory.getLogger(GraziRenameTypo::class.java)
+        private val logger = LoggerFactory.getLogger(GraziRenameTypoQuickFix::class.java)
     }
 
     override fun getFamilyName() = msg("grazi.quickfix.renametypo.family")

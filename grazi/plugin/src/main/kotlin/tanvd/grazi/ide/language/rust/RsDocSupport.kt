@@ -21,9 +21,7 @@ class RsDocSupport : LanguageSupport() {
     override fun isRelevant(element: PsiElement) = element is RsDocCommentImpl
 
     override fun check(element: PsiElement): Set<Typo> {
-        require(element is RsDocCommentImpl) { "Got not RsDocCommentImpl in a RsDocSupport" }
-
-        val ranges = findDoctestInjectableRanges(element).flatten().toList()
+        val ranges = findDoctestInjectableRanges(element as RsDocCommentImpl).flatten().toList()
         return checker.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ _, index -> ranges.any { range -> index in range } })))
     }
 }

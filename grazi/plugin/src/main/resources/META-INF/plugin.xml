@@ -77,14 +77,9 @@
 
     <idea-version since-build="192.3645"/>
 
-    <application-components>
-        <component>
-            <implementation-class>tanvd.grazi.ide.init.GraziAppInit</implementation-class>
-        </component>
-    </application-components>
-
-
     <extensions defaultExtensionNs="com.intellij">
+        <applicationInitializedListener implementation="tanvd.grazi.ide.init.GraziAppInit" />
+
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
 
         <backgroundPostStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>

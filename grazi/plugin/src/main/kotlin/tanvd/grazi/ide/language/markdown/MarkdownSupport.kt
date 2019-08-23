@@ -14,40 +14,37 @@ class MarkdownSupport : LanguageSupport() {
 
     override fun isRelevant(element: PsiElement) = MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element) || MarkdownPsiUtils.isCode(element)
 
-    override fun check(element: PsiElement): Set<Typo> {
-        require(isRelevant(element)) { "Got non Markdown header, paragraph or code in MarkdownSupport" }
+    override fun check(element: PsiElement) = GrammarChecker.default.check(element,
+            tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ token, index ->
+                val elementInToken = token.findElementAt(index)!!
+                !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
+            }))).filter { typo ->
+        val startElement = element.findElementAt(typo.location.range.start)!!
+        val endElement = element.findElementAt(typo.location.range.last)!!
 
-        return GrammarChecker.default.check(element, tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ token, index ->
-            val elementInToken = token.findElementAt(index)!!
-            !MarkdownPsiUtils.isText(elementInToken) || elementInToken.parents().any { MarkdownPsiUtils.isInline(it) }
-        }))).filter { typo ->
-            val startElement = element.findElementAt(typo.location.range.start)!!
-            val endElement = element.findElementAt(typo.location.range.last)!!
-
-            // Inline elements inside typo
-            if (generateSequence(startElement) { PsiTreeUtil.nextLeaf(it) }.takeWhile { it != endElement }
-                            .any { it.parents().any { MarkdownPsiUtils.isInline(it) } }) return@filter false
+        // Inline elements inside typo
+        if (generateSequence(startElement) { PsiTreeUtil.nextLeaf(it) }.takeWhile { it != endElement }
+                        .any { it.parents().any { MarkdownPsiUtils.isInline(it) } }) return@filter false
 
 
-            // Inline element right before a typo (TODO add categories filter)
-            if (typo.location.isAtStartOfInnerElement(startElement)) {
-                generateSequence(PsiTreeUtil.prevLeaf(startElement)) { PsiTreeUtil.prevLeaf(it) }
-                        .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
-                        ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
-                        ?.let { if (it) return@filter false }
-            }
+        // Inline element right before a typo (TODO add categories filter)
+        if (typo.location.isAtStartOfInnerElement(startElement)) {
+            generateSequence(PsiTreeUtil.prevLeaf(startElement)) { PsiTreeUtil.prevLeaf(it) }
+                    .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
+                    ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
+                    ?.let { if (it) return@filter false }
+        }
 
-            // Inline element right after a typo (TODO add categories filter)
-            if (typo.location.isAtEndOfInnerElement(endElement)) {
-                generateSequence(PsiTreeUtil.nextLeaf(endElement)) { PsiTreeUtil.nextLeaf(it) }
-                        .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
-                        ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
-                        ?.let { if (it) return@filter false }
-            }
+        // Inline element right after a typo (TODO add categories filter)
+        if (typo.location.isAtEndOfInnerElement(endElement)) {
+            generateSequence(PsiTreeUtil.nextLeaf(endElement)) { PsiTreeUtil.nextLeaf(it) }
+                    .find { !MarkdownPsiUtils.isWhitespace(it) && !MarkdownPsiUtils.isEOL(it) }
+                    ?.parents()?.any { MarkdownPsiUtils.isInline(it) }
+                    ?.let { if (it) return@filter false }
+        }
 
-            !(typo.isTypoInOuterListItem() && typo.info.category in bulletsIgnoredCategories)
-        }.toSet()
-    }
+        !(typo.isTypoInOuterListItem() && typo.info.category in bulletsIgnoredCategories)
+    }.toSet()
 
     private fun Typo.isTypoInOuterListItem() = this.location.element?.parents()?.any { element -> MarkdownPsiUtils.isOuterListItem(element) } ?: false
 }

@@ -14,9 +14,5 @@ class JsonSupport : LanguageSupport() {
 
     override fun isRelevant(element: PsiElement) = element is JsonStringLiteral
 
-    override fun check(element: PsiElement): Set<Typo> {
-        require(element is JsonStringLiteral) { "Got non JsonStringLiteral in JsonSupport" }
-
-        return GrammarChecker.default.check(element).filterNotToSet { it.info.category in ignoredCategories }
-    }
+    override fun check(element: PsiElement) = GrammarChecker.default.check(element).filterNotToSet { it.info.category in ignoredCategories }
 }
