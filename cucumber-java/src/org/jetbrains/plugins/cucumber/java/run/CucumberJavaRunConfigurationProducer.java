@@ -7,7 +7,6 @@ import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
-import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -15,7 +14,6 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScopesCore;
@@ -26,6 +24,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.Set;
 
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberMainClass;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
 
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
@@ -34,9 +33,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String FORMATTER_OPTIONS_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_3 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter";
   public static final String FORMATTER_OPTIONS_4 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter";
-
-  public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
-  public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
 
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                    "cucumber.annotation.After",
@@ -91,13 +87,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     String cucumberCoreVersion;
     final Location location = context.getLocation();
     if (location != null) {
-      if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_0_MAIN_CLASS)) {
-        mainClassName = CUCUMBER_1_0_MAIN_CLASS;
-        cucumberCoreVersion = CUCUMBER_CORE_VERSION_1_0;
-      } else {
-        mainClassName = CUCUMBER_1_1_MAIN_CLASS;
-        cucumberCoreVersion = getCucumberCoreVersion(module, module.getProject());
-      }
+      cucumberCoreVersion = getCucumberCoreVersion(module, module.getProject());
+      mainClassName = getCucumberMainClass(cucumberCoreVersion);
 
       configuration.setCucumberCoreVersion(cucumberCoreVersion);
       formatterOptions = getSMFormatterOptions(cucumberCoreVersion);

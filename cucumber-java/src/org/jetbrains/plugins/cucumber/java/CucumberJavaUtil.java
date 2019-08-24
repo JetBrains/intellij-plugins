@@ -25,6 +25,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Query;
+import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -41,6 +42,8 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_1;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_4_5;
 import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_ANNOTATION_NAMES;
 import static org.jetbrains.plugins.cucumber.java.steps.AnnotationPackageProvider.CUCUMBER_ANNOTATION_PACKAGES;
 
@@ -55,6 +58,11 @@ public class CucumberJavaUtil {
   private static final Pattern SCRIPT_STYLE_REGEXP = Pattern.compile("^/(.*)/$");
   private static final Pattern PARENTHESIS = Pattern.compile("\\(([^)]+)\\)");
   private static final Pattern ALPHA = Pattern.compile("[a-zA-Z]+");
+
+  public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
+  public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
+  public static final String CUCUMBER_4_5_MAIN_CLASS = "io.cucumber.core.cli.Main";
+
 
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
@@ -419,5 +427,19 @@ public class CucumberJavaUtil {
         });
       }
     }
+  }
+
+  /**
+   * Calculates class to run cucumber tests
+   */
+  @NotNull
+  public static String getCucumberMainClass(@NotNull String cucumberCoreVersion) {
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_4_5) >= 0) {
+      return CUCUMBER_4_5_MAIN_CLASS;
+    }
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_1_1) >= 0) {
+      return CUCUMBER_1_1_MAIN_CLASS;
+    }
+    return CUCUMBER_1_0_MAIN_CLASS;
   }
 }
