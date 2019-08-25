@@ -42,6 +42,7 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "Timeout", type = "integer", description = "Maximum time that the function can run before it is killed in seconds. Defaults to 3."),
         CloudFormationManualResourceProperty(name = "Role", type = "string", description = "ARN of an IAM role to use as this function's execution role. If omitted, a default role is created for this function.", excludedFromGlobals = true),
         CloudFormationManualResourceProperty(name = "Policies", type = "string | List of string | IAM policy document object | List of IAM policy document object", description = "Names of AWS managed IAM policies or IAM policy documents that this function needs, which should be appended to the default role for this function. If the Role property is set, this property has no meaning.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "PermissionsBoundary", type = "string", description = "ARN of a permissions boundary to use for this function's execution role.", excludedFromGlobals = true),
         CloudFormationManualResourceProperty(name = "Environment", type = "Function environment object", description = "Configuration for the runtime environment."),
         CloudFormationManualResourceProperty(name = "VpcConfig", type = "VPC config object", description = "Configuration to enable this function to access private resources within your VPC."),
         CloudFormationManualResourceProperty(name = "Events", type = "Map of string to Event source object", description = "A map (string to Event source object) that defines the events that trigger this function. Keys are limited to alphanumeric characters.", excludedFromGlobals = true),
@@ -52,6 +53,7 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "DeploymentPreference", type = "DeploymentPreference Object", description = "Settings to enable Safe Lambda Deployments. Read the usage guide for detailed information."),
         CloudFormationManualResourceProperty(name = "Layers", type = "list of string", description = "List of LayerVersion ARNs that should be used by this function. The order specified here is the order that they will be imported when running the Lambda function."),
         CloudFormationManualResourceProperty(name = "AutoPublishAlias", type = "string", description = "Name of the Alias. Read AutoPublishAlias Guide for how it works"),
+        CloudFormationManualResourceProperty(name = "VersionDescription", type = "string", description = "A string that specifies the Description field which will be added on the new lambda version"),
         CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency", excludedFromGlobals = true)
     ),
     attributes = listOf(
@@ -72,11 +74,16 @@ val awsServerlessApi = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "CacheClusterSize", type = "string", description = "The stage's cache cluster size."),
         CloudFormationManualResourceProperty(name = "Variables", type = "string", description = "A map (string to string map) that defines the stage variables, where the variable name is the key and the variable value is the value. Variable names are limited to alphanumeric characters. Values must match the following regular expression: [A-Za-z0-9._~:/?#&amp;=,-]+."),
         CloudFormationManualResourceProperty(name = "MethodSettings", type = "CloudFormation MethodSettings property", description = "Configures all settings for API stage including Logging, Metrics, CacheTTL, Throttling. This value is passed through to CloudFormation. So any values supported by CloudFormation MethodSettings property can be used here."),
-        CloudFormationManualResourceProperty(name = "MinimumCompressionSize", type = "int", description = ""),
         CloudFormationManualResourceProperty(name = "EndpointConfiguration", type = "string", description = "string\tSpecify the type of endpoint for API endpoint. Value is either REGIONAL or EDGE."),
-        CloudFormationManualResourceProperty(name = "BinaryMediaTypes", type = "List of string", description = "List of MIME types that your API could return. Use this to enable binary support for APIs. Use ~1 instead of / in the mime types (See examples in template.yaml)."),
+        CloudFormationManualResourceProperty(name = "BinaryMediaTypes", type = "List of string", description = "List of MIME types that your API could return. Use this to enable binary support for APIs. Use ~1 instead of / in the mime types "),
+        CloudFormationManualResourceProperty(name = "MinimumCompressionSize", type = "int", description = ""),
         CloudFormationManualResourceProperty(name = "Cors", type = "string or Cors Configuration", description = "Enable CORS for all your APIs. Specify the domain to allow as a string or specify a dictionary with additional Cors Configuration. NOTE: Cors requires SAM to modify your Swagger definition. Hence it works only inline swagger defined with DefinitionBody."),
-        CloudFormationManualResourceProperty(name = "Auth", type = "API Auth Object", description = "Auth configuration for this API. Define Lambda and Cognito Authorizers and specify a DefaultAuthorizer for this API.")
+        CloudFormationManualResourceProperty(name = "Auth", type = "API Auth Object", description = "Auth configuration for this API. Define Lambda and Cognito Authorizers and specify a DefaultAuthorizer for this API."),
+        CloudFormationManualResourceProperty(name = "GatewayResponses", type = "Map of Gateway Response Type to Gateway Response Object", description = "Configures Gateway Reponses for an API. Gateway Responses are responses returned by API Gateway, either directly or through the use of Lambda Authorizers. Keys for this object are passed through to Api Gateway, so any value supported by GatewayResponse.responseType is supported here."),
+        CloudFormationManualResourceProperty(name = "AccessLogSetting", type = "CloudFormation AccessLogSetting property", description = "Configures Access Log Setting for a stage. This value is passed through to CloudFormation, so any value supported by AccessLogSetting is supported here."),
+        CloudFormationManualResourceProperty(name = "CanarySetting", type = "CloudFormation CanarySetting property", description = "Configure a Canary Setting to a Stage of a regular deployment. This value is passed through to Cloudformation, so any value supported by CanarySetting is supported here."),
+        CloudFormationManualResourceProperty(name = "TracingEnabled", type = "boolean", description = "Indicates whether active tracing with X-Ray is enabled for the stage."),
+        CloudFormationManualResourceProperty(name = "Models", type = "\tList of JSON or YAML objects", description = "JSON schemas that describes the models to be used by API methods.")
     )
 )
 
