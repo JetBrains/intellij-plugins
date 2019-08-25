@@ -10,7 +10,7 @@ import org.fest.swing.timing.Timeout
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 
-abstract class GraziGuiTestBase : GuiTestCase(false) {
+abstract class GraziGuiTestBase : GuiTestCase(true) {
     protected val ciTimeout = Timeout.timeout(3, TimeUnit.MINUTES)
 
     companion object {
