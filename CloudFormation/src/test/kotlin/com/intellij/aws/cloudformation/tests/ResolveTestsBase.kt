@@ -3,13 +3,13 @@ package com.intellij.aws.cloudformation.tests
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ResolveTestCase
 import org.junit.Assert
 import java.io.File
@@ -19,9 +19,10 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
   protected val NotResolved = Object()
 
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
-    FileUtil.copy(File(testDataPath, testName), File(myProject.basePath, testName))
+    val targetFile = File(myProject.basePath, testName)
+    FileUtil.copy(File(testDataPath, testName), targetFile)
 
-    val vFile = PlatformTestUtil.getOrCreateProjectTestBaseDir(myProject).findChild(testName)!!
+    val vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile)!!
 
     var fileText = StringUtil.convertLineSeparators(VfsUtil.loadText(vFile))
 
