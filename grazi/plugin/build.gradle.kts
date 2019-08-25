@@ -39,10 +39,11 @@ tasks.withType<PublishTask> {
 val langs = setOf("ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
 
 dependencies {
-    compile(kotlin("stdlib"))
+    compileOnly(kotlin("stdlib"))
+    testCompile(kotlin("stdlib"))
 
-    compile("tanvd.grazi", "language-detector", "0.1.0-SNAPSHOT") {
-        exclude("org.slf4j", "slf4j-api")
+    compile("tanvd.grazi", "language-detector", "0.1.0") {
+        kotlinExcludes()
     }
 
     compile("tanvd.grazi.languagetool", "languagetool-core", Versions.languageTool) {
@@ -55,16 +56,16 @@ dependencies {
 
     // for PyCharm and others no Intellij Idea applications
     aetherDependencies()
+
     compile("org.apache.commons", "commons-lang3", "3.9")
+    compile("org.apache.commons", "commons-text", "1.7")
 
     compile("org.jetbrains.kotlinx", "kotlinx-html-jvm", "0.6.11") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-        exclude("org.jetbrains", "annotations")
+        kotlinExcludes()
     }
 
     compile("tanvd.kex", "kex", "0.1.1") {
-        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        kotlinExcludes()
     }
 
     for (lang in langs) {

@@ -5,30 +5,31 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.exclude
 
 fun ExternalModuleDependency.kotlinExcludes() {
+    // already in IDEA
     exclude("org.jetbrains.kotlin", "kotlin-stdlib")
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    exclude("org.jetbrains", "annotations")
+    exclude("org.slf4j", "slf4j-api")
 }
 
 fun ExternalModuleDependency.ltExcludes() {
+    kotlinExcludes()
+
     // already in project
     exclude("org.apache.commons", "commons-lang3")
 
     // already in IDEA
-    exclude("org.slf4j", "slf4j-api")
     exclude("com.google.guava", "guava")
-    exclude("com.intellij", "annotations")
+
     exclude("net.java.dev.jna", "jna")
+
     exclude("javax.xml.bind", "jaxb-api")
+
     exclude("org.glassfish.jaxb", "jaxb-runtime")
+
     exclude("com.fasterxml.jackson.core", "jackson-databind")
+
     exclude("commons-logging", "commons-logging")
-    exclude("org.ow2.asm", "asm")
-
-    // used only in languagetool-core tests
-    exclude("org.apache.lucene", "lucene-core")
-    exclude("org.apache.lucene", "lucene-backward-codecs")
-
-    exclude("org.slf4j", "slf4j-api")
 }
 
 fun DependencyHandler.aetherDependencies() {
