@@ -26,6 +26,7 @@ import static com.intellij.psi.impl.source.tree.JavaElementType.*;
 public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");
   private static final String JAVA_8_PACKAGE = "cucumber.api.java8.";
+  private static final String JAVA_8_CUCUMBER_4_5_PACKAGE = "io.cucumber.java8.";
 
   private static final List<String> STEP_KEYWORDS = Arrays.asList("Әмма", "Нәтиҗәдә", "Вә", "Әйтик", "Һәм", "Ләкин", "Әгәр",  "Und",
                                                                   "Angenommen", "Gegeben seien",  "Dann", "Aber", "Wenn", "Gegeben sei",
@@ -98,10 +99,13 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
   @Override
   public DataIndexer<Boolean, List<Integer>, FileContent> getIndexer() {
     return inputData -> {
-      StringSearcher searcher = new StringSearcher(JAVA_8_PACKAGE, true, true);
+      StringSearcher searcher = new StringSearcher(JAVA_8_CUCUMBER_4_5_PACKAGE, true, true);
       CharSequence text = inputData.getContentAsText();
       if (!isCucumberStepDefinitionFile(searcher, text)) {
-        return Collections.emptyMap();
+        searcher = new StringSearcher(JAVA_8_PACKAGE, true, true);
+        if (!isCucumberStepDefinitionFile(searcher, text)) {
+          return Collections.emptyMap();
+        }
       }
 
       LighterAST lighterAst = ((PsiDependentFileContent)inputData).getLighterAST();
@@ -126,7 +130,7 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
 
   @Override
   public int getVersion() {
-    return 1;
+    return 2;
   }
 
   @Override

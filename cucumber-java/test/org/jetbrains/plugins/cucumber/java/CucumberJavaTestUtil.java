@@ -59,6 +59,9 @@ public class CucumberJavaTestUtil {
         libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-4.5");
         PsiTestUtil.addProjectLibrary(model, "cucumber-java", libraryRoots.getClassesPaths());
 
+        libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-java-4.5");
+        PsiTestUtil.addProjectLibrary(model, "cucumber-java8", libraryRoots.getClassesPaths());
+
         attachCucumberExpressionsLibrary(model);
       }
     };
