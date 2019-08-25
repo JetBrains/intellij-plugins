@@ -14,7 +14,6 @@ import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Exception
 import java.net.URL
 import java.util.ArrayList
 import java.util.TreeMap
@@ -58,13 +57,9 @@ object ResourceTypesSaver {
     val resourceTypes = resourceTypeLocations.pmap(numThreads = 10) {
       val location = when (it.name) {
         "AWS::CloudWatch::Dashboard" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dashboard.html"
-        "AWS::DMS::ReplicationSubnetGroup" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-replicationsubnet-group.html"
         "AWS::ElasticBeanstalk::ConfigurationTemplate" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-beanstalk-configurationtemplate.html"
         else -> it.location
       }
-
-      // No documentation on site
-      if (it.name == "AWS::EC2::TrunkInterfaceAssociation") return@pmap null
 
       try {
         val builder = ResourceTypeBuilder(name = it.name, url = location)
@@ -78,9 +73,7 @@ object ResourceTypesSaver {
       } catch (e: Throwable) {
         throw Exception("Unable to parse resource type ${it.name} from $location: ${e.message}", e)
       }
-    }.filterNotNull()
-
-    fetchResourceAttributes(resourceTypes)
+    }
 
     val allBuilders = resourceTypes + awsServerless20161031ResourceTypes.map { it.toResourceTypeBuilder() }
 
@@ -98,64 +91,6 @@ object ResourceTypesSaver {
 
     FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
     FileOutputStream(File("src/main/resources/cloudformation-descriptions.xml")).use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
-  }
-
-  private fun fetchResourceAttributes(resourceTypes: List<ResourceTypeBuilder>) {
-    val fnGetAttrDocUrl = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html")
-    val doc = getDocumentFromUrl(fnGetAttrDocUrl)
-
-    val attribBlock = doc.getElementById("intrinsic-function-reference-getatt-attrib")!!
-    val tableElement = attribBlock.nextElementSibling().nextElementSibling()
-    assert(tableElement.className() == "table")
-
-    val table = parseTable(tableElement)
-
-    for (row in table) {
-      if (row.size != 3) {
-        continue
-      }
-
-      var resourceTypeName = row[0]
-      val attribute = row[1]
-      val description = row[2]
-
-      if (resourceTypeName.isEmpty()) {
-        continue
-      }
-
-      if (resourceTypeName == "AWS::CloudFormation::Stack" && attribute == "Outputs.NestedStackOutputName") {
-        // Not an attribute name
-        continue
-      }
-
-      if (resourceTypeName == "AWS::Serverless::Function") {
-        // Skip, this is a part of another spec
-        // https://github.com/awslabs/serverless-application-model/tree/master/versions
-        continue
-      }
-
-      if (resourceTypeName == "AWS::EC2::AWS::EC2::SubnetNetworkAclAssociation") {
-        resourceTypeName = "AWS::EC2::SubnetNetworkAclAssociation"
-      }
-
-      if (resourceTypeName == "the section called “AWS::Config::ConfigRule”") {
-        resourceTypeName = "AWS::Config::ConfigRule"
-      }
-
-      fun addAttribute(_resourceTypeName: String, _attribute: String, _description: String) {
-        val builder = resourceTypes.singleOrNull { it.name == _resourceTypeName }
-            ?: error("Can't find resource type $_resourceTypeName")
-        builder.addAttribute(_attribute).description = _description
-      }
-
-      if (resourceTypeName == "AWS::DirectoryService::MicrosoftAD and AWS::DirectoryService::SimpleAD") {
-        addAttribute("AWS::DirectoryService::MicrosoftAD", attribute, description)
-        addAttribute("AWS::DirectoryService::SimpleAD", attribute, description)
-        continue
-      }
-
-      addAttribute(resourceTypeName, attribute, description)
-    }
   }
 
   private fun downloadDocument(url: URL): Document {
@@ -453,8 +388,12 @@ object ResourceTypesSaver {
   private data class ResourceTypeLocation(val name: String, val location: String)
 
   private fun fetchResourceTypeLocations(url: String): Map<String, ResourceTypeLocation> {
-    val content = URL(url).openStream().use { stream ->
-      GZIPInputStream(stream).bufferedReader().readText()
+    val content = try {
+      URL(url).openStream().use { stream ->
+        GZIPInputStream(stream).bufferedReader().readText()
+      }
+    } catch (t: Throwable) {
+      throw IllegalStateException("Unable to fetch $url", t)
     }
 
     val root = JsonParser().parse(content)
@@ -479,7 +418,7 @@ object ResourceTypesSaver {
   private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
     // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification.html
     val urls = listOf(
-        "https://d1mta8qj7i28i2.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // EU (Frankfurt)
+//        "https://d1mta8qj7i28i2.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // EU (Frankfurt)
         "https://d3teyb21fexa9r.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // EU (Ireland)
         "https://d68hl49wbnanq.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // US West (N. California)
         "https://d201a2mn26r7lk.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json" //  US West (Oregon)
