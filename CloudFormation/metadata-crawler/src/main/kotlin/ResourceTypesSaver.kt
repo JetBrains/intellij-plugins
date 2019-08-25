@@ -2,25 +2,18 @@
 
 import com.google.gson.JsonParser
 import com.intellij.aws.cloudformation.CloudFormationConstants
-import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
-import com.intellij.aws.cloudformation.metadata.CloudFormationManualResourceType
-import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
-import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
-import com.intellij.aws.cloudformation.metadata.MetadataSerializer
-import com.intellij.aws.cloudformation.metadata.awsServerless20161031ResourceTypes
+import com.intellij.aws.cloudformation.metadata.*
+import com.intellij.aws.cloudformation.tests.TestUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
-import java.util.ArrayList
-import java.util.TreeMap
+import java.util.*
 import java.util.zip.GZIPInputStream
 
 object ResourceTypesSaver {
-  private val FETCH_TIMEOUT_MS = 10000
+  private const val FETCH_TIMEOUT_MS = 10000
 
   private fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
     val builder = ResourceTypeBuilder(name, url)
@@ -89,8 +82,10 @@ object ResourceTypesSaver {
         resourceTypes = allBuilders.map { Pair(it.name, it.toResourceTypeDescription()) }.toMap()
     )
 
-    FileOutputStream(File("src/main/resources/cloudformation-metadata.xml")).use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
-    FileOutputStream(File("src/main/resources/cloudformation-descriptions.xml")).use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
+    TestUtil.getTestDataFile("../src/main/resources/cloudformation-metadata.xml")
+      .outputStream().use { outputStream -> MetadataSerializer.toXML(metadata, outputStream) }
+    TestUtil.getTestDataFile("../src/main/resources/cloudformation-descriptions.xml")
+      .outputStream().use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 
   private fun downloadDocument(url: URL): Document {

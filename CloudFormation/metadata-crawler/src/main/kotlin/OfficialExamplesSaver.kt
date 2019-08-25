@@ -1,17 +1,14 @@
+
+import com.intellij.aws.cloudformation.tests.TestUtil
 import com.intellij.openapi.util.text.StringUtil
-import org.apache.commons.codec.binary.StringUtils
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.jsoup.Jsoup
 import java.io.File
-import java.net.URL
-import java.nio.file.Files
 import java.io.IOException
+import java.net.URL
+import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.SimpleFileVisitor
-import java.nio.file.FileSystems
-import java.nio.file.FileVisitResult
-import java.nio.file.Path
 
 object OfficialExamplesSaver {
   fun save() {
@@ -25,7 +22,7 @@ object OfficialExamplesSaver {
       val fileUrl = URL(url, name.replace(" ", "%20"))
 
       val localName = StringUtil.trimEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template"
-      val localFile = File("testData/officialExamples/src", localName)
+      val localFile = File(TestUtil.getTestDataFile("officialExamples/src"), localName)
 
       if (localFile.exists() && localFile.length() == size.toLong()) {
         continue
@@ -37,7 +34,7 @@ object OfficialExamplesSaver {
   }
 
   fun saveServerless() {
-    val targetRoot = File("testData/serverless-application-model/src")
+    val targetRoot = TestUtil.getTestDataFile("serverless-application-model/src")
 
     val tempFile = Files.createTempFile("serverless-application-model-master", ".zip")
     tempFile.toFile().deleteOnExit()
