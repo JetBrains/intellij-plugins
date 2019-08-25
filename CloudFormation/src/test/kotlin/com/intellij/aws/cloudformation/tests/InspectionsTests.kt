@@ -5,6 +5,7 @@ import com.intellij.testFramework.InspectionFixtureTestCase
 
 class InspectionsTests : InspectionFixtureTestCase() {
   fun testFormatViolationInspection() {
-    doTest(TestUtil.getTestDataPathRelativeToIdeaHome("inspections"), JsonFormatViolationInspection())
+    myFixture.testDataPath = TestUtil.testDataRoot.path
+    doTest("inspections", JsonFormatViolationInspection())
   }
 }
