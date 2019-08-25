@@ -4,17 +4,14 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.exclude
 
+fun ExternalModuleDependency.kotlinExcludes() {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+}
 
 fun ExternalModuleDependency.ltExcludes() {
     // already in project
     exclude("org.apache.commons", "commons-lang3")
-
-    // useless for languagetool-core
-    exclude("com.typesafe.akka")
-    exclude("org.scala-lang")
-    exclude("biz.k11i", "xgboost-predictor")
-    exclude("org.apache.commons", "commons-csv")
-    exclude("javax.activation", "javax.activation-api")
 
     // already in IDEA
     exclude("org.slf4j", "slf4j-api")
@@ -24,7 +21,6 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("javax.xml.bind", "jaxb-api")
     exclude("org.glassfish.jaxb", "jaxb-runtime")
     exclude("com.fasterxml.jackson.core", "jackson-databind")
-    exclude("com.esotericsoftware.kryo", "kryo")
     exclude("commons-logging", "commons-logging")
     exclude("org.ow2.asm", "asm")
 
@@ -32,11 +28,7 @@ fun ExternalModuleDependency.ltExcludes() {
     exclude("org.apache.lucene", "lucene-core")
     exclude("org.apache.lucene", "lucene-backward-codecs")
 
-    // exclude OpenNLP from English
-    exclude("edu.washington.cs.knowitall", "opennlp-postag-models")
-    exclude("edu.washington.cs.knowitall", "opennlp-chunk-models")
-    exclude("edu.washington.cs.knowitall", "opennlp-tokenize-models")
-    exclude("org.apache.opennlp", "opennlp-tools")
+    exclude("org.slf4j", "slf4j-api")
 }
 
 fun DependencyHandler.aetherDependencies() {

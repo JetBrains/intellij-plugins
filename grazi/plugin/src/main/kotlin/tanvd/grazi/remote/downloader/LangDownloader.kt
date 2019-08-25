@@ -33,7 +33,7 @@ import java.nio.file.Paths
 object LangDownloader {
     private val logger = LoggerFactory.getLogger(LangDownloader::class.java)
 
-    val MAVEN_CENTRAL_REPOSITORY: RemoteRepository = RemoteRepository.Builder("central", "default", msg("grazi.maven.repo.url")).build()
+    val MAVEN_GRAZI_REPOSITORY: RemoteRepository = RemoteRepository.Builder("grazi", "default", msg("grazi.maven.repo.url")).build()
 
     private val repository: RepositorySystem by lazy {
         with(MavenRepositorySystemUtils.newServiceLocator()) {
@@ -65,8 +65,8 @@ object LangDownloader {
 
         val jars: MutableList<Artifact> = ArrayList()
         val isNotCancelled = CoreProgressManager.getInstance().runProcessWithProgressSynchronously({
-            val artifact = DefaultArtifact("org.languagetool", "language-${lang.shortCode}", "jar", msg("grazi.languagetool.version"))
-            val request = CollectRequest(artifact.createDependency(), listOf(MAVEN_CENTRAL_REPOSITORY))
+            val artifact = DefaultArtifact("tanvd.grazi.languagetool", lang.shortCode, "jar", msg("grazi.languagetool.version"))
+            val request = CollectRequest(artifact.createDependency(), listOf(MAVEN_GRAZI_REPOSITORY))
             try {
                 repository.collectDependencies(session, request).root.traverse { jars.add(it.artifact) }
             } catch (e: Throwable) {

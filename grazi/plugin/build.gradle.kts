@@ -39,13 +39,17 @@ tasks.withType<PublishTask> {
 val langs = setOf("ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
 
 dependencies {
-    compile(kotlin("stdlib", "1.3.31"))
+    compile(kotlin("stdlib"))
 
-    compile("org.languagetool", "languagetool-core", Versions.languageTool) {
+    compile("tanvd.grazi", "language-detector", "0.1.0-SNAPSHOT") {
+        exclude("org.slf4j", "slf4j-api")
+    }
+
+    compile("tanvd.grazi.languagetool", "languagetool-core", Versions.languageTool) {
         ltExcludes()
     }
 
-    compile("org.languagetool", "language-en", Versions.languageTool) {
+    compile("tanvd.grazi.languagetool", "en", Versions.languageTool) {
         ltExcludes()
     }
 
@@ -64,7 +68,7 @@ dependencies {
     }
 
     for (lang in langs) {
-        testRuntime("org.languagetool", "language-$lang", Versions.languageTool) {
+        testRuntime("tanvd.grazi.languagetool", lang, Versions.languageTool) {
             ltExcludes()
         }
     }

@@ -1,4 +1,4 @@
-实际生产的量 <warning descr="s5">超过了计划的百分之百</warning>。(Chinese)
+实际生产的量 超过了计划的百分之百。(Chinese)
 
 Het blijkt dat de <warning descr="MORFOLOGIK_RULE_EN_US">moordenaarr</warning> van gisteren in <warning descr="PLAATS_AAN_DEN">Alphen aan de Rijn</warning> al met Justitie in aanraking was gekomen. (Dutch)
 
@@ -26,4 +26,4 @@ Ako sa mohlo <warning descr="MORFOLOGIK_RULE_EN_US">staťže</warning> sa reťaz
 
 En el <warning descr="USO_HUSO">uso</warning> horario de las <warning descr="MORFOLOGIK_RULE_EN_US">Canariaas</warning>. (Spanish)
 
-Прийшов до Андрія <warning descr="VIDMINA_CHOLOVICHYH_PRIZVYSCH">Громико</warning> <warning descr="MORFOLOGIK_RULE_EN_US">секретарр</warning>. (Ukrainian)
+Прийшов до Андрія Громико <warning descr="MORFOLOGIK_RULE_EN_US">секретарр</warning>. (Ukrainian)

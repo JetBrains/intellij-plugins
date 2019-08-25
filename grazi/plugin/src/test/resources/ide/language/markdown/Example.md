@@ -24,7 +24,7 @@ Of <warning descr="MISSING_COMMA_AFTER_INTRODUCTORY_PHRASE">course it</warning> 
 
 Once more we have an inline <warning descr="COMMA_BEFORE_AND">fragment and</warning> it is `a` friend.
 
-<warning descr="And">And</warning> we've got error in injected code!
+And we've got error in injected code!
 ```kotlin
 val b = "It is <warning descr="ARTICLE_MISSING">friend</warning>"
 ```
@@ -32,10 +32,10 @@ val b = "It is <warning descr="ARTICLE_MISSING">friend</warning>"
 ## Немного русского
 
 В коробке лежало <warning descr="Sklonenije_NUM_NN">пять карандаша</warning>.
-А <warning descr="grammar_vse_li_noun">все ли ошибка</warning> найдены?
-Это случилось <warning descr="INVALID_DATE">31 ноября</warning> 2014 г.
-За весь вечер она <warning descr="ne_proronila_ni">не проронила и слово</warning>.
-Собрание состоится в <warning descr="RU_COMPOUNDS">конференц зале</warning>.
+<warning descr="SENTENCE_WHITESPACE">А</warning> <warning descr="grammar_vse_li_noun">все ли ошибка</warning> найдены?
+<warning descr="SENTENCE_WHITESPACE">Это</warning> случилось <warning descr="INVALID_DATE">31 ноября</warning> 2014 г.
+<warning descr="SENTENCE_WHITESPACE">За</warning> весь вечер она <warning descr="ne_proronila_ni">не проронила и слово</warning>.
+<warning descr="SENTENCE_WHITESPACE">Собрание</warning> состоится в <warning descr="RU_COMPOUNDS">конференц зале</warning>.
 <warning descr="WORD_REPEAT_RULE">Он он</warning> ошибка.
 
 Er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.

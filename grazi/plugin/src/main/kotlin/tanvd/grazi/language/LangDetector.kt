@@ -1,12 +1,12 @@
 package tanvd.grazi.language
 
 import com.intellij.openapi.project.Project
-import com.optimaize.langdetect.LanguageDetector
-import com.optimaize.langdetect.LanguageDetectorBuilder
-import com.optimaize.langdetect.ngram.NgramExtractors
-import com.optimaize.langdetect.profiles.LanguageProfileReader
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
+import tanvd.grazi.langdetect.detector.LanguageDetector
+import tanvd.grazi.langdetect.detector.LanguageDetectorBuilder
+import tanvd.grazi.langdetect.ngram.NgramExtractor
+import tanvd.grazi.langdetect.profiles.LanguageProfileReader
 
 object LangDetector : GraziStateLifecycle {
     private const val charsForLangDetection = 1_000
@@ -21,7 +21,7 @@ object LangDetector : GraziStateLifecycle {
         languages = state.availableLanguages
         val profiles = LanguageProfileReader().read(languages.filter { it.shortCode != "zh" }.map { it.shortCode } + "zh-CN").toSet()
 
-        detector = LanguageDetectorBuilder.create(NgramExtractors.standard())
+        detector = LanguageDetectorBuilder.create(NgramExtractor.gramLengths(1, 2, 3))
                 .probabilityThreshold(0.90)
                 .prefixFactor(1.5)
                 .suffixFactor(2.0)

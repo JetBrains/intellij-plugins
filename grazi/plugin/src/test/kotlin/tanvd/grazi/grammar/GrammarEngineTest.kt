@@ -61,15 +61,6 @@ class GrammarEngineTest : GraziTestBase(true) {
     }
 
     @Test
-    fun `test one line text with few typos`() {
-        val text = "Hello. world,, tot he. text for english."
-        val fixes = GrammarEngine.getTypos(text).toList()
-        assertEquals(2, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text)
-        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text)
-    }
-
-    @Test
     fun `test few lines text with few typos`() {
         val text = """
             |Hello. world,, tot he.

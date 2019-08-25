@@ -59,7 +59,7 @@ class ExampleClassWithTypos:
             int: the new size of <warning descr="DT_DT">a the</warning> group.
 
         """
-        return 1  # It <warning descr="IT_VBZ">are</warning> <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1  # It are <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
 
 
 class ForMultiLanguageSupport:

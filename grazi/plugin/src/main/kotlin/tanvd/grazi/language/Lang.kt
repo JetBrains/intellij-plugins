@@ -49,8 +49,6 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
         get() {
             if (_jLanguage == null) {
                 _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
-
-                if (_jLanguage != null) LangToolInstrumentation.enableLatinLettersInSpellchecker(this)
             }
 
             return _jLanguage

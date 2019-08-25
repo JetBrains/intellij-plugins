@@ -11,7 +11,7 @@ object GraziRemote {
     private fun isLibExists(lib: String) = GraziPlugin.installationFolder.resolve("lib/$lib").exists()
 
     // TODO probably better to check all dependencies, but it will take a long time for resolving
-    fun isAvailableLocally(lang: Lang) = isLibExists("language-${lang.shortCode}-${msg("grazi.languagetool.version")}.jar")
+    fun isAvailableLocally(lang: Lang) = isLibExists("${lang.shortCode}-${msg("grazi.languagetool.version")}.jar")
 
     /** Downloads [lang] to local storage */
     fun download(lang: Lang, project: Project? = null): Boolean {

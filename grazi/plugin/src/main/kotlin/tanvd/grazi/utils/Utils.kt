@@ -2,9 +2,6 @@ package tanvd.grazi.utils
 
 import com.twelvemonkeys.util.LinkedSet
 import org.languagetool.rules.RuleMatch
-import tanvd.grazi.GraziPlugin
-import java.io.File
-import java.io.InputStream
 
 fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
@@ -23,11 +20,6 @@ fun Iterable<*>.joinToStringWithOxfordComma(separator: String = ", ") = with(toL
 }
 
 fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()
-
-object Resources {
-    fun getFile(file: String): File = File(GraziPlugin::class.java.getResource(file).file)
-    fun getStream(file: String): InputStream = GraziPlugin::class.java.getResourceAsStream(file)
-}
 
 fun <T> Iterable<T>.filterToSet(filter: (T) -> Boolean) = asSequence().filter(filter).toCollection(LinkedSet())
 fun <T> Iterable<T>.filterNotToSet(filterNot: (T) -> Boolean) = asSequence().filterNot(filterNot).toCollection(LinkedSet())

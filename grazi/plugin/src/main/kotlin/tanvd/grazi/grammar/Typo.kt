@@ -10,7 +10,6 @@ import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangToolFixes
 import tanvd.grazi.utils.*
 
-@Suppress("unused")
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
     companion object {
         private val logger = LoggerFactory.getLogger(Typo::class.java)
@@ -102,6 +101,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
             match.suggestedReplacements.map { LangToolFixes.fixSuggestion(match.rule, it) }
     )
 
+    @Suppress("unused")
     enum class Category(val value: String, val description: String) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),

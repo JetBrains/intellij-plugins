@@ -56,16 +56,6 @@ class GrammarCheckerTests : GraziTestBase(true) {
     }
 
     @Test
-    fun `test one line of text with multiple typos`() {
-        val text = "Hello. world,, tot he. text for english."
-        val tokens = plain(text)
-        val fixes = GrammarChecker.default.check(tokens).toList()
-        Assert.assertEquals(2, fixes.size)
-        fixes[0].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text)
-        fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text)
-    }
-
-    @Test
     fun `test few lines of text with few typos`() {
         val text = listOf("Hello. world,, tot he.\n", "This are my friend.")
         val tokens = plain(text)

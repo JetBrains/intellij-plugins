@@ -15,6 +15,7 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven("https://repo.labs.intellij.net/intdev")
     }
 
     apply {
