@@ -64,6 +64,7 @@
   COVARIANT="covariant"
   DEFERRED="deferred"
   EXPORT="export"
+  EXTENSION="extension"
   EXTERNAL="external"
   FACTORY="factory"
   GET="get"
@@ -163,6 +164,7 @@ private topLevelDefinition ::= libraryStatement
                              | classDefinition
                              | mixinDeclaration
                              | enumDefinition
+                             | extensionDeclaration
                              | functionTypeAlias
                              | getterOrSetterDeclaration
                              | functionDeclarationWithBodyOrNative
@@ -256,6 +258,9 @@ enumConstantDeclaration ::= componentName
   implements="com.jetbrains.lang.dart.psi.DartComponent"
   methods = [getMetadataList]
 }
+
+extensionDeclaration ::= 'extension' typeParameters? 'on' type '?'? classBody |
+                         'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
 
 mixinApplication ::= '=' type mixins? interfaces? ';' {pin = 1}
 private standardClassDeclarationTail ::= superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?

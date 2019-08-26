@@ -172,6 +172,7 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "covariant"            { return COVARIANT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "deferred"             { return DEFERRED; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "export"               { return EXPORT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "extension"            { return EXTENSION; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "external"             { return EXTERNAL; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "factory"              { return FACTORY; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "get"                  { return GET; }

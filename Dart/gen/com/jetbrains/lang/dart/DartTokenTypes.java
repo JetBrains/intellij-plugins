@@ -41,6 +41,7 @@ public interface DartTokenTypes {
   IElementType EXPORT_STATEMENT = new DartElementType("EXPORT_STATEMENT");
   IElementType EXPRESSION = new DartElementType("EXPRESSION");
   IElementType EXPRESSION_LIST = new DartElementType("EXPRESSION_LIST");
+  IElementType EXTENSION_DECLARATION = new DartElementType("EXTENSION_DECLARATION");
   IElementType FACTORY_CONSTRUCTOR_DECLARATION = new DartElementType("FACTORY_CONSTRUCTOR_DECLARATION");
   IElementType FIELD_FORMAL_PARAMETER = new DartElementType("FIELD_FORMAL_PARAMETER");
   IElementType FIELD_INITIALIZER = new DartElementType("FIELD_INITIALIZER");
@@ -188,6 +189,7 @@ public interface DartTokenTypes {
   IElementType EXPORT = new DartElementType("export");
   IElementType EXPRESSION_BODY_DEF = new DartElementType("=>");
   IElementType EXTENDS = new DartElementType("extends");
+  IElementType EXTENSION = new DartElementType("extension");
   IElementType EXTERNAL = new DartElementType("external");
   IElementType FACTORY = new DartElementType("factory");
   IElementType FALSE = new DartElementType("false");
@@ -383,6 +385,9 @@ public interface DartTokenTypes {
       }
       else if (type == EXPRESSION_LIST) {
         return new DartExpressionListImpl(node);
+      }
+      else if (type == EXTENSION_DECLARATION) {
+        return new DartExtensionDeclarationImpl(node);
       }
       else if (type == FACTORY_CONSTRUCTOR_DECLARATION) {
         return new DartFactoryConstructorDeclarationImpl(node);
