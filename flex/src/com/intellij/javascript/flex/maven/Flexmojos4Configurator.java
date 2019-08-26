@@ -8,8 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -114,8 +112,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     }
 
     if (existingTask == null) {
-      ChangeListManager.getInstance(project).addFilesToIgnore(
-        IgnoredBeanFactory.ignoreUnderDirectory(getCompilerConfigsDir(project), project));
       existingTask = new Flexmojos4GenerateConfigTask(myMavenTree);
       postTasks.add(existingTask);
     }

@@ -4,8 +4,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
-import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import org.jetbrains.idea.maven.model.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsProcessorTask;
@@ -42,8 +40,6 @@ public class Flexmojos5Configurator extends Flexmojos4Configurator {
     }
 
     if (existingTask == null) {
-      ChangeListManager.getInstance(project).addFilesToIgnore(
-        IgnoredBeanFactory.ignoreUnderDirectory(getCompilerConfigsDir(project), project));
       existingTask = new Flexmojos5GenerateConfigTask(myMavenTree);
       postTasks.add(existingTask);
     }
