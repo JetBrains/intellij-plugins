@@ -102,24 +102,14 @@ public class OsgiBuildSession implements Reporter {
     for (File file : myOutputJarFiles) {
       try (JarFile jarFile = new JarFile(file)) {
 
-        boolean extractedMetaInf = false;
-        boolean extractedOsgiInf = false;
-
         for (JarEntry entry : Collections.list(jarFile.entries())) {
-
-          if (extractedMetaInf && extractedOsgiInf) {
-            break;
-          }
 
           if (entry.getName().startsWith(META_INF)) {
             extractEntry(jarFile, entry);
-            extractedMetaInf = true;
-
           }
 
           if (entry.getName().startsWith(OSGI_INF)) {
             extractEntry(jarFile, entry);
-            extractedOsgiInf = true;
           }
 
 
