@@ -66,3 +66,33 @@ Future<T<Y>> foo8() async* {
   bar() async*{}
   async*{};
 }
+
+foo() {
+  for (var i in 2(10)) {
+    for (var i in 3[10]) {
+      print(i);
+    }
+  }
+}
+
+extension Tricky on int {
+ 	Iterable<int> call(int to) =>
+      Iterable<int>.generate(to - this + 1, (i) => i + this);
+}
+
+extension MyFancyList<T> on List<T> {
+  int get doubleLength => this.length * 2;
+  List<T> operator-() => this.reversed.toList();
+  List<List<T>> split(int at) => <List<T>>[this.sublist(0, at), this.sublist(at)];
+  List<T> mapToList<R>(R Function(T) convert) {
+    this.map(convert).toList();
+  }
+}
+
+extension on on on {}
+extension on on {}
+
+extension extension;
+extension on;
+extension extension() => on;
+extension on(){}
