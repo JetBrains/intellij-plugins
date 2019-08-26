@@ -1644,6 +1644,79 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'extension' typeParameters? 'on' type '?'? classBody |
+  //                          'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+  public static boolean extensionDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration")) return false;
+    if (!nextTokenIs(b, EXTENSION)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = extensionDeclaration_0(b, l + 1);
+    if (!r) r = extensionDeclaration_1(b, l + 1);
+    exit_section_(b, m, EXTENSION_DECLARATION, r);
+    return r;
+  }
+
+  // 'extension' typeParameters? 'on' type '?'? classBody
+  private static boolean extensionDeclaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EXTENSION);
+    r = r && extensionDeclaration_0_1(b, l + 1);
+    r = r && consumeToken(b, ON);
+    r = r && type(b, l + 1);
+    r = r && extensionDeclaration_0_4(b, l + 1);
+    r = r && classBody(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // typeParameters?
+  private static boolean extensionDeclaration_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0_1")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean extensionDeclaration_0_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_0_4")) return false;
+    consumeToken(b, QUEST);
+    return true;
+  }
+
+  // 'extension' <<nonStrictID>> typeParameters? 'on' type '?'? classBody
+  private static boolean extensionDeclaration_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EXTENSION);
+    r = r && nonStrictID(b, l + 1);
+    r = r && extensionDeclaration_1_2(b, l + 1);
+    r = r && consumeToken(b, ON);
+    r = r && type(b, l + 1);
+    r = r && extensionDeclaration_1_5(b, l + 1);
+    r = r && classBody(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // typeParameters?
+  private static boolean extensionDeclaration_1_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1_2")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // '?'?
+  private static boolean extensionDeclaration_1_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "extensionDeclaration_1_5")) return false;
+    consumeToken(b, QUEST);
+    return true;
+  }
+
+  /* ********************************************************** */
   // metadata* ('external' | 'const')* 'factory' componentName ('.' componentName)? formalParameterList factoryTail?
   public static boolean factoryConstructorDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "factoryConstructorDeclaration")) return false;
@@ -6251,6 +6324,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                              | classDefinition
   //                              | mixinDeclaration
   //                              | enumDefinition
+  //                              | extensionDeclaration
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
   //                              | functionDeclarationWithBodyOrNative
@@ -6268,6 +6342,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = classDefinition(b, l + 1);
     if (!r) r = mixinDeclaration(b, l + 1);
     if (!r) r = enumDefinition(b, l + 1);
+    if (!r) r = extensionDeclaration(b, l + 1);
     if (!r) r = functionTypeAlias(b, l + 1);
     if (!r) r = getterOrSetterDeclaration(b, l + 1);
     if (!r) r = functionDeclarationWithBodyOrNative(b, l + 1);
