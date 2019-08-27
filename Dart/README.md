@@ -111,6 +111,7 @@ repositories...', find plugins and install them. Restart IDE.
   4.2. Rename Plugin SDK to 'IDEA Ultimate'.
 
   4.3. Add some jars to the Plugin SDK Classpath:
+  
     - [IDEA Installation]/plugins/coverage/lib/\*.jar
     - [IDEA Installation]/plugins/copyright/lib/\*.jar
     - [IDEA Installation]/plugins/JavaScriptDebugger/lib/\*.jar
