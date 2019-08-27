@@ -458,12 +458,8 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   private static VirtualFile createEmptySwc(VirtualFile dir, String name) throws IOException {
     final File jarFile = new File(dir.getPath(), name);
     new ZipOutputStream(new FileOutputStream(jarFile)).close();
-    return ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
-      @Override
-      public VirtualFile compute() throws IOException {
-        return FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(jarFile), dir);
-      }
-    });
+    return ApplicationManager.getApplication().runWriteAction(
+      (ThrowableComputable<VirtualFile, IOException>)() -> FlexUtils.addFileWithContent(name, FileUtil.loadFileBytes(jarFile), dir));
   }
 
   public void testBcDependencies() throws Exception {
@@ -755,12 +751,8 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   private static VirtualFile addFileWithContent(String name, String content, VirtualFile settingsDir) throws IOException {
-    return ApplicationManager.getApplication().runWriteAction(new ThrowableComputable<VirtualFile, IOException>() {
-      @Override
-      public VirtualFile compute() throws IOException {
-        return FlexUtils.addFileWithContent(name, content, settingsDir);
-      }
-    });
+    return ApplicationManager.getApplication().runWriteAction(
+      (ThrowableComputable<VirtualFile, IOException>)() -> FlexUtils.addFileWithContent(name, content, settingsDir));
   }
 
   public void testWebASAppsAndModules() throws Exception {
