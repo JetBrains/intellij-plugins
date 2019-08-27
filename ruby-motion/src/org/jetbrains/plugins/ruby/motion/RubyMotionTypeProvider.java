@@ -59,7 +59,7 @@ import java.util.List;
 public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
   @Nullable
   @Override
-  public RType createTypeBySymbol(Symbol symbol, Visibility visibility) {
+  public RType createTypeBySymbol(@NotNull Symbol symbol, @NotNull Visibility visibility) {
     if (symbol instanceof ConstantSymbol) {
       final Constant constant = ((ConstantSymbol)symbol).getConstant();
       return MotionSymbolUtil.getTypeByName(symbol.getModule(), constant.getDeclaredType());

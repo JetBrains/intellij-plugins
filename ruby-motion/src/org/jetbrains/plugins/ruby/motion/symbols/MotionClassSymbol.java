@@ -114,7 +114,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     return myModule;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Symbol getSingletonClassSymbol() {
     return new MySingleton(this);
