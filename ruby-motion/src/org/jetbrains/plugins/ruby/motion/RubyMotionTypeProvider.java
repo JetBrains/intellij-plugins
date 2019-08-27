@@ -43,7 +43,6 @@ import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RArgument;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RMethod;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.RNamedArgument;
-import org.jetbrains.plugins.ruby.ruby.lang.psi.controlStructures.methods.Visibility;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.expressions.RExpression;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.methodCall.RCall;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.references.RReference;
@@ -59,7 +58,7 @@ import java.util.List;
 public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
   @Nullable
   @Override
-  public RType createTypeBySymbol(@NotNull Symbol symbol, @NotNull Visibility visibility) {
+  public RType createTypeBySymbol(@NotNull Symbol symbol) {
     if (symbol instanceof ConstantSymbol) {
       final Constant constant = ((ConstantSymbol)symbol).getConstant();
       return MotionSymbolUtil.getTypeByName(symbol.getModule(), constant.getDeclaredType());
