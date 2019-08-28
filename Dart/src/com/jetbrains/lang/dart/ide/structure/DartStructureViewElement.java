@@ -77,7 +77,11 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
   @NotNull
   private static String getPresentableText(@NotNull final Outline outline) {
     final Element element = outline.getElement();
-    final StringBuilder b = new StringBuilder(element.getName());
+    final StringBuilder b = new StringBuilder();
+    if (ElementKind.EXTENSION.equals(element.getKind())) {
+      b.append("extension ");
+    }
+    b.append(element.getName());
     if (StringUtil.isNotEmpty(element.getTypeParameters())) {
       b.append(element.getTypeParameters());
     }
@@ -99,6 +103,8 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     switch (element.getKind()) {
       case ElementKind.CLASS:
         return element.isAbstract() ? AbstractClass : Class;
+      case ElementKind.EXTENSION:
+        return AnonymousClass;
       case ElementKind.MIXIN:
         return AbstractClass;
       case ElementKind.CONSTRUCTOR:
