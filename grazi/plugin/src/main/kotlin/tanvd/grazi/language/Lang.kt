@@ -8,7 +8,7 @@ import tanvd.grazi.remote.RemoteLangDescriptor
 import tanvd.grazi.utils.LangToolInstrumentation
 
 @Suppress("unused")
-enum class Lang(val displayName: String, val shortCode: String, private val className: String, val descriptor: RemoteLangDescriptor,
+enum class Lang(val displayName: String, val shortCode: String, private val className: String, val remote: RemoteLangDescriptor,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet(),
                 private val disabledCategories: Set<String> = emptySet()) {

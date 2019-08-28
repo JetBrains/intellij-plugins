@@ -48,7 +48,7 @@ class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRende
         setSelected(myTextLabel, isSelected && isSelectable)
         setSelected(size, isSelected && isSelectable)
 
-        size.text = if (lang?.jLanguage != null) "" else lang?.descriptor?.size ?: ""
+        size.text = if (lang?.jLanguage != null) "" else lang?.remote?.size ?: ""
         size.foreground = if (!isSelected) Color.GRAY else myTextLabel.foreground
     }
 }

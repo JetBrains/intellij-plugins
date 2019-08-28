@@ -54,9 +54,6 @@ dependencies {
         ltExcludes()
     }
 
-    // for PyCharm and others no Intellij Idea applications
-    aetherDependencies()
-
     compile("org.apache.commons", "commons-lang3", "3.9")
     compile("org.apache.commons", "commons-text", "1.7")
 

@@ -52,7 +52,7 @@ fun FlowOrPhrasingContent.toCorrectHtml(example: IncorrectExample) {
 
 object LangToolInstrumentation {
     fun registerLanguage(lang: Lang) {
-        lang.descriptor.langsClasses.forEach { className ->
+        lang.remote.langsClasses.forEach { className ->
             val qualifiedName = "org.languagetool.language.$className"
             if (Languages.get().all { it::class.java.canonicalName != qualifiedName }) {
                 Languages.add(GraziPlugin.loadClass(qualifiedName)!!.newInstance() as Language)
