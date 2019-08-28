@@ -7,7 +7,7 @@
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
        globalStyleSheets: [temp:///src/src/styles.css]
-       stylePreprocessorIncludeDirs: []
+       stylePreprocessorIncludeDirs: [temp:///src]
        karmaConfigFile: temp:///src/src/karma.conf.js
        protractorConfigFile: null
        tsLintConfigurations: [
@@ -26,7 +26,7 @@
        sourceDir: temp:///src/e2e
        indexHtml: null
        globalStyleSheets: []
-       stylePreprocessorIncludeDirs: []
+       stylePreprocessorIncludeDirs: [temp:///src]
        karmaConfigFile: null
        protractorConfigFile: temp:///src/e2e/protractor.conf.js
        tsLintConfigurations: [
