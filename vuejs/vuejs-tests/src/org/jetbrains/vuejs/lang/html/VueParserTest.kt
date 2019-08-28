@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.settings.JSRootConfigurationBase
 import com.intellij.lexer.EmbeddedTokenTypesProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.progress.EmptyProgressIndicator
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
@@ -54,7 +53,7 @@ class VueParserTest : HtmlParsingTest("", "vue",
     addExplicitExtension<ASTFactory>(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, CssTreeElementFactory())
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider::class.java)
     registerExtension(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProviderImpl())
-    application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"))
+    application.registerService(CssElementDescriptorFactory2::class.java, CssElementDescriptorFactory2("css-parsing-tests.xml"))
 
     // Update parser definition if version is changed
     assert(JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6)

@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.tree.events.TreeChangeEvent;
 import com.intellij.psi.PsiFile;
@@ -58,7 +57,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     getApplication().registerService(CssElementDescriptorFactory2.class,
-                                     new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+                                     new CssElementDescriptorFactory2("css-parsing-tests.xml"));
 
     // Update parser definition if version is changed
     assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;

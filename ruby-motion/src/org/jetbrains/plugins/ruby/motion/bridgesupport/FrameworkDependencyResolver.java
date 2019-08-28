@@ -38,14 +38,12 @@ import java.util.stream.Stream;
 public class FrameworkDependencyResolver {
   private static final Logger LOG = Logger.getInstance(InheritanceInfoHolder.class);
   private final Map<String, Map<String, List<String>>> myDependencyInfo = new HashMap<>();
-  private final BridgeSupportLoader myLoader;
 
   public static FrameworkDependencyResolver getInstance() {
     return ServiceManager.getService(FrameworkDependencyResolver.class);
   }
 
-  public FrameworkDependencyResolver(final BridgeSupportLoader loader) {
-    myLoader = loader;
+  public FrameworkDependencyResolver() {
     final Stream<Path> childrenStream;
     try {
       childrenStream = Files.list(getScriptsDir());
@@ -110,7 +108,7 @@ public class FrameworkDependencyResolver {
       final String name = unsatisfied.poll();
       if (processed.contains(name)) continue;
 
-      ContainerUtil.addIfNotNull(result, myLoader.getFramework(sdkVersion, name));
+      ContainerUtil.addIfNotNull(result, BridgeSupportLoader.getInstance().getFramework(sdkVersion, name));
       final List<String> deps = dependencyInfo != null ? dependencyInfo.get(name) : null;
       if (deps != null) {
         unsatisfied.addAll(deps);
