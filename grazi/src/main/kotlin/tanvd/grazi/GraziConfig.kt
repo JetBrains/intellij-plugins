@@ -10,22 +10,22 @@ import tanvd.kex.ifTrue
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
-                @Property val nativeLanguage: Lang = enabledLanguages.first(),
-                @Property val enabledSpellcheck: Boolean = false,
-                @Property val userWords: Set<String> = HashSet(),
-                @Property val userDisabledRules: Set<String> = HashSet(),
-                @Property val userEnabledRules: Set<String> = HashSet(),
-                @Property val lastSeenVersion: String? = null,
-                val availableLanguages: Set<Lang> = enabledLanguages.filter { it.jLanguage != null }.toSet()) {
+                     @Property val nativeLanguage: Lang = enabledLanguages.first(),
+                     @Property val enabledSpellcheck: Boolean = false,
+                     @Property val userWords: Set<String> = HashSet(),
+                     @Property val userDisabledRules: Set<String> = HashSet(),
+                     @Property val userEnabledRules: Set<String> = HashSet(),
+                     @Property val lastSeenVersion: String? = null,
+                     val availableLanguages: Set<Lang> = enabledLanguages.filter { it.jLanguage != null }.toSet()) {
 
         val missedLanguages: Set<Lang>
             get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
-                    ((nativeLanguage.jLanguage == null).ifTrue { setOf(nativeLanguage) } ?: emptySet())
+                ((nativeLanguage.jLanguage == null).ifTrue { setOf(nativeLanguage) } ?: emptySet())
 
         fun clone() = State(
-                enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
-                userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
-                lastSeenVersion = lastSeenVersion, availableLanguages = availableLanguages)
+            enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
+            userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules), userEnabledRules = HashSet(userEnabledRules),
+            lastSeenVersion = lastSeenVersion, availableLanguages = availableLanguages)
 
         fun hasMissedLanguages(withNative: Boolean = true) = (withNative && nativeLanguage.jLanguage == null) || enabledLanguages.any { it.jLanguage == null }
 
@@ -36,7 +36,7 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
                    userDisabledRules: Set<String> = this.userDisabledRules,
                    userEnabledRules: Set<String> = this.userEnabledRules,
                    lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
-                userWords, userDisabledRules, userEnabledRules, lastSeenVersion, enabledLanguages.filter { it.jLanguage != null }.toSet())
+            userWords, userDisabledRules, userEnabledRules, lastSeenVersion, enabledLanguages.filter { it.jLanguage != null }.toSet())
     }
 
     companion object {

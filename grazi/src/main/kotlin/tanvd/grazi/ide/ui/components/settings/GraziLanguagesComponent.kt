@@ -4,9 +4,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.components.dsl.msg
-import tanvd.grazi.ide.ui.components.dsl.padding
-import tanvd.grazi.ide.ui.components.dsl.panel
+import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout

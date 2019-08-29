@@ -5,7 +5,6 @@ import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.utils.isInjectedFragment
 
 abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) : LanguageExtensionPoint<LanguageSupport>() {
     companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")

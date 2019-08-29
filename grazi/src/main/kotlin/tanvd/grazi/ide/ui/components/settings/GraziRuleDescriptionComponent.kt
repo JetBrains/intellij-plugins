@@ -12,10 +12,7 @@ import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
-import tanvd.grazi.ide.ui.components.dsl.msg
-import tanvd.grazi.ide.ui.components.dsl.padding
-import tanvd.grazi.ide.ui.components.dsl.pane
-import tanvd.grazi.ide.ui.components.dsl.panel
+import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.ide.ui.components.rules.ComparableCategory
 import tanvd.grazi.ide.ui.components.rules.RuleWithLang
 import tanvd.grazi.ide.ui.components.utils.GraziLinkLabel

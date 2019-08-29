@@ -3,7 +3,6 @@ package tanvd.grazi.ide.language.latex
 import com.intellij.psi.PsiElement
 import nl.hannahsten.texifyidea.psi.*
 import tanvd.grazi.grammar.GrammarChecker
-import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterNotToSet
 import tanvd.grazi.utils.parents

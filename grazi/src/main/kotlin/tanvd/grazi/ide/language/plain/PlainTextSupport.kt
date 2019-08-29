@@ -3,7 +3,6 @@ package tanvd.grazi.ide.language.plain
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPlainText
 import tanvd.grazi.grammar.GrammarChecker
-import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
 class PlainTextSupport : LanguageSupport() {

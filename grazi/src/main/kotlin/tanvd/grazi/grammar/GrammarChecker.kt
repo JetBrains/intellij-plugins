@@ -35,7 +35,7 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
 
 
     constructor(checker: GrammarChecker, charRules: CharRules = CharRules(), textRules: TextRules = TextRules())
-            : this(CharRules(checker.charRules, charRules), TextRules(checker.textRules, textRules))
+        : this(CharRules(checker.charRules, charRules), TextRules(checker.textRules, textRules))
 
     companion object {
         object Rules {
@@ -69,8 +69,8 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
         }
 
         val default = GrammarChecker(
-                CharRules(linkedSetOf(Rules.flatBlanks), linkedSetOf(Rules.flatNewlines)),
-                TextRules(ignoreFully = linkedSetOf(Rules.ignoreFullyBlank), ignoreByIndex = linkedSetOf(Rules.ignoreBorderQuotes))
+            CharRules(linkedSetOf(Rules.flatBlanks), linkedSetOf(Rules.flatNewlines)),
+            TextRules(ignoreFully = linkedSetOf(Rules.ignoreFullyBlank), ignoreByIndex = linkedSetOf(Rules.ignoreBorderQuotes))
         )
     }
 

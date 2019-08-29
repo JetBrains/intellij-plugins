@@ -10,10 +10,7 @@ import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
 import org.picocontainer.Disposable
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.components.dsl.border
-import tanvd.grazi.ide.ui.components.dsl.msg
-import tanvd.grazi.ide.ui.components.dsl.padding
-import tanvd.grazi.ide.ui.components.dsl.panel
+import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.language.Lang
 import tanvd.grazi.remote.GraziRemote
 import javax.swing.JComponent

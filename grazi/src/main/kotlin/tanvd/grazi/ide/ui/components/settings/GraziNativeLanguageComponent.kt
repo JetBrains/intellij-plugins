@@ -9,10 +9,7 @@ import com.intellij.util.ui.JBUI
 import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
-import tanvd.grazi.ide.ui.components.dsl.msg
-import tanvd.grazi.ide.ui.components.dsl.padding
-import tanvd.grazi.ide.ui.components.dsl.panel
-import tanvd.grazi.ide.ui.components.dsl.wrapWithLabel
+import tanvd.grazi.ide.ui.components.dsl.*
 import tanvd.grazi.language.Lang
 
 class GraziNativeLanguageComponent(download: (Lang) -> Boolean) {

@@ -5,7 +5,6 @@ import org.languagetool.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.remote.RemoteLangDescriptor
-import tanvd.grazi.utils.LangToolInstrumentation
 
 @Suppress("unused")
 enum class Lang(val displayName: String, val shortCode: String, private val className: String, val remote: RemoteLangDescriptor,

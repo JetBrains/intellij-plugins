@@ -1,9 +1,7 @@
 package tanvd.grazi.ide.language.python
 
 import com.intellij.psi.PsiElement
-import com.jetbrains.python.psi.PyFormattedStringElement
-import com.jetbrains.python.psi.PyPlainStringElement
-import com.jetbrains.python.psi.PyStringLiteralExpression
+import com.jetbrains.python.psi.*
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 

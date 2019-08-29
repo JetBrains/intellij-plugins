@@ -13,17 +13,18 @@ import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
 
-class GraziAddDeleteListPanel(private val download: (Lang) -> Boolean, private val onLanguageAdded: (lang: Lang) -> Unit, private val onLanguageRemoved: (lang: Lang) -> Unit) :
-        AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
+class GraziAddDeleteListPanel(private val download: (Lang) -> Boolean, private val onLanguageAdded: (lang: Lang) -> Unit,
+                              private val onLanguageRemoved: (lang: Lang) -> Unit) :
+    AddDeleteListPanel<Lang>(null, GraziConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
     private val decorator: ToolbarDecorator =
-            @Suppress("UNCHECKED_CAST")
-            GraziListToolbarDecorator(myList as JList<Any>)
-                    .setAddAction { addElement(findItemToAdd()) }
-                    .setToolbarPosition(ActionToolbarPosition.BOTTOM)
-                    .setRemoveAction {
-                        myList.selectedValuesList.forEach(onLanguageRemoved)
-                        ListUtil.removeSelectedItems(myList as JList<Lang>)
-                    }
+        @Suppress("UNCHECKED_CAST")
+        GraziListToolbarDecorator(myList as JList<Any>)
+            .setAddAction { addElement(findItemToAdd()) }
+            .setToolbarPosition(ActionToolbarPosition.BOTTOM)
+            .setRemoveAction {
+                myList.selectedValuesList.forEach(onLanguageRemoved)
+                ListUtil.removeSelectedItems(myList as JList<Lang>)
+            }
 
     init {
         emptyText.text = msg("grazi.ui.settings.language.empty.text")
