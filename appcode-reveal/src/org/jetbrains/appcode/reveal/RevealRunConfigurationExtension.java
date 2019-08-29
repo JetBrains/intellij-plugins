@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
-import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunnerSettings;
@@ -20,6 +19,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.UIBundle;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.ContainerUtil;
@@ -238,7 +238,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                   @NotNull
                   @Override
                   public String getDoNotShowMessage() {
-                    return CommonBundle.message("dialog.options.do.not.show");
+                    return UIBundle.message("dialog.options.do.not.show");
                   }
                 }
         ));
