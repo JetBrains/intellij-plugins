@@ -3,36 +3,106 @@ package tanvd.grazi.grammar
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import com.intellij.psi.PsiElement
-import org.languagetool.rules.Rule
-import org.languagetool.rules.RuleMatch
+import com.intellij.psi.util.PsiTreeUtil
+import org.languagetool.rules.*
+import org.slf4j.LoggerFactory
 import tanvd.grazi.language.Lang
+import tanvd.grazi.language.LangToolFixes
 import tanvd.grazi.utils.*
 
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
-    data class Location(val range: IntRange, val element: PsiElement? = null, val shouldUseRename: Boolean = false) {
-        fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
+    companion object {
+        private val logger = LoggerFactory.getLogger(Typo::class.java)
     }
 
+    data class Location(val range: IntRange, val pointer: PsiPointer<PsiElement>? = null, val shouldUseRename: Boolean = false) {
+        val element: PsiElement?
+            get() = pointer?.element
 
-    data class Info(val lang: Lang, val rule: Rule, val category: Category) {
-        val description: String
+        fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
+
+        fun isAtStart(skipWhitespace: Boolean = true): Boolean {
+            var start = 0
+            val element = pointer!!
+            while (start < element.element!!.text.length && start !in range && (skipWhitespace && element.element!!.text[start].isWhitespace())) {
+                start++
+            }
+            return start in range
+        }
+
+        fun isAtEnd(skipWhitespace: Boolean = true): Boolean {
+            val element = pointer!!
+            var end = element.element!!.text.length - 1
+            while (end >= 0 && end !in range && (skipWhitespace && element.element!!.text[end].isWhitespace())) {
+                end--
+            }
+            return end in range
+        }
+
+
+        /**
+         * Checks if [innerElement] covers the start of typo location
+         * Assumed that [pointer] at a typo is ancestor to passed [innerElement]
+         */
+        fun isAtStartOfInnerElement(innerElement: PsiElement): Boolean {
+            require(PsiTreeUtil.isAncestor(pointer!!.element, innerElement, false))
+
+            //delta between the innerElement and [pointer] that is ancestor for this innerElement.
+            val delta = (innerElement.textRange.startOffset - pointer.element!!.textRange.startOffset)
+            val rangeForElement = IntRange(range.start - delta, range.last - delta)
+
+            var start = 0
+            while (start < innerElement.text.length && start !in rangeForElement && innerElement.text[start].isWhitespace()) {
+                start++
+            }
+            return start in rangeForElement
+        }
+
+        /**
+         * Checks if [innerElement] covers the end of typo location
+         * Assumed that [pointer] at a typo is ancestor to [innerElement]
+         */
+        fun isAtEndOfInnerElement(innerElement: PsiElement): Boolean {
+            require(PsiTreeUtil.isAncestor(pointer!!.element, innerElement, false))
+
+            //delta between the innerElement and [pointer] that is ancestor for this innerElement.
+            val delta = (innerElement.textRange.startOffset - pointer.element!!.textRange.startOffset)
+            val rangeForElement = IntRange(range.start - delta, range.last - delta)
+
+            var end = innerElement.text.length - 1
+            while (end >= 0 && end !in rangeForElement && innerElement.text[end].isWhitespace()) {
+                end--
+            }
+            return end in rangeForElement
+        }
+    }
+
+    data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category) {
+        val incorrectExample: IncorrectExample?
             get() {
-                val description = rule.description
-                if (description.isBlank())
-                    return category.description
-                if (description.contains(":"))
-                    return description
-                return "${category.description}: $description"
+                val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }
+                return (withCorrections.takeIf { it.isNotEmpty() }
+                    ?: rule.incorrectExamples).minBy { it.example.length }
             }
     }
 
-    val word by lazy { location.element!!.text.subSequence(location.range).toString() }
+    val word: String by lazy {
+        try {
+            location.pointer?.element!!.text.subSequence(location.range).toString()
+        } catch (t: Throwable) {
+            logger.warn("Got an exception during getting typo word:\n${location.pointer?.element!!.text}\n${info.match.sentence.text}")
+            throw t
+        }
+    }
 
+    /** Constructor for LangTool, applies fixes to RuleMatch (Main constructor doesn't apply fixes) */
     constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
-            Location(match.toIntRange().withOffset(offset)),
-            Info(lang, match.rule, match.typoCategory), match.suggestedReplacements)
+        Location(match.toIntRange().withOffset(offset)),
+        Info(lang, match.rule, match, match.typoCategory),
+        match.suggestedReplacements.map { LangToolFixes.fixSuggestion(match.rule, it) }
+    )
 
-
+    @Suppress("unused")
     enum class Category(val value: String, val description: String) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),
@@ -87,9 +157,7 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
         override fun getProblemName() = description
 
         companion object {
-            operator fun get(value: String): Category {
-                return values().find { it.value == value } ?: OTHER
-            }
+            operator fun get(value: String) = values().find { it.value == value } ?: OTHER
         }
     }
 }

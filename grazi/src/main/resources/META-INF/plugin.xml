@@ -4,40 +4,40 @@
     <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">JetBrains</vendor>
 
     <description><![CDATA[
-        Grazi is a proofreader and grammar checker covering over 15 languages,
-        including English, German, Russian, Chinese, and others. It improves the
-        quality of texts written using IntelliJ Platform IDEs by providing
-        intelligent spelling and grammar checking.
+    <p>Provides intelligent spelling and grammar checks for text that you write in the IDE.</p>
 
-        <br/>
+    <ul>
+        <li>Supports over 15 languages, including English, German, Russian, Chinese, and others.</li>
+        <li>Recognizes natural language constructs in programming languages (Kotlin, Python, Java and others),
+            markup languages (Latex, Markdown, XML, HTML), comments, commits messages, and more.</li>
+        <li>Uses LanguageTool as its proofreading engine.</li>
+    </ul>
 
-        The plugin supports natural language constructs wherever they are: Kotlin,
-        Python, and Java (including literals and docs), comments, Markdown, XML,
-        commit messages and plain text.
+    <p>English is enabled by default when you install the plugin. To enable other languages, open Settings/Preferences
+       and select <strong>Tools</strong> > <strong>Grazi</strong>.</p>
 
-        <br/>
-
-        Under the hood, it uses LanguageTool to provide you with the unrivaled
-        performance and accuracy of the leading proofreading and grammar checking engine.
-
-        <br/>
-
-        Note, that all verification is performed locally, inside your IDE. The plugin does not
-        send any of your data anywhere.
-
-        <br/>
-
-        To enable spellchecking or support for other languages (by default English is enabled),
-        use the Grazi settings located at Settings/Preferences -> Tools -> Grazi
+    <p><strong>NOTE:</strong> All verification is performed locally, inside your IDE.</p>
     ]]></description>
 
     <change-notes><![CDATA[
+    <h4>2019.2-5</h4>
+    <ul>
+        <li>Reduce plugin size</li>
+        <li>Major performance improvements</li>
+        <li>Bugfixes for language detection</li>
+    </ul>
+    <h4>2019.2-4</h4>
+    <ul>
+        <li>Fixes for UI</li>
+        <li>Bug fixes for Markdown</li>
+        <li>Performance improvement of XML</li>
+    </ul>
     <h4>2019.2-3</h4>
     <ul>
-        <li>Huge performance improvements for almost all languages</li>
-        <li>Reworked inspection tooltips - examples, full error description</li>\
-        <li>Add ability to disable IDEA spellcheck globally</li>\
-        <li>Support of Rust, JSON, JavaScript</li>
+        <li>Huge performance improvements for all languages</li>
+        <li>Fully reworked UI</li>
+        <li>Configurations of enabled rules in UI</li>
+        <li>Support of Rust, JSON, JavaScript, Latex, Properties</li>
     </ul>
     <h4>2019.2-2</h4>
     <ul>
@@ -64,55 +64,49 @@
     ]]>
     </change-notes>
 
-    <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
-    <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
-    <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
     <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="javascript.xml">JavaScript</depends>
+    <depends optional="true" config-file="json.xml">com.intellij.modules.json</depends>
+    <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
+    <depends optional="true" config-file="properties.xml">com.intellij.properties</depends>
+    <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
     <depends optional="true" config-file="rust.xml">org.rust.lang</depends>
+    <depends optional="true" config-file="latex.xml">nl.rubensten.texifyidea</depends>
+    <depends optional="true" config-file="xml.xml">com.intellij.modules.xml</depends>
 
-    <idea-version since-build="192"/>
-
-    <application-components>
-        <component>
-            <implementation-class>tanvd.grazi.GraziPlugin</implementation-class>
-        </component>
-    </application-components>
-
+    <idea-version since-build="192.3645"/>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationInitializedListener implementation="tanvd.grazi.ide.init.GraziAppInit" />
+
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
 
-        <postStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
-        <postStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
+        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
+        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
 
 
-        <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
+        <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
-
-
-        <localInspection displayName="Grazi Commit proofreading inspection" groupName="Grazi" enabledByDefault="true"
-                         shortName="GraziCommitInspection" implementationClass="tanvd.grazi.ide.GraziCommitInspection" level="TYPO"/>
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
                                  id="reference.settingsdialog.project.grazi"
                                  key="grazi.name" bundle="messages.GraziBundle"/>
 
-        <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckSuggestions" order="first"/>
+        <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckRenameSuggestions" order="first"/>
+
+        <search.optionContributor implementation="tanvd.grazi.ide.ui.GraziSearchableOptionContributor"/>
+
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.language.LanguageSupport"/>
+        <extensionPoint name="languageSupport" beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="tanvd.grazi.ide.language.LanguageSupport"/>
+        </extensionPoint>
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.plain.UnknownTypeSupport"/>
-
-        <languageSupport implementation="tanvd.grazi.ide.language.xml.XmlSupport"/>
-
-        <languageSupport implementation="tanvd.grazi.ide.language.json.JsonSupport"/>
-
-        <languageSupport implementation="tanvd.grazi.ide.language.comment.CommentsSupport"/>
+        <languageSupport language="TEXT" implementationClass="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
+        <languageSupport language="" implementationClass="tanvd.grazi.ide.language.comment.CommentsSupport"/>
     </extensions>
 </idea-plugin>

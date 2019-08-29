@@ -1,19 +1,13 @@
 package tanvd.grazi.ide.init
 
-import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
-import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
-import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
-import tanvd.grazi.ide.GraziCommitInspection
+import com.intellij.openapi.startup.StartupActivity
+import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.msg.GraziStateLifecycle
 
-open class GraziProjectInit(private val project: Project) : ProjectComponent {
-    override fun getComponentName(): String {
-        return "GraziProjectInit"
-    }
-
-    override fun projectOpened() {
-        val inspectionProfile = CommitMessageInspectionProfile.getInstance(project)
-        inspectionProfile.addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
-        inspectionProfile.enableTool("GraziCommit", project)
+open class GraziProjectInit : StartupActivity, DumbAware {
+    override fun runActivity(project: Project) {
+        GraziStateLifecycle.publisher.init(GraziConfig.get(), project)
     }
 }
