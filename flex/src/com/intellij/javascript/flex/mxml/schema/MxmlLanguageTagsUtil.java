@@ -274,8 +274,8 @@ public class MxmlLanguageTagsUtil {
         target = (PsiElement) value;
       }
     }
-    else if (element instanceof XmlAttributeImpl) {
-      target = ((XmlAttributeImpl)element).getNameElement();
+    else if (element instanceof XmlAttribute) {
+      target = ((XmlAttribute)element).getNameElement();
     }
     else if (element instanceof XmlTag) {
       target = XmlTagUtil.getStartTagNameElement((XmlTag)element);
