@@ -31,7 +31,6 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
@@ -65,7 +64,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcProjectComponent implements BaseComponent {
+public final class OsmorcProjectComponent {
   public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
@@ -75,11 +74,8 @@ public class OsmorcProjectComponent implements BaseComponent {
 
   public OsmorcProjectComponent(@NotNull Project project) {
     myProject = project;
-    myQueue = new MergingUpdateQueue(getComponentName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
-  }
+    myQueue = new MergingUpdateQueue(OsmorcProjectComponent.class.getName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
 
-  @Override
-  public void initComponent() {
     MessageBusConnection connection = myProject.getMessageBus().connect();
     connection.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
     connection.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
