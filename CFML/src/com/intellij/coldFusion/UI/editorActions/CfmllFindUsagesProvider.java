@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
@@ -6,7 +6,6 @@ import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlFunctionImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlFunctionParameterImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagFunctionImpl;
-import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +14,6 @@ import org.jetbrains.annotations.NotNull;
  * Created by Lera Nikolaenko
  */
 public class CfmllFindUsagesProvider implements FindUsagesProvider {
-  @Override
-  public WordsScanner getWordsScanner() {
-    return null;
-  }
 
   @Override
   public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {

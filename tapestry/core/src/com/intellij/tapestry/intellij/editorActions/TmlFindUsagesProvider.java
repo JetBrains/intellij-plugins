@@ -1,6 +1,5 @@
 package com.intellij.tapestry.intellij.editorActions;
 
-import com.intellij.lang.cacheBuilder.WordsScanner;
 import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
@@ -13,10 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Alexey Chmutov
  */
 public class TmlFindUsagesProvider implements FindUsagesProvider {
-  @Override
-  public WordsScanner getWordsScanner() {
-    return null;
-  }
 
   @Override
   public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {
