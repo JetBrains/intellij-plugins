@@ -7,17 +7,17 @@ import tanvd.kosogor.proxy.publishJar
 group = "tanvd.grazi"
 version = "2019.2-5.1.$channel"
 
+repositories {
+    mavenCentral()
+    jcenter()
+    maven("https://repo.labs.intellij.net/intdev")
+}
+
 plugins {
     id("tanvd.kosogor") version "1.0.7" apply true
     id("io.gitlab.arturbosch.detekt") version ("1.0.0-RC14") apply true
     id("org.jetbrains.intellij") apply true
     kotlin("jvm") version "1.3.31" apply true
-}
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven("https://repo.labs.intellij.net/intdev")
 }
 
 intellij {
@@ -47,7 +47,7 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     testCompile(kotlin("stdlib"))
 
-    compile("tanvd.grazi", "language-detector", "0.1.0") {
+    compile("tanvd.grazi", "language-detector", "0.1.1") {
         kotlinExcludes()
     }
 

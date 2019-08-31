@@ -21,7 +21,7 @@ object LangDetector : GraziStateLifecycle {
         languages = state.availableLanguages
         val profiles = LanguageProfileReader().read(languages.filter { it.shortCode != "zh" }.map { it.shortCode } + "zh-CN").toSet()
 
-        detector = LanguageDetectorBuilder.create(NgramExtractor.gramLengths(1, 2, 3))
+        detector = LanguageDetectorBuilder.create(NgramExtractor.standard)
             .probabilityThreshold(0.90)
             .prefixFactor(1.5)
             .suffixFactor(2.0)
