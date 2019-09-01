@@ -2,7 +2,7 @@ package tanvd.grazi.language
 
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
-import org.languagetool.UserConfig
+import org.languagetool.config.UserConfig
 import org.languagetool.rules.Rule
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
@@ -17,7 +17,7 @@ object LangTool : GraziStateLifecycle {
         require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 
         return langs.getOrPut(lang) {
-            JLanguageTool(lang.jLanguage!!, GraziConfig.get().nativeLanguage.jLanguage, null, UserConfig(GraziConfig.get().userWords.toList())).apply {
+            JLanguageTool(lang.jLanguage!!, GraziConfig.get().nativeLanguage.jLanguage, UserConfig(GraziConfig.get().userWords.toList())).apply {
                 lang.configure(this)
 
                 GraziConfig.get().userDisabledRules.forEach { id -> disableRule(id) }

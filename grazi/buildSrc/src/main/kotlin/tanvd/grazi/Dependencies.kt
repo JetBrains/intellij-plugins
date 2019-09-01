@@ -1,7 +1,6 @@
 package tanvd.grazi
 
 import org.gradle.api.artifacts.ExternalModuleDependency
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.exclude
 
 fun ExternalModuleDependency.kotlinExcludes() {

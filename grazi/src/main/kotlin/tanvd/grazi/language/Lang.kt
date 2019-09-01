@@ -1,7 +1,7 @@
 package tanvd.grazi.language
 
 import org.languagetool.JLanguageTool
-import org.languagetool.Language
+import org.languagetool.language.Language
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.remote.RemoteLangDescriptor

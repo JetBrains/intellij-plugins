@@ -11,3 +11,4 @@ open class GraziProjectInit : StartupActivity, DumbAware {
         GraziStateLifecycle.publisher.init(GraziConfig.get(), project)
     }
 }
+

@@ -2,8 +2,8 @@ package tanvd.grazi.utils
 
 import kotlinx.html.FlowOrPhrasingContent
 import kotlinx.html.strong
-import org.languagetool.Language
-import org.languagetool.Languages
+import org.languagetool.language.Language
+import org.languagetool.language.Languages
 import org.languagetool.rules.*
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
