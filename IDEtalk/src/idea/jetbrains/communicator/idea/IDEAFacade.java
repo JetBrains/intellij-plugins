@@ -19,7 +19,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.ProjectFrameHelper;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.ArrayUtilRt;
@@ -373,7 +373,7 @@ public class IDEAFacade implements IDEFacade {
     else {
       IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
       for (IdeFrame frame : frames) {
-        IdeFrameImpl eachFrame = (IdeFrameImpl)frame;
+        ProjectFrameHelper eachFrame = (ProjectFrameHelper)frame;
         if (eachFrame.getFrame().isActive()) {
           res = eachFrame.getProject();
           if (res != null) break;
