@@ -97,7 +97,7 @@ tasks.withType<KotlinJvmCompile> {
 
 
 tasks.withType<RunIdeTask> {
-    jvmArgs("-Xmx1g")
+    jvmArgs("-Xmx1g", "-Dfus.internal.test.mode=true")
 }
 
 tasks.withType<PublishTask> {

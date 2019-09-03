@@ -2,6 +2,7 @@ package tanvd.grazi.language
 
 import com.intellij.openapi.project.Project
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.ide.fus.GraziFUCounterCollector
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.langdetect.detector.LanguageDetector
 import tanvd.grazi.langdetect.detector.LanguageDetectorBuilder
@@ -16,6 +17,7 @@ object LangDetector : GraziStateLifecycle {
     fun getLang(text: String) = detector?.getProbabilities(text.take(charsForLangDetection))
         ?.maxBy { it.probability }
         ?.let { detectedLanguage -> languages.find { it.shortCode == detectedLanguage.locale.language } }
+        .also { GraziFUCounterCollector.languageDetected(it) }
 
     override fun init(state: GraziConfig.State, project: Project) {
         languages = state.availableLanguages

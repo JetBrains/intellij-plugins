@@ -22,11 +22,5 @@ fun ExternalModuleDependency.ltExcludes() {
 
     exclude("net.java.dev.jna", "jna")
 
-    exclude("javax.xml.bind", "jaxb-api")
-
-    exclude("org.glassfish.jaxb", "jaxb-runtime")
-
-    exclude("com.fasterxml.jackson.core", "jackson-databind")
-
     exclude("commons-logging", "commons-logging")
 }

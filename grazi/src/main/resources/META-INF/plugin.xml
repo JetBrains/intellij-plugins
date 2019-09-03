@@ -85,7 +85,6 @@
         <backgroundPostStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
         <backgroundPostStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
 
-
         <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
 
@@ -97,6 +96,9 @@
 
         <search.optionContributor implementation="tanvd.grazi.ide.ui.GraziSearchableOptionContributor"/>
 
+        <statistics.applicationUsagesCollector implementation="tanvd.grazi.ide.fus.GraziFUStateCollector"/>
+        <statistics.validation.customWhiteListRule implementation="tanvd.grazi.ide.fus.GraziWhiteListRule"/>
+        <statistics.counterUsagesCollector groupId="grazi" version="1"/>
     </extensions>
 
     <extensionPoints>

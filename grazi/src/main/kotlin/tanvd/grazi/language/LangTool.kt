@@ -13,6 +13,9 @@ object LangTool : GraziStateLifecycle {
 
     private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
+    val allRules: Set<String>
+        get() = rulesToLanguages.keys
+
     fun getTool(lang: Lang): JLanguageTool {
         require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 

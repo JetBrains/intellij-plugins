@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.fus.GraziFUCounterCollector
 import tanvd.grazi.ide.quickfix.*
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.utils.*
@@ -23,6 +24,7 @@ class GraziProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescri
                 if (location.shouldUseRename) {
                     add(GraziRenameTypoQuickFix(this@toFixes))
                 } else {
+                    GraziFUCounterCollector.typoFound(this@toFixes)
                     add(GraziReplaceTypoQuickFix(this@toFixes))
                 }
             }

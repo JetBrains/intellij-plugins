@@ -1,8 +1,7 @@
 package tanvd.grazi.ide.quickfix
 
 import com.intellij.codeInsight.intention.PriorityAction
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.ide.DataManager
@@ -15,7 +14,9 @@ import com.intellij.openapi.util.Iconable
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
 import icons.SpellcheckerIcons
 import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.fus.GraziFUCounterCollector
 import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.utils.isSpellingTypo
 import tanvd.grazi.utils.toAbsoluteSelectionRange
 import tanvd.kex.trimToNull
 import javax.swing.Icon
@@ -43,7 +44,19 @@ class GraziReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable
             editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
 
             val items = typo.fixes.map { LookupElementBuilder.create(it) }
-            LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
+            LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())?.registerFUCollector(typo)
         }
+    }
+
+    private fun LookupEx.registerFUCollector(typo: Typo) {
+        addLookupListener(object : LookupListener {
+            override fun lookupCanceled(event: LookupEvent) {
+                GraziFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = true, isSpellcheck = typo.isSpellingTypo)
+            }
+
+            override fun itemSelected(event: LookupEvent) {
+                GraziFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = false, isSpellcheck = typo.isSpellingTypo)
+            }
+        })
     }
 }
