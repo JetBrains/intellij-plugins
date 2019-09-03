@@ -681,6 +681,8 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
                   "</build>" +
                   flexFrameworkDependency("3.2.0.3958"));
 
+    myProjectsManager.waitForImportFinishCompletion();
+
     final String[] jarNames =
       {"asc", "asdoc", "batik-all-flex", "commons-collections", "commons-discovery", "commons-logging", "compc", "copylocale", "digest",
         "fcsh", "fdb", "flex-compiler-oem", "flex-messaging-common", "mm-velocity-1.4", "mxmlc", "optimizer", "swfutils", "xalan",
@@ -716,6 +718,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
                   "  </plugins>" +
                   "</build>" +
                   flexFrameworkDependency("3.5.0.12683"));
+    myProjectsManager.waitForImportFinishCompletion();
 
     expected[22] = expected[22].replace("aglj32/3.5.0.12683/aglj32-3.5.0.12683", "aglj40/666/aglj40-666");
     checkFlexmojosSdkClasspath("3.5.0.12683", expected);
