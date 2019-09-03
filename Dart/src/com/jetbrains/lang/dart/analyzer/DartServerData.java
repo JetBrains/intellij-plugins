@@ -46,15 +46,15 @@ public class DartServerData {
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
-  // keeps track of files in which error regions have been deleted by DocumentListener (typing inside an error region)
-  private final Set<String> myFilePathsWithLostErrorInfo = Sets.newConcurrentHashSet();
+  // keeps track of files in which error regions have been updated by DocumentListener
+  private final Set<String> myFilePathsWithInaccurateErrorInfo = Sets.newConcurrentHashSet();
 
   DartServerData(@NotNull final DartAnalysisServerService service) {
     myService = service;
   }
 
-  boolean isErrorInfoLost(@NotNull final String filePath) {
-    return myFilePathsWithLostErrorInfo.contains(filePath);
+  boolean isErrorInfoInaccurate(@NotNull final String filePath) {
+    return myFilePathsWithInaccurateErrorInfo.contains(filePath);
   }
 
   /**
@@ -73,7 +73,7 @@ public class DartServerData {
       newErrors.add(new DartError(error, offset, length));
     }
 
-    myFilePathsWithLostErrorInfo.remove(filePath);
+    myFilePathsWithInaccurateErrorInfo.remove(filePath);
     myErrorData.put(filePath, newErrors);
 
     if (restartHighlighting) {
@@ -387,9 +387,9 @@ public class DartServerData {
     final String filePath = file.getPath();
     myFilePathsWithUnsentChanges.add(filePath);
 
-    boolean someRegionDeleted = updateRegionsDeletingTouched(filePath, myErrorData.get(filePath), e);
-    if (someRegionDeleted) {
-      myFilePathsWithLostErrorInfo.add(filePath);
+    boolean regionsUpdated = updateRegionsDeletingTouched(filePath, myErrorData.get(filePath), e);
+    if (regionsUpdated) {
+      myFilePathsWithInaccurateErrorInfo.add(filePath);
     }
     updateRegionsUpdatingTouched(myHighlightData.get(filePath), e);
     updateRegionsDeletingTouched(filePath, myNavigationData.get(filePath), e);
@@ -400,14 +400,14 @@ public class DartServerData {
   }
 
   /**
-   * @return {@code true} if at least one region has been deleted, {@code false} if updated only or nothing done at all
+   * @return {@code true} if at least one region has been updated or deleted, {@code false} if nothing done at all
    */
   private static boolean updateRegionsDeletingTouched(@NotNull final String filePath,
                                                       @Nullable final List<? extends DartRegion> regions,
                                                       @NotNull final DocumentEvent e) {
     if (regions == null) return false;
 
-    boolean regionDeleted = false;
+    boolean regionUpdated = false;
 
     // delete touched regions, shift untouched
     final int eventOffset = e.getOffset();
@@ -430,10 +430,11 @@ public class DartServerData {
         // Something was typed. Shift untouched regions, delete touched.
         if (eventOffset <= region.myOffset) {
           region.myOffset += deltaLength;
+          regionUpdated = true;
         }
-        else if (region.myOffset < eventOffset && eventOffset < region.myOffset + region.myLength) {
+        else if (eventOffset < region.myOffset + region.myLength) {
           iterator.remove();
-          regionDeleted = true;
+          regionUpdated = true;
         }
       }
       else if (deltaLength < 0) {
@@ -442,15 +443,16 @@ public class DartServerData {
 
         if (eventRightOffset <= region.myOffset) {
           region.myOffset += deltaLength;
+          regionUpdated = true;
         }
         else if (eventOffset < region.myOffset + region.myLength) {
           iterator.remove();
-          regionDeleted = true;
+          regionUpdated = true;
         }
       }
     }
 
-    return regionDeleted;
+    return regionUpdated;
   }
 
   private static void updateRegionsUpdatingTouched(@Nullable final List<? extends DartRegion> regions,
@@ -469,7 +471,7 @@ public class DartServerData {
         if (eventOffset <= region.myOffset) {
           region.myOffset += deltaLength;
         }
-        else if (region.myOffset < eventOffset && eventOffset < region.myOffset + region.myLength) {
+        else if (eventOffset < region.myOffset + region.myLength) {
           region.myLength += deltaLength;
         }
       }
