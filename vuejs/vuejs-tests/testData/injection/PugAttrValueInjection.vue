@@ -16,6 +16,9 @@
     li(v-cloak="someCloak")
     li(v-once="someOnce")
 
+    li(v-slot:header="{test}")
+    li(#header="{test}")
+
     li(v-on:click="someOn")
     li(v-on:click.ctrl.capture="someOn")
     li(@click="someOn")

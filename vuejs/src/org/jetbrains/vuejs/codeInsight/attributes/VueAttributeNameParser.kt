@@ -13,15 +13,24 @@ class VueAttributeNameParser {
       val name: String
       val kind: VueDirectiveKind
       var paramsPos: Int
+      var isShorthand = false
       if (attributeName.startsWith('@')) {
         name = "on"
         kind = VueDirectiveKind.ON
         paramsPos = 0
+        isShorthand = true
       }
       else if (attributeName.startsWith(':')) {
         name = "bind"
         kind = VueDirectiveKind.BIND
         paramsPos = 0
+        isShorthand = true
+      }
+      else if (attributeName.startsWith('#')) {
+        name = "slot"
+        kind = VueDirectiveKind.SLOT
+        paramsPos = 0
+        isShorthand = true
       }
       else if (attributeName.startsWith("v-") && attributeName.length > 2) {
         var nameEnd = attributeName.indexOfFirst { it == '.' || it == ':' }
@@ -45,13 +54,14 @@ class VueAttributeNameParser {
       if (paramsPos >= attributeName.length
           || (attributeName[paramsPos] != '@'
               && attributeName[paramsPos] != ':'
+              && attributeName[paramsPos] != '#'
               && attributeName[paramsPos] != '.')) {
-        return VueDirectiveInfo(name, kind)
+        return VueDirectiveInfo(name, kind, isShorthand = isShorthand)
       }
 
       val arguments: String?
       if (attributeName[paramsPos] == '.') {
-        return VueDirectiveInfo(name, kind, null, parseModifiers(attributeName, paramsPos))
+        return VueDirectiveInfo(name, kind, null, isShorthand, parseModifiers(attributeName, paramsPos))
       }
       else {
         paramsPos++
@@ -72,7 +82,7 @@ class VueAttributeNameParser {
           paramsPos = attributeName.length
         }
       }
-      return VueDirectiveInfo(name, kind, arguments, parseModifiers(attributeName, paramsPos))
+      return VueDirectiveInfo(name, kind, arguments, isShorthand, parseModifiers(attributeName, paramsPos))
     }
 
     private fun parseModifiers(modifiers: String, startPos: Int): Set<String> {
@@ -137,6 +147,7 @@ class VueAttributeNameParser {
   class VueDirectiveInfo internal constructor(name: String,
                                               val directiveKind: VueDirectiveKind,
                                               val arguments: String? = null,
+                                              val isShorthand: Boolean = false,
                                               modifiers: Set<String> = emptySet()) : VueAttributeInfo(name,
                                                                                                       VueAttributeKind.DIRECTIVE,
                                                                                                       modifiers) {

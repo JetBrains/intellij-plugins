@@ -61,6 +61,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       }
       info is VueAttributeNameParser.VueDirectiveInfo -> {
         return when {
+                 info.isShorthand && info.arguments.isNullOrEmpty() -> return null
+
                  info.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND ->
                    info.arguments?.let { HtmlNSDescriptorImpl.getCommonAttributeDescriptor(it, context) }
 

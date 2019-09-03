@@ -15,6 +15,9 @@
   <div v-cloak="someCloak"></div>
   <div v-once="someOnce"></div>
 
+  <div v-slot:header="{test}"></div>
+  <div #header="{test}"></div>
+
   <div v-on:click="someOn"></div>
   <div v-on:click.ctrl.capture="someOn"></div>
   <div @click="someOn"></div>

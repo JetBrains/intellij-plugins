@@ -332,6 +332,35 @@ HtmlFile:PugAttrValueInjection.vue
               PsiElement(JADE_PSEUDO_WHITESPACE)
                 <empty list>
               JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('v-slot:header')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"{test}"')
+              PsiElement(RPAREN)(')')
+            PsiElement(INDENT)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')
+              PsiElement(LPAREN)('(')
+              PsiElement(JADE_PSEUDO_WHITESPACE)
+                <empty list>
+              JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('#header')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"{test}"')
+              PsiElement(RPAREN)(')')
+              PsiElement(EOL)('\n')
+            PsiElement(INDENT)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')
+              PsiElement(LPAREN)('(')
+              PsiElement(JADE_PSEUDO_WHITESPACE)
+                <empty list>
+              JadeAttributeImpl(XML_ATTRIBUTE)
                 XmlToken:XML_NAME('v-on:click')
                 PsiElement(EQ)('=')
                 PsiElement(XML_ATTRIBUTE_VALUE)
@@ -616,3 +645,4 @@ HtmlFile:PugAttrValueInjection.vue
       XmlToken:XML_END_TAG_START('</')
       XmlToken:XML_NAME('template')
       XmlToken:XML_TAG_END('>')
+    PsiWhiteSpace('\n')

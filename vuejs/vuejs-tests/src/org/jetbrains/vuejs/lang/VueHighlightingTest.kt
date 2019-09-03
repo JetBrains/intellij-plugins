@@ -578,6 +578,8 @@ Vue.component('global-comp-literal', {
 <template>
     <for-v-bind :class="2" v-bind:style="<error descr="expression expected">"</error> :test-prop.camel="1" v-on:click="callMe" @copy="onCopy" ></for-v-bind>
     <for-v-bind class="" style="" v-on:submit.prevent></for-v-bind>
+    <div <warning descr="Attribute @ is not allowed here">@</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>
+    <div <warning descr="Attribute : is not allowed here">:</warning>="<weak_warning descr="Unresolved variable or type foo">foo</weak_warning>"></div>
 </template>
 
 <script>
@@ -1177,10 +1179,16 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     <div v-slot="propName"></div>
     <div v-slot></div>
     
+    <div #name="propName"></div>
+    <div #name></div>
+    
     <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
+    
+    <div <warning descr="Attribute # is not allowed here">#</warning>="propName"></div>
+    <div <warning descr="Attribute # is not allowed here">#</warning>></div>
   </div>
 </template>
     """)
