@@ -155,8 +155,6 @@
       <scope name="runtime.classes" level="WARNING" enabled="true" />
     </inspection_tool>
     <inspection_tool class="BadExpressionStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="BeforeClassOrAfterClassIsPublicStaticVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="BeforeOrAfterIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="BindingAnnotationWithoutInject" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BooleanMethodIsAlwaysInverted" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BoundedWildcard" enabled="true" level="WARNING" enabled_by_default="true">
@@ -207,13 +205,16 @@
       <scope name="Tests" level="WARNING" enabled="false">
         <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
         <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+        <option name="REPORT_NULLS_PASSED_TO_NOT_NULL_PARAMETER" value="false" />
       </scope>
       <scope name="runtime.classes" level="WARNING" enabled="false">
         <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
         <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+        <option name="REPORT_NULLS_PASSED_TO_NOT_NULL_PARAMETER" value="false" />
       </scope>
       <option name="SUGGEST_NULLABLE_ANNOTATIONS" value="false" />
       <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
+      <option name="REPORT_NULLS_PASSED_TO_NOT_NULL_PARAMETER" value="false" />
     </inspection_tool>
     <inspection_tool class="ConstantIfStatement" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
@@ -247,10 +248,6 @@
     <inspection_tool class="DuplicateCaseLabelJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="DuplicateThrows" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="DuplicatedBlockNamesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="EmptyStatementBody" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_reportEmptyBlocks" value="true" />
-      <option name="commentsAreContent" value="true" />
-    </inspection_tool>
     <inspection_tool class="EmptyStatementBodyJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_reportEmptyBlocks" value="false" />
     </inspection_tool>
@@ -295,7 +292,7 @@
         <option name="ignoreForPropertyKeyReferences" value="true" />
         <option name="ignoreForNonAlpha" value="true" />
         <option name="ignoreAssignedToConstants" value="false" />
-        <option name="ignoreToString" value="true" />
+        <option name="ignoreToString" value="false" />
         <option name="nonNlsCommentPattern" value="NON-NLS" />
       </scope>
       <option name="ignoreForAssertStatements" value="true" />
@@ -323,10 +320,6 @@
       <option name="suggestEnumSwitches" value="false" />
     </inspection_tool>
     <inspection_tool class="IfStatementWithIdenticalBranches" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="IgnoreResultOfCall" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_reportAllNonLibraryCalls" value="false" />
-      <option name="callCheckString" value="java.io.File,.*,java.io.InputStream,read|skip|available|markSupported,java.io.Writer,read|skip|ready|markSupported,java.lang.Boolean,.*,java.lang.Byte,.*,java.lang.Character,.*,java.lang.Double,.*,java.lang.Float,.*,java.lang.Integer,.*,java.lang.Long,.*,java.lang.Math,.*,java.lang.Object,equals|hashCode|toString,java.lang.Short,.*,java.lang.StrictMath,.*,java.lang.String,.*,java.math.BigInteger,.*,java.math.BigDecimal,.*,java.net.InetAddress,.*,java.net.URI,.*,java.util.UUID,.*,java.util.regex.Matcher,pattern|toMatchResult|start|end|group|groupCount|matches|find|lookingAt|quoteReplacement|replaceAll|replaceFirst|regionStart|regionEnd|hasTransparantBounds|hasAnchoringBounds|hitEnd|requireEnd,java.util.regex.Pattern,.*,com.intellij.openapi.util.LowMemoryWatcher,register,com.intellij.codeInsight.FileModificationService,preparePsiElementForWrite" />
-    </inspection_tool>
     <inspection_tool class="ImplicitArrayToString" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ImplicitDefaultCharsetUsage" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ImplicitTypeConversion" enabled="false" level="WARNING" enabled_by_default="false">
@@ -339,7 +332,6 @@
     <inspection_tool class="InfiniteLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="InfiniteRecursion" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="InfiniteRecursionJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="InnerClassMayBeStatic" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InspectionDescriptionNotFoundInspection" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="InstanceofCatchParameter" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="InstanceofIncompatibleInterface" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -453,7 +445,7 @@
             <option name="REQUIRED_TAGS" value="" />
           </value>
         </option>
-        <option name="IGNORE_DEPRECATED" value="true" />
+        <option name="IGNORE_DEPRECATED" value="false" />
         <option name="IGNORE_JAVADOC_PERIOD" value="true" />
         <option name="IGNORE_DUPLICATED_THROWS" value="false" />
         <option name="IGNORE_POINT_TO_ITSELF" value="false" />
@@ -536,9 +528,6 @@
     </inspection_tool>
     <inspection_tool class="LambdaUnfriendlyMethodOverload" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFORMATION" enabled_by_default="true" />
-    <inspection_tool class="LocalVariableName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="[a-z][A-Za-z\d_]*" />
-    </inspection_tool>
     <inspection_tool class="LongLiteralsEndingWithLowercaseL" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="LoopStatementThatDoesntLoopJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MakoArgumentListInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -555,7 +544,9 @@
     <inspection_tool class="MinMaxValuesInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MinitestFrameworkSupportInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MisorderedAssertEqualsParameters" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="MissingDeprecatedAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="warnOnMissingJavadoc" value="true" />
+    </inspection_tool>
     <inspection_tool class="MissingOverrideAnnotation" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreObjectMethods" value="true" />
       <option name="ignoreAnonymousClassMethods" value="false" />
@@ -590,13 +581,15 @@
     <inspection_tool class="NullableProblems" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="java-decompiler-engine" level="WARNING" enabled="true">
         <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true" />
-        <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="false" />
-        <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="false" />
+        <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="true" />
+        <option name="REPORT_NOTNULL_PARAMETER_OVERRIDES_NULLABLE" value="true" />
         <option name="REPORT_NOT_ANNOTATED_PARAMETER_OVERRIDES_NOTNULL" value="true" />
-        <option name="REPORT_NOT_ANNOTATED_GETTER" value="false" />
+        <option name="REPORT_NOT_ANNOTATED_GETTER" value="true" />
+        <option name="IGNORE_EXTERNAL_SUPER_NOTNULL" value="true" />
         <option name="REPORT_NOT_ANNOTATED_SETTER_PARAMETER" value="true" />
-        <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="false" />
+        <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true" />
         <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true" />
+        <option name="REPORT_NULLS_PASSED_TO_NOT_NULL_PARAMETER" value="false" />
       </scope>
       <option name="REPORT_NULLABLE_METHOD_OVERRIDES_NOTNULL" value="true" />
       <option name="REPORT_NOT_ANNOTATED_METHOD_OVERRIDES_NOTNULL" value="true" />
@@ -607,6 +600,7 @@
       <option name="REPORT_NOT_ANNOTATED_SETTER_PARAMETER" value="true" />
       <option name="REPORT_ANNOTATION_NOT_PROPAGATED_TO_OVERRIDERS" value="true" />
       <option name="REPORT_NULLS_PASSED_TO_NON_ANNOTATED_METHOD" value="true" />
+      <option name="REPORT_NULLS_PASSED_TO_NOT_NULL_PARAMETER" value="false" />
     </inspection_tool>
     <inspection_tool class="ObjectEqualsNull" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ObjectNotify" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -621,272 +615,19 @@
     </inspection_tool>
     <inspection_tool class="OctalIntegerJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="OverwrittenKey" enabled="true" level="Strong Warning" enabled_by_default="true" />
-    <inspection_tool class="PackageName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="[a-z_][a-z\d_]*(\.[a-z_][a-zA-Z\d_]*)*" />
-    </inspection_tool>
     <inspection_tool class="PageflowModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="PagesModelInspection" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="PluginXmlValidity" enabled="true" level="ERROR" enabled_by_default="true">
-      <option name="myRegistrationCheckIgnoreClassList">
-        <set>
-          <option value="com.intellij.ide.AgreementUpdater" />
-          <option value="com.intellij.ide.customization.UtmIdeUrlTrackingParametersProvider" />
-          <option value="com.intellij.internal.statistic.updater.StatisticsJobsScheduler" />
-          <option value="com.intellij.openapi.application.IdeUrlTrackingParametersProvider" />
-          <option value="com.intellij.ultimate.UltimateVerifier" />
-        </set>
-      </option>
-      <option name="PLUGINS_MODULES">
-        <modules-set>
-          <module name="intellij.platform.analysis" />
-          <module name="intellij.platform.builtInServer" />
-          <module name="intellij.platform.core" />
-          <module name="intellij.platform.diff" />
-          <module name="intellij.platform.vcs.dvcs" />
-          <module name="intellij.platform.editor" />
-          <module name="intellij.platform.externalSystem" />
-          <module name="intellij.platform.indexing" />
-          <module name="intellij.platform.jps.model" />
-          <module name="intellij.platform.lang" />
-          <module name="intellij.platform.lvcs" />
-          <module name="intellij.platform.ide" />
-          <module name="intellij.platform.projectModel" />
-          <module name="intellij.platform.remoteServers.agent.rt" />
-          <module name="intellij.platform.remoteServers" />
-          <module name="intellij.platform.tasks" />
-          <module name="intellij.platform.usageView" />
-          <module name="intellij.platform.vcs.core" />
-          <module name="intellij.platform.vcs" />
-          <module name="intellij.platform.vcs.log" />
-          <module name="intellij.platform.vcs.log.graph" />
-          <module name="intellij.platform.debugger" />
-          <module name="intellij.xml.analysis" />
-          <module name="intellij.xml" />
-          <module name="intellij.xml.psi" />
-          <module name="intellij.xml.structureView" />
-          <module name="intellij.platform.analysis.impl" />
-          <module name="intellij.platform.builtInServer.impl" />
-          <module name="intellij.platform.core.impl" />
-          <module name="intellij.platform.credentialStore" />
-          <module name="intellij.platform.diff.impl" />
-          <module name="intellij.platform.vcs.dvcs.impl" />
-          <module name="intellij.platform.editor.ex" />
-          <module name="intellij.platform.images" />
-          <module name="intellij.platform.indexing.impl" />
-          <module name="intellij.json" />
-          <module name="intellij.platform.lang.impl" />
-          <module name="intellij.platform.lvcs.impl" />
-          <module name="intellij.platform.ide.impl" />
-          <module name="intellij.platform.projectModel.impl" />
-          <module name="intellij.platform.scriptDebugger.protocolReaderRuntime" />
-          <module name="intellij.regexp" />
-          <module name="intellij.relaxng" />
-          <module name="intellij.platform.remoteServers.impl" />
-          <module name="intellij.platform.scriptDebugger.backend" />
-          <module name="intellij.platform.scriptDebugger.ui" />
-          <module name="intellij.platform.smRunner" />
-          <module name="intellij.spellchecker" />
-          <module name="intellij.platform.structureView.impl" />
-          <module name="intellij.platform.tasks.impl" />
-          <module name="intellij.platform.testRunner" />
-          <module name="intellij.platform.vcs.impl" />
-          <module name="intellij.platform.vcs.log.graph.impl" />
-          <module name="intellij.platform.vcs.log.impl" />
-          <module name="intellij.platform.debugger.impl" />
-          <module name="intellij.xml.analysis.impl" />
-          <module name="intellij.xml.psi.impl" />
-          <module name="intellij.xml.structureView.impl" />
-          <module name="intellij.xml.impl" />
-          <module name="intellij.platform.configurationStore.impl" />
-          <module name="intellij.xml.dom.impl" />
-          <module name="intellij.platform.webide.impl" />
-          <module name="intellij.platform.ssh" />
-          <module name="intellij.platform.ssh.attach" />
-          <module name="intellij.xml.dom" />
-          <module name="intellij.platform.webide" />
-          <module name="intellij.platform.util" />
-          <module name="intellij.platform.util.rt" />
-          <module name="intellij.platform.util.classLoader" />
-          <module name="intellij.platform.extensions" />
-          <module name="intellij.platform.bootstrap" />
-          <module name="intellij.java.guiForms.rt" />
-          <module name="intellij.platform.icons" />
-          <module name="intellij.platform.boot" />
-          <module name="intellij.platform.resources" />
-          <module name="intellij.platform.colorSchemes" />
-          <module name="intellij.platform.resources.en" />
-          <module name="intellij.platform.jps.model.serialization" />
-          <module name="intellij.platform.jps.model.impl" />
-          <module name="intellij.platform.coverage" />
-          <module name="intellij.platform.duplicates" />
-          <module name="intellij.platform.duplicates.analysis" />
-          <module name="intellij.platform.externalSystem.impl" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.idea.community.resources" />
-          <module name="intellij.java" />
-          <module name="intellij.java.aetherDependencyResolver" />
-          <module name="intellij.java.analysis" />
-          <module name="intellij.java.analysis.impl" />
-          <module name="intellij.java.compiler" />
-          <module name="intellij.java.compiler.antTasks" />
-          <module name="intellij.java.compiler.impl" />
-          <module name="intellij.java.compiler.instrumentationUtil" />
-          <module name="intellij.java.compiler.instrumentationUtil.java8" />
-          <module name="intellij.java.debugger" />
-          <module name="intellij.java.debugger.impl" />
-          <module name="intellij.java.debugger.memory.agent" />
-          <module name="intellij.java.duplicates" />
-          <module name="intellij.java.duplicates.analysis" />
-          <module name="intellij.java.duplicatesDetection" />
-          <module name="intellij.java.execution" />
-          <module name="intellij.java.execution.impl" />
-          <module name="intellij.java.guiForms.compiler" />
-          <module name="intellij.java.guiForms.rt" />
-          <module name="intellij.java.impl" />
-          <module name="intellij.java.indexing" />
-          <module name="intellij.java.indexing.impl" />
-          <module name="intellij.java.jam" />
-          <module name="intellij.java.jam.impl" />
-          <module name="intellij.java.jps.javacRefScanner8" />
-          <module name="intellij.java.jshell.protocol" />
-          <module name="intellij.java.manifest" />
-          <module name="intellij.java.psi" />
-          <module name="intellij.java.psi.impl" />
-          <module name="intellij.java.remoteServers" />
-          <module name="intellij.java.remoteServers.impl" />
-          <module name="intellij.java.resources" />
-          <module name="intellij.java.resources.en" />
-          <module name="intellij.java.rt" />
-          <module name="intellij.java.structuralSearch" />
-          <module name="intellij.java.structureView" />
-          <module name="intellij.java.testFramework" />
-          <module name="intellij.java.typeMigration" />
-          <module name="intellij.java.uast" />
-          <module name="intellij.java.ui" />
-          <module name="intellij.jsp" />
-          <module name="intellij.jsp.base" />
-          <module name="intellij.jsp.spi" />
-          <module name="intellij.jvm.analysis" />
-          <module name="intellij.jvm.analysis.impl" />
-          <module name="intellij.platform.jps.build" />
-          <module name="intellij.platform.jps.build.javac.rt" />
-          <module name="intellij.platform.jps.build.launcher" />
-          <module name="intellij.platform.uast" />
-          <module name="intellij.platform.uast.tests" />
-          <module name="intellij.uiDesigner" />
-          <module name="intellij.xml.dom" />
-          <module name="intellij.xml.dom.impl" />
-          <module name="intellij.platform.testFramework" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.android.core" />
-          <module name="intellij.android.adt.branding" />
-          <module name="intellij.android.common" />
-          <module name="intellij.android.apkanalyzer" />
-          <module name="intellij.android.designer" />
-          <module name="intellij.android.ultimate" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.appcode" />
-          <module name="intellij.clion" />
-          <module name="intellij.cidr.common" />
-          <module name="intellij.cidr.debugger" />
-          <module name="intellij.c" />
-          <module name="intellij.swift" />
-          <module name="intellij.cidr.cocoaCommon" />
-          <module name="intellij.cidr.xctest" />
-          <module name="intellij.clion.swift" />
-          <module name="intellij.clion.webDeployment" />
-          <module name="intellij.cidr.ide" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.css" />
-          <module name="intellij.css.impl" />
-          <module name="intellij.css.psi" />
-          <module name="intellij.css.analysis" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.database" />
-          <module name="intellij.database.impl" />
-          <module name="intellij.database.sql.dialects" />
-          <module name="intellij.database.dialects" />
-          <module name="intellij.database.jdbcConsole" />
-          <module name="intellij.database.plugin" />
-          <module name="intellij.database.sql" />
-          <module name="intellij.database.sql.impl" />
-          <module name="intellij.datagrip.impl" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.python" />
-          <module name="intellij.python.plugin" />
-          <module name="intellij.python.community" />
-          <module name="intellij.python.community.impl" />
-          <module name="intellij.ds" />
-          <module name="intellij.pycharm.community" />
-          <module name="intellij.python.configure" />
-          <module name="intellij.python.community.plugin" />
-          <module name="intellij.python.concurrencyVisualizer" />
-          <module name="intellij.edu.pycharm" />
-          <module name="intellij.pycharm.pro" />
-          <module name="intellij.python.psi" />
-          <module name="intellij.python.pydev" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.ideTalk" />
-          <module name="intellij.ideTalk.p2p" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.php" />
-          <module name="intellij.php.resources" />
-          <module name="intellij.php.impl" />
-          <module name="intellij.php.jsDebugger" />
-          <module name="intellij.phpstorm" />
-          <module name="intellij.platform.webide.impl" />
-          <module name="intellij.php.structuralSearch" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.ruby" />
-          <module name="intellij.ruby.core" />
-          <module name="intellij.ruby.ext" />
-          <module name="intellij.ruby.plugin" />
-          <module name="intellij.rubymine" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.rubyMotion" />
-          <module name="intellij.rubyMotion.plugin" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.struts2" />
-          <module name="intellij.struts2.ognl" />
-          <module name="intellij.struts2.dom" />
-        </modules-set>
-        <modules-set>
-          <module name="intellij.xml.duplicates" />
-          <module name="intellij.xml.duplicates.analysis" />
-        </modules-set>
-      </option>
-    </inspection_tool>
     <inspection_tool class="PointcutMethodStyleInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessArithmeticExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessBinding" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PointlessBitwiseExpressionJS" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="m_ignoreExpressionsContainingConstants" value="false" />
-    </inspection_tool>
     <inspection_tool class="PointlessBooleanExpressionJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PointlessNullCheck" enabled="false" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="PrivatePropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="([A-Z_][A-Z_\d]*)|(_?[a-z][A-Za-z\d]*)" />
-    </inspection_tool>
     <inspection_tool class="ProtectedMemberInFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PublicConstructorInNonPublicClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="PublicFieldAccessedInSynchronizedContext" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="Query_bound_parameters" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Query_index_required" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Query_restricted" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="RedundantCast" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="IGNORE_SUSPICIOUS_METHOD_CALLS" value="true" />
-    </inspection_tool>
     <inspection_tool class="RedundantSamConstructor" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantScopeBinding" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RedundantStreamOptionalCall" enabled="true" level="Strong Warning" enabled_by_default="true" />
@@ -1199,9 +940,6 @@
     <inspection_tool class="SocketResource" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="insideTryAllowed" value="false" />
     </inspection_tool>
-    <inspection_tool class="SortedCollectionWithNonComparableKeys" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="IGNORE_TYPE_PARAMETERS" value="true" />
-    </inspection_tool>
     <inspection_tool class="SpringFacetCodeInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SpringFacetInspection" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="checkTestFiles" value="false" />
@@ -1212,7 +950,6 @@
     <inspection_tool class="StaticFieldReferenceOnSubclass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticNonFinalField" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StaticPseudoFunctionalStyleMethod" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="StaticSuite" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="StringBufferReplaceableByStringBuilder" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="StringConstructor" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreSubstringArguments" value="false" />
@@ -1408,17 +1145,15 @@
     <inspection_tool class="TestCaseWithNoTestMethods" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreSupers" value="true" />
     </inspection_tool>
-    <inspection_tool class="TestMethodIsPublicVoidNoArg" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TestOnlyProblems" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="cidr-test-frameworks" level="WARNING" enabled="false" />
       <scope name="test-framework" level="WARNING" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="TextLabelInSwitchStatement" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="TextLabelInSwitchStatement" enabled="true" level="Strong Warning" enabled_by_default="true" />
     <inspection_tool class="ThisExpressionReferencesGlobalObjectJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ThreadDumpStack" enabled="true" level="WARNING" enabled_by_default="true">
       <scope name="Tests" level="WARNING" enabled="false" />
     </inspection_tool>
-    <inspection_tool class="ThreadRun" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ThreadStartInConstruction" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="ThrowFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ThrowFromFinallyBlockJS" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1433,13 +1168,6 @@
     <inspection_tool class="TryFinallyCanBeTryWithResources" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TryWithIdenticalCatches" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TypeParameterExtendsFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="UNCHECKED_WARNING" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="IGNORE_UNCHECKED_ASSIGNMENT" value="false" />
-      <option name="IGNORE_UNCHECKED_GENERICS_ARRAY_CREATION" value="true" />
-      <option name="IGNORE_UNCHECKED_CALL" value="false" />
-      <option name="IGNORE_UNCHECKED_CAST" value="false" />
-      <option name="IGNORE_UNCHECKED_OVERRIDING" value="false" />
-    </inspection_tool>
     <inspection_tool class="UndeclaredTests" enabled="true" level="WARNING" enabled_by_default="false">
       <scope name="Tests" level="WARNING" enabled="true" />
     </inspection_tool>
@@ -1472,10 +1200,6 @@
     <inspection_tool class="UnnecessaryLabelOnBreakStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryLabelOnContinueStatement" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="UnnecessaryLabelOnContinueStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="UnnecessaryLocalVariable" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_ignoreImmediatelyReturnedVariables" value="false" />
-      <option name="m_ignoreAnnotatedVariables" value="true" />
-    </inspection_tool>
     <inspection_tool class="UnnecessaryLocalVariableJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_ignoreImmediatelyReturnedVariables" value="false" />
       <option name="m_ignoreAnnotatedVariables" value="false" />
@@ -1508,9 +1232,6 @@
       <option name="SUGGEST_PRIVATE_FOR_INNERS" value="false" />
     </inspection_tool>
     <inspection_tool class="Weblogic" enabled="false" level="ERROR" enabled_by_default="false" />
-    <inspection_tool class="WhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoreNonEmtpyLoops" value="false" />
-    </inspection_tool>
     <inspection_tool class="WithStatementJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="XsltDeclarations" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="XsltTemplateInvocation" enabled="false" level="ERROR" enabled_by_default="false" />
