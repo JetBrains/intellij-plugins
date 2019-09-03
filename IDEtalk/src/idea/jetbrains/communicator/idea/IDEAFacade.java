@@ -373,8 +373,8 @@ public class IDEAFacade implements IDEFacade {
     else {
       IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
       for (IdeFrame frame : frames) {
-        final IdeFrameImpl eachFrame = (IdeFrameImpl)frame;
-        if (eachFrame.isActive()) {
+        IdeFrameImpl eachFrame = (IdeFrameImpl)frame;
+        if (eachFrame.getFrame().isActive()) {
           res = eachFrame.getProject();
           if (res != null) break;
         }
