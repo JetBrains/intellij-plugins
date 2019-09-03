@@ -98,7 +98,7 @@
 
         <statistics.applicationUsagesCollector implementation="tanvd.grazi.ide.fus.GraziFUStateCollector"/>
         <statistics.validation.customWhiteListRule implementation="tanvd.grazi.ide.fus.GraziWhiteListRule"/>
-        <statistics.counterUsagesCollector groupId="grazi" version="1"/>
+        <statistics.counterUsagesCollector groupId="grazi.count" version="1"/>
     </extensions>
 
     <extensionPoints>
