@@ -123,16 +123,18 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       return null;
     }
 
-    if (lang.is(getTemplateDataLanguage())) {
-      PsiFileImpl file = (PsiFileImpl)parserDefinition.createFile(this);
-      file.setContentElementType(getTemplateDataElementType(getBaseLanguage()));
+    if (lang.is(getTemplateDataLanguage()) || lang.isKindOf(getBaseLanguage())) {
+      PsiFile file = parserDefinition.createFile(this);
+      setContentElementType(lang, file);
       return file;
     }
-    else if (lang.isKindOf(getBaseLanguage())) {
-      return parserDefinition.createFile(this);
-    }
-    else {
-      return null;
+    return null;
+  }
+
+  @Override
+  public void setContentElementType(Language language, PsiFile file) {
+    if (language.is(getTemplateDataLanguage())) {
+      ((PsiFileImpl)file).setContentElementType(getTemplateDataElementType(getBaseLanguage()));
     }
   }
 
