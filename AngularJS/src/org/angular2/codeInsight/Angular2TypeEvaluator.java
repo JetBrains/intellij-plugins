@@ -211,7 +211,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     }
     return JSCompositeTypeImpl.optimizeTypeIfComposite(
       union ? new JSCompositeTypeImpl(source, types)
-            : new JSIntersectionTypeImpl(source, types), OPTIMIZED_SIMPLE);
+            : JSCompositeTypeFactory.createIntersectionType(types, source), OPTIMIZED_SIMPLE);
   }
 
   private static boolean isPropertyBindingAttribute(AttributeInfo info) {
