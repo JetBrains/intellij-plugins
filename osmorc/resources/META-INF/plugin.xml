@@ -61,7 +61,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="org.osmorc.OsmorcPostStartupActivity"/>
+    <backgroundPostStartupActivity implementation="org.osmorc.OsmorcPostStartupActivity"/>
 
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
