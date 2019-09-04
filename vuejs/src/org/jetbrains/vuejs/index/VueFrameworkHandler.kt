@@ -131,7 +131,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun getContextualType(type: JSType?): JSType {
     if (type == null || type is JSAnyType) return JSTypeCastUtil.NO_RECORD_TYPE
-    if (type !is JSCompositeTypeImpl) return type
+    if (type !is JSUnionType) return type
     return JSCompositeTypeFactory.createContextualUnionType(type.types, type.source)
   }
 
