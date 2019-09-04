@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DartDumbAwareStartupActivity implements StartupActivity.Backgroundable {
+public class DartDumbAwareStartupActivity implements StartupActivity.DumbAware {
   @Override
   public void runActivity(@NotNull final Project project) {
     if (DartModuleBuilder.isPubGetScheduledForNewlyCreatedProject(project)) {
