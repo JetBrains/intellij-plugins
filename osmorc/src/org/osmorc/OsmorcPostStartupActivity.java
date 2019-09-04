@@ -41,7 +41,7 @@ import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcPostStartupActivity implements StartupActivity {
+public class OsmorcPostStartupActivity implements StartupActivity.Background {
   private static void handleFacetChange(@NotNull Facet<?> facet, @NotNull Project project) {
     if (facet.getTypeId() != OsmorcFacetType.ID) {
       return;
