@@ -63,7 +63,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletionProvider.isValidVariant;
-import static com.intellij.lang.javascript.psi.types.JSCompositeTypeBaseImpl.isNullOrUndefinedType;
+import static com.intellij.lang.javascript.psi.JSTypeUtils.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
