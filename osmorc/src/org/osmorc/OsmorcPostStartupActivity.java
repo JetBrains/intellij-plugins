@@ -41,7 +41,7 @@ import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcPostStartupActivity implements StartupActivity.Background {
+public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
   private static void handleFacetChange(@NotNull Facet<?> facet, @NotNull Project project) {
     if (facet.getTypeId() != OsmorcFacetType.ID) {
       return;
@@ -54,9 +54,7 @@ public class OsmorcPostStartupActivity implements StartupActivity.Background {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    if (project.isDefault()) {
-      return;
-    }
+    if (project.isDefault()) return;
 
     MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
