@@ -81,7 +81,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
   }
 
   private static Pair<Integer, List<String>> determineArgNumberAndPath(ParamContext context) {
-    final RPsiElement element = context.getValueElement();
+    final RPsiElement element = context.getArgumentElement();
     final PsiElement parent = element.getParent();
     final PsiElement argument = parent instanceof RAssoc ? parent : element;
     final RListOfExpressions expressions = RListOfExpressionsNavigator.getByPsiElement(argument);
