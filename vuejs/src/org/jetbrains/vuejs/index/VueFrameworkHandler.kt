@@ -132,7 +132,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun getContextualType(type: JSType?): JSType {
     if (type == null || type is JSAnyType) return JSTypeCastUtil.NO_RECORD_TYPE
     if (type !is JSCompositeTypeImpl) return type
-    return JSContextualUnionTypeImpl.getContextualUnionType(type.types, type.source)
+    return JSCompositeTypeFactory.createContextualUnionType(type.types, type.source)
   }
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
