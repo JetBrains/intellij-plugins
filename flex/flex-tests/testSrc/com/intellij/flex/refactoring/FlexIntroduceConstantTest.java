@@ -10,8 +10,8 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.IntroduceConstantInfoProvider;
-import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
@@ -50,7 +50,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
                       final String className,
                       String fileName,
                       String ext) throws Exception {
-    doTest(new JSIntroduceConstantHandler() {
+    doTest(new FlexIntroduceConstantHandler() {
       @Override
       protected JSIntroduceConstantSettings getSettings(Project project,
                                                         Editor editor,
@@ -86,7 +86,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
     }, fileName, ext);
   }
 
-  private void doTest(final JSIntroduceConstantHandler handler, String fileName, String ext) throws Exception {
+  private void doTest(final FlexIntroduceConstantHandler handler, String fileName, String ext) throws Exception {
     configureByFile(fileName + "." + ext);
     Editor injectedEditor = BaseCodeInsightAction.getInjectedEditor(myProject, myEditor);
     if (injectedEditor != null) {
@@ -152,7 +152,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
   }
 
   private void doNiceNameTest(final int i) throws Exception {
-    doTest(new JSIntroduceConstantHandler() {
+    doTest(new FlexIntroduceConstantHandler() {
       @Override
       protected JSIntroduceConstantSettings getSettings(Project project,
                                                         Editor editor,

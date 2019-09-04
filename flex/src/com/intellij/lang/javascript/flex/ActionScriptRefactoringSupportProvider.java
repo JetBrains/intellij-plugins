@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractInterfaceDialog;
 import com.intellij.javascript.flex.refactoring.extractSuper.FlexExtractSuperClassDialog;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.refactoring.JavascriptRefactoringSupportProvider;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractInterfaceHandler;
 import com.intellij.lang.javascript.refactoring.extractSuper.JSExtractSuperClassHandler;
-import com.intellij.lang.javascript.refactoring.introduceConstant.JSIntroduceConstantHandler;
+import com.intellij.lang.javascript.refactoring.introduceConstant.FlexIntroduceConstantHandler;
 import com.intellij.lang.javascript.refactoring.introduceField.JSIntroduceFieldHandler;
 import com.intellij.lang.javascript.refactoring.memberPullUp.JSPullUpHandler;
 import com.intellij.lang.javascript.refactoring.memberPushDown.JSPushDownHandler;
@@ -45,7 +45,7 @@ public class ActionScriptRefactoringSupportProvider extends JavascriptRefactorin
 
   @Override
   public RefactoringActionHandler getIntroduceConstantHandler() {
-    return new JSIntroduceConstantHandler();
+    return new FlexIntroduceConstantHandler();
   }
 
   @Override
