@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Function;
 import org.jetbrains.plugins.ruby.rails.codeInsight.paramDefs.MethodRefParam;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.CallArgumentContext;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.DynamicHashKeyProviderEx;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.RubyCallArgumentContext;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefExpression;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.paramDefs.matcher.ParamDefLeaf;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
@@ -49,7 +49,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
 
   @NotNull
   @Override
-  public List<String> getKeys(CallArgumentContext context) {
+  public List<String> getKeys(RubyCallArgumentContext context) {
     final Collection<Function> functions = getFunctions(context);
     if (functions == null) return Collections.emptyList();
 
@@ -80,7 +80,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
     return true;
   }
 
-  private static Pair<Integer, List<String>> determineArgNumberAndPath(CallArgumentContext context) {
+  private static Pair<Integer, List<String>> determineArgNumberAndPath(RubyCallArgumentContext context) {
     final RPsiElement element = context.getArgumentElement();
     final PsiElement parent = element.getParent();
     final PsiElement argument = parent instanceof RAssoc ? parent : element;
@@ -104,19 +104,19 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
   }
 
   @Override
-  public boolean hasKey(CallArgumentContext context, String text) {
+  public boolean hasKey(RubyCallArgumentContext context, String text) {
     return getKeys(context).contains(text);
   }
 
   @Nullable
   @Override
-  public PsiElement resolveKey(CallArgumentContext context, String text) {
+  public PsiElement resolveKey(RubyCallArgumentContext context, String text) {
     return null;
   }
 
   @Nullable
   @Override
-  public ParamDefExpression getValue(CallArgumentContext context, String text) {
+  public ParamDefExpression getValue(RubyCallArgumentContext context, String text) {
     final Collection<Function> functions = getFunctions(context);
     if (functions == null) return null;
 
@@ -135,7 +135,7 @@ public class SelectorKeysProvider implements DynamicHashKeyProviderEx {
   }
 
   @Nullable
-  private Collection<Function> getFunctions(CallArgumentContext context) {
+  private Collection<Function> getFunctions(RubyCallArgumentContext context) {
     final Module module = context.getModule();
     if (module == null) return null;
 
