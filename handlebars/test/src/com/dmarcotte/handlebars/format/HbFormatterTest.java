@@ -2,17 +2,20 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.util.HbTestUtils;
+import com.intellij.codeInsight.generation.AutoIndentLinesHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -88,15 +91,15 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * @throws Exception
    */
   void doFileBasedTest(@NonNls String fileNameBefore, LanguageFileType templateDataLanguageType) throws Exception {
-    doTextTest(loadFile(fileNameBefore), loadFile(fileNameBefore.replace(".hbs", "_expected.hbs")), templateDataLanguageType);
+    String extension = FileUtilRt.getExtension(fileNameBefore);
+    doTextTest(loadFile(fileNameBefore),
+               loadFile(fileNameBefore.replace("." + extension, "_expected." + extension)),
+               extension,
+               templateDataLanguageType);
   }
 
   void doStringBasedTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
-    doTextTest(text, textAfter, HbLanguage.getDefaultTemplateLang());
-  }
-
-  private abstract static class FormatRunnableFactory {
-    abstract Runnable createFormatRunnable(PsiFile file);
+    doTextTest(text, textAfter, "hbs", HbLanguage.getDefaultTemplateLang());
   }
 
   /**
@@ -109,63 +112,31 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
    * @param templateDataLanguageType The templated language of the file
    * @throws IncorrectOperationException
    */
-  void doTextTest(final String beforeText, String textAfter, LanguageFileType templateDataLanguageType) throws IncorrectOperationException {
+  void doTextTest(final String beforeText, String textAfter, String extension, LanguageFileType templateDataLanguageType) throws IncorrectOperationException {
     // define action to run "Reformat Code" on the whole "file" defined by beforeText
-    FormatRunnableFactory fullFormatRunnableFactory = new FormatRunnableFactory() {
-      @Override
-      Runnable createFormatRunnable(final PsiFile file) {
-        return () -> {
-          try {
-            TextRange rangeToUse = file.getTextRange();
-            CodeStyleManager styleManager = CodeStyleManager.getInstance(getProject());
-            styleManager.reformatText(file, rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
-          }
-          catch (IncorrectOperationException e) {
-            assertTrue(e.getLocalizedMessage(), false);
-          }
+    Runnable fullFormatRunnableFactory = () -> {
+          TextRange rangeToUse = myFixture.getFile().getTextRange();
+          CodeStyleManager styleManager = CodeStyleManager.getInstance(getProject());
+          styleManager.reformatText(myFixture.getFile(), rangeToUse.getStartOffset(), rangeToUse.getEndOffset());
         };
-      }
-    };
 
     // define action to run "Adjust line indent" on every line in the "file" defined by beforeText
-    FormatRunnableFactory lineFormatRunnableFactory = new FormatRunnableFactory() {
-      @Override
-      Runnable createFormatRunnable(final PsiFile file) {
-        return () -> {
-          try {
-            final PsiDocumentManager manager = PsiDocumentManager.getInstance(getProject());
-            final Document document = manager.getDocument(file);
-
-            assert document != null;
-
-            for (int lineNum = 0; lineNum < document.getLineCount(); lineNum++) {
-              CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(getProject());
-              int offset = document.getLineStartOffset(lineNum);
-              @SuppressWarnings("deprecation") // if this breaks at some point, we should
-                // refactor to invoke AutoIndentLinesAction
-                // instead of doing the indent directly
-                boolean lineToBeIndented = codeStyleManager.isLineToBeIndented(file, offset);
-              if (lineToBeIndented) {
-                codeStyleManager.adjustLineIndent(file, offset);
-              }
-            }
-          }
-          catch (IncorrectOperationException e) {
-            assertTrue(e.getLocalizedMessage(), false);
-          }
+    Runnable lineFormatRunnableFactory = () -> {
+          Editor editor = myFixture.getEditor();
+          editor.getSelectionModel().setSelection(0, editor.getDocument().getTextLength());
+          new AutoIndentLinesHandler().invoke(myFixture.getProject(), editor, myFixture.getFile());
         };
-      }
-    };
 
-    doFormatterActionTest(fullFormatRunnableFactory, beforeText, textAfter, templateDataLanguageType);
-    doFormatterActionTest(lineFormatRunnableFactory, beforeText, textAfter, templateDataLanguageType);
+    doFormatterActionTest(fullFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
+    doFormatterActionTest(lineFormatRunnableFactory, beforeText, textAfter, extension, templateDataLanguageType);
   }
 
-  private void doFormatterActionTest(final FormatRunnableFactory formatAction,
+  private void doFormatterActionTest(final Runnable formatAction,
                                      final String beforeText,
                                      String textAfter,
+                                     String extension,
                                      LanguageFileType templateDataLanguageType) {
-    PsiFile baseFile = myFixture.configureByText("A.hbs", beforeText);
+    PsiFile baseFile = myFixture.configureByText("A." + extension, beforeText);
 
     VirtualFile virtualFile = baseFile.getVirtualFile();
     assert virtualFile != null;
@@ -176,12 +147,8 @@ public abstract class HbFormatterTest extends BasePlatformTestCase implements Hb
     final PsiFile file = PsiManager.getInstance(getProject()).findFile(virtualFile);
     assert file != null;
 
-    CommandProcessor.getInstance().executeCommand(getProject(),
-                                                  () -> ApplicationManager.getApplication()
-                                                    .runWriteAction(formatAction.createFormatRunnable(file)), "", "");
-
+    WriteCommandAction.runWriteCommandAction(getProject(), formatAction);
     TemplateDataLanguageMappings.getInstance(getProject()).cleanupForNextTest();
-
     assertEquals("Reformat Code failed", prepareText(textAfter), prepareText(file.getText()));
   }
 
