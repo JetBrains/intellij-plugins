@@ -98,7 +98,7 @@ object GraziSpellchecker : GraziStateLifecycle {
         if (ApplicationManager.getApplication().isUnitTestMode || !state.enabledSpellcheck) return
 
         //Eagerly init speller language
-        LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE)
+        LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE, state)
 
         modifyAndCommitProjectProfile(project, Consumer {
             it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
@@ -113,7 +113,7 @@ object GraziSpellchecker : GraziStateLifecycle {
         if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck == newState.enabledSpellcheck) return
 
         //Eagerly init speller language
-        LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE)
+        LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE, newState)
 
         if (newState.enabledSpellcheck) {
             modifyAndCommitProjectProfile(project, Consumer {

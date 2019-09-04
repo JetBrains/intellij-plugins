@@ -16,28 +16,28 @@ object LangTool : GraziStateLifecycle {
     val allRules: Set<String>
         get() = rulesToLanguages.keys
 
-    fun getTool(lang: Lang): JLanguageTool {
+    fun getTool(lang: Lang, state: GraziConfig.State = GraziConfig.get()): JLanguageTool {
         require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 
         return langs.getOrPut(lang) {
-            JLanguageTool(lang.jLanguage!!, GraziConfig.get().nativeLanguage.jLanguage, UserConfig(GraziConfig.get().userWords.toList())).apply {
+            JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
                 lang.configure(this)
 
-                GraziConfig.get().userDisabledRules.forEach { id -> disableRule(id) }
-                GraziConfig.get().userEnabledRules.forEach { id -> enableRule(id) }
+                state.userDisabledRules.forEach { id -> disableRule(id) }
+                state.userEnabledRules.forEach { id -> enableRule(id) }
             }
         }
     }
 
-    fun getSpeller(lang: Lang): Rule? {
+    fun getSpeller(lang: Lang, state: GraziConfig.State = GraziConfig.get()): Rule? {
         return spellers.getOrPut(lang) {
-            getTool(lang).allRules.find { it.isDictionaryBasedSpellingRule }
+            getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule }
         }
     }
 
     override fun init(state: GraziConfig.State, project: Project) {
         for (lang in state.availableLanguages) {
-            getTool(lang).allRules.distinctBy { it.id }.forEach { rule ->
+            getTool(lang, state).allRules.distinctBy { it.id }.forEach { rule ->
                 rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
             }
         }

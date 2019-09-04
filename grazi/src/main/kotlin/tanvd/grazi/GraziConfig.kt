@@ -42,7 +42,11 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     companion object {
         private val instance: GraziConfig by lazy { ServiceManager.getService(GraziConfig::class.java) }
 
-        /** Get copy of Grazi config state */
+        /**
+         * Get copy of Grazi config state
+         *
+         * Should never be called in GraziStateLifecycle actions
+         */
         fun get() = instance.state
 
         /** Update Grazi config state */
