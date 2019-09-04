@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyCallElement;
 import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -172,8 +172,8 @@ public class Angular2LibrariesHacks {
         && (clazz = PsiTreeUtil.getContextOfType(property.getSourceElement(), TypeScriptClass.class)) != null
         && type.getTypeText().contains(NG_ITERABLE)
         && (queryListType = getQueryListType(clazz)) != null) {
-      return new JSCompositeTypeImpl(type.getSource(), type,
-                                     new JSGenericTypeImpl(type.getSource(), queryListType,
+      return JSCompositeTypeFactory.createUnionType(type.getSource(), type,
+                                                        new JSGenericTypeImpl(type.getSource(), queryListType,
                                                            ((JSGenericTypeImpl)type).getArguments()));
     }
     return type;

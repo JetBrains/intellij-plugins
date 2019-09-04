@@ -206,11 +206,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   @NotNull
   private static JSType merge(@NotNull JSTypeSource source, @NotNull List<JSType> types, boolean union) {
-    if (types.size() == 1) {
-      return types.get(0);
-    }
     return JSCompositeTypeImpl.optimizeTypeIfComposite(
-      union ? new JSCompositeTypeImpl(source, types)
+      union ? JSCompositeTypeFactory.createUnionType(source, types)
             : JSCompositeTypeFactory.createIntersectionType(types, source), OPTIMIZED_SIMPLE);
   }
 

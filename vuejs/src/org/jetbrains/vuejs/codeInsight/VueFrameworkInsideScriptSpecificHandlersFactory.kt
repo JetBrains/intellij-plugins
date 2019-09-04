@@ -10,7 +10,10 @@ import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandlersFactor
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.JSUnionType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
@@ -52,7 +55,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
           expressionText == "mapState" -> processVuex(keys, map, VueStoreUtils.STATE)
         }
         if (map.isEmpty()) return null
-        return JSCompositeTypeImpl(map[0].source, map)
+        return JSCompositeTypeFactory.createUnionType(map[0].source, map)
       }
       return createExportedObjectLiteralTypeEvaluator(obj)
     }

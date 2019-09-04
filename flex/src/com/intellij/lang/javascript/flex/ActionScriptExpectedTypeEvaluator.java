@@ -82,7 +82,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     }
     else {
       final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myGrandParent, true);
-      setResult(new JSCompositeTypeImpl(typeSource,
+      setResult(JSCompositeTypeFactory.createUnionType(typeSource,
                                          JSNamedTypeFactory.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
                                         JSNamedTypeFactory.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE)));
     }
