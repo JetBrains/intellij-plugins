@@ -17,7 +17,7 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.*

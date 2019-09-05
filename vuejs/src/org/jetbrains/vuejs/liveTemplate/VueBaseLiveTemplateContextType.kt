@@ -12,7 +12,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", EverywhereContextType::class.java) {

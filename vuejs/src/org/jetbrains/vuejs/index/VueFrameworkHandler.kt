@@ -40,6 +40,7 @@ import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersF
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.html.VueFileType

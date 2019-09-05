@@ -10,6 +10,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.Attribu
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.LOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.NONE
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
@@ -18,7 +19,7 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    if (context == null || !org.jetbrains.vuejs.index.isVueContext(context)) return emptyArray()
+    if (context == null || !isVueContext(context)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
 
     StreamEx.of(*VueAttributeNameParser.VueAttributeKind.values())
@@ -51,7 +52,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (context == null || !org.jetbrains.vuejs.index.isVueContext(context) || attributeName == null) return null
+    if (context == null || !isVueContext(context) || attributeName == null) return null
     val info = VueAttributeNameParser.parse(attributeName, context)
     when {
       info.kind == VueAttributeNameParser.VueAttributeKind.PLAIN -> {

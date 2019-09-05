@@ -14,13 +14,14 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.openapi.actionSystem.IdeActions
-import com.intellij.testFramework.fixtures.EditorHintFixture
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.EditorHintFixture
 import com.intellij.util.ui.UIUtil
 
 class VueParameterInfoTest : BasePlatformTestCase() {
 
   fun testTypeScriptParametersHint() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.addFileToProject("api.vue", "<script lang='ts'>\n" +
                                           "    export function isApiResponse(s:String,b:boolean){}\n" +
                                           "</script>")

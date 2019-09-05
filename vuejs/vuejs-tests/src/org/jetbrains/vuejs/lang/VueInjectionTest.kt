@@ -32,6 +32,7 @@ class VueInjectionTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/injection/"
 
   fun testSimpleInterpolationInHtml() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("SimpleInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -48,6 +49,7 @@ class VueInjectionTest : BasePlatformTestCase() {
   }
 
   fun testSimpleInterpolationInVue() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("SimpleInterpolationInVue.vue", """<template>
     <div>
       {{ 1 + <caret>2 }}
@@ -118,6 +120,7 @@ new Vue({
   }
 
   fun testCustomDelimitersInterpolationInHtml() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("CustomDelimitersInterpolationInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -156,6 +159,7 @@ new Vue({
   }
 
   fun testCustomDelimitersOldDoNotWorkInHtml() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("CustomDelimitersOldDoNotWorkInHtml.html", """<!DOCTYPE html>
 <html>
   <head>
@@ -174,7 +178,7 @@ new Vue({
 })
 </script>
 </html>""")
-    TestCase.assertEquals(HTMLLanguage.INSTANCE, myFixture.file.language)
+    TestCase.assertEquals(VueLanguage.INSTANCE, myFixture.file.language)
     checkParseTree()
   }
 

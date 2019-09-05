@@ -7,8 +7,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.DELIMITER
-import org.jetbrains.vuejs.index.isVueContext
 
 object VueStoreUtils {
   private const val VUEX = "vuex"

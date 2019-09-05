@@ -27,8 +27,8 @@ import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.VueOptionsIndex
-import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition

@@ -239,6 +239,7 @@ const props = {seeMe: {}}
   }
 
   fun testCompRequiredAttributesTest() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
@@ -808,6 +809,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testClassComponentAnnotationWithLocalComponent() {
+    createPackageJsonWithVueDependency(myFixture)
     createTwoClassComponents(myFixture)
     myFixture.configureByText("ClassComponentAnnotationWithLocalComponent.vue",
                               """
@@ -836,6 +838,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
     createTwoClassComponents(myFixture, true)
     myFixture.configureByText("ClassComponentAnnotationWithLocalComponentTs.vue",

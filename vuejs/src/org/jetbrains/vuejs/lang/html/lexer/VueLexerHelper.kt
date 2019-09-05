@@ -73,6 +73,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
 
   private fun scriptContentViaLang(): HtmlScriptContentProvider? {
     return Language.getRegisteredLanguages()
+      .asSequence()
       .filter { languageMatches(it) }
       .map { LanguageHtmlScriptContentProvider.getScriptContentProvider(it) }
       .firstOrNull { it != null }
@@ -84,7 +85,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
       return true
     }
     val fileType = FileTypeManager.getInstance().getFileTypeByExtension(scriptType)
-    return fileType == language.associatedFileType
+    return fileType === language.associatedFileType
   }
 
   companion object {

@@ -9,7 +9,7 @@ import com.intellij.psi.impl.source.html.HtmlTagImpl
 import com.intellij.util.ProcessingContext
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.context.isVueContext
 
 class VueTagContentCompletionProvider : CompletionProvider<CompletionParameters>() {
 

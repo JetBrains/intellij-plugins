@@ -98,9 +98,14 @@ class VueModelManager {
       val global = getGlobal(templateElement) ?: return null
       val xmlElement = if (templateElement is XmlElement)
         templateElement
-      else
-        InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(templateElement)
-        ?: return null
+      else {
+        when (val context = PsiTreeUtil.getContextOfType(templateElement, PsiFile::class.java, XmlElement::class.java)) {
+          is XmlElement -> context
+          is PsiFile -> InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(context)
+          else -> return null
+        }
+      } ?: return null
+
       var result: VueApp? = null
       PsiTreeUtil.findFirstParent(xmlElement, Condition {
         if (it is PsiFile) return@Condition true

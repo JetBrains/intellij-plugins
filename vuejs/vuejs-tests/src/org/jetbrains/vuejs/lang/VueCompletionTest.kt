@@ -11,8 +11,6 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.WriteAction.run
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -34,26 +32,17 @@ class VueCompletionTest : BasePlatformTestCase() {
     assertSameElements(myFixture.lookupElementStrings!!, "externalClass", "internalClass")
   }
 
-  fun testCompleteAttributesWithVueInPackageJson() {
-    try {
-      run<Throwable> {
-        @Suppress("DEPRECATION")
-        val packageJson = myFixture.project.baseDir.createChildData(this, PackageJsonUtil.FILE_NAME)
-        VfsUtil.saveText(packageJson, "{\"name\": \"id\", \"version\": \"1.0.0\", \"dependencies\": {\"vue\": \"2.4.1\"}}")
-      }
-      myFixture.configureByText("index.html", "<html <caret>></html>")
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
-    }
-    finally {
-      @Suppress("DEPRECATION")
-      val packageJson = myFixture.project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
-      run<Throwable> { packageJson?.delete(this) }
-    }
+
+  fun testCompleteAttributesWithVueInNodeModules() {
+    myFixture.configureByText("package.json","{}")
+    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureByText("index.html", "<html <caret>></html>")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
   }
 
-  fun testCompleteAttributesWithVueFile() {
-    myFixture.configureByText("a.vue", "")
+  fun testCompleteAttributesWithVueInPackageJson() {
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("index.html", "<html <caret>></html>")
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-bind", "v-else")
@@ -762,7 +751,7 @@ $script""")
   }
 
   private fun configureVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture, "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
   }
 
@@ -1669,7 +1658,7 @@ $script""")
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
-                                       additionalDependencies: String) {
+                                       additionalDependencies: String = "") {
   fixture.configureByText(PackageJsonUtil.FILE_NAME, """
   {
     "name": "test",

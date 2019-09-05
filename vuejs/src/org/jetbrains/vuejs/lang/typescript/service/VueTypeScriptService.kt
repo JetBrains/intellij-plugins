@@ -26,8 +26,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
+import org.jetbrains.vuejs.context.enableVueTSService
 import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.typescript.service.protocol.VueTypeScriptServiceProtocol
 
@@ -116,7 +116,7 @@ class VueTypeScriptService(project: Project) :
     return VueTypeScriptServiceProtocol(myProject, mySettings, readyConsumer, createEventConsumer(), tsServicePath)
   }
 
-  private fun isVueServiceEnabled(): Boolean = hasVue(myProject)
+  private fun isVueServiceEnabled(): Boolean = enableVueTSService(myProject)
 
   override fun getInitialCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
     //commands

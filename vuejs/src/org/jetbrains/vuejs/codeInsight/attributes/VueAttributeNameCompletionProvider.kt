@@ -17,7 +17,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.Attribu
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.*
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.getAvailableSlots
 import javax.swing.Icon
 

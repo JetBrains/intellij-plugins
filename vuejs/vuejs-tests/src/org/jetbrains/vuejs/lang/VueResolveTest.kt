@@ -577,7 +577,7 @@ export default {
   }
 
   fun testIntoVForVarInHtml() {
-    myFixture.configureByText("a.vue", "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("IntoVForVarInHtml.html", """
 <html>
   <ul>
@@ -651,7 +651,7 @@ export default {
   }
 
   fun testKeyIntoForResolveHtml() {
-    myFixture.configureByText("a.vue", "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("KeyIntoForResolveHtml.html", """
 <html>
   <li id="id123" v-for="(item1, index1) in items1" :key="<caret>item1" v-if="item1 > 0">
@@ -669,7 +669,7 @@ export default {
   }
 
   fun testResolveByMountedVueInstanceInData() {
-    myFixture.configureByText("a.vue", "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("ResolveByMountedVueInstanceInData.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInData',
@@ -698,7 +698,7 @@ new Vue({
   }
 
   fun testResolveByMountedVueInstanceInProps() {
-    myFixture.configureByText("a.vue", "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("ResolveByMountedVueInstanceInProps.js", """
 new Vue({
   el: '#ResolveByMountedVueInstanceInProps',
@@ -726,7 +726,7 @@ new Vue({
   }
 
   fun testResolveVForIterableByMountedVueInstance() {
-    myFixture.configureByText("a.vue", "")
+    createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByText("ResolveVForIterableByMountedVueInstance.js", """
 new Vue({
   el: '#ResolveVForIterableByMountedVueInstance',
@@ -1698,6 +1698,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testResolveWithClassComponentTs() {
+    createPackageJsonWithVueDependency(myFixture)
     createTwoClassComponents(myFixture, true)
     myFixture.configureByText("ResolveWithClassComponentTs.vue",
                               """
