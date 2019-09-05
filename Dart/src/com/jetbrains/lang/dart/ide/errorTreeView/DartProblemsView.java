@@ -87,7 +87,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   };
 
-  public DartProblemsView(@NotNull final Project project, @NotNull final ToolWindowManager toolWindowManager) {
+  public DartProblemsView(@NotNull Project project) {
     myProject = project;
     myPresentationHelper = new DartProblemsPresentationHelper(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
@@ -100,7 +100,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       myPanel = new DartProblemsViewPanel(project, myPresentationHelper);
 
-      myToolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
+      myToolWindow = ToolWindowManager.getInstance(project).registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
       myToolWindow.setHelpId("reference.toolWindow.DartAnalysis");
       myCurrentIcon = DartIcons.Dart_13;
       updateIcon();
