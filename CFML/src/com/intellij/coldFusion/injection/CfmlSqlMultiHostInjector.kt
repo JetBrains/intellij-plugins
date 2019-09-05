@@ -1,5 +1,6 @@
 package com.intellij.coldFusion.injection
 
+import com.intellij.coldFusion.model.CfmlUtil
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes
 import com.intellij.coldFusion.model.psi.*
@@ -13,7 +14,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.sql.psi.SqlLanguage
 
 
 /**
@@ -52,17 +52,17 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
   private val CFQUERY_PARAM_DUMMY = "'parameter from <cfqueryparam>'"
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
-
+    val sqlLanguage = CfmlUtil.getSqlLanguage() ?: return
     if (context.isCfIfTag() && context.isTagInsideCfQuery()) {
       val cfIfTagOptionHosts = getCfIfTagOptionHosts(context)
       for (host in cfIfTagOptionHosts) {
-        registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, listOf(host)), context.containingFile, registrar)
+        registerInjection(sqlLanguage, mapSplittedHostsToTextRanges(context, listOf(host)), context.containingFile, registrar)
       }
     }
     if (context.isCfQueryTag()) {
       val splitHosts = getCfQueryHosts(context)
       if (splitHosts.isEmpty()) return
-      registerInjection(SqlLanguage.INSTANCE, mapSplittedHostsToTextRanges(context, splitHosts), context.containingFile, registrar)
+      registerInjection(sqlLanguage, mapSplittedHostsToTextRanges(context, splitHosts), context.containingFile, registrar)
     }
 
   }

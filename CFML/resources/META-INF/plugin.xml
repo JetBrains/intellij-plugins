@@ -15,10 +15,8 @@
   <vendor>JetBrains</vendor>
   <resource-bundle>messages.CfmlBundle</resource-bundle>
 
-  <depends>com.intellij.modules.sql</depends>
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
-  <depends>com.intellij.database</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <psi.referenceContributor language="CFML"
@@ -109,7 +107,7 @@
 
   <actions>
     <action id="NewCfmlFile" class="com.intellij.coldFusion.UI.CfmlCreateFileAction"
-            text="CFML/CFC file"
+            text="CFML/CFC File"
             description="Create new CFML/CFC file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>

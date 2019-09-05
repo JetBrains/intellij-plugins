@@ -16,6 +16,7 @@
 package com.intellij.coldFusion.model.files;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
+import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
@@ -26,7 +27,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
-import com.intellij.sql.psi.SqlLanguage;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,8 +64,8 @@ public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewPro
       file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
       return file;
     }
-    if (lang == SqlLanguage.INSTANCE) {
-      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(SqlLanguage.INSTANCE).createFile(this);
+    if (lang == CfmlUtil.getSqlLanguage()) {
+      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
       file.setContentElementType(CfmlElementTypes.SQL_DATA);
       return file;
     }

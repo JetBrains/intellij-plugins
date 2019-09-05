@@ -11,6 +11,7 @@ import com.intellij.coldFusion.model.parsers.CfmlKeywords;
 import com.intellij.coldFusion.model.psi.CfmlImport;
 import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
+import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -41,6 +42,12 @@ import java.util.Set;
  * Created by Lera Nikolaenko
  */
 public class CfmlUtil {
+
+  @Nullable
+  public static Language getSqlLanguage() {
+    return Language.findLanguageByID("SQL");
+  }
+
   @Nullable
   public static VirtualFile findFileByLibTag(PsiFile originalFile, @NotNull String libtag) {
     VirtualFile base = getRealVirtualFile(originalFile);
