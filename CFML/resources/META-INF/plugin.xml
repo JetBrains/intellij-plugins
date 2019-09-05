@@ -23,7 +23,7 @@
                               implementation="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlReferenceContributor"/>
     <programRunner implementation="com.intellij.coldFusion.UI.runner.CfmlRunner"/>
     <configurationType implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationType"/>
-    <runConfigurationProducer implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer" order="before JavaScriptDebug"/>
     <localInspection language="CFML" shortName="CfmlReferenceInspection" bundle="messages.CfmlBundle" key="cfml.references.inspection"
                      groupKey="cfml.inspections.group" enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.coldFusion.UI.inspections.CfmlReferenceInspection"/>
@@ -50,9 +50,9 @@
     <lang.syntaxHighlighterFactory language="CFML"
                                    implementationClass="com.intellij.coldFusion.UI.highlighting.CfmlSyntaxHighlighterFactory"/>
     <indexPatternBuilder implementation="com.intellij.coldFusion.model.psi.CfmlIndexPatternBuilder"/>
-    <completion.contributor language="CFML"
+    <completion.contributor language="CFML" order="before javaClassReference"
                             implementationClass="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlCompletionContributor"/>
-    <completion.contributor language="XML"
+    <completion.contributor language="XML" order="before javaClassReference"
                             implementationClass="com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlCompletionContributor"/>
     <highlightErrorFilter implementation="com.intellij.coldFusion.model.CfmlErrorFilter"/>
     <lang.elementManipulator forClass="com.intellij.coldFusion.model.psi.CfmlCompositeElement"
