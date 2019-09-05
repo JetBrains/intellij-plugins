@@ -38,9 +38,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.elementType
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
-import com.intellij.sql.type
 import com.intellij.util.SystemProperties
 
 class CfmlTypedHandler : TypedHandlerDelegate() {
@@ -129,7 +129,7 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
     var cfmlPsiElement: PsiElement? = cfmlElement
     while (cfmlPsiElement != null) {
       //we've found an opened xml tag here; let's delegate completion to the XmlTypedHandler (IDEA-205201)
-      if (cfmlPsiElement.type == TEMPLATE_TEXT && hasUnclosedXmlTag(cfmlElement, offset)) return null
+      if (cfmlPsiElement.elementType == TEMPLATE_TEXT && hasUnclosedXmlTag(cfmlElement, offset)) return null
       cfmlPsiElement = cfmlPsiElement.getPreviousCfmlTag()
       if (cfmlPsiElement is CfmlTag && CfmlTagUtil.isUnclosedTag(cfmlPsiElement)) return cfmlPsiElement
     }
@@ -148,7 +148,7 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
       .withRoot(htmlPsi)
       .traverse()
       .filter { it is XmlTag && (it.textOffset in startOffset..caretOffset) }
-      .any { it.lastChild.type != XmlTokenType.XML_TAG_END }
+      .any { it.lastChild.elementType != XmlTokenType.XML_TAG_END }
   }
 
   companion object {
