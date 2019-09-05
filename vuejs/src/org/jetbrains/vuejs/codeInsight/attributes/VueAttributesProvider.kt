@@ -23,7 +23,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
     StreamEx.of(*VueAttributeNameParser.VueAttributeKind.values())
       .filter { it.attributeName != null && it.isValidIn(context) }
-      .map { VueAttributeDescriptor(it.attributeName!!, acceptsNoValue = !it.requiresValue, priority = if (it.deprecated) NONE else LOW) }
+      .map {
+        VueAttributeDescriptor(context, it.attributeName!!, acceptsNoValue = !it.requiresValue, priority = if (it.deprecated) NONE else LOW)
+      }
       .forEach { result.add(it) }
 
     val contributedDirectives = mutableSetOf<String>()
@@ -34,13 +36,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
         && it.directiveName != null
         && contributedDirectives.add(it.directiveName!!)
       }
-      .map { VueAttributeDescriptor("v-" + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
+      .map { VueAttributeDescriptor(context, "v-" + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
       .forEach { result.add(it) }
 
     VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelVisitor() {
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         if (contributedDirectives.add(name)) {
-          result.add(VueAttributeDescriptor("v-" + fromAsset(name), directive.source, true, AttributePriority.of(proximity)))
+          result.add(VueAttributeDescriptor(context, "v-" + fromAsset(name), directive.source, true, AttributePriority.of(proximity)))
         }
         return true
       }
@@ -57,7 +59,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
           return null
         }
         return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(info.name, context)
-               ?: VueAttributeDescriptor(info.name, acceptsNoValue = !info.requiresValue, priority = LOW)
+               ?: VueAttributeDescriptor(context, info.name, acceptsNoValue = !info.requiresValue, priority = LOW)
       }
       info is VueAttributeNameParser.VueDirectiveInfo -> {
         return when {
@@ -74,9 +76,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
                  else -> null
                }
-               ?: return VueAttributeDescriptor(attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
+               ?: return VueAttributeDescriptor(context, attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
       }
-      else -> return VueAttributeDescriptor(attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
+      else -> return VueAttributeDescriptor(context, attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
     }
   }
 
@@ -94,7 +96,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     }, VueModelVisitor.Proximity.GLOBAL)
 
     return directives.firstOrNull()?.let {
-      VueAttributeDescriptor("v-" + fromAsset(it.defaultName ?: searchName),
+      VueAttributeDescriptor(context, "v-" + fromAsset(it.defaultName ?: searchName),
                              it.source,
                              true,
                              AttributePriority.of(minProximity))

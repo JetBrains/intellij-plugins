@@ -22,7 +22,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   override fun parseAttribute() {
     assert(token() === XmlTokenType.XML_NAME)
     val attr = mark()
-    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, null)
+    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, peekTagName())
     advance()
     if (token() === XmlTokenType.XML_EQ) {
       advance()

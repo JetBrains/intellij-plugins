@@ -28,6 +28,8 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("slot", "slot", SLOT, injectJS = false, requiresAttributeValue = true)
     expect("ref", "ref", REF, injectJS = false, requiresAttributeValue = true)
     expect("slot-scope", "slot-scope", SLOT_SCOPE, injectJS = true, requiresAttributeValue = true)
+    expect("scope", "scope", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("scope", "scope", SCOPE, injectJS = true, requiresAttributeValue = true, context = "template")
 
     // contextual attributes within non valid context
     expect("scoped", "scoped", PLAIN, injectJS = false, requiresAttributeValue = true)
@@ -74,9 +76,9 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("v-show", "show", null, SHOW, injectJS = true, requiresAttributeValue = true)
     expect("v-text", "text", null, TEXT, injectJS = true, requiresAttributeValue = true)
 
-    expect("v-slot", "slot", null, VueDirectiveKind.SLOT, injectJS = false, requiresAttributeValue = false)
-    expect("#header", "slot", "header", VueDirectiveKind.SLOT, injectJS = false, requiresAttributeValue = false, isShorthand = true)
-    expect("#", "slot", "", VueDirectiveKind.SLOT, injectJS = false, requiresAttributeValue = false, isShorthand = true)
+    expect("v-slot", "slot", null, VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false)
+    expect("#header", "slot", "header", VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false, isShorthand = true)
+    expect("#", "slot", "", VueDirectiveKind.SLOT, injectJS = true, requiresAttributeValue = false, isShorthand = true)
 
     // No attribute value directives
     expect("v-cloak", "cloak", null, CLOAK, injectJS = false, requiresAttributeValue = false)
@@ -106,8 +108,9 @@ class VueAttributeNameParserTest : UsefulTestCase() {
                      attributeKind: VueAttributeKind,
                      modifiers: Set<String> = emptySet(),
                      injectJS: Boolean,
-                     requiresAttributeValue: Boolean) {
-    val info = VueAttributeNameParser.parse(attributeName, null)
+                     requiresAttributeValue: Boolean,
+                     context: String? = null) {
+    val info = VueAttributeNameParser.parse(attributeName, context)
     assertEquals("$attributeName - wrong parsed name", name, info.name)
     assertEquals("$attributeName - wrong kind", attributeKind, info.kind)
     assertEquals("$attributeName - wrong modifiers", modifiers, info.modifiers)

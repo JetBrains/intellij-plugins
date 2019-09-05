@@ -31,8 +31,11 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
             when ((attributeInfo as VueDirectiveInfo).directiveKind) {
               VueDirectiveKind.FOR -> VueJSStatementParser::parseVFor
               VueDirectiveKind.BIND -> VueJSStatementParser::parseVBind
+              VueDirectiveKind.SLOT -> VueJSStatementParser::parseSlotPropsExpression
               else -> VueJSStatementParser::parseRegularExpression
             }
+          VueAttributeKind.SLOT_SCOPE -> VueJSStatementParser::parseSlotPropsExpression
+          VueAttributeKind.SCOPE -> VueJSStatementParser::parseSlotPropsExpression
           else -> VueJSStatementParser::parseRegularExpression
         }
       VueJSParser(builder, false).statementParser.let {
@@ -88,7 +91,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       if (builder.tokenType == JSTokenTypes.LPAR) {
         parseVForVariables()
       }
-      else if (!parseVForLoopVariableStatement()) {
+      else if (!parseVariableStatement(VueJSElementTypes.V_FOR_VARIABLE)) {
         val marker = builder.mark()
         if (!builder.eof()
             && builder.tokenType !== JSTokenTypes.IN_KEYWORD
@@ -105,6 +108,24 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       }
       myExpressionParser.parseExpression()
       vForExpr.done(VueJSElementTypes.V_FOR_EXPRESSION)
+    }
+
+    fun parseSlotPropsExpression() {
+      val slotPropsExpression = builder.mark()
+      if (builder.eof()) {
+        builder.mark().error("Expected slot props variable declaration")
+      }
+      else {
+        parseVariableStatement(VueJSElementTypes.SLOT_PROPS_VARIABLE)
+        if (!builder.eof()) {
+          val mark = builder.mark()
+          while (!builder.eof()) {
+            builder.advanceLexer()
+          }
+          mark.error("Unexpected tokens in slot props variable declaration")
+        }
+      }
+      slotPropsExpression.done(VueJSElementTypes.SLOT_PROPS_EXPRESSION)
     }
 
     internal fun parseRest(initialReported: Boolean = false) {
@@ -128,19 +149,21 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
               val mark = builder.mark()
               builder.advanceLexer()
               mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
-            } else {
+            }
+            else {
               builder.advanceLexer()
             }
-          } else {
+          }
+          else {
             reported = false
           }
         }
       }
     }
 
-    private fun parseVForLoopVariableStatement(): Boolean {
+    private fun parseVariableStatement(elementType: IElementType): Boolean {
       val statement = builder.mark()
-      if (parseVForLoopVariable()) {
+      if (parseVariable(elementType)) {
         statement.done(JSStubElementTypes.VAR_STATEMENT)
         return true
       }
@@ -150,9 +173,9 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       }
     }
 
-    private fun parseVForLoopVariable(): Boolean {
+    private fun parseVariable(elementType: IElementType): Boolean {
       if (isIdentifierToken(builder.tokenType)) {
-        buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
+        buildTokenElement(elementType)
         return true
       }
       else if (myFunctionParser.willParseDestructuringAssignment()) {
@@ -167,7 +190,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       val parenthesis = builder.mark()
       builder.advanceLexer() //LPAR
       val varStatement = builder.mark()
-      if (parseVForLoopVariable()) {
+      if (parseVariable(VueJSElementTypes.V_FOR_VARIABLE)) {
         var i = 0
         while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
           builder.advanceLexer()

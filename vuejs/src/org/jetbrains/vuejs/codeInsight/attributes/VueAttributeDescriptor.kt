@@ -1,37 +1,45 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
+import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.psi.PsiElement
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
 
 @Suppress("DEPRECATION")
-open class VueAttributeDescriptor(name: String,
+open class VueAttributeDescriptor(protected val tag: XmlTag,
+                                  name: String,
                                   element: PsiElement? = null,
                                   acceptsNoValue: Boolean = false,
                                   val priority: AttributePriority = AttributePriority.NORMAL,
                                   isRequired: Boolean = false) :
   org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isNonProp = acceptsNoValue) {
 
-  constructor(name: String, prop: VueInputProperty) : this(name, prop.source,
-                                                           isRequired = prop.required,
-                                                           acceptsNoValue = isBooleanProp(prop),
-                                                           priority = AttributePriority.HIGH)
+  constructor(tag: XmlTag, name: String, prop: VueInputProperty) : this(
+    tag, name, prop.source,
+    isRequired = prop.required,
+    acceptsNoValue = isBooleanProp(prop),
+    priority = AttributePriority.HIGH)
 
   private val _isRequired: Boolean = isRequired
-
-  override fun isRequired(): Boolean {
-    return _isRequired
+  private val info: NotNullLazyValue<VueAttributeInfo> = NotNullLazyValue.createValue {
+    VueAttributeNameParser.parse(getName(), tag)
   }
+
+  override fun isRequired(): Boolean = _isRequired
+
+  fun getInfo(): VueAttributeInfo = info.value
 
   companion object {
     private fun isBooleanProp(prop: VueInputProperty): Boolean {
@@ -65,10 +73,7 @@ open class VueAttributeDescriptor(name: String,
 open class _VueAttributeDescriptor(private val name: String,
                                    internal val element: PsiElement? = null,
                                    private val acceptsNoValue: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  override fun isRequired(): Boolean {
-    return false
-  }
-
+  override fun isRequired(): Boolean = false
   override fun getName(): String = name
   override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}

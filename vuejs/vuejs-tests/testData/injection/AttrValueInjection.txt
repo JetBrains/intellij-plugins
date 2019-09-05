@@ -53,12 +53,53 @@ HtmlFile:AttrValueInjection.vue
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
-                JSReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('someSlotScope')
+                VueJSSlotPropsExpression
+                  JSVarStatement
+                    VueJSSlotPropsVariable
+                      PsiElement(JS:IDENTIFIER)('someSlotScope')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
         XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('scope')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someSlotScope')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:template
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('template')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('scope')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+              VueJSEmbeddedExpression
+                VueJSSlotPropsExpression
+                  JSVarStatement
+                    VueJSSlotPropsVariable
+                      PsiElement(JS:IDENTIFIER)('someSlotScope')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('template')
         XmlToken:XML_TAG_END('>')
       XmlText
         PsiWhiteSpace('\n\n  ')
@@ -283,7 +324,17 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{test}')
+            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+              VueJSEmbeddedExpression
+                VueJSSlotPropsExpression
+                  JSVarStatement
+                    JSDestructuringElement
+                      JSDestructuringObject
+                        PsiElement(JS:LBRACE)('{')
+                        JSDestructuringShorthandedProperty
+                          VueJSVForVariable
+                            PsiElement(JS:IDENTIFIER)('test')
+                        PsiElement(JS:RBRACE)('}')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')
@@ -300,7 +351,17 @@ HtmlFile:AttrValueInjection.vue
           XmlToken:XML_EQ('=')
           PsiElement(XML_ATTRIBUTE_VALUE)
             XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
-            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('{test}')
+            ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
+              VueJSEmbeddedExpression
+                VueJSSlotPropsExpression
+                  JSVarStatement
+                    JSDestructuringElement
+                      JSDestructuringObject
+                        PsiElement(JS:LBRACE)('{')
+                        JSDestructuringShorthandedProperty
+                          VueJSVForVariable
+                            PsiElement(JS:IDENTIFIER)('test')
+                        PsiElement(JS:RBRACE)('}')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
         XmlToken:XML_END_TAG_START('</')

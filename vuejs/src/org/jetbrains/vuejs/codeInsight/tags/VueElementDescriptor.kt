@@ -80,12 +80,19 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         val result = mutableListOf<XmlAttributeDescriptor>()
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
-            result.add(VueAttributeDescriptor(fromAsset(prop.name), prop))
+            result.add(VueAttributeDescriptor(tag, fromAsset(prop.name), prop))
             return true
           }
         })
         result
       }
+      .toList()
+  }
+
+  fun getSlots(): List<VueSlot> {
+    return StreamEx.of(sources)
+      .select(VueContainer::class.java)
+      .flatCollection { it.slots }
       .toList()
   }
 
@@ -97,23 +104,25 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    val info = VueAttributeNameParser.parse(attributeName ?: return null, context)
+    val info = VueAttributeNameParser.parse(attributeName ?: return null,
+                                            context ?: return null)
 
     if (info is VueAttributeNameParser.VueDirectiveInfo && info.arguments != null) {
       if (info.directiveKind === BIND) {
-        return resolveToProp(info.arguments, attributeName)
-               ?: VueAttributeDescriptor(attributeName, acceptsNoValue = false, priority = LOW)
+        return resolveToProp(context, info.arguments, attributeName)
+               ?: VueAttributeDescriptor(context, attributeName, acceptsNoValue = false, priority = LOW)
       }
       // TODO resolve component events
     }
     if (info.kind === PLAIN) {
-      resolveToProp(info.name, attributeName)?.let { return it }
+      resolveToProp(context, info.name, attributeName)?.let { return it }
     }
 
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context)
            // relax attributes check: https://vuejs.org/v2/guide/components.html#Non-Prop-Attributes
            // vue allows any non-declared as props attributes to be passed to a component
-           ?: VueAttributeDescriptor(attributeName,
+           ?: VueAttributeDescriptor(context,
+                                     attributeName,
                                      acceptsNoValue = !info.requiresValue
                                                       || info.kind === PLAIN
                                                       || (info is VueAttributeNameParser.VueDirectiveInfo
@@ -121,7 +130,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
                                      priority = LOW)
   }
 
-  private fun resolveToProp(propName: String, attributeName: String): XmlAttributeDescriptor? {
+  private fun resolveToProp(context: XmlTag, propName: String, attributeName: String): XmlAttributeDescriptor? {
     val propFromAsset = fromAsset(propName)
     return StreamEx.of(sources)
       .map {
@@ -129,7 +138,7 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
         it.acceptPropertiesAndMethods(object : VueModelVisitor() {
           override fun visitInputProperty(prop: VueInputProperty, proximity: Proximity): Boolean {
             if (propFromAsset == fromAsset(prop.name)) {
-              result = VueAttributeDescriptor(attributeName, prop)
+              result = VueAttributeDescriptor(context, attributeName, prop)
               return false
             }
             return true

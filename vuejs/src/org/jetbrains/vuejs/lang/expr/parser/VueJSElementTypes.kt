@@ -7,9 +7,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionImpl
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForExpressionImpl
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForVariableImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.*
 
 object VueJSElementTypes {
 
@@ -17,9 +15,23 @@ object VueJSElementTypes {
     override fun createCompositeNode(): ASTNode = VueJSVForExpressionImpl(this)
   }
 
+  val SLOT_PROPS_EXPRESSION: IElementType = object : VueJSCompositeElementType("SLOT_PROPS_EXPRESSION") {
+    override fun createCompositeNode(): ASTNode = VueJSSlotPropsExpressionImpl(this)
+  }
+
   val V_FOR_VARIABLE: JSVariableElementType = object : JSVariableElementType("V_FOR_VARIABLE") {
     override fun construct(node: ASTNode?): PsiElement? {
       return VueJSVForVariableImpl(node)
+    }
+
+    override fun shouldCreateStub(node: ASTNode?): Boolean {
+      return false
+    }
+  }
+
+  val SLOT_PROPS_VARIABLE: JSVariableElementType = object : JSVariableElementType("SLOT_PROPS_VARIABLE") {
+    override fun construct(node: ASTNode?): PsiElement? {
+      return VueJSSlotPropsVariableImpl(node)
     }
 
     override fun shouldCreateStub(node: ASTNode?): Boolean {

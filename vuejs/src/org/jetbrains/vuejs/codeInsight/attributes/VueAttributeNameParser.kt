@@ -6,9 +6,16 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import java.util.*
 
-class VueAttributeNameParser {
+class VueAttributeNameParser private constructor() {
   companion object {
-    fun parse(attributeName: String, context: XmlTag?): VueAttributeInfo {
+
+    fun parse(attributeName: String, context: String?): VueAttributeInfo =
+      parse(attributeName) { it.isValidIn(context) }
+
+    fun parse(attributeName: String, context: XmlTag): VueAttributeInfo =
+      parse(attributeName) { it.isValidIn(context) }
+
+    private fun parse(attributeName: String, isValid: (VueAttributeKind) -> Boolean): VueAttributeInfo {
       if (attributeName.isEmpty()) return VueAttributeInfo("", VueAttributeKind.PLAIN)
       val name: String
       val kind: VueDirectiveKind
@@ -47,7 +54,7 @@ class VueAttributeNameParser {
           nameEnd = attributeName.length
         }
         name = attributeName.substring(0, nameEnd)
-        val attributeKind = attributeKindMap[name]?.let { if (it.isValidIn(context)) it else VueAttributeKind.PLAIN }
+        val attributeKind = attributeKindMap[name]?.let { if (isValid(it)) it else VueAttributeKind.PLAIN }
                             ?: VueAttributeKind.PLAIN
         return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
@@ -183,22 +190,38 @@ class VueAttributeNameParser {
                               val injectJS: Boolean = false,
                               val requiresValue: Boolean = true,
                               val deprecated: Boolean = false) {
-    PLAIN(null, requiresValue = true),
+    PLAIN(null),
     DIRECTIVE(null),
     SLOT("slot", deprecated = true),
     REF("ref"),
     IS("is"),
+    SCOPE("scope", injectJS = true, deprecated = true),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
     STYLE_SCOPED("scoped", requiresValue = false),
     STYLE_MODULE("module", requiresValue = false),
     STYLE_SRC("src"),
     TEMPLATE_FUNCTIONAL("functional", requiresValue = false);
 
+    fun isValidIn(context: String?): Boolean {
+      return when {
+        this === SCOPE -> context?.toLowerCase(Locale.US) == "template"
+        this === TEMPLATE_FUNCTIONAL
+        || this === STYLE_SRC
+        || this === STYLE_SCOPED
+        || this === STYLE_MODULE -> false
+        else -> true
+      }
+    }
+
     fun isValidIn(context: XmlTag?): Boolean {
-      when {
-        this === TEMPLATE_FUNCTIONAL -> return context != null && isTopLevelTemplateTag(context)
-        this === STYLE_SRC || this === STYLE_SCOPED || this === STYLE_MODULE -> return context != null && isTopLevelStyleTag(context)
-        else -> return true
+      return when {
+        this === TEMPLATE_FUNCTIONAL ->
+          context != null && isTopLevelTemplateTag(context)
+        this === STYLE_SRC
+        || this === STYLE_SCOPED
+        || this === STYLE_MODULE ->
+          context != null && isTopLevelStyleTag(context)
+        else -> isValidIn(context?.name)
       }
     }
 
@@ -212,7 +235,8 @@ class VueAttributeNameParser {
   }
 
   enum class VueDirectiveKind(private val hasName: Boolean = true,
-                              val injectJS: Boolean = true, val requiresValue: Boolean = true) {
+                              val injectJS: Boolean = true,
+                              val requiresValue: Boolean = true) {
     CUSTOM(hasName = false, requiresValue = false),
     BIND,
     ON,
@@ -226,7 +250,7 @@ class VueAttributeNameParser {
     ONCE(injectJS = false, requiresValue = false),
     PRE(injectJS = false, requiresValue = false),
     SHOW,
-    SLOT(requiresValue = false, injectJS = false /* until supports for slots is done */),
+    SLOT(requiresValue = false),
     TEXT;
 
     val directiveName get() = if (hasName) name.toLowerCase(Locale.US).replace('_', '-') else null

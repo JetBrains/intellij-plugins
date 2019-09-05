@@ -62,18 +62,67 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someSlot"')
                       JSFile:PugAttrValueInjection.vue.slot-scope.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someSlot')
+                          VueJSSlotPropsExpression
+                            JSVarStatement
+                              VueJSSlotPropsVariable
+                                PsiElement(JS:IDENTIFIER)('someSlot')
                     JSFile:PugAttrValueInjection.vue.slot-scope.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someSlot')
+                        VueJSSlotPropsExpression
+                          JSVarStatement
+                            VueJSSlotPropsVariable
+                              PsiElement(JS:IDENTIFIER)('someSlot')
                   JSFile:PugAttrValueInjection.vue.slot-scope.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someSlot')
+                      VueJSSlotPropsExpression
+                        JSVarStatement
+                          VueJSSlotPropsVariable
+                            PsiElement(JS:IDENTIFIER)('someSlot')
               PsiElement(RPAREN)(')')
-              PsiElement(EOL)('\n')
+            PsiElement(INDENT)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')
+              PsiElement(LPAREN)('(')
+              PsiElement(JADE_PSEUDO_WHITESPACE)
+                <empty list>
+              JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('scope')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"someSlotScope"')
+              PsiElement(RPAREN)(')')
+            PsiElement(INDENT)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')
+              PsiElement(INDENT)('\n      ')
+              JadeTagImpl(TAG)
+                XmlToken:XML_TAG_NAME('template')
+                PsiElement(LPAREN)('(')
+                PsiElement(JADE_PSEUDO_WHITESPACE)
+                  <empty list>
+                JadeAttributeImpl(XML_ATTRIBUTE)
+                  XmlToken:XML_NAME('scope')
+                  PsiElement(EQ)('=')
+                  PsiElement(XML_ATTRIBUTE_VALUE)
+                    JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                      JSLiteralExpression
+                        PsiElement(JS:STRING_LITERAL)('"someSlotScope"')
+                        JSFile:PugAttrValueInjection.vue.scope.expr
+                          VueJSEmbeddedExpression
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('someSlotScope')
+                      JSFile:PugAttrValueInjection.vue.scope.expr
+                        VueJSEmbeddedExpression
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('someSlotScope')
+                    JSFile:PugAttrValueInjection.vue.scope.expr
+                      VueJSEmbeddedExpression
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someSlotScope')
+                PsiElement(RPAREN)(')')
+                PsiElement(EOL)('\n')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
               XmlToken:XML_TAG_NAME('li')
@@ -338,6 +387,39 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"{test}"')
+                      JSFile:PugAttrValueInjection.vue.v-slot:header.expr
+                        VueJSEmbeddedExpression
+                          VueJSSlotPropsExpression
+                            JSVarStatement
+                              JSDestructuringElement
+                                JSDestructuringObject
+                                  PsiElement(JS:LBRACE)('{')
+                                  JSDestructuringShorthandedProperty
+                                    VueJSVForVariable
+                                      PsiElement(JS:IDENTIFIER)('test')
+                                  PsiElement(JS:RBRACE)('}')
+                    JSFile:PugAttrValueInjection.vue.v-slot:header.expr
+                      VueJSEmbeddedExpression
+                        VueJSSlotPropsExpression
+                          JSVarStatement
+                            JSDestructuringElement
+                              JSDestructuringObject
+                                PsiElement(JS:LBRACE)('{')
+                                JSDestructuringShorthandedProperty
+                                  VueJSVForVariable
+                                    PsiElement(JS:IDENTIFIER)('test')
+                                PsiElement(JS:RBRACE)('}')
+                  JSFile:PugAttrValueInjection.vue.v-slot:header.expr
+                    VueJSEmbeddedExpression
+                      VueJSSlotPropsExpression
+                        JSVarStatement
+                          JSDestructuringElement
+                            JSDestructuringObject
+                              PsiElement(JS:LBRACE)('{')
+                              JSDestructuringShorthandedProperty
+                                VueJSVForVariable
+                                  PsiElement(JS:IDENTIFIER)('test')
+                              PsiElement(JS:RBRACE)('}')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -352,6 +434,39 @@ HtmlFile:PugAttrValueInjection.vue
                   JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"{test}"')
+                      JSFile:PugAttrValueInjection.vue.#header.expr
+                        VueJSEmbeddedExpression
+                          VueJSSlotPropsExpression
+                            JSVarStatement
+                              JSDestructuringElement
+                                JSDestructuringObject
+                                  PsiElement(JS:LBRACE)('{')
+                                  JSDestructuringShorthandedProperty
+                                    VueJSVForVariable
+                                      PsiElement(JS:IDENTIFIER)('test')
+                                  PsiElement(JS:RBRACE)('}')
+                    JSFile:PugAttrValueInjection.vue.#header.expr
+                      VueJSEmbeddedExpression
+                        VueJSSlotPropsExpression
+                          JSVarStatement
+                            JSDestructuringElement
+                              JSDestructuringObject
+                                PsiElement(JS:LBRACE)('{')
+                                JSDestructuringShorthandedProperty
+                                  VueJSVForVariable
+                                    PsiElement(JS:IDENTIFIER)('test')
+                                PsiElement(JS:RBRACE)('}')
+                  JSFile:PugAttrValueInjection.vue.#header.expr
+                    VueJSEmbeddedExpression
+                      VueJSSlotPropsExpression
+                        JSVarStatement
+                          JSDestructuringElement
+                            JSDestructuringObject
+                              PsiElement(JS:LBRACE)('{')
+                              JSDestructuringShorthandedProperty
+                                VueJSVForVariable
+                                  PsiElement(JS:IDENTIFIER)('test')
+                              PsiElement(JS:RBRACE)('}')
               PsiElement(RPAREN)(')')
               PsiElement(EOL)('\n')
             PsiElement(INDENT)('\n    ')

@@ -53,7 +53,7 @@ class VueXmlExtension : HtmlXmlExtension() {
         }
         return@find false
       }
-      val info = VueAttributeNameParser.parse(it.name, null)
+      val info = VueAttributeNameParser.parse(it.name, tag)
       return@find fromAsset(if (info is VueAttributeNameParser.VueDirectiveInfo
                                 && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
                                 && info.arguments != null)

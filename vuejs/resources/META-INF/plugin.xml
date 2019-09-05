@@ -37,12 +37,17 @@ Vue components defined using separate .html, .js, and .css files are not support
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.vuejs.templateScopesProvider"
+                    interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
     <fileType name="Vue.js" extensions="vue" language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFileType"
-              fieldName="INSTANCE" />
+              fieldName="INSTANCE"/>
     <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueParserDefinition"/>
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition"/>
     <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>
@@ -113,6 +118,16 @@ Vue components defined using separate .html, .js, and .css files are not support
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
     <idIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueIdIndexer"/>
     <todoIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
+
+    <vuejs.templateScopesProvider
+        implementation="org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider"
+        id="templateElements"
+    />
+    <vuejs.templateScopesProvider
+        implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
+        id="containerScope"
+        order="after templateElements"
+    />
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">

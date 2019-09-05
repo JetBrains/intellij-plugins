@@ -15,10 +15,10 @@ import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.BIND
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.ON
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.*
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.model.getAvailableSlots
 import javax.swing.Icon
 
 class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -52,14 +52,20 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     addAttributeDescriptorCompletions(attr, parameters, result)
 
     val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), null)
-    if (attrInfo is VueDirectiveInfo) {
-      if (attrInfo.directiveKind === ON) {
+    when ((attrInfo as? VueDirectiveInfo)?.directiveKind) {
+      ON -> {
         addEventCompletions(attr, attrInfo, result)
         return
       }
-      if (attrInfo.directiveKind === BIND) {
+      BIND -> {
         addBindCompletions(attr, result)
         return
+      }
+      SLOT -> {
+        addSlotCompletions(attr, result)
+        return
+      }
+      else -> {
       }
     }
 
@@ -71,6 +77,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     }
     result.addElement(lookupElement("v-on:", priority = LOW, insertHandler = insertHandler))
     result.addElement(lookupElement("v-bind:", priority = LOW, insertHandler = insertHandler))
+    result.addElement(lookupElement("v-slot:", priority = LOW, insertHandler = insertHandler))
   }
 
   private fun addAttributeDescriptorCompletions(attr: XmlAttribute, parameters: CompletionParameters, result: CompletionResultSet) {
@@ -178,6 +185,15 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
     for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
       newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, priority = HIGH))
+    }
+  }
+
+  private fun addSlotCompletions(attr: XmlAttribute, result: CompletionResultSet) {
+    val prefix = result.prefixMatcher.prefix
+    val newResult = if (prefix == "v-slot:") result.withPrefixMatcher("") else result
+    val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
+    for (slot in getAvailableSlots(attr, true)) {
+      newResult.addElement(lookupElement(lookupItemPrefix + slot.name, priority = HIGH))
     }
   }
 

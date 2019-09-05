@@ -3,6 +3,9 @@
     li(ref="someRef")
     li(slot="someSlot")
     li(slot-scope="someSlot")
+    li(scope="someSlotScope")
+    li
+      template(scope="someSlotScope")
 
     li(v-text="someText")
     li(v-html="someHtml")

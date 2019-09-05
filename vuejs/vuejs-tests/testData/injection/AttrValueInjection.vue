@@ -2,6 +2,8 @@
   <div ref="someRef"></div>
   <div slot="someSlot"></div>
   <div slot-scope="someSlotScope"></div>
+  <div scope="someSlotScope"></div>
+  <template scope="someSlotScope"></template>
 
   <div v-text="someText"></div>
   <div v-html="someHtml"></div>

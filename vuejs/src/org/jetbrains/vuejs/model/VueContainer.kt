@@ -28,7 +28,9 @@ class VueModelDirectiveProperties(
   }
 }
 
-interface VueSlot : VueNamedSymbol
+interface VueSlot : VueNamedSymbol {
+  val scope: JSType? get() = null
+}
 
 interface VueEmitCall : VueNamedSymbol {
   val eventJSType: JSType? get() = null

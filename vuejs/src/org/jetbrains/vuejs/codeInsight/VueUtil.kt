@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
@@ -14,11 +16,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.ObjectUtils.tryCast
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
 import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
@@ -134,4 +140,22 @@ fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
   directives ?: return null
   val file = getContainingXmlFile(directives) ?: return null
   return GlobalSearchScope.fileScope(file.originalFile)
+}
+
+fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,
+                                                      expressionClass: Class<T>): T? {
+  val value = attribute.valueElement ?: return null
+
+  val root = when {
+    attribute.language === VueLanguage.INSTANCE ->
+      value.children
+        .find { it is ASTWrapperPsiElement }
+    value.textLength >= 2 ->
+      InjectedLanguageManager.getInstance(attribute.project).findInjectedElementAt(
+        value.containingFile, value.textOffset + 1)
+        ?.containingFile
+    else -> null
+  }
+
+  return tryCast((root?.firstChild as? VueJSEmbeddedExpression)?.firstChild, expressionClass)
 }

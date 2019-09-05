@@ -11,6 +11,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.PLAIN
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SLOT
+import org.jetbrains.vuejs.model.getAvailableSlots
 import java.util.*
 
 class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -23,20 +26,28 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
     val xmlAttribute = PsiTreeUtil.getParentOfType(parameters.position, XmlAttribute::class.java,
                                                    false)
     if (xmlTag == null || xmlAttribute == null) return
+
     for (completion in listOfCompletions(xmlTag, xmlAttribute)) {
       result.addElement(LookupElementBuilder.create(completion))
     }
   }
 
   private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> {
-    if (xmlAttribute.name == "lang") {
-      when (xmlTag.name) {
-        "script" -> return VUE_SCRIPT_LANGUAGE
-        "style" -> return VUE_STYLE_LANGUAGE
-        "template" -> return VUE_TEMPLATE_LANGUAGE
+    val attrInfo = VueAttributeNameParser.parse(xmlAttribute.name, xmlTag)
+    when (attrInfo.kind) {
+      PLAIN ->
+        if (xmlAttribute.name == "lang") {
+          when (xmlTag.name) {
+            "script" -> return VUE_SCRIPT_LANGUAGE
+            "style" -> return VUE_STYLE_LANGUAGE
+            "template" -> return VUE_TEMPLATE_LANGUAGE
+          }
+        }
+      SLOT -> return getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
+      else -> {
       }
     }
-    return ContainerUtil.immutableSet()
+    return emptySet()
   }
 
   private fun vueStyleLanguages(): Set<String> {

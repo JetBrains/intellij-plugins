@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.refs
 
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
@@ -15,9 +17,15 @@ import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.util.PsiTreeUtil.isAncestor
+import com.intellij.psi.xml.XmlFile
 import com.intellij.util.ProcessingContext
+import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.VueMethod
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelProximityVisitor
+import org.jetbrains.vuejs.model.VueProperty
 
 class VueJSReferenceContributor : PsiReferenceContributor() {
   companion object {
@@ -86,9 +94,30 @@ private class VueComponentLocalReference(reference: JSReferenceExpressionImpl,
   override fun resolveInner(): Array<ResolveResult> {
     getParentOfType(element, JSFunction::class.java, true) ?: return emptyArray()
     // let function context around the expression be enough to think it is used somewhere in assembling the exported object
-    return VueJSReferenceExpressionResolver(element, false).resolveInCurrentComponentDefinition(element)
+    return resolveInCurrentComponentDefinition(element)
            ?: emptyArray()
   }
+
+  fun resolveInCurrentComponentDefinition(ref: JSReferenceExpression): Array<ResolveResult>? {
+    if (ref.qualifier != null && ref.qualifier !is JSThisExpression) return null
+    val name = StringUtils.uncapitalize(ref.referenceName) ?: return null
+    val result = mutableListOf<ResolveResult>()
+    VueModelManager.findEnclosingContainer(ref)?.acceptPropertiesAndMethods(object : VueModelProximityVisitor() {
+      override fun visitProperty(property: VueProperty, proximity: Proximity): Boolean {
+        return acceptSameProximity(proximity, name == StringUtils.uncapitalize(property.name)) {
+          property.source?.let { result.add(PsiElementResolveResult(it)) }
+        }
+      }
+
+      override fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
+        return acceptSameProximity(proximity, name == StringUtils.uncapitalize(method.name)) {
+          method.source?.let { result.add(PsiElementResolveResult(it)) }
+        }
+      }
+    }, onlyPublic = false)
+    return if (result.isNotEmpty()) result.toTypedArray() else null
+  }
+
 }
 
 private class VueComponentNameReferenceProvider : PsiReferenceProvider() {
@@ -108,3 +137,21 @@ private class VueComponentNameReference(reference: JSLiteralExpression,
     return arrayOf(PsiElementResolveResult(JSImplicitElementImpl(element.value.toString(), element)))
   }
 }
+
+fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {
+  val xmlFile = getContainingXmlFile(element) ?: return null
+
+  val module = findModule(xmlFile) ?: return null
+  val defaultExport = ES6PsiUtil.findDefaultExport(module)
+                        as? ES6ExportDefaultAssignment ?: return null
+  if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {
+    return Pair(module, defaultExport)
+  }
+  return null
+}
+
+fun getContainingXmlFile(element: PsiElement): XmlFile? =
+  (element.containingFile as? XmlFile
+   ?: element as? XmlFile
+   ?: InjectedLanguageManager.getInstance(
+     element.project).getInjectionHost(element)?.containingFile as? XmlFile)

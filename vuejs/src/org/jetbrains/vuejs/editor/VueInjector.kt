@@ -85,20 +85,22 @@ class VueInjector : MultiHostInjector {
     if (fileType != HtmlFileType.INSTANCE && fileType != VueFileType.INSTANCE) return
 
     // this supposed to work in <template lang="jade"> attribute values
-    if (context is XmlAttributeValueImpl && !context.value.isBlank()
-        && context.parent is XmlAttribute
-        && context.parent.language !== VueLanguage.INSTANCE
-        && VueAttributeNameParser.parse((context.parent as XmlAttribute).name, null).injectJS) {
+    val parent = context.parent
+    if (context is XmlAttributeValueImpl
+        && !context.value.isBlank()
+        && parent is XmlAttribute
+        && parent.language !== VueLanguage.INSTANCE
+        && VueAttributeNameParser.parse(parent.name, parent.parent).injectJS) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null) {
         val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
         if (literal != null) {
-          injectInElement(literal, registrar, (context.parent as XmlAttribute).name)
+          injectInElement(literal, registrar, parent.name)
           return
         }
       }
       else {
-        injectInElement(context, registrar, (context.parent as XmlAttribute).name)
+        injectInElement(context, registrar, parent.name)
       }
     }
 

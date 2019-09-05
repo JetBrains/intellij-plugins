@@ -11,6 +11,7 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Trinity
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
@@ -73,9 +74,11 @@ class VueResolveTest : BasePlatformTestCase() {
       reference as JSReferenceExpressionImpl, true)
     val results = resolver.resolve(reference, false)
     TestCase.assertEquals(1, results.size)
-    val literal = results[0].element!!
-    TestCase.assertTrue(literal is JSLiteralExpression)
-    TestCase.assertTrue(literal.parent is JSArrayLiteralExpression)
+    val element = results[0].element!!
+    assertInstanceOf(element, JSImplicitElement::class.java)
+    val literal = element.parent
+    assertInstanceOf(literal, JSLiteralExpression::class.java)
+    assertInstanceOf(literal.parent, JSArrayLiteralExpression::class.java)
     TestCase.assertEquals("'message25620Arr'", literal.text)
   }
 
@@ -716,9 +719,10 @@ new Vue({
     TestCase.assertNotNull(reference)
     val arrayItem = reference!!.resolve()
     TestCase.assertNotNull(arrayItem)
-    TestCase.assertTrue(arrayItem is JSLiteralExpression)
-    TestCase.assertTrue(arrayItem!!.parent.parent is JSProperty)
-    TestCase.assertEquals("props", (arrayItem.parent.parent as JSProperty).name)
+    UsefulTestCase.assertInstanceOf(arrayItem, JSImplicitElement::class.java)
+    UsefulTestCase.assertInstanceOf(arrayItem!!.parent, JSLiteralExpression::class.java)
+    UsefulTestCase.assertInstanceOf(arrayItem.parent.parent.parent, JSProperty::class.java)
+    TestCase.assertEquals("props", (arrayItem.parent.parent.parent as JSProperty).name)
   }
 
   fun testResolveVForIterableByMountedVueInstance() {
