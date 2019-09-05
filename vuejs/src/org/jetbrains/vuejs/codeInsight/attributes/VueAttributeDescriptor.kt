@@ -9,7 +9,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.model.VueInputProperty
@@ -17,14 +16,13 @@ import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
 import javax.swing.Icon
 
-@Suppress("DEPRECATION")
 open class VueAttributeDescriptor(protected val tag: XmlTag,
-                                  name: String,
-                                  element: PsiElement? = null,
-                                  acceptsNoValue: Boolean = false,
+                                  private val name: String,
+                                  internal val element: PsiElement? = null,
+                                  private val acceptsNoValue: Boolean = false,
                                   val priority: AttributePriority = AttributePriority.NORMAL,
-                                  isRequired: Boolean = false) :
-  org.jetbrains.vuejs.codeInsight.VueAttributeDescriptor(name, element, isNonProp = acceptsNoValue) {
+                                  isRequired: Boolean = false)
+  : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
 
   constructor(tag: XmlTag, name: String, prop: VueInputProperty) : this(
     tag, name, prop.source,
@@ -37,43 +35,9 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
     VueAttributeNameParser.parse(getName(), tag)
   }
 
-  override fun isRequired(): Boolean = _isRequired
-
   fun getInfo(): VueAttributeInfo = info.value
 
-  companion object {
-    private fun isBooleanProp(prop: VueInputProperty): Boolean {
-      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
-    }
-  }
-
-  enum class AttributePriority(val value: Double) {
-    NONE(0.0),
-    LOW(25.0),
-    NORMAL(50.0),
-    HIGH(100.0);
-
-    companion object {
-      fun of(proximity: VueModelVisitor.Proximity): AttributePriority {
-        return when (proximity) {
-          LOCAL -> HIGH
-          PLUGIN, APP -> NORMAL
-          GLOBAL -> LOW
-          OUT_OF_SCOPE -> NONE
-        }
-      }
-    }
-  }
-}
-
-// This class is the original `VueAttributeDescriptor` class,
-// but it's renamed to allow instanceof check through deprecated class from 'codeInsight' package
-@Deprecated("Public for internal purpose only!")
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-open class _VueAttributeDescriptor(private val name: String,
-                                   internal val element: PsiElement? = null,
-                                   private val acceptsNoValue: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  override fun isRequired(): Boolean = false
+  override fun isRequired(): Boolean = _isRequired
   override fun getName(): String = name
   override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}
@@ -103,4 +67,27 @@ open class _VueAttributeDescriptor(private val name: String,
   override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 
+  companion object {
+    private fun isBooleanProp(prop: VueInputProperty): Boolean {
+      return prop.jsType?.isDirectlyAssignableType(BOOLEAN_TYPE, null) ?: false
+    }
+  }
+
+  enum class AttributePriority(val value: Double) {
+    NONE(0.0),
+    LOW(25.0),
+    NORMAL(50.0),
+    HIGH(100.0);
+
+    companion object {
+      fun of(proximity: VueModelVisitor.Proximity): AttributePriority {
+        return when (proximity) {
+          LOCAL -> HIGH
+          PLUGIN, APP -> NORMAL
+          GLOBAL -> LOW
+          OUT_OF_SCOPE -> NONE
+        }
+      }
+    }
+  }
 }

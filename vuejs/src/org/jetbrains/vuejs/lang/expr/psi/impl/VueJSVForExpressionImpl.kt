@@ -10,14 +10,9 @@ import com.intellij.lang.javascript.psi.impl.JSForInStatementImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 
-// This class is the original `VueJSVForExpression` class,
-// but it's renamed to allow instanceof check through deprecated class from 'language' package
-@Deprecated("Public for internal purpose only!")
-@ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-open class _VueJSVForExpression(vueJSElementType: IElementType) : JSExpressionImpl(vueJSElementType), VueJSVForExpression {
+class VueJSVForExpressionImpl(vueJSElementType: IElementType) : JSExpressionImpl(vueJSElementType), VueJSVForExpression {
   override fun getVarStatement(): JSVarStatement? {
     if (firstChild is JSVarStatement) return firstChild as JSVarStatement
     if (firstChild is JSParenthesizedExpression) {
@@ -32,7 +27,3 @@ open class _VueJSVForExpression(vueJSElementType: IElementType) : JSExpressionIm
     return JSForInStatementImpl.findCollectionExpression(this)
   }
 }
-
-@Suppress("DEPRECATION")
-class VueJSVForExpressionImpl(vueJSElementType: IElementType)
-  : org.jetbrains.vuejs.language.VueVForExpression(vueJSElementType), VueJSVForExpression
