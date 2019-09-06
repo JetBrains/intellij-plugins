@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -40,7 +41,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     @NotNull
     public ResolveResult[] resolveInner() {
       final String id = getViewName();
-      final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Condition.TRUE;
+      final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Conditions.alwaysTrue();
       return AngularIndexUtil.multiResolveAngularNamedDefinitionIndex(getElement().getProject(),
                                                                       AngularUiRouterViewsIndex.UI_ROUTER_VIEWS_CACHE_INDEX, id, filter, false);
     }
@@ -62,7 +63,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
           }
         }
       }
-      return Condition.TRUE;
+      return Conditions.alwaysTrue();
     }
 
     @Override

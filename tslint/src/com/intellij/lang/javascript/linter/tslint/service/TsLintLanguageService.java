@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
+import com.intellij.util.EmptyConsumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -206,7 +206,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     private final VirtualFile myWorkingDirectory;
 
     private Protocol(@NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory, @NotNull Project project) {
-      super("tslint", project, Consumer.EMPTY_CONSUMER);
+      super("tslint", project, EmptyConsumer.getInstance());
       myNodePackage = nodePackage;
       myWorkingDirectory = workingDirectory;
     }

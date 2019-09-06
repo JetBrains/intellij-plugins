@@ -32,6 +32,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -516,7 +517,7 @@ public class BndProjectImporter {
 
   @NotNull
   public static Collection<Project> getWorkspaceProjects(@NotNull Workspace workspace) throws Exception {
-    return ContainerUtil.filter(workspace.getAllProjects(), Condition.NOT_NULL);
+    return ContainerUtil.filter(workspace.getAllProjects(), Conditions.notNull());
   }
 
   /**

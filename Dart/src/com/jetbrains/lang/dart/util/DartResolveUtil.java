@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -570,7 +571,7 @@ public class DartResolveUtil {
   public static List<DartComponentName> getComponentNames(Collection<? extends DartComponent> fields) {
     return ContainerUtil
       .filter(ContainerUtil.map(fields, (Function<DartComponent, DartComponentName>)DartComponent::getComponentName),
-              Condition.NOT_NULL);
+              Conditions.notNull());
   }
 
   public static DartComponentName[] getComponentNameArray(Collection<? extends DartComponent> components) {
