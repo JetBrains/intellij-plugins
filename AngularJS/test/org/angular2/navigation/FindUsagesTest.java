@@ -53,7 +53,7 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
   public void testSlotComponentAttributeSelector() {
     myFixture.configureByFiles("slots.component.ts", "slots.test.component.html", "slots.test.component.ts", "package.json");
     checkUsages("attr<caret>-slot",
-                "\"[attr-slot]\" <slots.component.ts:(77,88):(0,11)>",
+                "\"[attr-slot]\" <slots.component.ts:(77,88):(1,10)>",
                 "attr-slot <slots.test.component.html:(78,87):(0,9)>");
   }
 
