@@ -409,7 +409,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void update(@NotNull final AnActionEvent e) {
       // show icon as toggled on if any filter is active
-      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myPresentationHelper.areFiltersApplied());
+      Toggleable.setSelected(e.getPresentation(), myPresentationHelper.areFiltersApplied());
     }
 
     @Override
@@ -427,7 +427,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void update(@NotNull final AnActionEvent e) {
       final boolean asByDefault = myPresentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
-      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, !asByDefault);
+      Toggleable.setSelected(e.getPresentation(), !asByDefault);
     }
 
     @Override
