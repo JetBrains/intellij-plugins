@@ -15,7 +15,7 @@ import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
-import org.languagetool.rules.en.MorfologikAmericanSpellerRule
+import org.languagetool.rules.en.speller.MorfologikAmericanSpellerRule
 import org.slf4j.LoggerFactory
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
@@ -91,8 +91,13 @@ object GraziSpellchecker : GraziStateLifecycle {
             if (it.rule is MorfologikAmericanSpellerRule) match = it
         }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.sortedWith(Text.Levenshtein.Comparator(word)).toList()
 
+        //TODO-tanvd/fatall -- should we ignore casing?
+        if (isCasing(word, fixes)) return emptySet()
+
         return setOf(Typo(RuleMatch(match, fixes), BASE_SPELLCHECKER_LANGUAGE, 0))
     }
+
+    private fun isCasing(word: String, fixes: Iterable<String>) = word.toLowerCase().let { lowered -> fixes.any { it.toLowerCase() == lowered } }
 
     override fun init(state: GraziConfig.State, project: Project) {
         if (ApplicationManager.getApplication().isUnitTestMode || !state.enabledSpellcheck) return

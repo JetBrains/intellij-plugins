@@ -51,11 +51,11 @@ dependencies {
         kotlinExcludes()
     }
 
-    compile("tanvd.grazi.languagetool", "languagetool-core", Versions.languageTool) {
+    compile("tanvd.grazi.languagetool", "grazi-language-tool", Versions.languageTool) {
         ltExcludes()
     }
 
-    compile("tanvd.grazi.languagetool", "en", Versions.languageTool) {
+    compile("tanvd.grazi.languagetool", "grazi-language-tool-en", Versions.languageTool) {
         ltExcludes()
     }
 
@@ -71,7 +71,7 @@ dependencies {
     }
 
     for (lang in langs) {
-        testRuntime("tanvd.grazi.languagetool", lang, Versions.languageTool) {
+        testRuntime("tanvd.grazi.languagetool", "grazi-language-tool-$lang", Versions.languageTool) {
             ltExcludes()
         }
     }
