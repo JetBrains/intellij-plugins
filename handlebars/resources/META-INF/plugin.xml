@@ -2,6 +2,8 @@
 <idea-plugin url="https://github.com/dmarcotte/idea-handlebars">
   <id>com.dmarcotte.handlebars</id>
   <name>Handlebars/Mustache</name>
+  <category>HTML/JavaScript Development</category>
+  <vendor>JetBrains</vendor>
 
   <description><![CDATA[
 <p>Support for <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.io/">Mustache</a> template languages</p>
@@ -13,10 +15,9 @@
 <li>Automatic indentation when typing</li>
 </ul>]]>
   </description>
-  <category>HTML/JavaScript Development</category>
+
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
-  <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.file.HbFileType" fieldName="INSTANCE" language="Handlebars" extensions="handlebars;hbs;mustache"/>
