@@ -15,6 +15,7 @@ interface VueContainer : VueEntitiesContainer {
   val template: PsiElement?
   val element: String?
   val extends: List<VueContainer>
+  val delimiters: Pair<String, String>? get() = null
   val model: VueModelDirectiveProperties
 }
 

@@ -8,14 +8,25 @@ import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.getBaseLexerState
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.isLexerWithinInterpolation
+import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.isLexerWithinUnterminatedInterpolation
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHandle
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
+import org.jetbrains.vuejs.lang.html.lexer._VueLexer
 
-class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHighlightingLexer() {
+class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
+                           interpolationConfig: Pair<String, String>?)
+  : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
+                          true, null) {
+
   companion object {
     @NonNls
     val EXPRESSION_WHITE_SPACE = IElementType("VueJS:EXPRESSION_WHITE_SPACE", VueJSLanguage.INSTANCE)
@@ -62,6 +73,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
   })
 
   init {
+    registerHandler(INTERPOLATION_EXPR, ElEmbeddmentHandler())
     registerHandler(XmlTokenType.XML_NAME, HtmlAttributeNameHandler())
   }
 
@@ -74,6 +86,10 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
     super.start(buffer, startOffset, endOffset, helper.start(initialState))
   }
 
+  override fun isHtmlTagState(state: Int): Boolean {
+    return state == _VueLexer.START_TAG_NAME || state == _VueLexer.END_TAG_NAME
+  }
+
   override fun getState(): Int = helper.getState(super.getState())
 
   override fun endOfTheEmbeddment(name: String?): Boolean {
@@ -82,10 +98,13 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
 
   override fun getTokenType(): IElementType? {
     val type = helper.getTokenType(super.getTokenType())
-    if (type == XmlTokenType.TAG_WHITE_SPACE && baseState() == 0)
-      return XmlTokenType.XML_REAL_WHITE_SPACE
-    if (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript() && hasSeenAttribute())
+    if ((type === XmlTokenType.TAG_WHITE_SPACE && isLexerWithinInterpolation(state))
+        || (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript() && hasSeenAttribute()))
       return EXPRESSION_WHITE_SPACE
+    if (type === XmlTokenType.TAG_WHITE_SPACE && (getBaseLexerState(state) == 0
+                                                  || isLexerWithinUnterminatedInterpolation(state))) {
+      return XML_REAL_WHITE_SPACE
+    }
     return type
   }
 
@@ -97,7 +116,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
     }
   }
 
-  override fun createELLexer(newLexer: Lexer): Lexer? {
+  override fun createELLexer(newLexer: Lexer?): Lexer? {
     return inlineScriptHighlightingLexer
   }
 
@@ -117,5 +136,23 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
       }
     }
   }
+
+  private class VueHighlightingMergingLexer internal constructor(original: FlexAdapter)
+    : VueLexer.VueMergingLexer(original) {
+
+    override fun merge(type: IElementType?, originalLexer: Lexer): IElementType? {
+      val tokenType = super.merge(type, originalLexer)
+      if (tokenType === XmlTokenType.XML_CHAR_ENTITY_REF) {
+        while (originalLexer.tokenType === XmlTokenType.XML_CHAR_ENTITY_REF) {
+          originalLexer.advance()
+        }
+        if (originalLexer.tokenType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+          return XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN
+        }
+      }
+      return tokenType
+    }
+  }
+
 }
 

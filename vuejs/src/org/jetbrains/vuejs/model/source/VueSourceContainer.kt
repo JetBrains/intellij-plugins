@@ -39,6 +39,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val emits: List<VueEmitCall> get() = VueDecoratedComponentInfo.get(clazz)?.emits ?: emptyList()
   override val slots: List<VueSlot> = emptyList()
 
+  override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
   override val extends: List<VueContainer> get() = get(EXTENDS)
   override val components: Map<String, VueComponent> get() = get(COMPONENTS)
   override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
@@ -54,6 +55,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val MIXINS = MixinsAccessor(MIXINS_PROP, VueMixinBindingIndex.KEY, VueDecoratedComponentInfo::mixins)
     private val DIRECTIVES = DirectivesAccessor()
     private val COMPONENTS = ComponentsAccessor()
+    private val DELIMITERS = DelimitersAccessor()
 
     private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty, VueDecoratedComponentInfo::props)
     private val DATA = SimpleMemberAccessor(ContainerMember.Data, ::VueSourceDataProperty, VueDecoratedComponentInfo::data)
@@ -242,6 +244,26 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     }
   }
 
+  private class DelimitersAccessor : MemberAccessor<Pair<String, String>?>({ null }) {
+    override fun build(declaration: JSObjectLiteralExpression): Pair<String, String>? {
+      val delimiters = ContainerMember.Delimiters.readMembers(declaration)
+      if (delimiters.size == 2
+          && delimiters[0].first.isNotBlank()
+          && delimiters[1].first.isNotBlank()) {
+        return Pair(delimiters[0].first, delimiters[1].first)
+      }
+      return null
+    }
+
+    override fun empty(): Pair<String, String>? {
+      return null
+    }
+
+    override fun merge(fromClass: Pair<String, String>?, fromInitializer: Pair<String, String>?): Pair<String, String>? {
+      return fromInitializer
+    }
+  }
+
   private enum class ContainerMember(val propertyName: String,
                                      val isFunctions: Boolean,
                                      private val canBeArray: Boolean) {
@@ -249,6 +271,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     Computed("computed", true, false),
     Methods("methods", true, false),
     Components("components", false, false),
+    Delimiters("delimiters", false, true),
     Model("model", false, false),
     Data("data", false, false) {
       override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = findReturnedObjectLiteral(resolved)
@@ -269,12 +292,12 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
         if (resolved != null) {
           propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
                           .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
-          if (propsObject == null && canBeArray) {
+          if ((propsObject == null && canBeArray) || this === Delimiters) {
             return readPropsFromArray(resolved, detailsFilter)
           }
         }
       }
-      if (propsObject != null) {
+      if (propsObject != null && this !== Delimiters) {
         return filteredObjectProperties(propsObject, detailsFilter)
       }
       return if (canBeArray) readPropsFromArray(property, detailsFilter) else return emptyList()

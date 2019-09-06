@@ -14,6 +14,8 @@ import kotlin.properties.Delegates.notNull
 open class VueLexerTest : LexerTestCase() {
   private var fixture: IdeaProjectTestFixture by notNull()
 
+  protected var interpolationConfig: Pair<String, String>? = null
+
   override fun setUp() {
     super.setUp()
 
@@ -280,7 +282,7 @@ open class VueLexerTest : LexerTestCase() {
     | </style>
     | <div></div>
     |</template>
-  """,false)// TODO improve CSS lexer to have less states
+  """, false) // TODO improve CSS lexer to have less states
 
   fun testStyleAfterBinding() = doTest("""
     |<template>
@@ -316,7 +318,80 @@ open class VueLexerTest : LexerTestCase() {
     |<div :bar="some"></div>
   """)
 
-  override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6)
+
+  fun testInterpolation1() {
+    doTest("<t a=\"{{v}}\" b=\"s{{m}}e\" c='s{{m//c}}e'>")
+  }
+
+  fun testInterpolation2() {
+    doTest("""{{ a }}b{{ c // comment }}""".trimIndent())
+  }
+
+  fun testMultiLineSingleComment() {
+    doTest("""
+      |{{ a }}b{{ c // comment
+      | + on
+      | - multiple
+      |lines }}
+  """)
+  }
+
+  fun testMultiLineComment() {
+    doTest("""
+      |{{ a }}b{{ c /* comment
+      | + on
+      | - multiple
+      |lines */ }}
+  """)
+  }
+
+  fun testMultipleInterpolations() {
+    doTest("{{test}} !=bbb {{foo() - bar()}}")
+  }
+
+  fun testInterpolationIgnored() {
+    doTest("<div> this is ignored {{<interpolation> }}")
+  }
+
+  fun testInterpolationIgnored2() {
+    doTest("this {{ is {{ <ignored/> interpolation }}")
+  }
+
+  fun testInterpolationIgnored3() {
+    doTest("<div foo=\"This {{ is {{ ignored interpolation\"> }}<a foo=\"{{\">")
+  }
+
+  fun testInterpolationIgnored4() {
+    doTest("<div foo='This {{ is {{ ignored interpolation'> }}<a foo='{{'>")
+  }
+
+  fun testInterpolationEmpty() {
+    doTest("{{}}<div foo='{{}}' foo='a{{}}b' bar=\"{{}}\" bar=\"a{{}}b\">{{}}</div>a{{}}b<div>a{{}}b</div>")
+  }
+
+  @Suppress("TestFunctionName")
+  fun _testInterpolationCharEntityRefs() {
+    doTest("&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}<div foo='&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}' bar=\"&nbsp;{{foo&nbsp;bar}}{{&nbsp;}}\">")
+  }
+
+  @Suppress("TestFunctionName")
+  fun _testInterpolationEntityRefs() {
+    doTest("&foo;{{foo&foo;bar}}{{&foo;}}<div foo='&foo;{{foo&foo;bar}}{{&foo;}}' bar=\"&foo;{{foo&foo;bar}}{{&foo;}}\">")
+  }
+
+  fun testCustomInterpolation() {
+    testCustomInterpolation(Pair("{%", "%}")) {
+      doTest("{{ regular text }} {% custom interpolation %}")
+    }
+  }
+
+  fun testCustomInterpolation2() {
+    testCustomInterpolation(Pair("abcd", "efgh")) {
+      doTest("{{ regular text }} abcdcustom interpolationefgh")
+    }
+  }
+
+  override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6, interpolationConfig)
 
   override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/html/lexer"
 
@@ -324,14 +399,38 @@ open class VueLexerTest : LexerTestCase() {
     doTest(text, true)
   }
 
-  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
-    val withoutMargin = text.trimMargin()
-    super.doTest(withoutMargin)
-    if (checkRestartOnEveryToken) {
-      checkCorrectRestartOnEveryToken(text)
+  override fun getExpectedFileExtension(): String {
+    return if (interpolationConfig != null)
+      ".${interpolationConfig!!.first}.${interpolationConfig!!.second}.txt"
+    else
+      super.getExpectedFileExtension()
+  }
+
+  private fun testCustomInterpolation(interpolationConfig: Pair<String, String>?, test: () -> Unit) {
+    val old = this.interpolationConfig
+    try {
+      this.interpolationConfig = interpolationConfig
+      test()
     }
-    else {
-      checkCorrectRestart(withoutMargin)
+    finally {
+      this.interpolationConfig = old
+    }
+  }
+
+  private fun doTest(@NonNls text: String, checkRestartOnEveryToken: Boolean) {
+    val test = {
+      val withoutMargin = text.trimMargin()
+      super.doTest(withoutMargin)
+      if (checkRestartOnEveryToken) {
+        checkCorrectRestartOnEveryToken(text)
+      }
+      else {
+        checkCorrectRestart(withoutMargin)
+      }
+    }
+    test()
+    if (interpolationConfig == null) {
+      testCustomInterpolation(Pair("{{", "}}"), test)
     }
   }
 }

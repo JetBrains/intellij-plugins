@@ -55,6 +55,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition"/>
     <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
+    <annotator language="VueJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
     <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
 
@@ -90,7 +91,9 @@ Vue components defined using separate .html, .js, and .css files are not support
       <category>VueJS</category>
     </intentionAction>
 
-    <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector" id="vue"/>
+    <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector"
+                       order="before JSConfigurationInjector, after TemporaryPlacesInjector"
+                       id="VueInjector"/>
 
     <internalFileTemplate name="Vue Single File Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>

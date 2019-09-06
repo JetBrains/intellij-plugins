@@ -81,9 +81,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private const val VUE_INSTANCE = "CombinedVueInstance"
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
-    private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
-    fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
-      obj.properties.any { COMPONENT_INDICATOR_PROPS.contains(it.name) }
+    private val COMPONENT_INDICATOR_PROPS = setOf("template", "data", "render", "props", "propsData", "computed", "methods", "watch",
+                                                  "mixins", "components", "directives", "filters")
+
+    fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
+      obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
 
     fun isDefaultExports(expression: JSExpression?): Boolean =
       expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,

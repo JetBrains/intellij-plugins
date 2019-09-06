@@ -102,14 +102,7 @@ class VueComponents {
     }
 
     fun isComponentDecorator(decorator: ES6Decorator): Boolean {
-      val callExpression = decorator.expression as? JSCallExpression
-      if (callExpression != null) {
-        return "Component" == (callExpression.methodExpression as? JSReferenceExpression)?.referenceName
-      }
-      else {
-        val reference = decorator.expression as? JSReferenceExpression
-        return "Component" == reference?.referenceName
-      }
+      return decorator.decoratorName == "Component"
     }
 
     fun getElementComponentDecorator(element: PsiElement): ES6Decorator? {
@@ -144,9 +137,9 @@ class VueComponents {
     }
 
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
-      val callExpression = decorator.expression as? JSCallExpression ?: return null
-      if ("Component" != (callExpression.methodExpression as? JSReferenceExpression)?.referenceName) return null
+      if (!isComponentDecorator(decorator)) return null
 
+      val callExpression = decorator.expression as? JSCallExpression ?: return null
       val arguments = callExpression.arguments
       if (arguments.size == 1) {
         return arguments[0] as? JSObjectLiteralExpression

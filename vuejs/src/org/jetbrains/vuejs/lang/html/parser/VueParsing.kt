@@ -8,8 +8,12 @@ import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
+import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
+
   override fun isSingleTag(tagName: String, originalTagName: String): Boolean {
     // There are heavily-used Vue components called like 'Col' or 'Input'. Unlike HTML tags <col> and <input> Vue components do have closing tags.
     // The following 'if' is a little bit hacky but it's rather tricky to solve the problem in a better way at parser level.
@@ -17,6 +21,41 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       return false
     }
     return super.isSingleTag(tagName, originalTagName)
+  }
+
+  override fun hasCustomTagContent(): Boolean {
+    return token() === INTERPOLATION_START
+  }
+
+  override fun hasCustomTopLevelContent(): Boolean {
+    return token() === INTERPOLATION_START
+  }
+
+  override fun parseCustomTagContent(xmlText: PsiBuilder.Marker?): PsiBuilder.Marker? {
+    var result = xmlText
+    val tt = token()
+    if (tt === INTERPOLATION_START) {
+      result = terminateText(result)
+      val interpolation = mark()
+      advance()
+      if (token() === INTERPOLATION_EXPR) {
+        parseInterpolationExpr()
+      }
+      if (token() === INTERPOLATION_END) {
+        advance()
+        interpolation.drop()
+      }
+      else {
+        interpolation.error("Unterminated interpolation")
+      }
+    }
+    return result
+  }
+
+  override fun parseCustomTopLevelContent(error: PsiBuilder.Marker?): PsiBuilder.Marker? {
+    val result = flushError(error)
+    terminateText(parseCustomTagContent(null))
+    return result
   }
 
   override fun parseAttribute() {
@@ -56,6 +95,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
             error.error(XmlErrorMessages.message("unescaped.ampersand.or.nonterminated.character.entity.reference"))
           }
           XmlTokenType.XML_ENTITY_REF_TOKEN -> parseReference()
+          INTERPOLATION_EXPR -> parseInterpolationExpr()
           else -> advance()
         }
       }
@@ -80,5 +120,12 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       }
     }
     attValue.done(XmlElementType.XML_ATTRIBUTE_VALUE)
+  }
+
+  private fun parseInterpolationExpr() {
+    assert(token() === INTERPOLATION_EXPR)
+    val marker = mark()
+    advance()
+    marker.collapse(VueJSEmbeddedExprTokenType.createInterpolationExpression(builder.project))
   }
 }

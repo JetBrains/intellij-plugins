@@ -1,15 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ClassExpression
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -46,8 +44,12 @@ class VueModelManager {
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
-      return getContainingXmlFile(templateElement)
-        ?.originalFile
+      return (InjectedLanguageManager.getInstance(templateElement.project)
+                .getInjectionHost(templateElement)
+                ?.let { it as? JSLiteralExpression }
+                ?.let { CompletionUtil.getOriginalOrSelf(it) }
+                ?.let { it.parent as? JSProperty }
+              ?: getContainingXmlFile(templateElement)?.originalFile)
         ?.let { getEnclosingComponentDescriptor(it) }
         ?.let { getComponent(it.obj ?: it.clazz!!) }
     }
@@ -96,15 +98,17 @@ class VueModelManager {
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
       val global = getGlobal(templateElement) ?: return null
-      val xmlElement = if (templateElement is XmlElement)
-        templateElement
-      else {
-        when (val context = PsiTreeUtil.getContextOfType(templateElement, PsiFile::class.java, XmlElement::class.java)) {
-          is XmlElement -> context
-          is PsiFile -> InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(context)
-          else -> return null
+      val xmlElement =
+        if (templateElement is XmlElement) {
+          templateElement
         }
-      } ?: return null
+        else {
+          when (val context = PsiTreeUtil.getContextOfType(templateElement, PsiFile::class.java, XmlElement::class.java)) {
+            is XmlElement -> context
+            is PsiFile -> InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(context)
+            else -> return null
+          }
+        } ?: return null
 
       var result: VueApp? = null
       PsiTreeUtil.findFirstParent(xmlElement, Condition {

@@ -15,9 +15,16 @@ import com.intellij.psi.tree.IFileElementType
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 
 class VueParserDefinition : HTMLParserDefinition() {
+
+  companion object {
+    fun createLexer(project: Project, interpolationConfig: Pair<String, String>?): Lexer {
+      val level = JSRootConfiguration.getInstance(project).languageLevel
+      return VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6, interpolationConfig)
+    }
+  }
+
   override fun createLexer(project: Project): Lexer {
-    val level = JSRootConfiguration.getInstance(project).languageLevel
-    return VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6)
+    return Companion.createLexer(project, null)
   }
 
   override fun getFileNodeType(): IFileElementType {

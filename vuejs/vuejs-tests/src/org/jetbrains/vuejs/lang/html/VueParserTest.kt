@@ -32,6 +32,7 @@ import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.html.TemplateHtmlScriptContentProvider
 import com.intellij.util.ObjectUtils
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
+import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
 import org.jetbrains.vuejs.lang.html.parser.VueParserDefinition
 
 class VueParserTest : HtmlParsingTest("", "vue",
@@ -44,7 +45,8 @@ class VueParserTest : HtmlParsingTest("", "vue",
   override fun setUp() {
     super.setUp()
 
-    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE, HtmlInlineJSScriptTokenTypesProvider())
+    addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
+                         HtmlInlineJSScriptTokenTypesProvider())
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, JSScriptContentProvider())
 
     registerExtensions(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider::class.java,
@@ -85,12 +87,16 @@ class VueParserTest : HtmlParsingTest("", "vue",
 
   override fun doTest(text: String, fileName: String) {
     super.doTest(if (fileName.endsWith(".vue")
+                     || fileName.endsWith(INJECTED_FILE_SUFFIX)
                      || text.trimStart().startsWith("<!DOCTYPE")
                      || text.trimStart().startsWith("<?"))
                    text
                  else
                    "<template>\n$text\n</template>",
-                 "${fileName.substring(0, fileName.lastIndexOf('.'))}.vue")
+                 if (fileName.endsWith(INJECTED_FILE_SUFFIX))
+                   fileName
+                 else
+                   "${fileName.substring(0, fileName.lastIndexOf('.'))}.vue")
   }
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/html/parser"
@@ -148,6 +154,25 @@ class VueParserTest : HtmlParsingTest("", "vue",
       </template>
     """)
   }
+
+  fun testInterpolationParsing() {
+    doTest("""
+      {{foo.bar}}
+      <div v-bind:foo="{{bar}}" foo="{{bar}}" foo2='{{bar}}'>
+        {{foo.bar}}
+      </div>
+    """.trimIndent(), "test.{{.}}$INJECTED_FILE_SUFFIX")
+  }
+
+  fun testCustomInterpolationParsing() {
+    doTest("""
+      {%foo.bar%}
+      <div v-bind:foo="{{bar}}" foo="{{bar}}" foo2='{%bar%}'>
+        {{foo.bar}}
+      </div>
+    """.trimIndent(), "test.{%.%}$INJECTED_FILE_SUFFIX")
+  }
+
 
   private class MockJSRootConfiguration internal constructor(project: Project) : JSRootConfigurationBase(project) {
 

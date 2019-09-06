@@ -8,15 +8,19 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttr
 import org.jetbrains.vuejs.lang.VueEmbeddedContentTokenType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 
-class VueJSEmbeddedExprTokenType(debugName: String,
-                                 private val attributeInfo: VueAttributeInfo,
-                                 private val project: Project)
+class VueJSEmbeddedExprTokenType private constructor(debugName: String,
+                                                     private val attributeInfo: VueAttributeInfo?,
+                                                     private val project: Project)
   : VueEmbeddedContentTokenType(debugName, VueJSLanguage.INSTANCE, false) {
 
   companion object {
     fun createEmbeddedExpression(attributeInfo: VueAttributeInfo,
                                  project: Project): VueJSEmbeddedExprTokenType {
       return VueJSEmbeddedExprTokenType("VueJS:EMBEDDED_EXPR", attributeInfo, project)
+    }
+
+    fun createInterpolationExpression(project: Project): VueJSEmbeddedExprTokenType {
+      return VueJSEmbeddedExprTokenType("VueJS:INTERPOLATION_EXPR", null, project)
     }
   }
 

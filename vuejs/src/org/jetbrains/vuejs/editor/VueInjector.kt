@@ -1,16 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
-import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
 import com.intellij.lang.javascript.JSInjectionBracesUtil.injectInXmlTextByDelimiters
 import com.intellij.lang.javascript.index.JavaScriptIndex
-import com.intellij.lang.javascript.psi.JSDefinitionExpression
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil
+import com.intellij.lang.javascript.injections.JSInjectionUtil
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
@@ -24,27 +23,40 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.parser.VueJSParserDefinition
-import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
+import org.jetbrains.vuejs.model.source.VueSourceContainer
 
 class VueInjector : MultiHostInjector {
   companion object {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
-      VueJSLanguage.INSTANCE.displayName) { project, key ->
-      if (project == null || key == null) return@delimitersFactory null
-      calculateDelimitersFromIndex(project, key) ?: calculateDelimitersFromAssignment(project, key)
-    }
+      VueJSLanguage.INSTANCE.displayName,
+      { element ->
+        (VueModelManager.findEnclosingContainer(element) as? VueSourceContainer)
+          ?.delimiters
+          ?.let {
+            Pair(it.first, it.second)
+          }
+      }, { project, key ->
+        if (project == null || key == null) return@delimitersFactory null
+        calculateDelimitersFromIndex(project, key) ?: calculateDelimitersFromAssignment(project, key)
+      })
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
       val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
@@ -79,29 +91,29 @@ class VueInjector : MultiHostInjector {
   }
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
-    if (!isVueContext(context)) return
-
-    val fileType = context.containingFile?.originalFile?.virtualFile?.fileType
-    if (fileType != HtmlFileType.INSTANCE && fileType != VueFileType.INSTANCE) return
+    val parent = context.parent
+    if (parent == null || !isVueContext(context)) return
 
     // this supposed to work in <template lang="jade"> attribute values
-    val parent = context.parent
     if (context is XmlAttributeValueImpl
         && !context.value.isBlank()
         && parent is XmlAttribute
-        && parent.language !== VueLanguage.INSTANCE
-        && VueAttributeNameParser.parse(parent.name, parent.parent).injectJS) {
-      val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
-      if (embedded != null) {
-        val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
-        if (literal != null) {
-          injectInElement(literal, registrar, parent.name)
-          return
+        && ((parent.descriptor as? VueAttributeDescriptor)?.getInfo()
+            ?: VueAttributeNameParser.parse(parent.name, parent.parent))
+          .injectJS) {
+      if (parent.language !== VueLanguage.INSTANCE) {
+        val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
+        if (embedded != null) {
+          val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
+          if (literal != null) {
+            injectInElement(literal, registrar, parent.name)
+          }
+        }
+        else {
+          injectInElement(context, registrar, parent.name)
         }
       }
-      else {
-        injectInElement(context, registrar, parent.name)
-      }
+      return
     }
 
     if (context is XmlTextImpl || context is XmlAttributeValueImpl) {
@@ -110,6 +122,36 @@ class VueInjector : MultiHostInjector {
                                   braces.getFirst(), braces.getSecond(),
                                   VueJSParserDefinition.INTERPOLATION)
     }
+    else if (context is JSLiteralExpressionImpl
+             && context.isQuotedLiteral
+             && parent is JSProperty
+             && parent.name == "template"
+             && parent.parent is JSObjectLiteralExpression
+             && shouldInjectVueTemplate(context, parent.parent as JSObjectLiteralExpression)) {
+
+      val braces = (VueModelManager.getComponent(parent.parent) as? VueRegularComponent)
+                     ?.delimiters
+                     ?.let {
+                       Pair(it.first, it.second)
+                     }
+                   ?: BRACES_FACTORY.`fun`(context)
+                   ?: Pair(JSInjectionBracesUtil.DEFAULT_START, JSInjectionBracesUtil.DEFAULT_END)
+      JSInjectionUtil.injectInQuotedLiteral(registrar,
+                                            VueLanguage.INSTANCE,
+                                            "${braces.first}.${braces.second}${INJECTED_FILE_SUFFIX}",
+                                            context, null, null)
+      JSFormattableInjectionUtil.setReformattableInjection(context, VueLanguage.INSTANCE)
+    }
+
+  }
+
+  private fun shouldInjectVueTemplate(template: JSLiteralExpressionImpl, initializer: JSObjectLiteralExpression): Boolean {
+    val chars = template.node.chars
+    if (chars.length > 2 && chars[1] == '#')
+      return false
+    return VueFrameworkHandler.hasComponentIndicatorProperties(initializer, "template")
+           || PsiTreeUtil.getContextOfType(initializer, ES6Decorator::class.java)
+             ?.let { VueComponents.isComponentDecorator(it) } == true
   }
 
   private fun injectInElement(host: PsiLanguageInjectionHost,
@@ -121,6 +163,8 @@ class VueInjector : MultiHostInjector {
   }
 
   override fun elementsToInjectIn(): List<Class<out PsiElement>> {
-    return listOf(XmlTextImpl::class.java, XmlAttributeValueImpl::class.java)
+    return listOf(XmlTextImpl::class.java,
+                  XmlAttributeValueImpl::class.java,
+                  JSLiteralExpressionImpl::class.java)
   }
 }
