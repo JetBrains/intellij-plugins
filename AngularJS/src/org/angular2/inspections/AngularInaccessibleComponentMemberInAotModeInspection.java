@@ -5,11 +5,11 @@ import com.intellij.codeInspection.*;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.intentions.JSPublicModifierIntention;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
@@ -155,33 +155,53 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-      return accept(locateMemberToEdit(element));
+      return isInvokedInJsFile(element)
+            ? super.isAvailable(project, editor, element)
+            : accept(locateMemberToEdit(element));
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
+      if (isInvokedInJsFile(element)) {
+        super.invoke(project, editor, element);
+        return;
+      }
+
       PsiElement member = locateMemberToEdit(element);
       if (!accept(member)) {
         return;
       }
       if (editor != null) {
         PsiNavigationSupport.getInstance().createNavigatable(
-          project, member.getContainingFile().getVirtualFile(),
-          member.getTextRange().getStartOffset() + 1
+              project,
+              member.getContainingFile().getVirtualFile(),
+              member.getTextOffset()
         ).navigate(true);
       }
-      super.invoke(project, editor, member instanceof TypeScriptFunction
-                                    || member instanceof JSParameter ? member.getFirstChild()
-                                                                     : member);
+
+      super.invoke(
+            project,
+            editor,
+            member instanceof PsiNameIdentifierOwner
+                  ? ((PsiNameIdentifierOwner) member).getNameIdentifier()
+                  : member
+      );
     }
 
     @Nullable
     private PsiElement locateMemberToEdit(@NotNull PsiElement element) {
-      if (element.getParent() instanceof JSReferenceExpression) {
-        element = element.getParent();
+      element = element instanceof PsiWhiteSpace
+            ? element.getPrevSibling()
+            : element.getParent();
+
+      if (!(element instanceof JSReferenceExpression)) {
+        element = element.getPrevSibling();
       }
       if (element instanceof JSReferenceExpression) {
         element = ((JSReferenceExpression)element).resolve();
+      }
+      if (element instanceof PsiNameIdentifierOwner) {
+        element = ((PsiNameIdentifierOwner) element).getNameIdentifier();
       }
       if (element == null) {
         return null;
@@ -202,6 +222,14 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     @Override
     public Priority getPriority() {
       return Priority.HIGH;
+    }
+
+    private static boolean isInvokedInJsFile(@NotNull final PsiElement element) {
+      final Language language =
+            element.getContainingFile()
+                   .getLanguage()
+                   .getBaseLanguage();
+      return JavascriptLanguage.INSTANCE.is(language);
     }
   }
 }
