@@ -17,22 +17,22 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
         GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
     CANADIAN_ENGLISH("English (Canadian)", "en", "CanadianEnglish", RemoteLangDescriptor.ENGLISH,
         GraziBundle.langConfig("en.rules.enabled"), GraziBundle.langConfig("en.rules.disabled"), GraziBundle.langConfig("en.categories.disabled")),
-    RUSSIAN("Russian", "ru", "Russian", RemoteLangDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
-    PERSIAN("Persian", "fa", "Persian", RemoteLangDescriptor.PERSIAN),
-    FRENCH("French", "fr", "French", RemoteLangDescriptor.FRENCH),
     GERMANY_GERMAN("German (Germany)", "de", "GermanyGerman", RemoteLangDescriptor.GERMAN, disabledCategories = GraziBundle.langConfig("de.categories.disabled")),
     AUSTRIAN_GERMAN("German (Austria)", "de", "AustrianGerman", RemoteLangDescriptor.GERMAN, disabledCategories = GraziBundle.langConfig("de.categories.disabled")),
-    POLISH("Polish", "pl", "Polish", RemoteLangDescriptor.POLISH),
-    ITALIAN("Italian", "it", "Italian", RemoteLangDescriptor.ITALIAN),
-    DUTCH("Dutch", "nl", "Dutch", RemoteLangDescriptor.DUTCH),
     PORTUGAL_PORTUGUESE("Portuguese (Portugal)", "pt", "PortugalPortuguese", RemoteLangDescriptor.PORTUGUESE),
     BRAZILIAN_PORTUGUESE("Portuguese (Brazil)", "pt", "BrazilianPortuguese", RemoteLangDescriptor.PORTUGUESE),
-    CHINESE("Chinese", "zh", "Chinese", RemoteLangDescriptor.CHINESE),
-    GREEK("Greek", "el", "Greek", RemoteLangDescriptor.GREEK),
+    SPANISH("Spanish", "es", "Spanish", RemoteLangDescriptor.SPANISH),
+    RUSSIAN("Russian", "ru", "Russian", RemoteLangDescriptor.RUSSIAN, GraziBundle.langConfig("ru.rules.enabled")),
+    FRENCH("French", "fr", "French", RemoteLangDescriptor.FRENCH),
+    ITALIAN("Italian", "it", "Italian", RemoteLangDescriptor.ITALIAN),
+    DUTCH("Dutch", "nl", "Dutch", RemoteLangDescriptor.DUTCH),
     JAPANESE("Japanese", "ja", "Japanese", RemoteLangDescriptor.JAPANESE),
+    CHINESE("Chinese", "zh", "Chinese", RemoteLangDescriptor.CHINESE),
+    PERSIAN("Persian", "fa", "Persian", RemoteLangDescriptor.PERSIAN),
+    POLISH("Polish", "pl", "Polish", RemoteLangDescriptor.POLISH),
+    GREEK("Greek", "el", "Greek", RemoteLangDescriptor.GREEK),
     ROMANIAN("Romanian", "ro", "Romanian", RemoteLangDescriptor.ROMANIAN),
     SLOVAK("Slovak", "sk", "Slovak", RemoteLangDescriptor.SLOVAK),
-    SPANISH("Spanish", "es", "Spanish", RemoteLangDescriptor.SPANISH),
     UKRAINIAN("Ukrainian", "uk", "Ukrainian", RemoteLangDescriptor.UKRAINIAN);
 
     companion object {
@@ -45,12 +45,8 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
 
     private var _jLanguage: Language? = null
     val jLanguage: Language?
-        get() {
-            if (_jLanguage == null) {
-                _jLanguage = GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?
-            }
-
-            return _jLanguage
+        get() = _jLanguage ?: (GraziPlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?)?.also {
+            _jLanguage = it
         }
 
     fun isEnglish() = shortCode == "en"

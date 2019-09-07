@@ -12,6 +12,7 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
+import com.twelvemonkeys.util.LinkedSet
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
@@ -34,12 +35,11 @@ object GraziSpellchecker : GraziStateLifecycle {
         fun check(text: String): Set<RuleMatch> = synchronized(speller) { speller.match(tool.getRawAnalyzedSentence(text)).toSet() }
     }
 
-    private val checkers: Set<SpellerTool>
+    private val checkers: LinkedSet<SpellerTool>
         get() = GraziConfig.get().availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
-            val tool = LangTool.getTool(lang)
             val rule = LangTool.getSpeller(lang)
-            rule?.let { SpellerTool(tool, rule) }
-        }.toSet()
+            rule?.let { SpellerTool(LangTool.getTool(lang), rule) }
+        }.let { LinkedSet(it) }
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(Text::isHiddenFile, Text::isURL, Text::isHtmlUnicodeSymbol, Text::isFilePath)
 
@@ -89,15 +89,10 @@ object GraziSpellchecker : GraziStateLifecycle {
             }?.firstOrNull() ?: return emptySet()
         }.onEach {
             if (it.rule is MorfologikAmericanSpellerRule) match = it
-        }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.sortedWith(Text.Levenshtein.Comparator(word)).toList()
-
-        //TODO-tanvd/fatall -- should we ignore casing?
-        if (isCasing(word, fixes)) return emptySet()
+        }.flatMap { it.suggestedReplacements.take(MAX_SUGGESTIONS_COUNT) }.toList()
 
         return setOf(Typo(RuleMatch(match, fixes), BASE_SPELLCHECKER_LANGUAGE, 0))
     }
-
-    private fun isCasing(word: String, fixes: Iterable<String>) = word.toLowerCase().let { lowered -> fixes.any { it.toLowerCase() == lowered } }
 
     override fun init(state: GraziConfig.State, project: Project) {
         if (ApplicationManager.getApplication().isUnitTestMode || !state.enabledSpellcheck) return

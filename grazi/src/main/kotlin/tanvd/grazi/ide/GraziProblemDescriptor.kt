@@ -11,8 +11,8 @@ import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList
 
-class GraziProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(fix.location.element!!, fix.location.element!!, fix.toDescriptionTemplate(isOnTheFly),
-    fix.toFixes(isOnTheFly).toTypedArray(), fix.info.category.highlight, false, fix.toSelectionRange(), true, isOnTheFly) {
+class GraziProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(fix.location.element!!, fix.location.element!!,
+    fix.toDescriptionTemplate(isOnTheFly), fix.toFixes(isOnTheFly).toTypedArray(), fix.info.category.highlight, false, fix.toSelectionRange(), true, isOnTheFly) {
 
     companion object {
         private fun Typo.toFixes(isOnTheFly: Boolean) = buildList<LocalQuickFix> {

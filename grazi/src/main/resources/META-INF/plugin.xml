@@ -78,7 +78,7 @@
     <idea-version since-build="192.3645"/>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationInitializedListener implementation="tanvd.grazi.ide.init.GraziAppInit" />
+        <applicationInitializedListener implementation="tanvd.grazi.ide.init.GraziAppInit"/>
 
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
 

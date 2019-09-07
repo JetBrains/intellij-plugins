@@ -37,8 +37,7 @@ open class GraziRenameTypoQuickFix(private val typo: Typo) : RefactoringQuickFix
     override fun getPriority() = PriorityAction.Priority.HIGH
 
     override fun getHandler(): RefactoringActionHandler = RefactoringActionHandlerFactory.getInstance().createRenameHandler()
-    override fun getHandler(context: DataContext): RefactoringActionHandler = RenameHandlerRegistry.getInstance().getRenameHandler(context)
-        ?: handler
+    override fun getHandler(context: DataContext): RefactoringActionHandler = RenameHandlerRegistry.getInstance().getRenameHandler(context) ?: handler
 
     override fun getElementToRefactor(element: PsiElement): PsiElement = if (element is PsiNamedElement) element else super.getElementToRefactor(element)
 
