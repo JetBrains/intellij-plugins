@@ -1,7 +1,7 @@
 package tanvd.grazi.utils
 
-import com.twelvemonkeys.util.LinkedSet
 import org.languagetool.rules.RuleMatch
+import tanvd.kex.LinkedSet
 
 fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
