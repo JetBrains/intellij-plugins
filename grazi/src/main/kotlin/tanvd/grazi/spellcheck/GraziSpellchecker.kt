@@ -104,13 +104,16 @@ object GraziSpellchecker : GraziStateLifecycle {
             it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
         })
 
-        with(CommitMessageInspectionProfile.getInstance(project)) {
-            getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
+        if (state.enabledCommitIntegration) {
+            with(CommitMessageInspectionProfile.getInstance(project)) {
+                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
+            }
         }
     }
 
     override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
-        if (ApplicationManager.getApplication().isUnitTestMode || prevState.enabledSpellcheck == newState.enabledSpellcheck) return
+        if (ApplicationManager.getApplication().isUnitTestMode || (prevState.enabledSpellcheck == newState.enabledSpellcheck
+                && prevState.enabledCommitIntegration == newState.enabledCommitIntegration)) return
 
         //Eagerly init speller language
         LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE, newState)
@@ -120,16 +123,20 @@ object GraziSpellchecker : GraziStateLifecycle {
                 it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = false
             })
 
-            with(CommitMessageInspectionProfile.getInstance(project)) {
-                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
+            if (newState.enabledCommitIntegration) {
+                with(CommitMessageInspectionProfile.getInstance(project)) {
+                    getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = false
+                }
             }
         } else {
             modifyAndCommitProjectProfile(project, Consumer {
                 it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = true
             })
 
-            with(CommitMessageInspectionProfile.getInstance(project)) {
-                getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = true
+            if (newState.enabledCommitIntegration) {
+                with(CommitMessageInspectionProfile.getInstance(project)) {
+                    getTools(getTool(CommitMessageSpellCheckingInspection::class.java).shortName, project).isEnabled = true
+                }
             }
         }
     }

@@ -15,7 +15,8 @@ class GraziSearchableOptionContributor : SearchableOptionContributor() {
 
     override fun processOptions(processor: SearchableOptionProcessor) {
         with(processor) {
-            addOptions(msg("grazi.ui.settings.enable.text"), msg("grazi.ui.settings.enable.text"))
+            addOptions(msg("grazi.ui.settings.spellcheck.enable.text"), msg("grazi.ui.settings.spellcheck.enable.text"))
+            addOptions(msg("grazi.ui.settings.vcs.enable.text"), msg("grazi.ui.settings.vcs.enable.text"))
             addOptions(msg("grazi.ui.settings.rules.configuration.text"), msg("grazi.ui.settings.rules.configuration.text"))
             addOptions(msg("grazi.ui.settings.languages.native.text"), msg("grazi.ui.settings.languages.native.text"))
 

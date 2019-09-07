@@ -17,6 +17,7 @@ import javax.swing.JComponent
 
 class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     private val spellcheck = GraziSpellcheckComponent()
+    private val vcs = GraziCommitComponent()
     private val native = GraziNativeLanguageComponent(::download)
     private val description = GraziRuleDescriptionComponent()
     private val rules = GraziRulesComponent(description.listener)
@@ -38,6 +39,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
 
     override fun isModified(settings: GraziConfig) = rules.isModified
         .or(settings.state.enabledSpellcheck != spellcheck.isSpellcheckEnabled)
+        .or(settings.state.enabledCommitIntegration != vcs.isCommitIntegrationEnabled)
         .or(settings.state.nativeLanguage != native.language)
         .or(settings.state.enabledLanguages != languages.values)
 
@@ -73,7 +75,8 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                 userEnabledRules = userEnabledRules,
                 userDisabledRules = userDisabledRules,
                 nativeLanguage = native.language,
-                enabledSpellcheck = spellcheck.isSpellcheckEnabled
+                enabledSpellcheck = spellcheck.isSpellcheckEnabled,
+                enabledCommitIntegration = vcs.isCommitIntegrationEnabled
             )
         }
 
@@ -83,6 +86,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
     override fun reset(settings: GraziConfig) {
         native.language = settings.state.nativeLanguage
         spellcheck.isSpellcheckEnabled = settings.state.enabledSpellcheck
+        vcs.isCommitIntegrationEnabled = settings.state.enabledCommitIntegration
         languages.reset(settings.state.enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName)))
         rules.reset()
 
@@ -100,6 +104,7 @@ class GraziSettingsPanel : ConfigurableUi<GraziConfig>, Disposable {
                     border = padding(JBUI.insetsLeft(20))
                     add(native.component)
                     add(spellcheck.component)
+                    add(vcs.component)
                 }
 
                 update()

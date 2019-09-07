@@ -16,9 +16,20 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
 
         override fun init(state: GraziConfig.State, project: Project) {
             with(CommitMessageInspectionProfile.getInstance(project)) {
-                addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
-                enableTool("GraziCommit", project)
+                if (state.enabledCommitIntegration) {
+                    addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
+                    setToolEnabled("GraziCommit", true, project)
+                } else {
+                    setToolEnabled("GraziCommit", false, project)
+                    //TODO-tanvd how to remove tool?
+                }
             }
+        }
+
+        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
+            if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
+
+            init(newState, project);
         }
     }
 
