@@ -190,8 +190,12 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
 
     @Nullable
     private PsiElement locateMemberToEdit(@NotNull PsiElement element) {
-      if (element.getParent() instanceof JSReferenceExpression) {
-        element = element.getParent();
+      element = element instanceof PsiWhiteSpace
+            ? element.getPrevSibling()
+            : element.getParent();
+
+      if (!(element instanceof JSReferenceExpression)) {
+        element = element.getPrevSibling();
       }
       if (element instanceof JSReferenceExpression) {
         element = ((JSReferenceExpression)element).resolve();
