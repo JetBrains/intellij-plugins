@@ -17,9 +17,7 @@ class LatexSupport : LanguageSupport() {
         return parents().find { it is LatexGroup || it is LatexOpenGroup }?.let { it is LatexGroup }.orTrue()
     }
 
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is LatexNormalText && element.isNotInMathEnvironment() && element.isNotInSquareBrackets()
-    }
+    override fun isRelevant(element: PsiElement) = element is LatexNormalText && element.isNotInMathEnvironment() && element.isNotInSquareBrackets()
 
     override fun check(element: PsiElement) = GrammarChecker.default.check(element).filterNotToSet { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }
 }
