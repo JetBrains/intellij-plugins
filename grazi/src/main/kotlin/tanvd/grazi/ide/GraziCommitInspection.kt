@@ -20,7 +20,7 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
                     addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
                     setToolEnabled("GraziCommit", true, project)
                 } else {
-                    setToolEnabled("GraziCommit", false, project)
+                    if (getToolsOrNull("GraziCommit", project) != null) setToolEnabled("GraziCommit", false, project)
                     //TODO-tanvd how to remove tool?
                 }
             }
