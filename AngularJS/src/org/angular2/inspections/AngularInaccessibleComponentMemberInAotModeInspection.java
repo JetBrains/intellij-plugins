@@ -173,8 +173,9 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
       }
       if (editor != null) {
         PsiNavigationSupport.getInstance().createNavigatable(
-          project, member.getContainingFile().getVirtualFile(),
-          member.getTextRange().getStartOffset() + 1
+              project,
+              member.getContainingFile().getVirtualFile(),
+              member.getTextOffset()
         ).navigate(true);
       }
 
