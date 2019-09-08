@@ -12,7 +12,6 @@ import com.intellij.spellchecker.tokenizer.TokenConsumer
 import com.intellij.util.Consumer
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 import com.intellij.vcs.commit.message.CommitMessageSpellCheckingInspection
-import com.twelvemonkeys.util.LinkedSet
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
@@ -24,6 +23,7 @@ import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
 import tanvd.grazi.utils.*
+import tanvd.kex.LinkedSet
 
 object GraziSpellchecker : GraziStateLifecycle {
     private const val MAX_SUGGESTIONS_COUNT = 5
