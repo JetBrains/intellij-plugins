@@ -220,7 +220,7 @@
     <applicationService serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
     <codeCompletionConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
-    <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
+    <backgroundPostStartupActivity implementation="com.jetbrains.lang.dart.DartBackgroundStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
