@@ -130,8 +130,8 @@ public class RubyMotionTypeProvider extends AbstractRubyTypeProvider {
       classSymbol = ((ClassModuleSymbol)superClassRef.get()).getSuperClassSymbol(expression);
     }
     if (classSymbol instanceof MotionClassSymbol) {
-      final List<Symbol> candidates = Symbol
-        .getSymbolsByNameAndTypes(classSymbol, rubyName, symbol.getType().asSet(), expression);
+      final List<Symbol> candidates =
+        Symbol.getSymbolsByFilter(classSymbol, Symbol.Filter.byName(rubyName).andType(symbol.getType()), expression);
       for (Symbol candidate : candidates) {
         final Function function = ((FunctionSymbol)candidate).getFunction();
         if (objCName.equals(function.getName())) {
