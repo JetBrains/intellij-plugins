@@ -412,11 +412,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
       builder.addComponent(myNotAvailable);
       builder.addComponent(myInjectCheckBox, UIUtil.DEFAULT_VGAP * 3);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 4);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP * 4).setHorizontalGap(UIUtil.DEFAULT_HGAP * 4);
       builder.addComponent(myInjectHint);
-      builder.setIndent(UIUtil.DEFAULT_HGAP);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP).setHorizontalGap(UIUtil.DEFAULT_HGAP);
       builder.addComponent(myInstallCheckBox);
-      builder.setIndent(UIUtil.DEFAULT_HGAP * 5);
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP * 5).setHorizontalGap(UIUtil.DEFAULT_HGAP * 5);
       builder.addComponent(myInstallHint);
 
       JPanel controls = builder.getPanel();
