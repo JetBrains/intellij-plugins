@@ -77,10 +77,6 @@ public class FlexMxmlTypedHandler extends JavaScriptTypedHandlerBase {
       PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       PsiFile injectedPsi = InjectedLanguageUtil.findInjectedPsiNoCommit(file, offset);
       if (injectedPsi == null) {
-        offset--;
-        injectedPsi = InjectedLanguageUtil.findInjectedPsiNoCommit(file, offset);
-      }
-      if (injectedPsi == null) {
         return null;
       }
       editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(editor, file, offset);
