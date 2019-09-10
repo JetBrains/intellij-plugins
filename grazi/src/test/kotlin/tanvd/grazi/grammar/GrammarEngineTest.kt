@@ -73,28 +73,4 @@ class GrammarEngineTest : GraziTestBase(true) {
         fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text)
         fixes[2].assertTypoIs(Typo.Category.GRAMMAR, IntRange(23, 30), listOf("This is"), text)
     }
-
-    @Test
-    fun `test performance with 10 sonnets`() {
-        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_10.txt"), CharsetToolkit.UTF8_CHARSET)
-        var fixes: List<Typo> = emptyList()
-        val totalTime = measureTimeMillis {
-            fixes = GrammarEngine.getTypos(text).toList()
-        }
-        fixes.forEach { it.verify(text) }
-        assert(fixes.size > 30)
-        assert(totalTime < 10_000)
-    }
-
-    @Test
-    fun `test performance with 50 sonnets`() {
-        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_50.txt"), CharsetToolkit.UTF8_CHARSET)
-        var fixes: List<Typo> = emptyList()
-        val totalTime = measureTimeMillis {
-            fixes = GrammarEngine.getTypos(text).toList()
-        }
-        fixes.forEach { it.verify(text) }
-        assert(fixes.size > 200)
-        assert(totalTime < 20_000)
-    }
 }

@@ -91,30 +91,4 @@ class GrammarCheckerTests : GraziTestBase(true) {
         fixes[1].assertTypoIs(Typo.Category.TYPOS, IntRange(20, 28), listOf("to the"), text[0])
         fixes[2].assertTypoIs(Typo.Category.GRAMMAR, IntRange(4, 11), listOf("This is"), text[2])
     }
-
-    @Test
-    fun `test performance for 10 sonnets`() {
-        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_10.txt"), CharsetToolkit.UTF8_CHARSET)
-        val tokens = plain(text.split("\n").map { it + "\n" })
-        var fixes: List<Typo> = emptyList()
-        val totalTime = measureTimeMillis {
-            fixes = GrammarChecker.default.check(tokens).toList()
-        }
-        fixes.forEach { it.verify(text) }
-        assert(fixes.size < 50)
-        assert(totalTime < 10_000)
-    }
-
-    @Test
-    fun `test performance for 50 sonnets`() {
-        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_50.txt"), CharsetToolkit.UTF8_CHARSET)
-        val tokens = plain(text.split("\n").map { it + "\n" })
-        var fixes: List<Typo> = emptyList()
-        val totalTime = measureTimeMillis {
-            fixes = GrammarChecker.default.check(tokens).toList()
-        }
-        fixes.forEach { it.verify(text) }
-        assert(fixes.size < 500)
-        assert(totalTime < 100_000)
-    }
 }
