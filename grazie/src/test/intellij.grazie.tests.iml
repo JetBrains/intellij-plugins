@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.grazi" />
+    <orderEntry type="module" module-name="intellij.grazie" />
     <orderEntry type="library" scope="RUNTIME" name="KotlinPlugin" level="project" />
     <orderEntry type="library" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
