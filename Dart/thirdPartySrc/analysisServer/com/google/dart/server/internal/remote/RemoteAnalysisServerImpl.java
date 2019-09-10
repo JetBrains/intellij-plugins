@@ -93,6 +93,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private final AtomicLong lastRequestTime = new AtomicLong(0);
 
   /**
+   * The following is a subset of the list provided in the `allFixes` list,
+   * dart-sdk-dir/analysis_server/lib/src/edit/fix/dartfix_info.dart
+   */
+  public static final String DART_FIX_INFO_NON_NULLABLE = "non-nullable";
+
+  /**
    * The listener that will receive notification when new analysis results become available.
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
