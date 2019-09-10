@@ -1,5 +1,5 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="Markdown" implementationClass="tanvd.grazi.ide.language.markdown.MarkdownSupport"/>
+    <extensions defaultExtensionNs="com.intellij.grazie">
+        <languageSupport language="Markdown" implementationClass="com.intellij.grazie.ide.language.markdown.MarkdownSupport"/>
     </extensions>
 </idea-plugin>

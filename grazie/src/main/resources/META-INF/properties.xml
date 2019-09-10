@@ -1,5 +1,5 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="Properties" implementationClass="tanvd.grazi.ide.language.properties.PropertiesSupport"/>
+    <extensions defaultExtensionNs="com.intellij.grazie">
+        <languageSupport language="Properties" implementationClass="com.intellij.grazie.ide.language.properties.PropertiesSupport"/>
     </extensions>
 </idea-plugin>

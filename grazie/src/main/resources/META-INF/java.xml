@@ -1,7 +1,7 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="JAVA" implementationClass="tanvd.grazi.ide.language.java.JDocSupport"/>
-        <languageSupport language="JAVA" implementationClass="tanvd.grazi.ide.language.java.JStringSupport"/>
+    <extensions defaultExtensionNs="com.intellij.grazie">
+        <languageSupport language="JAVA" implementationClass="com.intellij.grazie.ide.language.java.JDocSupport"/>
+        <languageSupport language="JAVA" implementationClass="com.intellij.grazie.ide.language.java.JStringSupport"/>
     </extensions>
 </idea-plugin>
 

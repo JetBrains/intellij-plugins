@@ -1,0 +1,31 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.grazie
+
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.CommonBundle
+import org.jetbrains.annotations.PropertyKey
+import java.util.*
+
+object GrazieBundle {
+  private val json = ObjectMapper()
+  private val setTypeRef = object : TypeReference<Set<String>>() {}
+
+  const val bundleName = "messages.GrazieBundle"
+
+  private val bundle by lazy { ResourceBundle.getBundle(bundleName) }
+
+  private val langConfigs by lazy {
+    Properties().also {
+      it.load(GrazieBundle::class.java.classLoader.getResourceAsStream("data/lang_config.properties"))
+    }
+  }
+
+  fun message(@PropertyKey(resourceBundle = bundleName) key: String, vararg params: String): String {
+    return CommonBundle.message(bundle, key, *params)
+  }
+
+  fun langConfig(key: String): Set<String> {
+    return json.readValue(langConfigs.getProperty(key)!!, setTypeRef)
+  }
+}

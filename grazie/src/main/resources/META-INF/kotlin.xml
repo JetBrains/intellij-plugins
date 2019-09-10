@@ -1,7 +1,0 @@
-<idea-plugin>
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="kotlin" implementationClass="tanvd.grazi.ide.language.kotlin.KDocSupport"/>
-        <languageSupport language="kotlin" implementationClass="tanvd.grazi.ide.language.kotlin.KStringSupport"/>
-    </extensions>
-</idea-plugin>
-

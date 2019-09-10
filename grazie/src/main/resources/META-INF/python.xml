@@ -1,7 +1,7 @@
 <idea-plugin>
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="Python" implementationClass="tanvd.grazi.ide.language.python.PStringSupport"/>
-        <languageSupport language="Python" implementationClass="tanvd.grazi.ide.language.python.PDocSupport"/>
+    <extensions defaultExtensionNs="com.intellij.grazie">
+        <languageSupport language="Python" implementationClass="com.intellij.grazie.ide.language.python.PStringSupport"/>
+        <languageSupport language="Python" implementationClass="com.intellij.grazie.ide.language.python.PDocSupport"/>
     </extensions>
 </idea-plugin>
 

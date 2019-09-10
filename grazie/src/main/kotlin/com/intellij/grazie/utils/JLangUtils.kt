@@ -1,0 +1,66 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.grazie.utils
+
+import kotlinx.html.FlowOrPhrasingContent
+import kotlinx.html.strong
+import org.languagetool.language.Language
+import org.languagetool.language.Languages
+import org.languagetool.rules.ExampleSentence
+import org.languagetool.rules.IncorrectExample
+import org.languagetool.rules.Rule
+import org.languagetool.rules.RuleMatch
+import com.intellij.grazie.GraziePlugin
+import com.intellij.grazie.grammar.Typo
+import com.intellij.grazie.language.Lang
+
+val Typo.isSpellingTypo: Boolean
+  get() = info.rule.isDictionaryBasedSpellingRule
+
+val RuleMatch.typoCategory: Typo.Category
+  get() = Typo.Category[rule.category.id.toString()]
+
+val ExampleSentence.text: CharSequence
+  get() = example
+
+fun Rule.toDescriptionSanitized() = this.description.replace("**", "")
+
+private fun FlowOrPhrasingContent.toHtml(example: IncorrectExample, mistakeHandler: FlowOrPhrasingContent.(String) -> Unit) {
+  Regex("(.*?)<marker>(.*?)</marker>|(.*)").findAll(example.example).forEach {
+    val (prefix, mistake, suffix) = it.destructured
+
+    +prefix
+    mistakeHandler(mistake)
+    +suffix
+  }
+}
+
+fun FlowOrPhrasingContent.toIncorrectHtml(example: IncorrectExample) {
+  toHtml(example) { mistake ->
+    if (mistake.isNotEmpty()) {
+      strong {
+        +mistake.trim()
+      }
+    }
+  }
+}
+
+fun FlowOrPhrasingContent.toCorrectHtml(example: IncorrectExample) {
+  toHtml(example) { mistake ->
+    if (mistake.isNotEmpty() && example.corrections.isNotEmpty()) {
+      strong {
+        +example.corrections.first().trim()
+      }
+    }
+  }
+}
+
+object LangToolInstrumentation {
+  fun registerLanguage(lang: Lang) {
+    lang.remote.langsClasses.forEach { className ->
+      val qualifiedName = "org.languagetool.language.$className"
+      if (Languages.get().all { it::class.java.canonicalName != qualifiedName }) {
+        Languages.add(GraziePlugin.loadClass(qualifiedName)!!.newInstance() as Language)
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>tanvd.grazi</id>
-    <name>Grazi</name>
-    <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">JetBrains</vendor>
+    <name>Grazie</name>
+    <vendor>JetBrains</vendor>
 
     <description><![CDATA[
     <p>Provides intelligent spelling and grammar checks for text that you write in the IDE.</p>
@@ -14,101 +14,52 @@
     </ul>
 
     <p>English is enabled by default when you install the plugin. To enable other languages, open Settings/Preferences
-       and select <strong>Tools</strong> > <strong>Grazi</strong>.</p>
+       and select <strong>Tools</strong> > <strong>Grazie</strong>.</p>
 
     <p><strong>NOTE:</strong> All verification is performed locally, inside your IDE.</p>
     ]]></description>
 
-    <change-notes><![CDATA[
-    <h4>2019.2-5</h4>
-    <ul>
-        <li>Reduce plugin size</li>
-        <li>Major performance improvements</li>
-        <li>Bugfixes for language detection</li>
-    </ul>
-    <h4>2019.2-4</h4>
-    <ul>
-        <li>Fixes for UI</li>
-        <li>Bug fixes for Markdown</li>
-        <li>Performance improvement of XML</li>
-    </ul>
-    <h4>2019.2-3</h4>
-    <ul>
-        <li>Huge performance improvements for all languages</li>
-        <li>Fully reworked UI</li>
-        <li>Configurations of enabled rules in UI</li>
-        <li>Support of Rust, JSON, JavaScript, Latex, Properties</li>
-    </ul>
-    <h4>2019.2-2</h4>
-    <ul>
-        <li>Update since-until build</li>
-    </ul>
-    <h4>2019.2-1</h4>
-    <ul>
-        <li>Fixes for 2019.2 EAP</li>
-    </ul>
-    <h4>2019.1-2</h4>
-    <ul>
-        <li>Support of commit messages proofreading</li>
-        <li>Extended support of formatted strings and inline code fragments</li>
-        <li>A lot of bug fixes </li>
-    </ul>
-    <h4>2019.1-1</h4>
-    <ul>
-        <li>Spellcheck by Grazi. 25 languages supported. (Enable it in settings)</li>
-        <li>Native language based inspections</li>
-        <li>Extended support of Kotlin and Java</li>
-        <li>Support of Python and XML</li>
-        <li>A lot of bug fixes</li>
-    </ul>
-    ]]>
-    </change-notes>
 
     <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="javascript.xml">JavaScript</depends>
     <depends optional="true" config-file="json.xml">com.intellij.modules.json</depends>
-    <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="properties.xml">com.intellij.properties</depends>
     <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
-    <depends optional="true" config-file="rust.xml">org.rust.lang</depends>
-    <depends optional="true" config-file="latex.xml">nl.rubensten.texifyidea</depends>
     <depends optional="true" config-file="xml.xml">com.intellij.modules.xml</depends>
 
-    <idea-version since-build="192.3645"/>
-
     <extensions defaultExtensionNs="com.intellij">
-        <applicationInitializedListener implementation="tanvd.grazi.ide.init.GraziAppInit"/>
+        <applicationInitializedListener implementation="com.intellij.grazie.ide.init.GrazieAppInit"/>
 
-        <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
+        <applicationService serviceImplementation="com.intellij.grazie.GrazieConfig"/>
 
-        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.notification.GraziNotificationComponent"/>
-        <backgroundPostStartupActivity implementation="tanvd.grazi.ide.init.GraziProjectInit"/>
+        <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.notification.GrazieNotificationComponent"/>
+        <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.init.GrazieProjectInit"/>
 
-        <localInspection groupName="Grazi" enabledByDefault="true" displayName="Grazi proofreading inspection"
-                         shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
+        <localInspection groupName="Grazie" enabledByDefault="true" displayName="Grazie proofreading inspection"
+                         shortName="GraziInspection" implementationClass="com.intellij.grazie.ide.GrazieInspection" level="TYPO"/>
 
-        <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
-                                 id="reference.settingsdialog.project.grazi"
-                                 key="grazi.name" bundle="messages.GraziBundle"/>
+        <applicationConfigurable groupId="tools" instance="com.intellij.grazie.ide.ui.GrazieConfigurable"
+                                 id="reference.settingsdialog.project.grazie"
+                                 key="grazie.name" bundle="messages.GrazieBundle"/>
 
-        <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckRenameSuggestions" order="first"/>
+        <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="com.intellij.grazie.spellcheck.SpellCheckRenameSuggestions" order="first"/>
 
-        <search.optionContributor implementation="tanvd.grazi.ide.ui.GraziSearchableOptionContributor"/>
+        <search.optionContributor implementation="com.intellij.grazie.ide.ui.GrazieSearchableOptionContributor"/>
 
-        <statistics.applicationUsagesCollector implementation="tanvd.grazi.ide.fus.GraziFUStateCollector"/>
-        <statistics.validation.customWhiteListRule implementation="tanvd.grazi.ide.fus.GraziWhiteListRule"/>
+        <statistics.applicationUsagesCollector implementation="com.intellij.grazie.ide.fus.GrazieFUStateCollector"/>
+        <statistics.validation.customWhiteListRule implementation="com.intellij.grazie.ide.fus.GrazieWhiteListRule"/>
         <statistics.counterUsagesCollector groupId="grazi.count" version="1"/>
     </extensions>
 
     <extensionPoints>
         <extensionPoint name="languageSupport" beanClass="com.intellij.lang.LanguageExtensionPoint">
-            <with attribute="implementationClass" implements="tanvd.grazi.ide.language.LanguageSupport"/>
+            <with attribute="implementationClass" implements="com.intellij.grazie.ide.language.LanguageSupport"/>
         </extensionPoint>
     </extensionPoints>
 
-    <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport language="TEXT" implementationClass="tanvd.grazi.ide.language.plain.PlainTextSupport"/>
-        <languageSupport language="" implementationClass="tanvd.grazi.ide.language.comment.CommentsSupport"/>
+    <extensions defaultExtensionNs="com.intellij.grazie">
+        <languageSupport language="TEXT" implementationClass="com.intellij.grazie.ide.language.plain.PlainTextSupport"/>
+        <languageSupport language="" implementationClass="com.intellij.grazie.ide.language.comment.CommentsSupport"/>
     </extensions>
 </idea-plugin>
