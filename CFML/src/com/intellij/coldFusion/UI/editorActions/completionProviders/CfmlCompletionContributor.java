@@ -15,6 +15,7 @@ import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.StdLanguages;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.FormatterUtil;
@@ -65,7 +66,7 @@ public class CfmlCompletionContributor extends CompletionContributor {
 
     // tag names completion in template data, in open and close constructions in cfml data
     CfmlTagNamesCompletionProvider tagNamesCompletionProvider = new CfmlTagNamesCompletionProvider();
-    extend(BASIC, psiElement().afterLeaf(psiElement().withText("<")).withLanguage(StdLanguages.XML),
+    extend(BASIC, psiElement().afterLeaf(psiElement().withText("<")).withLanguage(XMLLanguage.INSTANCE),
            tagNamesCompletionProvider);
     extend(BASIC, psiElement().afterLeaf(psiElement().withText("<")).withLanguage(CfmlLanguage.INSTANCE),
            tagNamesCompletionProvider);
