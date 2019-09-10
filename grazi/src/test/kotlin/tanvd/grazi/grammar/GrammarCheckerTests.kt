@@ -1,9 +1,11 @@
 package tanvd.grazi.grammar
 
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.CharsetToolkit
 import org.junit.Assert
 import org.junit.Test
 import tanvd.grazi.GraziTestBase
-import tanvd.kex.Resources
+import java.io.File
 import kotlin.system.measureTimeMillis
 
 
@@ -92,7 +94,7 @@ class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test performance for 10 sonnets`() {
-        val text = Resources.getText("grammar/sonnet_10.txt")
+        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_10.txt"), CharsetToolkit.UTF8_CHARSET)
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
@@ -105,7 +107,7 @@ class GrammarCheckerTests : GraziTestBase(true) {
 
     @Test
     fun `test performance for 50 sonnets`() {
-        val text = Resources.getText("grammar/sonnet_50.txt")
+        val text = FileUtil.loadFile(File(testDataPath, "grammar/sonnet_50.txt"), CharsetToolkit.UTF8_CHARSET)
         val tokens = plain(text.split("\n").map { it + "\n" })
         var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
