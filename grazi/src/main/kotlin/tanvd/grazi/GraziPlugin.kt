@@ -9,25 +9,26 @@ import tanvd.kex.tryRun
 import java.io.File
 
 object GraziPlugin {
-    const val id: String = "tanvd.grazi"
+  const val id: String = "tanvd.grazi"
 
-    private val descriptor: IdeaPluginDescriptor
-        get() = PluginManager.getPlugin(PluginId.getId(id))!!
+  private val descriptor: IdeaPluginDescriptor
+    get() = PluginManager.getPlugin(PluginId.getId(id))!!
 
-    val version: String
-        get() = descriptor.version
+  val version: String
+    get() = descriptor.version
 
-    val classLoader: ClassLoader
-        get() = if (ApplicationManager.getApplication().isUnitTestMode) ClassLoader.getSystemClassLoader() else descriptor.pluginClassLoader
+  val classLoader: ClassLoader
+    get() = if (ApplicationManager.getApplication().isUnitTestMode) ClassLoader.getSystemClassLoader() else descriptor.pluginClassLoader
 
-    val installationFolder: File
-        get() = descriptor.path
+  val installationFolder: File
+    get() = descriptor.path
 
-    fun loadClass(className: String) = tryRun {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            Class.forName(className)
-        } else {
-            Class.forName(className, true, classLoader)
-        }
+  fun loadClass(className: String) = tryRun {
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      Class.forName(className)
     }
+    else {
+      Class.forName(className, true, classLoader)
+    }
+  }
 }

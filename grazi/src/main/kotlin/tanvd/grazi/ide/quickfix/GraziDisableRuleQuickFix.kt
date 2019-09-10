@@ -13,18 +13,18 @@ import tanvd.grazi.ide.ui.components.dsl.msg
 import javax.swing.Icon
 
 class GraziDisableRuleQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
-    override fun getFamilyName(): String = msg("grazi.quickfix.disablerule.family")
+  override fun getFamilyName(): String = msg("grazi.quickfix.disablerule.family")
 
-    override fun getName() = msg("grazi.quickfix.disablerule.text", typo.info.rule.description)
+  override fun getName() = msg("grazi.quickfix.disablerule.text", typo.info.rule.description)
 
-    override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
+  override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
 
-    override fun getPriority() = PriorityAction.Priority.LOW
+  override fun getPriority() = PriorityAction.Priority.LOW
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        GraziConfig.update {
-            it.update(userEnabledRules = it.userEnabledRules - typo.info.rule.id, userDisabledRules = it.userDisabledRules + typo.info.rule.id)
-        }
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    GraziConfig.update {
+      it.update(userEnabledRules = it.userEnabledRules - typo.info.rule.id, userDisabledRules = it.userDisabledRules + typo.info.rule.id)
     }
+  }
 }
 

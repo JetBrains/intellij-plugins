@@ -7,7 +7,7 @@ import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 class CommentsSupport : LanguageSupport() {
-    override fun isRelevant(element: PsiElement) = element is PsiCommentImpl
+  override fun isRelevant(element: PsiElement) = element is PsiCommentImpl
 
-    override fun check(element: PsiElement) = GrammarChecker.default.check(element)
+  override fun check(element: PsiElement) = GrammarChecker.default.check(element)
 }

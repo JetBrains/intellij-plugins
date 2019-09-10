@@ -13,17 +13,17 @@ import tanvd.grazi.ide.ui.components.dsl.msg
 import javax.swing.Icon
 
 class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
-    override fun getFamilyName() = msg("grazi.quickfix.addword.family")
+  override fun getFamilyName() = msg("grazi.quickfix.addword.family")
 
-    override fun getName() = msg("grazi.quickfix.addword.text", typo.word)
+  override fun getName() = msg("grazi.quickfix.addword.text", typo.word)
 
-    override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Dictionary
+  override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Dictionary
 
-    override fun getPriority() = PriorityAction.Priority.NORMAL
+  override fun getPriority() = PriorityAction.Priority.NORMAL
 
-    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        GraziConfig.update {
-            it.update(userWords = it.userWords + typo.word.toLowerCase())
-        }
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    GraziConfig.update {
+      it.update(userWords = it.userWords + typo.word.toLowerCase())
     }
+  }
 }

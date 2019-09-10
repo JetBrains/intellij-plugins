@@ -2,8 +2,6 @@
 
 [![JetBrains Plugin](https://img.shields.io/jetbrains/plugin/v/12175-grazi.svg?style=flat-square&label=jetbrains%20plugin)](https://plugins.jetbrains.com/plugin/12175-grazi)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/12175-graz.svg?style=flat-square)](https://plugins.jetbrains.com/plugin/12175-grazi)
-[![CircleCI](https://img.shields.io/circleci/build/github/TanVD/Grazi.svg?style=flat-square)](https://circleci.com/gh/TanVD/Grazi)
-[![Gitter](https://img.shields.io/gitter/room/grazi-intellij-plugin/community.svg?style=flat-square)](https://gitter.im/grazi-intellij-plugin/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
 
 Grazi is an IntelliJ IDEA plugin providing local spell and grammar checking for Markdown, JavaDoc, Plain texts, and others.
@@ -13,7 +11,7 @@ under the hood, so it supports over 15 languages and provides the best performan
 accuracy among free (and even non-free) alternatives.
 
 <p align="center">
-  <img src="https://plugins.jetbrains.com/files/12175/screenshot_20039.png" width="75%" />
+  <img src="https://plugins.jetbrains.com/files/12175/screenshot_20233.png" width="75%" />
 </p>
 
 ## What's inside

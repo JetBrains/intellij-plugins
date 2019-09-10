@@ -9,11 +9,11 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterNotToSet
 
 class PropertiesSupport : LanguageSupport() {
-    companion object {
-        private val ignoredCategories = listOf(Typo.Category.CASING)
-    }
+  companion object {
+    private val ignoredCategories = listOf(Typo.Category.CASING)
+  }
 
-    override fun isRelevant(element: PsiElement) = element is PropertyValueImpl
+  override fun isRelevant(element: PsiElement) = element is PropertyValueImpl
 
-    override fun check(element: PsiElement) = GrammarChecker.default.check(element).filterNotToSet { it.info.category in ignoredCategories }
+  override fun check(element: PsiElement) = GrammarChecker.default.check(element).filterNotToSet { it.info.category in ignoredCategories }
 }

@@ -15,70 +15,70 @@ import java.awt.Component
 import javax.swing.tree.DefaultMutableTreeNode
 
 class GraziRulesPanel(onSelectionChanged: (meta: Any) -> Unit) : Disposable {
-    private val tree: GraziRulesTree = GraziRulesTree(GraziCheckboxTreeCellRenderer { filter?.filter ?: "" })
-    private val filter: GraziFilterComponent = GraziFilterComponent(tree, "GRAZI_RULES_FILTER", "GRAZI_RULES_SEARCH")
+  private val tree: GraziRulesTree = GraziRulesTree(GraziCheckboxTreeCellRenderer { filter?.filter ?: "" })
+  private val filter: GraziFilterComponent = GraziFilterComponent(tree, "GRAZI_RULES_FILTER", "GRAZI_RULES_SEARCH")
 
-    init {
-        tree.selectionModel.addTreeSelectionListener { event ->
-            val meta = (event?.path?.lastPathComponent as DefaultMutableTreeNode).userObject
-            if (meta != null) onSelectionChanged(meta)
+  init {
+    tree.selectionModel.addTreeSelectionListener { event ->
+      val meta = (event?.path?.lastPathComponent as DefaultMutableTreeNode).userObject
+      if (meta != null) onSelectionChanged(meta)
+    }
+  }
+
+  val panel by lazy {
+    panel {
+      panel(constraint = BorderLayout.NORTH) {
+        border = JBUI.Borders.emptyBottom(2)
+
+        actionGroup {
+          val actionManager = CommonActionsManager.getInstance()
+          val treeExpander = DefaultTreeExpander(tree)
+          add(actionManager.createExpandAllAction(treeExpander, tree))
+          add(actionManager.createCollapseAllAction(treeExpander, tree))
+
+          add(ActionManager.getInstance().createActionToolbar("GraziRulesPanel", this, true).component, BorderLayout.WEST)
         }
+
+        add(filter as Component, BorderLayout.CENTER)
+      }
+
+      panel(constraint = BorderLayout.CENTER) {
+        add(ScrollPaneFactory.createScrollPane(tree))
+      }
     }
+  }
 
-    val panel by lazy {
-        panel {
-            panel(constraint = BorderLayout.NORTH) {
-                border = JBUI.Borders.emptyBottom(2)
+  val isModified: Boolean
+    get() = tree.isModified
 
-                actionGroup {
-                    val actionManager = CommonActionsManager.getInstance()
-                    val treeExpander = DefaultTreeExpander(tree)
-                    add(actionManager.createExpandAllAction(treeExpander, tree))
-                    add(actionManager.createCollapseAllAction(treeExpander, tree))
+  fun state() = tree.state()
 
-                    add(ActionManager.getInstance().createActionToolbar("GraziRulesPanel", this, true).component, BorderLayout.WEST)
-                }
+  fun addLang(lang: Lang) {
+    tree.addLang(lang)
+    update()
+  }
 
-                add(filter as Component, BorderLayout.CENTER)
-            }
+  fun removeLang(lang: Lang) {
+    tree.removeLang(lang)
+    update()
+  }
 
-            panel(constraint = BorderLayout.CENTER) {
-                add(ScrollPaneFactory.createScrollPane(tree))
-            }
-        }
-    }
+  fun update() {
+    filter.filter()
+    if (tree.isSelectionEmpty) tree.setSelectionRow(0)
+  }
 
-    val isModified: Boolean
-        get() = tree.isModified
+  fun reset() {
+    tree.clearState()
+    update()
+  }
 
-    fun state() = tree.state()
+  fun filter(str: String) {
+    filter.filter = str
+    filter.filter()
+  }
 
-    fun addLang(lang: Lang) {
-        tree.addLang(lang)
-        update()
-    }
-
-    fun removeLang(lang: Lang) {
-        tree.removeLang(lang)
-        update()
-    }
-
-    fun update() {
-        filter.filter()
-        if (tree.isSelectionEmpty) tree.setSelectionRow(0)
-    }
-
-    fun reset() {
-        tree.clearState()
-        update()
-    }
-
-    fun filter(str: String) {
-        filter.filter = str
-        filter.filter()
-    }
-
-    override fun dispose() {
-        filter.dispose()
-    }
+  override fun dispose() {
+    filter.dispose()
+  }
 }

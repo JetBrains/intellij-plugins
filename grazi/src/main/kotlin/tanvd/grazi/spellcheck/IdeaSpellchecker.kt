@@ -10,16 +10,16 @@ import com.intellij.spellchecker.tokenizer.LanguageSpellchecking
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 
 object IdeaSpellchecker {
-    fun getSpellcheckingStrategy(element: PsiElement): SpellcheckingStrategy? {
-        for (strategy in LanguageSpellchecking.INSTANCE.allForLanguage(element.language)) {
-            if (strategy.isMyContext(element)) return strategy
-        }
-        return null
+  fun getSpellcheckingStrategy(element: PsiElement): SpellcheckingStrategy? {
+    for (strategy in LanguageSpellchecking.INSTANCE.allForLanguage(element.language)) {
+      if (strategy.isMyContext(element)) return strategy
     }
+    return null
+  }
 
-    fun hasProblem(word: String, project: Project, language: Language): Boolean {
-        val spellchecker = SpellCheckerManager.getInstance(project)
-        val keyworder = LanguageNamesValidation.INSTANCE.forLanguage(language)
-        return !keyworder.isKeyword(word, project) && spellchecker.hasProblem(word)
-    }
+  fun hasProblem(word: String, project: Project, language: Language): Boolean {
+    val spellchecker = SpellCheckerManager.getInstance(project)
+    val keyworder = LanguageNamesValidation.INSTANCE.forLanguage(language)
+    return !keyworder.isKeyword(word, project) && spellchecker.hasProblem(word)
+  }
 }

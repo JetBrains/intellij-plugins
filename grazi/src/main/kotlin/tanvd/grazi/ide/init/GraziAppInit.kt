@@ -12,11 +12,11 @@ import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
 
 class GraziAppInit : ApplicationInitializedListener {
-    override fun componentsInitialized() {
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangDetector)
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziCommitInspection)
-        GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
-    }
+  override fun componentsInitialized() {
+    GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangTool)
+    GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), LangDetector)
+    GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziSpellchecker)
+    GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziCommitInspection)
+    GraziStateLifecycle.topic.subscribe(ApplicationManager.getApplication(), GraziInspection)
+  }
 }

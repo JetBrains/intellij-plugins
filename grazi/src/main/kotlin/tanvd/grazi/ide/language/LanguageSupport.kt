@@ -8,20 +8,20 @@ import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import tanvd.grazi.grammar.Typo
 
 abstract class LanguageSupport(private val disabledRules: Set<String> = emptySet()) : LanguageExtensionPoint<LanguageSupport>() {
-    companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")
+  companion object : LanguageExtension<LanguageSupport>("tanvd.grazi.languageSupport")
 
-    abstract fun isRelevant(element: PsiElement): Boolean
+  abstract fun isRelevant(element: PsiElement): Boolean
 
-    fun getTypos(element: PsiElement): Set<Typo> {
-        require(isRelevant(element)) { "Got not relevant element in LanguageSupport" }
-        return check(element)
-            .asSequence()
-            .filterNot { it.info.rule.id in disabledRules }
-            .filter {
-                it.location.element?.let { gotElement -> isAncestor(element, gotElement, false) } ?: false
-            }.toSet()
-    }
+  fun getTypos(element: PsiElement): Set<Typo> {
+    require(isRelevant(element)) { "Got not relevant element in LanguageSupport" }
+    return check(element)
+      .asSequence()
+      .filterNot { it.info.rule.id in disabledRules }
+      .filter {
+        it.location.element?.let { gotElement -> isAncestor(element, gotElement, false) } ?: false
+      }.toSet()
+  }
 
-    /** Don't forget to use ProgressManager.checkCancelled() */
-    protected abstract fun check(element: PsiElement): Set<Typo>
+  /** Don't forget to use ProgressManager.checkCancelled() */
+  protected abstract fun check(element: PsiElement): Set<Typo>
 }

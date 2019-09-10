@@ -16,40 +16,40 @@ import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.isInjectedFragment
 
 class GraziInspection : LocalInspectionTool() {
-    companion object : GraziStateLifecycle {
-        override fun init(state: GraziConfig.State, project: Project) {
-            ProjectManager.getInstance().openProjects.forEach {
-                DaemonCodeAnalyzer.getInstance(it).restart()
-            }
-        }
-
-        override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
-            if (prevState != newState) init(newState, project)
-        }
+  companion object : GraziStateLifecycle {
+    override fun init(state: GraziConfig.State, project: Project) {
+      ProjectManager.getInstance().openProjects.forEach {
+        DaemonCodeAnalyzer.getInstance(it).restart()
+      }
     }
 
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
-                if (element == null || element.isInjectedFragment()) return
-
-                val typos = HashSet<Typo>()
-                for (ext in LanguageSupport.allForLanguageOrAny(element.language).filter { it.isRelevant(element) }) {
-                    typos.addAll(ext.getTypos(element))
-                }
-
-                if (GraziConfig.get().enabledSpellcheck) {
-                    typos.addAll(GraziSpellchecker.getTypos(element))
-                }
-
-                typos.map { GraziProblemDescriptor(it, isOnTheFly) }.forEach {
-                    holder.registerProblem(it)
-                }
-
-                super.visitElement(element)
-            }
-        }
+    override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
+      if (prevState != newState) init(newState, project)
     }
+  }
 
-    override fun getDisplayName() = "Grazi proofreading inspection"
+  override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+    return object : PsiElementVisitor() {
+      override fun visitElement(element: PsiElement?) {
+        if (element == null || element.isInjectedFragment()) return
+
+        val typos = HashSet<Typo>()
+        for (ext in LanguageSupport.allForLanguageOrAny(element.language).filter { it.isRelevant(element) }) {
+          typos.addAll(ext.getTypos(element))
+        }
+
+        if (GraziConfig.get().enabledSpellcheck) {
+          typos.addAll(GraziSpellchecker.getTypos(element))
+        }
+
+        typos.map { GraziProblemDescriptor(it, isOnTheFly) }.forEach {
+          holder.registerProblem(it)
+        }
+
+        super.visitElement(element)
+      }
+    }
+  }
+
+  override fun getDisplayName() = "Grazi proofreading inspection"
 }

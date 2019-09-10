@@ -10,7 +10,8 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.filterNotToSet
 
 class XmlSupport : LanguageSupport() {
-    override fun isRelevant(element: PsiElement) = element is XmlText || (element is XmlToken && element.tokenType == XML_ATTRIBUTE_VALUE_TOKEN)
+  override fun isRelevant(element: PsiElement) = element is XmlText || (element is XmlToken && element.tokenType == XML_ATTRIBUTE_VALUE_TOKEN)
 
-    override fun check(element: PsiElement) = GrammarChecker.default.check(element).filterNotToSet { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }
+  override fun check(element: PsiElement) = GrammarChecker.default.check(
+    element).filterNotToSet { typo -> typo.location.isAtStart() || typo.location.isAtEnd() }
 }

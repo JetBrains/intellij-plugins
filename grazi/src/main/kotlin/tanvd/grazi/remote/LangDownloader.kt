@@ -13,23 +13,24 @@ import tanvd.grazi.utils.addUrls
 import java.nio.file.Paths
 
 object LangDownloader {
-    private val downloader by lazy { DownloadableFileService.getInstance() }
+  private val downloader by lazy { DownloadableFileService.getInstance() }
 
-    fun download(lang: Lang, project: Project?): Boolean {
-        // check if language lib already loaded
-        if (GraziRemote.isAvailableLocally(lang)) return true
+  fun download(lang: Lang, project: Project?): Boolean {
+    // check if language lib already loaded
+    if (GraziRemote.isAvailableLocally(lang)) return true
 
-        val result = downloader.createDownloader(listOf(downloader.createFileDescription(lang.remote.url, lang.remote.file)), msg("grazi.ui.settings.language.download.name", lang.displayName))
-            .downloadFilesWithProgress(GraziPlugin.installationFolder.absolutePath + "/lib", project, null)
+    val result = downloader.createDownloader(listOf(downloader.createFileDescription(lang.remote.url, lang.remote.file)),
+                                             msg("grazi.ui.settings.language.download.name", lang.displayName))
+      .downloadFilesWithProgress(GraziPlugin.installationFolder.absolutePath + "/lib", project, null)
 
-        // null if canceled or failed, zero result if nothing found
-        if (result != null && result.isNotEmpty()) {
-            (GraziPlugin.classLoader as UrlClassLoader).addUrls(result.map { Paths.get(it.presentableUrl).toUri().toURL() }.toList())
-            LangToolInstrumentation.registerLanguage(lang)
-            GraziConfig.update { state -> state.update() }
-            return true
-        }
-
-        return false
+    // null if canceled or failed, zero result if nothing found
+    if (result != null && result.isNotEmpty()) {
+      (GraziPlugin.classLoader as UrlClassLoader).addUrls(result.map { Paths.get(it.presentableUrl).toUri().toURL() }.toList())
+      LangToolInstrumentation.registerLanguage(lang)
+      GraziConfig.update { state -> state.update() }
+      return true
     }
+
+    return false
+  }
 }

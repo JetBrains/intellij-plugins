@@ -9,14 +9,15 @@ import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 class PDocSupport : LanguageSupport() {
-    override fun isRelevant(element: PsiElement) = element is PyStringLiteralExpression && element.isDocString
+  override fun isRelevant(element: PsiElement) = element is PyStringLiteralExpression && element.isDocString
 
-    override fun check(element: PsiElement) = GrammarChecker.default.check((element as PyStringLiteralExpression).stringElements,
-        tokenRules = GrammarChecker.TokenRules(ignoreByIndex = linkedSetOf({ token, index ->
-            when (token) {
-                is PyFormattedStringElement -> token.literalPartRanges.all { index !in it }
-                is PyPlainStringElement -> false
-                else -> false
-            }
-        })))
+  override fun check(element: PsiElement) = GrammarChecker.default.check((element as PyStringLiteralExpression).stringElements,
+                                                                         tokenRules = GrammarChecker.TokenRules(
+                                                                           ignoreByIndex = linkedSetOf({ token, index ->
+                                                                                                         when (token) {
+                                                                                                           is PyFormattedStringElement -> token.literalPartRanges.all { index !in it }
+                                                                                                           is PyPlainStringElement -> false
+                                                                                                           else -> false
+                                                                                                         }
+                                                                                                       })))
 }

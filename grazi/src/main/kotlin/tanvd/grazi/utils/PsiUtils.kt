@@ -14,7 +14,8 @@ import com.intellij.psi.util.PsiTreeUtil
 
 internal typealias PsiPointer<E> = SmartPsiElementPointer<E>
 
-inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(this, T::class.java).filter(filter).distinct()
+inline fun <reified T : PsiElement> PsiElement.filterFor(filter: (T) -> Boolean = { true }): List<T> = PsiTreeUtil.collectElementsOfType(
+  this, T::class.java).filter(filter).distinct()
 
 fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) == null
 
@@ -25,7 +26,7 @@ fun ASTNode.hasType(vararg tokens: IElementType) = hasType(tokens.toSet())
 fun ASTNode.hasType(tokens: Set<IElementType>) = this.elementType in tokens
 
 inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType): List<T> = filterFor { token ->
-    tokens.contains(token.node.elementType)
+  tokens.contains(token.node.elementType)
 }
 
 inline fun <reified T : PsiElement> T.toPointer(): PsiPointer<T> = SmartPointerManager.createPointer(this)
@@ -33,11 +34,11 @@ inline fun <reified T : PsiElement> T.toPointer(): PsiPointer<T> = SmartPointerM
 fun PsiElement.parents(): Sequence<PsiElement> = generateSequence(this) { it.parent }
 
 fun PsiElement.isInjectedFragment(): Boolean {
-    val host = this.parents().filter { it is PsiLanguageInjectionHost }.firstOrNull() as? PsiLanguageInjectionHost
-        ?: return false
-    var isInjected = false
-    InjectedLanguageManager.getInstance(project).enumerate(host) { _, _ ->
-        isInjected = true
-    }
-    return isInjected
+  val host = this.parents().filter { it is PsiLanguageInjectionHost }.firstOrNull() as? PsiLanguageInjectionHost
+             ?: return false
+  var isInjected = false
+  InjectedLanguageManager.getInstance(project).enumerate(host) { _, _ ->
+    isInjected = true
+  }
+  return isInjected
 }

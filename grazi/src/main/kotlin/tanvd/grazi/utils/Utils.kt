@@ -13,11 +13,12 @@ fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.firstOrNull()?.let { if
 fun String.safeSubstring(startIndex: Int) = if (this.length <= startIndex) "" else substring(startIndex)
 
 fun Iterable<*>.joinToStringWithOxfordComma(separator: String = ", ") = with(toList()) {
-    if (size > 1) {
-        dropLast(1).joinToString(separator, postfix = ", ") + "and ${last()}"
-    } else {
-        last().toString()
-    }
+  if (size > 1) {
+    dropLast(1).joinToString(separator, postfix = ", ") + "and ${last()}"
+  }
+  else {
+    last().toString()
+  }
 }
 
 fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCase()) this else decapitalize()

@@ -7,12 +7,18 @@ import com.intellij.util.ui.UIUtil
 import javax.swing.JTree
 
 class GraziCheckboxTreeCellRenderer(val searchString: () -> String) : CheckboxTree.CheckboxTreeCellRenderer(true) {
-    override fun customizeRenderer(tree: JTree?, node: Any?, selected: Boolean, expanded: Boolean, leaf: Boolean, row: Int, hasFocus: Boolean) {
-        if (node !is GraziTreeNode || tree !is GraziRulesTree) return
+  override fun customizeRenderer(tree: JTree?,
+                                 node: Any?,
+                                 selected: Boolean,
+                                 expanded: Boolean,
+                                 leaf: Boolean,
+                                 row: Int,
+                                 hasFocus: Boolean) {
+    if (node !is GraziTreeNode || tree !is GraziRulesTree) return
 
-        val background = UIUtil.getTreeBackground(selected, true)
-        UIUtil.changeBackGround(this, background)
+    val background = UIUtil.getTreeBackground(selected, true)
+    UIUtil.changeBackGround(this, background)
 
-        SearchUtil.appendFragments(searchString(), node.nodeText, node.attrs.style, node.attrs.fgColor, background, textRenderer)
-    }
+    SearchUtil.appendFragments(searchString(), node.nodeText, node.attrs.style, node.attrs.fgColor, background, textRenderer)
+  }
 }

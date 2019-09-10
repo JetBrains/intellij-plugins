@@ -8,8 +8,8 @@ import tanvd.grazi.GraziConfig
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 
 open class GraziProjectInit : StartupActivity, DumbAware {
-    override fun runActivity(project: Project) {
-        GraziStateLifecycle.publisher.init(GraziConfig.get(), project)
-    }
+  override fun runActivity(project: Project) {
+    GraziStateLifecycle.publisher.init(GraziConfig.get(), project)
+  }
 }
 

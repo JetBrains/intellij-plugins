@@ -9,12 +9,12 @@ import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 class JStringSupport : LanguageSupport(GraziBundle.langConfig("global.literal_string.disabled")) {
-    override fun isRelevant(element: PsiElement): Boolean {
-        return element is PsiLiteralExpressionImpl && (element.literalElementType == JavaTokenType.STRING_LITERAL)
-    }
+  override fun isRelevant(element: PsiElement): Boolean {
+    return element is PsiLiteralExpressionImpl && (element.literalElementType == JavaTokenType.STRING_LITERAL)
+  }
 
-    override fun check(element: PsiElement) = when ((element as PsiLiteralExpressionImpl).literalElementType) {
-        JavaTokenType.STRING_LITERAL -> GrammarChecker.default.check(element)
-        else -> emptySet()
-    }
+  override fun check(element: PsiElement) = when ((element as PsiLiteralExpressionImpl).literalElementType) {
+    JavaTokenType.STRING_LITERAL -> GrammarChecker.default.check(element)
+    else -> emptySet()
+  }
 }
