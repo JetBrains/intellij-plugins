@@ -40,7 +40,7 @@
     <lang.ast.factory language="PostCSS" implementationClass="org.intellij.plugins.postcss.psi.impl.PostCssTreeElementFactory"/>
     <lang.commenter language="PostCSS" implementationClass="org.intellij.plugins.postcss.PostCssCommenter"/>
     <internalFileTemplate name="PostCSS File"/>
-    <lang.syntaxHighlighterFactory language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighter language="PostCSS" implementationClass="org.intellij.plugins.postcss.highlighting.PostCssSyntaxHighlighter"/>
     <colorSettingsPage implementation="org.intellij.plugins.postcss.highlighting.PostCssColorsPage"/>
     <css.structureViewChildrenProvider implementation="org.intellij.plugins.postcss.fileStructure.PostCssStructureViewElementsProvider"/>
     <completion.contributor language="CSS" implementationClass="org.intellij.plugins.postcss.completion.PostCssDumbAwareCompletionContributor"

@@ -46,7 +46,7 @@
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.dmarcotte.handlebars.editor.templates.HbsLiveTemplatesProvider"/>
     
-    <lang.syntaxHighlighterFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighterFactory"/>
+    <lang.syntaxHighlighter language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighter"/>
 
     <localInspection bundle="messages.HbBundle"
                      key="handlebars.inspections.helpers.empty"

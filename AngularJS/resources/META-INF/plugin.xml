@@ -76,7 +76,7 @@
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider"/>
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
+    <lang.syntaxHighlighter language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighter"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter"/>
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
@@ -223,8 +223,8 @@
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
-    <lang.syntaxHighlighterFactory language="Angular2"
-                                   implementationClass="org.angular2.lang.expr.highlighting.Angular2HighlighterFactory"/>
+    <lang.syntaxHighlighter language="Angular2"
+                                   implementationClass="org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
