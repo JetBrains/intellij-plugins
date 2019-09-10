@@ -15,6 +15,7 @@ import java.awt.Component
 import javax.swing.tree.DefaultMutableTreeNode
 
 class GrazieRulesPanel(onSelectionChanged: (meta: Any) -> Unit) : Disposable {
+  @Suppress("UNNECESSARY_SAFE_CALL")
   private val tree: GrazieRulesTree = GrazieRulesTree(GrazieCheckboxTreeCellRenderer { filter?.filter ?: "" })
   private val filter: GrazieFilterComponent = GrazieFilterComponent(tree, "GRAZIE_RULES_FILTER", "GRAZIE_RULES_SEARCH")
 
