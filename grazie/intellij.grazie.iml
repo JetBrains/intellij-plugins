@@ -95,10 +95,6 @@
           <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.4/grazi-language-tool-4.7.4.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.2/commons-logging-1.2.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/21.0/guava-21.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.6/morfologik-fsa-2.1.6.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.6/morfologik-fsa-builders-2.1.6.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.2/hppc-0.7.2.jar!/" />
@@ -114,10 +110,6 @@
           <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.4/grazi-language-tool-4.7.4-sources.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9-sources.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0-sources.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/21.0/guava-21.0-sources.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/net/java/dev/jna/jna/4.4.0/jna-4.4.0-sources.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25-sources.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.6/morfologik-fsa-2.1.6-sources.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.6/morfologik-fsa-builders-2.1.6-sources.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.2/hppc-0.7.2-sources.jar!/" />
