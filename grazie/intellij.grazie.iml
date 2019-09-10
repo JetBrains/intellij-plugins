@@ -62,9 +62,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.lang" />
-    <orderEntry type="module" module-name="intellij.platform.lang.impl" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
-    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
     <orderEntry type="module" module-name="intellij.spellchecker" />
