@@ -1,6 +1,6 @@
 package com.intellij.tapestry.psi;
 
-import com.intellij.lang.StdLanguages;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -36,7 +36,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   private final PsiModifierList myModifierList;
 
   protected TapestryAccessorMethod(PsiField property, boolean getterNotSetter, @NotNull String name) {
-    super(property.getManager(), StdLanguages.JAVA);
+    super(property.getManager(), JavaLanguage.INSTANCE);
     myProperty = property;
     myGetterNotSetter = getterNotSetter;
     myName = name;
@@ -268,7 +268,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     private LightParameter[] myParameters = null;
 
     protected LightParameterList(PsiManager manager, Computable<LightParameter[]> parametersComputation) {
-      super(manager, StdLanguages.JAVA);
+      super(manager, JavaLanguage.INSTANCE);
       myParametersComputation = parametersComputation;
     }
 
