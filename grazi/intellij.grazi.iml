@@ -84,7 +84,7 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module-library">
       <library name="tanvd.grazi:grazi-language-detector:0.1.2" type="repository">
-        <properties maven-id="tanvd.grazi:grazi-language-detector:0.1.2" />
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi:grazi-language-detector:0.1.2" />
         <CLASSES>
           <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/grazi-language-detector/0.1.2/grazi-language-detector-0.1.2.jar!/" />
         </CLASSES>
