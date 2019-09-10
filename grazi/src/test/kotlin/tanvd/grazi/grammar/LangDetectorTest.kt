@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.grammar
 
 import tanvd.grazi.GraziTestBase
@@ -101,11 +102,11 @@ class LangDetectorTest : GraziTestBase(true) {
     }
 
     fun `test japanese detection`() {
-        var lang = LangDetector.getLang("歌わさせていただきます" +
-            "この件に関しては言わずもがなだ。" +
-            "鼻にも掛けない。" +
-            "取り沙汰される。" +
-            "アルプス一万尺")
+        val lang = LangDetector.getLang("歌わさせていただきます" +
+                                        "この件に関しては言わずもがなだ。" +
+                                        "鼻にも掛けない。" +
+                                        "取り沙汰される。" +
+                                        "アルプス一万尺")
         assertEquals("ja", lang?.shortCode)
 
         // FIXME japanese detection is awful

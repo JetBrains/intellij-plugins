@@ -1,10 +1,13 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.ui.components.settings
 
 import com.intellij.icons.AllIcons
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.ide.ui.components.dsl.*
+import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.ide.ui.components.dsl.padding
+import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.ide.ui.components.langlist.GraziAddDeleteListPanel
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout

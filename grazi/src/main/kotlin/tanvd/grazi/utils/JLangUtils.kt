@@ -1,10 +1,14 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.utils
 
 import kotlinx.html.FlowOrPhrasingContent
 import kotlinx.html.strong
 import org.languagetool.language.Language
 import org.languagetool.language.Languages
-import org.languagetool.rules.*
+import org.languagetool.rules.ExampleSentence
+import org.languagetool.rules.IncorrectExample
+import org.languagetool.rules.Rule
+import org.languagetool.rules.RuleMatch
 import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.language.Lang

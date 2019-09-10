@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.spellcheck
 
 import com.intellij.codeInspection.ex.modifyAndCommitProjectProfile
@@ -22,7 +23,9 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.msg.GraziStateLifecycle
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool
-import tanvd.grazi.utils.*
+import tanvd.grazi.utils.Text
+import tanvd.grazi.utils.toPointer
+import tanvd.grazi.utils.withOffset
 import tanvd.kex.LinkedSet
 
 object GraziSpellchecker : GraziStateLifecycle {

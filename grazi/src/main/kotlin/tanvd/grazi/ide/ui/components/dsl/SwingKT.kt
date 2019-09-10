@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.ui.components.dsl
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup
@@ -6,8 +7,13 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.PropertyKey
 import tanvd.grazi.GraziBundle
-import java.awt.*
-import javax.swing.*
+import java.awt.BorderLayout
+import java.awt.Container
+import java.awt.Insets
+import java.awt.LayoutManager
+import javax.swing.JComponent
+import javax.swing.JEditorPane
+import javax.swing.JPanel
 import javax.swing.border.Border
 
 fun panel(layout: LayoutManager = BorderLayout(0, 0), body: JPanel.() -> Unit) = JPanel(layout).apply(body)

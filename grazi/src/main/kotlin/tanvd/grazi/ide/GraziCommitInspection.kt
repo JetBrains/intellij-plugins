@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
@@ -29,7 +30,7 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
         override fun update(prevState: GraziConfig.State, newState: GraziConfig.State, project: Project) {
             if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
 
-            init(newState, project);
+            init(newState, project)
         }
     }
 

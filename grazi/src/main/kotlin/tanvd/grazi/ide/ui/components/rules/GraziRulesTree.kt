@@ -1,6 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.ui.components.rules
 
-import com.intellij.ui.*
+import com.intellij.ui.CheckboxTree
+import com.intellij.ui.CheckboxTreeListener
+import com.intellij.ui.CheckedTreeNode
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.Lang
 import tanvd.grazi.language.LangTool

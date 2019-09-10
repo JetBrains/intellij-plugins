@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.ui.components.langlist
 
 import com.intellij.openapi.util.Comparing
@@ -9,7 +10,10 @@ import com.intellij.util.ui.UIUtil
 import tanvd.grazi.language.Lang
 import java.awt.BorderLayout
 import java.awt.Color
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JList
+import javax.swing.JPanel
 
 class GraziPopupListElementRenderer(list: ListPopupImpl) : PopupListElementRenderer<Lang>(list) {
     private lateinit var size: JLabel

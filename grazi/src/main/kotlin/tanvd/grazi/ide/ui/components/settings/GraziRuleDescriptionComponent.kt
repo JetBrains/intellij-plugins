@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.ui.components.settings
 
 import com.intellij.ide.BrowserUtil
@@ -5,14 +6,17 @@ import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SideBorder
 import com.intellij.ui.components.JBPanelWithEmptyText
 import com.intellij.ui.components.labels.LinkListener
-import com.intellij.ui.layout.migLayout.createLayoutConstraints
+import com.intellij.ui.layout.migLayout.*
 import com.intellij.util.ui.JBUI
 import kotlinx.html.*
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
-import tanvd.grazi.ide.ui.components.dsl.*
+import tanvd.grazi.ide.ui.components.dsl.msg
+import tanvd.grazi.ide.ui.components.dsl.padding
+import tanvd.grazi.ide.ui.components.dsl.pane
+import tanvd.grazi.ide.ui.components.dsl.panel
 import tanvd.grazi.ide.ui.components.rules.ComparableCategory
 import tanvd.grazi.ide.ui.components.rules.RuleWithLang
 import tanvd.grazi.ide.ui.components.utils.GraziLinkLabel

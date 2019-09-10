@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide
 
 import com.intellij.codeInspection.LocalQuickFix
@@ -6,7 +7,10 @@ import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.fus.GraziFUCounterCollector
-import tanvd.grazi.ide.quickfix.*
+import tanvd.grazi.ide.quickfix.GraziAddWordQuickFix
+import tanvd.grazi.ide.quickfix.GraziDisableRuleQuickFix
+import tanvd.grazi.ide.quickfix.GraziRenameTypoQuickFix
+import tanvd.grazi.ide.quickfix.GraziReplaceTypoQuickFix
 import tanvd.grazi.ide.ui.components.dsl.msg
 import tanvd.grazi.utils.*
 import tanvd.kex.buildList

@@ -1,7 +1,10 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package tanvd.grazi.ide.language.python
 
 import com.intellij.psi.PsiElement
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.psi.PyFormattedStringElement
+import com.jetbrains.python.psi.PyPlainStringElement
+import com.jetbrains.python.psi.PyStringLiteralExpression
 import tanvd.grazi.GraziBundle
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
