@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.lang.javascript.service.JSLanguageService
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicNotNullLazyValue
@@ -12,12 +11,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueLanguageServiceProvider(project: Project) : JSLanguageServiceProvider {
-
   private val myLanguageService: AtomicNotNullLazyValue<VueTypeScriptService>
 
   init {
     myLanguageService = AtomicNotNullLazyValue.createValue<VueTypeScriptService> {
-      val service = VueTypeScriptService(project, TypeScriptCompilerSettings.getSettings(project))
+      val service = VueTypeScriptService(project)
       Disposer.register(project, service)
       return@createValue service
     }

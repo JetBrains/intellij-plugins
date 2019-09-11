@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
@@ -69,8 +68,8 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   return result
 }
 
-class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSettings) :
-  TypeScriptServerServiceImpl(project, settings, "Vue Console") {
+class VueTypeScriptService(project: Project) :
+  TypeScriptServerServiceImpl(project, "Vue Console") {
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true

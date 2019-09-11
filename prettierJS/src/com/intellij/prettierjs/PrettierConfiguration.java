@@ -34,18 +34,16 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
-public class PrettierConfiguration implements JSNpmLinterState {
+public final class PrettierConfiguration implements JSNpmLinterState {
   @NotNull
   private final Project myProject;
-  private final PropertiesComponent myPropertiesComponent;
   private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
   private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
   private static final String OLD_PACKAGE_PROPERTY = "node.js.selected.package.prettier";
   private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
 
-  public PrettierConfiguration(@NotNull Project project, @NotNull PropertiesComponent component) {
+  public PrettierConfiguration(@NotNull Project project) {
     myProject = project;
-    myPropertiesComponent = component;
     ExecutorService threadPoolExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Prettier.PackageJsonUpdater");
     project.getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
@@ -67,8 +65,8 @@ public class PrettierConfiguration implements JSNpmLinterState {
   @Override
   @NotNull
   public NodeJsInterpreterRef getInterpreterRef() {
-    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(myPropertiesComponent.getValue(NODE_INTERPRETER_PROPERTY),
-                                                            myPropertiesComponent.getValue(OLD_INTERPRETER_PROPERTY)));
+    return NodeJsInterpreterRef.create(ObjectUtils.coalesce(PropertiesComponent.getInstance(myProject).getValue(NODE_INTERPRETER_PROPERTY),
+                                                            PropertiesComponent.getInstance(myProject).getValue(OLD_INTERPRETER_PROPERTY)));
   }
 
   @NotNull
@@ -93,15 +91,15 @@ public class PrettierConfiguration implements JSNpmLinterState {
 
   @NotNull
   public NodePackage getPackage() {
-    String value = ObjectUtils.coalesce(myPropertiesComponent.getValue(PACKAGE_PROPERTY),
-                                        myPropertiesComponent.getValue(OLD_PACKAGE_PROPERTY),
+    String value = ObjectUtils.coalesce(PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY),
+                                        PropertiesComponent.getInstance(myProject).getValue(OLD_PACKAGE_PROPERTY),
                                         "");
     return new NodePackage(value);
   }
 
   public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
-    myPropertiesComponent.setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
-    myPropertiesComponent.setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
+    PropertiesComponent.getInstance(myProject).setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
+    PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 
   private void detectLocalOrGlobalPackage() {
@@ -116,14 +114,14 @@ public class PrettierConfiguration implements JSNpmLinterState {
     if (myProject.isDisposed() || myProject.isDefault()) {
       return;
     }
-    String stored = myPropertiesComponent.getValue(PACKAGE_PROPERTY, "");
+    String stored = PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY, "");
     if (!StringUtil.isEmpty(stored)) {
       return;
     }
 
     NodePackage detected = packageProducer.get();
     if (detected != null) {
-      myPropertiesComponent.setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
+      PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
     }
   }
 
