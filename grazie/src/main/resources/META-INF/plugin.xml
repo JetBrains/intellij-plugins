@@ -53,7 +53,7 @@
     </extensions>
 
     <extensionPoints>
-        <extensionPoint name="languageSupport" beanClass="com.intellij.lang.LanguageExtensionPoint">
+        <extensionPoint qualifiedName="com.intellij.grazie.languageSupport" beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="com.intellij.grazie.ide.language.LanguageSupport"/>
         </extensionPoint>
     </extensionPoints>
