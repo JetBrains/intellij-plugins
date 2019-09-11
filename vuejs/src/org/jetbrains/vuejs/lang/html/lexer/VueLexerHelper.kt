@@ -11,6 +11,7 @@ import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 
 class VueLexerHelper(private val handle: VueLexerHandle) {
 
@@ -59,7 +60,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
   }
 
   fun endOfTheEmbeddment(name: String?): Boolean {
-    return seenTemplate && "template" == name
+    return seenTemplate && TEMPLATE_TAG_NAME == name
   }
 
   fun getTokenType(tokenType: IElementType?): IElementType? {
@@ -136,10 +137,10 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
 
   inner class VueTemplateTagHandler : BaseHtmlLexer.TokenHandler {
     override fun handleElement(lexer: Lexer) {
-      if (!handle.seenTag && handle.inTagState && "template" == lexer.tokenText) {
+      if (!handle.seenTag && handle.inTagState && TEMPLATE_TAG_NAME == lexer.tokenText) {
         seenTemplate = true
       }
-      if (!handle.inTagState && "template" == lexer.tokenText) {
+      if (!handle.inTagState && TEMPLATE_TAG_NAME == lexer.tokenText) {
         handle.seenTag = false
       }
     }

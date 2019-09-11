@@ -12,8 +12,8 @@ interface VueContainer : VueEntitiesContainer {
   val emits: List<VueEmitCall>
   val slots: List<VueSlot>
 
-  val template: PsiElement?
-  val element: String?
+  val template: PsiElement? get() = null
+  val element: String? get() = null
   val extends: List<VueContainer>
   val delimiters: Pair<String, String>? get() = null
   val model: VueModelDirectiveProperties

@@ -1,4 +1,5 @@
-<template>
+<template lang="pug">
+  div
 
 </template>
 <script>
@@ -28,6 +29,6 @@
     @PropSync("synced_string1", {type: String, required: true}) syncedProp_string1
     @PropSync("synced_bool1", Boolean) syncedProp_bool1
 
-    @Model('event_string1', { type: [String, Array], required: true }) model_string1
+    @Model('event_string1', {type: [String, Array], required: true}) model_string1
   }
 </script>

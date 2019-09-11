@@ -16,16 +16,25 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
+import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.ProcessingContext
+import com.intellij.util.castSafelyTo
+import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
 import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
-import org.jetbrains.vuejs.index.VueComponentsIndex
-import org.jetbrains.vuejs.index.findModule
-import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getExportedDescriptor
 
@@ -82,18 +91,78 @@ class VueModelManager {
             null
         }
         is JSClass -> {
-          val decorator = VueComponents.getElementComponentDecorator(when (val decoratorContext = context.context) {
-                                                                       is JSExportAssignment -> decoratorContext
-                                                                       else -> context
-                                                                     })
+          val decorator = VueComponents.getElementComponentDecorator(
+            when (val decoratorContext = context.context) {
+              is JSExportAssignment -> decoratorContext
+              else -> context
+            })
           VueComponentDescriptor(
             obj = decorator?.let { VueComponents.getDescriptorFromDecorator(it) },
             clazz = context)
         }
-        else -> findModule(context)
+        null -> null
+        else -> getDescriptorFromVueModule(context)
+                ?: getDescriptorFromReferencedScript(context)
+                ?: findReferencingComponentDescriptor(context)
+      }
+    }
+
+    private fun findReferencingComponentDescriptor(context: PsiElement): VueComponentDescriptor? {
+      if (context !is XmlElement) return null
+
+      val file = VueSourceComponent.getHostFile(context) ?: return null
+      val name = file.viewProvider.virtualFile.name
+      var result: VueComponentDescriptor? = null
+
+      StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, context.project,
+                                              GlobalSearchScope.projectScope(context.project),
+                                              PsiElement::class.java) { element ->
+        if (element is JSProperty) {
+          if (element.indexingData?.implicitElements?.asSequence()
+                ?.any {
+                  it.userString == VueUrlIndex.JS_KEY
+                  && it?.qualifiedName == name
+                  && it.isValid
+                } == true
+              && element.value
+                ?.let { VueSourceComponent.getReferencedTemplate(it) }
+                ?.value?.containingFile == file) {
+            result = getEnclosingComponentDescriptor(element)
+          }
+        }
+        else if (element is XmlAttribute
+                 && element.parent?.name == HtmlUtil.TEMPLATE_TAG_NAME
+                 && element.valueElement?.references
+                   ?.any { it.resolve()?.containingFile == context.containingFile } == true) {
+          result = getDescriptorFromVueModule(element)
+                   ?: getDescriptorFromReferencedScript(element)
+        }
+        true
+      }
+      return result
+    }
+
+    private fun getDescriptorFromVueModule(element: PsiElement): VueComponentDescriptor? {
+      return findModule(element)
+        ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
+        ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
+    }
+
+    private fun getDescriptorFromReferencedScript(element: PsiElement): VueComponentDescriptor? {
+      val file = element as? XmlFile ?: element.containingFile as? XmlFile
+      if (file != null && file.fileType == VueFileType.INSTANCE) {
+        // TODO stub safe resolution
+        return findTopLevelVueTag(file, SCRIPT_TAG_NAME)
+          ?.getAttribute(SRC_ATTRIBUTE_NAME)
+          ?.valueElement
+          ?.let { BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext()) }
+          ?.asSequence()
+          ?.mapNotNull { it.resolve()?.castSafelyTo<PsiFile>() }
+          ?.first()
           ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
           ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
       }
+      return null
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
@@ -226,5 +295,4 @@ class VueModelManager {
       JSImplicitElementImpl(JSImplicitElementImpl.Builder(name, parent).forbidAstAccess())
 
   }
-
 }

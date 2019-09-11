@@ -173,6 +173,20 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """.trimIndent(), "test.{%.%}$INJECTED_FILE_SUFFIX")
   }
 
+  fun testSrcAttribute() {
+    doTestVue("""
+      <template src="foo"></template>
+      <script src="foo"></script>
+      <style src="foo"></style>
+      <img src="foo">
+      <template>
+        <template src="foo"></template>
+        <script src="foo"></script>
+        <style src="foo"></style>
+        <img src="foo">
+      </template>
+    """.trimIndent())
+  }
 
   private class MockJSRootConfiguration internal constructor(project: Project) : JSRootConfigurationBase(project) {
 

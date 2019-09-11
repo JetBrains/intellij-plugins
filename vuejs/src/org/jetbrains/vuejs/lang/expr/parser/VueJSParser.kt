@@ -91,7 +91,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       if (builder.tokenType == JSTokenTypes.LPAR) {
         parseVForVariables()
       }
-      else if (!parseVariableStatement(VueJSElementTypes.V_FOR_VARIABLE)) {
+      else if (!parseVariableStatement(VueJSStubElementTypes.V_FOR_VARIABLE)) {
         val marker = builder.mark()
         if (!builder.eof()
             && builder.tokenType !== JSTokenTypes.IN_KEYWORD
@@ -116,7 +116,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         builder.mark().error("Expected slot props variable declaration")
       }
       else {
-        parseVariableStatement(VueJSElementTypes.SLOT_PROPS_VARIABLE)
+        parseVariableStatement(VueJSStubElementTypes.SLOT_PROPS_VARIABLE)
         if (!builder.eof()) {
           val mark = builder.mark()
           while (!builder.eof()) {
@@ -179,7 +179,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         return true
       }
       else if (myFunctionParser.willParseDestructuringAssignment()) {
-        myExpressionParser.parseDestructuringElement(VueJSElementTypes.V_FOR_VARIABLE, false, false)
+        myExpressionParser.parseDestructuringElement(VueJSStubElementTypes.V_FOR_VARIABLE, false, false)
         return true
       }
       return false
@@ -190,12 +190,12 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       val parenthesis = builder.mark()
       builder.advanceLexer() //LPAR
       val varStatement = builder.mark()
-      if (parseVariable(VueJSElementTypes.V_FOR_VARIABLE)) {
+      if (parseVariable(VueJSStubElementTypes.V_FOR_VARIABLE)) {
         var i = 0
         while (builder.tokenType == JSTokenTypes.COMMA && i < EXTRA_VAR_COUNT) {
           builder.advanceLexer()
           if (isIdentifierToken(builder.tokenType)) {
-            buildTokenElement(VueJSElementTypes.V_FOR_VARIABLE)
+            buildTokenElement(VueJSStubElementTypes.V_FOR_VARIABLE)
           }
           i++
         }

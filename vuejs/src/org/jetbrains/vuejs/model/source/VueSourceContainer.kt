@@ -26,7 +26,6 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
-  override val template: PsiElement? = null
   override val element: String? get() = getTextIfLiteral(initializer?.findProperty("el")?.value)
 
   override val data: List<VueDataProperty> get() = get(DATA)

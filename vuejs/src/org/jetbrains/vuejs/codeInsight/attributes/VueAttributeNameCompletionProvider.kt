@@ -51,7 +51,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val attr = parameters.position.parent as? XmlAttribute ?: return
     addAttributeDescriptorCompletions(attr, parameters, result)
 
-    val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), null)
+    val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), attr.parent)
     when ((attrInfo as? VueDirectiveInfo)?.directiveKind) {
       ON -> {
         addEventCompletions(attr, attrInfo, result)

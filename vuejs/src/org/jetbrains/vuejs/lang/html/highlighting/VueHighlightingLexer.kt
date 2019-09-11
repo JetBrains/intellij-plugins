@@ -125,7 +125,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
   private inner class HtmlAttributeNameHandler : TokenHandler {
     override fun handleElement(lexer: Lexer) {
       if (lexer.state and BaseHtmlLexer.BASE_STATE_MASK == _HtmlLexer.TAG_ATTRIBUTES) {
-        val info = VueAttributeNameParser.parse(tokenText, null)
+        val info = VueAttributeNameParser.parse(tokenText)
         if (info.injectJS) {
           if (seenAttribute) {
             popScriptStyle()

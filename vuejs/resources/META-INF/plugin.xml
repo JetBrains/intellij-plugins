@@ -74,7 +74,10 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex"/>
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes"/>
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueUrlIndex"/>
+
+    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
+    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
 
     <directoryProjectGenerator
         implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
@@ -151,7 +154,7 @@ Vue components defined using separate .html, .js, and .css files are not support
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="1"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="2"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>

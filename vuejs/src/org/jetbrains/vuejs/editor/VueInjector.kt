@@ -28,6 +28,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
@@ -125,7 +126,7 @@ class VueInjector : MultiHostInjector {
     else if (context is JSLiteralExpressionImpl
              && context.isQuotedLiteral
              && parent is JSProperty
-             && parent.name == "template"
+             && parent.name == TEMPLATE_PROP
              && parent.parent is JSObjectLiteralExpression
              && shouldInjectVueTemplate(context, parent.parent as JSObjectLiteralExpression)) {
 
@@ -149,7 +150,7 @@ class VueInjector : MultiHostInjector {
     val chars = template.node.chars
     if (chars.length > 2 && chars[1] == '#')
       return false
-    return VueFrameworkHandler.hasComponentIndicatorProperties(initializer, "template")
+    return VueFrameworkHandler.hasComponentIndicatorProperties(initializer, TEMPLATE_PROP)
            || PsiTreeUtil.getContextOfType(initializer, ES6Decorator::class.java)
              ?.let { VueComponents.isComponentDecorator(it) } == true
   }

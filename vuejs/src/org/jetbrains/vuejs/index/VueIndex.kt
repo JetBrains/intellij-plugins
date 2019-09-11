@@ -35,6 +35,7 @@ const val MIXINS_PROP: String = "mixins"
 const val EXTENDS_PROP: String = "extends"
 const val DIRECTIVES_PROP: String = "directives"
 const val NAME_PROP: String = "name"
+const val TEMPLATE_PROP: String = "template"
 const val GLOBAL_BINDING_MARK: String = "*"
 const val VUE_CLASS_COMPONENT: String = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
@@ -115,5 +116,4 @@ fun getVueIndexData(element: JSImplicitElement): VueIndexData {
 }
 
 class VueIndexData(val originalName: String,
-                   val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean) {
-}
+                   val nameRef: String?, val descriptorRef: String?, val groupRegistration: Boolean, val isGlobal: Boolean)

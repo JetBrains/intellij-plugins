@@ -2,15 +2,16 @@
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.psi.xml.XmlTag
+import com.intellij.xml.util.HtmlUtil.*
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
 import java.util.*
 
 class VueAttributeNameParser private constructor() {
   companion object {
 
-    fun parse(attributeName: String, context: String?): VueAttributeInfo =
-      parse(attributeName) { it.isValidIn(context) }
+    fun parse(attributeName: String, context: String? = null, isTopLevel: Boolean = false): VueAttributeInfo =
+      parse(attributeName) { it.isValidIn(context, isTopLevel) }
 
     fun parse(attributeName: String, context: XmlTag): VueAttributeInfo =
       parse(attributeName) { it.isValidIn(context) }
@@ -54,8 +55,15 @@ class VueAttributeNameParser private constructor() {
           nameEnd = attributeName.length
         }
         name = attributeName.substring(0, nameEnd)
-        val attributeKind = attributeKindMap[name]?.let { if (isValid(it)) it else VueAttributeKind.PLAIN }
-                            ?: VueAttributeKind.PLAIN
+        val attributeKind =
+          if (name == SRC_ATTRIBUTE_NAME) {
+            listOf(VueAttributeKind.TEMPLATE_SRC, VueAttributeKind.STYLE_SRC, VueAttributeKind.SCRIPT_SRC)
+              .find { isValid(it) }
+          }
+          else {
+            attributeKindMap[name]?.takeIf(isValid)
+          }
+          ?: VueAttributeKind.PLAIN
         return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
       if (paramsPos >= attributeName.length
@@ -115,6 +123,7 @@ class VueAttributeNameParser private constructor() {
 
     private val attributeKindMap = StreamEx.of(*VueAttributeKind.values())
       .mapToEntry({ it.attributeName }, { it })
+      .filterKeys { it != SRC_ATTRIBUTE_NAME }
       .nonNullKeys()
       .toMap()
 
@@ -186,10 +195,12 @@ class VueAttributeNameParser private constructor() {
 
   }
 
+  @Suppress("unused")
   enum class VueAttributeKind(val attributeName: String?,
                               val injectJS: Boolean = false,
                               val requiresValue: Boolean = true,
-                              val deprecated: Boolean = false) {
+                              val deprecated: Boolean = false,
+                              val requiredTopLevelTag: String? = null) {
     PLAIN(null),
     DIRECTIVE(null),
     SLOT("slot", deprecated = true),
@@ -197,41 +208,25 @@ class VueAttributeNameParser private constructor() {
     IS("is"),
     SCOPE("scope", injectJS = true, deprecated = true),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
-    STYLE_SCOPED("scoped", requiresValue = false),
-    STYLE_MODULE("module", requiresValue = false),
-    STYLE_SRC("src"),
-    TEMPLATE_FUNCTIONAL("functional", requiresValue = false);
+    STYLE_SCOPED("scoped", requiresValue = false, requiredTopLevelTag = STYLE_TAG_NAME),
+    STYLE_MODULE("module", requiresValue = false, requiredTopLevelTag = STYLE_TAG_NAME),
+    STYLE_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = STYLE_TAG_NAME),
+    TEMPLATE_FUNCTIONAL("functional", requiresValue = false, requiredTopLevelTag = TEMPLATE_TAG_NAME),
+    TEMPLATE_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = TEMPLATE_TAG_NAME),
+    SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = SCRIPT_TAG_NAME),
+    ;
 
-    fun isValidIn(context: String?): Boolean {
+    fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {
       return when {
-        this === SCOPE -> context?.toLowerCase(Locale.US) == "template"
-        this === TEMPLATE_FUNCTIONAL
-        || this === STYLE_SRC
-        || this === STYLE_SCOPED
-        || this === STYLE_MODULE -> false
+        this === SCOPE -> context?.toLowerCase(Locale.US) == TEMPLATE_TAG_NAME
+        requiredTopLevelTag != null -> isTopLevel && context == requiredTopLevelTag
         else -> true
       }
     }
 
-    fun isValidIn(context: XmlTag?): Boolean {
-      return when {
-        this === TEMPLATE_FUNCTIONAL ->
-          context != null && isTopLevelTemplateTag(context)
-        this === STYLE_SRC
-        || this === STYLE_SCOPED
-        || this === STYLE_MODULE ->
-          context != null && isTopLevelStyleTag(context)
-        else -> isValidIn(context?.name)
-      }
+    fun isValidIn(context: XmlTag): Boolean {
+      return isValidIn(context.name, context.parentTag == null)
     }
-
-    private fun isTopLevelStyleTag(tag: XmlTag): Boolean = tag.parentTag == null &&
-                                                           tag.name == "style" &&
-                                                           tag.containingFile?.language == VueLanguage.INSTANCE
-
-    private fun isTopLevelTemplateTag(tag: XmlTag): Boolean = tag.parentTag == null &&
-                                                              tag.name == "template" &&
-                                                              tag.containingFile?.language == VueLanguage.INSTANCE
   }
 
   enum class VueDirectiveKind(private val hasName: Boolean = true,

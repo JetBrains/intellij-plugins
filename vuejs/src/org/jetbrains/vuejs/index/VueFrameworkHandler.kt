@@ -2,10 +2,8 @@
 package org.jetbrains.vuejs.index
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
+import com.intellij.lang.ecmascript6.ES6StubElementTypes
+import com.intellij.lang.ecmascript6.psi.*
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
@@ -21,9 +19,12 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeInfo
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.PsiFileImpl
@@ -35,7 +36,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.xml.util.HtmlUtil
+import com.intellij.util.PathUtil
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -61,19 +63,22 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueLocalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
     record(VueOptionsIndex.KEY),
-    record(VueStoreIndex.KEY)
+    record(VueStoreIndex.KEY),
+    record(VueUrlIndex.KEY)
   )
   private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
                                                                 JSStubElementTypes.NEW_EXPRESSION,
-                                                                JSStubElementTypes.ASSIGNMENT_EXPRESSION)
+                                                                JSStubElementTypes.ASSIGNMENT_EXPRESSION,
+                                                                ES6StubElementTypes.EXPORT_DEFAULT_ASSIGNMENT)
 
 
   companion object {
-    private fun record(key: StubIndexKey<String, JSImplicitElementProvider>): Pair<String, StubIndexKey<String, JSImplicitElementProvider>> {
+    private fun <T : PsiElement> record(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
     const val VUE: String = "Vue"
+    private const val REQUIRE = "require"
     private const val METHOD = "methods"
     private const val COMPUTED = "computed"
     private const val DATA = "data"
@@ -91,6 +96,31 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
                                                                                             JSSymbolUtil.EXPORTS, "default")
 
+    fun getExprReferencedFileUrl(expression: JSExpression?): String? {
+      if (expression is JSReferenceExpression) {
+        for (resolvedElement in resolveLocally(expression)) {
+          (resolvedElement as? ES6ImportedBinding)
+            ?.declaration
+            ?.fromClause
+            ?.let {
+              return it.referenceText?.let { ref -> StringUtil.unquoteString(ref) }
+            }
+        }
+      }
+      else if (expression is JSCallExpression) {
+        val referenceExpression = expression.methodExpression as? JSReferenceExpression
+        val arguments = expression.arguments
+        if (arguments.size == 1
+            && arguments[0] is JSLiteralExpression
+            && (arguments[0] as JSLiteralExpression).isQuotedLiteral
+            && referenceExpression != null
+            && referenceExpression.qualifier == null
+            && REQUIRE == referenceExpression.referenceName) {
+          return (arguments[0] as JSLiteralExpression).stringValue
+        }
+      }
+      return null
+    }
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.index.findModule(result)
@@ -186,14 +216,26 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
       }
     }
+    else if (TEMPLATE_PROP == property.name) {
+      if (isPossiblyVueContainerInitializer(property.parent as? JSObjectLiteralExpression)) {
+        getExprReferencedFileUrl(property.value)
+          ?.let { PathUtil.getFileName(it) }
+          ?.takeIf { it.isNotBlank() }
+          ?.let {
+            JSImplicitElementImpl.Builder(it, property)
+              .setUserString(VueUrlIndex.JS_KEY)
+              .forbidAstAccess()
+              .toImplicitElement()
+          }
+          ?.let { out.addImplicitElement(it) }
+      }
+    }
     else if (VueStoreUtils.STATE == property.name) {
       val properties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
       properties
-        .filter { it.parent.parent == property }
+        .filter { it.parent.parent == property && it.name != null }
         .forEach {
-          if (it.name != null) {
-            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, VueStoreUtils.STATE))
-          }
+          out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, VueStoreUtils.STATE))
         }
     }
     else if (VueStoreUtils.ACTION == property.name || VueStoreUtils.MUTATION == property.name || VueStoreUtils.GETTER == property.name) {
@@ -238,7 +280,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val parent = obj.parent
       if (parent is JSExportAssignment ||
           (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
-        if (obj.containingFile.fileType == VueFileType.INSTANCE || obj.containingFile is JSFile && hasComponentIndicatorProperties(obj)) {
+        if (isPossiblyVueContainerInitializer(obj)) {
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
         }
       }
@@ -327,6 +369,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                                      descriptorRef, isGlobal))
   }
 
+  private fun isPossiblyVueContainerInitializer(initializer: JSObjectLiteralExpression?): Boolean {
+    return initializer != null
+           && (initializer.containingFile.fileType == VueFileType.INSTANCE
+               || (initializer.containingFile is JSFile && hasComponentIndicatorProperties(initializer)))
+  }
+
   private fun isDescriptorOfLinkedInstanceDefinition(obj: JSObjectLiteralExpression): Boolean {
     val argumentList = obj.parent as? JSArgumentList ?: return false
     if (argumentList.arguments[0] == obj) {
@@ -359,6 +407,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val statement = TreeUtil.findParent(expression.node,
                                         expectedLiteralOwnerExpressions,
                                         JSExtendedLanguagesTokenSetProvider.STATEMENTS) ?: return false
+    if (statement.elementType == ES6StubElementTypes.EXPORT_DEFAULT_ASSIGNMENT) return true
     val referenceHolder = if (statement.elementType == JSStubElementTypes.ASSIGNMENT_EXPRESSION)
       statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
     else statement
@@ -376,7 +425,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (index != null) {
       sink?.occurrence(index, element.name)
     }
-    return false
+    return index == VueUrlIndex.KEY
   }
 
   override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator,
@@ -394,6 +443,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
     return false
   }
+}
+
+fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
+  return if (ref.qualifier == null && ref.referenceName != null) {
+    JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ref.referenceName!!, ref)
+  }
+  else emptyList()
 }
 
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
@@ -418,10 +474,22 @@ fun findModule(element: PsiElement?): JSEmbeddedContent? {
 }
 
 fun findScriptTag(xmlFile: XmlFile): XmlTag? {
+  return findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
+}
+
+fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
   if (xmlFile.fileType == VueFileType.INSTANCE) {
-    val visitor = MyScriptVisitor()
-    xmlFile.accept(visitor)
-    return visitor.scriptTag
+    var result: XmlTag? = null
+    xmlFile.accept(object : VueFileVisitor() {
+      override fun visitXmlTag(tag: XmlTag?) {
+        if (result == null
+            && tag != null
+            && tag.localName.equals(tagName, ignoreCase = true)) {
+          result = tag
+        }
+      }
+    })
+    return result
   }
   return null
 }
@@ -435,18 +503,6 @@ private enum class VueStaticMethod(val methodName: String) {
 
   fun matches(reference: JSReferenceExpression): Boolean =
     JSSymbolUtil.isAccurateReferenceExpressionName(reference, VueFrameworkHandler.VUE, methodName)
-}
-
-private class MyScriptVisitor : VueFileVisitor() {
-  internal var jsElement: JSEmbeddedContent? = null
-  internal var scriptTag: XmlTag? = null
-
-  override fun visitXmlTag(tag: XmlTag?) {
-    if (HtmlUtil.isScriptTag(tag)) {
-      scriptTag = tag
-      jsElement = PsiTreeUtil.findChildOfType(tag, JSEmbeddedContent::class.java)
-    }
-  }
 }
 
 open class VueFileVisitor : XmlElementVisitor() {

@@ -35,7 +35,7 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
         addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
       }
       else if (tokenType === XML_NAME) {
-        val info = VueAttributeNameParser.parse(myDelegate.tokenText, null)
+        val info = VueAttributeNameParser.parse(myDelegate.tokenText)
         if (info.kind !== VueAttributeNameParser.VueAttributeKind.PLAIN) {
           if (info is VueAttributeNameParser.VueDirectiveInfo) {
             var nameIndex = tokenText.indexOf(info.name)

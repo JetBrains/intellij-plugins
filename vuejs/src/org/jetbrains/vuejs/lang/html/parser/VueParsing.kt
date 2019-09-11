@@ -7,6 +7,7 @@ import com.intellij.lang.html.HtmlParsing
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
@@ -61,13 +62,20 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   override fun parseAttribute() {
     assert(token() === XmlTokenType.XML_NAME)
     val attr = mark()
-    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, peekTagName())
+    val attributeInfo = VueAttributeNameParser.parse(builder.tokenText!!, peekTagName(), tagLevel() == 1)
     advance()
     if (token() === XmlTokenType.XML_EQ) {
       advance()
       parseAttributeValue(attributeInfo)
     }
-    attr.done(XmlElementType.XML_ATTRIBUTE)
+    if (attributeInfo.kind === TEMPLATE_SRC
+        || attributeInfo.kind === SCRIPT_SRC
+        || attributeInfo.kind === STYLE_SRC) {
+      attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
+    }
+    else {
+      attr.done(XmlElementType.XML_ATTRIBUTE)
+    }
   }
 
   private fun parseAttributeValue(attributeInfo: VueAttributeNameParser.VueAttributeInfo) {

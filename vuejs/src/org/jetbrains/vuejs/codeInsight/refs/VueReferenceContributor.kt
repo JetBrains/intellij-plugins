@@ -2,24 +2,31 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.lang.Language
+import com.intellij.openapi.paths.PathReferenceManager
+import com.intellij.patterns.XmlAttributeValuePattern
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
 import com.intellij.psi.css.resolve.CssReferenceProviderUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.ProcessingContext
-import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.HtmlUtil.*
+import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
 
 class VueReferenceContributor : PsiReferenceContributor() {
-  companion object {
-    private val SRC_ATTRIBUTE = XmlPatterns.xmlAttributeValue("src").inside(XmlPatterns.xmlTag().withLocalName("style"))
-  }
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(SRC_ATTRIBUTE, object : PsiReferenceProvider() {
+    registrar.registerReferenceProvider(createSrcAttrValuePattern(STYLE_TAG_NAME), STYLE_REF_PROVIDER)
+    registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
+    registrar.registerReferenceProvider(createSrcAttrValuePattern(SCRIPT_TAG_NAME), BASIC_REF_PROVIDER)
+  }
+
+  companion object {
+
+    private val STYLE_REF_PROVIDER = object : PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
         val text = ElementManipulators.getValueText(element)
-        if (!HtmlUtil.hasHtmlPrefix(text)) {
+        if (!hasHtmlPrefix(text)) {
           val xmlTag = (element.parent as? XmlAttribute)?.parent
           val langValue = xmlTag?.getAttribute("lang")?.value
           if (langValue != null) {
@@ -33,6 +40,15 @@ class VueReferenceContributor : PsiReferenceContributor() {
         }
         return PsiReference.EMPTY_ARRAY
       }
-    })
+    }
+
+    val BASIC_REF_PROVIDER = object : PsiReferenceProvider() {
+      override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> =
+        PathReferenceManager.getInstance().createReferences(element, false, false, true)
+    }
+
+    private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
+      XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).inside(XmlPatterns.xmlTag().withLocalName(tagName))
+
   }
 }

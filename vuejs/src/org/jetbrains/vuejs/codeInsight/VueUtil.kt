@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -26,6 +25,8 @@ import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
+const val SRC_ATTRIBUTE_NAME = "src"
+
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
   for (i in split.indices) {
@@ -40,12 +41,6 @@ fun toAsset(name: String): String {
     words[i] = StringUtil.capitalize(words[i])
   }
   return StringUtil.join(*words)
-}
-
-fun getNameVariants(name: String, withKebab: Boolean): Set<String> {
-  val camelCaseName = toAsset(name).decapitalize()
-  if (withKebab) return setOf(fromAsset(name), camelCaseName, camelCaseName.capitalize())
-  return setOf(camelCaseName, camelCaseName.capitalize())
 }
 
 private val QUOTES = setOf('\'', '"', '`')
@@ -83,14 +78,6 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
   val xmlFile = file as? XmlFile ?: return null
   val scriptTag = findScriptTag(xmlFile) ?: return null
   return detectLanguage(scriptTag)
-}
-
-fun getSearchScope(project: Project, includeLibraries: Boolean = false): GlobalSearchScope {
-  // TODO support multi module setup
-  return if (includeLibraries)
-    GlobalSearchScope.allScope(project)
-  else
-    GlobalSearchScope.projectScope(project)
 }
 
 val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
@@ -158,4 +145,12 @@ fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,
   }
 
   return tryCast((root?.firstChild as? VueJSEmbeddedExpression)?.firstChild, expressionClass)
+}
+
+fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
+  return element
+    ?.let { InjectedLanguageManager.getInstance(element.project).getInjectedPsiFiles(element) }
+    ?.asSequence()
+    ?.mapNotNull { it.first as? PsiFile }
+    ?.first()
 }

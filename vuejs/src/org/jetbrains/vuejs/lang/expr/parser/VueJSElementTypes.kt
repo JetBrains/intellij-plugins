@@ -2,12 +2,12 @@
 package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.javascript.types.JSVariableElementType
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.impl.*
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSSlotPropsExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForExpressionImpl
 
 object VueJSElementTypes {
 
@@ -17,26 +17,6 @@ object VueJSElementTypes {
 
   val SLOT_PROPS_EXPRESSION: IElementType = object : VueJSCompositeElementType("SLOT_PROPS_EXPRESSION") {
     override fun createCompositeNode(): ASTNode = VueJSSlotPropsExpressionImpl(this)
-  }
-
-  val V_FOR_VARIABLE: JSVariableElementType = object : JSVariableElementType("V_FOR_VARIABLE") {
-    override fun construct(node: ASTNode?): PsiElement? {
-      return VueJSVForVariableImpl(node)
-    }
-
-    override fun shouldCreateStub(node: ASTNode?): Boolean {
-      return false
-    }
-  }
-
-  val SLOT_PROPS_VARIABLE: JSVariableElementType = object : JSVariableElementType("SLOT_PROPS_VARIABLE") {
-    override fun construct(node: ASTNode?): PsiElement? {
-      return VueJSSlotPropsVariableImpl(node)
-    }
-
-    override fun shouldCreateStub(node: ASTNode?): Boolean {
-      return false
-    }
   }
 
   val EMBEDDED_EXPR_STATEMENT: IElementType = object : VueJSCompositeElementType("VUE:EMBEDDED_EXPR_STATEMENT") {

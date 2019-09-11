@@ -46,7 +46,7 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
                   ""
               }
               .let {
-                VueAttributeNameParser.parse(it, null)
+                VueAttributeNameParser.parse(it)
               }
             VueJSParser.parseEmbeddedExpression(builder, root, info)
           }

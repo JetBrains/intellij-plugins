@@ -23,8 +23,6 @@ class VueWebTypesComponent(tag: Tag,
   override val props: List<VueInputProperty> = tag.attributes.filter { it.name != null }.map { VueWebTypesInputProperty(it, typeProvider) }
   override val emits: List<VueEmitCall> = tag.events.filter { it.name != null }.map { VueWebTypesEmitCall(it) }
   override val slots: List<VueSlot> = tag.slots.filter { it.name != null }.map { VueWebTypesSlot(it) }
-  override val template: PsiElement? = null
-  override val element: String? = null
   override val extends: List<VueContainer> = emptyList()
   override val components: Map<String, VueComponent> = Collections.emptyMap()
   override val directives: Map<String, VueDirective> = Collections.emptyMap()

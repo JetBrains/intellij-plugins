@@ -2,6 +2,7 @@ package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
@@ -108,7 +109,14 @@ fun findOffsetBySignature(signature: String, psiFile: PsiFile): Int {
 
 fun resolveReference(signature: String, fixture: CodeInsightTestFixture): PsiElement {
   val offsetBySignature = findOffsetBySignature(signature, fixture.file)
-  val ref = fixture.file.findReferenceAt(offsetBySignature)
+  var ref = fixture.file.findReferenceAt(offsetBySignature)
+  if (ref === null) {
+    //possibly an injection
+    ref = InjectedLanguageManager.getInstance(fixture.project)
+      .findInjectedElementAt(fixture.file, offsetBySignature)
+      ?.findReferenceAt(0)
+  }
+
   TestCase.assertNotNull("No reference at '$signature'", ref)
   var resolve = ref!!.resolve()
   if (resolve == null && ref is PsiPolyVariantReference) {

@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class DuplicateTagInspection : LocalInspectionTool() {
@@ -21,7 +22,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag?) {
         if (tag?.language != VueLanguage.INSTANCE) return
-        if ("template" != tag.name && !HtmlUtil.isScriptTag(tag)) return
+        if (TEMPLATE_TAG_NAME != tag.name && !HtmlUtil.isScriptTag(tag)) return
         val parent = tag.parent as? XmlDocument ?: return
         PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java)!!
           .filter { it != tag && it.name == tag.name }

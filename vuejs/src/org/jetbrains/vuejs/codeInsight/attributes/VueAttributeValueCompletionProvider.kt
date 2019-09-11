@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.PLAIN
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SLOT
 import org.jetbrains.vuejs.model.getAvailableSlots
@@ -38,9 +39,9 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
       PLAIN ->
         if (xmlAttribute.name == "lang") {
           when (xmlTag.name) {
-            "script" -> return VUE_SCRIPT_LANGUAGE
-            "style" -> return VUE_STYLE_LANGUAGE
-            "template" -> return VUE_TEMPLATE_LANGUAGE
+            SCRIPT_TAG_NAME -> return VUE_SCRIPT_LANGUAGE
+            STYLE_TAG_NAME -> return VUE_STYLE_LANGUAGE
+            TEMPLATE_TAG_NAME -> return VUE_TEMPLATE_LANGUAGE
           }
         }
       SLOT -> return getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
