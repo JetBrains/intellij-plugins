@@ -10,12 +10,12 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
-import com.intellij.testFramework.ResolveTestCase
+import com.intellij.testFramework.JavaResolveTestCase
 import org.junit.Assert
 import java.io.File
 import java.util.*
 
-abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : ResolveTestCase() {
+abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : JavaResolveTestCase() {
   protected val NotResolved = Object()
 
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
@@ -35,7 +35,7 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
         break
       }
 
-      fileText = fileText.substring(0, offset) + fileText.substring(offset + ResolveTestCase.MARKER.length)
+      fileText = fileText.substring(0, offset) + fileText.substring(offset + JavaResolveTestCase.MARKER.length)
       offsets.add(offset)
     }
 
