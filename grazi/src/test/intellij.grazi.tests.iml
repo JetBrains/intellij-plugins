@@ -11,7 +11,7 @@
     <orderEntry type="library" scope="RUNTIME" name="KotlinPlugin" level="project" />
     <orderEntry type="library" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.4" />
         <CLASSES>
@@ -65,7 +65,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-el:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-el:4.7.4" />
         <CLASSES>
@@ -111,7 +111,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-es:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-es:4.7.4" />
         <CLASSES>
@@ -155,7 +155,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-fa:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-fa:4.7.4" />
         <CLASSES>
@@ -199,7 +199,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-fr:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-fr:4.7.4" />
         <CLASSES>
@@ -245,7 +245,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-it:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-it:4.7.4" />
         <CLASSES>
@@ -289,7 +289,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-ja:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-ja:4.7.4" />
         <CLASSES>
@@ -337,7 +337,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-nl:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-nl:4.7.4" />
         <CLASSES>
@@ -381,7 +381,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-pl:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-pl:4.7.4" />
         <CLASSES>
@@ -425,7 +425,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-pt:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-pt:4.7.4" />
         <CLASSES>
@@ -471,7 +471,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-ro:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-ro:4.7.4" />
         <CLASSES>
@@ -515,7 +515,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.4" />
         <CLASSES>
@@ -559,7 +559,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-sk:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-sk:4.7.4" />
         <CLASSES>
@@ -603,7 +603,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-uk:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-uk:4.7.4" />
         <CLASSES>
@@ -648,7 +648,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="tanvd.grazi.languagetool:grazi-language-tool-zh:4.7.4" type="repository">
         <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-zh:4.7.4" />
         <CLASSES>
