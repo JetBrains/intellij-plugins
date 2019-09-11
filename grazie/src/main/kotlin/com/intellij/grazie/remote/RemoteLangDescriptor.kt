@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.remote
 
+import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.ide.ui.components.dsl.msg
+import java.io.File
 
 enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String, shortCode: String) {
   ENGLISH(listOf("BritishEnglish", "AmericanEnglish", "CanadianEnglish", "AustralianEnglish", "NewZealandEnglish", "SouthAfricanEnglish"),
@@ -22,6 +24,7 @@ enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String
   SPANISH(listOf("Spanish"), "2 MB", "es"),
   UKRAINIAN(listOf("Ukrainian"), "6 MB", "uk");
 
-  val file: String by lazy { "$shortCode-${msg("grazie.languagetool.version")}.jar" }
-  val url: String by lazy { "${msg("grazie.maven.repo.url")}/$file" }
+  val fileName: String by lazy { "$shortCode-${msg("grazie.languagetool.version")}.jar" }
+  val file: File by lazy { GrazieDynamic.dynamicFolder.resolve(fileName) }
+  val url: String by lazy { "${msg("grazie.maven.repo.url")}/$fileName" }
 }

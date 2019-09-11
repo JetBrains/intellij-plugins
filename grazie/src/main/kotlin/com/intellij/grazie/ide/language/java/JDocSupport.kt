@@ -10,7 +10,7 @@ import com.intellij.grazie.grammar.GrammarChecker
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.language.LanguageSupport
 import com.intellij.grazie.utils.filterFor
-import tanvd.kex.buildSet
+import com.intellij.grazie.utils.buildSet
 
 class JDocSupport : LanguageSupport() {
   companion object {

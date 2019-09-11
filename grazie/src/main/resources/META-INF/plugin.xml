@@ -37,7 +37,7 @@
         <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.init.GrazieProjectInit"/>
 
         <localInspection groupName="Grazie" enabledByDefault="true" displayName="Grazie proofreading inspection"
-                         shortName="GraziInspection" implementationClass="com.intellij.grazie.ide.GrazieInspection" level="TYPO"/>
+                         shortName="GrazieInspection" implementationClass="com.intellij.grazie.ide.GrazieInspection" level="TYPO"/>
 
         <applicationConfigurable groupId="tools" instance="com.intellij.grazie.ide.ui.GrazieConfigurable"
                                  id="reference.settingsdialog.project.grazie"

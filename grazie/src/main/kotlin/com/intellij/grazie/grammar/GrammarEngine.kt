@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory
 import com.intellij.grazie.language.LangDetector
 import com.intellij.grazie.language.LangTool
 import com.intellij.grazie.utils.splitWithRanges
-import tanvd.kex.LinkedSet
-import tanvd.kex.buildSet
+import com.intellij.grazie.utils.LinkedSet
+import com.intellij.grazie.utils.buildSet
 
 object GrammarEngine {
   private val logger = LoggerFactory.getLogger(GrammarEngine::class.java)

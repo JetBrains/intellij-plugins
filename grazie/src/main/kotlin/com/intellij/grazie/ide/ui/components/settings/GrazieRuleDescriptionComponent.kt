@@ -23,7 +23,7 @@ import com.intellij.grazie.ide.ui.components.utils.GrazieLinkLabel
 import com.intellij.grazie.language.Lang
 import com.intellij.grazie.language.LangTool
 import com.intellij.grazie.utils.*
-import tanvd.kex.orFalse
+import com.intellij.grazie.utils.orFalse
 import java.awt.BorderLayout
 import javax.swing.ScrollPaneConstants
 

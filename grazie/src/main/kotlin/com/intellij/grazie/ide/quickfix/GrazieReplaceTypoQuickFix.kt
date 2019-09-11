@@ -19,7 +19,7 @@ import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.isSpellingTypo
 import com.intellij.grazie.utils.toAbsoluteSelectionRange
-import tanvd.kex.trimToNull
+import com.intellij.grazie.utils.trimToNull
 import javax.swing.Icon
 import kotlin.math.min
 

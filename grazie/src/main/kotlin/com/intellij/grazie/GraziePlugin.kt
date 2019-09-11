@@ -5,7 +5,6 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.PluginId
-import tanvd.kex.tryRun
 import java.io.File
 
 object GraziePlugin {
@@ -18,17 +17,11 @@ object GraziePlugin {
     get() = descriptor.version
 
   val classLoader: ClassLoader
-    get() = if (ApplicationManager.getApplication().isUnitTestMode) ClassLoader.getSystemClassLoader() else descriptor.pluginClassLoader
+    get() = if (ApplicationManager.getApplication().isUnitTestMode)
+      ClassLoader.getSystemClassLoader()
+    else
+      descriptor.pluginClassLoader
 
-  val installationFolder: File
-    get() = descriptor.path
-
-  fun loadClass(className: String) = tryRun {
-    if (ApplicationManager.getApplication().isUnitTestMode) {
-      Class.forName(className)
-    }
-    else {
-      Class.forName(className, true, classLoader)
-    }
-  }
+  val libFolder: File
+    get() = descriptor.path.resolve("lib")
 }

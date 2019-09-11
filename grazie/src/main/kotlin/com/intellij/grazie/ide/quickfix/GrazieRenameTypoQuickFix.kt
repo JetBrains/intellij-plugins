@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.spellcheck.SpellCheckRenameSuggestions
-import tanvd.kex.trimToNull
-import tanvd.kex.untilNotNull
+import com.intellij.grazie.utils.trimToNull
 import javax.swing.Icon
 
 open class GrazieRenameTypoQuickFix(private val typo: Typo) : RefactoringQuickFix, Iconable, PriorityAction {
@@ -47,7 +46,7 @@ open class GrazieRenameTypoQuickFix(private val typo: Typo) : RefactoringQuickFi
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val element = descriptor.psiElement ?: return
 
-    with(NameSuggestionProvider.EP_NAME.extensionList.untilNotNull { it as? SpellCheckRenameSuggestions }) {
+    with(NameSuggestionProvider.EP_NAME.extensionList.asSequence().mapNotNull { it as? SpellCheckRenameSuggestions }.firstOrNull()) {
       try {
         this?.active = true
         TransactionGuard.submitTransaction(project, Runnable { doFix(element) })

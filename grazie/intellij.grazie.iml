@@ -8,18 +8,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
-      <library name="tanvd.kex:kex:0.1.1" type="repository">
-        <properties include-transitive-deps="false" maven-id="tanvd.kex:kex:0.1.1" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/kex/kex/0.1.1/kex-0.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/kex/kex/0.1.1/kex-0.1.1-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library name="org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.11" type="repository">
         <properties include-transitive-deps="false" maven-id="org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.11" />
@@ -66,7 +54,7 @@
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
     <orderEntry type="module" module-name="intellij.platform.vcs.impl" />
-    <orderEntry type="module" module-name="intellij.spellchecker"/>
+    <orderEntry type="module" module-name="intellij.spellchecker" />
     <orderEntry type="library" name="miglayout-swing" level="project" />
     <orderEntry type="module" module-name="intellij.java" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" />
@@ -93,26 +81,26 @@
     <orderEntry type="library" scope="RUNTIME" name="Guava" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="jetbrains-annotations" level="project" />
     <orderEntry type="module-library">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.4" type="repository">
-        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.4" />
+      <library name="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.5" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.4/grazi-language-tool-en-4.7.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.5/grazi-language-tool-en-4.7.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.4/grazi-language-tool-en-4.7.4-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.5/grazi-language-tool-en-4.7.5-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool:4.7.4" type="repository">
-        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool:4.7.4" />
+      <library name="tanvd.grazi.languagetool:grazi-language-tool:4.7.5" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool:4.7.5" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.4/grazi-language-tool-4.7.4.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.5/grazi-language-tool-4.7.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.4/grazi-language-tool-4.7.4-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.5/grazi-language-tool-4.7.5-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

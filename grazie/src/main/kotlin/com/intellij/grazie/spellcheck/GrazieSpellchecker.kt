@@ -26,7 +26,7 @@ import com.intellij.grazie.language.LangTool
 import com.intellij.grazie.utils.Text
 import com.intellij.grazie.utils.toPointer
 import com.intellij.grazie.utils.withOffset
-import tanvd.kex.LinkedSet
+import com.intellij.grazie.utils.LinkedSet
 
 object GrazieSpellchecker : GrazieStateLifecycle {
   private const val MAX_SUGGESTIONS_COUNT = 5

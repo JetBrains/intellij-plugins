@@ -5,7 +5,7 @@ import com.intellij.openapi.ui.popup.ListSeparator
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.grazie.language.Lang
-import tanvd.kex.ifTrue
+import com.intellij.grazie.utils.ifTrue
 
 class GrazieListPopupStep(title: String, downloadedLangs: List<Lang>, private val otherLangs: List<Lang>,
                           private val download: (Lang) -> Boolean,

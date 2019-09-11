@@ -1,15 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.remote
 
-import com.intellij.openapi.project.Project
 import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.GraziePlugin
 import com.intellij.grazie.language.Lang
+import com.intellij.openapi.project.Project
 
 object GrazieRemote {
-  private fun isLibExists(lib: String) = GraziePlugin.installationFolder.resolve("lib/$lib").exists()
+  private fun isLibExists(lib: String) = GrazieDynamic.dynamicFolder.resolve(lib).exists() || GraziePlugin.libFolder.resolve(lib).exists()
 
-  fun isAvailableLocally(lang: Lang) = isLibExists(lang.remote.file)
+  fun isAvailableLocally(lang: Lang) = isLibExists(lang.remote.fileName)
+
+  fun allAvailableLocally() = Lang.values().filter { isAvailableLocally(it) }
 
   /** Downloads [lang] to local storage */
   fun download(lang: Lang, project: Project? = null): Boolean {

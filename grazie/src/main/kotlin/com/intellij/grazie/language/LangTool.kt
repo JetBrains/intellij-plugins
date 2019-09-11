@@ -1,18 +1,25 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.language
 
+import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.grazie.language.broker.GrazieDynamicClassBroker
+import com.intellij.grazie.language.broker.GrazieDynamicDataBroker
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.config.UserConfig
 import org.languagetool.rules.Rule
-import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 
 object LangTool : GrazieStateLifecycle {
   private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
   private val spellers: MutableMap<Lang, Rule?> = HashMap()
 
   private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
+
+  init {
+    JLanguageTool.setDataBroker(GrazieDynamicDataBroker)
+    JLanguageTool.setClassBroker(GrazieDynamicClassBroker)
+  }
 
   val allRules: Set<String>
     get() = rulesToLanguages.keys

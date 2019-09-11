@@ -9,7 +9,7 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.language.Lang
-import tanvd.kex.ifTrue
+import com.intellij.grazie.utils.ifTrue
 
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {

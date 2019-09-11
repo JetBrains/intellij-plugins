@@ -4,11 +4,11 @@ package com.intellij.grazie.language
 import org.languagetool.JLanguageTool
 import org.languagetool.language.Language
 import com.intellij.grazie.GrazieBundle
-import com.intellij.grazie.GraziePlugin
+import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.remote.RemoteLangDescriptor
 
 @Suppress("unused")
-enum class Lang(val displayName: String, val shortCode: String, private val className: String, val remote: RemoteLangDescriptor,
+enum class Lang(val displayName: String, val shortCode: String, val className: String, val remote: RemoteLangDescriptor,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet(),
                 private val disabledCategories: Set<String> = emptySet()) {
@@ -51,7 +51,7 @@ enum class Lang(val displayName: String, val shortCode: String, private val clas
 
   private var _jLanguage: Language? = null
   val jLanguage: Language?
-    get() = _jLanguage ?: (GraziePlugin.loadClass("org.languagetool.language.$className")?.newInstance() as Language?)?.also {
+    get() = _jLanguage ?: GrazieDynamic.loadLang(this)?.also {
       _jLanguage = it
     }
 

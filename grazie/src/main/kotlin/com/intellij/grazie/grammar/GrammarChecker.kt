@@ -4,10 +4,9 @@ package com.intellij.grazie.grammar
 import com.intellij.psi.PsiElement
 import com.intellij.grazie.utils.Text
 import com.intellij.grazie.utils.toPointer
-import tanvd.kex.LinkedSet
-import tanvd.kex.ifTrue
-import tanvd.kex.orTrue
-import tanvd.kex.untilNotNull
+import com.intellij.grazie.utils.LinkedSet
+import com.intellij.grazie.utils.ifTrue
+import com.intellij.grazie.utils.orTrue
 
 class GrammarChecker(private val charRules: CharRules = CharRules(), private val textRules: TextRules = TextRules()) {
 
@@ -17,7 +16,7 @@ class GrammarChecker(private val charRules: CharRules = CharRules(), private val
     constructor(fst: CharRules, snd: CharRules) : this(LinkedSet(fst.ignore + snd.ignore), LinkedSet(fst.replace + snd.replace))
 
     fun ignore(prev: CharSequence, cur: Char) = ignore.any { it(prev, cur) }
-    fun replace(prev: CharSequence, cur: Char) = replace.untilNotNull { it(prev, cur) } ?: cur
+    fun replace(prev: CharSequence, cur: Char) = replace.asSequence().mapNotNull { it(prev, cur) }.firstOrNull() ?: cur
   }
 
   /** Rules working on a level of the whole text */

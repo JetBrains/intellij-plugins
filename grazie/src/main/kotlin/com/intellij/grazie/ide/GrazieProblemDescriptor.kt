@@ -13,7 +13,7 @@ import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
-import tanvd.kex.buildList
+import com.intellij.grazie.utils.buildList
 
 class GrazieProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
   fix.location.element!!, fix.location.element!!,

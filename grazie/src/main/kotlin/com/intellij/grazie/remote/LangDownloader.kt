@@ -2,14 +2,13 @@
 package com.intellij.grazie.remote
 
 import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.GraziePlugin
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.language.Lang
 import com.intellij.openapi.project.Project
 import com.intellij.util.download.DownloadableFileService
 import com.intellij.util.lang.UrlClassLoader
-import org.languagetool.language.Language
-import org.languagetool.language.Languages
 import java.nio.file.Paths
 
 object LangDownloader {
@@ -19,19 +18,17 @@ object LangDownloader {
     // check if language lib already loaded
     if (GrazieRemote.isAvailableLocally(lang)) return true
 
-    val result = downloader.createDownloader(listOf(downloader.createFileDescription(lang.remote.url, lang.remote.file)),
-                                             msg("grazie.ui.settings.language.download.name", lang.displayName))
-      .downloadFilesWithProgress(GraziePlugin.installationFolder.absolutePath + "/lib", project, null)
+    val result = downloader.createDownloader(
+      listOf(downloader.createFileDescription(lang.remote.url, lang.remote.fileName)),
+      msg("grazie.ui.settings.language.download.name", lang.displayName)
+    ).downloadFilesWithProgress(GrazieDynamic.dynamicFolder.canonicalPath, project, null)
 
     // null if canceled or failed, zero result if nothing found
     if (result != null && result.isNotEmpty()) {
-      result.map { Paths.get(it.presentableUrl).toUri().toURL() }.forEach { (GraziePlugin.classLoader as UrlClassLoader).addURL(it) }
-      lang.remote.langsClasses.forEach { className ->
-        val qualifiedName = "org.languagetool.language.$className"
-        if (Languages.get().all { it::class.java.canonicalName != qualifiedName }) {
-          Languages.add(GraziePlugin.loadClass(qualifiedName)!!.newInstance() as Language)
-        }
-      }
+      val classLoader = UrlClassLoader.build().parent(GraziePlugin.classLoader)
+        .urls(result.map { Paths.get(it.presentableUrl).toUri().toURL() }).get()
+
+      GrazieDynamic.addDynClassLoader(classLoader)
 
       GrazieConfig.update { state -> state.update() }
       return true

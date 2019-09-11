@@ -2,13 +2,11 @@
 package com.intellij.grazie.utils
 
 import org.languagetool.rules.RuleMatch
-import tanvd.kex.LinkedSet
+import com.intellij.grazie.utils.LinkedSet
 
 fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
 fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + offset)
-
-fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.firstOrNull()?.let { if (body(it)) drop(1) else this } ?: this
 
 fun String.safeSubstring(startIndex: Int) = if (this.length <= startIndex) "" else substring(startIndex)
 
@@ -25,3 +23,29 @@ fun String.decapitalizeIfNotAbbreviation() = if (length > 1 && get(1).isUpperCas
 
 fun <T> Iterable<T>.filterToSet(filter: (T) -> Boolean) = asSequence().filter(filter).toCollection(LinkedSet())
 fun <T> Iterable<T>.filterNotToSet(filterNot: (T) -> Boolean) = asSequence().filterNot(filterNot).toCollection(LinkedSet())
+
+fun Boolean?.orTrue() = this ?: true
+fun Boolean?.orFalse() = this ?: false
+
+fun <T> Boolean.ifTrue(body: () -> T): T? = if (this) {
+  body()
+}
+else {
+  null
+}
+
+fun String.trimToNull(): String? = takeIf(String::isNotBlank)
+
+fun <T> buildList(body: MutableList<T>.() -> Unit): List<T> {
+  val result = ArrayList<T>()
+  result.body()
+  return result
+}
+
+fun <T> buildSet(body: MutableSet<T>.() -> Unit): Set<T> {
+  val result = LinkedSet<T>()
+  result.body()
+  return result
+}
+
+typealias LinkedSet<T> = LinkedHashSet<T>
