@@ -2,7 +2,6 @@
 package com.intellij.flex.completion
 
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.flex.util.FlexTestUtils
 import com.intellij.lang.javascript.JSTestOption
@@ -10,6 +9,7 @@ import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.flex.FlexModuleType
 import com.intellij.openapi.module.ModuleType
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.fixtures.CompletionAutoPopupTestCase
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor
 import org.jetbrains.annotations.NotNull
 
