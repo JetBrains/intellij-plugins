@@ -21,8 +21,10 @@
 </ul>
 <p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
 <p>Please report any issues on the <a href="https://youtrack.jetbrains.com/issues/WEB">tracker</a>.</p>
+<p></p>
+<p>Originally developed by John Lindquist.</p>
   ]]></description>
-  <vendor>johnlindquist, JetBrains</vendor>
+  <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>
