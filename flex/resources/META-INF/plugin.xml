@@ -1,5 +1,9 @@
 <idea-plugin>
+  <id>com.intellij.flex</id>
   <name>Flash/Flex</name>
+  <category>HTML/JavaScript Development</category>
+  <vendor>JetBrains</vendor>
+
   <description>
     <![CDATA[
       Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:<br>
@@ -7,12 +11,11 @@
       - Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.<br>
       - Run, debug, test, package and deploy your applications.
     ]]></description>
-  <id>com.intellij.flex</id>
-  <category>HTML/JavaScript Development</category>
-  <vendor>JetBrains</vendor>
-  <depends optional="false">JavaScript</depends>
-  <depends optional="false">com.intellij.css</depends>
+
+  <depends>JavaScript</depends>
+  <depends>com.intellij.css</depends>
   <depends>com.intellij.properties</depends>
+  <depends>com.intellij.modules.idea.ultimate</depends>
   <depends optional="true" config-file="flex-maven-support.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
   <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
