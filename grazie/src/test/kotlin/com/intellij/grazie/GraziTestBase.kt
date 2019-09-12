@@ -12,9 +12,7 @@ import com.intellij.grazie.language.Lang
 import com.intellij.grazie.utils.filterFor
 
 abstract class GraziTestBase(private val withSpellcheck: Boolean) : LightJavaCodeInsightFixtureTestCase() {
-  override fun getBasePath(): String {
-    return "contrib/grazi/src/test/testData"
-  }
+  override fun getBasePath() = "contrib/grazie/src/test/testData"
 
   override fun setUp() {
     super.setUp()
