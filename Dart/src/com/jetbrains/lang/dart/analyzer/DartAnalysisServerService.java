@@ -89,6 +89,8 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static com.google.dart.server.internal.remote.RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE;
+
 public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
@@ -99,6 +101,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
+  private static final long EDIT_DARTFIX_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1492,6 +1495,51 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return resultRef.get();
+  }
+
+  @Nullable
+  public List<SourceFileEdit> edit_dartfixNNBD(@NotNull final List<VirtualFile> files) {
+    return edit_dartfix(files, Collections.singletonList(DART_FIX_INFO_NON_NULLABLE));
+  }
+
+  @Nullable
+  private List<SourceFileEdit> edit_dartfix(@NotNull final List<VirtualFile> files, @NotNull final List<String> includedFixes) {
+
+    final ArrayList<String> filePaths = new ArrayList<>(files.size());
+    for (VirtualFile file : files) {
+      filePaths.add(FileUtil.toSystemDependentName(file.getPath()));
+    }
+
+    final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
+
+    final AnalysisServer server = myServer;
+    if (server == null) return null;
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.edit_dartfix(filePaths, includedFixes, false, Collections.emptyList(), new DartfixConsumer() {
+      @Override
+      public void computedDartfix(List<DartFixSuggestion> suggestions,
+                                  List<DartFixSuggestion> otherSuggestions,
+                                  boolean hasErrors,
+                                  List<SourceFileEdit> edits) {
+        resultRef.set(edits);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        logError("edit_dartfix()", StringUtil.join(filePaths, ", "), error);
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, EDIT_DARTFIX_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      LOG.info("edit_dartfix() took too long for files " + StringUtil.join(filePaths, ", "));
+    }
+
     return resultRef.get();
   }
 
