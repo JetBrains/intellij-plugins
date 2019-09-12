@@ -2,6 +2,8 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
@@ -20,12 +22,10 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
-
-const val SRC_ATTRIBUTE_NAME = "src"
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
@@ -154,3 +154,21 @@ fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
     ?.mapNotNull { it.first as? PsiFile }
     ?.first()
 }
+
+fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {
+  val xmlFile = getContainingXmlFile(element) ?: return null
+
+  val module = findModule(xmlFile) ?: return null
+  val defaultExport = ES6PsiUtil.findDefaultExport(module)
+                        as? ES6ExportDefaultAssignment ?: return null
+  if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {
+    return Pair(module, defaultExport)
+  }
+  return null
+}
+
+fun getContainingXmlFile(element: PsiElement): XmlFile? =
+  (element.containingFile as? XmlFile
+   ?: element as? XmlFile
+   ?: InjectedLanguageManager.getInstance(
+     element.project).getInjectionHost(element)?.containingFile as? XmlFile)

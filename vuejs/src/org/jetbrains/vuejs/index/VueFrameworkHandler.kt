@@ -64,7 +64,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueMixinBindingIndex.KEY),
     record(VueOptionsIndex.KEY),
     record(VueStoreIndex.KEY),
-    record(VueUrlIndex.KEY)
+    record(VueUrlIndex.KEY),
+    record(VueIdIndex.KEY)
   )
   private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
                                                                 JSStubElementTypes.NEW_EXPRESSION,
@@ -218,16 +219,30 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
     else if (TEMPLATE_PROP == property.name) {
       if (isPossiblyVueContainerInitializer(property.parent as? JSObjectLiteralExpression)) {
-        getExprReferencedFileUrl(property.value)
-          ?.let { PathUtil.getFileName(it) }
-          ?.takeIf { it.isNotBlank() }
-          ?.let {
-            JSImplicitElementImpl.Builder(it, property)
-              .setUserString(VueUrlIndex.JS_KEY)
-              .forbidAstAccess()
-              .toImplicitElement()
-          }
-          ?.let { out.addImplicitElement(it) }
+        val value = property.value
+        if (value is JSLiteralExpression && value.isQuotedLiteral) {
+          value.stringValue
+            ?.takeIf { it.startsWith("#") && it.length > 1 }
+            ?.let {
+              JSImplicitElementImpl.Builder(it.substring(1), property)
+                .setUserString(VueIdIndex.JS_KEY)
+                .forbidAstAccess()
+                .toImplicitElement()
+            }
+            ?.let { out.addImplicitElement(it) }
+        }
+        else {
+          getExprReferencedFileUrl(property.value)
+            ?.let { PathUtil.getFileName(it) }
+            ?.takeIf { it.isNotBlank() }
+            ?.let {
+              JSImplicitElementImpl.Builder(it, property)
+                .setUserString(VueUrlIndex.JS_KEY)
+                .forbidAstAccess()
+                .toImplicitElement()
+            }
+            ?.let { out.addImplicitElement(it) }
+        }
       }
     }
     else if (VueStoreUtils.STATE == property.name) {

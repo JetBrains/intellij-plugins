@@ -72,6 +72,8 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         || attributeInfo.kind === SCRIPT_SRC
         || attributeInfo.kind === STYLE_SRC) {
       attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
+    } else if (attributeInfo.kind === SCRIPT_ID) {
+      attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
     }
     else {
       attr.done(XmlElementType.XML_ATTRIBUTE)

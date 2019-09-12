@@ -45,6 +45,13 @@ class VueAttributeNameParserTest : UsefulTestCase() {
     expect("functional", "functional", TEMPLATE_FUNCTIONAL, injectJS = false, requiresAttributeValue = false,
            contextTag = "template", isTopLevelTag = true)
 
+
+    expect("id", "id", PLAIN, injectJS = false, requiresAttributeValue = true)
+    expect("id", "id", SCRIPT_ID, injectJS = false, requiresAttributeValue = true,
+           contextTag = "script", isTopLevelTag = true)
+    expect("id", "id", SCRIPT_ID, injectJS = false, requiresAttributeValue = true,
+           contextTag = "script", isTopLevelTag = false)
+
     expect("src", "src", TEMPLATE_SRC, injectJS = false, requiresAttributeValue = true,
            contextTag = "template", isTopLevelTag = true)
     expect("src", "src", SCRIPT_SRC, injectJS = false, requiresAttributeValue = true,

@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight.attributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.*
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
 import java.util.*
 
 class VueAttributeNameParser private constructor() {
@@ -158,6 +157,10 @@ class VueAttributeNameParser private constructor() {
       result = 31 * result + modifiers.hashCode()
       return result
     }
+
+    override fun toString(): String {
+      return "$name [$kind, modifiers=$modifiers]"
+    }
   }
 
   class VueDirectiveInfo internal constructor(name: String,
@@ -192,6 +195,9 @@ class VueAttributeNameParser private constructor() {
       return result
     }
 
+    override fun toString(): String {
+      return "$name [$kind, args=$arguments, isShorthand=$isShorthand, modifiers=$modifiers]"
+    }
 
   }
 
@@ -200,28 +206,28 @@ class VueAttributeNameParser private constructor() {
                               val injectJS: Boolean = false,
                               val requiresValue: Boolean = true,
                               val deprecated: Boolean = false,
-                              val requiredTopLevelTag: String? = null) {
+                              val requiresTag: String? = null,
+                              val onlyTopLevelTag: Boolean = true) {
     PLAIN(null),
     DIRECTIVE(null),
     SLOT("slot", deprecated = true),
     REF("ref"),
     IS("is"),
-    SCOPE("scope", injectJS = true, deprecated = true),
+    SCOPE("scope", injectJS = true, deprecated = true, requiresTag = TEMPLATE_TAG_NAME, onlyTopLevelTag = false),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
-    STYLE_SCOPED("scoped", requiresValue = false, requiredTopLevelTag = STYLE_TAG_NAME),
-    STYLE_MODULE("module", requiresValue = false, requiredTopLevelTag = STYLE_TAG_NAME),
-    STYLE_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = STYLE_TAG_NAME),
-    TEMPLATE_FUNCTIONAL("functional", requiresValue = false, requiredTopLevelTag = TEMPLATE_TAG_NAME),
-    TEMPLATE_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = TEMPLATE_TAG_NAME),
-    SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiredTopLevelTag = SCRIPT_TAG_NAME),
+    STYLE_SCOPED("scoped", requiresValue = false, requiresTag = STYLE_TAG_NAME),
+    STYLE_MODULE("module", requiresValue = false, requiresTag = STYLE_TAG_NAME),
+    STYLE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
+    TEMPLATE_FUNCTIONAL("functional", requiresValue = false, requiresTag = TEMPLATE_TAG_NAME),
+    TEMPLATE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = TEMPLATE_TAG_NAME),
+    SCRIPT_ID(ID_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME, onlyTopLevelTag = false),
+    SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     ;
 
     fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {
-      return when {
-        this === SCOPE -> context?.toLowerCase(Locale.US) == TEMPLATE_TAG_NAME
-        requiredTopLevelTag != null -> isTopLevel && context == requiredTopLevelTag
-        else -> true
-      }
+      return requiresTag == null
+             || ((!onlyTopLevelTag || isTopLevel)
+                 && context?.toLowerCase(Locale.US) == requiresTag)
     }
 
     fun isValidIn(context: XmlTag): Boolean {

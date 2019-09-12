@@ -44,6 +44,19 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
     doTest()
   }
 
+  fun testLinkedTemplateJSExportXTemplate() {
+    doTest()
+
+    myFixture.configureFromTempProjectFile("script.js")
+    val element = resolveReference("#b<caret>ar", myFixture)
+    assertEquals("template.html", element.containingFile.name)
+    assertEquals("\n" +
+                 "    <div>\n" +
+                 "      {{ foo }}\n" +
+                 "    </div>\n" +
+                 "  ", element.firstChild.text)
+  }
+
   private fun doTest(mainFile: String = "template.html", targetFile: String = "script.js") {
     val testName = getTestName(true)
     val targetText = if (testName.endsWith("Decorators")) "@Prop foo" else "\"foo\""

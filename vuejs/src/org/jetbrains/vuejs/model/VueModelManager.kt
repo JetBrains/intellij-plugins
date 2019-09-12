@@ -29,10 +29,9 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
-import org.jetbrains.vuejs.codeInsight.refs.getContainingXmlFile
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -53,13 +52,25 @@ class VueModelManager {
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
-      return (InjectedLanguageManager.getInstance(templateElement.project)
-                .getInjectionHost(templateElement)
-                ?.let { it as? JSLiteralExpression }
-                ?.let { CompletionUtil.getOriginalOrSelf(it) }
-                ?.let { it.parent as? JSProperty }
-              ?: getContainingXmlFile(templateElement)?.originalFile)
-        ?.let { getEnclosingComponentDescriptor(it) }
+      val baseElement: PsiElement? =
+        if (templateElement is JSElement && templateElement.containingFile is XmlFile) {
+          PsiTreeUtil.getParentOfType(templateElement, XmlElement::class.java)
+        }
+        else {
+          templateElement
+        }
+
+      return when (baseElement) {
+        is XmlElement -> InjectedLanguageManager.getInstance(baseElement.project)
+                           .getInjectionHost(baseElement)
+                           ?.let { it as? JSLiteralExpression }
+                           ?.let { CompletionUtil.getOriginalOrSelf(it) }
+                           ?.let { it.parent as? JSProperty }
+                         ?: baseElement
+        is JSElement -> InjectedLanguageManager.getInstance(templateElement.project).getInjectionHost(templateElement) as? XmlElement
+        else -> null
+      }
+        ?.let { getEnclosingComponentDescriptor(CompletionUtil.getOriginalOrSelf(it)) }
         ?.let { getComponent(it.obj ?: it.clazz!!) }
     }
 
@@ -109,6 +120,33 @@ class VueModelManager {
 
     private fun findReferencingComponentDescriptor(context: PsiElement): VueComponentDescriptor? {
       if (context !is XmlElement) return null
+
+      PsiTreeUtil.findFirstParent(context) {
+        (it as? XmlTag)?.let { tag ->
+          tag.name == SCRIPT_TAG_NAME
+          && tag.getAttribute("type")?.value == "text/x-template"
+        } ?: false
+      }?.let { scriptTag ->
+        val id = (scriptTag as XmlTag).getAttribute("id")?.value ?: return null
+
+        var result: VueComponentDescriptor? = null
+        StubIndex.getInstance().processElements(VueIdIndex.KEY, id, context.project,
+                                                GlobalSearchScope.projectScope(context.project),
+                                                PsiElement::class.java) { element ->
+          if ((element as? JSProperty)?.indexingData
+              ?.implicitElements
+              ?.asSequence()
+              ?.any {
+                it.userString == VueIdIndex.JS_KEY
+                && it?.qualifiedName == id
+                && it.isValid
+              } == true) {
+            result = getEnclosingComponentDescriptor(element)
+          }
+          true
+        }
+        return result
+      }
 
       val file = VueSourceComponent.getHostFile(context) ?: return null
       val name = file.viewProvider.virtualFile.name

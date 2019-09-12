@@ -22,9 +22,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
-import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.SRC_ATTRIBUTE_NAME
+import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.TEMPLATE_PROP
