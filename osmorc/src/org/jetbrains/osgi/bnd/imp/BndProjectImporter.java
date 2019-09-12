@@ -31,7 +31,6 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -44,6 +43,7 @@ import com.intellij.pom.java.LanguageLevel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
@@ -99,7 +99,7 @@ public class BndProjectImporter {
   private final com.intellij.openapi.project.Project myProject;
   private final Workspace myWorkspace;
   private final Collection<? extends Project> myProjects;
-  private final Map<String, String> mySourcesMap = ContainerUtil.newTroveMap(FileUtil.PATH_HASHING_STRATEGY);
+  private final Map<String, String> mySourcesMap = new THashMap<>(FileUtil.PATH_HASHING_STRATEGY);
 
   public BndProjectImporter(@NotNull com.intellij.openapi.project.Project project,
                             @NotNull Workspace workspace,

@@ -8,6 +8,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,11 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-import static com.intellij.util.containers.ContainerUtil.newHashSet;
-
 public class Angular2AttributeInsertHandler implements InsertHandler<LookupElement> {
 
-  private static final Set<Character> HTML_ATTR_NOT_ALLOWED_CHARS = newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
+  private static final Set<Character> HTML_ATTR_NOT_ALLOWED_CHARS = ContainerUtil.newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
 
   private final boolean myShouldRemoveLeftover;
   private final BooleanSupplier myShouldCompleteValue;

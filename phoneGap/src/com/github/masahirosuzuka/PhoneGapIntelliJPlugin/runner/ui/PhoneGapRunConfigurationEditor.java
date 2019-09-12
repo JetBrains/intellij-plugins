@@ -159,7 +159,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       @NotNull
       @Override
       public Set<String> getCachedValues() {
-        return ContainerUtil.newHashOrEmptySet(null);
+        return Collections.emptySet();
       }
 
       @Override
@@ -189,7 +189,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
       }
 
       private void processEmpty() {
-        myTarget.onUpdateValues(ContainerUtil.newHashOrEmptySet(null));
+        myTarget.onUpdateValues(Collections.emptySet());
       }
     });
 

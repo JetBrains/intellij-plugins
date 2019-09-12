@@ -26,7 +26,7 @@ import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,15 +40,15 @@ public class ActionScriptRearranger extends JSRearrangerBase {
 
   private static final Logger LOG = Logger.getInstance(ActionScriptRearranger.class.getName());
 
-  private static final Set<ArrangementSettingsToken> SUPPORTED_TYPES = ContainerUtilRt.newLinkedHashSet(
+  private static final Set<ArrangementSettingsToken> SUPPORTED_TYPES = ContainerUtil.newLinkedHashSet(
     CONSTRUCTOR, METHOD, STATIC_INIT, CONST, VAR, PROPERTY, EVENT_HANDLER
   );
 
-  private static final Set<ArrangementSettingsToken> SUPPORTED_MODIFIERS = ContainerUtilRt.newLinkedHashSet(
+  private static final Set<ArrangementSettingsToken> SUPPORTED_MODIFIERS = ContainerUtil.newLinkedHashSet(
     PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE, STATIC, FINAL, OVERRIDE
   );
 
-  private static final Set<ArrangementSettingsToken> VISIBILITY_MODIFIERS = ContainerUtilRt.newLinkedHashSet(
+  private static final Set<ArrangementSettingsToken> VISIBILITY_MODIFIERS = ContainerUtil.newLinkedHashSet(
     PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE
   );
 
