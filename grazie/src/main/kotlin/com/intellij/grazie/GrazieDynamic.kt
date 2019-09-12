@@ -13,6 +13,9 @@ import java.net.URL
 object GrazieDynamic {
   @Suppress("ObjectPropertyName")
   private val myDynClassLoaders by lazy {
+    for (file in dynamicFolder.walk().filter { file -> file.isFile && Lang.values().all { it.remote.file != file } }) {
+      file.delete()
+    }
     hashSetOf<ClassLoader>(
       UrlClassLoader.build()
         .parent(GraziePlugin.classLoader)
