@@ -4,6 +4,7 @@ package org.angular2.lang.html;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSEmbeddedContent;
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
@@ -21,6 +22,12 @@ public class XmlASTWrapperPsiElement extends ASTWrapperPsiElement implements Xml
   @Override
   public boolean processElements(PsiElementProcessor processor, PsiElement place) {
     return XmlPsiUtil.processXmlElements(this, processor, false);
+  }
+
+  @Override
+  public void subtreeChanged() {
+    super.subtreeChanged();
+    JSControlFlowService.getService(getProject()).resetFlow(this);
   }
 
   @Override

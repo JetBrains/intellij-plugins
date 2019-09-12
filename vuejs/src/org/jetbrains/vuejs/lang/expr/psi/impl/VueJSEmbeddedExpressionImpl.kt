@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.lang.expr.psi.impl
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.psi.JSElementVisitor
 import com.intellij.lang.javascript.psi.JSSuppressionHolder
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.lang.javascript.psi.impl.JSElementImpl
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
 import com.intellij.psi.PsiElementVisitor
@@ -28,6 +29,11 @@ class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(ele
 
   override fun allowTopLevelThis(): Boolean {
     return true
+  }
+
+  override fun subtreeChanged() {
+    super.subtreeChanged()
+    JSControlFlowService.getService(project).resetFlow(this)
   }
 
   override fun getQuoteChar(): Char? {

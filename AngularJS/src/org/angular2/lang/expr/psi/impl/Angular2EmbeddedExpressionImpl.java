@@ -4,6 +4,7 @@ package org.angular2.lang.expr.psi.impl;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSSuppressionHolder;
+import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.lang.javascript.psi.impl.JSElementImpl;
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
 import com.intellij.psi.PsiElementVisitor;
@@ -33,6 +34,12 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSS
     else {
       super.accept(visitor);
     }
+  }
+
+  @Override
+  public void subtreeChanged() {
+    super.subtreeChanged();
+    JSControlFlowService.getService(getProject()).resetFlow(this);
   }
 
   @Override
