@@ -989,10 +989,12 @@ public class FlexCommonUtils {
     }
 
     if (version != null) {
+      if (ArrayUtil.contains(version, "1.5.1", "1.5.2", "1.5.3")) {
+        return version;
+      }
+
       final Trinity<String, String, String> majorMinorRevision = getMajorMinorRevisionVersion(version);
-      return majorMinorRevision.third.isEmpty() || "0".equals(majorMinorRevision.third)
-             ? majorMinorRevision.first + "." + majorMinorRevision.second
-             : majorMinorRevision.first + "." + majorMinorRevision.second + "." + majorMinorRevision.third;
+      return majorMinorRevision.first + "." + majorMinorRevision.second;
     }
 
     return null;
