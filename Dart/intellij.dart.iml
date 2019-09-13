@@ -42,12 +42,15 @@
     <orderEntry type="library" name="netty-codec-http" level="project" />
     <orderEntry type="library" name="markdownj" level="project" />
     <orderEntry type="module-library">
-      <library>
+      <library name="org.apache.commons:commons-lang3:3.9" type="repository">
+        <properties maven-id="org.apache.commons:commons-lang3:3.9" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-lang3-3.2.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
