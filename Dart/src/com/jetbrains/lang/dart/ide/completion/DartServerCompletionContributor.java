@@ -642,6 +642,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     else if (elementKind.equals(ElementKind.TOP_LEVEL_VARIABLE)) {
       return AllIcons.Nodes.Variable;
     }
+    else if (elementKind.equals(ElementKind.EXTENSION)) {
+      return AllIcons.Nodes.AnonymousClass;
+    }
     else {
       return null;
     }
