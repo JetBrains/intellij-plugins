@@ -90,6 +90,11 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     return false;
   }
 
+  @Override
+  public boolean isElvis() {
+    return false;
+  }
+
   @Nullable
   private JSReferenceExpression getNameReference() {
     return (JSReferenceExpression)findPsiChildByType(Angular2ElementTypes.PIPE_REFERENCE_EXPRESSION);

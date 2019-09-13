@@ -64,6 +64,11 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return false;
   }
 
+  @Override
+  public boolean isElvis() {
+    return false;
+  }
+
   @Nullable
   @Override
   public JSElementIndexingData getIndexingData() {
