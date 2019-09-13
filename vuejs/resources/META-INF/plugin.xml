@@ -42,6 +42,8 @@ Vue components defined using separate .html, .js, and .css files are not support
                     interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"/>
     <extensionPoint qualifiedName="com.intellij.vuejs.contextProvider"
                     interface="org.jetbrains.vuejs.context.VueContextProvider"/>
+    <extensionPoint qualifiedName="com.intellij.vuejs.containerInfoProvider"
+                    interface="org.jetbrains.vuejs.model.source.VueContainerInfoProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -142,6 +144,12 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VueNodeModulesContextProvider"
                            id="node_modules"
                            order="after package.json"/>
+
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.model.source.VueDefaultContainerInfoProvider"
+                                 id="default"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider"
+                                 id="decoratedComponent"
+                                 order="after default"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
