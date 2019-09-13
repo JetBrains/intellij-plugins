@@ -99,7 +99,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
   override fun getTokenType(): IElementType? {
     val type = helper.getTokenType(super.getTokenType())
     if ((type === XmlTokenType.TAG_WHITE_SPACE && isLexerWithinInterpolation(state))
-        || (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript() && hasSeenAttribute()))
+        || (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript()))
       return EXPRESSION_WHITE_SPACE
     if (type === XmlTokenType.TAG_WHITE_SPACE && (getBaseLexerState(state) == 0
                                                   || isLexerWithinUnterminatedInterpolation(state))) {
