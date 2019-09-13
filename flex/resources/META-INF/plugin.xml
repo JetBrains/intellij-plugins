@@ -19,10 +19,10 @@
   <depends optional="true" config-file="flex-maven-support.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
   <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
-  <depends optional="true" config-file="idea-specific.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
     <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
