@@ -152,7 +152,7 @@ fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
     ?.let { InjectedLanguageManager.getInstance(element.project).getInjectedPsiFiles(element) }
     ?.asSequence()
     ?.mapNotNull { it.first as? PsiFile }
-    ?.first()
+    ?.firstOrNull()
 }
 
 fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {

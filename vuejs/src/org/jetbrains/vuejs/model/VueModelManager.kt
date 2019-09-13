@@ -135,7 +135,6 @@ class VueModelManager {
                                                 PsiElement::class.java) { element ->
           if ((element as? JSProperty)?.indexingData
               ?.implicitElements
-              ?.asSequence()
               ?.any {
                 it.userString == VueIdIndex.JS_KEY
                 && it?.qualifiedName == id
@@ -156,7 +155,7 @@ class VueModelManager {
                                               GlobalSearchScope.projectScope(context.project),
                                               PsiElement::class.java) { element ->
         if (element is JSProperty) {
-          if (element.indexingData?.implicitElements?.asSequence()
+          if (element.indexingData?.implicitElements
                 ?.any {
                   it.userString == VueUrlIndex.JS_KEY
                   && it?.qualifiedName == name
@@ -196,7 +195,7 @@ class VueModelManager {
           ?.let { BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext()) }
           ?.asSequence()
           ?.mapNotNull { it.resolve()?.castSafelyTo<PsiFile>() }
-          ?.first()
+          ?.firstOrNull()
           ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
           ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
       }
