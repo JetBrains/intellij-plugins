@@ -6,6 +6,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -216,8 +217,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider {
       val property = descriptor.findProperty(propertyName) ?: return emptyList()
 
       var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
-      if (propsObject == null && property.initializerReference != null) {
-        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(property.initializerReference!!, property)
+      val initializerReference = JSPsiImplUtils.getInitializerReference(property)
+      if (propsObject == null && initializerReference != null) {
+        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
         if (resolved != null) {
           propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
                           .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
