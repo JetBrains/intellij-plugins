@@ -105,14 +105,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     catch (ExecutionException e1) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
-                () -> editSettings(project));
+                               () -> editSettings(project));
       return;
     }
 
     NodePackage nodePackage = configuration.getPackage();
     if (nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
-                () -> editSettings(project));
+                               () -> editSettings(project));
       return;
     }
     if (!nodePackage.isValid()) {
@@ -249,7 +249,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (result.unsupported && reportSkippedFiles) {
           PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
             .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
-          reformattedResults.put(currentFile,errorResult); 
+          reformattedResults.put(currentFile, errorResult);
         }
         if (result.ignored) {
           PrettierLanguageService.FormatResult errorResult =
@@ -270,7 +270,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         }
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         PrettierLanguageService.FormatResult result = entry.getValue();
-        if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
+        if (document != null && StringUtil.isEmpty(result.error) && !result.ignored && !result.unsupported) {
           CharSequence textBefore = document.getCharsSequence();
           LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
           String newContent = StringUtil.convertLineSeparators(result.result);
@@ -315,7 +315,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     WriteCommandAction.runWriteCommandAction(project, PrettierBundle.message("command.name"), null, runnable);
   }
 
-  private static String buildNotificationMessage(@NotNull Document document, @NotNull CharSequence textBefore, boolean lineSeparatorsUpdated) {
+  private static String buildNotificationMessage(@NotNull Document document,
+                                                 @NotNull CharSequence textBefore,
+                                                 boolean lineSeparatorsUpdated) {
     int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
     return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines"
                                       : lineSeparatorsUpdated
@@ -331,8 +333,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                            : HintUtil.createInformationLabel(text, hyperlinkListener, null, null);
       final LightweightHint hint = new LightweightHint(component);
       HintManagerImpl.getInstanceImpl()
-                     .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
-                                                                      HintManager.HIDE_BY_SCROLLING, 0, false);
+        .showEditorHint(hint, editor, HintManager.UNDER, HintManager.HIDE_BY_ANY_KEY | HintManager.HIDE_BY_TEXT_CHANGE |
+                                                         HintManager.HIDE_BY_SCROLLING, 0, false);
     }, ModalityState.NON_MODAL, o -> editor.isDisposed() || !editor.getComponent().isShowing());
   }
 
