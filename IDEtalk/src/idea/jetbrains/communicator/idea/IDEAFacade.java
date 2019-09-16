@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.ProjectFrameHelper;
 import com.intellij.ui.PopupHandler;
@@ -371,11 +370,9 @@ public class IDEAFacade implements IDEFacade {
       res = (Project) getData(component, CommonDataKeys.PROJECT.getName());
     }
     else {
-      IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
-      for (IdeFrame frame : frames) {
-        ProjectFrameHelper eachFrame = (ProjectFrameHelper)frame;
-        if (eachFrame.getFrame().isActive()) {
-          res = eachFrame.getProject();
+      for (ProjectFrameHelper frameHelper : WindowManagerEx.getInstanceEx().getProjectFrameHelpers()) {
+        if (frameHelper.getFrame().isActive()) {
+          res = frameHelper.getProject();
           if (res != null) break;
         }
       }
