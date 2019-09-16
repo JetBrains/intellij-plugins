@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
@@ -178,7 +179,17 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         radioButtonPanel.border = EmptyBorder(0, 12, 0, 0)
         radioButtonPanel.layout = BoxLayout(radioButtonPanel, BoxLayout.PAGE_AXIS)
 
-        val sortedLangSupportExtensions = LangManager.getInstance().supportedLanguagesExtensions.sortedBy {it.language}
+        val supportedLanguagesExtensions = LangManager.getInstance().supportedLanguagesExtensions
+        if (supportedLanguagesExtensions.isEmpty()) {
+          val message = "No supported languages found"
+          LOG.error(message)
+            mainPanel!!.add(JLabel().apply {
+                text = message
+                font = UISettings.instance.boldFont
+            })
+            return
+        }
+        val sortedLangSupportExtensions = supportedLanguagesExtensions.sortedBy {it.language}
 
         for (langSupportExt: LanguageExtensionPoint<LangSupport> in sortedLangSupportExtensions) {
 
@@ -260,7 +271,7 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
     }
 
     companion object {
-
+        private val LOG = Logger.getInstance(LanguageChoosePanel::class.java)
         private val REGULAR = SimpleAttributeSet()
         private val REGULAR_GRAY = SimpleAttributeSet()
         private val PARAGRAPH_STYLE = SimpleAttributeSet()
