@@ -16,6 +16,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.ConfigurableTemplateLanguageFileViewProvider;
 import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -123,26 +124,34 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       return null;
     }
 
-    if (lang.is(getTemplateDataLanguage()) || lang.isKindOf(getBaseLanguage())) {
+    if (lang.is(getTemplateDataLanguage())) {
       PsiFile file = parserDefinition.createFile(this);
-      setContentElementType(lang, file);
+      IElementType type = getContentElementType(lang, file);
+      if (type != null) {
+        ((PsiFileImpl)file).setContentElementType(type);
+      }
       return file;
+    }
+    else if (lang.isKindOf(getBaseLanguage())) {
+      return parserDefinition.createFile(this);
     }
     return null;
   }
 
   @Override
-  public void setContentElementType(Language language, PsiFile file) {
+  public IElementType getContentElementType(Language language, PsiFile file) {
     if (language.is(getTemplateDataLanguage())) {
-      ((PsiFileImpl)file).setContentElementType(getTemplateDataElementType(getBaseLanguage()));
+      return getTemplateDataElementType(getBaseLanguage());
     }
+    return null;
   }
 
   private ParserDefinition getDefinition(Language lang) {
     ParserDefinition parserDefinition;
     if (lang.isKindOf(getBaseLanguage())) {
       parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang.is(getBaseLanguage()) ? lang : getBaseLanguage());
-    } else {
+    }
+    else {
       parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
     }
     return parserDefinition;
