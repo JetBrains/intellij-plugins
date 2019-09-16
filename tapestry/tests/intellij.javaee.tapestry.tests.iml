@@ -14,7 +14,8 @@
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
     <orderEntry type="library" scope="TEST" name="TestNG" level="project" />
-    <orderEntry type="library" scope="TEST" name="XMLUnit" level="project" />
+    <orderEntry type="library" scope="TEST" name="XMLUnit Core" level="project" />
+    <orderEntry type="library" scope="TEST" name="XMLUnit Matchers" level="project" />
     <orderEntry type="module" module-name="intellij.database.plugin" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.java.langInjection" scope="RUNTIME" />
     <orderEntry type="module" module-name="intellij.xml.langInjection" scope="RUNTIME" />
