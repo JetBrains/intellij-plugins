@@ -46,7 +46,8 @@ public class AngularJSInjector implements MultiHostInjector {
     if (!AngularIndexUtil.hasAngularJS(project)) return;
 
     final PsiElement parent = context.getParent();
-    if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute) {
+    if (context instanceof XmlAttributeValueImpl && parent instanceof XmlAttribute &&
+        ((XmlAttributeValueImpl)context).isValidHost()) {
       final String value = context.getText();
       final int start = value.startsWith("'") || value.startsWith("\"") ? 1 : 0;
       final int end = value.endsWith("'") || value.endsWith("\"") ? 1 : 0;
