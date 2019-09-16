@@ -17,20 +17,15 @@ public class MetadataJsonFileViewProviderFactory implements FileViewProviderFact
                                                  Language language,
                                                  @NotNull PsiManager manager,
                                                  boolean eventSystemEnabled) {
-    assert file.getFileType() instanceof MetadataJsonFileType;
-    return new MetadataFileViewProvider(manager, file, (MetadataJsonFileType)file.getFileType(), eventSystemEnabled);
+    return new MetadataFileViewProvider(manager, file, eventSystemEnabled);
   }
 
   public static class MetadataFileViewProvider extends SingleRootFileViewProvider {
-
-    @NotNull private final MetadataJsonFileType myFileType;
-
     private MetadataFileViewProvider(@NotNull PsiManager manager,
                                      @NotNull VirtualFile file,
-                                     @NotNull MetadataJsonFileType fileType,
                                      boolean eventSystemEnabled) {
-      super(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE, fileType);
-      myFileType = fileType;
+      super(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE);
+      assert file.getFileType() instanceof MetadataJsonFileType;
     }
 
     @Override
@@ -41,7 +36,7 @@ public class MetadataJsonFileViewProviderFactory implements FileViewProviderFact
     @NotNull
     @Override
     public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
-      return new MetadataFileViewProvider(getManager(), copy, myFileType, false);
+      return new MetadataFileViewProvider(getManager(), copy, false);
     }
   }
 }
