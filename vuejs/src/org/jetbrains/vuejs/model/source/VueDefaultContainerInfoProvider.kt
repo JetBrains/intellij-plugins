@@ -12,29 +12,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
-import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Function
 
-class VueDefaultContainerInfoProvider : VueContainerInfoProvider {
+class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? =
-    initializer?.let {
-      CachedValuesManager.getCachedValue(it) {
-        CachedValueProvider.Result.create(VueSourceContainerInfo(it),
-                                          PsiModificationTracker.MODIFICATION_COUNT)
-      }
-    }
-
-  private class VueSourceContainerInfo(val declaration: JSObjectLiteralExpression) : VueContainerInfo {
+  private class VueSourceContainerInfo(declaration: JSObjectLiteralExpression) : VueInitializedContainerInfo(declaration) {
     override val data: List<VueDataProperty> get() = get(DATA)
     override val computed: List<VueComputedProperty> get() = get(COMPUTED)
     override val methods: List<VueMethod> get() = get(METHODS)
@@ -48,12 +34,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider {
     override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
     override val mixins: List<VueMixin> get() = get(MIXINS)
 
-    private val values: MutableMap<MemberAccessor<*>, Any?> = ConcurrentHashMap()
-
-    private fun <T> get(accessor: MemberAccessor<T>): T {
-      @Suppress("UNCHECKED_CAST")
-      return values.computeIfAbsent(accessor, Function { it.build(declaration) }) as T
-    }
   }
 
   companion object {
@@ -70,16 +50,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider {
 
     private val MODEL = ModelAccessor()
   }
-
-  private abstract class MemberAccessor<T> {
-
-    abstract fun build(declaration: JSObjectLiteralExpression): T
-
-  }
-
-  private abstract class ListAccessor<T> : MemberAccessor<List<T>>()
-
-  private abstract class MapAccessor<T> : MemberAccessor<Map<String, T>>()
 
   private class MixinsAccessor(private val propertyName: String,
                                private val indexKey: StubIndexKey<String, JSImplicitElementProvider>)
@@ -118,7 +88,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider {
     }
   }
 
-  private class ComponentsAccessor() : MapAccessor<VueComponent>() {
+  private class ComponentsAccessor : MapAccessor<VueComponent>() {
     override fun build(declaration: JSObjectLiteralExpression): Map<String, VueComponent> {
       return StreamEx.of(ContainerMember.Components.readMembers(declaration))
         .mapToEntry({ p -> p.first }, { p -> p.second })

@@ -18,6 +18,7 @@ import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest;
 import org.jetbrains.vuejs.lang.html.VueIndexerTest;
 import org.jetbrains.vuejs.lang.html.VueLexerTest;
 import org.jetbrains.vuejs.lang.html.VueParserTest;
+import org.jetbrains.vuejs.vuex.VuexTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -47,6 +48,7 @@ import org.junit.runners.Suite;
   VueCopyrightTest.class,
   VueAutoPopupTest.class,
   VueEmmetTest.class,
+  VuexTestSuite.class,
   VueModuleImportTest.class,
   VueTypeScriptHighlightingTest.class,
   VueTypeScriptDuplicateTest.class,

@@ -39,7 +39,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory
-import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
@@ -63,7 +62,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueLocalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
     record(VueOptionsIndex.KEY),
-    record(VueStoreIndex.KEY),
     record(VueUrlIndex.KEY),
     record(VueIdIndex.KEY)
   )
@@ -74,7 +72,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
 
   companion object {
-    private fun <T : PsiElement> record(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
+    fun <T : PsiElement> record(key: StubIndexKey<String, T>): Pair<String, StubIndexKey<String, T>> {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
@@ -244,50 +242,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             ?.let { out.addImplicitElement(it) }
         }
       }
-    }
-    else if (VueStoreUtils.STATE == property.name) {
-      val properties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
-      properties
-        .filter { it.parent.parent == property && it.name != null }
-        .forEach {
-          out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, VueStoreUtils.STATE))
-        }
-    }
-    else if (VueStoreUtils.ACTION == property.name || VueStoreUtils.MUTATION == property.name || VueStoreUtils.GETTER == property.name) {
-      //Actions can be action: function(){} or action(){}
-      val es6properties = PsiTreeUtil.findChildrenOfType(property, ES6FunctionProperty::class.java)
-      val jsProperties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
-
-      es6properties
-        .filter { it.parent.parent == property }
-        .forEach {
-          //          For such cases:
-          //          var SOME_MUTATION = 'computed name'
-          //          mutations = {
-          //            [SOME_MUTATION]() {
-          //            }
-          //          };
-          if (it.computedPropertyName != null) {
-            val expr = PsiTreeUtil.findChildOfType(it, JSReferenceExpression::class.java)
-            if (expr != null && expr.referenceName != null) {
-              val reference = JSSymbolUtil.resolveLocallyIncludingDefinitions(expr.referenceName!!, expr)
-              val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
-              if (referenceText != null) out.addImplicitElement(
-                createImplicitElement(referenceText.toString(), it, VueStoreIndex.JS_KEY, property.name))
-            }
-          }
-          if (it.name != null) {
-            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
-          }
-
-        }
-      jsProperties
-        .filter { it.parent.parent == property }
-        .forEach {
-          if (it.name != null) {
-            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
-          }
-        }
     }
 
     val firstProperty = obj.firstProperty ?: return outData

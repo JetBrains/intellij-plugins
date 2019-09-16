@@ -19,14 +19,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
-import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.hasVuex
-import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.normalizeName
 import org.jetbrains.vuejs.index.DELIMITER
-import org.jetbrains.vuejs.index.VueStoreIndex
 import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.libraries.vuex.VuexStoreIndex
+import org.jetbrains.vuejs.libraries.vuex.VuexStoreUtils
+import org.jetbrains.vuejs.libraries.vuex.VuexStoreUtils.hasVuex
+import org.jetbrains.vuejs.libraries.vuex.VuexStoreUtils.normalizeName
 
 class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
   companion object {
@@ -41,18 +41,19 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
     if (VueFileType.INSTANCE == parent.containingFile?.fileType && isInsideScript(parent) && VueJSLanguage.INSTANCE != language) {
       val obj = parent as? JSObjectLiteralExpression
       if (obj?.parent !is ES6ExportDefaultAssignment) {
+        // TODO migrate to Vuex package
         if (!hasVuex(parent)) return null
         val expression = PsiTreeUtil.getParentOfType(parent, JSCallExpression::class.java)
         if (expression == null || expression.methodExpression == null) return null
-        val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VueStoreIndex.KEY)
+        val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VuexStoreIndex.KEY)
         if (keys.isEmpty()) return null
         val map = mutableListOf<JSStringLiteralTypeImpl>()
         val expressionText = expression.methodExpression!!.text!!
         when {
-          expressionText.endsWith("dispatch") || expressionText == "mapActions" -> processVuex(keys, map, VueStoreUtils.ACTION)
-          expressionText == "commit" || expressionText == "mapMutations" -> processVuex(keys, map, VueStoreUtils.MUTATION)
-          expressionText.endsWith("getters") || expressionText == "mapGetters" -> processVuex(keys, map, VueStoreUtils.GETTER)
-          expressionText == "mapState" -> processVuex(keys, map, VueStoreUtils.STATE)
+          expressionText.endsWith("dispatch") || expressionText == "mapActions" -> processVuex(keys, map, VuexStoreUtils.ACTION)
+          expressionText == "commit" || expressionText == "mapMutations" -> processVuex(keys, map, VuexStoreUtils.MUTATION)
+          expressionText.endsWith("getters") || expressionText == "mapGetters" -> processVuex(keys, map, VuexStoreUtils.GETTER)
+          expressionText == "mapState" -> processVuex(keys, map, VuexStoreUtils.STATE)
         }
         if (map.isEmpty()) return null
         return JSCompositeTypeFactory.createUnionType(map[0].source, map)

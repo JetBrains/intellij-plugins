@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.codeInsight.completion.vuex
+package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.roots.ProjectRootModificationTracker
@@ -10,12 +10,14 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.DELIMITER
 
-object VueStoreUtils {
+object VuexStoreUtils {
   private const val VUEX = "vuex"
   const val ACTION = "actions"
   const val MUTATION = "mutations"
   const val STATE = "state"
   const val GETTER = "getters"
+
+  val VUEX_COMPONENT_FUNCTIONS = setOf("mapState", "mapGetters", "mapMutations", "mapActions")
 
   fun hasVuex(context: PsiElement): Boolean {
     val project = context.project

@@ -8,32 +8,13 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember
-import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
-class VueDecoratedComponentInfoProvider : VueContainerInfoProvider {
-
-  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? =
-    clazz?.let {
-      CachedValuesManager.getCachedValue(clazz) {
-        val dependencies = mutableListOf<Any>()
-        JSClassUtils.processClassesInHierarchy(clazz, true) { aClass, _, _ ->
-          dependencies.add(aClass)
-          dependencies.add(aClass.containingFile)
-          true
-        }
-        CachedValueProvider.Result.create(VueDecoratedComponentInfo(clazz), dependencies)
-      }
-    }
+class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
 
   private class VueDecoratedComponentInfo constructor(clazz: JSClass) : VueContainerInfo {
     override val mixins: List<VueMixin>
@@ -59,15 +40,15 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider {
         .asRecordType()
         .typeMembers
         .forEach { member ->
-          val decorator = findDecorator(member)
+          val decorator = findDecorator(member, DECS)
           when (decorator?.decoratorName) {
             PROP_DEC -> if (member is PropertySignature) {
-              props.add(VueDecoratedInputProperty(member.memberName, member, getPropOptionsFromDec(decorator, 0)))
+              props.add(VueDecoratedInputProperty(member.memberName, member, getDecoratorArgument(decorator, 0)))
             }
             PROP_SYNC_DEC -> if (member is PropertySignature) {
               computed.add(VueDecoratedComputedProperty(member.memberName, member))
               getNameFromDecorator(decorator)?.let { name ->
-                props.add(VueDecoratedInputProperty(name, member, getPropOptionsFromDec(decorator, 1)))
+                props.add(VueDecoratedInputProperty(name, member, getDecoratorArgument(decorator, 1)))
                 emits.add(VueDecoratedPropertyEmitCall("update:$name", member))
               }
             }
@@ -75,7 +56,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider {
               val name = getNameFromDecorator(decorator)
               model = VueModelDirectiveProperties(member.memberName,
                                                   name ?: VueModelDirectiveProperties.DEFAULT_EVENT)
-              props.add(VueDecoratedInputProperty(member.memberName, member, getPropOptionsFromDec(decorator, 1)))
+              props.add(VueDecoratedInputProperty(member.memberName, member, getDecoratorArgument(decorator, 1)))
             }
             EMIT_DEC -> if (member is PropertySignature) {
               if (member.memberSource.singleElement is JSFunction) {
@@ -133,24 +114,9 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider {
 
       private val DECS = setOf(PROP_DEC, PROP_SYNC_DEC, MODEL_DEC, EMIT_DEC)
 
-      private fun findDecorator(member: TypeMember): ES6Decorator? {
-        return (member.memberSource.singleElement as? JSAttributeListOwner)
-          ?.attributeList
-          ?.decorators
-          ?.find { DECS.contains(it.decoratorName) }
-      }
-
       private fun getNameFromDecorator(decorator: ES6Decorator): String? {
-        return (decorator.expression as? JSCallExpression)
-          ?.arguments
-          ?.firstOrNull()
+        return getDecoratorArgument(decorator, 0)
           ?.let { getTextIfLiteral(it) }
-      }
-
-      private fun getPropOptionsFromDec(decorator: ES6Decorator, index: Int): JSExpression? {
-        return (decorator.expression as? JSCallExpression)
-          ?.arguments
-          ?.getOrNull(index)
       }
     }
 

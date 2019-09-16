@@ -75,9 +75,9 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueUrlIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueIdIndex"/>
+    <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.VuexStoreIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
@@ -150,6 +150,12 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider"
                                  id="decoratedComponent"
                                  order="after default"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.VuexBasicComponentInfoProvider"
+                                 id="vuexBasic"
+                                 order="after decoratedComponent"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.VuexDecoratedComponentInfoProvider"
+                                 id="vuexDecoratedComponent"
+                                 order="after decoratedComponent"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -163,7 +169,8 @@ Vue components defined using separate .html, .js, and .css files are not support
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="2"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="3"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.VuexFrameworkHandler" version="1"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
