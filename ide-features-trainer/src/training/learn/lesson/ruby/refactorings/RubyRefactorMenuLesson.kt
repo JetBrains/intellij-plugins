@@ -6,7 +6,6 @@ import com.intellij.testGuiFramework.impl.jList
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
-import org.jetbrains.plugins.ruby.ruby.codeInsight.types.Context
 import training.commands.kotlin.TaskTestContext
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
@@ -64,7 +63,6 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
         derived,
         "meow",
         Types.METHODS,
-        Context.INSTANCE.immutable(),
         null)
 
     return barInDerived?.parentSymbol?.name == "Cat"
