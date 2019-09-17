@@ -71,6 +71,14 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts");
   }
 
+  public void testDuplicateAttributeBinding() {
+    doTest(
+          AngularDuplicateAttributeInspection.class,
+          "duplicate-attribute.html",
+          "component.ts"
+    );
+  }
+
   public void testMatchingComponents() {
     doTest(AngularAmbiguousComponentTagInspection.class,
            "matching-components.html", "component.ts");
