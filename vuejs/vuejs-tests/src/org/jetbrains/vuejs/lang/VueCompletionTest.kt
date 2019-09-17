@@ -424,6 +424,7 @@ export default {
       groceryList: {}
     }
   }</script>""")
+    myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
@@ -441,6 +442,7 @@ export default {
                 return {groceryList: 12}
               }
     }</script>""")
+    myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
