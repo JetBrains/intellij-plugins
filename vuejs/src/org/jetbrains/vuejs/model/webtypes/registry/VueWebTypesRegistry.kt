@@ -48,6 +48,8 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   companion object {
     private val LOG = Logger.getInstance(VueWebTypesRegistry::class.java)
     private const val WEB_TYPES_ENABLED_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/web-types/master/packages/registry.json"
+    private val LETTERS_PATTERN = Regex("[a-zA-Z]")
+    private val NON_LETTERS_PATTERN = Regex("^[^a-zA-Z]+\$")
 
     const val PACKAGE_PREFIX = "@web-types"
 
@@ -136,9 +138,21 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
       val pkgVersion = packageJson.version
 
-      val webTypesVersionEntry = versions.entries.find {
+      var webTypesVersionEntry = versions.entries.find {
         pkgVersion == null || it.key <= pkgVersion
       } ?: return@processState null
+
+      if (webTypesVersionEntry.key.preRelease?.contains(LETTERS_PATTERN) == true) {
+        // `2.0.0-beta.1` version is higher than `2.0.0-1`, so we need to manually find if there
+        // is a non-alpha/beta/rc version available in such a case.
+        versions.entries.find {
+          it.key.major == webTypesVersionEntry.key.major
+          && it.key.minor == webTypesVersionEntry.key.minor
+          && it.key.patch == webTypesVersionEntry.key.patch
+          && it.key.preRelease?.contains(NON_LETTERS_PATTERN) == true
+        }
+          ?.let { webTypesVersionEntry = it }
+      }
 
       return@processState loadPackageWebTypes(webTypesVersionEntry.value)
         ?.let { VueWebTypesPlugin(project, packageJsonFile, it, owner) }
