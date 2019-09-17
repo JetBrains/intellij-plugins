@@ -2,11 +2,13 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSFieldVariable
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
@@ -26,5 +28,12 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
     restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
     myContext.finishEvaluationWithStrictness(myContext.isStrict)
     return true
+  }
+
+  companion object {
+    fun resolveEventType(@Suppress("UNUSED_PARAMETER") attribute: XmlAttribute): JSType? {
+      // TODO resolve event type
+      return null
+    }
   }
 }

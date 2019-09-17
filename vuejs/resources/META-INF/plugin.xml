@@ -132,6 +132,10 @@ Vue components defined using separate .html, .js, and .css files are not support
     <todoIndexer filetype="Vue" implementationClass="org.jetbrains.vuejs.lang.html.index.VueTodoIndexer"/>
 
     <vuejs.templateScopesProvider
+        implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
+        id="standardSymbols"
+        order="before templateElements"/>
+    <vuejs.templateScopesProvider
         implementation="org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider"
         id="templateElements"/>
     <vuejs.templateScopesProvider

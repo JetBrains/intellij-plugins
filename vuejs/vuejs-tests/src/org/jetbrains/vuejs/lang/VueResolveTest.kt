@@ -1861,6 +1861,15 @@ export default class UsageComponent extends Vue {
                               resolveReference(testCase.key, myFixture).let { it as JSImplicitElement }.context!!.text)
       }
   }
+
+  fun testVueDefaultSymbols() {
+    configureVueDefinitions(myFixture)
+    myFixture.configureByFile("vueDefaultSymbols.vue")
+    assertEquals("vue.d.ts",
+                 resolveReference("\$<caret>slots", myFixture).containingFile.name)
+    assertEquals("vue.d.ts",
+                 resolveReference("\$<caret>emit()", myFixture).containingFile.name)
+  }
 }
 
 fun globalMixinText(): String {

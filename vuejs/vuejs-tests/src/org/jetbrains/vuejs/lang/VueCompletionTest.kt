@@ -411,7 +411,7 @@ export default {
   }
 
   fun testCompleteElementsFromLocalData() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("CompleteElementsFromLocalData.vue", """
   <template>{{<caret>}}</template>
   <script>
@@ -424,12 +424,11 @@ export default {
       groceryList: {}
     }
   }</script>""")
-    assertDoesntContainVueLifecycleHooks()
     assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
   fun testCompleteElementsFromLocalData2() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("CompleteElementsFromLocalData2.vue", """
     <template>{{<caret>}}</template>
     <script>
@@ -442,7 +441,6 @@ export default {
                 return {groceryList: 12}
               }
     }</script>""")
-    assertDoesntContainVueLifecycleHooks()
     assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
@@ -699,7 +697,7 @@ $script""")
   }
 
   fun testVueOutObjectLiteralCompletion() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("VueOutObjectLiteralCompletion.vue", """
     <script>
       export default {
@@ -725,7 +723,7 @@ $script""")
   }
 
   fun testVueOutObjectLiteralCompletionTs() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("VueOutObjectLiteralCompletionTs.vue", """
     <script lang="ts">
       export default {
@@ -738,7 +736,7 @@ $script""")
   }
 
   fun testVueOutObjectLiteralCompletionJsx() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("VueOutObjectLiteralCompletionJsx.vue", """
     <script lang="jsx">
       export default {
@@ -748,11 +746,6 @@ $script""")
 """)
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "beforeCreate", "beforeDestroy", "beforeUpdate", "beforeMount")
-  }
-
-  private fun configureVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture)
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
   }
 
   fun testNoDoubleCompletionForLocalComponent() {
@@ -1256,7 +1249,7 @@ $script""")
   }
 
   fun testVueCompletionInsideScript() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("test.vue", "<script>\n" +
                                           "    export default {\n" +
                                           "        name: 'test',\n" +
@@ -1279,7 +1272,7 @@ $script""")
   }
 
   fun testVueCompletionInsideScriptLifecycleHooks() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("test.vue", "<script>\n" +
                                           "    export default {\n" +
                                           "        computed: {\n" +
@@ -1303,7 +1296,7 @@ $script""")
   }
 
   fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("test.vue", "<script>\n" +
                                           "    export default {\n" +
                                           "        this.<caret> " +
@@ -1313,7 +1306,7 @@ $script""")
   }
 
   fun testVueCompletionInsideScriptNoLifecycleHooksWithoutThis() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByText("test.vue", "<script>\n" +
                                           "    export default {\n" +
                                           "        methods: {name(){<caret>}} " +
@@ -1472,7 +1465,7 @@ $script""")
   }
 
   fun testDestructuringVariableTypeInVFor() {
-    configureVueDefinitions()
+    configureVueDefinitions(myFixture)
     myFixture.configureByFile(getTestName(true) + ".vue")
     myFixture.completeBasic()
     assertStartsWith(myFixture.lookupElements!!, "first", "last")
@@ -1522,11 +1515,34 @@ $script""")
     assertDoesntContain(myFixture.lookupElementStrings!!, "header1Props", "vFor2")
   }
 
+  fun testVueDefaultSymbolsWithDefinitions() {
+    configureVueDefinitions(myFixture)
+    testVueDefaultSymbols()
+  }
+
+  @Suppress("MemberVisibilityCanBePrivate")
+  fun testVueDefaultSymbols() {
+    myFixture.configureByFile("vueDefaultSymbols.vue")
+
+    moveToOffsetBySignature("v-on:click=\"<caret>\"", myFixture)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$event", "\$emit", "\$root", "\$props", "\$refs")
+
+    moveToOffsetBySignature("v-bind:about=\"<caret>\"", myFixture)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$emit", "\$root", "\$props", "\$refs")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "\$event")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
   }
+}
 
+fun configureVueDefinitions(fixture: CodeInsightTestFixture) {
+  createPackageJsonWithVueDependency(fixture)
+  fixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

@@ -12,15 +12,22 @@ import com.intellij.lang.javascript.psi.types.JSTypeContext
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.typescript.modules.TypeScriptNodeReference
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider.Result.create
+import com.intellij.psi.util.CachedValuesManager.getCachedValue
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
+import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
@@ -172,3 +179,25 @@ fun getContainingXmlFile(element: PsiElement): XmlFile? =
    ?: element as? XmlFile
    ?: InjectedLanguageManager.getInstance(
      element.project).getInjectionHost(element)?.containingFile as? XmlFile)
+
+private val resolveSymbolCache = mutableMapOf<String, Key<CachedValue<*>>>()
+
+fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String, symbolClass: Class<T>): T? {
+  @Suppress("UNCHECKED_CAST")
+  val key: Key<CachedValue<T>> = resolveSymbolCache.computeIfAbsent("$moduleName/$symbolName/${symbolClass.simpleName}") {
+    Key.create(it)
+  } as Key<CachedValue<T>>
+  return getCachedValue(scope ?: return null, key) {
+    TypeScriptNodeReference(scope, moduleName, 0).resolve()
+      ?.castSafelyTo<JSElement>()
+      ?.let { ES6PsiUtil.resolveSymbolInModule(symbolName, scope, it) }
+      ?.asSequence()
+      ?.filter { it.element?.isValid == true }
+      ?.mapNotNull { tryCast(it.element, symbolClass) }
+      ?.firstOrNull()
+      ?.let {
+        return@getCachedValue create(it, PsiModificationTracker.MODIFICATION_COUNT)
+      }
+    create<T>(null, PsiModificationTracker.MODIFICATION_COUNT)
+  }
+}

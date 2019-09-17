@@ -2,11 +2,15 @@
 package org.jetbrains.vuejs.codeInsight.template
 
 import com.intellij.lang.javascript.psi.JSPsiElementBase
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
+import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
+import org.jetbrains.vuejs.index.VUE
 import org.jetbrains.vuejs.model.*
 import java.util.function.Consumer
 
@@ -18,7 +22,8 @@ class VueContainerScopeProvider : VueTemplateScopesProvider() {
            ?: emptyList()
   }
 
-  private class VueContainerScope constructor(private val myEntitiesContainer: VueEntitiesContainer) : VueTemplateScope(null) {
+  private class VueContainerScope constructor(private val myEntitiesContainer: VueEntitiesContainer)
+    : VueTemplateScope(VueDefaultInstanceScope(myEntitiesContainer)) {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       throw UnsupportedOperationException()
@@ -51,6 +56,45 @@ class VueContainerScopeProvider : VueTemplateScopesProvider() {
 
       }, onlyPublic = false)
       return continueProcessing
+    }
+  }
+
+  private class VueDefaultInstanceScope constructor(private val myEntitiesContainer: VueEntitiesContainer) : VueTemplateScope(null) {
+
+    override fun resolve(consumer: Consumer<in ResolveResult>) {
+      val source = myEntitiesContainer.source ?: return
+      resolveSymbolFromNodeModule(source, VUE, "Vue", TypeScriptInterface::class.java)
+        ?.jsType
+        ?.asRecordType()
+        ?.properties
+        ?.let { props ->
+          props.asSequence()
+            .mapNotNull { it.memberSource.singleElement }
+            .map { PsiElementResolveResult(it, true) }
+            .forEach { consumer.accept(it) }
+          return
+        }
+
+      // Fallback to a predefined list of properties without any typings
+      VUE_INSTANCE_PROPERTIES.forEach {
+        consumer.accept(PsiElementResolveResult(JSImplicitElementImpl.Builder(it, source)
+                                                  .forbidAstAccess().setType(JSImplicitElement.Type.Property)
+                                                  .toImplicitElement()))
+      }
+      VUE_INSTANCE_METHODS.forEach {
+        consumer.accept(PsiElementResolveResult(JSImplicitElementImpl.Builder(it, source)
+                                                  .forbidAstAccess().setType(JSImplicitElement.Type.Function)
+                                                  .toImplicitElement()))
+      }
+    }
+
+    companion object {
+      val VUE_INSTANCE_PROPERTIES: List<String> = listOf("\$el", "\$options", "\$parent", "\$root", "\$children", "\$refs", "\$slots",
+                                                         "\$scopedSlots", "\$isServer", "\$data", "\$props",
+                                                         "\$ssrContext", "\$vnode", "\$attrs", "\$listeners")
+      val VUE_INSTANCE_METHODS: List<String> = listOf("\$mount", "\$forceUpdate", "\$destroy", "\$set", "\$delete", "\$watch", "\$on",
+                                                      "\$once", "\$off", "\$emit", "\$nextTick", "\$createElement"
+      )
     }
   }
 }
