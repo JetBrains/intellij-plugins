@@ -7,12 +7,16 @@ import com.intellij.lang.javascript.psi.JSSuppressionHolder
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService
 import com.intellij.lang.javascript.psi.impl.JSElementImpl
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl
+import com.intellij.psi.HintedReferenceHost
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 
-class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(elementType), JSSuppressionHolder, VueJSEmbeddedExpression {
+class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(elementType),
+                                                               JSSuppressionHolder, VueJSEmbeddedExpression, HintedReferenceHost {
 
   override fun getLanguage(): Language {
     return VueJSLanguage.INSTANCE
@@ -39,4 +43,8 @@ class VueJSEmbeddedExpressionImpl(elementType: IElementType) : JSElementImpl(ele
   override fun getQuoteChar(): Char? {
     return JSEmbeddedContentImpl.getQuoteChar(this)
   }
+
+  override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> = PsiReference.EMPTY_ARRAY
+
+  override fun shouldAskParentForReferences(hints: PsiReferenceService.Hints): Boolean = false
 }

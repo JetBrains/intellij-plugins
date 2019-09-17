@@ -7,14 +7,18 @@ import com.intellij.lang.javascript.psi.JSSuppressionHolder;
 import com.intellij.lang.javascript.psi.controlflow.JSControlFlowService;
 import com.intellij.lang.javascript.psi.impl.JSElementImpl;
 import com.intellij.lang.javascript.psi.impl.JSEmbeddedContentImpl;
+import com.intellij.psi.HintedReferenceHost;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSSuppressionHolder, Angular2EmbeddedExpression {
+public class Angular2EmbeddedExpressionImpl extends JSElementImpl
+  implements JSSuppressionHolder, Angular2EmbeddedExpression, HintedReferenceHost {
 
   public Angular2EmbeddedExpressionImpl(IElementType elementType) {
     super(elementType);
@@ -51,5 +55,16 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSS
   @Override
   public Character getQuoteChar() {
     return JSEmbeddedContentImpl.getQuoteChar(this);
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferences(@NotNull PsiReferenceService.Hints hints) {
+    return PsiReference.EMPTY_ARRAY;
+  }
+
+  @Override
+  public boolean shouldAskParentForReferences(@NotNull PsiReferenceService.Hints hints) {
+    return false;
   }
 }

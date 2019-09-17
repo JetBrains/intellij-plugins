@@ -34,7 +34,7 @@ class VueCompletionTest : BasePlatformTestCase() {
 
 
   fun testCompleteAttributesWithVueInNodeModules() {
-    myFixture.configureByText("package.json","{}")
+    myFixture.configureByText("package.json", "{}")
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
     myFixture.configureByText("index.html", "<html <caret>></html>")
     myFixture.completeBasic()
@@ -1473,7 +1473,7 @@ $script""")
 
   fun testDestructuringVariableTypeInVFor() {
     configureVueDefinitions()
-    myFixture.configureByFile(getTestName(false) + ".vue")
+    myFixture.configureByFile(getTestName(true) + ".vue")
     myFixture.completeBasic()
     assertStartsWith(myFixture.lookupElements!!, "first", "last")
   }
@@ -1513,6 +1513,13 @@ $script""")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "foo3", "foo", "foo-bar")
     assertDoesntContain(myFixture.lookupElementStrings!!, "foo2", "foo-foo", "foo2-bar", "foo2-foo")
+  }
+
+  fun testSlotPropsCompletion() {
+    myFixture.configureByFile("slotProps.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "foo", "bar", "headerProps", "vFor")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "header1Props", "vFor2")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
