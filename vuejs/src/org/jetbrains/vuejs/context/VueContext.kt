@@ -26,6 +26,9 @@ fun isVueContext(context: PsiElement): Boolean {
   if (!context.isValid) {
     return false
   }
+  if (context is PsiDirectory) {
+    return isVueContext(context)
+  }
   val psiFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context) ?: return false
   if (psiFile.language == VueLanguage.INSTANCE) return true
   val file = psiFile.originalFile.virtualFile
@@ -44,8 +47,12 @@ fun isVueContext(context: VirtualFile, project: Project): Boolean {
   val psiDir = file?.parent
                  ?.let { if (it.isValid) PsiManager.getInstance(project).findDirectory(it) else null }
                ?: return false
-  return CachedValuesManager.getCachedValue(psiDir, VUE_CONTEXT_KEY) {
-    isVueContextFromProviders(psiDir)
+  return isVueContext(psiDir)
+}
+
+private fun isVueContext(directory: PsiDirectory):Boolean {
+  return CachedValuesManager.getCachedValue(directory, VUE_CONTEXT_KEY) {
+    isVueContextFromProviders(directory)
   }
 }
 
