@@ -30,7 +30,7 @@ import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedAssignmentInspection;
+import com.intellij.lang.javascript.inspection.JSUnusedAssignmentInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSImplicitlyInternalDeclarationInspection;
