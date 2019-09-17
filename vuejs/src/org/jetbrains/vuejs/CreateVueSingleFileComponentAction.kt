@@ -22,7 +22,7 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
 
   override fun isAvailable(dataContext: DataContext): Boolean {
     return super.isAvailable(dataContext) && isVueContext(
-      PlatformDataKeys.PSI_FILE.getData(dataContext) ?: return false)
+      PlatformDataKeys.PSI_ELEMENT.getData(dataContext) ?: return false)
   }
 
   override fun buildDialog(project: Project?, directory: PsiDirectory?, builder: CreateFileFromTemplateDialog.Builder?) {
