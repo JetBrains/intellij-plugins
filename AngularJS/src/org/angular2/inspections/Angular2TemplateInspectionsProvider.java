@@ -23,6 +23,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       AngularInvalidExpressionResultTypeInspection.class,
       AngularInvalidTemplateReferenceVariableInspection.class,
       AngularMissingEventHandlerInspection.class,
+      AngularDuplicateAttributeInspection.class,
       AngularMultipleStructuralDirectivesInspection.class,
       AngularNonEmptyNgContentInspection.class,
       AngularUndefinedBindingInspection.class,

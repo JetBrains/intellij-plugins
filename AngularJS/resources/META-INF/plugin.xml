@@ -191,6 +191,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularMultipleStructuralDirectivesInspection"
                      displayName="Multiple structural directives on one element" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularDuplicateAttributeInspection"
+                     displayName="Duplicate selectors and property bindings" groupName="Angular" enabledByDefault="true"
+                     level="ERROR" />
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection"
                      alternativeId=""
                      displayName="Invalid animation trigger assignment" groupName="Angular" enabledByDefault="true"
