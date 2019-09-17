@@ -39,14 +39,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-192.5728-EAP-CANDIDATE-SNAPSHOT'
+    version 'IU-193.2956-EAP-CANDIDATE-SNAPSHOT'
 
     plugins = [
-            'Pythonid:2019.2.192.5728.12',
-            'org.jetbrains.plugins.ruby:2019.2.20190710',
+            'Pythonid:193.2956.37',
+            'org.jetbrains.plugins.ruby:193.2956.37',
             'com.intellij.testGuiFramework:0.9.44.1@nightly',
             'java',
-            'org.jetbrains.plugins.go:192.5728.12.238'
+            'org.jetbrains.plugins.go:193.2956.37.421'
     ]
     if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
         alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")
@@ -111,7 +111,7 @@ runIde {
     }
 }
 
-test{
+test {
     def sysProps = System.properties.findAll { (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb") }
     sysProps.put("idea.gui.tests.gradle.runner", true) //Use Gradle Launcher to run GUI tests
     systemProperties sysProps
