@@ -95,4 +95,10 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("duplicateDeclarationOff.html", "duplicateDeclarationOff.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testDuplicateDeclarationOffTemplate() {
+    myFixture.enableInspections(new JSDuplicatedDeclarationInspection());
+    myFixture.configureByFiles("duplicateDeclarationOffLocalTemplate.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }
