@@ -126,7 +126,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
 
     if (lang.is(getTemplateDataLanguage())) {
       PsiFile file = parserDefinition.createFile(this);
-      IElementType type = getContentElementType(lang, file);
+      IElementType type = getContentElementType(lang);
       if (type != null) {
         ((PsiFileImpl)file).setContentElementType(type);
       }
@@ -139,7 +139,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   }
 
   @Override
-  public IElementType getContentElementType(Language language, PsiFile file) {
+  public IElementType getContentElementType(@NotNull Language language) {
     if (language.is(getTemplateDataLanguage())) {
       return getTemplateDataElementType(getBaseLanguage());
     }
