@@ -6,15 +6,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.wm.IdeFocusManager
-import com.intellij.openapi.wm.WindowManager
-import com.intellij.openapi.wm.ex.IdeFrameEx
-import com.intellij.openapi.wm.impl.IdeFrameImpl
 import org.jetbrains.annotations.SystemDependent
 import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import training.learn.exceptons.NoSdkException
-import java.lang.Boolean.TRUE
 
 /**
  * Created by karashevich on 24/09/15.
@@ -50,20 +45,6 @@ object NewLearnProjectUtil {
     if (newProject !== projectToClose && !unitTestMode && projectToClose != null) {
       ProjectUtil.closeAndDispose(projectToClose)
     }
-
-    if (newProject !== projectToClose) {
-      ProjectUtil.updateLastProjectLocation(projectFilePath)
-      if (WindowManager.getInstance().isFullScreenSupportedInCurrentOS) {
-        val lastFocusedFrame = IdeFocusManager.findInstance().lastFocusedFrame
-        if (lastFocusedFrame is IdeFrameEx) {
-          val fullScreen = lastFocusedFrame.isInFullScreen
-          if (fullScreen) newProject.putUserData(IdeFrameImpl.SHOULD_OPEN_IN_FULL_SCREEN, TRUE)
-        }
-      }
-      if (unitTestMode) return newProject
-      else projectManager.openProject(newProject)
-    }
-
     newProject.save()
     return newProject
 
