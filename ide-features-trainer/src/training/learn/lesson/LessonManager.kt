@@ -34,14 +34,7 @@ class LessonManager {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
   }
 
-  constructor(lesson: Lesson, editor: Editor) {
-    mouseBlocked = false
-    if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
-    lastEditor = editor
-    mouseListenerHolder = null
-  }
-
-  constructor() {
+  init {
     mouseBlocked = false
     if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
     lastEditor = null
