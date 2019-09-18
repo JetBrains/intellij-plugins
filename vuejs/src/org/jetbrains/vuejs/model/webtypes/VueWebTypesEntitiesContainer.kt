@@ -42,13 +42,13 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
                    ?.html
                    ?.tags
                    ?.filter { it.name != null }
-                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, owner, typeProvider, sourceSymbolResolver) })
+                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, project, owner, typeProvider, sourceSymbolResolver) })
                  ?: Collections.emptyMap()
     directives = webTypes.contributions
                    ?.html
                    ?.attributes
                    ?.filter { it.name?.startsWith("v-") ?: false }
-                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, owner, sourceSymbolResolver) })
+                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, project, owner, sourceSymbolResolver) })
                  ?: Collections.emptyMap()
   }
 

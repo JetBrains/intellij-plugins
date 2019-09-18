@@ -2,18 +2,18 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.project.Project
 import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.webtypes.json.Source
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
 
 class VueWebTypesComponent(tag: Tag,
+                           project: Project,
                            private val parent: VueEntitiesContainer,
                            typeProvider: (Any?) -> JSType?,
-                           private val sourceSymbolResolver: WebTypesSourceSymbolResolver) : VueRegularComponent {
+                           sourceSymbolResolver: WebTypesSourceSymbolResolver)
+  : VueWebTypesSourceEntity(project, tag.source, sourceSymbolResolver), VueRegularComponent {
 
-  override val source: PsiElement? get() = sourceInfo?.let { sourceSymbolResolver.resolve(sourceInfo) }
   override val global: VueGlobal? get() = parent.global
   override val parents: List<VueEntitiesContainer> get() = listOf(parent)
 
@@ -38,5 +38,5 @@ class VueWebTypesComponent(tag: Tag,
                                                       }
                                                     ?: VueModelDirectiveProperties()
   override val defaultName: String = tag.name!!
-  private val sourceInfo: Source? = tag.source
+
 }
