@@ -1,22 +1,23 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview.jcef;
 
-import com.intellij.notification.NotificationGroup;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
-import netscape.javascript.JSObject;
+import org.cef.browser.CefBrowser;
+import org.cef.handler.CefLoadHandlerAdapter;
 import org.intellij.markdown.html.HtmlGenerator;
-import org.intellij.plugins.markdown.MarkdownBundle;
+import org.intellij.plugins.markdown.ui.preview.MarkdownAccessor;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
 import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MarkdownJCEFHtmlPanel extends JCEFHtmlPanel implements MarkdownHtmlPanel {
+
+  private static final String JS_REQ_SET_SCROLL_Y = JBCefUtils.makeUniqueJSRequestID(MarkdownJCEFHtmlPanel.class, "setMyScrollY");
+  private static final String JS_REQ_OPEN_IN_BROWSER = JBCefUtils.makeUniqueJSRequestID(MarkdownJCEFHtmlPanel.class, "openInExternalBrowser");
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
     @NotNull
@@ -35,15 +36,20 @@ public class MarkdownJCEFHtmlPanel extends JCEFHtmlPanel implements MarkdownHtml
   private String myCSP = "";
   @NotNull
   private String myLastRawHtml = "";
-  /*
   @NotNull
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
-  */
 
   public MarkdownJCEFHtmlPanel() {
     super();
+    JBCefUtils.addJSHandler(getBrowser().getClient(), JS_REQ_SET_SCROLL_Y,
+      (value) -> {
+        try {
+          myScrollPreservingListener.myScrollY = Integer.parseInt(value);
+        } catch (NumberFormatException ignored) {}
+        return true;
+      });
   }
 
   @Override
@@ -55,11 +61,10 @@ public class MarkdownJCEFHtmlPanel extends JCEFHtmlPanel implements MarkdownHtml
   @NotNull
   @Override
   protected String prepareHtml(@NotNull String html) {
-    //return ImageRefreshFix.setStamps(html
-    //                                   .replace("<head>", "<head>"
-    //                                                      + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
-    //                                                      + MarkdownHtmlPanel.getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
-    return super.prepareHtml(html);
+    return MarkdownAccessor.getImageRefreshFixAccessor().setStamps(html
+      .replace("<head>", "<head>"
+               + "<meta http-equiv=\"Content-Security-Policy\" content=\"" + myCSP + "\"/>"
+               + MarkdownHtmlPanel.getCssLines(null, myCssUris) + "\n" + getScriptingLines()));
   }
 
   @Override
@@ -79,23 +84,20 @@ public class MarkdownJCEFHtmlPanel extends JCEFHtmlPanel implements MarkdownHtml
   @Override
   public void scrollToMarkdownSrcOffset(final int offset) {
     getBrowser().executeJavaScript(
-        "if ('__IntelliJTools' in window) " +
-        "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');",
+      "if ('__IntelliJTools' in window) " +
+      "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');",
       getBrowser().getURL(), 0);
-    //final Object result = getBrowser().executeJavaScript(
-    //    "document.documentElement.scrollTop || (document.body && document.body.scrollTop)",
-    //    getBrowser().getURL(), 0);
-    //if (result instanceof Number) {
-    //  myScrollPreservingListener.myScrollY = ((Number)result).intValue();
-    //}
+
+    getBrowser().executeJavaScript(
+      "var value = document.documentElement.scrollTop || (document.body && document.body.scrollTop);" +
+      JBCefUtils.makeJSRequestCode(JS_REQ_SET_SCROLL_Y, "value"),
+      null, 0);
   }
 
   @Override
   public void dispose() {
-    //runInPlatformWhenAvailable(() -> {
-    //  getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
-    //  getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
-    //});
+    JBCefUtils.removeJSHandler(getBrowser().getClient(), JS_REQ_SET_SCROLL_Y);
+    JBCefUtils.removeJSHandler(getBrowser().getClient(), JS_REQ_OPEN_IN_BROWSER);
   }
 
   @NotNull
@@ -103,48 +105,48 @@ public class MarkdownJCEFHtmlPanel extends JCEFHtmlPanel implements MarkdownHtml
     return MY_SCRIPTING_LINES.getValue();
   }
 
-  /*
-  @SuppressWarnings("unused")
-  public static class JavaPanelBridge {
-    static final JavaPanelBridge INSTANCE = new JavaPanelBridge();
-    private static final NotificationGroup MARKDOWN_NOTIFICATION_GROUP =
-      NotificationGroup.toolWindowGroup(MarkdownBundle.message("markdown.navigate.to.header.group"), ToolWindowId.MESSAGES_WINDOW);
-
-    public void openInExternalBrowser(@NotNull String link) {
-      SafeOpener.openLink(link);
-    }
-
-    public void log(@Nullable String text) {
-      Logger.getInstance(JavaPanelBridge.class).warn(text);
-    }
+  @Override
+  protected void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+    myScrollPreservingListener.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
+    myBridgeSettingListener.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
   }
 
-  private class BridgeSettingListener implements ChangeListener<State> {
+  private class BridgeSettingListener extends CefLoadHandlerAdapter  {
+    {
+      JBCefUtils.addJSHandler(getBrowser().getClient(), JS_REQ_OPEN_IN_BROWSER,
+        (link) -> {
+          MarkdownAccessor.getSafeOpenerAccessor().openLink(link);
+          return true;
+        });
+    }
+
     @Override
-    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-      JSObject win
-        = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-      win.setMember("JavaPanelBridge", JavaPanelBridge.INSTANCE);
+    public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+      getBrowser().executeJavaScript(
+        "window.JavaPanelBridge = {" +
+          "openInExternalBrowser : function(link) {" +
+            JBCefUtils.makeJSRequestCode(JS_REQ_OPEN_IN_BROWSER, "link") +
+          "}" +
+        "};",
+        getBrowser().getURL(), 0);
     }
   }
 
-  private class ScrollPreservingListener implements ChangeListener<State> {
+  private class ScrollPreservingListener extends CefLoadHandlerAdapter {
     volatile int myScrollY = 0;
 
     @Override
-    public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-      if (newValue == State.RUNNING) {
-        final Object result =
-          getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
-        if (result instanceof Number) {
-          myScrollY = ((Number)result).intValue();
-        }
+    public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+      if (isLoading) {
+        getBrowser().executeJavaScript(
+          "var value = document.documentElement.scrollTop || document.body.scrollTop;" +
+          JBCefUtils.makeJSRequestCode(JS_REQ_SET_SCROLL_Y, "value"),
+          getBrowser().getURL(), 0);
       }
-      else if (newValue == State.SUCCEEDED) {
-        getWebViewGuaranteed().getEngine()
-          .executeScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY);
+      else {
+        getBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
+                                       getBrowser().getURL(), 0);
       }
     }
   }
-  */
 }
