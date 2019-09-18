@@ -643,7 +643,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       return AllIcons.Nodes.Variable;
     }
     else if (elementKind.equals(ElementKind.EXTENSION)) {
-      return AllIcons.Nodes.AnonymousClass;
+      return AllIcons.Nodes.Include;
     }
     else {
       return null;

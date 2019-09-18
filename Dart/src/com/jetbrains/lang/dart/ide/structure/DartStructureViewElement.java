@@ -104,7 +104,7 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
       case ElementKind.CLASS:
         return element.isAbstract() ? AbstractClass : Class;
       case ElementKind.EXTENSION:
-        return AnonymousClass;
+        return Include;
       case ElementKind.MIXIN:
         return AbstractClass;
       case ElementKind.CONSTRUCTOR:
