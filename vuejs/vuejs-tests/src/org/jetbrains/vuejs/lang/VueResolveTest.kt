@@ -1870,6 +1870,15 @@ export default class UsageComponent extends Vue {
     assertEquals("vue.d.ts",
                  resolveReference("\$<caret>emit()", myFixture).containingFile.name)
   }
+
+  fun testResolveVueLoaderStyleReference() {
+    myFixture.copyDirectoryToProject("resolve-vue-loader-url", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    TestCase.assertEquals("vue-multiselect.min.css",
+                          resolveReference("vue-multiselect.<caret>min.css", myFixture)
+                            .containingFile.name)
+  }
+
 }
 
 fun globalMixinText(): String {

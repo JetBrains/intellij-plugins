@@ -2,11 +2,17 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.lang.Language
+import com.intellij.lang.javascript.modules.NodeModuleUtil.NODE_MODULES
+import com.intellij.lang.javascript.psi.util.JSProjectUtil
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.paths.PathReferenceManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.XmlAttributeValuePattern
 import com.intellij.patterns.XmlPatterns
 import com.intellij.psi.*
-import com.intellij.psi.css.resolve.CssReferenceProviderUtil
+import com.intellij.psi.css.resolve.CssReferenceProviderUtil.getFileReferenceData
+import com.intellij.psi.css.resolve.StylesheetFileReferenceSet
+import com.intellij.psi.util.PsiUtilCore
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.ProcessingContext
 import com.intellij.xml.util.HtmlUtil.*
@@ -26,16 +32,22 @@ class VueReferenceContributor : PsiReferenceContributor() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
         val text = ElementManipulators.getValueText(element)
         if (!hasHtmlPrefix(text)) {
-          val xmlTag = (element.parent as? XmlAttribute)?.parent
-          val langValue = xmlTag?.getAttribute("lang")?.value
-          if (langValue != null) {
-            val lang = VueLexerHelper.styleViaLang(Language.findLanguageByID("CSS"), langValue)
-            val fileType = lang?.associatedFileType
-            if (fileType != null) {
-              return CssReferenceProviderUtil.getFileReferences(element, true, false, fileType)
-            }
-          }
-          return CssReferenceProviderUtil.getFileReferences(element, true, false)
+          val referenceData = getFileReferenceData(element)
+                              ?: return PsiReference.EMPTY_ARRAY
+          val suitableFileTypes =
+            (element.parent as? XmlAttribute)
+              ?.parent
+              ?.getAttribute("lang")
+              ?.value
+              ?.let { VueLexerHelper.styleViaLang(Language.findLanguageByID("CSS"), it) }
+              ?.associatedFileType
+              ?.let { arrayOf(it) }
+            ?: emptyArray()
+
+          val referenceSet = VueStylesheetFileReferenceSet(element, referenceData.first,
+                                                           referenceData.second, *suitableFileTypes)
+          @Suppress("UNCHECKED_CAST")
+          return referenceSet.allReferences as Array<PsiReference>
         }
         return PsiReference.EMPTY_ARRAY
       }
@@ -49,5 +61,26 @@ class VueReferenceContributor : PsiReferenceContributor() {
     private fun createSrcAttrValuePattern(tagName: String): XmlAttributeValuePattern =
       XmlPatterns.xmlAttributeValue(SRC_ATTRIBUTE_NAME).inside(XmlPatterns.xmlTag().withLocalName(tagName))
 
+    private class VueStylesheetFileReferenceSet(element: PsiElement, referenceText: String,
+                                                textRange: TextRange, vararg suitableFileTypes: FileType)
+      : StylesheetFileReferenceSet(element, referenceText, textRange, false, *suitableFileTypes) {
+
+      override fun computeDefaultContexts(): MutableCollection<PsiFileSystemItem> {
+        val result = super.computeDefaultContexts()
+        if (pathString[0] !in listOf('.', '/', '\\')) {
+          val psiManager = PsiManager.getInstance(this.element.project)
+          PsiUtilCore.getVirtualFile(this.element)?.let { root ->
+            JSProjectUtil.processDirectoriesUpToContentRoot(this.element.project, root) { dir ->
+              dir.findChild(NODE_MODULES)
+                ?.takeIf { it.isDirectory }
+                ?.let { psiManager.findDirectory(it) }
+                ?.let { result.add(it) }
+              true
+            }
+          }
+        }
+        return result
+      }
+    }
   }
 }
