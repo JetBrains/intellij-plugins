@@ -19,7 +19,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
-import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlAttribute;
@@ -462,18 +462,39 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  public static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
-    if (ONE_TIME_BINDING_EXCLUDES.contains(property.getName())) return false;
-    if (property.isVirtual()) return true;
-    JSType type = property.getType();
-    if (type == null) return true;
+  public static boolean isOneTimeBindingProperty(@NotNull final Angular2DirectiveProperty property) {
+    if (ONE_TIME_BINDING_EXCLUDES.contains(property.getName())) {
+      return false;
+    }
 
-    Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
-      CachedValueProvider.Result.create(new ConcurrentHashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
-    return cache.computeIfAbsent(property, prop ->
-      expandStringLiteralTypes(type)
-        .isDirectlyAssignableType(STRING_TYPE, JSTypeComparingContextService.getProcessingContextWithCache(
-          property.getSourceElement()))) == Boolean.TRUE;
+    if (property.isVirtual()) {
+      return true;
+    }
+
+    final JSType type = property.getType();
+
+    if (type == null) {
+      return true;
+    }
+
+    final Map<Angular2DirectiveProperty, Boolean> cache =
+          CachedValuesManager.getCachedValue(
+                property.getSourceElement(),
+                () -> Result.create(
+                      new ConcurrentHashMap<>(),
+                      PsiModificationTracker.MODIFICATION_COUNT)
+          );
+    final Boolean isDirectlyAssignable = cache.computeIfAbsent(
+          property,
+          prop -> expandStringLiteralTypes(type).isDirectlyAssignableType(
+                STRING_TYPE,
+                JSTypeComparingContextService.getProcessingContextWithCache(
+                      property.getSourceElement()
+                )
+          )
+    );
+
+    return isDirectlyAssignable == Boolean.TRUE;
   }
 
   @Contract("null -> null") //NON-NLS
