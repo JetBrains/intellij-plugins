@@ -105,14 +105,14 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
     // Apply the change.
     final String error = WriteAction.compute(() -> {
       final SourceChange change = myRefactoring.getChange();
-      assert change != null;
-      try {
-        AssistUtils.applySourceChange(myProject, change, false, excludedIds);
+      if (change != null) {
+        try {
+          AssistUtils.applySourceChange(myProject, change, false, excludedIds);
+        }
+        catch (DartSourceEditException e) {
+          return e.getMessage();
+        }
       }
-      catch (DartSourceEditException e) {
-        return e.getMessage();
-      }
-
       return null;
     });
 
