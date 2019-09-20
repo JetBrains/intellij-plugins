@@ -573,19 +573,19 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(),
-                           "[myInput]",
+                           "myInput", "[myInput]",
                            "(myOutput)",
                            "[mySimpleBindingInput]", "mySimpleBindingInput",
                            "myPlain",
-                           "[myInOut]", "[(myInOut)]",
+                           "myInOut","[myInOut]", "[(myInOut)]",
                            "fake", "[fake]", "[(fake)]",
                            "(fakeChange)");
     assertDoesntContain(myFixture.getLookupElementStrings(),
-                        "myInput", "(myInput)", "[(myInput)]",
+                        "(myInput)", "[(myInput)]",
                         "myOutput", "[myOutput]", "[(myOutput)]",
                         "(mySimpleBindingInput)", "[(mySimpleBindingInput)]",
                         "[myPlain]", "(myPlain)", "[(myPlain)]",
-                        "(myInOut)", "myInOut",
+                        "(myInOut)",
                         "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]",
                         "(fake)",
                         "fakeChange, [fakeChange], [(fakeChange)]");
@@ -604,11 +604,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     for (Map.Entry<String, String> attr : ContainerUtil.<String, String>immutableMapBuilder()
       // <simple><input><output><inout>
       // x -> no resolve, p -> resolve to property, s -> resolve to selector
-      .put("myInput", "xpxx")
+      .put("myInput", "ppxx")
       .put("mySimpleBindingInput", "ppxx")
       .put("myPlain", "sxxx")
       .put("myOutput", "xxpx")
-      .put("myInOut", "xpxp")
+      .put("myInOut", "ppxp")
       .put("myInOutChange", "xxpx")
       .put("fake", "ccxc")
       .put("fakeChange", "xxcx")

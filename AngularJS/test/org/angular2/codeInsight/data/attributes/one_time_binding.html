@@ -1,2 +1,16 @@
-<my-comp numberBinding="12" booleanBinding="false" stringBinding="text" booleanBinding2 <warning descr="Attribute objectBinding is not allowed here">objectBinding</warning>="foo"></my-comp>
-<my-comp [numberBinding]="12" [booleanBinding]="false" [stringBinding]="'text'" [booleanBinding2] [objectBinding]="{foo: true}"></my-comp>
+<my-comp numberBinding="12"
+         booleanBinding="false"
+         stringBinding="text"
+         booleanBinding2
+         nullBinding="12"
+         anyBinding="false"
+         <warning descr="Attribute objectBinding is not allowed here">objectBinding</warning>="foo">
+</my-comp>
+<my-comp [numberBinding]="12"
+         [booleanBinding]="false"
+         [stringBinding]="'text'"
+         [booleanBinding2]
+         [nullBinding]="false"
+         [anyBinding]="'test'"
+         [objectBinding]="{foo: true}">
+</my-comp>
