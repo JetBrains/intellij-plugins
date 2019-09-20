@@ -128,7 +128,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     while ((parent = element.getParent()) != null) {
       final TextRange parentRange = parent.getTextRange();
       if (rangeOk) {
-        if (!parentRange.equals(previousRange)) {
+        if (parentRange == null || !parentRange.equals(previousRange)) {
           return element; // range became bigger, return previous that matched better
         }
 
