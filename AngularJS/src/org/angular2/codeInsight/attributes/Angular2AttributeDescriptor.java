@@ -466,7 +466,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (ONE_TIME_BINDING_EXCLUDES.contains(property.getName())) return false;
     if (property.isVirtual()) return true;
     JSType type = property.getType();
-    if (type == null) return false;
+    if (type == null) return true;
 
     Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
       CachedValueProvider.Result.create(new ConcurrentHashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
