@@ -5,6 +5,7 @@ import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.types.JSWhiteSpaceElementType
 import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
@@ -29,7 +30,8 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
 
   companion object {
     @NonNls
-    val EXPRESSION_WHITE_SPACE = IElementType("VueJS:EXPRESSION_WHITE_SPACE", VueJSLanguage.INSTANCE)
+    val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("VueJS:EXPRESSION_WHITE_SPACE",
+                                                                     VueJSLanguage.INSTANCE), JSWhiteSpaceElementType {}
   }
 
   private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {

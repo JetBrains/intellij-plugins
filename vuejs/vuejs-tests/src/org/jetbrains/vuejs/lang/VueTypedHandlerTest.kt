@@ -160,6 +160,22 @@ export default
 """)
   }
 
+  fun testBracesCompletionInsideVueScriptContents() {
+    myFixture.configureByText(VueFileType.INSTANCE, """
+<template></template>
+<script>
+export default <caret>
+</script>
+""")
+    doInterpolationBracesCompleterTest("{{", "}}", '{', false)
+    myFixture.checkResult("""
+<template></template>
+<script>
+export default {<caret>}
+</script>
+""")
+  }
+
   fun testTypeClosingCol() {
     myFixture.configureByText("TypeClosingCol.vue", """
 <template>
