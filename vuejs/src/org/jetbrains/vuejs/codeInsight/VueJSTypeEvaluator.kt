@@ -37,21 +37,16 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
       0 -> {
         pushDestructuringContext(jsVariable)
         val expression = myContext.processedExpression
-        val collectionType = JSResolveUtil.getElementJSType(collectionExpr) ?: return true
-        when {
-          collectionType is JSStringType -> addVForVarType(collectionExpr, ::JSStringType)
-          collectionType is JSNumberType -> addVForVarType(collectionExpr, ::JSNumberType)
-          JSTypeUtils.isArrayLikeType(collectionType) -> addVForVarType(
-            collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
-          else -> {
-            val recordType = collectionType.asRecordType()
-            val indexTypes = JSRecordType.IndexSignatureKind.values()
-              .asSequence()
-              .mapNotNull { recordType.findIndexer(it) }
-              .map { it.memberType }
-              .toList()
-            if (indexTypes.isNotEmpty()) {
-              addVForVarType(collectionExpr, *indexTypes.toTypedArray())
+        when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()) {
+          is JSStringType -> addVForVarType(collectionExpr, ::JSStringType)
+          is JSNumberType -> addVForVarType(collectionExpr, ::JSNumberType)
+          is JSType -> {
+            val type = JSTypeUtils.getIterableComponentType(collectionType)
+            if (type != null) {
+              addType(type, expression)
+            } else {
+              addVForVarType(
+                collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
             }
           }
         }
@@ -68,17 +63,21 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
         }
         else {
           val recordType = collectionType.asRecordType()
-          val indexerTypes = JSRecordType.IndexSignatureKind.values()
-            .asSequence()
-            .mapNotNull { recordType.findIndexer(it) }
-            .map { it.memberParameterType }
-            .toList()
+          if (recordType.findPropertySignature(JSCommonTypeNames.ITERATOR_SYMBOL) != null) {
+            addVForVarType(collectionExpr, ::JSNumberType)
+          } else {
+            val indexerTypes = JSRecordType.IndexSignatureKind.values()
+              .asSequence()
+              .mapNotNull { recordType.findIndexer(it) }
+              .map { it.memberParameterType }
+              .toList()
 
-          if (indexerTypes.isNotEmpty()) {
-            addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
-          }
-          else {
-            addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
+            if (indexerTypes.isNotEmpty()) {
+              addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
+            }
+            else {
+              addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
+            }
           }
         }
       }
