@@ -42,14 +42,14 @@ class DemoModeUI {
     val frame = WindowManagerEx.getInstanceEx().getFrame(myProject)
     val statusBar = frame!!.statusBar
 
-    statusBar.updateWidget(demoModeWidget!!.ID())
+    statusBar?.updateWidget(demoModeWidget!!.ID())
   }
 
   fun removeDemoModeWidget() {
     val frame = WindowManagerEx.getInstanceEx().getFrame(myProject)
     val statusBar = frame!!.statusBar
 
-    statusBar.removeWidget(demoModeWidget!!.ID())
+    statusBar?.removeWidget(demoModeWidget!!.ID())
     demoModeWidget = null
   }
 
