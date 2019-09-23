@@ -2,14 +2,12 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
-import com.intellij.lang.javascript.psi.JSEmbeddedContent
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSExpression
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.xml.SchemaPrefix
 import com.intellij.psi.impl.source.xml.TagNameReference
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -42,19 +40,14 @@ class VueXmlExtension : HtmlXmlExtension() {
     val toAssetName = toAsset(attrName)
     val fromAssetName = fromAsset(attrName)
 
-    return tag?.attributes?.find {
-      if (it.name == "v-bind") {
-        val jsEmbeddedContent = PsiTreeUtil.findChildOfType(it.valueElement, JSEmbeddedContent::class.java)
-        val child = jsEmbeddedContent?.firstChild
-        if (child is JSReferenceExpression && child.nextSibling == null) {
-          val resolve = child.resolve()
-          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach { property ->
-            if (property.name == toAssetName) return@find true
-          }
-        }
-        return@find false
+    return tag?.attributes?.find { attr ->
+      if (attr.name == "v-bind") {
+        return@find findExpressionInAttributeValue(attr, JSExpression::class.java)
+          ?.let { JSResolveUtil.getElementJSType(it) }
+          ?.asRecordType()
+          ?.findPropertySignature(toAssetName) != null
       }
-      val info = VueAttributeNameParser.parse(it.name, tag)
+      val info = VueAttributeNameParser.parse(attr.name, tag)
       var name: String? = null
       if (info is VueAttributeNameParser.VueDirectiveInfo) {
         if (info.directiveKind == VueAttributeNameParser.VueDirectiveKind.MODEL) {
