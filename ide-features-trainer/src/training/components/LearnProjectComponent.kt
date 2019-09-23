@@ -18,6 +18,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.impl.IdeFrameImpl
+import com.intellij.openapi.wm.impl.ProjectFrameHelper
 import com.intellij.openapi.wm.impl.StripeButton
 import com.intellij.openapi.wm.impl.ToolWindowsPane
 import com.intellij.ui.GotItMessage
@@ -34,7 +36,6 @@ import training.ui.LearnToolWindowFactory
 import training.ui.UiManager
 import java.awt.Point
 import java.util.concurrent.TimeUnit
-import javax.swing.JFrame
 
 /**
  * Created by karashevich on 17/03/16.
@@ -213,7 +214,12 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
       val wm = WindowManager.getInstance() ?: return null
       val ideFrame = wm.getIdeFrame(myProject) ?: return null
 
-      val rootPane = (ideFrame as JFrame).rootPane
+      val frame= if (ideFrame is ProjectFrameHelper) {
+        (wm.getIdeFrame(myProject) as ProjectFrameHelper).frame
+      } else {
+        (ideFrame as IdeFrameImpl)
+      }
+      val rootPane = frame.rootPane
       val pane = UIUtil.findComponentOfType(rootPane, ToolWindowsPane::class.java)
       val componentsOfType = UIUtil.findComponentsOfType(pane, StripeButton::class.java)
       return componentsOfType.lastOrNull { it.text == LearnToolWindowFactory.LEARN_TOOL_WINDOW }
