@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
@@ -54,11 +55,18 @@ class VueXmlExtension : HtmlXmlExtension() {
         return@find false
       }
       val info = VueAttributeNameParser.parse(it.name, tag)
-      return@find fromAsset(if (info is VueAttributeNameParser.VueDirectiveInfo
-                                && info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
-                                && info.arguments != null)
-                              info.arguments
-                            else info.name) == fromAssetName
+      var name: String? = null
+      if (info is VueAttributeNameParser.VueDirectiveInfo) {
+        if (info.directiveKind == VueAttributeNameParser.VueDirectiveKind.MODEL) {
+          name = (tag.descriptor as? VueElementDescriptor)?.getModel()?.prop
+                 ?: VueModelDirectiveProperties.DEFAULT_PROP
+        }
+        else if (info.directiveKind === VueAttributeNameParser.VueDirectiveKind.BIND
+                 && info.arguments != null) {
+          name = info.arguments
+        }
+      }
+      return@find fromAsset(name ?: info.name) == fromAssetName
     } != null
   }
 
