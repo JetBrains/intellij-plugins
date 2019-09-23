@@ -17,7 +17,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     testVFor(Triple("el", "*", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "*", "number|string|symbol"))
+             Triple("obj", "*", "string|number"))
   }
 
   fun testVForTS() {
@@ -27,6 +27,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("str", "string", "number"),
              Triple("obj", "boolean,*", "string"),
              Triple("objNum", "string,*", "number"),
+             Triple("objMix", "boolean|Foo2,*", "string|number"),
              Triple("state", "ShopState,Foo2", "number"))
   }
 

@@ -4,6 +4,7 @@
   <div v-for="str1 in aString">{{ str1 }}</div>
   <div v-for="obj1 in anObject">{{ obj1 }}</div>
   <div v-for="objNum1 in anObjectNum">{{ objNum1 }}</div>
+  <div v-for="objMix1 in anObjectMix">{{ objMix1 }}</div>
   <div v-for="state1 in shopStates">{{ state1 }}</div>
 
   <div v-for="(el2, el2Ind) in arr">{{ el2, el2Ind }}</div>
@@ -11,6 +12,7 @@
   <div v-for="(str2, str2Ind ) in aString">{{ str2, str2Ind }}</div>
   <div v-for="(obj2, obj2Ind ) in anObject">{{ obj2, obj2Ind }}</div>
   <div v-for="(objNum2, objNum2Ind) in anObjectNum">{{ objNum2, objNum2Ind }}</div>
+  <div v-for="(objMix2, objMix2Ind) in anObjectMix">{{ objMix2, objMix2Ind }}</div>
   <div v-for="(state2, state2Ind ) in shopStates">{{ state2, state2Ind }}</div>
 
   <div v-for="(el3, el3Ind) in ['12', 'sss', 'foo']">{{ el3, el3Ind }}</div>
@@ -18,6 +20,7 @@
   <div v-for="(str3, str3Ind ) in 'foo'">{{ str3, str3Ind }}</div>
   <div v-for="(obj3, obj3Ind ) in {foo: true, bar: false}">{{ obj3, obj3Ind }}</div>
   <div v-for="(objNum3, objNum3Ind ) in {12: 'foo', 56: 'bar'}">{{ objNum3, objNum3Ind }}</div>
+  <div v-for="(objMix3, objMix3Ind) in {12: 'foo', foo: true}">{{ objMix3, objMix3Ind }}</div>
   <div v-for="({allPage: state3 }, state3Ind ) in shopStates">{{ state3, state3Ind }}</div>
 
 </template>
@@ -41,6 +44,10 @@
     }
     @Prop() anObjectNum: {
       [key:number]: string
+    }
+    @Prop() anObjectMix: {
+      [key:number]: Foo2
+      [key:string]: boolean
     }
     @Prop shopStates: ShopState[]
   }

@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
-import com.intellij.lang.javascript.psi.types.primitives.JSSymbolType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -38,11 +37,23 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
       0 -> {
         pushDestructuringContext(jsVariable)
         val expression = myContext.processedExpression
-        when (val collectionType = JSResolveUtil.getElementJSType(collectionExpr)) {
-          is JSStringType -> addType(collectionType, expression)
-          is JSNumberType -> addType(collectionType, expression)
-          else -> getComponentTypeFromArrayExpression(expression, collectionExpr)
-            .forEach { addType(it, expression) }
+        val collectionType = JSResolveUtil.getElementJSType(collectionExpr) ?: return true
+        when {
+          collectionType is JSStringType -> addVForVarType(collectionExpr, ::JSStringType)
+          collectionType is JSNumberType -> addVForVarType(collectionExpr, ::JSNumberType)
+          JSTypeUtils.isArrayLikeType(collectionType) -> addVForVarType(
+            collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
+          else -> {
+            val recordType = collectionType.asRecordType()
+            val indexTypes = JSRecordType.IndexSignatureKind.values()
+              .asSequence()
+              .mapNotNull { recordType.findIndexer(it) }
+              .map { it.memberType }
+              .toList()
+            if (indexTypes.isNotEmpty()) {
+              addVForVarType(collectionExpr, *indexTypes.toTypedArray())
+            }
+          }
         }
         restoreEvaluationContextApplingElementsSize(myContext.jsElementsToApply.size)
         myContext.finishEvaluationWithStrictness(myContext.isStrict)
@@ -50,21 +61,24 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
       1 -> {
         val collectionType = JSResolveUtil.getElementJSType(collectionExpr)?.substitute()
         if (collectionType == null || JSTypeUtils.isAnyType(collectionType)) {
-          addVForVarType(collectionExpr, ::JSNumberType, ::JSStringType, ::JSSymbolType)
+          addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
         }
         else if (JSTypeUtils.isArrayLikeType(collectionType) || collectionType is JSPrimitiveType) {
           addVForVarType(collectionExpr, ::JSNumberType)
         }
         else {
           val recordType = collectionType.asRecordType()
-          when {
-            recordType.findIndexer(JSRecordType.IndexSignatureKind.NUMERIC) != null ->
-              addVForVarType(collectionExpr, ::JSNumberType)
+          val indexerTypes = JSRecordType.IndexSignatureKind.values()
+            .asSequence()
+            .mapNotNull { recordType.findIndexer(it) }
+            .map { it.memberParameterType }
+            .toList()
 
-            recordType.findIndexer(JSRecordType.IndexSignatureKind.STRING) != null ->
-              addVForVarType(collectionExpr, ::JSStringType)
-
-            else -> addVForVarType(collectionExpr, ::JSNumberType, ::JSStringType, ::JSSymbolType)
+          if (indexerTypes.isNotEmpty()) {
+            addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
+          }
+          else {
+            addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
           }
         }
       }
@@ -75,7 +89,12 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
 
   private fun addVForVarType(source: PsiElement, vararg types: (Boolean, JSTypeSource, JSTypeContext) -> JSType) {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    addType(JSCompositeTypeImpl.getCommonType(types.map { it(true, typeSource, JSTypeContext.INSTANCE) }, typeSource, false), source, true)
+    addVForVarType(source, *types.map { it(true, typeSource, JSTypeContext.INSTANCE) }.toTypedArray())
+  }
+
+  private fun addVForVarType(source: PsiElement, vararg types: JSType) {
+    val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
+    addType(JSCompositeTypeImpl.getCommonType(types.toList(), typeSource, false), source, true)
   }
 
   companion object {
