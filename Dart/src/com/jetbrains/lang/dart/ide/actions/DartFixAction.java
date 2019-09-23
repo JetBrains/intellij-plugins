@@ -3,17 +3,15 @@ package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import org.dartlang.analysis.server.protocol.SourceEdit;
+import com.jetbrains.lang.dart.assists.AssistUtils;
 import org.dartlang.analysis.server.protocol.SourceFileEdit;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +24,6 @@ import java.util.List;
  * This is currently experimental work.
  */
 public class DartFixAction extends AbstractDartFileProcessingAction {
-
-  private static final Logger LOG = Logger.getInstance(DartFixAction.class.getName());
 
   public DartFixAction() {
     super(DartBundle.message("dart.fix.action.name"), DartBundle.message("dart.fix.action.description"), null);
@@ -53,23 +49,15 @@ public class DartFixAction extends AbstractDartFileProcessingAction {
     final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
     das.updateFilesContent();
     List<SourceFileEdit> sourceFileEdits = das.edit_dartfixNNBD(Collections.singletonList(psiFile.getVirtualFile()));
-    if (sourceFileEdits == null || sourceFileEdits.size() != 1) {
+    if (sourceFileEdits == null) {
       return;
     }
 
+    // TODO(jwren) See DartStyleAction for potential ideas around inline editor notifications
+
     final Runnable runnable = () -> {
-      final List<SourceEdit> edits = sourceFileEdits.get(0).getEdits();
-      if (edits == null || edits.size() == 0) {
-        showHintLater(editor, DartBundle.message("dart.fix.hint.already.good"), false);
-      }
-      else if (edits.size() == 1) {
-        final String replacement = StringUtil.convertLineSeparators(edits.get(0).getReplacement());
-        document.replaceString(0, document.getTextLength(), replacement);
-        showHintLater(editor, DartBundle.message("dart.fix.hint.success"), false);
-      }
-      else {
-        showHintLater(editor, DartBundle.message("dart.fix.hint.failed"), true);
-        LOG.warn("Unexpected response from edit_format, formatResult.getEdits().size() = " + edits.size());
+      for (SourceFileEdit edit : sourceFileEdits) {
+        AssistUtils.applyFileEdit(project, edit);
       }
     };
 
