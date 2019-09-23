@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide.findUsages;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartServerFindUsagesHandler extends FindUsagesHandler {
+  private static final Logger LOG = Logger.getInstance(DartServerFindUsagesHandler.class.getName());
+
   public DartServerFindUsagesHandler(@NotNull final PsiElement element) {
     super(mayBeChangeToNameIdentifier(element));
   }
@@ -114,6 +117,10 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
     while ((parent = element.getParent()) != null) {
       final TextRange parentRange = parent.getTextRange();
       if (rangeOk) {
+        if (parentRange == null) {
+          LOG.info(
+            "Null text-range range found for PSI element type " + parent.toString() + ", parent of element type " + element.toString());
+        }
         if (parentRange == null || !parentRange.equals(previousRange)) {
           return element; // range became bigger, return previous that matched better
         }
