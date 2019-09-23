@@ -310,20 +310,6 @@ public class FlexUtils {
     });
   }
 
-  private static void processMxmlTags(final XmlTag rootTag,
-                                      final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor,
-                                      Processor<XmlTag> processor) {
-    String namespace = findMxmlNamespace(rootTag);
-
-    XmlBackedJSClassImpl.InjectedScriptsVisitor scriptsVisitor =
-      new XmlBackedJSClassImpl.InjectedScriptsVisitor(rootTag, MxmlJSClassProvider.getInstance(), false, false, injectedFilesVisitor, processor, true);
-    scriptsVisitor.go();
-
-    for (XmlTag s : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, namespace)) {
-      processor.process(s);
-    }
-  }
-
   private static String findMxmlNamespace(XmlTag rootTag) {
     String namespace = "";
 
@@ -339,8 +325,18 @@ public class FlexUtils {
 
   public static void processMxmlTags(final XmlTag rootTag, boolean isPhysical,
                                      final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor) {
-    processMxmlTags(rootTag, injectedFilesVisitor,
-                    new XmlBackedJSClassImpl.InjectedScriptsVisitor.InjectingProcessor(injectedFilesVisitor, rootTag, isPhysical));
+    Processor<XmlTag> processor =
+      new XmlBackedJSClassImpl.InjectedScriptsVisitor.InjectingProcessor(injectedFilesVisitor, rootTag, isPhysical);
+    String namespace = findMxmlNamespace(rootTag);
+
+    XmlBackedJSClassImpl.InjectedScriptsVisitor scriptsVisitor =
+      new XmlBackedJSClassImpl.InjectedScriptsVisitor(rootTag, MxmlJSClassProvider.getInstance(), false, false, injectedFilesVisitor,
+                                                      processor, isPhysical);
+    scriptsVisitor.go();
+
+    for (XmlTag s : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, namespace)) {
+      processor.process(s);
+    }
   }
 
   public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, @NotNull final ActionScriptResolveUtil.MetaDataProcessor processor) {
