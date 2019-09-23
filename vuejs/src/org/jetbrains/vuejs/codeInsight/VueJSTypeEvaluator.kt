@@ -32,6 +32,7 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
     val collectionExpr = vForExpression.getCollectionExpression() ?: return false
 
     val declaration = PsiTreeUtil.getTopmostParentOfType(jsVariable, JSInitializerOwner::class.java)
+                      ?: jsVariable
 
     when (vForExpression.getVarStatement()?.declarations?.indexOf(declaration)) {
       0 -> {

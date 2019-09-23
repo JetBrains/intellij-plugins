@@ -25,8 +25,9 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     testVFor(Triple("el", "string", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "boolean", "string"),
-             Triple("objNum", "string", "number"))
+             Triple("obj", "boolean,*", "string"),
+             Triple("objNum", "string,*", "number"),
+             Triple("state", "ShopState,Foo2", "number"))
   }
 
   private fun testVFor(vararg testCases: Triple<String, String, String>) {
@@ -36,7 +37,8 @@ class VueTypeResolveTest : BasePlatformTestCase() {
           .findInjectedElementAt(myFixture.file, findOffsetBySignature("{{ ${test.first}<caret>$i", myFixture.file))
           ?.parentOfType<JSReferenceExpression>()
         TestCase.assertNotNull("${test.first}$i", element)
-        assertEquals("${test.first}$i", test.second, JSResolveUtil.getElementJSType(element)?.typeText ?: "*")
+        val type = test.second.split(',').let { if (i == 3) it.last() else it.first() }
+        assertEquals("${test.first}$i", type, JSResolveUtil.getElementJSType(element)?.typeText ?: "*")
       }
 
       val index = InjectedLanguageManager.getInstance(project)
