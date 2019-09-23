@@ -49,8 +49,8 @@ class VueResolveTest : BasePlatformTestCase() {
       reference as JSReferenceExpressionImpl, true)
     val results = resolver.resolve(reference, false)
     TestCase.assertEquals(1, results.size)
-    TestCase.assertTrue(results[0].element!! is JSProperty)
-    TestCase.assertEquals("message25620", (results[0].element!! as JSProperty).name)
+    TestCase.assertTrue(results[0].element!!.parent!! is JSProperty)
+    TestCase.assertEquals("message25620", (results[0].element!!.parent!! as JSProperty).name)
   }
 
   fun testResolveUsageInAttributeToPropInArray() {
@@ -99,7 +99,7 @@ class VueResolveTest : BasePlatformTestCase() {
 </script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertTrue(literal!!.parent is JSArrayLiteralExpression)
     TestCase.assertEquals("'pascalCase'", literal.text)
@@ -201,7 +201,7 @@ export default {
 }</script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     TestCase.assertEquals("'parentMsg'", literal.text)
@@ -222,7 +222,7 @@ export default {
 }</script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     TestCase.assertEquals("'parentMsg'", literal.text)
@@ -244,7 +244,7 @@ export default {
 }</script>""")
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
     TestCase.assertEquals("'parentMsg'", literal.text)
@@ -429,11 +429,12 @@ export default {
     myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val target = reference!!.resolve()
     if (expectedPropertyName == null) {
-      TestCase.assertNull(property)
+      TestCase.assertNull(target)
     }
     else {
+      val property = if (target is JSImplicitElement) target.parent else target
       TestCase.assertTrue(property is JSProperty)
       TestCase.assertEquals(expectedPropertyName, (property as JSProperty).name)
     }
@@ -802,7 +803,7 @@ export default {
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("'libComponentProp'", literal!!.text)
@@ -828,7 +829,7 @@ export default {
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("kuku", (property as JSProperty).name)
@@ -846,7 +847,7 @@ export default {
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("to", (property as JSProperty).name)
@@ -880,7 +881,7 @@ export default {
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("from", (property as JSProperty).name)
@@ -931,7 +932,7 @@ Vue.component('global-comp-literal', {
 """)
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("insideGlobalCompLiteral", (property as JSProperty).name)
@@ -958,7 +959,7 @@ Vue.component('global-comp-literal', {
     myFixture.doHighlighting()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -984,7 +985,7 @@ const props = ['oneTwo']
     myFixture.doHighlighting()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("oneTwo", (literal as JSLiteralExpression).stringValue)
@@ -1018,7 +1019,7 @@ const props = ['oneTwo']
     myFixture.doHighlighting()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val literal = reference!!.resolve()
+    val literal = reference!!.resolve()!!.parent
     TestCase.assertNotNull(literal)
     TestCase.assertTrue(literal is JSLiteralExpression)
     TestCase.assertEquals("seeMe", (literal as JSLiteralExpression).stringValue)
@@ -1052,7 +1053,7 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("seeMe", (property as JSProperty).name)
@@ -1086,7 +1087,7 @@ const props = {seeMe: {}}
     myFixture.checkHighlighting()
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertTrue(property!!.parent.parent is JSProperty)
@@ -1140,7 +1141,7 @@ const props = {seeMe: {}}
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals("mixinProp", (property as JSProperty).name)
@@ -1184,7 +1185,7 @@ const props = {seeMe: {}}
     val checkResolve = { propName: String, file: String ->
       val reference = myFixture.getReferenceAtCaretPosition()
       TestCase.assertNotNull(reference)
-      val literal = reference!!.resolve()
+      val literal = reference!!.resolve()!!.parent
       TestCase.assertNotNull(literal)
       TestCase.assertTrue(literal is JSLiteralExpression)
       TestCase.assertEquals(propName, (literal as JSLiteralExpression).stringValue)
@@ -1255,7 +1256,7 @@ const props = {seeMe: {}}
   private fun doTestResolveIntoProperty(name: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
-    val property = reference!!.resolve()
+    val property = reference!!.resolve()!!.parent
     TestCase.assertNotNull(property)
     TestCase.assertTrue(property is JSProperty)
     TestCase.assertEquals(name, (property as JSProperty).name)

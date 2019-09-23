@@ -1,0 +1,50 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.vuejs.lang
+
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.openapi.application.PathManager
+import com.intellij.psi.util.parentOfType
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import junit.framework.TestCase
+
+class VueTypeResolveTest : BasePlatformTestCase() {
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/typeResolve/"
+
+  fun testVForJS() {
+    myFixture.configureByFile("vFor-js.vue")
+    testVFor(Triple("el", "*", "number"),
+             Triple("num", "number", "number"),
+             Triple("str", "string", "number"),
+             Triple("obj", "*", "number|string|symbol"))
+  }
+
+  fun testVForTS() {
+    myFixture.configureByFile("vFor-ts.vue")
+    testVFor(Triple("el", "string", "number"),
+             Triple("num", "number", "number"),
+             Triple("str", "string", "number"),
+             Triple("obj", "boolean", "string"),
+             Triple("objNum", "string", "number"))
+  }
+
+  private fun testVFor(vararg testCases: Triple<String, String, String>) {
+    for (test in testCases) {
+      for (i in 1..3) {
+        val element = InjectedLanguageManager.getInstance(project)
+          .findInjectedElementAt(myFixture.file, findOffsetBySignature("{{ ${test.first}<caret>$i", myFixture.file))
+          ?.parentOfType<JSReferenceExpression>()
+        TestCase.assertNotNull("${test.first}$i", element)
+        assertEquals("${test.first}$i", test.second, JSResolveUtil.getElementJSType(element)?.typeText ?: "*")
+      }
+
+      val index = InjectedLanguageManager.getInstance(project)
+        .findInjectedElementAt(myFixture.file, findOffsetBySignature("${test.first}<caret>2Ind }}", myFixture.file))
+        ?.parentOfType<JSReferenceExpression>()
+
+      TestCase.assertNotNull("${test.first}2Ind", index)
+      assertEquals("${test.first}2Ind", test.third, JSResolveUtil.getElementJSType(index)?.typeText ?: "*")
+    }
+  }
+}

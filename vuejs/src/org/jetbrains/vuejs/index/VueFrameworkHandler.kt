@@ -11,10 +11,7 @@ import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
@@ -41,9 +38,6 @@ import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
@@ -395,22 +389,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       sink?.occurrence(index, element.name)
     }
     return index == VueUrlIndex.KEY
-  }
-
-  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator,
-                                        context: JSEvaluateContext,
-                                        result: PsiElement): Boolean {
-    if (!isVueContext(result)) return false
-    if (result is JSVariable && result.language is VueJSLanguage) {
-      val vFor = result.parent as? VueJSVForExpression
-                 ?: result.parent.parent as? VueJSVForExpression
-      val vForRef = vFor?.getReferenceExpression()
-      val variables = vFor?.getVarStatement()?.variables
-      if (vForRef != null && variables != null && variables.isNotEmpty() && result == variables[0]) {
-        if (JSPsiImplUtils.calculateTypeOfVariableForIteratedExpression(evaluator, vForRef, vFor)) return true
-      }
-    }
-    return false
   }
 }
 

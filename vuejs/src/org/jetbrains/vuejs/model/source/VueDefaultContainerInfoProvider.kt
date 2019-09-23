@@ -5,8 +5,9 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -150,9 +151,13 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
 
   private class VueSourceInputProperty(override val name: String,
-                                       override val source: PsiElement?) : VueInputProperty {
-    override val jsType: JSType? = getJSTypeFromPropOptions((source as? JSProperty)?.value)
-    override val required: Boolean = getRequiredFromPropOptions((source as? JSProperty)?.value)
+                                       sourceElement: PsiElement?) : VueInputProperty {
+
+    override val source: JSLocalImplicitElementImpl =
+      JSLocalImplicitElementImpl(name, getJSTypeFromPropOptions((sourceElement as? JSProperty)?.value),
+                                 sourceElement, JSImplicitElement.Type.Property)
+    override val jsType: JSType? = source.jsType
+    override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
   }
 
   private class VueSourceDataProperty(override val name: String,

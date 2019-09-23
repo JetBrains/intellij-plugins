@@ -7,10 +7,10 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeContext
-import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
+import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
+import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.openapi.util.Key
@@ -89,6 +89,14 @@ fun detectVueScriptLanguage(file: PsiFile): String? {
 
 val BOOLEAN_TYPE = JSBooleanType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)
 
+private val vueTypesMap = mapOf(
+  Pair("Boolean", BOOLEAN_TYPE),
+  Pair("String", JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)),
+  Pair("Number", JSNumberType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE)),
+  Pair("Function", JSFunctionTypeImpl(JSTypeSource.EXPLICITLY_DECLARED, listOf(), null)),
+  Pair("Array", JSArrayTypeImpl(null, JSTypeSource.EXPLICITLY_DECLARED))
+)
+
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
   return when (expression) {
     is JSReferenceExpression -> getJSTypeFromVueType(expression)
@@ -114,10 +122,7 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
 }
 
 private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
-  return reference
-    .referenceName
-    // TODO support other types here
-    ?.let { name -> if (name == "Boolean") BOOLEAN_TYPE else null }
+  return reference.referenceName?.let { vueTypesMap[it] }
 }
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
