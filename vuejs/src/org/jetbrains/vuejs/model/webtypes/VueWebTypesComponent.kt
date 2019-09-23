@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
