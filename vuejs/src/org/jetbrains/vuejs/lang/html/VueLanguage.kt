@@ -2,10 +2,9 @@
 package org.jetbrains.vuejs.lang.html
 
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.fileTypes.LanguageFileType
 
-class VueLanguage : XMLLanguage(HTMLLanguage.INSTANCE, "Vue") {
+class VueLanguage : HTMLLanguage(HTMLLanguage.INSTANCE, "Vue") {
   companion object {
     val INSTANCE: VueLanguage = VueLanguage()
   }

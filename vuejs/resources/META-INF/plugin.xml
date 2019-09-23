@@ -123,6 +123,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
     <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
 
+    <xml.fileNSInfoProvider implementation="org.jetbrains.vuejs.lang.html.VueNSInfoProvider"/>
     <highlightingPassFactory
         implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFormattingModelBuilder"/>
