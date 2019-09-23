@@ -13,6 +13,7 @@ import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
+import java.util.*
 
 class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedContainerInfoProvider(::VueDecoratedComponentInfo) {
 
@@ -87,7 +88,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
 
       clazz.extendsList?.children?.forEach { extendItem ->
         val call = ((extendItem as? JSReferenceListMember)?.expression as? JSCallExpression)
-        if ((call?.methodExpression as? JSReferenceExpression)?.referenceName == "mixins") {
+        if ((call?.methodExpression as? JSReferenceExpression)?.referenceName?.toLowerCase(Locale.US) == "mixins") {
           call.arguments.mapNotNullTo(mixins) { arg ->
             (arg as? JSReferenceExpression)?.resolve()
               ?.let { VueModelManager.getMixin(it) }
