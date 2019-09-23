@@ -20,6 +20,7 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.ui.treeStructure.actions.ExpandAllAction;
+import icons.JavaxIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -276,7 +277,7 @@ public class DependenciesTab {
     private class NavigateToUsageAction extends AnAction {
 
         NavigateToUsageAction() {
-            super("Navigate to Usage", "Navigate to part of code where the selected element is used", AllIcons.Nodes.EjbReference);
+            super("Navigate to Usage", "Navigate to part of code where the selected element is used", JavaxIcons.Javaee.EjbReference);
         }
 
         /**
