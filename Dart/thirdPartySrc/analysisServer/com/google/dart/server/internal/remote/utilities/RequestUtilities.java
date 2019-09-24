@@ -34,9 +34,15 @@ public class RequestUtilities {
   private static final String CONTEXT_FILE = "contextFile";
   private static final String CONTEXT_OFFSET = "contextOffset";
   private static final String CONTEXT_ROOT = "contextRoot";
+  private static final String EXCLUDED = "excluded";
+  private static final String EXCLUDED_FIXES = "excludedFixes";
   private static final String EXPRESSIONS = "expressions";
   private static final String FILE = "file";
   private static final String ID = "id";
+  private static final String INCLUDED = "included";
+  private static final String INCLUDED_FIXES = "includedFixes";
+  private static final String INCLUDED_PEDANTIC_FIXES = "includePedanticFixes";
+  private static final String INCLUDED_REQUIRED_FIXES = "includeRequiredFixes";
   private static final String LABEL = "label";
   private static final String LENGTH = "length";
   private static final String LINE_LENGTH = "lineLength";
@@ -313,8 +319,8 @@ public class RequestUtilities {
   public static JsonObject generateAnalysisSetAnalysisRoots(String id, List<String> included,
                                                             List<String> excluded, Map<String, String> packageRoots) {
     JsonObject params = new JsonObject();
-    params.add("included", buildJsonElement(included));
-    params.add("excluded", buildJsonElement(excluded));
+    params.add(INCLUDED, buildJsonElement(included));
+    params.add(EXCLUDED, buildJsonElement(excluded));
     if (packageRoots != null) {
       params.add("packageRoots", buildJsonElement(packageRoots));
     }
@@ -527,14 +533,14 @@ public class RequestUtilities {
                                                boolean includeRequiredFixes,
                                                List<String> excludedFixes) {
     JsonObject params = new JsonObject();
-    params.add("included", buildJsonElement(included));
+    params.add(INCLUDED, buildJsonElement(included));
     if (includedFixes != null) {
-      params.add("includedFixes", buildJsonElement(includedFixes));
+      params.add(INCLUDED_FIXES, buildJsonElement(includedFixes));
     }
-    params.addProperty("includePedanticFixes", includePedanticFixes);
-    params.addProperty("includeRequiredFixes", includeRequiredFixes);
+    params.addProperty(INCLUDED_PEDANTIC_FIXES, includePedanticFixes);
+    params.addProperty(INCLUDED_REQUIRED_FIXES, includeRequiredFixes);
     if (excludedFixes != null) {
-      params.add("excludedFixes", buildJsonElement(excludedFixes));
+      params.add(EXCLUDED_FIXES, buildJsonElement(excludedFixes));
     }
     return buildJsonObjectRequest(idValue, METHOD_EDIT_DARTFIX, params);
   }
