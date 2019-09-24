@@ -5,6 +5,7 @@ import com.intellij.CommonBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -42,7 +43,7 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
 
       final ModalityState modalityState = ModalityState.stateForComponent(getWindow());
 
-      final Condition expired = o -> !isShowing();
+      final Condition<?> expired = o -> !isShowing();
 
       ApplicationManager.getApplication().invokeLater(runnable, modalityState, expired);
     });
@@ -102,10 +103,14 @@ public abstract class ServerRefactoringDialog<T extends ServerRefactoring> exten
   }
 
   protected final void doRefactoring(@NotNull final Set<String> excludedIds) {
-    // Apply the change.
+    final SourceChange change = myRefactoring.getChange();
+    if (change == null) {
+      Logger.getInstance(ServerRefactoringDialog.class)
+        .error(myRefactoring.getClass().getSimpleName() + ".getChange() == null\n" + myOptionsStatus);
+      return;
+    }
+
     final String error = WriteAction.compute(() -> {
-      final SourceChange change = myRefactoring.getChange();
-      assert change != null;
       try {
         AssistUtils.applySourceChange(myProject, change, false, excludedIds);
       }
