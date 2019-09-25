@@ -53,9 +53,6 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
     }
 
-    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
-    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
-
     // 'Environment variables' is the widest label, anchored by myDartFileLabel
     myDartFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
     myEnvironmentVariables.setAnchor(myDartFileLabel);
