@@ -1072,13 +1072,13 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<HoverInformation> analysis_getHover(@NotNull final VirtualFile file, final int _offset) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final List<HoverInformation> result = Lists.newArrayList();
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return HoverInformation.EMPTY_LIST;
     }
+
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final List<HoverInformation> result = Lists.newArrayList();
 
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1097,6 +1097,10 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_HOVER_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("analysis_getHover", GET_HOVER_TIMEOUT, filePath);
+    }
     return result;
   }
 
@@ -1104,13 +1108,13 @@ public class DartAnalysisServerService implements Disposable {
   public List<DartServerData.DartNavigationRegion> analysis_getNavigation(@NotNull final VirtualFile file,
                                                                           final int _offset,
                                                                           final int length) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
+
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
 
     final CountDownLatch latch = new CountDownLatch(1);
     LOG.debug("analysis_getNavigation(" + filePath + ")");
@@ -1146,7 +1150,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, GET_NAVIGATION_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("analysis_getNavigation() took more than " + GET_NAVIGATION_TIMEOUT + "ms for file " + filePath);
+      logTookTooLongMessage("analysis_getNavigation", GET_NAVIGATION_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1154,14 +1158,13 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<SourceChange> edit_getAssists(@NotNull final VirtualFile file, final int _offset, final int _length) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final List<SourceChange> results = Lists.newArrayList();
-
     final AnalysisServer server = myServer;
     if (server == null) {
-      return results;
+      return Collections.emptyList();
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final List<SourceChange> results = Lists.newArrayList();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     final int length = getOriginalOffset(file, _offset + _length) - offset;
@@ -1179,8 +1182,13 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_ASSISTS_TIMEOUT_EDT : GET_ASSISTS_TIMEOUT;
+    final long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_ASSISTS_TIMEOUT_EDT : GET_ASSISTS_TIMEOUT;
+
     awaitForLatchCheckingCanceled(server, latch, timeout);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("edit_getAssists", timeout, filePath);
+    }
     return results;
   }
 
@@ -1189,6 +1197,7 @@ public class DartAnalysisServerService implements Disposable {
     if (server == null) {
       return false;
     }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<Boolean> resultRef = Ref.create(false);
     final CountDownLatch latch = new CountDownLatch(1);
@@ -1202,6 +1211,10 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, POSTFIX_COMPLETION_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("edit_isPostfixCompletionApplicable", POSTFIX_COMPLETION_TIMEOUT, filePath);
+    }
     return resultRef.get();
   }
 
@@ -1237,7 +1250,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, POSTFIX_INITIALIZATION_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_listPostfixCompletionTemplates() took too long");
+      logTookTooLongMessage("edit_listPostfixCompletionTemplates", POSTFIX_INITIALIZATION_TIMEOUT, null);
     }
 
     return resultRef.get();
@@ -1245,13 +1258,12 @@ public class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public SourceChange edit_getPostfixCompletion(@NotNull final VirtualFile file, final int _offset, final String key) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<SourceChange> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1270,18 +1282,21 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, POSTFIX_COMPLETION_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("edit_getPostfixCompletion", POSTFIX_COMPLETION_TIMEOUT, filePath);
+    }
     return resultRef.get();
   }
 
   @Nullable
   public SourceChange edit_getStatementCompletion(@NotNull final VirtualFile file, final int _offset) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<SourceChange> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1300,6 +1315,10 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, STATEMENT_COMPLETION_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("edit_getStatementCompletion", STATEMENT_COMPLETION_TIMEOUT, filePath);
+    }
     return resultRef.get();
   }
 
@@ -1321,11 +1340,12 @@ public class DartAnalysisServerService implements Disposable {
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
                                                       final int _offset,
                                                       @NotNull final Consumer<? super List<AnalysisErrorFixes>> consumer) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-
     final AnalysisServer server = myServer;
-    if (server == null) return;
+    if (server == null) {
+      return;
+    }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.edit_getFixes(filePath, offset, new GetFixesConsumer() {
@@ -1342,18 +1362,25 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_FIXES_TIMEOUT_EDT : GET_FIXES_TIMEOUT;
+    final long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_FIXES_TIMEOUT_EDT : GET_FIXES_TIMEOUT;
+
     awaitForLatchCheckingCanceled(server, latch, timeout);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("edit_getFixes", timeout, filePath);
+    }
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
                                            final int _offset,
                                            @NotNull final Consumer<? super SearchResult> consumer) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<String> searchIdRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return;
 
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1374,7 +1401,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, FIND_ELEMENT_REFERENCES_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("search_findElementReferences() took too long for " + filePath + "@" + offset);
+      logTookTooLongMessage("search_findElementReferences", FIND_ELEMENT_REFERENCES_TIMEOUT, filePath + "@" + offset);
       return;
     }
 
@@ -1408,14 +1435,13 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<TypeHierarchyItem> results = Lists.newArrayList();
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return results;
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.search_getTypeHierarchy(filePath, offset, superOnly, new GetTypeHierarchyConsumer() {
@@ -1433,6 +1459,10 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_TYPE_HIERARCHY_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("search_getTypeHierarchy", GET_TYPE_HIERARCHY_TIMEOUT, filePath);
+    }
     return results;
   }
 
@@ -1441,14 +1471,13 @@ public class DartAnalysisServerService implements Disposable {
                                                                     final int id,
                                                                     final String label,
                                                                     final int _offset) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestionDetails(filePath, id, label, offset, new GetSuggestionDetailsConsumer() {
@@ -1465,19 +1494,22 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTION_DETAILS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("completion_getSuggestionDetails", GET_SUGGESTION_DETAILS_TIMEOUT, filePath);
+    }
     return resultRef.get();
   }
 
   @Nullable
   public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final Ref<String> resultRef = new Ref<>();
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;
     }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<String> resultRef = new Ref<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestions(filePath, offset, new GetSuggestionsConsumer() {
@@ -1495,6 +1527,11 @@ public class DartAnalysisServerService implements Disposable {
     });
 
     awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("completion_getSuggestions", GET_SUGGESTIONS_TIMEOUT, filePath);
+    }
+
     return resultRef.get();
   }
 
@@ -1505,6 +1542,10 @@ public class DartAnalysisServerService implements Disposable {
 
   @Nullable
   private List<SourceFileEdit> edit_dartfix(@NotNull final List<VirtualFile> files, @NotNull final List<String> includedFixes) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
 
     final ArrayList<String> filePaths = new ArrayList<>(files.size());
     for (VirtualFile file : files) {
@@ -1512,9 +1553,6 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_dartfix(filePaths, includedFixes, false, Collections.emptyList(), new DartfixConsumer() {
@@ -1537,7 +1575,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EDIT_DARTFIX_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_dartfix() took too long for files " + StringUtil.join(filePaths, ", "));
+      logTookTooLongMessage("edit_dartfix", EDIT_DARTFIX_TIMEOUT, StringUtil.join(filePaths, ", "));
     }
 
     return resultRef.get();
@@ -1548,11 +1586,13 @@ public class DartAnalysisServerService implements Disposable {
                                   final int _selectionOffset,
                                   final int _selectionLength,
                                   final int lineLength) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<FormatResult> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
     final int selectionOffset = getOriginalOffset(file, _selectionOffset);
@@ -1580,7 +1620,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EDIT_FORMAT_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_format() took too long for file " + filePath);
+      logTookTooLongMessage("edit_format", EDIT_FORMAT_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1590,12 +1630,13 @@ public class DartAnalysisServerService implements Disposable {
   public List<ImportedElements> analysis_getImportedElements(@NotNull final VirtualFile file,
                                                              final int _selectionOffset,
                                                              final int _selectionLength) {
+    final AnalysisServer server = myServer;
+    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<List<ImportedElements>> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
-
     final CountDownLatch latch = new CountDownLatch(1);
     final int selectionOffset = getOriginalOffset(file, _selectionOffset);
     final int selectionLength = getOriginalOffset(file, _selectionOffset + _selectionLength) - selectionOffset;
@@ -1619,7 +1660,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, IMPORTED_ELEMENTS_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("analysis_getImportedElements() took too long for file " + filePath);
+      logTookTooLongMessage("analysis_getImportedElements", IMPORTED_ELEMENTS_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1629,12 +1670,13 @@ public class DartAnalysisServerService implements Disposable {
   public SourceFileEdit edit_importElements(@NotNull final VirtualFile file,
                                             @NotNull final List<ImportedElements> importedElements,
                                             final int _offset) {
+    final AnalysisServer server = myServer;
+    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<SourceFileEdit> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
-
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     server.edit_importElements(filePath, importedElements, offset, new ImportElementsConsumer() {
@@ -1657,7 +1699,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, IMPORTED_ELEMENTS_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_importElements() took too long for file " + filePath);
+      logTookTooLongMessage("edit_importElements", IMPORTED_ELEMENTS_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1670,11 +1712,12 @@ public class DartAnalysisServerService implements Disposable {
                                      boolean validateOnly,
                                      RefactoringOptions options,
                                      GetRefactoringConsumer consumer) {
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-
     final AnalysisServer server = myServer;
-    if (server == null) return false;
+    if (server == null) {
+      return false;
+    }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final int offset = getOriginalOffset(file, _offset);
     final int length = getOriginalOffset(file, _offset + _length) - offset;
     server.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
@@ -1683,14 +1726,14 @@ public class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<SourceFileEdit> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
-
     final CountDownLatch latch = new CountDownLatch(1);
-
     server.edit_organizeDirectives(filePath, new OrganizeDirectivesConsumer() {
       @Override
       public void computedEdit(final SourceFileEdit edit) {
@@ -1715,7 +1758,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EDIT_ORGANIZE_DIRECTIVES_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_organizeDirectives() took too long for file " + filePath);
+      logTookTooLongMessage("edit_organizeDirectives", EDIT_ORGANIZE_DIRECTIVES_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1723,11 +1766,13 @@ public class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public SourceFileEdit edit_sortMembers(@NotNull final String _filePath) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<SourceFileEdit> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_sortMembers(filePath, new SortMembersConsumer() {
@@ -1754,7 +1799,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EDIT_SORT_MEMBERS_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("edit_sortMembers() took too long for file " + filePath);
+      logTookTooLongMessage("edit_sortMembers", EDIT_SORT_MEMBERS_TIMEOUT, filePath);
     }
 
     return resultRef.get();
@@ -1762,7 +1807,9 @@ public class DartAnalysisServerService implements Disposable {
 
   public void analysis_reanalyze() {
     final AnalysisServer server = myServer;
-    if (server == null) return;
+    if (server == null) {
+      return;
+    }
 
     server.analysis_reanalyze();
 
@@ -1808,12 +1855,13 @@ public class DartAnalysisServerService implements Disposable {
 
   @Nullable
   public String execution_createContext(@NotNull final String _filePath) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
     final String filePath = FileUtil.toSystemDependentName(_filePath);
     final Ref<String> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
-
     final CountDownLatch latch = new CountDownLatch(1);
     server.execution_createContext(filePath, new CreateContextConsumer() {
       @Override
@@ -1832,9 +1880,8 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EXECUTION_CREATE_CONTEXT_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("execution_createContext() took too long for file " + filePath);
+      logTookTooLongMessage("execution_createContext", EXECUTION_CREATE_CONTEXT_TIMEOUT, filePath);
     }
-
     return resultRef.get();
   }
 
@@ -1852,13 +1899,12 @@ public class DartAnalysisServerService implements Disposable {
                                                           final int contextOffset,
                                                           @NotNull final List<RuntimeCompletionVariable> variables,
                                                           @NotNull final List<RuntimeCompletionExpression> expressions) {
-    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
-
     final AnalysisServer server = myServer;
     if (server == null) {
       return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
     }
 
+    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
     final Ref<RuntimeCompletionResult> refResult = Ref.create();
     server.execution_getSuggestions(
@@ -1882,24 +1928,30 @@ public class DartAnalysisServerService implements Disposable {
       });
 
     awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("execution_getSuggestions", GET_SUGGESTIONS_TIMEOUT, contextFilePath);
+    }
     return refResult.get();
   }
 
   @Nullable
   public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
     // From the Dart Analysis Server Spec:
     // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
     // be generated. Similarly, if neither field is provided, then an error of type INVALID_PARAMETER will be generated.
     if ((_filePath == null && _uri == null) || (_filePath != null && _uri != null)) {
-      LOG.error("One of _filePath and _uri must be non-null.");
+      LOG.error("execution_mapUri - one of _filePath and _uri must be non-null.");
       return null;
     }
 
     final String filePath = _filePath != null ? FileUtil.toSystemDependentName(_filePath) : null;
     final Ref<String> resultRef = new Ref<>();
-
-    final AnalysisServer server = myServer;
-    if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
     server.execution_mapUri(_id, filePath, _uri, new MapUriConsumer() {
@@ -1925,7 +1977,7 @@ public class DartAnalysisServerService implements Disposable {
     awaitForLatchCheckingCanceled(server, latch, EXECUTION_MAP_URI_TIMEOUT);
 
     if (latch.getCount() > 0) {
-      LOG.info("execution_mapUri() took too long for contextID " + _id + " and file or uri " + (filePath != null ? filePath : _uri));
+      logTookTooLongMessage("execution_mapUri", EXECUTION_MAP_URI_TIMEOUT, filePath != null ? filePath : _uri);
       return null;
     }
 
@@ -2171,10 +2223,13 @@ public class DartAnalysisServerService implements Disposable {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
     final AnalysisServer server = myServer;
-    if (server == null) return;
+    if (server == null) {
+      return;
+    }
 
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final CountDownLatch latch = new CountDownLatch(1);
-    server.analysis_getErrors(FileUtil.toSystemDependentName(file.getPath()), new GetErrorsConsumer() {
+    server.analysis_getErrors(filePath, new GetErrorsConsumer() {
       @Override
       public void computedErrors(AnalysisError[] errors) {
         latch.countDown();
@@ -2187,8 +2242,13 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, ANALYSIS_IN_TESTS_TIMEOUT / TESTS_TIMEOUT_COEFF);
-    assert latch.getCount() == 0 : "Analysis did't complete in " + ANALYSIS_IN_TESTS_TIMEOUT + "ms.";
+    final long timeout = ANALYSIS_IN_TESTS_TIMEOUT / TESTS_TIMEOUT_COEFF;
+
+    awaitForLatchCheckingCanceled(server, latch, timeout);
+
+    if (latch.getCount() > 0) {
+      logTookTooLongMessage("analysis_getErrors", timeout, filePath);
+    }
   }
 
   private void waitWhileServerBusy() {
@@ -2236,12 +2296,23 @@ public class DartAnalysisServerService implements Disposable {
     LOG.error(message);
   }
 
+  @NotNull
   private String getShortErrorMessage(@NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
     return "Error from " + methodName +
            (filePath == null ? "" : (", file = " + filePath)) +
            ", SDK version = " + mySdkVersion +
            ", server version = " + myServerVersion +
            ", error code = " + error.getCode() + ": " + error.getMessage();
+  }
+
+  private void logTookTooLongMessage(@NotNull final String methodName, final long timeout, @Nullable String filePath) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(methodName).append("() took longer than ").append(timeout).append("ms");
+    if (filePath != null) {
+      builder.append(", for file ").append(filePath);
+    }
+    builder.append(", Dart SDK version: ").append(mySdkVersion);
+    LOG.info(builder.toString());
   }
 
   private static boolean awaitForLatchCheckingCanceled(@NotNull final AnalysisServer server,
