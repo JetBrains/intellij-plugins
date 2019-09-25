@@ -1,5 +1,6 @@
 package {
 public class Super {
+
     /**
      * this is a prop
      */
@@ -15,6 +16,5 @@ public class Super {
 }
 
 public class Sub extends Super {
-
 }
 }
