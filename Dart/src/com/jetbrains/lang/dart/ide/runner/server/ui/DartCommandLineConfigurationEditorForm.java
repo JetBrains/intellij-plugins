@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -52,9 +52,6 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
       myCheckedModeOrEnableAssertsCheckBox.setText("Enable asserts");
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
     }
-
-    myVMOptions.setDialogCaption(DartBundle.message("config.vmoptions.caption"));
-    myArguments.setDialogCaption(DartBundle.message("config.progargs.caption"));
 
     // 'Environment variables' is the widest label, anchored by myDartFileLabel
     myDartFileLabel.setPreferredSize(myEnvironmentVariables.getLabel().getPreferredSize());
