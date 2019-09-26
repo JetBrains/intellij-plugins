@@ -147,7 +147,7 @@ public final class PrettierConfiguration implements JSNpmLinterState {
 
   public static class ProjectConfigurator implements DirectoryProjectConfigurator {
     @Override
-    public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
+    public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
       StartupManager.getInstance(project).runWhenProjectIsInitialized(
         (DumbAwareRunnable)() -> getInstance(project).detectLocalOrGlobalPackage());
     }

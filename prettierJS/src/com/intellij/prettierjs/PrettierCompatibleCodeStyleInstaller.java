@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
 
   @Override
-  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef, boolean newProject) {
     if (project.isDefault() || project.getBaseDir() == null || project.isDisposed()) return;
     StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> installCodeStyle(project));
   }
