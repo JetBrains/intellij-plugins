@@ -25,7 +25,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Bean", icon = "JavaxIcons.Javaee.Ejb")
+@Presentation(typeName = "Bean", icon = "JavaUltimateIcons.Javaee.Ejb")
 public interface Bean extends DomElement {
 
   @NameValue(unique = false)

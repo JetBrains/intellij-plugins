@@ -37,6 +37,6 @@
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
     <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="module" module-name="intellij.css.psi" />
-    <orderEntry type="module" module-name="intellij.javax.icons" />
+    <orderEntry type="module" module-name="intellij.idea.ultimate.icons" />
   </component>
 </module>
