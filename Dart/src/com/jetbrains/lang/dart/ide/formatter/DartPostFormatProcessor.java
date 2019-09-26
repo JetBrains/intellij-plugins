@@ -1,18 +1,20 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
-import com.intellij.openapi.editor.Document;
+import com.intellij.application.options.CodeStyle;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.actions.DartStyleAction;
@@ -20,8 +22,6 @@ import com.jetbrains.lang.dart.ide.application.options.DartCodeStyleSettings;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
 
 final class DartPostFormatProcessor implements PostFormatProcessor {
   @NotNull
@@ -35,22 +35,19 @@ final class DartPostFormatProcessor implements PostFormatProcessor {
   public TextRange processText(@NotNull final PsiFile psiFile,
                                @NotNull final TextRange rangeToReformat,
                                @NotNull final CodeStyleSettings settings) {
-    if (!isApplicable(psiFile, rangeToReformat)) return rangeToReformat;
+    if (!isApplicable(psiFile)) return rangeToReformat;
 
-    DartStyleAction.runDartfmt(psiFile.getProject(), Collections.singletonList(psiFile.getVirtualFile()));
+    FileEditor[] fileEditors = FileEditorManager.getInstance(psiFile.getProject()).getEditors(psiFile.getVirtualFile());
+    FileEditor fileEditor = fileEditors.length == 1 ? fileEditors[0] : null;
+    Editor editor = fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
 
-    final Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
-    if (document != null) {
-      PsiDocumentManager.getInstance(psiFile.getProject()).commitDocument(document); // otherwise we can't return correct range
-    }
-    return psiFile.getTextRange();
+    return DartStyleAction.reformatRange(editor, psiFile, rangeToReformat, false);
   }
 
-  private static boolean isApplicable(@NotNull final PsiFile psiFile, @NotNull final TextRange rangeToReformat) {
+  private static boolean isApplicable(@NotNull final PsiFile psiFile) {
     if (!(psiFile instanceof DartFile)) return false;
-    if (!psiFile.getTextRange().equals(rangeToReformat)) return false;
     final Project project = psiFile.getProject();
-    if (!CodeStyleSettingsManager.getSettings(project).getCustomSettings(DartCodeStyleSettings.class).DELEGATE_TO_DARTFMT) return false;
+    if (!CodeStyle.getSettings(psiFile).getCustomSettings(DartCodeStyleSettings.class).DELEGATE_TO_DARTFMT) return false;
     final VirtualFile vFile = psiFile.getVirtualFile();
     if (!DartAnalysisServerService.isLocalAnalyzableFile(vFile)) return false;
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);

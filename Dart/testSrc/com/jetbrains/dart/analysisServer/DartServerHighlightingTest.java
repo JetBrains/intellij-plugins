@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -59,7 +47,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
   private static void checkRegions(final List<? extends DartRegion> regions, final TextRange... ranges) {
     assertEquals("Incorrect regions amount", ranges.length, regions.size());
     int i = 0;
-    for (DartServerData.DartRegion region: regions) {
+    for (DartServerData.DartRegion region : regions) {
       assertEquals("Mismatched region " + i, ranges[i++], TextRange.create(region.getOffset(), region.getOffset() + region.getLength()));
     }
   }
@@ -246,9 +234,9 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.type('\b');
     checkRegions(service.getNavigation(file), TextRange.create(7, 18), /*TextRange.create(28, 39),*/ TextRange.create(47 - 29, 58 - 29));
     checkRegions(service.getHighlight(file),
-                 /*TextRange.create(0, 19),*/ TextRange.create(0, 6), TextRange.create(7, 18),
-                 /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
-                 /*TextRange.create(40, 59), TextRange.create(40, 46),*/ TextRange.create(47 - 29, 58 - 29));
+      /*TextRange.create(0, 19),*/ TextRange.create(0, 6), TextRange.create(7, 18),
+      /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
+      /*TextRange.create(40, 59), TextRange.create(40, 46),*/ TextRange.create(47 - 29, 58 - 29));
 
     undoAndUpdateHighlighting(file);
     // delete selection that has start in one region and end in another
@@ -257,8 +245,8 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     myFixture.type('\b');
     checkRegions(service.getNavigation(file), /*TextRange.create(7, 18), TextRange.create(28, 39),*/ TextRange.create(36, 47));
     checkRegions(service.getHighlight(file),
-                 /*TextRange.create(0, 19),*/ TextRange.create(0, 6), /*TextRange.create(7, 18),*/
-                 /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
+      /*TextRange.create(0, 19),*/ TextRange.create(0, 6), /*TextRange.create(7, 18),*/
+      /*TextRange.create(20, 39), TextRange.create(20, 26), TextRange.create(27, 38),*/
                  TextRange.create(40 - 11, 59 - 11), TextRange.create(40 - 11, 46 - 11), TextRange.create(47 - 11, 58 - 11));
   }
 
@@ -324,7 +312,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     assertNotEmpty(service.getOverrideMembers(secondFile));
 
     getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER)
-                .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
+      .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
 
     assertNotEmpty(service.getHighlight(firstFile));
     assertNotEmpty(service.getNavigation(firstFile));
@@ -336,7 +324,7 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
 
     FileEditorManager.getInstance(getProject()).closeFile(firstFile);
     getProject().getMessageBus().syncPublisher(FileEditorManagerListener.FILE_EDITOR_MANAGER)
-                .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
+      .fileClosed(FileEditorManager.getInstance(getProject()), firstFile);
 
     assertEmpty(service.getHighlight(firstFile));
     assertEmpty(service.getNavigation(firstFile));
@@ -393,5 +381,17 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
                                           "  var <warning>b</warning> = \"<a href='$varNameLongerThanDart_string_template_placeholder'></a>\";\n" +
                                           "}");
     myFixture.checkHighlighting();
+  }
+
+  public void testFormatRegion() {
+    myFixture.configureByText("foo.dart", "  main ( )  {\n" +
+                                          "  <selection> Function ( ) <caret>a ; </selection>\n" +
+                                          " Function ( ) b ;\n" +
+                                          " }");
+    myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+    myFixture.checkResult("  main ( )  {\n" +
+                          "  Function() <caret>a;\n" +
+                          "  Function ( ) b ;\n" +
+                          " }");
   }
 }
