@@ -18,7 +18,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.packageJson.NpmRegistryService;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;

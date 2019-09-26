@@ -11,7 +11,7 @@ import com.google.common.cache.CacheLoader
 import com.intellij.javaee.ExternalResourceManager
 import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
-import com.intellij.javascript.nodejs.packageJson.NpmRegistryService
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -241,10 +241,10 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     })
     val packageInfo: MutableList<NodePackageBasicInfo> = mutableListOf()
     NpmRegistryService.getInstance().findPackages(null,
-                                                  NpmRegistryService.fullTextSearch(PACKAGE_PREFIX),
-                                                  50,
-                                                  { it.name.startsWith("$PACKAGE_PREFIX/") },
-                                                  { packageInfo.add(it) })
+                                                                                              NpmRegistryService.fullTextSearch(PACKAGE_PREFIX),
+                                                                                              50,
+                                                                                              { it.name.startsWith("$PACKAGE_PREFIX/") },
+                                                                                              { packageInfo.add(it) })
 
     val availableVersions: SortedMap<String, SortedMap<SemVer, String>> = StreamEx.of(packageInfo)
       .parallel()

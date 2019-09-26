@@ -7,7 +7,7 @@ import com.google.gson.stream.JsonReader;
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.packageJson.NpmRegistryService;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
