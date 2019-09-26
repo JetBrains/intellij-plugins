@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
@@ -30,8 +31,8 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   @Nullable
   @Override
   protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
-    if (descriptor instanceof DartHierarchyNodeDescriptor) {
-      DartHierarchyNodeDescriptor pyDescriptor = (DartHierarchyNodeDescriptor)descriptor;
+    if (descriptor instanceof DartCallHierarchyNodeDescriptor) {
+      DartCallHierarchyNodeDescriptor pyDescriptor = (DartCallHierarchyNodeDescriptor)descriptor;
       return pyDescriptor.getPsiElement();
     }
     return null;
