@@ -1,5 +1,5 @@
 {
-  "$schema": "../../schema/web-types.schema.json",
+  "$schema": "../../schema/web-types.json",
   "framework": "vue",
   "name": "vue",
   "version": "2.5.0",
@@ -8,73 +8,192 @@
       "types-syntax": "typescript",
       "tags": [
         {
-          "name": "KeepAlive",
-          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "name": "Component",
+          "doc-url": "https://vuejs.org/v2/api/#component",
+          "description": "A “meta component” for rendering dynamic components. The actual component to render is determined by the `is` prop.",
           "attributes": [
             {
-              "name": "exclude"
+              "name": "is",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "string",
+                  "ComponentDefinition",
+                  "ComponentConstructor"
+                ]
+              }
             },
             {
-              "name": "include"
-            },
-            {
-              "name": "max"
-            }
-          ],
-          "slots": [
-            {
-              "name": "default"
+              "name": "inline-template",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
             }
           ]
         },
         {
           "name": "Transition",
-          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "description": "`<transition>` serve as transition effects for single element/component. The `<transition>` only applies the transition behavior to the wrapped content inside; it doesn't render an extra DOM element, or show up in the inspected component hierarchy.",
+          "doc-url": "https://vuejs.org/v2/api/#transition",
           "attributes": [
+            {
+              "name": "name",
+              "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
+              "default": "\"v\"",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appear",
+              "description": "Whether to apply transition on initial render.",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "default": "false",
+              "type": "boolean"
+            },
+            {
+              "name": "css",
+              "description": "Whether to apply CSS transition classes. Defaults to `true`. If set to `false`, will only trigger JavaScript hooks registered via component events.",
+              "default": "true",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "type",
+              "description": "Specifies the type of transition events to wait for to determine transition end timing. Available values are `\"transition\"` and `\"animation\"`. By default, it will automatically detect the type that has a longer duration.",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "mode",
+              "description": "Controls the timing sequence of leaving/entering transitions. Available modes are `\"out-in\"` and `\"in-out\"`; defaults to simultaneous.",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "duration",
+              "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "number",
+                  "{ enter: number, leave: number }"
+                ]
+              }
+            },
+            {
+              "name": "enterClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "enterToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "enterActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "before-enter"
+            },
+            {
+              "name": "before-leave"
+            },
+            {
+              "name": "before-appear"
+            },
+            {
+              "name": "enter"
+            },
+            {
+              "name": "leave"
+            },
             {
               "name": "appear"
             },
             {
-              "name": "appearActiveClass"
+              "name": "after-enter"
             },
             {
-              "name": "appearClass"
+              "name": "after-leave"
             },
             {
-              "name": "appearToClass"
+              "name": "after-appear"
             },
             {
-              "name": "css"
+              "name": "enter-cancelled"
             },
             {
-              "name": "duration"
+              "name": "leave-cancelled"
             },
             {
-              "name": "enterActiveClass"
-            },
-            {
-              "name": "enterClass"
-            },
-            {
-              "name": "enterToClass"
-            },
-            {
-              "name": "leaveActiveClass"
-            },
-            {
-              "name": "leaveClass"
-            },
-            {
-              "name": "leaveToClass"
-            },
-            {
-              "name": "mode"
-            },
-            {
-              "name": "name"
-            },
-            {
-              "name": "type"
+              "name": "appear-cancelled"
             }
           ],
           "slots": [
@@ -85,60 +204,228 @@
         },
         {
           "name": "TransitionGroup",
-          "source-file": "./node_modules/vue/dist/vue.esm.js",
+          "description": "`<transition-group>` serve as transition effects for multiple elements/components. The `<transition-group>` renders a real DOM element. By default it renders a `<span>`, and you can configure what element it should render via the `tag` attribute.",
+          "doc-url": "https://vuejs.org/v2/api/#transition-group",
           "attributes": [
+            {
+              "name": "tag",
+              "default": "\"span\"",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "moveClass",
+              "description": "Overwrite CSS class applied during moving transition"
+            },
+            {
+              "name": "name",
+              "description": "Used to automatically generate transition CSS class names. e.g. `name: 'fade'` will auto expand to `.fade-enter`, `,.fade-enter-active`, etc.",
+              "default": "\"v\"",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appear",
+              "description": "Whether to apply transition on initial render.",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "default": "false",
+              "type": "boolean"
+            },
+            {
+              "name": "css",
+              "description": "Whether to apply CSS transition classes. Defaults to `true`. If set to `false`, will only trigger JavaScript hooks registered via component events.",
+              "default": "true",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "type",
+              "description": "Specifies the type of transition events to wait for to determine transition end timing. Available values are `\"transition\"` and `\"animation\"`. By default, it will automatically detect the type that has a longer duration.",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "duration",
+              "description": "Specifies the duration of transition. By default, Vue waits for the first `transitionend` or `animationend` event on the root transition element.",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "number",
+                  "{ enter: number, leave: number }"
+                ]
+              }
+            },
+            {
+              "name": "enterClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "enterToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearToClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "enterActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "leaveActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            },
+            {
+              "name": "appearActiveClass",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            }
+          ],
+          "events": [
+            {
+              "name": "before-enter"
+            },
+            {
+              "name": "before-leave"
+            },
+            {
+              "name": "before-appear"
+            },
+            {
+              "name": "enter"
+            },
+            {
+              "name": "leave"
+            },
             {
               "name": "appear"
             },
             {
-              "name": "appearActiveClass"
+              "name": "after-enter"
             },
             {
-              "name": "appearClass"
+              "name": "after-leave"
             },
             {
-              "name": "appearToClass"
+              "name": "after-appear"
             },
             {
-              "name": "css"
+              "name": "enter-cancelled"
             },
             {
-              "name": "duration"
+              "name": "leave-cancelled"
             },
             {
-              "name": "enterActiveClass"
-            },
-            {
-              "name": "enterClass"
-            },
-            {
-              "name": "enterToClass"
-            },
-            {
-              "name": "leaveActiveClass"
-            },
-            {
-              "name": "leaveClass"
-            },
-            {
-              "name": "leaveToClass"
-            },
-            {
-              "name": "moveClass"
-            },
-            {
-              "name": "name"
-            },
-            {
-              "name": "tag"
-            },
-            {
-              "name": "type"
+              "name": "appear-cancelled"
             }
           ],
           "slots": [
             {
               "name": "default"
+            }
+          ]
+        },
+        {
+          "name": "KeepAlive",
+          "doc-url": "https://vuejs.org/v2/api/#keep-alive",
+          "description": "When wrapped around a dynamic component, `<keep-alive>` caches the inactive component instances without destroying them. Similar to `<transition>`, `<keep-alive>` is an abstract component: it doesn’t render a DOM element itself, and doesn’t show up in the component parent chain.",
+          "attributes": [
+            {
+              "name": "include",
+              "description": "Only components with matching names will be cached.",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "string",
+                  "RegExp",
+                  "(string|RegExp)[]"
+                ]
+              }
+            },
+            {
+              "name": "exclude",
+              "description": "Any component with a matching name will not be cached.",
+              "value": {
+                "kind": "expression",
+                "type": [
+                  "string",
+                  "RegExp",
+                  "(string|RegExp)[]"
+                ]
+              }
+            },
+            {
+              "name": "max",
+              "description": "The maximum number of component instances to cache.",
+              "value": {
+                "kind": "expression",
+                "type": "number"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Slot",
+          "description": "`<slot>` serve as content distribution outlets in component templates. `<slot>` itself will be replaced.",
+          "doc-url": "https://vuejs.org/v2/api/#slot",
+          "attributes": [
+            {
+              "name": "name",
+              "description": "Used for named slot.",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
             }
           ]
         }
@@ -148,8 +435,7 @@
           "name": "v-model"
         },
         {
-          "name": "v-show",
-          "source-file": "./node_modules/vue/dist/vue.esm.js"
+          "name": "v-show"
         }
       ]
     }

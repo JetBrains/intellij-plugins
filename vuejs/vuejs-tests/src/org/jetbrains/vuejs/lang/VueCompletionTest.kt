@@ -1536,6 +1536,16 @@ $script""")
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$event")
   }
 
+  fun testSlotTag() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.copyDirectoryToProject("../types", ".")
+    myFixture.configureByFile("slotTag.vue")
+
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "name")
+  }
+
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

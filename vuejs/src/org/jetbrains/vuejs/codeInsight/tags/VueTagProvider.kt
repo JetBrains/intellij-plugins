@@ -43,10 +43,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       }, VueModelVisitor.Proximity.GLOBAL)
 
       if (components.isNotEmpty()) return VueElementDescriptor(tag, components)
-
-      if (VUE_FRAMEWORK_COMPONENTS.contains(tagName)) {
-        return VueElementDescriptor(tag)
-      }
     }
     return null
   }
@@ -81,10 +77,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         return true
       }
     }, VueModelVisitor.Proximity.OUT_OF_SCOPE)
-
-    elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
-      LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
-    })
   }
 
   private fun priorityOf(proximity: VueModelVisitor.Proximity): Double {
@@ -129,11 +121,5 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     return PrioritizedLookupElement.withPriority(builder, priority)
   }
 
-  companion object {
-    private val VUE_FRAMEWORK_COMPONENTS = setOf(
-      "component",
-      "slot"
-    )
-  }
 }
 
