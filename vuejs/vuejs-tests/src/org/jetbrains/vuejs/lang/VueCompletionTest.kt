@@ -1365,8 +1365,8 @@ $script""")
       <template>
     """)
     myFixture.completeBasic()
-    assertEquals(listOf("KeepAlive#vue#80", "Transition#vue#80", "TransitionGroup#vue#80", "component#vue#0",
-                        "keep-alive#vue#80", "slot#vue#0", "transition#vue#80", "transition-group#vue#80"),
+    assertEquals(listOf("Component#vue#80", "KeepAlive#vue#80", "Slot#vue#80", "Transition#vue#80", "TransitionGroup#vue#80",
+                        "component#vue#80", "keep-alive#vue#80", "slot#vue#80", "transition#vue#80", "transition-group#vue#80"),
                  renderLookupItems(myFixture, renderPriority = true, renderTypeText = true)
                    .filter { !it.contains("http://www.w3.org") }
                    .sorted())
