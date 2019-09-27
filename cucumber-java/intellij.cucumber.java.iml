@@ -97,6 +97,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.junit.rt" />
-    <orderEntry type="module" module-name="intellij.junit" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.junit" />
   </component>
 </module>
