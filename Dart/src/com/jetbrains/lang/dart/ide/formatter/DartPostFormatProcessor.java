@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
-import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -18,7 +17,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.impl.source.codeStyle.PostFormatProcessor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.actions.DartStyleAction;
-import com.jetbrains.lang.dart.ide.application.options.DartCodeStyleSettings;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +45,6 @@ final class DartPostFormatProcessor implements PostFormatProcessor {
   private static boolean isApplicable(@NotNull final PsiFile psiFile) {
     if (!(psiFile instanceof DartFile)) return false;
     final Project project = psiFile.getProject();
-    if (!CodeStyle.getSettings(psiFile).getCustomSettings(DartCodeStyleSettings.class).DELEGATE_TO_DARTFMT) return false;
     final VirtualFile vFile = psiFile.getVirtualFile();
     if (!DartAnalysisServerService.isLocalAnalyzableFile(vFile)) return false;
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
