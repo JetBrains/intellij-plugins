@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.*;
@@ -11,14 +12,12 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
-import static com.jetbrains.lang.dart.DartTokenTypesSets.BLOCKS;
 
 public class DartBlock extends AbstractBlock implements BlockWithParent {
   public static final List<DartBlock> DART_EMPTY = Collections.emptyList();
@@ -27,10 +26,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
   private static final TokenSet LAST_TOKENS_IN_SWITCH_CASE = TokenSet.create(BREAK_STATEMENT, CONTINUE_STATEMENT, RETURN_STATEMENT);
 
-  private final DartIndentProcessor myIndentProcessor;
   private final DartSpacingProcessor mySpacingProcessor;
   private final DartWrappingProcessor myWrappingProcessor;
-  private final DartAlignmentProcessor myAlignmentProcessor;
   private final CodeStyleSettings mySettings;
   private final DartBlockContext myContext;
   private Wrap myChildWrap = null;
@@ -42,11 +39,9 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     super(node, wrap, alignment);
     mySettings = settings;
     myContext = context;
-    myIndentProcessor = new DartIndentProcessor(context.getDartSettings());
     mySpacingProcessor = new DartSpacingProcessor(node, context.getDartSettings());
-    myWrappingProcessor = new DartWrappingProcessor(node, context.getDartSettings());
-    myAlignmentProcessor = new DartAlignmentProcessor(node, context.getDartSettings());
-    myIndent = myIndentProcessor.getChildIndent(myNode, context.getMode());
+    myWrappingProcessor = new DartWrappingProcessor(node);
+    myIndent = new DartIndentProcessor().getChildIndent(myNode);
   }
 
   @Override
@@ -68,7 +63,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
       if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
       final DartBlock childBlock =
-        new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings, myContext);
+        new DartBlock(childNode, createChildWrap(childNode), null, mySettings, myContext);
       childBlock.setParent(this);
       tlChildren.add(childBlock);
     }
@@ -83,15 +78,6 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
       myChildWrap = wrap;
     }
     return wrap;
-  }
-
-  @Nullable
-  protected Alignment createChildAlignment(ASTNode child) {
-    final IElementType type = child.getElementType();
-    if (type != LPAREN && !BLOCKS.contains(type)) {
-      return myAlignmentProcessor.createChildAlignment();
-    }
-    return null;
   }
 
   @Override
@@ -119,14 +105,12 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     }
 
     if (previousType == SWITCH_CASE || previousType == DEFAULT_CASE) {
-      if (previousBlock != null) {
-        final List<DartBlock> subBlocks = previousBlock.getSubDartBlocks();
-        if (!subBlocks.isEmpty()) {
-          final DartBlock lastChildInPrevBlock = subBlocks.get(subBlocks.size() - 1);
-          final List<DartBlock> subSubBlocks = lastChildInPrevBlock.getSubDartBlocks();
-          if (isLastTokenInSwitchCase(subSubBlocks)) {
-            return new ChildAttributes(Indent.getNormalIndent(), null);  // e.g. Enter after BREAK_STATEMENT
-          }
+      final List<DartBlock> subBlocks = previousBlock.getSubDartBlocks();
+      if (!subBlocks.isEmpty()) {
+        final DartBlock lastChildInPrevBlock = subBlocks.get(subBlocks.size() - 1);
+        final List<DartBlock> subSubBlocks = lastChildInPrevBlock.getSubDartBlocks();
+        if (isLastTokenInSwitchCase(subSubBlocks)) {
+          return new ChildAttributes(Indent.getNormalIndent(), null);  // e.g. Enter after BREAK_STATEMENT
         }
       }
 

@@ -1,8 +1,7 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.formatter;
 
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterTestCase;
-import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartFormatterInHtmlTest extends FormatterTestCase {
@@ -23,31 +22,9 @@ public class DartFormatterInHtmlTest extends FormatterTestCase {
   }
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    setTestStyleSettings();
-  }
-
-  @Override
   protected void doTest(String resultNumber) throws Exception {
     String testName = getTestName(false);
     doTest(testName + "." + getFileExtension(), testName + "_after." + getFileExtension(), resultNumber);
-  }
-
-  private void setTestStyleSettings() {
-    final CommonCodeStyleSettings settings = getSettings(DartLanguage.INSTANCE);
-    CommonCodeStyleSettings.IndentOptions indentOptions = settings.getIndentOptions();
-    assertNotNull(indentOptions);
-    indentOptions.INDENT_SIZE = 2;
-    indentOptions.CONTINUATION_INDENT_SIZE = 2;
-    indentOptions.TAB_SIZE = 2;
-
-    settings.KEEP_BLANK_LINES_IN_CODE = 2;
-    settings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    settings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE;
-    settings.ALIGN_MULTILINE_PARAMETERS = false;
-    settings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = false;
-    settings.KEEP_FIRST_COLUMN_COMMENT = false;
   }
 
   public void testDefault() throws Exception {

@@ -1,12 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
-import com.intellij.formatting.FormattingMode;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -27,13 +25,7 @@ public class DartIndentProcessor {
             SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
             VALUE_EXPRESSION, IF_NULL_EXPRESSION);
 
-  private final CommonCodeStyleSettings settings;
-
-  public DartIndentProcessor(CommonCodeStyleSettings settings) {
-    this.settings = settings;
-  }
-
-  public Indent getChildIndent(final ASTNode node, final FormattingMode mode) {
+  public Indent getChildIndent(final ASTNode node) {
     final IElementType elementType = node.getElementType();
     final ASTNode prevSibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpacesAndComments(node);
     final IElementType prevSiblingType = prevSibling == null ? null : prevSibling.getElementType();
@@ -41,8 +33,6 @@ public class DartIndentProcessor {
     final IElementType parentType = parent != null ? parent.getElementType() : null;
     final ASTNode superParent = parent == null ? null : parent.getTreeParent();
     final IElementType superParentType = superParent == null ? null : superParent.getElementType();
-
-    final int braceStyle = superParentType == FUNCTION_BODY ? settings.METHOD_BRACE_STYLE : settings.BRACE_STYLE;
 
     if (parent == null || parent.getTreeParent() == null || parentType == EMBEDDED_CONTENT) {
       return Indent.getNoneIndent();
@@ -55,7 +45,7 @@ public class DartIndentProcessor {
       return Indent.getSpaceIndent(1, true);
     }
 
-    if (settings.KEEP_FIRST_COLUMN_COMMENT && (elementType == SINGLE_LINE_COMMENT || elementType == MULTI_LINE_COMMENT)) {
+    if (elementType == SINGLE_LINE_COMMENT || elementType == MULTI_LINE_COMMENT) {
       final ASTNode previousNode = node.getTreePrev();
       if (previousNode != null && previousNode.getElementType() == WHITE_SPACE && previousNode.getText().endsWith("\n")) {
         return Indent.getAbsoluteNoneIndent();
@@ -89,21 +79,11 @@ public class DartIndentProcessor {
     }
 
     if (elementType == LBRACE || elementType == RBRACE) {
-      switch (braceStyle) {
-        case CommonCodeStyleSettings.END_OF_LINE:
-          if (elementType == LBRACE && FormatterUtil.isPrecededBy(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
-            // Use Nystrom style rather than Allman.
-            return Indent.getContinuationIndent();
-          } // FALL THROUGH
-        case CommonCodeStyleSettings.NEXT_LINE:
-        case CommonCodeStyleSettings.NEXT_LINE_IF_WRAPPED:
-          return Indent.getNoneIndent();
-        case CommonCodeStyleSettings.NEXT_LINE_SHIFTED:
-        case CommonCodeStyleSettings.NEXT_LINE_SHIFTED2:
-          return Indent.getNormalIndent();
-        default:
-          return Indent.getNoneIndent();
+      if (elementType == LBRACE && FormatterUtil.isPrecededBy(parent, SINGLE_LINE_COMMENT, WHITE_SPACE)) {
+        // Use Nystrom style rather than Allman.
+        return Indent.getContinuationIndent();
       }
+      return Indent.getNoneIndent();
     }
 
     if (parentType == PARENTHESIZED_EXPRESSION) {
@@ -139,9 +119,7 @@ public class DartIndentProcessor {
     if (parentType == FORMAL_PARAMETER_LIST || parentType == PARAMETER_TYPE_LIST) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == OPTIONAL_FORMAL_PARAMETERS &&
-        elementType != LBRACE && elementType != RBRACE &&
-        elementType != LBRACKET && elementType != RBRACKET) {
+    if (parentType == OPTIONAL_FORMAL_PARAMETERS && elementType != LBRACKET && elementType != RBRACKET) {
       return Indent.getNormalIndent();
     }
     if (parentType == FOR_STATEMENT && prevSiblingType == FOR_LOOP_PARTS_IN_BRACES && !BLOCKS.contains(elementType)) {

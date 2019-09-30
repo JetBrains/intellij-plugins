@@ -9,6 +9,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -59,10 +62,18 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     reformatRange(editor, psiFile, TextRange.from(0, psiFile.getTextLength()), true);
   }
 
-  public static TextRange reformatRange(@Nullable final Editor editor,
-                                        @NotNull final PsiFile psiFile,
-                                        @NotNull final TextRange inputRange,
-                                        final boolean showStatusHint) {
+  public static TextRange reformatRange(@NotNull final PsiFile psiFile, @NotNull final TextRange range) {
+    FileEditor[] fileEditors = FileEditorManager.getInstance(psiFile.getProject()).getEditors(psiFile.getVirtualFile());
+    FileEditor fileEditor = fileEditors.length == 1 ? fileEditors[0] : null;
+    Editor editor = fileEditor instanceof TextEditor ? ((TextEditor)fileEditor).getEditor() : null;
+
+    return reformatRange(editor, psiFile, range, false);
+  }
+
+  private static TextRange reformatRange(@Nullable final Editor editor,
+                                         @NotNull final PsiFile psiFile,
+                                         @NotNull final TextRange inputRange,
+                                         final boolean showStatusHint) {
     final Project project = psiFile.getProject();
     final VirtualFile file = psiFile.getVirtualFile();
     final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);

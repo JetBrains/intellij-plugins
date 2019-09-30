@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.dart_style;
 
 import gnu.trove.THashSet;
@@ -10,14 +11,6 @@ import java.util.Set;
  * properly formatted code into improperly formatted code.
  */
 public class DartStyleLenientTest extends DartStyleTest {
-
-  /** The set of tests that are known to fail only in lenient mode. */
-  private static final Set<String> KNOWN_TO_FAIL_LENIENT = new THashSet<>();
-
-  static {
-    //KNOWN_TO_FAIL_LENIENT.add("regression/0000/0083.unit:1");
-  }
-
   /**
    * Run a test defined in "*.unit" or "*.stmt" file inside directory {@code dirName}.
    */
@@ -25,7 +18,6 @@ public class DartStyleLenientTest extends DartStyleTest {
   protected void runTestInDirectory(String dirName) throws Exception {
     Set<String> fail = new THashSet<>();
     fail.addAll(KNOWN_TO_FAIL);
-    fail.addAll(KNOWN_TO_FAIL_LENIENT);
     runTestInDirectory(dirName, fail);
   }
 
