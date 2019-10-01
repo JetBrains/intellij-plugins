@@ -4,8 +4,10 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.codeInsight.daemon.XmlErrorMessages
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.html.HtmlParsing
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
@@ -72,7 +74,8 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         || attributeInfo.kind === SCRIPT_SRC
         || attributeInfo.kind === STYLE_SRC) {
       attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
-    } else if (attributeInfo.kind === SCRIPT_ID) {
+    }
+    else if (attributeInfo.kind === SCRIPT_ID) {
       attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
     }
     else {
@@ -137,5 +140,19 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
     val marker = mark()
     advance()
     marker.collapse(VueJSEmbeddedExprTokenType.createInterpolationExpression(builder.project))
+  }
+
+  override fun getHtmlTagElementType(): IElementType {
+    val tagName = peekTagName()
+    if (tagName == SCRIPT_TAG_NAME
+        || (tagLevel() == 1
+            && peekTagName() in TOP_LEVEL_TAGS)) {
+      return VueStubElementTypes.STUBBED_TAG
+    }
+    return super.getHtmlTagElementType()
+  }
+
+  companion object {
+    val TOP_LEVEL_TAGS: List<String> = listOf(TEMPLATE_TAG_NAME, SCRIPT_TAG_NAME, STYLE_TAG_NAME)
   }
 }

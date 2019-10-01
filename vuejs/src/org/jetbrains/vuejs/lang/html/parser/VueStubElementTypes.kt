@@ -2,10 +2,12 @@
 package org.jetbrains.vuejs.lang.html.parser
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.impl.source.html.HtmlStubBasedTagElementType
 import com.intellij.psi.impl.source.xml.stub.XmlAttributeStubImpl
 import com.intellij.psi.impl.source.xml.stub.XmlStubBasedAttributeElementType
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.index.VueIdIndex
 import org.jetbrains.vuejs.index.VueUrlIndex
@@ -21,6 +23,20 @@ object VueStubElementTypes {
     override fun shouldCreateStub(node: ASTNode?): Boolean {
       return (node?.psi as? XmlAttribute)?.parent
         ?.getAttribute("type")?.value == "text/x-template"
+    }
+  }
+
+  val STUBBED_TAG = object : HtmlStubBasedTagElementType("STUBBED_TAG", VueLanguage.INSTANCE) {
+    override fun shouldCreateStub(node: ASTNode?): Boolean {
+      return (node?.psi as? XmlTag)
+               ?.let {
+                 // script tag with x-template
+                 (it.getAttributeValue("type") === "text/x-template"
+                  && it.getAttribute("id") != null)
+                 // top-level style/script/template tag
+                 || (it.getAttribute("src") != null
+                     && it.parentTag == null)
+               } ?: false
     }
   }
 
