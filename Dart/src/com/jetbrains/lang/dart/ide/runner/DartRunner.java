@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.ExecutionException;
@@ -33,9 +33,14 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.TimeUnit;
+
 public class DartRunner extends GenericProgramRunner {
 
   private static final Logger LOG = Logger.getInstance(DartRunner.class.getName());
+
+  // Allow 5 seconds to connect to the observatory.
+  private static final int OBSERVATORY_TIMEOUT_MS = Math.toIntExact(TimeUnit.SECONDS.toMillis(5));
 
   @NotNull
   @Override
@@ -81,7 +86,7 @@ public class DartRunner extends GenericProgramRunner {
   }
 
   protected int getTimeout() {
-    return 5000; // Allow 5 seconds to connect to the observatory.
+    return OBSERVATORY_TIMEOUT_MS;
   }
 
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
