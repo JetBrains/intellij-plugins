@@ -24,7 +24,8 @@ public class GherkinScenarioImpl extends GherkinStepsHolderBase implements Gherk
 
   @Override
   public boolean isBackground() {
-    return getNode().getFirstChildNode().getElementType() == GherkinTokenTypes.BACKGROUND_KEYWORD;
+    ASTNode node = getNode().getFirstChildNode();
+    return node != null && node.getElementType() == GherkinTokenTypes.BACKGROUND_KEYWORD;
   }
 
   @Override
