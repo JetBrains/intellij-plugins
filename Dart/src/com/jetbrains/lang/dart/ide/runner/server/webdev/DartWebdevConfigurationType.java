@@ -12,6 +12,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,19 +30,14 @@ public class DartWebdevConfigurationType extends ConfigurationTypeBase implement
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
-      public String getName() {
-        return "Dart Web"; // compatibility
-      }
-
-      @NotNull
-      @Override
       public RunConfiguration createTemplateConfiguration(@NotNull final Project project) {
         return new DartWebdevConfiguration(project, DartWebdevConfigurationType.this, "Dart Web");
       }
 
       @Override
       public boolean isApplicable(@NotNull final Project project) {
-        return FileTypeIndex.containsFileOfType(HtmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+        return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project)) &&
+               FileTypeIndex.containsFileOfType(HtmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
     });
   }
