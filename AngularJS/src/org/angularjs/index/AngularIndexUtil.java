@@ -91,7 +91,7 @@ public class AngularIndexUtil {
             for (JSImplicitElement element : elements) {
               if (element.getQualifiedName().equals(lookupKey)
                   && ((index != AngularDirectivesIndex.KEY && index != AngularDirectivesDocIndex.KEY) ||
-                      (element.getType() != JSImplicitElement.Type.Function
+                      (!element.getType().isFunction()
                        && AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString())))) {
                 if (!processor.process(element)) return false;
               }
