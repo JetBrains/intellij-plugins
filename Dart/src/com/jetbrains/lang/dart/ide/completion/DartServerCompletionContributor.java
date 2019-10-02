@@ -140,6 +140,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                  updatedResultSet.addElement(lookupElement);
                }, (includedSet, includedKinds, includedRelevanceTags, libraryFilePathSD) -> {
+                 if (includedKinds.isEmpty()) {
+                   return;
+                 }
+
                  final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
                  if (suggestionSet == null) {
                    return;
