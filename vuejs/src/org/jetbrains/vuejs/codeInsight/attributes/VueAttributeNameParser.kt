@@ -4,6 +4,9 @@ package org.jetbrains.vuejs.codeInsight.attributes
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil.*
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
+import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
+import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 import java.util.*
 
 class VueAttributeNameParser private constructor() {
@@ -210,11 +213,12 @@ class VueAttributeNameParser private constructor() {
                               val onlyTopLevelTag: Boolean = true) {
     PLAIN(null),
     DIRECTIVE(null),
-    SLOT("slot", deprecated = true),
+    SLOT(DEPRECATED_SLOT_ATTRIBUTE, deprecated = true),
     REF("ref"),
     IS("is"),
     SCOPE("scope", injectJS = true, deprecated = true, requiresTag = TEMPLATE_TAG_NAME, onlyTopLevelTag = false),
     SLOT_SCOPE("slot-scope", injectJS = true, deprecated = true),
+    SLOT_NAME(SLOT_NAME_ATTRIBUTE, injectJS = false, requiresTag = SLOT_TAG_NAME),
     STYLE_SCOPED("scoped", requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_MODULE("module", requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),

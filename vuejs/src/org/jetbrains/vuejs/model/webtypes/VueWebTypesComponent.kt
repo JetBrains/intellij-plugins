@@ -20,9 +20,22 @@ class VueWebTypesComponent(tag: Tag,
   override val data: List<VueDataProperty> = Collections.emptyList()
   override val computed: List<VueComputedProperty> = Collections.emptyList()
   override val methods: List<VueMethod> = Collections.emptyList()
-  override val props: List<VueInputProperty> = tag.attributes.filter { it.name != null }.map { VueWebTypesInputProperty(it, typeProvider) }
-  override val emits: List<VueEmitCall> = tag.events.filter { it.name != null }.map { VueWebTypesEmitCall(it) }
-  override val slots: List<VueSlot> = tag.slots.filter { it.name != null }.map { VueWebTypesSlot(it) }
+  override val props: List<VueInputProperty> = tag.attributes.asSequence()
+    .filter { it.name != null }
+    .map { VueWebTypesInputProperty(it, typeProvider) }
+    .toList()
+
+  override val emits: List<VueEmitCall> = tag.events.asSequence()
+    .filter { it.name != null }
+    .map { VueWebTypesEmitCall(it) }
+    .toList()
+
+  override val slots: List<VueSlot> = tag.slots.asSequence()
+    .plus(tag.vueScopedSlots)
+    .filter { it.name != null }
+    .map { VueWebTypesSlot(it) }
+    .toList()
+
   override val extends: List<VueContainer> = emptyList()
   override val components: Map<String, VueComponent> = Collections.emptyMap()
   override val directives: Map<String, VueDirective> = Collections.emptyMap()

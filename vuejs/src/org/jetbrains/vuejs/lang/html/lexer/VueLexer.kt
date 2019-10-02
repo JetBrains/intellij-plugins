@@ -12,7 +12,7 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
 
-class VueLexer(private val languageLevel: JSLanguageLevel, interpolationConfig: Pair<String, String>?)
+class VueLexer(private val languageLevel: JSLanguageLevel, private val interpolationConfig: Pair<String, String>?)
   : HtmlLexer(VueMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))), true) {
 
   private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {
@@ -49,6 +49,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel, interpolationConfig: 
     override val seenStyle: Boolean get() = this@VueLexer.seenStyle
     override val styleType: String? get() = this@VueLexer.styleType
     override val inTagState: Boolean get() = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _VueLexer.START_TAG_NAME
+    override val interpolationConfig: Pair<String, String>? get() = this@VueLexer.interpolationConfig
 
     override fun registerHandler(elementType: IElementType, value: TokenHandler) {
       this@VueLexer.registerHandler(elementType, value)

@@ -111,9 +111,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
   private class VueTemplateScopeBuilder internal constructor(templateFile: PsiFile) : Angular2BaseScopeBuilder(templateFile) {
 
     override fun visitXmlTag(tag: XmlTag) {
-      val tagHasVariables = tag.children
-        .asSequence()
-        .filterIsInstance<XmlAttribute>()
+      val tagHasVariables = tag.attributes
         .any { attribute ->
           (attribute.descriptor as? VueAttributeDescriptor)
             ?.getInfo()

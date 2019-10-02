@@ -1528,11 +1528,11 @@ $script""")
   fun testVueDefaultSymbols() {
     myFixture.configureByFile("vueDefaultSymbols.vue")
 
-    moveToOffsetBySignature("v-on:click=\"<caret>\"", myFixture)
+    myFixture.moveToOffsetBySignature("v-on:click=\"<caret>\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "\$event", "\$emit", "\$root", "\$props", "\$refs")
 
-    moveToOffsetBySignature("v-bind:about=\"<caret>\"", myFixture)
+    myFixture.moveToOffsetBySignature("v-bind:about=\"<caret>\"")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "\$emit", "\$root", "\$props", "\$refs")
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$event")
@@ -1547,6 +1547,25 @@ $script""")
     assertContainsElements(myFixture.lookupElementStrings!!, "name")
   }
 
+  fun testSlotNameCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"some_lib\": \"0.0.0\"")
+    myFixture.copyDirectoryToProject("slotNames", ".")
+    myFixture.configureByFile("test.vue")
+
+    for ((tag, slots) in listOf(
+      Pair("script-template-vue", listOf("scriptTemplateVue1", "scriptTemplateVue2", "default")),
+      Pair("require-decorators", listOf("requireDecorators1", "requireDecorators2", "default")),
+      Pair("x-template", listOf("xTemplate1", "xTemplate2", "default")),
+      Pair("export-import", listOf("exportImport1", "exportImport2")),
+      Pair("some-lib", listOf("someLib1", "someLib2"))
+    )) {
+      for (signature in listOf("$tag><template v-slot:<caret></$tag", "$tag><div slot=\"<caret>\"</$tag")) {
+        myFixture.moveToOffsetBySignature(signature)
+        myFixture.completeBasic()
+        assertEquals(signature, slots.sorted(), myFixture.lookupElementStrings!!.sorted())
+      }
+    }
+  }
 
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url", "default", "required", "value", "source", "vue-modifiers")
+@JsonPropertyOrder("name", "description", "doc-url", "default", "required", "value", "source", "vue-argument", "vue-modifiers")
 class Attribute_ {
 
   /**
@@ -93,6 +93,10 @@ class Attribute_ {
   @get:JsonProperty("source")
   @set:JsonProperty("source")
   var source: Source? = null
+  @JsonProperty("vue-argument")
+  @get:JsonProperty("vue-argument")
+  @set:JsonProperty("vue-argument")
+  var vueArgument: VueArgument? = null
   @JsonProperty("vue-modifiers")
   @get:JsonProperty("vue-modifiers")
   @set:JsonProperty("vue-modifiers")

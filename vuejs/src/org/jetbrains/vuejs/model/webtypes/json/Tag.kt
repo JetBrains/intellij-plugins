@@ -106,10 +106,24 @@ class Tag {
   @get:JsonProperty("slots")
   @set:JsonProperty("slots")
   var slots: List<Slot> = ArrayList()
+  /**
+   * Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.
+   *
+   */
+  /**
+   * Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.
+   *
+   */
+  /**
+   * Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.
+   *
+   */
   @JsonProperty("vue-scoped-slots")
+  @JsonPropertyDescription(
+    "Deprecated. Use regular 'slot' property instead and specify 'vue-properties' to provide slot scope information.")
   @get:JsonProperty("vue-scoped-slots")
   @set:JsonProperty("vue-scoped-slots")
-  var vueScopedSlots: List<VueScopedSlot> = ArrayList()
+  var vueScopedSlots: List<Slot> = ArrayList()
   @JsonProperty("vue-model")
   @get:JsonProperty("vue-model")
   @set:JsonProperty("vue-model")

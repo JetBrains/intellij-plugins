@@ -14,16 +14,17 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.*
 import com.intellij.psi.filters.ElementFilter
 import com.intellij.psi.filters.position.FilterPattern
-import com.intellij.psi.impl.source.html.HtmlEmbeddedContentImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
 import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
+import com.intellij.util.castSafelyTo
 import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.findScriptWithExport
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueIdIndex
@@ -91,11 +92,9 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
 
   private class VueTemplateIdReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-      return if (element is JSLiteralExpression
-                 && element.isQuotedLiteral
-                 && element.stringValue?.startsWith("#") == true
+      return if (getTextIfLiteral(element)?.startsWith("#") == true
                  && isVueContext(element)) {
-        arrayOf(VueTemplateIdReference(element, TextRange(2, element.textLength - 1)))
+        arrayOf(VueTemplateIdReference(element as JSLiteralExpression, TextRange(2, element.textLength - 1)))
       }
       else emptyArray()
     }
@@ -170,8 +169,8 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
                                               GlobalSearchScope.projectScope(element.project),
                                               PsiElement::class.java) { element ->
         (element as? XmlAttribute)
-          ?.parent
-          ?.let { PsiTreeUtil.findChildOfType(it, HtmlEmbeddedContentImpl::class.java) }
+          ?.context
+          ?.castSafelyTo<XmlTag>()
           ?.let { result.add(PsiElementResolveResult(it)) }
         true
       }

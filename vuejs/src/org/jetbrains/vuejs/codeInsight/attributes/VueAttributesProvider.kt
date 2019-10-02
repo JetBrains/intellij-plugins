@@ -9,12 +9,11 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.LOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.NONE
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.model.VueDirective
-import org.jetbrains.vuejs.model.VueModelManager
-import org.jetbrains.vuejs.model.VueModelProximityVisitor
-import org.jetbrains.vuejs.model.VueModelVisitor
+import org.jetbrains.vuejs.model.*
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
@@ -22,7 +21,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     if (context == null || !isVueContext(context)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
 
-    StreamEx.of(*VueAttributeNameParser.VueAttributeKind.values())
+    StreamEx.of(*VueAttributeKind.values())
       .filter { it.attributeName != null && it.isValidIn(context) }
       .map {
         VueAttributeDescriptor(context, it.attributeName!!, acceptsNoValue = !it.requiresValue, priority = if (it.deprecated) NONE else LOW)
@@ -30,10 +29,10 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       .forEach { result.add(it) }
 
     val contributedDirectives = mutableSetOf<String>()
-    StreamEx.of(*VueAttributeNameParser.VueDirectiveKind.values())
+    StreamEx.of(*VueDirectiveKind.values())
       .filter {
         // 'on' should not be proposed without colon. It is added separately in VueTagAttributeCompletionProvider
-        it !== VueAttributeNameParser.VueDirectiveKind.ON
+        it !== VueDirectiveKind.ON
         && it.directiveName != null
         && contributedDirectives.add(it.directiveName!!)
       }
@@ -55,7 +54,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     if (context == null || !isVueContext(context) || attributeName == null) return null
     val info = VueAttributeNameParser.parse(attributeName, context)
     when {
-      info.kind == VueAttributeNameParser.VueAttributeKind.PLAIN -> {
+      info.kind == VueAttributeKind.PLAIN -> {
         if (info.modifiers.isEmpty()) {
           return null
         }
@@ -66,13 +65,22 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
         return when {
                  info.isShorthand && info.arguments.isNullOrEmpty() -> return null
 
-                 info.directiveKind == VueAttributeNameParser.VueDirectiveKind.BIND ->
+                 info.directiveKind == VueDirectiveKind.BIND ->
                    info.arguments?.let { HtmlNSDescriptorImpl.getCommonAttributeDescriptor(it, context) }
 
-                 info.directiveKind == VueAttributeNameParser.VueDirectiveKind.ON ->
+                 info.directiveKind == VueDirectiveKind.ON ->
                    info.arguments?.let { HtmlNSDescriptorImpl.getCommonAttributeDescriptor("on$it", context) }
 
-                 info.directiveKind == VueAttributeNameParser.VueDirectiveKind.CUSTOM ->
+                 info.directiveKind == VueDirectiveKind.SLOT -> {
+                   val slotName = info.arguments ?: DEFAULT_SLOT_NAME
+                   getAvailableSlots(context, true)
+                     .find { it.name == slotName }
+                     ?.let {
+                       VueAttributeDescriptor(context, attributeName, it.source, true)
+                     }
+                 }
+
+                 info.directiveKind == VueDirectiveKind.CUSTOM ->
                    return resolveDirective(info.name, context)
 
                  else -> null

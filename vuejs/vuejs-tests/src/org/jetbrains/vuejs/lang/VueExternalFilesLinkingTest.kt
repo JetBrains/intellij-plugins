@@ -48,13 +48,13 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
     doTest()
 
     myFixture.configureFromTempProjectFile("script.js")
-    val element = resolveReference("#b<caret>ar", myFixture)
+    val element = myFixture.resolveReference("#b<caret>ar")
     assertEquals("template.html", element.containingFile.name)
-    assertEquals("\n" +
-                 "    <div>\n" +
-                 "      {{ foo }}\n" +
-                 "    </div>\n" +
-                 "  ", element.firstChild.text)
+    assertEquals("""<script type="text/x-template" id="bar">
+    <div>
+      {{ foo }}
+    </div>
+  </script>""", element.text)
   }
 
   private fun doTest(mainFile: String = "template.html", targetFile: String = "script.js") {
@@ -63,7 +63,7 @@ class VueExternalFilesLinkingTest : BasePlatformTestCase() {
     myFixture.copyDirectoryToProject(getTestName(true), ".")
     createPackageJsonWithVueDependency(myFixture, "")
     myFixture.configureFromTempProjectFile(mainFile)
-    val element = resolveReference("{{ <caret>foo }}", myFixture)
+    val element = myFixture.resolveReference("{{ <caret>foo }}")
     assertEquals(targetFile, element.containingFile.name)
     assertEquals(targetText, element.context?.text)
   }

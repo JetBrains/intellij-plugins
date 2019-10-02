@@ -25,13 +25,10 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import com.intellij.xml.util.HtmlUtil.SRC_ATTRIBUTE_NAME
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor.Companion.BASIC_REF_PROVIDER
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -190,12 +187,8 @@ class VueModelManager {
       if (file != null && file.fileType == VueFileType.INSTANCE) {
         // TODO stub safe resolution
         return findTopLevelVueTag(file, SCRIPT_TAG_NAME)
-          ?.getAttribute(SRC_ATTRIBUTE_NAME)
-          ?.valueElement
-          ?.let { BASIC_REF_PROVIDER.getReferencesByElement(it, ProcessingContext()) }
-          ?.asSequence()
-          ?.mapNotNull { it.resolve()?.castSafelyTo<PsiFile>() }
-          ?.firstOrNull()
+          ?.let { resolveTagSrcReference(it) }
+          ?.castSafelyTo<PsiFile>()
           ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
           ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
       }

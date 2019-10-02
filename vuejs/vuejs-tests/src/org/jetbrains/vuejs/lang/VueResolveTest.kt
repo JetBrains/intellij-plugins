@@ -1859,7 +1859,7 @@ export default class UsageComponent extends Vue {
     )
       .forEach { testCase ->
         TestCase.assertEquals(testCase.value,
-                              resolveReference(testCase.key, myFixture).let { it as JSImplicitElement }.context!!.text)
+                              myFixture.resolveReference(testCase.key).let { it as JSImplicitElement }.context!!.text)
       }
   }
 
@@ -1867,17 +1867,38 @@ export default class UsageComponent extends Vue {
     configureVueDefinitions(myFixture)
     myFixture.configureByFile("vueDefaultSymbols.vue")
     assertEquals("vue.d.ts",
-                 resolveReference("\$<caret>slots", myFixture).containingFile.name)
+                 myFixture.resolveReference("\$<caret>slots").containingFile.name)
     assertEquals("vue.d.ts",
-                 resolveReference("\$<caret>emit()", myFixture).containingFile.name)
+                 myFixture.resolveReference("\$<caret>emit()").containingFile.name)
   }
 
   fun testResolveVueLoaderStyleReference() {
     myFixture.copyDirectoryToProject("resolve-vue-loader-url", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     TestCase.assertEquals("vue-multiselect.min.css",
-                          resolveReference("vue-multiselect.<caret>min.css", myFixture)
+                          myFixture.resolveReference("vue-multiselect.<caret>min.css")
                             .containingFile.name)
+  }
+
+  fun testSlotName() {
+    createPackageJsonWithVueDependency(myFixture, "\"some_lib\":\"0.0.0\"")
+    myFixture.copyDirectoryToProject("../completion/slotNames", ".")
+    myFixture.copyFileToProject("slotNames/test2.vue", "test2.vue")
+    myFixture.configureFromTempProjectFile("test2.vue")
+
+    for ((tag, slotName, slotDeclText) in listOf(
+      Triple("script-template-vue", "scriptTemplateVue1", "<slot name=\"scriptTemplateVue1\"></slot>"),
+      Triple("require-decorators", "default", "<slot></slot>"),
+      Triple("x-template", "xTemplate1", "<slot name=\"xTemplate1\"></slot>"),
+      Triple("export-import", "exportImport1", "<slot name=\"exportImport1\"></slot>")
+    )) {
+      val slotWithCaret = slotName.replaceRange(1, 1, "<caret>")
+      for (signature in listOf("<$tag><template v-slot:$slotWithCaret",
+                               "<$tag><div slot=\"$slotWithCaret\"")) {
+        val element = myFixture.resolveReference(signature)
+        assertEquals(signature, slotDeclText, element.text)
+      }
+    }
   }
 
 }

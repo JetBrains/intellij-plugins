@@ -26,6 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.tree.TreeUtil
+import com.intellij.psi.impl.source.xml.stub.XmlTagStub
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
@@ -358,8 +359,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
     val parentType = expression.node.treeParent?.elementType ?: return false
-    if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType ||
-        JSElementTypes.PROPERTY == parentType && "required" == expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text) {
+    if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
+        || (JSElementTypes.PROPERTY == parentType
+            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf("required", "el"))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     return false
@@ -402,19 +404,9 @@ fun resolveLocally(ref: JSReferenceExpression): List<PsiElement> {
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
   val file = element as? XmlFile ?: element?.containingFile as? XmlFile
   if (file != null && file.fileType == VueFileType.INSTANCE) {
-    if (file is PsiFileImpl) {
-      val greenStub = file.greenStub
-      //stub-safe path
-      if (greenStub != null) {
-        val children = greenStub.getChildrenByType<JSElement>(JSExtendedLanguagesTokenSetProvider.MODULE_EMBEDDED_CONTENTS,
-                                                              JSEmbeddedContent.ARRAY_FACTORY)
-        val result = children.firstOrNull()
-        return if (result is JSEmbeddedContent) result else null
-      }
-    }
     val script = findScriptTag(file)
     if (script != null) {
-      return PsiTreeUtil.findChildOfType(script, JSEmbeddedContent::class.java)
+      return PsiTreeUtil.getStubChildOfType(script, JSEmbeddedContent::class.java)
     }
   }
   return null
@@ -424,9 +416,19 @@ fun findScriptTag(xmlFile: XmlFile): XmlTag? {
   return findTopLevelVueTag(xmlFile, SCRIPT_TAG_NAME)
 }
 
+@StubSafe
 fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
   if (xmlFile.fileType == VueFileType.INSTANCE) {
     var result: XmlTag? = null
+    if (xmlFile is PsiFileImpl) {
+      xmlFile.stub?.let { stub ->
+        return stub.childrenStubs
+          .asSequence()
+          .mapNotNull { (it as? XmlTagStub<*>)?.psi }
+          .find { it.localName.equals(tagName, ignoreCase = true) }
+      }
+    }
+
     xmlFile.accept(object : VueFileVisitor() {
       override fun visitXmlTag(tag: XmlTag?) {
         if (result == null

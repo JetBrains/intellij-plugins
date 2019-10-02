@@ -17,5 +17,6 @@ interface VueLexerHandle {
   val seenStyle: Boolean
   val styleType: String?
   val inTagState: Boolean
+  val interpolationConfig: Pair<String, String>?
 
 }

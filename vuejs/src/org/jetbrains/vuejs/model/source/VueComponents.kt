@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
@@ -136,9 +137,16 @@ class VueComponents {
       return null
     }
 
+    @StubSafe
     fun getDescriptorFromDecorator(decorator: ES6Decorator): JSObjectLiteralExpression? {
       if (!isComponentDecorator(decorator)) return null
 
+      if (decorator is StubBasedPsiElementBase<*>) {
+        decorator.stub?.let {
+          return it.findChildStubByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+            ?.psi
+        }
+      }
       val callExpression = decorator.expression as? JSCallExpression ?: return null
       val arguments = callExpression.arguments
       if (arguments.size == 1) {

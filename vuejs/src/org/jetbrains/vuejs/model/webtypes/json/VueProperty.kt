@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url", "properties")
-class VueScopedSlot {
+@JsonPropertyOrder("name", "description", "doc-url", "type")
+class VueProperty {
 
   /**
    *
@@ -65,21 +64,22 @@ class VueScopedSlot {
   @set:JsonProperty("doc-url")
   var docUrl: String? = null
   /**
-   * Specify properties of the slot scope
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *
    */
   /**
-   * Specify properties of the slot scope
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *
    */
   /**
-   * Specify properties of the slot scope
+   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *
    */
-  @JsonProperty("properties")
-  @JsonPropertyDescription("Specify properties of the slot scope")
-  @get:JsonProperty("properties")
-  @set:JsonProperty("properties")
-  var properties: List<Property> = ArrayList()
+  @JsonProperty("type")
+  @JsonPropertyDescription(
+    "Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.")
+  @get:JsonProperty("type")
+  @set:JsonProperty("type")
+  var type: Any? = null
 
 }

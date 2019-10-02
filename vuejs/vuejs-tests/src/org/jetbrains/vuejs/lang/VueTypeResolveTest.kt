@@ -36,7 +36,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     for (test in testCases) {
       for (i in 1..3) {
         val element = InjectedLanguageManager.getInstance(project)
-          .findInjectedElementAt(myFixture.file, findOffsetBySignature("{{ ${test.first}<caret>$i", myFixture.file))
+          .findInjectedElementAt(myFixture.file, myFixture.file.findOffsetBySignature("{{ ${test.first}<caret>$i"))
           ?.parentOfType<JSReferenceExpression>()
         TestCase.assertNotNull("${test.first}$i", element)
         val type = test.second.split(',').let { if (i == 3) it.last() else it.first() }
@@ -44,7 +44,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
       }
 
       val index = InjectedLanguageManager.getInstance(project)
-        .findInjectedElementAt(myFixture.file, findOffsetBySignature("${test.first}<caret>2Ind }}", myFixture.file))
+        .findInjectedElementAt(myFixture.file, myFixture.file.findOffsetBySignature("${test.first}<caret>2Ind }}"))
         ?.parentOfType<JSReferenceExpression>()
 
       TestCase.assertNotNull("${test.first}2Ind", index)

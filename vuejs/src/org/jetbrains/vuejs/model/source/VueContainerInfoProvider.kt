@@ -28,7 +28,6 @@ interface VueContainerInfoProvider {
     val computed: List<VueComputedProperty> get() = emptyList()
     val methods: List<VueMethod> get() = emptyList()
     val emits: List<VueEmitCall> get() = emptyList()
-    val slots: List<VueSlot> get() = emptyList()
 
     val model: VueModelDirectiveProperties? get() = null
     val delimiters: Pair<String, String>? get() = null

@@ -90,30 +90,30 @@ fun renderLookupItems(fixture: CodeInsightTestFixture, renderPriority: Boolean, 
   }
 }
 
-fun moveToOffsetBySignature(signature: String, fixture: CodeInsightTestFixture) {
-  PsiDocumentManager.getInstance(fixture.project).commitAllDocuments()
-  val offset = findOffsetBySignature(signature, fixture.file)
-  fixture.editor.caretModel.moveToOffset(offset)
+fun CodeInsightTestFixture.moveToOffsetBySignature(signature: String) {
+  PsiDocumentManager.getInstance(project).commitAllDocuments()
+  val offset = file.findOffsetBySignature(signature)
+  editor.caretModel.moveToOffset(offset)
 }
 
-fun findOffsetBySignature(signature: String, psiFile: PsiFile): Int {
+fun PsiFile.findOffsetBySignature(signature: String): Int {
   var str = signature
   val caretSignature = "<caret>"
   val caretOffset = str.indexOf(caretSignature)
   assert(caretOffset >= 0)
   str = str.substring(0, caretOffset) + str.substring(caretOffset + caretSignature.length)
-  val pos = psiFile.text.indexOf(str)
+  val pos = text.indexOf(str)
   assertTrue("Failed to locate '$str'", pos >= 0)
   return pos + caretOffset
 }
 
-fun resolveReference(signature: String, fixture: CodeInsightTestFixture): PsiElement {
-  val offsetBySignature = findOffsetBySignature(signature, fixture.file)
-  var ref = fixture.file.findReferenceAt(offsetBySignature)
+fun CodeInsightTestFixture.resolveReference(signature: String): PsiElement {
+  val offsetBySignature = file.findOffsetBySignature(signature)
+  var ref = file.findReferenceAt(offsetBySignature)
   if (ref === null) {
     //possibly an injection
-    ref = InjectedLanguageManager.getInstance(fixture.project)
-      .findInjectedElementAt(fixture.file, offsetBySignature)
+    ref = InjectedLanguageManager.getInstance(project)
+      .findInjectedElementAt(file, offsetBySignature)
       ?.findReferenceAt(0)
   }
 

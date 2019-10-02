@@ -32,7 +32,7 @@ class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLa
   }
 
   override fun getStubVersion(): Int {
-    return JSFileElementType.getVersion() + 2
+    return JSFileElementType.getVersion() + 3
   }
 
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {

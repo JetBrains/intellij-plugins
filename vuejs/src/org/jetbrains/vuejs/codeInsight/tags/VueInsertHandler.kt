@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
@@ -71,7 +72,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()
-    val isClass = element.context is JSClassExpression
+    val isClass = element.context is JSClassExpression || element.context is ES6Decorator
     XmlTagNameSynchronizer.runWithoutCancellingSyncTagsEditing(context.document) {
       InsertHandlerWorker().insertComponentImport(context.file, item.lookupString, importedFile, context.editor, isClass)
     }

@@ -39,10 +39,10 @@ class VueTemplateInjectionsTest : BasePlatformTestCase() {
       PsiDocumentManager.getInstance(project).commitAllDocuments()
 
       TestCase.assertEquals(VueLanguage.INSTANCE, injectedLanguageManager.findInjectedElementAt(
-        myFixture.file, findOffsetBySignature("</<caret>div>", myFixture.file))?.containingFile?.language)
+        myFixture.file, myFixture.file.findOffsetBySignature("</<caret>div>"))?.containingFile?.language)
 
       val injectedElement = injectedLanguageManager.findInjectedElementAt(
-        myFixture.file, findOffsetBySignature("<caret>title + foo", myFixture.file))
+        myFixture.file, myFixture.file.findOffsetBySignature("<caret>title + foo"))
 
       TestCase.assertNotNull(PsiTreeUtil.getParentOfType(injectedElement, VueJSEmbeddedExpression::class.java))
 

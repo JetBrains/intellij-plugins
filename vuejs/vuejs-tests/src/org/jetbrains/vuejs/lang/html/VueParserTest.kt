@@ -117,6 +117,24 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """)
   }
 
+  fun testSlotName() {
+    doTestVue("""
+      <template>
+        <slot name='foo'></slot>
+      </template>
+    """)
+  }
+
+  fun testSlotName2() {
+    doTestVue("""
+      <template>
+        <script type="text/x-template" id="foo">
+          <slot name='foo'></slot>
+        </script>
+      </template>
+    """)
+  }
+
   fun testPropBinding() {
     doTestVue("""
       <template>

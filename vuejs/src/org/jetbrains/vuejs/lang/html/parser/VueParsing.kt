@@ -14,6 +14,8 @@ import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_END
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_EXPR
 import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION_START
+import org.jetbrains.vuejs.model.SLOT_TAG_NAME
+import java.util.*
 
 class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
 
@@ -70,17 +72,16 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
       advance()
       parseAttributeValue(attributeInfo)
     }
-    if (attributeInfo.kind === TEMPLATE_SRC
-        || attributeInfo.kind === SCRIPT_SRC
-        || attributeInfo.kind === STYLE_SRC) {
-      attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
+    if (peekTagName().toLowerCase(Locale.US) == SLOT_TAG_NAME) {
+      attr.done(VueStubElementTypes.SLOT_TAG_ATTRIBUTE)
     }
-    else if (attributeInfo.kind === SCRIPT_ID) {
-      attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
-    }
-    else {
-      attr.done(XmlElementType.XML_ATTRIBUTE)
-    }
+    else
+      when (attributeInfo.kind) {
+        TEMPLATE_SRC, SCRIPT_SRC, STYLE_SRC -> attr.done(VueStubElementTypes.SRC_ATTRIBUTE)
+        SCRIPT_ID -> attr.done(VueStubElementTypes.SCRIPT_ID_ATTRIBUTE)
+        else -> attr.done(XmlElementType.XML_ATTRIBUTE)
+
+      }
   }
 
   private fun parseAttributeValue(attributeInfo: VueAttributeNameParser.VueAttributeInfo) {
@@ -143,16 +144,16 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
   }
 
   override fun getHtmlTagElementType(): IElementType {
-    val tagName = peekTagName()
-    if (tagName == SCRIPT_TAG_NAME
-        || (tagLevel() == 1
-            && peekTagName() in TOP_LEVEL_TAGS)) {
+    val tagName = peekTagName().toLowerCase(Locale.US)
+    if (tagName in STUBBED_TAGS
+        || (tagLevel() == 1 && tagName in TOP_LEVEL_TAGS)) {
       return VueStubElementTypes.STUBBED_TAG
     }
     return super.getHtmlTagElementType()
   }
 
   companion object {
-    val TOP_LEVEL_TAGS: List<String> = listOf(TEMPLATE_TAG_NAME, SCRIPT_TAG_NAME, STYLE_TAG_NAME)
+    val STUBBED_TAGS: List<String> = listOf(SCRIPT_TAG_NAME, SLOT_TAG_NAME)
+    val TOP_LEVEL_TAGS: List<String> = listOf(TEMPLATE_TAG_NAME, STYLE_TAG_NAME)
   }
 }

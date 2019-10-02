@@ -174,7 +174,7 @@ Vue components defined using separate .html, .js, and .css files are not support
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="3"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="4"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.VuexFrameworkHandler" version="1"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"

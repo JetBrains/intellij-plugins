@@ -17,7 +17,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
 
-  override val element: String? get() = getTextIfLiteral(initializer?.findProperty("el")?.value)
+  override val element: String? get() = getTextIfLiteral(initializer?.findProperty("el")?.literalExpressionInitializer)
 
   override val data: List<VueDataProperty> get() = get(DATA)
   override val computed: List<VueComputedProperty> get() = get(COMPUTED)
@@ -27,7 +27,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val model: VueModelDirectiveProperties get() = get(MODEL)
 
   override val emits: List<VueEmitCall> get() = get(EMITS)
-  override val slots: List<VueSlot> = get(SLOTS)
+  override val slots: List<VueSlot> = emptyList()
 
   override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
   override val extends: List<VueContainer> get() = get(EXTENDS)
@@ -53,7 +53,6 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val COMPUTED = NamedListAccessor(VueContainerInfo::computed)
     private val METHODS = NamedListAccessor(VueContainerInfo::methods)
 
-    private val SLOTS = NamedListAccessor(VueContainerInfo::slots)
     private val EMITS = NamedListAccessor(VueContainerInfo::emits)
 
     private val MODEL = ModelAccessor(VueContainerInfo::model)

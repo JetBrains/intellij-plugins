@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSExpression
@@ -12,8 +12,12 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.XmlRecursiveElementWalkingVisitor
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.resolve.FileContextUtil
+import com.intellij.psi.impl.source.xml.stub.XmlTagStub
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
@@ -22,14 +26,15 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
-import com.intellij.xml.util.HtmlUtil.*
+import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
+import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.index.findTopLevelVueTag
-import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.*
 
 class VueSourceComponent(sourceElement: JSImplicitElement,
                          clazz: JSClass?,
@@ -49,6 +54,14 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
         ?: locateTemplateInTemplateProperty(element)
         ?: locateTemplateInReferencingVueFile(element)
         ?: Result.create(null as PsiElement?, element)
+      }
+    }
+
+  override val slots: List<VueSlot>
+    get() {
+      val template = template ?: return emptyList()
+      return CachedValuesManager.getCachedValue(template) {
+        Result.create(buildSlotsList(template), template)
       }
     }
 
@@ -81,7 +94,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     }
 
     internal fun getReferencedTemplate(expression: JSExpression): Result<PsiElement> {
-      var directRefs = false
+      var directRefs = getTextIfLiteral(expression)?.startsWith("#") == true
       var referenceExpr = expression
 
       if (expression is JSCallExpression) {
@@ -95,11 +108,11 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
         }
       }
 
-      var result: PsiFile? = null
+      var result: PsiElement? = null
       refs@ for (ref in referenceExpr.references) {
         val el = ref.resolve()
         if (directRefs) {
-          if (el is PsiFile) {
+          if (el is PsiFile || el is XmlTag) {
             result = el
             break@refs
           }
@@ -124,7 +137,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
       StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, source.project,
                                               GlobalSearchScope.projectScope(source.project), PsiElement::class.java) { element ->
         if (element is XmlAttribute
-            && element.parent?.name == SCRIPT_TAG_NAME
+            && element.context?.let { it is XmlTag && it.name == SCRIPT_TAG_NAME } == true
             && element.valueElement?.references
               ?.any { it.resolve()?.containingFile == source.containingFile } == true) {
           result = Result.create(
@@ -150,15 +163,62 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     }
 
     private fun locateTemplateInTemplateTag(tag: XmlTag): PsiElement? {
-      tag.getAttribute(SRC_ATTRIBUTE_NAME)?.let {
-        return it.valueElement?.reference?.resolve()?.castSafelyTo<XmlFile>()
+      return resolveTagSrcReference(tag)
+        ?.takeIf { it is XmlTag || it is XmlFile }
+    }
+
+    private fun buildSlotsList(template: PsiElement): List<VueSlot> {
+      val result = mutableListOf<VueSlot>()
+      if (template is PsiFileImpl) {
+        template.stubTree?.let { stubTree ->
+          stubTree.plainList
+            .asSequence()
+            .filterIsInstance<XmlTagStub<*>>()
+            .forEach { findSlotInStubbedTag(it.psi, result) }
+          return result
+        }
       }
-      val child = PsiTreeUtil.findChildOfAnyType(tag, ASTWrapperPsiElement::class.java, XmlTag::class.java)
-      if (child is XmlTag)
-        return child
-      else if (child is ASTWrapperPsiElement)
-        return PsiTreeUtil.findChildOfType(child.firstChild, XmlTag::class.java)
-      return null
+      if (template is XmlTag
+          && template is StubBasedPsiElementBase<*>) {
+        template.stub?.let { stub ->
+          stub.childrenStubs
+            .forEach { findSlotsRecursivelyFromStubs(it, result) }
+          return result
+        }
+      }
+      template.acceptChildren(object : XmlRecursiveElementWalkingVisitor() {
+        override fun visitXmlTag(tag: XmlTag?) {
+          if (tag?.name == SLOT_TAG_NAME) {
+            val name = tag.getAttributeValue(SLOT_NAME_ATTRIBUTE)
+                         ?.takeIf { it.isNotBlank() }
+                       ?: DEFAULT_SLOT_NAME
+            result.add(VueSourceSlot(name, tag))
+          }
+          super.visitXmlTag(tag)
+        }
+      })
+      return result
+    }
+
+    private fun findSlotsRecursivelyFromStubs(stub: StubElement<*>, result: MutableList<VueSlot>) {
+      if (stub is XmlTagStub<*>) {
+        findSlotInStubbedTag(stub.psi, result)
+        stub.childrenStubs.forEach { findSlotsRecursivelyFromStubs(it, result) }
+      }
+    }
+
+    private fun findSlotInStubbedTag(tag: XmlTag?, result: MutableList<VueSlot>) {
+      if (tag?.name == SLOT_TAG_NAME) {
+        val name = PsiTreeUtil.getStubChildrenOfTypeAsList(tag, XmlAttribute::class.java)
+                     .find { it.name == SLOT_NAME_ATTRIBUTE }
+                     ?.value
+                     ?.takeIf { it.isNotBlank() }
+                   ?: DEFAULT_SLOT_NAME
+        result.add(VueSourceSlot(name, tag))
+      }
     }
   }
+
+  private class VueSourceSlot(override val name: String,
+                              override val source: PsiElement) : VueSlot
 }

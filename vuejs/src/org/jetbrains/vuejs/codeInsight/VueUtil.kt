@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValue
@@ -72,9 +73,15 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement,
     }
 }
 
+@StubSafe
 fun getTextIfLiteral(holder: PsiElement?): String? {
-  if (holder != null && holder is JSLiteralExpression && holder.isQuotedLiteral) {
-    return holder.stringValue
+  if (holder != null && holder is JSLiteralExpression) {
+    if ((holder as? StubBasedPsiElement<*>)?.stub != null) {
+      return holder.significantValue?.let { es6Unquote(it) }
+    }
+    if (holder.isQuotedLiteral) {
+      return holder.stringValue
+    }
   }
   return null
 }

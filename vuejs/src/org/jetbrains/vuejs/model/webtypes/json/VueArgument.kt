@@ -7,28 +7,27 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url", "type")
-class Property {
+@JsonPropertyOrder("pattern", "description", "doc-url")
+class VueArgument {
 
   /**
-   *
-   * (Required)
-   *
-   */
-  /**
-   *
-   * (Required)
+   * A RegEx pattern to match whole content. Syntax should work with at least ECMA, Java and Python implementations.
    *
    */
   /**
-   *
-   * (Required)
+   * A RegEx pattern to match whole content. Syntax should work with at least ECMA, Java and Python implementations.
    *
    */
-  @JsonProperty("name")
-  @get:JsonProperty("name")
-  @set:JsonProperty("name")
-  var name: String? = null
+  /**
+   * A RegEx pattern to match whole content. Syntax should work with at least ECMA, Java and Python implementations.
+   *
+   */
+  @JsonProperty("pattern")
+  @JsonPropertyDescription(
+    "A RegEx pattern to match whole content. Syntax should work with at least ECMA, Java and Python implementations.")
+  @get:JsonProperty("pattern")
+  @set:JsonProperty("pattern")
+  var pattern: Any? = null
   /**
    * Short description to be rendered in documentation popup. May contain HTML tags.
    *
@@ -63,23 +62,5 @@ class Property {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   var docUrl: String? = null
-  /**
-   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
-   *
-   */
-  /**
-   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
-   *
-   */
-  /**
-   * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
-   *
-   */
-  @JsonProperty("type")
-  @JsonPropertyDescription(
-    "Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.")
-  @get:JsonProperty("type")
-  @set:JsonProperty("type")
-  var type: Any? = null
 
 }

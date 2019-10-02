@@ -24,7 +24,7 @@ import org.jetbrains.vuejs.lang.html.lexer.VueTokenTypes.Companion.INTERPOLATION
 import org.jetbrains.vuejs.lang.html.lexer._VueLexer
 
 class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
-                           interpolationConfig: Pair<String, String>?)
+                           private val interpolationConfig: Pair<String, String>?)
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null) {
 
@@ -68,6 +68,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
     override val seenStyle: Boolean get() = this@VueHighlightingLexer.seenStyle
     override val styleType: String? get() = this@VueHighlightingLexer.styleType
     override val inTagState: Boolean get() = baseState() == _HtmlLexer.START_TAG_NAME
+    override val interpolationConfig: Pair<String, String>? get() = this@VueHighlightingLexer.interpolationConfig
 
     override fun registerHandler(elementType: IElementType, value: TokenHandler) {
       this@VueHighlightingLexer.registerHandler(elementType, value)

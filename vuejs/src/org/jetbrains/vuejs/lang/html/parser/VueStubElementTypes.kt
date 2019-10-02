@@ -12,8 +12,24 @@ import com.intellij.util.PathUtil
 import org.jetbrains.vuejs.index.VueIdIndex
 import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.SLOT_TAG_NAME
 
 object VueStubElementTypes {
+
+  val STUBBED_TAG = object : HtmlStubBasedTagElementType("STUBBED_TAG", VueLanguage.INSTANCE) {
+    override fun shouldCreateStub(node: ASTNode?): Boolean {
+      return (node?.psi as? XmlTag)
+               ?.let {
+                 // top-level style/script/template tag
+                 it.parentTag == null
+                 // slot tag
+                 || it.name == SLOT_TAG_NAME
+                 // script tag with x-template
+                 || (it.getAttributeValue("type") == "text/x-template"
+                     && it.getAttribute("id") != null)
+               } ?: false
+    }
+  }
 
   val SCRIPT_ID_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SCRIPT_ID_ATTRIBUTE", VueLanguage.INSTANCE) {
     override fun indexStub(stub: XmlAttributeStubImpl, sink: IndexSink) {
@@ -26,20 +42,6 @@ object VueStubElementTypes {
     }
   }
 
-  val STUBBED_TAG = object : HtmlStubBasedTagElementType("STUBBED_TAG", VueLanguage.INSTANCE) {
-    override fun shouldCreateStub(node: ASTNode?): Boolean {
-      return (node?.psi as? XmlTag)
-               ?.let {
-                 // script tag with x-template
-                 (it.getAttributeValue("type") === "text/x-template"
-                  && it.getAttribute("id") != null)
-                 // top-level style/script/template tag
-                 || (it.getAttribute("src") != null
-                     && it.parentTag == null)
-               } ?: false
-    }
-  }
-
   val SRC_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SRC_ATTRIBUTE", VueLanguage.INSTANCE) {
     override fun indexStub(stub: XmlAttributeStubImpl, sink: IndexSink) {
       stub.value
@@ -48,4 +50,8 @@ object VueStubElementTypes {
         ?.let { sink.occurrence(VueUrlIndex.KEY, it) }
     }
   }
+
+  val SLOT_TAG_ATTRIBUTE = object : XmlStubBasedAttributeElementType("SLOT_TAG_ATTRIBUTE", VueLanguage.INSTANCE) {
+  }
+
 }

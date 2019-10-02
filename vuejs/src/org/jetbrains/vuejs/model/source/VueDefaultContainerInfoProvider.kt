@@ -220,7 +220,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     private fun readPropsFromArray(holder: PsiElement, filter: (PsiElement) -> Boolean): List<Pair<String, JSElement>> =
       getStringLiteralsFromInitializerArray(holder) { _, element -> filter(element) }
-        .map { Pair(it.stringValue ?: "", it) }
+        .map { Pair(getTextIfLiteral(it) ?: "", it) }
 
     companion object {
       private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {

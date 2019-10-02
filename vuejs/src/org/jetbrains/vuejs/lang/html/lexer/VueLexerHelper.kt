@@ -10,8 +10,11 @@ import com.intellij.lexer.BaseHtmlLexer
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
+import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
 
 class VueLexerHelper(private val handle: VueLexerHandle) {
 
@@ -31,7 +34,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
   fun findScriptContentProviderVue(mimeType: String?,
                                    delegate: (String) -> HtmlScriptContentProvider?,
                                    languageLevel: JSLanguageLevel): HtmlScriptContentProvider? {
-    val provider: HtmlScriptContentProvider?
+    var provider: HtmlScriptContentProvider?
     if (mimeType != null) {
       provider = delegate(mimeType) ?: scriptContentViaLang()
     }
@@ -39,6 +42,12 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
       provider = LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
     }
     provider ?: return null
+    if (provider.scriptElementType == XmlElementType.HTML_EMBEDDED_CONTENT) {
+      provider = object : HtmlScriptContentProvider {
+        override fun getScriptElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
+        override fun getHighlightingLexer(): Lexer? = VueHighlightingLexer(languageLevel, handle.interpolationConfig)
+      }
+    }
     val moduleType = JSElementTypes.toModuleContentType(provider.scriptElementType)
     if (provider.scriptElementType == moduleType) return provider
     return object : HtmlScriptContentProvider {
