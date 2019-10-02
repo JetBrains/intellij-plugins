@@ -37,9 +37,4 @@ public class DartFileType extends LanguageFileType {
   public Icon getIcon() {
     return DartIcons.Dart_file;
   }
-
-  @Override
-  public String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
-    return null;
-  }
 }
