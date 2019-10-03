@@ -38,6 +38,10 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
            ?: Result.create(null as VuePlugin?, packageJson, VueWebTypesRegistry.MODIFICATION_TRACKER)
   }
 
+  override fun toString(): String {
+    return "VuePlugin [$moduleName]"
+  }
+
   override fun equals(other: Any?) =
     (other as? VuePluginImpl)?.let {
       it.project == project && it.packageJson == packageJson

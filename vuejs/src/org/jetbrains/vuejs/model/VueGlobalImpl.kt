@@ -61,6 +61,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
+    val dependencies = mutableListOf<Any>()
     val enabledPackagesResult = VueWebTypesRegistry.instance.webTypesEnabledPackages
     val enabledPackages = enabledPackagesResult.value.asSequence()
       .flatMap { pkgName ->
@@ -69,11 +70,14 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
         else sequenceOf(pkgName)
       }
       .toSet()
+    dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+    dependencies.add(enabledPackagesResult.dependencyItems)
     PackageJsonUtil.processUpPackageJsonFilesInAllScope(packageJson) { candidate ->
       result.addAll(getPlugins(candidate, enabledPackages))
+      dependencies.add(candidate)
       true
     }
-    return Result.create(result, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, *enabledPackagesResult.dependencyItems)
+    return Result.create(result, *dependencies.toTypedArray())
   }
 
   private fun getPlugins(packageJson: VirtualFile,
