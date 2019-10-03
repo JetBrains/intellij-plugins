@@ -34,6 +34,7 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import java.util.concurrent.ConcurrentHashMap
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
@@ -192,7 +193,7 @@ fun getContainingXmlFile(element: PsiElement): XmlFile? =
    ?: InjectedLanguageManager.getInstance(
      element.project).getInjectionHost(element)?.containingFile as? XmlFile)
 
-private val resolveSymbolCache = mutableMapOf<String, Key<CachedValue<*>>>()
+private val resolveSymbolCache = ConcurrentHashMap<String, Key<CachedValue<*>>>()
 
 fun <T : PsiElement> resolveSymbolFromNodeModule(scope: PsiElement?, moduleName: String, symbolName: String, symbolClass: Class<T>): T? {
   @Suppress("UNCHECKED_CAST")
