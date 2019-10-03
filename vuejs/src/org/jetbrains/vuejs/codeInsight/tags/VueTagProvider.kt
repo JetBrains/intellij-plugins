@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
@@ -30,20 +31,23 @@ private const val UNREGISTERED_PRIORITY = 50.0
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && isVueContext(tag)) {
-      val tagName = fromAsset(tag.name)
+    if (tag?.containingFile?.language != VueLanguage.INSTANCE
+        || DumbService.isDumb(tag.project)
+        || !isVueContext(tag)) return null
 
-      val components = mutableListOf<VueComponent>()
-      VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
-        override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
-          return acceptSameProximity(proximity, fromAsset(name) == tagName) {
-            components.add(component)
-          }
+    val tagName = fromAsset(tag.name)
+
+    val components = mutableListOf<VueComponent>()
+    VueModelManager.findEnclosingContainer(tag)?.acceptEntities(object : VueModelProximityVisitor() {
+      override fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+        return acceptSameProximity(proximity, fromAsset(name) == tagName) {
+          components.add(component)
         }
-      }, VueModelVisitor.Proximity.GLOBAL)
+      }
+    }, VueModelVisitor.Proximity.GLOBAL)
 
-      if (components.isNotEmpty()) return VueElementDescriptor(tag, components)
-    }
+    if (components.isNotEmpty())
+      return VueElementDescriptor(tag, components)
     return null
   }
 

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight.attributes
 
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.XmlAttributeDescriptor
@@ -18,7 +19,9 @@ import org.jetbrains.vuejs.model.*
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    if (context == null || !isVueContext(context)) return emptyArray()
+    if (context == null
+        || DumbService.isDumb(context.project)
+        || !isVueContext(context)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
 
     StreamEx.of(*VueAttributeKind.values())
@@ -51,7 +54,10 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (context == null || !isVueContext(context) || attributeName == null) return null
+    if (context == null
+        || attributeName == null
+        || DumbService.isDumb(context.project)
+        || !isVueContext(context)) return null
     val info = VueAttributeNameParser.parse(attributeName, context)
     when {
       info.kind == VueAttributeKind.PLAIN -> {
