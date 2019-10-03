@@ -48,6 +48,7 @@ public class RequestUtilities {
   private static final String LINE_LENGTH = "lineLength";
   private static final String METHOD = "method";
   private static final String OFFSET = "offset";
+  private static final String OUTPUT_DIR = "outputDir";
   private static final String PARAMS = "params";
   private static final String CLIENT_REQUEST_TIME = "clientRequestTime";
   private static final String SELECTION_LENGTH = "selectionLength";
@@ -521,7 +522,8 @@ public class RequestUtilities {
    *     "includedFixes": optional List&lt;String&gt;
    *     "includePedanticFixes": optional boolean
    *     "includeRequiredFixes": optional boolean
-   *     "excludedFixes": List&lt;FilePath&gt;
+   *     "excludedFixes": optional List&lt;FilePath&gt;
+   *     "outputDir": optional String
    *   }
    * }
    * </pre>
@@ -531,7 +533,8 @@ public class RequestUtilities {
                                                List<String> includedFixes,
                                                boolean includePedanticFixes,
                                                boolean includeRequiredFixes,
-                                               List<String> excludedFixes) {
+                                               List<String> excludedFixes,
+                                               String outputDir) {
     JsonObject params = new JsonObject();
     params.add(INCLUDED, buildJsonElement(included));
     if (includedFixes != null) {
@@ -541,6 +544,9 @@ public class RequestUtilities {
     params.addProperty(INCLUDED_REQUIRED_FIXES, includeRequiredFixes);
     if (excludedFixes != null) {
       params.add(EXCLUDED_FIXES, buildJsonElement(excludedFixes));
+    }
+    if (outputDir != null) {
+      params.addProperty(OUTPUT_DIR, outputDir);
     }
     return buildJsonObjectRequest(idValue, METHOD_EDIT_DARTFIX, params);
   }
