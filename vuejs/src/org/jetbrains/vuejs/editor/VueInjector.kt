@@ -106,7 +106,7 @@ class VueInjector : MultiHostInjector {
         val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
         if (embedded != null) {
           val literal = PsiTreeUtil.getChildOfType(embedded, JSLiteralExpressionImpl::class.java)
-          if (literal != null) {
+          if (literal != null && literal.isValidHost) {
             injectInElement(literal, registrar, parent.name)
           }
         }
@@ -125,6 +125,7 @@ class VueInjector : MultiHostInjector {
     }
     else if (context is JSLiteralExpressionImpl
              && context.isQuotedLiteral
+             && context.isValidHost
              && parent is JSProperty
              && parent.name == TEMPLATE_PROP
              && parent.parent is JSObjectLiteralExpression
