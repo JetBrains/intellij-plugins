@@ -79,7 +79,7 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
         .nonNullValues()
         // TODO properly support multiple components with the same name
         .distinctKeys()
-        .into(mutableMapOf())
+        .into(sortedMapOf())
 
       val globalComponents: MutableMap<String, VueComponent> = EntryStream.of(moduleComponents)
         .filterValues { it.second }
@@ -87,15 +87,15 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
         .nonNullValues()
         // TODO properly support multiple components with the same name
         .distinctKeys()
-        .into(mutableMapOf())
+        .into(sortedMapOf())
 
       componentsData.libCompResolveMap.forEach { (alias, target) ->
         localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
         globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
       }
 
-      mapOf(Pair(true, globalComponents),
-            Pair(false, localComponents))
+      sortedMapOf(Pair(true, globalComponents),
+                  Pair(false, localComponents))
     }[global] ?: emptyMap()
   }
 
