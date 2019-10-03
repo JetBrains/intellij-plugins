@@ -117,6 +117,16 @@ class VueParserTest : HtmlParsingTest("", "vue",
     """)
   }
 
+  fun testVueInnerScriptTag3() {
+    doTestVue("""
+      <template>
+        <script type="text/x-template" id="foo">
+          <div :foo="some - script()"></div>
+        </script>
+      </template>
+    """)
+  }
+
   fun testSlotName() {
     doTestVue("""
       <template>

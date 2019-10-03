@@ -45,7 +45,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
     if (provider.scriptElementType == XmlElementType.HTML_EMBEDDED_CONTENT) {
       provider = object : HtmlScriptContentProvider {
         override fun getScriptElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
-        override fun getHighlightingLexer(): Lexer? = VueHighlightingLexer(languageLevel, handle.interpolationConfig)
+        override fun getHighlightingLexer(): Lexer? = VueHighlightingLexer(languageLevel, null)
       }
     }
     val moduleType = JSElementTypes.toModuleContentType(provider.scriptElementType)

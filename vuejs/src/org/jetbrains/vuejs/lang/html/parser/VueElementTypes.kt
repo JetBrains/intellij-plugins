@@ -7,7 +7,6 @@ import com.intellij.lang.PsiBuilderFactory
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.ILazyParseableElementType
 import com.intellij.psi.tree.ILightLazyParseableElementType
-import com.intellij.psi.xml.XmlElementType.HTML_FILE
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -22,7 +21,7 @@ object VueElementTypes {
       val file = chameleon.containingFile ?: error(chameleon)
 
       val builder = PsiBuilderFactory.getInstance().createBuilder(file.project, chameleon)
-      VueParser().parse(HTML_FILE, builder)
+      VueParser().parseWithoutBuildingTree(VueFileElementType.INSTANCE, builder)
       return builder.lightTree
     }
   }

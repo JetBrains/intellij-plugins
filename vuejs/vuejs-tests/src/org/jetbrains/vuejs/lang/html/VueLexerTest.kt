@@ -42,6 +42,14 @@ open class VueLexerTest : LexerTestCase() {
     |</script>
   """)
 
+  fun testScriptEmpty2() = doTest("""
+    |<div :foo='something()'>
+    |  <script></script>
+    |  <div :foo='something()'>
+    |  </div>
+    |</div>
+  """)
+
   fun testScriptTS() = doTest("""
     |<script lang="typescript">
     |(() => {})();
@@ -389,6 +397,16 @@ open class VueLexerTest : LexerTestCase() {
     testCustomInterpolation(Pair("abcd", "efgh")) {
       doTest("{{ regular text }} abcdcustom interpolationefgh")
     }
+  }
+
+  fun testVueInnerScriptTag() {
+    doTest("""
+      |<template>
+      |  <script type="text/x-template" id="foo">
+      |    <div :foo="some - script()"></div>
+      |  </script>
+      |</template>
+    """, false)
   }
 
   override fun createLexer(): Lexer = VueLexer(JSLanguageLevel.ES6, interpolationConfig)
