@@ -270,9 +270,8 @@ class VueModelManager {
           .findFirst()
           .orElse(null)
         else -> getEnclosingComponentDescriptor(mixin)?.let { it.clazz ?: it.obj!! }
-                ?: return null
       }
-      return CachedValuesManager.getCachedValue(context) {
+      return CachedValuesManager.getCachedValue(context ?: return null) {
         val descriptor = getEnclosingComponentDescriptor(context)
         val declaration: PsiElement = descriptor?.obj ?: context
 
