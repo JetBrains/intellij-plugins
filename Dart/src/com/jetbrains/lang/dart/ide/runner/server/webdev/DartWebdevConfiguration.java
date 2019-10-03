@@ -13,7 +13,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
-import com.jetbrains.lang.dart.ide.runner.server.DartWebdevRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartWebdevConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;

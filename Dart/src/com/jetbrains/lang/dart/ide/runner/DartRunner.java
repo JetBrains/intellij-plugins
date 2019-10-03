@@ -26,7 +26,6 @@ import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
-import com.jetbrains.lang.dart.ide.runner.server.DartWebdevRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
@@ -106,6 +105,7 @@ public class DartRunner extends GenericProgramRunner {
     final String debuggingHost;
     final int observatoryPort;
     final Project project = env.getProject();
+    final DartVmServiceDebugProcess.DebugType debugType;
 
     if (runConfiguration instanceof DartRunConfigurationBase) {
       contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFileOrDirectory();
@@ -121,6 +121,7 @@ public class DartRunner extends GenericProgramRunner {
 
       debuggingHost = null;
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
+      debugType = DartVmServiceDebugProcess.DebugType.CLI;
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
       final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
@@ -135,6 +136,7 @@ public class DartRunner extends GenericProgramRunner {
 
       debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
       observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
+      debugType = DartVmServiceDebugProcess.DebugType.REMOTE;
     }
     else if (runConfiguration instanceof DartWebdevConfiguration) {
       contextFileOrDir = ((DartWebdevConfiguration)runConfiguration).getParameters().getHtmlFile();
@@ -149,7 +151,8 @@ public class DartRunner extends GenericProgramRunner {
       }
 
       debuggingHost = null;
-      observatoryPort = ((DartWebdevRunningState)state).getObservatoryPort();
+      observatoryPort = -1;
+      debugType = DartVmServiceDebugProcess.DebugType.WEBDEV;
     }
     else {
       LOG.error("Unexpected run configuration: " + runConfiguration.getClass().getName());
@@ -170,7 +173,7 @@ public class DartRunner extends GenericProgramRunner {
                                              executionResult,
                                              dartUrlResolver,
                                              dasExecutionContextId,
-                                             runConfiguration instanceof DartRemoteDebugConfiguration,
+                                             debugType,
                                              getTimeout(),
                                              currentWorkingDirectory);
       }

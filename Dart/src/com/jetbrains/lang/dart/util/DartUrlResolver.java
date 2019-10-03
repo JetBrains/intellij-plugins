@@ -23,6 +23,7 @@ public abstract class DartUrlResolver {
   public static final String TEMP_PREFIX = "temp:";                // TempFileSystem in tests only
   public static final String PACKAGES_FOLDER_NAME = "packages";
   public static final String DART_CORE_URI = "dart:core";
+  public static final String ORG_DARTLANG_APP_PREFIX = "org-dartlang-app:";
 
   /**
    * Returned instance becomes obsolete if/when pubspec.yaml file is added or deleted or if module-specific custom package roots are changed,
