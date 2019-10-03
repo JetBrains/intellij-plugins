@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry;
-import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.editor.impl.FontInfo;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -185,13 +184,7 @@ class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
     if (fgColor == null) return;
     g.setColor(fgColor);
     FontInfo fontInfo = getFontInfo(editor);
-    int ascent;
-    if (editor instanceof EditorImpl) {
-      ascent = ((EditorImpl)editor).getAscent();
-    }
-    else {
-      ascent = fontInfo.fontMetrics().getAscent();
-    }
+    int ascent = editor.getAscent();
     g.setFont(fontInfo.getFont());
     g.drawString(label, r.x, r.y + ascent);
   }
