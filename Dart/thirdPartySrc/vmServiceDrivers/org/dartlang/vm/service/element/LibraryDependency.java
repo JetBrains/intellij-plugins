@@ -31,21 +31,21 @@ public class LibraryDependency extends Element {
    * Is this dependency deferred?
    */
   public boolean getIsDeferred() {
-    return json.get("isDeferred").getAsBoolean();
+    return getAsBoolean("isDeferred");
   }
 
   /**
    * Is this dependency an import (rather than an export)?
    */
   public boolean getIsImport() {
-    return json.get("isImport").getAsBoolean();
+    return getAsBoolean("isImport");
   }
 
   /**
    * The prefix of an 'as' import, or null.
    */
   public String getPrefix() {
-    return json.get("prefix").getAsString();
+    return getAsString("prefix");
   }
 
   /**

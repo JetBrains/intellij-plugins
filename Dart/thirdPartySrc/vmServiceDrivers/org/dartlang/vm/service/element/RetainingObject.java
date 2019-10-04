@@ -15,51 +15,56 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * A {@link Context} is a data structure which holds the captured variables for some closure.
+ * See RetainingPath.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Context extends Obj {
+public class RetainingObject extends Element {
 
-  public Context(JsonObject json) {
+  public RetainingObject(JsonObject json) {
     super(json);
   }
 
   /**
-   * The number of variables in this context.
-   */
-  public int getLength() {
-    return getAsInt("length");
-  }
-
-  /**
-   * The enclosing context for this context.
+   * The name of the field containing the retaining object within an object.
    *
    * Can return <code>null</code>.
    */
-  public Context getParent() {
-    JsonObject obj = (JsonObject) json.get("parent");
+  public String getParentField() {
+    return getAsString("parentField");
+  }
+
+  /**
+   * The offset of the retaining object in a containing list.
+   *
+   * Can return <code>null</code>.
+   */
+  public int getParentListIndex() {
+    return getAsInt("parentListIndex");
+  }
+
+  /**
+   * The key mapping to the retaining object in a containing map.
+   *
+   * Can return <code>null</code>.
+   */
+  public ObjRef getParentMapKey() {
+    JsonObject obj = (JsonObject) json.get("parentMapKey");
     if (obj == null) return null;
     final String type = json.get("type").getAsString();
     if ("Instance".equals(type) || "@Instance".equals(type)) {
       final String kind = json.get("kind").getAsString();
       if ("Null".equals(kind)) return null;
     }
-    return new Context(obj);
+    return new ObjRef(obj);
   }
 
   /**
-   * The variables in this context object.
+   * An object that is part of a retaining path.
    */
-  public ElementList<ContextElement> getVariables() {
-    return new ElementList<ContextElement>(json.get("variables").getAsJsonArray()) {
-      @Override
-      protected ContextElement basicGet(JsonArray array, int index) {
-        return new ContextElement(array.get(index).getAsJsonObject());
-      }
-    };
+  public ObjRef getValue() {
+    return new ObjRef((JsonObject) json.get("value"));
   }
 }

@@ -40,7 +40,7 @@ public class FieldRef extends ObjRef {
    * The name of this field.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -54,20 +54,20 @@ public class FieldRef extends ObjRef {
    * Is this field const?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 
   /**
    * Is this field final?
    */
   public boolean isFinal() {
-    return json.get("final").getAsBoolean();
+    return getAsBoolean("final");
   }
 
   /**
    * Is this field static?
    */
   public boolean isStatic() {
-    return json.get("static").getAsBoolean();
+    return getAsBoolean("static");
   }
 }

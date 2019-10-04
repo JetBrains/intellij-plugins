@@ -31,6 +31,6 @@ public class ClassRef extends ObjRef {
    * The name of this class.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 }

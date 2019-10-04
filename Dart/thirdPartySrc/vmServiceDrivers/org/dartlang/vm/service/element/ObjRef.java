@@ -34,13 +34,13 @@ public class ObjRef extends Response {
    * Can return <code>null</code>.
    */
   public boolean getFixedId() {
-    return json.get("fixedId") == null ? false : json.get("fixedId").getAsBoolean();
+    return getAsBoolean("fixedId");
   }
 
   /**
    * A unique identifier for an Object. Passed to the getObject RPC to load this Object.
    */
   public String getId() {
-    return json.get("id").getAsString();
+    return getAsString("id");
   }
 }

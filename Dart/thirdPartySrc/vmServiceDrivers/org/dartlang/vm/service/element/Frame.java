@@ -55,7 +55,7 @@ public class Frame extends Response {
   }
 
   public int getIndex() {
-    return json.get("index") == null ? -1 : json.get("index").getAsInt();
+    return getAsInt("index");
   }
 
   /**

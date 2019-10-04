@@ -31,6 +31,6 @@ public class VMRef extends Response {
    * A name identifying this vm. Not guaranteed to be unique.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 }

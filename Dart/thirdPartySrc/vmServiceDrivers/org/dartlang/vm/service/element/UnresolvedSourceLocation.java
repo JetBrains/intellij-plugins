@@ -36,7 +36,7 @@ public class UnresolvedSourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public int getColumn() {
-    return json.get("column") == null ? -1 : json.get("column").getAsInt();
+    return getAsInt("column");
   }
 
   /**
@@ -46,7 +46,7 @@ public class UnresolvedSourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public int getLine() {
-    return json.get("line") == null ? -1 : json.get("line").getAsInt();
+    return getAsInt("line");
   }
 
   /**
@@ -71,7 +71,7 @@ public class UnresolvedSourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public String getScriptUri() {
-    return json.get("scriptUri") == null ? null : json.get("scriptUri").getAsString();
+    return getAsString("scriptUri");
   }
 
   /**
@@ -81,6 +81,6 @@ public class UnresolvedSourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public int getTokenPos() {
-    return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
+    return getAsInt("tokenPos");
   }
 }

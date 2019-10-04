@@ -31,6 +31,6 @@ public class ScriptRef extends ObjRef {
    * The uri from which this script was loaded.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }
