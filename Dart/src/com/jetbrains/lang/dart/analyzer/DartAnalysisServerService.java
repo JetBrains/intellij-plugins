@@ -1555,7 +1555,7 @@ public class DartAnalysisServerService implements Disposable {
     final Ref<List<SourceFileEdit>> resultRef = new Ref<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
-    server.edit_dartfix(filePaths, includedFixes, false, Collections.emptyList(), new DartfixConsumer() {
+    server.edit_dartfix(filePaths, includedFixes, false, false, Collections.emptyList(), null, new DartfixConsumer() {
       @Override
       public void computedDartfix(List<DartFixSuggestion> suggestions,
                                   List<DartFixSuggestion> otherSuggestions,

@@ -17,16 +17,15 @@ import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceChange;
 
 /**
- * The interface {@code GetChangeAddForDesignTimeConstructorConsumer} defines the behavior of objects that consume
- * a getChangeAddForDesignTimeConstructor request.
+ * The interface {@code SetWidgetPropertyValueConsumer} defines the behavior of objects that consume a setWidgetPropertyValue request.
  *
  * @coverage dart.server
  */
-public interface GetChangeAddForDesignTimeConstructorConsumer extends Consumer {
+public interface SetWidgetPropertyValueConsumer extends Consumer {
   /**
-   * @param change The change that adds the forDesignTime() constructor. If the change cannot be produced, an error is returned.
+   * @param change The change that should be applied.
    */
-  public void computedChangeAddForDesignTimeConstructor(SourceChange change);
+  public void computedSetWidgetPropertyValue(SourceChange change);
 
   /**
    * If a transitive closure cannot be passed back, some {@link RequestError} is passed back

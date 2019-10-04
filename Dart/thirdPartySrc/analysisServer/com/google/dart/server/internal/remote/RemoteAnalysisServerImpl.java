@@ -356,11 +356,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void edit_dartfix(List<String> included,
                            List<String> includedFixes,
+                           boolean includePedanticFixes,
                            boolean includeRequiredFixes,
                            List<String> excludedFixes,
+                           String outputDir,
                            DartfixConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateEditDartfix(id, included, includedFixes, false, includeRequiredFixes, excludedFixes), consumer);
+    sendRequestToServer(id, RequestUtilities
+                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, includeRequiredFixes, excludedFixes, outputDir),
+                        consumer);
   }
 
   @Override
@@ -489,12 +493,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer) {
-  }
+  public void flutter_getWidgetDescription(String file, int offset, GetWidgetDescriptionConsumer consumer) {}
 
   @Override
-  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {
-  }
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {}
+
+  public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer) {}
 
   @Override
   public boolean isSocketOpen() {
