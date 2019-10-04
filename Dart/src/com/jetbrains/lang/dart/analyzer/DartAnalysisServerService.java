@@ -1065,7 +1065,7 @@ public class DartAnalysisServerService implements Disposable {
       myFolderPathsWithErrors.clear();
     }
 
-    if (!myProject.isDisposed() && myInitializationOnServerStartupDone) {
+    if (!myProject.isDisposedOrDisposeInProgress() && myInitializationOnServerStartupDone) {
       DartProblemsView.getInstance(myProject).clearAll();
     }
   }

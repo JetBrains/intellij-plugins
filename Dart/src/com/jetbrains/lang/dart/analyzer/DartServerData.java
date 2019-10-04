@@ -313,7 +313,7 @@ public class DartServerData {
                        DaemonCodeAnalyzer.getInstance(project).restart();
                      },
                      ModalityState.NON_MODAL,
-                     project.getDisposed());
+                     project.getDisposedOrDisposeInProgress());
     }
   }
 
