@@ -32,7 +32,7 @@ public class Version extends Response {
    * incompatible way.
    */
   public int getMajor() {
-    return json.get("major") == null ? -1 : json.get("major").getAsInt();
+    return getAsInt("major");
   }
 
   /**
@@ -40,6 +40,6 @@ public class Version extends Response {
    * way.
    */
   public int getMinor() {
-    return json.get("minor") == null ? -1 : json.get("minor").getAsInt();
+    return getAsInt("minor");
   }
 }

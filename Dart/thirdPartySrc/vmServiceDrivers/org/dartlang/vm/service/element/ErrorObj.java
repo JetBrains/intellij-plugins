@@ -55,7 +55,7 @@ public class ErrorObj extends Obj {
    * A description of the error.
    */
   public String getMessage() {
-    return json.get("message").getAsString();
+    return getAsString("message");
   }
 
   /**

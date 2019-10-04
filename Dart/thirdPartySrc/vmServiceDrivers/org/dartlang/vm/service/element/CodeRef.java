@@ -44,6 +44,6 @@ public class CodeRef extends ObjRef {
    * A name for this code object.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 }

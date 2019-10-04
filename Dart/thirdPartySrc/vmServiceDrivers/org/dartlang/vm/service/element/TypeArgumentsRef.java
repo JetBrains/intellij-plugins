@@ -31,6 +31,6 @@ public class TypeArgumentsRef extends ObjRef {
    * A name for this type argument list.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 }

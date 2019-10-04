@@ -18,7 +18,7 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonObject;
 
 /**
- * An {@link MemoryUsage} object provides heap usage information for a specific isolate at a given
+ * A {@link MemoryUsage} object provides heap usage information for a specific isolate at a given
  * point in time.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -36,7 +36,7 @@ public class MemoryUsage extends Response {
    * is separate from heapUsage and heapCapacity.
    */
   public int getExternalUsage() {
-    return json.get("externalUsage") == null ? -1 : json.get("externalUsage").getAsInt();
+    return getAsInt("externalUsage");
   }
 
   /**
@@ -44,7 +44,7 @@ public class MemoryUsage extends Response {
    * from the perspective of the operating system.
    */
   public int getHeapCapacity() {
-    return json.get("heapCapacity") == null ? -1 : json.get("heapCapacity").getAsInt();
+    return getAsInt("heapCapacity");
   }
 
   /**
@@ -52,6 +52,6 @@ public class MemoryUsage extends Response {
    * capacity.
    */
   public int getHeapUsage() {
-    return json.get("heapUsage") == null ? -1 : json.get("heapUsage").getAsInt();
+    return getAsInt("heapUsage");
   }
 }

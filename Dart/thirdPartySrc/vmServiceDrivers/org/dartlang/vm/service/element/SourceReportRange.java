@@ -33,7 +33,7 @@ public class SourceReportRange extends Element {
    * Has this range been compiled by the Dart VM?
    */
   public boolean getCompiled() {
-    return json.get("compiled").getAsBoolean();
+    return getAsBoolean("compiled");
   }
 
   /**
@@ -57,7 +57,7 @@ public class SourceReportRange extends Element {
    * The token position at which this range ends.  Inclusive.
    */
   public int getEndPos() {
-    return json.get("endPos") == null ? -1 : json.get("endPos").getAsInt();
+    return getAsInt("endPos");
   }
 
   /**
@@ -93,13 +93,13 @@ public class SourceReportRange extends Element {
    * range of code.
    */
   public int getScriptIndex() {
-    return json.get("scriptIndex") == null ? -1 : json.get("scriptIndex").getAsInt();
+    return getAsInt("scriptIndex");
   }
 
   /**
    * The token position at which this range begins.
    */
   public int getStartPos() {
-    return json.get("startPos") == null ? -1 : json.get("startPos").getAsInt();
+    return getAsInt("startPos");
   }
 }

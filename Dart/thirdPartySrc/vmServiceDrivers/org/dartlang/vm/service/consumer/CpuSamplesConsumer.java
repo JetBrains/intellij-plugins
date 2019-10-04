@@ -11,27 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.dartlang.vm.service.element;
+package org.dartlang.vm.service.consumer;
 
 // This is a generated file.
 
-import com.google.gson.JsonObject;
+import org.dartlang.vm.service.element.CpuSamples;
 
-/**
- * {@link NullRef} is a reference to an a {@link Null}.
- */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class NullRef extends InstanceRef {
+public interface CpuSamplesConsumer extends Consumer {
 
-  public NullRef(JsonObject json) {
-    super(json);
-  }
-
-  /**
-   * Always 'null'.
-   */
-  @Override
-  public String getValueAsString() {
-    return getAsString("valueAsString");
-  }
+  void received(CpuSamples response);
 }

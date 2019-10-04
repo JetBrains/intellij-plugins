@@ -89,7 +89,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public String getBytes() {
-    return json.get("bytes") == null ? null : json.get("bytes").getAsString();
+    return getAsString("bytes");
   }
 
   /**
@@ -98,44 +98,6 @@ public class Instance extends Obj {
   @Override
   public ClassRef getClassRef() {
     return new ClassRef((JsonObject) json.get("class"));
-  }
-
-  /**
-   * The context associated with a Closure instance.
-   *
-   * Provided for instance kinds:
-   *  - Closure
-   *
-   * Can return <code>null</code>.
-   */
-  public ContextRef getClosureContext() {
-    JsonObject obj = (JsonObject) json.get("closureContext");
-    if (obj == null) return null;
-    final String type = json.get("type").getAsString();
-    if ("Instance".equals(type) || "@Instance".equals(type)) {
-      final String kind = json.get("kind").getAsString();
-      if ("Null".equals(kind)) return null;
-    }
-    return new ContextRef(obj);
-  }
-
-  /**
-   * The function associated with a Closure instance.
-   *
-   * Provided for instance kinds:
-   *  - Closure
-   *
-   * Can return <code>null</code>.
-   */
-  public FuncRef getClosureFunction() {
-    JsonObject obj = (JsonObject) json.get("closureFunction");
-    if (obj == null) return null;
-    final String type = json.get("type").getAsString();
-    if ("Instance".equals(type) || "@Instance".equals(type)) {
-      final String kind = json.get("kind").getAsString();
-      if ("Null".equals(kind)) return null;
-    }
-    return new FuncRef(obj);
   }
 
   /**
@@ -164,7 +126,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public int getCount() {
-    return json.get("count") == null ? -1 : json.get("count").getAsInt();
+    return getAsInt("count");
   }
 
   /**
@@ -213,7 +175,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public boolean getIsCaseSensitive() {
-    return json.get("isCaseSensitive") == null ? false : json.get("isCaseSensitive").getAsBoolean();
+    return getAsBoolean("isCaseSensitive");
   }
 
   /**
@@ -225,7 +187,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public boolean getIsMultiLine() {
-    return json.get("isMultiLine") == null ? false : json.get("isMultiLine").getAsBoolean();
+    return getAsBoolean("isMultiLine");
   }
 
   /**
@@ -266,7 +228,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public int getLength() {
-    return json.get("length") == null ? -1 : json.get("length").getAsInt();
+    return getAsInt("length");
   }
 
   /**
@@ -292,7 +254,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public String getName() {
-    return json.get("name") == null ? null : json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -321,7 +283,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public int getOffset() {
-    return json.get("offset") == null ? -1 : json.get("offset").getAsInt();
+    return getAsInt("offset");
   }
 
   /**
@@ -333,7 +295,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public int getParameterIndex() {
-    return json.get("parameterIndex") == null ? -1 : json.get("parameterIndex").getAsInt();
+    return getAsInt("parameterIndex");
   }
 
   /**
@@ -364,7 +326,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public String getPattern() {
-    return json.get("pattern") == null ? null : json.get("pattern").getAsString();
+    return getAsString("pattern");
   }
 
   /**
@@ -462,7 +424,7 @@ public class Instance extends Obj {
    * Can return <code>null</code>.
    */
   public String getValueAsString() {
-    return json.get("valueAsString") == null ? null : json.get("valueAsString").getAsString();
+    return getAsString("valueAsString");
   }
 
   /**

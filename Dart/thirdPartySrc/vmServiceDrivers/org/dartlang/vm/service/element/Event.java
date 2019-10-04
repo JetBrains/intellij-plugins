@@ -39,7 +39,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getAlias() {
-    return json.get("alias") == null ? null : json.get("alias").getAsString();
+    return getAsString("alias");
   }
 
   /**
@@ -52,7 +52,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public boolean getAtAsyncSuspension() {
-    return json.get("atAsyncSuspension") == null ? false : json.get("atAsyncSuspension").getAsBoolean();
+    return getAsBoolean("atAsyncSuspension");
   }
 
   /**
@@ -85,7 +85,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getBytes() {
-    return json.get("bytes") == null ? null : json.get("bytes").getAsString();
+    return getAsString("bytes");
   }
 
   /**
@@ -125,7 +125,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getExtensionKind() {
-    return json.get("extensionKind") == null ? null : json.get("extensionKind").getAsString();
+    return getAsString("extensionKind");
   }
 
   /**
@@ -136,7 +136,19 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getExtensionRPC() {
-    return json.get("extensionRPC") == null ? null : json.get("extensionRPC").getAsString();
+    return getAsString("extensionRPC");
+  }
+
+  /**
+   * The name of the changed flag.
+   *
+   * This is provided for the event kinds:
+   *  - VMFlagUpdate
+   *
+   * Can return <code>null</code>.
+   */
+  public String getFlag() {
+    return getAsString("flag");
   }
 
   /**
@@ -156,7 +168,7 @@ public class Event extends Response {
    * The isolate with which this event is associated.
    *
    * This is provided for all event kinds except for:
-   *  - VMUpdate
+   *  - VMUpdate, VMFlagUpdate
    *
    * Can return <code>null</code>.
    */
@@ -181,6 +193,18 @@ public class Event extends Response {
     } catch (IllegalArgumentException e) {
       return EventKind.Unknown;
     }
+  }
+
+  /**
+   * Specifies whether this event is the last of a group of events.
+   *
+   * This is provided for the event kinds:
+   *  - HeapSnapshot
+   *
+   * Can return <code>null</code>.
+   */
+  public boolean getLast() {
+    return getAsBoolean("last");
   }
 
   /**
@@ -211,7 +235,19 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getMethod() {
-    return json.get("method") == null ? null : json.get("method").getAsString();
+    return getAsString("method");
+  }
+
+  /**
+   * The new value of the changed flag.
+   *
+   * This is provided for the event kinds:
+   *  - VMFlagUpdate
+   *
+   * Can return <code>null</code>.
+   */
+  public String getNewValue() {
+    return getAsString("newValue");
   }
 
   /**
@@ -249,7 +285,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getService() {
-    return json.get("service") == null ? null : json.get("service").getAsString();
+    return getAsString("service");
   }
 
   /**
@@ -260,7 +296,7 @@ public class Event extends Response {
    * Can return <code>null</code>.
    */
   public String getStatus() {
-    return json.get("status") == null ? null : json.get("status").getAsString();
+    return getAsString("status");
   }
 
   /**
@@ -321,7 +357,7 @@ public class Event extends Response {
    * The vm with which this event is associated.
    *
    * This is provided for the event kind:
-   *  - VMUpdate
+   *  - VMUpdate, VMFlagUpdate
    *
    * Can return <code>null</code>.
    */

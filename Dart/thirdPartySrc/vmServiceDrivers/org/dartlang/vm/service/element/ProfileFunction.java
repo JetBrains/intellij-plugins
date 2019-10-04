@@ -16,8 +16,10 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
-import java.util.List;
 
+/**
+ * A {@link ProfileFunction} contains profiling information about a Dart or native function.
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ProfileFunction extends Element {
 
@@ -25,23 +27,45 @@ public class ProfileFunction extends Element {
     super(json);
   }
 
-  public List<Integer> getCodes() {
-    return getListInt("codes");
-  }
-
+  /**
+   * The number of times function appeared on the top of the stack during sampling events.
+   */
   public int getExclusiveTicks() {
-    return json.get("exclusiveTicks") == null ? -1 : json.get("exclusiveTicks").getAsInt();
+    return getAsInt("exclusiveTicks");
   }
 
-  public FuncRef getFunction() {
-    return new FuncRef((JsonObject) json.get("function"));
+  /**
+   * The function captured during profiling.
+   *
+   * @return one of <code>FuncRef</code> or <code>NativeFunction</code>
+   */
+  public Object getFunction() {
+    final JsonObject elem = (JsonObject)json.get("function");
+    if (elem == null) return null;
+
+    if (elem.get("type").getAsString().equals("@Func")) return new FuncRef(elem);
+    if (elem.get("type").getAsString().equals("NativeFunction")) return new NativeFunction(elem);
+    return null;
   }
 
+  /**
+   * The number of times function appeared on the stack during sampling events.
+   */
   public int getInclusiveTicks() {
-    return json.get("inclusiveTicks") == null ? -1 : json.get("inclusiveTicks").getAsInt();
+    return getAsInt("inclusiveTicks");
   }
 
+  /**
+   * The kind of function this object represents.
+   */
   public String getKind() {
-    return json.get("kind").getAsString();
+    return getAsString("kind");
+  }
+
+  /**
+   * The resolved URL for the script containing function.
+   */
+  public String getResolvedUrl() {
+    return getAsString("resolvedUrl");
   }
 }

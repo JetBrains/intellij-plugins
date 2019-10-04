@@ -15,51 +15,47 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * A {@link Context} is a data structure which holds the captured variables for some closure.
+ * See getInboundReferences.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Context extends Obj {
+public class InboundReference extends Element {
 
-  public Context(JsonObject json) {
+  public InboundReference(JsonObject json) {
     super(json);
   }
 
   /**
-   * The number of variables in this context.
-   */
-  public int getLength() {
-    return getAsInt("length");
-  }
-
-  /**
-   * The enclosing context for this context.
+   * If source is a field of an object, parentField is the field containing the inbound reference.
    *
    * Can return <code>null</code>.
    */
-  public Context getParent() {
-    JsonObject obj = (JsonObject) json.get("parent");
+  public FieldRef getParentField() {
+    JsonObject obj = (JsonObject) json.get("parentField");
     if (obj == null) return null;
     final String type = json.get("type").getAsString();
     if ("Instance".equals(type) || "@Instance".equals(type)) {
       final String kind = json.get("kind").getAsString();
       if ("Null".equals(kind)) return null;
     }
-    return new Context(obj);
+    return new FieldRef(obj);
   }
 
   /**
-   * The variables in this context object.
+   * If source is a List, parentListIndex is the index of the inbound reference.
+   *
+   * Can return <code>null</code>.
    */
-  public ElementList<ContextElement> getVariables() {
-    return new ElementList<ContextElement>(json.get("variables").getAsJsonArray()) {
-      @Override
-      protected ContextElement basicGet(JsonArray array, int index) {
-        return new ContextElement(array.get(index).getAsJsonObject());
-      }
-    };
+  public int getParentListIndex() {
+    return getAsInt("parentListIndex");
+  }
+
+  /**
+   * The object holding the inbound reference.
+   */
+  public ObjRef getSource() {
+    return new ObjRef((JsonObject) json.get("source"));
   }
 }

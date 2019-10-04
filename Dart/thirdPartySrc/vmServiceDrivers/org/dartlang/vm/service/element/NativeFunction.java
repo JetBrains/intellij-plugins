@@ -18,35 +18,20 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonObject;
 
 /**
- * The {@link SourceLocation} class is used to designate a position or range in some script.
+ * A {@link NativeFunction} object is used to represent native functions in profiler samples. See
+ * CpuSamples;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class SourceLocation extends Response {
+public class NativeFunction extends Element {
 
-  public SourceLocation(JsonObject json) {
+  public NativeFunction(JsonObject json) {
     super(json);
   }
 
   /**
-   * The last token of the location if this is a range.
-   *
-   * Can return <code>null</code>.
+   * The name of the native function this object represents.
    */
-  public int getEndTokenPos() {
-    return getAsInt("endTokenPos");
-  }
-
-  /**
-   * The script containing the source location.
-   */
-  public ScriptRef getScript() {
-    return new ScriptRef((JsonObject) json.get("script"));
-  }
-
-  /**
-   * The first token of the location.
-   */
-  public int getTokenPos() {
-    return getAsInt("tokenPos");
+  public String getName() {
+    return getAsString("name");
   }
 }

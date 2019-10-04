@@ -31,21 +31,21 @@ public class Flag extends Element {
    * A description of the flag.
    */
   public String getComment() {
-    return json.get("comment").getAsString();
+    return getAsString("comment");
   }
 
   /**
    * Has this flag been modified from its default setting?
    */
   public boolean getModified() {
-    return json.get("modified").getAsBoolean();
+    return getAsBoolean("modified");
   }
 
   /**
    * The name of the flag.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -56,6 +56,6 @@ public class Flag extends Element {
    * Can return <code>null</code>.
    */
   public String getValueAsString() {
-    return json.get("valueAsString") == null ? null : json.get("valueAsString").getAsString();
+    return getAsString("valueAsString");
   }
 }

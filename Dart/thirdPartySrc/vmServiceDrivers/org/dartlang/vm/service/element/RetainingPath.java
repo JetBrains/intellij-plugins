@@ -19,31 +19,40 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * See getInstances.
+ * See getRetainingPath.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class InstanceSet extends Response {
+public class RetainingPath extends Response {
 
-  public InstanceSet(JsonObject json) {
+  public RetainingPath(JsonObject json) {
     super(json);
   }
 
   /**
-   * An array of instances of the requested type.
+   * The chain of objects which make up the retaining path.
    */
-  public ElementList<ObjRef> getInstances() {
-    return new ElementList<ObjRef>(json.get("instances").getAsJsonArray()) {
+  public ElementList<RetainingObject> getElements() {
+    return new ElementList<RetainingObject>(json.get("elements").getAsJsonArray()) {
       @Override
-      protected ObjRef basicGet(JsonArray array, int index) {
-        return new ObjRef(array.get(index).getAsJsonObject());
+      protected RetainingObject basicGet(JsonArray array, int index) {
+        return new RetainingObject(array.get(index).getAsJsonObject());
       }
     };
   }
 
   /**
-   * The number of instances of the requested type currently allocated.
+   * The type of GC root which is holding a reference to the specified object. Possible values
+   * include:  * class table  * local handle  * persistent handle  * stack  * user global  * weak
+   * persistent handle  * unknown
    */
-  public int getTotalCount() {
-    return getAsInt("totalCount");
+  public String getGcRootType() {
+    return getAsString("gcRootType");
+  }
+
+  /**
+   * The length of the retaining path.
+   */
+  public int getLength() {
+    return getAsInt("length");
   }
 }

@@ -37,7 +37,7 @@ public class LogRecord extends Response {
    * See the package:logging `Level` class for an overview of the possible values.
    */
   public int getLevel() {
-    return json.get("level") == null ? -1 : json.get("level").getAsInt();
+    return getAsInt("level");
   }
 
   /**
@@ -58,7 +58,7 @@ public class LogRecord extends Response {
    * A monotonically increasing sequence number.
    */
   public int getSequenceNumber() {
-    return json.get("sequenceNumber") == null ? -1 : json.get("sequenceNumber").getAsInt();
+    return getAsInt("sequenceNumber");
   }
 
   /**
@@ -72,7 +72,7 @@ public class LogRecord extends Response {
    * The timestamp.
    */
   public int getTime() {
-    return json.get("time") == null ? -1 : json.get("time").getAsInt();
+    return getAsInt("time");
   }
 
   /**

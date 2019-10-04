@@ -15,38 +15,28 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * The {@link SourceLocation} class is used to designate a position or range in some script.
+ * See getInboundReferences.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class SourceLocation extends Response {
+public class InboundReferences extends Response {
 
-  public SourceLocation(JsonObject json) {
+  public InboundReferences(JsonObject json) {
     super(json);
   }
 
   /**
-   * The last token of the location if this is a range.
-   *
-   * Can return <code>null</code>.
+   * An array of inbound references to an object.
    */
-  public int getEndTokenPos() {
-    return getAsInt("endTokenPos");
-  }
-
-  /**
-   * The script containing the source location.
-   */
-  public ScriptRef getScript() {
-    return new ScriptRef((JsonObject) json.get("script"));
-  }
-
-  /**
-   * The first token of the location.
-   */
-  public int getTokenPos() {
-    return getAsInt("tokenPos");
+  public ElementList<InboundReference> getReferences() {
+    return new ElementList<InboundReference>(json.get("references").getAsJsonArray()) {
+      @Override
+      protected InboundReference basicGet(JsonArray array, int index) {
+        return new InboundReference(array.get(index).getAsJsonObject());
+      }
+    };
   }
 }
