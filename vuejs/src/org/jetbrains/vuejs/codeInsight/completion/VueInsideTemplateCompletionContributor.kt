@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.util.Processor
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
 import java.util.*
@@ -18,14 +19,16 @@ class VueInsideTemplateCompletionContributor : JSSmartCompletionContributor() {
 
     val vueVariants = ArrayList<LookupElement>()
 
-    VueTemplateScopesResolver.resolve(location, Processor { resolveResult ->
-      val element = resolveResult.element as? JSPsiElementBase
-      if (element != null) {
-        vueVariants.add(JSCompletionUtil.withJSLookupPriority(JSLookupUtilImpl.createLookupElement(element),
-                                                              JSLookupPriority.MAX_PRIORITY))
-      }
-      true
-    })
+    if (location.qualifier is JSThisExpression?) {
+      VueTemplateScopesResolver.resolve(location, Processor { resolveResult ->
+        val element = resolveResult.element as? JSPsiElementBase
+        if (element != null) {
+          vueVariants.add(JSCompletionUtil.withJSLookupPriority(JSLookupUtilImpl.createLookupElement(element),
+                                                                JSLookupPriority.MAX_PRIORITY))
+        }
+        true
+      })
+    }
     return mergeVariants(basicVariants, vueVariants)
   }
 }
