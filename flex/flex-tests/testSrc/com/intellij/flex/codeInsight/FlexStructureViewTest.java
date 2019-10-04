@@ -49,8 +49,8 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     return new LightProjectDescriptor() {
       @NotNull
       @Override
-      public ModuleType getModuleType() {
-        return FlexModuleType.getInstance();
+      public String getModuleTypeId() {
+        return FlexModuleType.MODULE_TYPE_ID;
       }
 
       @Nullable

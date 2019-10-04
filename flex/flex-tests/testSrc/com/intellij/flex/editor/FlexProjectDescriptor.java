@@ -2,7 +2,6 @@
 package com.intellij.flex.editor;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +10,7 @@ public class FlexProjectDescriptor extends LightProjectDescriptor {
 
   @NotNull
   @Override
-  public ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  public String getModuleTypeId() {
+    return FlexModuleType.MODULE_TYPE_ID;
   }
 }
