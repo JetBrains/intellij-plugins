@@ -74,12 +74,12 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     template.addTextSegment("@override\n");
     template.addTextSegment("bool operator==(Object other) =>\nidentical(this, other) ||\n");
     if (mySuperclassOverridesEqualEqualAndHashCode) {
-      template.addTextSegment("super == other &&\n");
+      template.addTextSegment("super == other && ");
     }
-    template.addTextSegment("other is " + myDartClass.getName() + " &&\n");
+    template.addTextSegment("other is " + myDartClass.getName() + " && ");
     template.addTextSegment("runtimeType == other.runtimeType");
     for (DartComponent component : elementsToProcess) {
-      template.addTextSegment(" &&\n");
+      template.addTextSegment(" && ");
       template.addTextSegment(component.getName() + " == other." + component.getName());
     }
     template.addTextSegment(";\n");
@@ -88,12 +88,12 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
     template.addTextSegment("int get hashCode => ");
     boolean firstItem = true;
     if (mySuperclassOverridesEqualEqualAndHashCode) {
-      template.addTextSegment("\nsuper.hashCode");
+      template.addTextSegment("super.hashCode");
       firstItem = false;
     }
     for (DartComponent component : elementsToProcess) {
       if (!firstItem) {
-        template.addTextSegment(" ^\n");
+        template.addTextSegment(" ^ ");
       }
       template.addTextSegment(component.getName() + ".hashCode");
       firstItem = false;
@@ -102,7 +102,6 @@ public class CreateEqualsAndHashcodeFix extends BaseCreateMethodsFix<DartCompone
       template.addTextSegment("0");
     }
     template.addTextSegment(";\n");
-    template.addEndVariable();
     template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
 
     return template;
