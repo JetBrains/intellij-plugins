@@ -301,6 +301,13 @@ class VueModelManager {
       }
     }
 
+    fun getFilter(it: JSImplicitElement): VueFilter? {
+      if (it.userString == VueGlobalFiltersIndex.JS_KEY) {
+        return VueSourceFilter(it.name, it)
+      }
+      return null
+    }
+
     fun getApp(appDeclaration: JSObjectLiteralExpression): VueApp {
       return CachedValuesManager.getCachedValue(appDeclaration) {
         CachedValueProvider.Result.create(VueSourceApp(getComponentImplicitElement(appDeclaration)

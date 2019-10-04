@@ -58,7 +58,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueMixinBindingIndex.KEY),
     record(VueOptionsIndex.KEY),
     record(VueUrlIndex.KEY),
-    record(VueIdIndex.KEY)
+    record(VueIdIndex.KEY),
+    record(VueGlobalFiltersIndex.KEY)
   )
   private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION,
                                                                 JSStubElementTypes.NEW_EXPRESSION,
@@ -79,7 +80,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private const val PROPS = "props"
     private const val VUE_INSTANCE = "CombinedVueInstance"
 
-    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
+    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters", "filter")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "data", "render", "props", "propsData", "computed", "methods", "watch",
                                                   "mixins", "components", "directives", "filters")
 
@@ -188,7 +189,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
     }
     else if (EXTENDS_PROP == property.name && property.value is JSReferenceExpression) {
-      recordExtends(out, property, property.value, false)
+      recordExtends(out, property, property.value)
     }
     else if (DIRECTIVES_PROP == property.name) {
       (property.value as? JSObjectLiteralExpression)?.properties?.forEach { directive ->
@@ -302,8 +303,15 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
     else if (VueStaticMethod.Directive.matches(reference)) {
       val directiveName = getTextIfLiteral(arguments[0])
-      if (arguments.size >= 2 && directiveName != null && !directiveName.isNullOrBlank()) {
+      if (arguments.size >= 2 && !directiveName.isNullOrBlank()) {
         recordDirective(outData, callExpression, directiveName, arguments[1], true)
+      }
+    }
+    else if (VueStaticMethod.Filter.matches(reference)) {
+      val filterName = getTextIfLiteral(arguments[0])
+      if (arguments.size >= 2 && !filterName.isNullOrBlank()) {
+        outData.addImplicitElement(createImplicitElement(
+          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, null, arguments[1], true))
       }
     }
   }
@@ -327,10 +335,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   private fun recordExtends(outData: JSElementIndexingData,
                             provider: JSImplicitElementProvider,
-                            descriptorRef: PsiElement?,
-                            isGlobal: Boolean) {
-    outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
-                                                     descriptorRef, isGlobal))
+                            descriptorRef: PsiElement?) {
+    outData.addImplicitElement(createImplicitElement(LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
+                                                     descriptorRef, false))
   }
 
   private fun isPossiblyVueContainerInitializer(initializer: JSObjectLiteralExpression?): Boolean {
@@ -444,7 +451,10 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
 }
 
 private enum class VueStaticMethod(val methodName: String) {
-  Component("component"), Mixin("mixin"), Directive("directive");
+  Component("component"),
+  Mixin("mixin"),
+  Directive("directive"),
+  Filter("filter");
 
   companion object {
     fun matchesAny(reference: JSReferenceExpression): Boolean = values().any { it.matches(reference) }

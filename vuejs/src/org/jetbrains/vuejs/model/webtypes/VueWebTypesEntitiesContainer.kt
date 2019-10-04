@@ -21,9 +21,8 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
   override val parents: List<VueEntitiesContainer> = emptyList()
   final override val components: Map<String, VueComponent>
   final override val directives: Map<String, VueDirective>
+  final override val filters: Map<String, VueFilter>
 
-  override val filters: Map<String, VueFilter>
-    get() = Collections.emptyMap()
   override val mixins: List<VueMixin>
     get() = Collections.emptyList()
 
@@ -50,6 +49,13 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
                    ?.filter { it.name?.startsWith("v-") ?: false }
                    ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, project, owner, sourceSymbolResolver) })
                  ?: Collections.emptyMap()
+    filters = webTypes.contributions
+                ?.html
+                ?.vueFilters
+                ?.filter { it.name != null }
+                ?.distinctBy { it.name }
+                ?.associateBy({ it.name!! }, { VueWebTypesFilter(it, project, owner, sourceSymbolResolver) })
+              ?: Collections.emptyMap()
   }
 
   private class TypeScriptTypeProvider {

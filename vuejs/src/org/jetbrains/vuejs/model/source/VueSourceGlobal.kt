@@ -14,9 +14,9 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.EntryStream
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
+import java.util.*
 
 class VueSourceGlobal(override val project: Project, private val packageJson: VirtualFile?) : VueGlobal {
 
@@ -26,15 +26,9 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
   override val parents: List<VueEntitiesContainer> = emptyList()
 
   override val directives: Map<String, VueDirective>
-    get() = getCachedValue { searchScope ->
-      StreamEx.of(getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY))
-        .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) })
-        // TODO properly support multiple directives with the same name
-        .distinctKeys()
-        .toMap()
-    }
-  override val filters: Map<String, VueFilter> = emptyMap()
-
+    get() = getCachedValue { buildDirectives(it) }
+  override val filters: Map<String, VueFilter>
+    get() = getCachedValue { buildFiltersMap(it) }
   override val apps: List<VueApp>
     get() = getCachedValue { buildAppsList(it) }
   override val mixins: List<VueMixin>
@@ -118,24 +112,44 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
   }
 
   companion object {
+    private fun buildDirectives(searchScope: GlobalSearchScope): Map<String, VueDirective> {
+      return getForAllKeys(searchScope, VueGlobalDirectivesIndex.KEY)
+        .asSequence()
+        .map { Pair(it.name, VueSourceDirective(it.name, it.parent)) }
+        // TODO properly support multiple directives with the same name
+        .distinctBy { it.first }
+        .toMap()
+    }
+
     private fun buildMixinsList(scope: GlobalSearchScope): List<VueMixin> {
-      val elements = resolve(GLOBAL, scope, VueMixinBindingIndex.KEY) ?: return emptyList()
-      return StreamEx.of(elements)
-        .map { VueComponents.vueMixinDescriptorFinder(it) }
-        .nonNull()
-        .map { VueModelManager.getMixin(it!!) }
-        .nonNull()
-        .toList()
+      return resolve(GLOBAL, scope, VueMixinBindingIndex.KEY)
+               ?.asSequence()
+               ?.mapNotNull { VueComponents.vueMixinDescriptorFinder(it) }
+               ?.mapNotNull { VueModelManager.getMixin(it) }
+               ?.toList()
+             ?: emptyList()
     }
 
     private fun buildAppsList(scope: GlobalSearchScope): List<VueApp> {
-      return StreamEx.of(getForAllKeys(scope, VueOptionsIndex.KEY))
+      return getForAllKeys(scope, VueOptionsIndex.KEY)
+        .asSequence()
         .filter(VueComponents.Companion::isNotInLibrary)
-        .map { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
-        .nonNull()
-        .map { VueModelManager.getApp(it!!) }
+        .mapNotNull { it as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(it, JSObjectLiteralExpression::class.java) }
+        .map { VueModelManager.getApp(it) }
         .filter { it.element != null }
         .toList()
+    }
+
+    private fun buildFiltersMap(scope: GlobalSearchScope): Map<String, VueFilter> {
+      return getForAllKeys(scope, VueGlobalFiltersIndex.KEY)
+        .asSequence()
+        .mapNotNull { element ->
+          VueModelManager.getFilter(element)
+            ?.let { Pair(element.name, it) }
+        }
+        // TODO properly support multiple filters with the same name
+        .distinctBy { it.first }
+        .toMap(TreeMap())
     }
   }
 }

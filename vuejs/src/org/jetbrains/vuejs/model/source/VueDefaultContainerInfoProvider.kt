@@ -18,6 +18,7 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
+import java.util.*
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -34,6 +35,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val components: Map<String, VueComponent> get() = get(COMPONENTS)
     override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
     override val mixins: List<VueMixin> get() = get(MIXINS)
+    override val filters: Map<String, VueFilter> get() = get(FILTERS)
 
   }
 
@@ -42,6 +44,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     private val MIXINS = MixinsAccessor(MIXINS_PROP, VueMixinBindingIndex.KEY)
     private val DIRECTIVES = DirectivesAccessor()
     private val COMPONENTS = ComponentsAccessor()
+    private val FILTERS = FiltersAccessor()
     private val DELIMITERS = DelimitersAccessor()
 
     private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
@@ -110,6 +113,21 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     }
   }
 
+  private class FiltersAccessor : MapAccessor<VueFilter>() {
+
+    override fun build(declaration: JSObjectLiteralExpression): Map<String, VueFilter> {
+      return ContainerMember.Filters.readMembers(declaration)
+        .asSequence()
+        .map {
+          Pair(it.first, VueSourceFilter(it.first, VueComponents.meaningfulExpression(it.second) ?: it.second))
+        }
+        // TODO properly support multiple filters with the same name
+        .distinctBy { it.first }
+        .toMap(TreeMap())
+    }
+
+  }
+
   private class SimpleMemberAccessor<T : VueNamedSymbol>(val member: ContainerMember,
                                                          val provider: (String, JSElement) -> T)
     : ListAccessor<T>() {
@@ -176,6 +194,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     Computed("computed", true, false),
     Methods("methods", true, false),
     Components("components", false, false),
+    Filters("filters", false, false),
     Delimiters("delimiters", false, true),
     Model("model", false, false),
     Data("data", false, false) {

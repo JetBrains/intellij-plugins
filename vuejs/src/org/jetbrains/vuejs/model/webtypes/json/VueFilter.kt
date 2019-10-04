@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("name", "description", "doc-url", "accepts", "returns", "arguments")
+@JsonPropertyOrder("name", "description", "doc-url", "source", "accepts", "returns", "arguments")
 class VueFilter {
 
   /**
@@ -64,6 +64,23 @@ class VueFilter {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   var docUrl: String? = null
+  /**
+   * Allows to specify the source of the entity. For Vue.js component this may be for instance a class.
+   *
+   */
+  /**
+   * Allows to specify the source of the entity. For Vue.js component this may be for instance a class.
+   *
+   */
+  /**
+   * Allows to specify the source of the entity. For Vue.js component this may be for instance a class.
+   *
+   */
+  @JsonProperty("source")
+  @JsonPropertyDescription("Allows to specify the source of the entity. For Vue.js component this may be for instance a class.")
+  @get:JsonProperty("source")
+  @set:JsonProperty("source")
+  var source: Source? = null
   /**
    * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *

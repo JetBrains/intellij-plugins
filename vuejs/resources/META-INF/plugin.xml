@@ -77,6 +77,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueUrlIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueIdIndex"/>
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.VuexStoreIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
@@ -181,7 +182,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="4"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="5"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.VuexFrameworkHandler" version="1"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 
