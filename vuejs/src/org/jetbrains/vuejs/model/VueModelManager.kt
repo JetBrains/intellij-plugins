@@ -7,6 +7,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -16,6 +17,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
@@ -74,9 +76,21 @@ class VueModelManager {
 
     private fun getEnclosingComponentDescriptor(element: PsiElement): VueComponentDescriptor? {
       var context: PsiElement? = element
-      if (context is JSProperty) {
+      if (context is JSCallExpression) {
+        val stub = (context as? StubBasedPsiElement<*>)?.stub
+        if (stub != null) {
+          context = stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
+                                           JSObjectLiteralExpression.ARRAY_FACTORY)
+            .firstOrNull()
+        } else {
+          context = context.argumentList
+            ?.arguments
+            ?.find { it is JSObjectLiteralExpression }
+        }
+      } else if (context is JSProperty) {
         context = context.context
       }
+
       if (context is JSObjectLiteralExpression) {
         val parentContext = PsiTreeUtil.getContextOfType(context, JSObjectLiteralExpression::class.java,
                                                          ES6Decorator::class.java)

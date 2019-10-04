@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.vuex;
+package org.jetbrains.vuejs.libraries.vuex;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
