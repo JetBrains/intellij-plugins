@@ -97,16 +97,13 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
                             "  @override\n" +
                             "  bool operator ==(Object other) =>\n" +
                             "      identical(this, other) ||\n" +
-                            "          other is Foo &&\n" +
-                            "              runtimeType == other.runtimeType &&\n" +
-                            "              e == other.e &&\n" +
-                            "              b == other.b;\n" +
+                            "      other is Foo &&\n" +
+                            "          runtimeType == other.runtimeType &&\n" +
+                            "          e == other.e &&\n" +
+                            "          b == other.b;\n" +
                             "\n" +
                             "  @override\n" +
-                            "  int get hashCode =>\n" +
-                            "      e.hashCode ^\n" +
-                            "      b.hashCode;\n" +
-                            "  \n" +
+                            "  int get hashCode => e.hashCode ^ b.hashCode;\n" +
                             "}");
   }
 
@@ -133,18 +130,14 @@ public class DartCodeGenerationTest extends CodeInsightFixtureTestCase {
                             "  @override\n" +
                             "  bool operator ==(Object other) =>\n" +
                             "      identical(this, other) ||\n" +
-                            "          super == other &&\n" +
-                            "              other is Foo &&\n" +
-                            "              runtimeType == other.runtimeType &&\n" +
-                            "              e == other.e &&\n" +
-                            "              b == other.b;\n" +
+                            "      super == other &&\n" +
+                            "          other is Foo &&\n" +
+                            "          runtimeType == other.runtimeType &&\n" +
+                            "          e == other.e &&\n" +
+                            "          b == other.b;\n" +
                             "\n" +
                             "  @override\n" +
-                            "  int get hashCode =>\n" +
-                            "      super.hashCode ^\n" +
-                            "      e.hashCode ^\n" +
-                            "      b.hashCode;\n" +
-                            "  \n" +
+                            "  int get hashCode => super.hashCode ^ e.hashCode ^ b.hashCode;\n" +
                             "}");
   }
 }

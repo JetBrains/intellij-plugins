@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.template.Template;
@@ -47,7 +48,6 @@ public class CreateConstructorFix extends BaseCreateMethodsFix<DartComponent> {
       }
     }
     template.addTextSegment(");");
-    template.addEndVariable();
     template.addTextSegment(" "); // trailing space is removed when auto-reformatting, but it helps to enter line break if needed
     return template;
   }
