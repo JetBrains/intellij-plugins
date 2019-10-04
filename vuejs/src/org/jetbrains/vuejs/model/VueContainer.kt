@@ -12,7 +12,7 @@ interface VueContainer : VueEntitiesContainer {
   val emits: List<VueEmitCall>
   val slots: List<VueSlot>
 
-  val template: PsiElement? get() = null
+  val template: VueTemplate<*>? get() = null
   val element: String? get() = null
   val extends: List<VueContainer>
   val delimiters: Pair<String, String>? get() = null

@@ -27,6 +27,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val model: VueModelDirectiveProperties get() = get(MODEL)
 
   override val emits: List<VueEmitCall> get() = get(EMITS)
+  override val template: VueTemplate<*>? get() = if (this is VueRegularComponent) get(TEMPLATE) else null
   override val slots: List<VueSlot> = emptyList()
 
   override val delimiters: Pair<String, String>? get() = get(DELIMITERS)
@@ -56,6 +57,11 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
     private val EMITS = NamedListAccessor(VueContainerInfo::emits)
 
     private val MODEL = ModelAccessor(VueContainerInfo::model)
+    private val TEMPLATE = TemplateAccessor(VueContainerInfo::template)
+
+    fun getTemplate(descriptor: VueComponentDescriptor): VueTemplate<*>? {
+      return TEMPLATE.get(descriptor.obj, descriptor.clazz)
+    }
   }
 
   private abstract class MemberAccessor<T>(val extInfoAccessor: (VueContainerInfo) -> T?, val takeFirst: Boolean = false) {
@@ -132,6 +138,14 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
 
     override fun merge(arg1: VueModelDirectiveProperties, arg2: VueModelDirectiveProperties): VueModelDirectiveProperties {
       return arg2
+    }
+  }
+
+  private class TemplateAccessor(extInfoAccessor: (VueContainerInfo) -> VueTemplate<*>?)
+    : MemberAccessor<VueTemplate<*>?>(extInfoAccessor, true) {
+
+    override fun empty(): VueTemplate<*>? {
+      return null
     }
   }
 

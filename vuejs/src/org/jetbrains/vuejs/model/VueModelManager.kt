@@ -29,6 +29,7 @@ import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -144,24 +145,27 @@ class VueModelManager {
         return result
       }
 
-      val file = VueSourceComponent.getHostFile(context) ?: return null
+      val file = getHostFile(context) ?: return null
       val name = file.viewProvider.virtualFile.name
       var result: VueComponentDescriptor? = null
 
       StubIndex.getInstance().processElements(VueUrlIndex.KEY, name, context.project,
                                               GlobalSearchScope.projectScope(context.project),
                                               PsiElement::class.java) { element ->
-        if (element is JSProperty) {
+        if (element is JSImplicitElementProvider) {
           if (element.indexingData?.implicitElements
-                ?.any {
-                  it.userString == VueUrlIndex.JS_KEY
-                  && it?.qualifiedName == name
-                  && it.isValid
-                } == true
-              && element.value
-                ?.let { VueSourceComponent.getReferencedTemplate(it) }
-                ?.value?.containingFile == file) {
-            result = getEnclosingComponentDescriptor(element)
+              ?.any {
+                it.userString == VueUrlIndex.JS_KEY
+                && it?.qualifiedName == name
+                && it.isValid
+              } == true) {
+            val candidate = getEnclosingComponentDescriptor(element)
+            if (candidate != null
+                && VueSourceContainer.getTemplate(candidate)
+                  ?.source
+                  ?.containingFile == file) {
+              result = candidate
+            }
           }
         }
         else if (element is XmlAttribute

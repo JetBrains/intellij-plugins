@@ -30,6 +30,7 @@ interface VueContainerInfoProvider {
     val emits: List<VueEmitCall> get() = emptyList()
 
     val model: VueModelDirectiveProperties? get() = null
+    val template: VueTemplate<*>? get() = null
     val delimiters: Pair<String, String>? get() = null
   }
 

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
@@ -18,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValue
@@ -192,6 +194,12 @@ fun getContainingXmlFile(element: PsiElement): XmlFile? =
    ?: element as? XmlFile
    ?: InjectedLanguageManager.getInstance(
      element.project).getInjectionHost(element)?.containingFile as? XmlFile)
+
+fun getHostFile(context: PsiElement): PsiFile? {
+  val original = CompletionUtil.getOriginalOrSelf(context)
+  val hostFile = FileContextUtil.getContextFile(if (original !== context) original else context.containingFile.originalFile)
+  return hostFile?.originalFile
+}
 
 private val resolveSymbolCache = ConcurrentHashMap<String, Key<CachedValue<*>>>()
 
