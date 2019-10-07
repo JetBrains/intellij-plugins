@@ -7,16 +7,10 @@ class EqualsAndHashCode1 {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is EqualsAndHashCode1 &&
-              runtimeType == other.runtimeType &&
-              str == other.str &&
-              v == other.v &&
-              i == other.i;
+          other is EqualsAndHashCode1 && runtimeType == other.runtimeType &&
+              str == other.str && v == other.v && i == other.i;
 
   @override
-  int get hashCode =>
-      str.hashCode ^
-      v.hashCode ^
-      i.hashCode;
-  <caret>
+  int get hashCode => str.hashCode ^ v.hashCode ^ i.hashCode;
+<caret>
 }
