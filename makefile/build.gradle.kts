@@ -1,22 +1,39 @@
+import org.jetbrains.kotlin.gradle.tasks.*
+
 plugins {
-  kotlin("jvm") version "1.3.21"
-  id("org.jetbrains.intellij") version "0.4.4"
+  kotlin("jvm") version "1.3.50"
+  id("org.jetbrains.intellij") version "0.4.10"
 }
 
 group = "name.kropp.intellij"
-version = "1.6.1"
+version = "1.7.0"
 
 repositories {
   mavenCentral()
 }
 
 intellij {
-  version = "2018.3"
+  version = "2019.1"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
 }
 
-kotlin.sourceSets["main"].kotlin.srcDir("gen")
+sourceSets["main"].java.srcDir("gen")
+
+tasks.withType<JavaCompile> {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
+}
+
+tasks.withType<KotlinCompile> {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
+  kotlinOptions {
+    jvmTarget = "1.8"
+    apiVersion = "1.3"
+    languageVersion = "1.3"
+  }
+}
 
 dependencies {
   api(kotlin("stdlib-jdk8"))

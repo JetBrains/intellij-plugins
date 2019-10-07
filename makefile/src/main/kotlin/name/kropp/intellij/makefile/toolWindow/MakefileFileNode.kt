@@ -19,7 +19,7 @@ class MakefileFileNode(val psiFile: PsiFile, private val targets: List<MakefileT
   override val icon: Icon
     get() = MakefileIcon
 
-  override fun children(): Enumeration<*> = enumeration(targets)
+  override fun children(): Enumeration<out TreeNode>? = enumeration(targets)
 
   override fun isLeaf() = false
 
