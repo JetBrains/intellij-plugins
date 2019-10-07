@@ -3,6 +3,7 @@ package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
 import name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface MakefilePrerequisite extends PsiElement {
@@ -10,7 +11,8 @@ public interface MakefilePrerequisite extends PsiElement {
   @Nullable
   MakefileFunction getFunction();
 
-  MakefilePrerequisiteImpl updateText(String newText);
+  @NotNull
+  MakefilePrerequisiteImpl updateText(@NotNull String newText);
 
   boolean isPhonyTarget();
 

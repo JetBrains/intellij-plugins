@@ -17,7 +17,7 @@ Makefile
           PsiWhiteSpace(' ')
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('docker-compose.yaml')
-    PsiWhiteSpace('\n')
+      PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')

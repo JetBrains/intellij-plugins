@@ -1,0 +1,9 @@
+Makefile
+  MakefileOverrideImpl(OVERRIDE)
+    PsiElement(override)('override')
+    PsiWhiteSpace(' ')
+    MakefileUndefineImpl(UNDEFINE)
+      PsiElement(undefine)('undefine')
+      PsiWhiteSpace(' ')
+      MakefileVariableImpl(VARIABLE)
+        PsiElement(identifier)('FOO')

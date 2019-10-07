@@ -78,7 +78,7 @@ variable ::= identifier
 meta variable-value ::= multiline
 define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL {pin=1}
-override ::= 'override' variable-assignment {pin=1}
+override ::= 'override' (undefine|variable-assignment) {pin=1}
 export ::= 'export' (variable-assignment|variable)? EOL {pin=1}
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}

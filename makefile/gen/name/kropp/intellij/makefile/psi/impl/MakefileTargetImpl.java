@@ -1,17 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import name.kropp.intellij.makefile.psi.*;
-import com.intellij.navigation.ItemPresentation;
-import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
 import com.intellij.psi.stubs.IStubElementType;
+import name.kropp.intellij.makefile.psi.MakefilePsiImplUtil;
+import name.kropp.intellij.makefile.psi.MakefileTarget;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileTargetImpl extends MakefileNamedElementImpl implements MakefileTarget {
 
@@ -19,8 +19,8 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
     super(node);
   }
 
-  public MakefileTargetImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType type) {
-    super(stub, type);
+  public MakefileTargetImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType<?, ?> nodeType) {
+    super(stub, nodeType);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
@@ -32,36 +32,46 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
     else super.accept(visitor);
   }
 
+  @Override
   @Nullable
   public String getName() {
     return MakefilePsiImplUtil.getName(this);
   }
 
-  public PsiElement setName(String newName) {
+  @Override
+  @NotNull
+  public PsiElement setName(@NotNull String newName) {
     return MakefilePsiImplUtil.setName(this, newName);
   }
 
+  @Override
   @Nullable
   public PsiElement getNameIdentifier() {
     return MakefilePsiImplUtil.getNameIdentifier(this);
   }
 
+  @Override
+  @NotNull
   public ItemPresentation getPresentation() {
     return MakefilePsiImplUtil.getPresentation(this);
   }
 
+  @Override
   public boolean isSpecialTarget() {
     return MakefilePsiImplUtil.isSpecialTarget(this);
   }
 
+  @Override
   public boolean isPatternTarget() {
     return MakefilePsiImplUtil.isPatternTarget(this);
   }
 
-  public boolean matches(String prerequisite) {
+  @Override
+  public boolean matches(@NotNull String prerequisite) {
     return MakefilePsiImplUtil.matches(this, prerequisite);
   }
 
+  @Override
   @Nullable
   public String getDocComment() {
     return MakefilePsiImplUtil.getDocComment(this);

@@ -1,5 +1,5 @@
-import com.intellij.testFramework.ParsingTestCase
-import name.kropp.intellij.makefile.MakefileParserDefinition
+import com.intellij.testFramework.*
+import name.kropp.intellij.makefile.*
 
 class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinition()) {
   fun testHelloWorld() = doTest(true)
@@ -29,6 +29,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testAtSign() = doTest(true)
   fun testElseif() = doTest(true)
   fun testFunctionInPrerequisites() = doTest(true)
+  fun testUndefine() = doTest(true)
 
   fun testIssue7() = doTest(true)
   fun testIssue9() = doTest(true)

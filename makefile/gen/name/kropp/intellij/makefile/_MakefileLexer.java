@@ -4,7 +4,6 @@ package name.kropp.intellij.makefile;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import name.kropp.intellij.makefile.psi.MakefileTypes;
 
 import static com.intellij.psi.TokenType.BAD_CHARACTER;
 import static com.intellij.psi.TokenType.WHITE_SPACE;
@@ -661,7 +660,7 @@ public class _MakefileLexer implements FlexLexer {
   /**
    * Refills the input buffer.
    *
-   * @return      <code>false</code>, iff there was new input.
+   * @return      {@code false}, iff there was new input.
    *
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
@@ -697,7 +696,7 @@ public class _MakefileLexer implements FlexLexer {
 
 
   /**
-   * Returns the character at position <tt>pos</tt> from the
+   * Returns the character at position {@code pos} from the
    * matched text.
    *
    * It is equivalent to yytext().charAt(pos), but faster
@@ -721,7 +720,7 @@ public class _MakefileLexer implements FlexLexer {
 
 
   /**
-   * Reports an error that occured while scanning.
+   * Reports an error that occurred while scanning.
    *
    * In a wellformed scanner (no or only correct usage of
    * yypushback(int) and a match-all fallback rule) this method
@@ -790,11 +789,11 @@ public class _MakefileLexer implements FlexLexer {
       if (zzMarkedPosL > zzStartRead) {
         switch (zzBufferL.charAt(zzMarkedPosL-1)) {
         case '\n':
-        case '\u000B':  // fall though
-        case '\u000C':  // fall though
-        case '\u0085':  // fall though
-        case '\u2028':  // fall though
-        case '\u2029':  // fall though
+        case '\u000B':  // fall through
+        case '\u000C':  // fall through
+        case '\u0085':  // fall through
+        case '\u2028':  // fall through
+        case '\u2029':  // fall through
           zzAtBOL = true;
           break;
         case '\r': 

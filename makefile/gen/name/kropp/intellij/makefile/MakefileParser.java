@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.lang.PsiParser;
-import com.intellij.lang.LightPsiParser;
+import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
+import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class MakefileParser implements PsiParser, LightPsiParser {
@@ -23,97 +23,15 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == BLOCK) {
-      r = block(b, 0);
-    }
-    else if (t == COMMAND) {
-      r = command(b, 0);
-    }
-    else if (t == COMMENT) {
-      r = comment(b, 0);
-    }
-    else if (t == CONDITIONAL) {
-      r = conditional(b, 0);
-    }
-    else if (t == DEFINE) {
-      r = define(b, 0);
-    }
-    else if (t == DIRECTORY) {
-      r = directory(b, 0);
-    }
-    else if (t == DOC_COMMENT) {
-      r = doc_comment(b, 0);
-    }
-    else if (t == EMPTY_COMMAND) {
-      r = empty_command(b, 0);
-    }
-    else if (t == EXPORT) {
-      r = export(b, 0);
-    }
-    else if (t == FILENAME) {
-      r = filename(b, 0);
-    }
-    else if (t == FUNCTION) {
-      r = function(b, 0);
-    }
-    else if (t == INCLUDE) {
-      r = include(b, 0);
-    }
-    else if (t == NORMAL_PREREQUISITES) {
-      r = normal_prerequisites(b, 0);
-    }
-    else if (t == ORDER_ONLY_PREREQUISITES) {
-      r = order_only_prerequisites(b, 0);
-    }
-    else if (t == OVERRIDE) {
-      r = override(b, 0);
-    }
-    else if (t == PATTERN) {
-      r = pattern(b, 0);
-    }
-    else if (t == PREREQUISITE) {
-      r = prerequisite(b, 0);
-    }
-    else if (t == PREREQUISITES) {
-      r = prerequisites(b, 0);
-    }
-    else if (t == PRIVATEVAR) {
-      r = privatevar(b, 0);
-    }
-    else if (t == RECIPE) {
-      r = recipe(b, 0);
-    }
-    else if (t == RULE) {
-      r = rule(b, 0);
-    }
-    else if (t == TARGET) {
-      r = target(b, 0);
-    }
-    else if (t == TARGET_LINE) {
-      r = target_line(b, 0);
-    }
-    else if (t == TARGET_PATTERN) {
-      r = target_pattern(b, 0);
-    }
-    else if (t == TARGETS) {
-      r = targets(b, 0);
-    }
-    else if (t == UNDEFINE) {
-      r = undefine(b, 0);
-    }
-    else if (t == VARIABLE) {
-      r = variable(b, 0);
-    }
-    else if (t == VPATH) {
-      r = vpath(b, 0);
-    }
-    else {
-      r = parse_root_(t, b, 0);
-    }
+    r = parse_root_(t, b);
     exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
   }
 
-  protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
+  protected boolean parse_root_(IElementType t, PsiBuilder b) {
+    return parse_root_(t, b, 0);
+  }
+
+  static boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return makefile(b, l + 1);
   }
 
@@ -762,7 +680,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'override' variable-assignment
+  // 'override' (undefine|variable-assignment)
   public static boolean override(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "override")) return false;
     if (!nextTokenIs(b, KEYWORD_OVERRIDE)) return false;
@@ -770,9 +688,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, OVERRIDE, null);
     r = consumeToken(b, KEYWORD_OVERRIDE);
     p = r; // pin = 1
-    r = r && variable_assignment(b, l + 1);
+    r = r && override_1(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  // undefine|variable-assignment
+  private static boolean override_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "override_1")) return false;
+    boolean r;
+    r = undefine(b, l + 1);
+    if (!r) r = variable_assignment(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
