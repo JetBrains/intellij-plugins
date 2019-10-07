@@ -81,7 +81,7 @@ interface VueScopeElement {
         }
       }
       container.filters.forEach { (name, filter) ->
-        if (visited.add(Pair(fromAsset(name), filter))
+        if (visited.add(Pair(name, filter))
             && !visitor.visitFilter(name, filter, proximity)) {
           return false
         }

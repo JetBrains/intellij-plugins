@@ -2,7 +2,9 @@
 package org.jetbrains.vuejs.codeInsight.refs
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector
+import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSFunctionItem
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
@@ -16,6 +18,10 @@ import com.intellij.util.Processor
 import com.intellij.util.SmartList
 import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesResolver
+import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
+import org.jetbrains.vuejs.model.VueFilter
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelProximityVisitor
 
 class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
                                        ignorePerformanceLimits: Boolean) :
@@ -23,11 +29,37 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
 
   override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY
-
+    if (myRef is VueJSFilterReferenceExpression) {
+      return resolveFilterNameReference(expression, incompleteCode)
+    }
     if (myQualifier == null || myQualifier is JSThisExpression) {
       resolveTemplateVariable(expression).let { if (it.isNotEmpty()) return it }
     }
     return super.resolve(expression, incompleteCode)
+  }
+
+  private fun resolveFilterNameReference(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
+    if (!incompleteCode) {
+      val results = expression.multiResolve(true)
+      //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
+      return JSTypeSignatureChooser(expression.parent as JSCallExpression).chooseOverload(results)
+    }
+    assert(myReferencedName != null)
+
+    val container = VueModelManager.findEnclosingContainer(expression)
+    val filters = mutableListOf<VueFilter>()
+    container?.acceptEntities(object : VueModelProximityVisitor() {
+      override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+        return acceptSameProximity(proximity, name == myReferencedName) {
+          filters.add(filter)
+        }
+      }
+    })
+    return filters.asSequence()
+      .mapNotNull { it.source }
+      .map { JSResolveResult(it) }
+      .toList()
+      .toTypedArray()
   }
 
   private fun resolveTemplateVariable(expression: JSReferenceExpressionImpl): Array<ResolveResult> {

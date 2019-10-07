@@ -121,12 +121,11 @@ JSFile:test.js.v-bind:foo.expr
               PsiWhiteSpace(' ')
               VueJSFilterReferenceExpression
                 PsiElement(JS:IDENTIFIER)('first')
-            PsiErrorElement:Expected | or end of expression
-              <empty list>
-            PsiWhiteSpace(' ')
-            PsiElement(JS:PLUS)('+')
-            PsiWhiteSpace(' ')
-            PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiWhiteSpace(' ')
+              PsiErrorElement:Expected (, | or end of expression
+                PsiElement(JS:PLUS)('+')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:NUMERIC_LITERAL)('12')
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')

@@ -255,22 +255,29 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         else {
           builder.error("Expected identifier or string")
         }
-        val params = builder.mark()
         if (builder.tokenType === JSTokenTypes.LPAR) {
+          val params = builder.mark()
           expressionNestingLevel = 2
           parseArgumentListNoMarker()
           params.done(FILTER_ARGUMENTS_LIST)
+          if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
+            val err = builder.mark()
+            builder.advanceLexer()
+            err.error("Expected | or end of expression")
+            while (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
+              builder.advanceLexer()
+            }
+          }
         }
-        else {
-          params.drop()
-        }
-        pipe.done(FILTER_EXPRESSION)
-        if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
-          builder.error("Expected | or end of expression")
+        else if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
+          val err = builder.mark()
+          builder.advanceLexer()
+          err.error("Expected (, | or end of expression")
           while (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
             builder.advanceLexer()
           }
         }
+        pipe.done(FILTER_EXPRESSION)
         firstParam = pipe.precede()
         pipe = firstParam.precede()
       }

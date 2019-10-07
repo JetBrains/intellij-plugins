@@ -32,6 +32,7 @@ import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getHostFile
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -82,12 +83,14 @@ class VueModelManager {
           context = stub.getChildrenByType(JSStubElementTypes.OBJECT_LITERAL_EXPRESSION,
                                            JSObjectLiteralExpression.ARRAY_FACTORY)
             .firstOrNull()
-        } else {
+        }
+        else {
           context = context.argumentList
             ?.arguments
             ?.find { it is JSObjectLiteralExpression }
         }
-      } else if (context is JSProperty) {
+      }
+      else if (context is JSProperty) {
         context = context.context
       }
 
@@ -303,7 +306,13 @@ class VueModelManager {
 
     fun getFilter(it: JSImplicitElement): VueFilter? {
       if (it.userString == VueGlobalFiltersIndex.JS_KEY) {
-        return VueSourceFilter(it.name, it)
+        val call = it.context
+        var filterMethod: PsiElement = it
+        if (call is JSCallExpression) {
+          call.arguments.getOrNull(1)
+            ?.let { filterMethod = it }
+        }
+        return VueSourceFilter(toAsset(it.name), filterMethod)
       }
       return null
     }

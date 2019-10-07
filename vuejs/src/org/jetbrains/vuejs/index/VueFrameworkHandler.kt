@@ -311,7 +311,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       val filterName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && !filterName.isNullOrBlank()) {
         outData.addImplicitElement(createImplicitElement(
-          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, null, arguments[1], true))
+          filterName, callExpression, VueGlobalFiltersIndex.JS_KEY, null,
+          arguments[1], true))
       }
     }
   }

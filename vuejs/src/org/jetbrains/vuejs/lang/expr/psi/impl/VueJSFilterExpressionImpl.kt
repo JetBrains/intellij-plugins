@@ -9,20 +9,20 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes
 import org.jetbrains.vuejs.lang.expr.psi.VueJSElementVisitor
+import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterArgumentsList
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
-import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterLeftSideArgument
 
 class VueJSFilterExpressionImpl(elementType: IElementType)
   : JSExpressionImpl(elementType), VueJSFilterExpression, JSCallLikeExpressionCommon {
 
-  private val leftSideArgument: VueJSFilterLeftSideArgument
+  private val leftSideArgument: VueJSFilterLeftSideArgumentImpl
     get() {
       return findChildByType(VueJSElementTypes.FILTER_LEFT_SIDE_ARGUMENT)
-        ?.getPsi(VueJSFilterLeftSideArgument::class.java)!!
+        ?.getPsi(VueJSFilterLeftSideArgumentImpl::class.java)!!
     }
 
   private val nameReference: JSReferenceExpression?
-    get() = findPsiChildByType(VueJSElementTypes.FILTER_REFERENCE_EXPRESSION) as JSReferenceExpression
+    get() = findPsiChildByType(VueJSElementTypes.FILTER_REFERENCE_EXPRESSION) as JSReferenceExpression?
 
   override fun accept(visitor: PsiElementVisitor) {
     when (visitor) {
@@ -45,6 +45,8 @@ class VueJSFilterExpressionImpl(elementType: IElementType)
   override fun getStubSafeMethodExpression(): JSExpression? = null
 
   override fun getArgumentList(): JSArgumentList = leftSideArgument
+
+  override val filterArgumentsList: VueJSFilterArgumentsList? get() = leftSideArgument.pipeRightSideArguments
 
   override fun isRequireCall(): Boolean = false
 

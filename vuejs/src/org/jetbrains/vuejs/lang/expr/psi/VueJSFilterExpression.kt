@@ -6,4 +6,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 interface VueJSFilterExpression : JSCallExpression {
 
   override fun getName(): String?
+
+  val filterArgumentsList: VueJSFilterArgumentsList?
+
 }

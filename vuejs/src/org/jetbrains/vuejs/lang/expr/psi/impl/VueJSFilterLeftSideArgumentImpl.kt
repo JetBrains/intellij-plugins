@@ -15,7 +15,7 @@ class VueJSFilterLeftSideArgumentImpl(elementType: IElementType) : JSElementImpl
     get() = findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS)
       ?.getPsi(JSExpression::class.java)
 
-  private val pipeRightSideArguments: VueJSFilterArgumentsListImpl?
+  val pipeRightSideArguments: VueJSFilterArgumentsListImpl?
     get() = (parent as? VueJSFilterExpressionImpl)
       ?.findChildByType(VueJSElementTypes.FILTER_ARGUMENTS_LIST)
       ?.getPsi(VueJSFilterArgumentsListImpl::class.java)

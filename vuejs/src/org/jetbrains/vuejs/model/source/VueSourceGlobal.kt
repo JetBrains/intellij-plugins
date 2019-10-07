@@ -14,6 +14,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.EntryStream
+import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import java.util.*
@@ -145,7 +146,7 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
         .asSequence()
         .mapNotNull { element ->
           VueModelManager.getFilter(element)
-            ?.let { Pair(element.name, it) }
+            ?.let { Pair(toAsset(element.name), it) }
         }
         // TODO properly support multiple filters with the same name
         .distinctBy { it.first }
