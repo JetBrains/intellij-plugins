@@ -314,6 +314,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     return DebugType.REMOTE == myDebugType;
   }
 
+  public boolean isWebdevDebug() {
+    return DebugType.WEBDEV == myDebugType;
+  }
+
   public void guessRemoteProjectRoot(@NotNull final ElementList<LibraryRef> libraries) {
     final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
     final VirtualFile projectRoot = pubspec != null ? pubspec.getParent() : myCurrentWorkingDirectory;

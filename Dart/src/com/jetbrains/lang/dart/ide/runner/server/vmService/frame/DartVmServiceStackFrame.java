@@ -191,7 +191,11 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Nullable
   @Override
   public XDebuggerEvaluator getEvaluator() {
-    return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    // Enable Expression evaluation for all run configurations except webdev run instances
+    if (!myDebugProcess.isWebdevDebug()) {
+      return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    }
+    return null;
   }
 
   public boolean isInDartSdkPatchFile() {
