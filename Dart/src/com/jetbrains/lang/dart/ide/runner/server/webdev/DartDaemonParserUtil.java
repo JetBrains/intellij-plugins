@@ -55,11 +55,16 @@ public class DartDaemonParserUtil {
   }
 
   /**
-   * Given the json log:
-   * <p>
+   * Given the json logs:
+   * <code>
    * [{"event":"daemon.log","params":{"log":"some log text"}}]
    * <p>
-   * return the {@link String} <code>some log text</code>
+   * or
+   * <p>
+   * [{"event":"app.log","params":{"appId":"foobar","log":"Counter is: 1\n"}}]
+   * </code>
+   * <p>
+   * return the {@link String} <code>some log text</code> or <code>Counter is: 1</code>
    */
   @Nullable
   public static String getLogMessage(@NotNull final String text) {
@@ -82,7 +87,7 @@ public class DartDaemonParserUtil {
     }
 
     final String eventName = primEvent.getAsString();
-    if (eventName == null || !eventName.equals("daemon.log")) {
+    if (eventName == null || (!eventName.equals("daemon.log") && !eventName.equals("app.log"))) {
       return null;
     }
 
