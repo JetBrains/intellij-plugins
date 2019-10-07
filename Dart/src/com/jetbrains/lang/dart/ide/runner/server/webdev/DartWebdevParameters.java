@@ -19,6 +19,8 @@ public class DartWebdevParameters implements Cloneable {
   @Nullable
   private String myHTMLFilePath = null;
 
+  private static final String MIN_DART_SDK_VERSION_FOR_WEBDEV = "2.5.0";
+
   @Nullable
   public String getHTMLFilePath() {
     return myHTMLFilePath;
@@ -56,24 +58,22 @@ public class DartWebdevParameters implements Cloneable {
     }
   }
 
-  public void check(final @NotNull Project project) throws RuntimeConfigurationError {
+  public void check(@NotNull final Project project) throws RuntimeConfigurationError {
     // check sdk
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"),
                                           () -> DartConfigurable.openDartSettings(project));
     }
-
-    // TODO(jwren) check that the Dart SDK is at or past some Dart SDK version that has the webdev support
+    final String sdkVersion = sdk.getVersion();
+    if (!sdkVersion.isEmpty() && StringUtil.compareVersionNumbers(sdkVersion, MIN_DART_SDK_VERSION_FOR_WEBDEV) < 0) {
+      throw new RuntimeConfigurationError(DartBundle.message("old.dart.sdk.for.webdev", MIN_DART_SDK_VERSION_FOR_WEBDEV, sdkVersion));
+    }
 
     // check main html file
     if (StringUtil.isEmptyOrSpaces(myHTMLFilePath)) {
       throw new RuntimeConfigurationError(DartBundle.message("path.to.html.file.not.set"));
     }
-
-    // TODO(jwren) check that the html file is named "index.html"
-    // TODO(jwren) check that the html file is in a directory named "web"
-    // TODO(jwren) other verifications, such as the existence of a main.dart file, yaml file, .packages file
   }
 
   @Override
