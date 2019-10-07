@@ -1,3 +1,10 @@
+"foo"|lowercase
+"foo" | lowercase
+"foo" | mod(false, 12)
+"foo" | first | second(12, 34) | third
+("foo" | 123) | foo
+("foo" | 123) | first + 12 | second(12, 34 + 12 | 23) | third
+{foo: 12 | 34} | boo
 0&&2
 0||2
 0||1&&2

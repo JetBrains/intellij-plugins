@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(com.intellij.testFramework.Parameterized::class)
-class VueJSParserTest  : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHelperEx {
+class VueJSParserTest : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHelperEx {
 
   override fun getTestDataPath(): String {
     return PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/expr/parser"
@@ -35,7 +35,7 @@ class VueJSParserTest  : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHe
         throwable = e
       }
     }
-    throwable?.let{throw it}
+    throwable?.let { throw it }
   }
 
   private fun doSingleTest(suffix: String, path: String) {
@@ -44,7 +44,7 @@ class VueJSParserTest  : LightPlatformCodeInsightTestCase(), FileBasedTestCaseHe
 
     val firstDot = suffix.indexOf('.')
     val attributeName = suffix.substring(0, firstDot)
-      .replace('=',':')
+      .replace('=', ':')
       .replace(' ', '.')
     val secondDot = suffix.indexOf('.', firstDot + 1)
     val extension = if (secondDot > 0) suffix.substring(firstDot + 1, secondDot) else ""

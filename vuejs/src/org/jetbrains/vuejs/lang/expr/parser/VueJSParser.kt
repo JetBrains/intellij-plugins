@@ -12,11 +12,16 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.psi.css.impl.CssElementTypes.KEYWORDS
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_ARGUMENTS_LIST
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_EXPRESSION
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_LEFT_SIDE_ARGUMENT
+import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_REFERENCE_EXPRESSION
 
 class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
-  : ES6Parser<ES6ExpressionParser<*>, VueJSParser.VueJSStatementParser, ES6FunctionParser<*>,
+  : ES6Parser<VueJSParser.VueJSExpressionParser, VueJSParser.VueJSStatementParser, ES6FunctionParser<*>,
   JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
 
   constructor(builder: PsiBuilder) : this(builder, true)
@@ -58,13 +63,13 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
 
   init {
     myStatementParser = VueJSStatementParser(this)
+    myExpressionParser = VueJSExpressionParser(this)
   }
 
   inner class VueJSStatementParser(parser: VueJSParser) : ES6StatementParser<VueJSParser>(parser) {
 
     fun parseRegularExpression() {
-      // TODO support filters
-      if (!myExpressionParser.parseExpressionOptional() && !builder.eof()) {
+      if (!myExpressionParser.parseFilterOptional() && !builder.eof()) {
         val mark = builder.mark()
         if (!builder.eof()) {
           builder.advanceLexer()
@@ -75,8 +80,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
     }
 
     fun parseVBind() {
-      // TODO support filters
-      if (!myExpressionParser.parseExpressionOptional()) {
+      if (!myExpressionParser.parseFilterOptional()) {
         val mark = builder.mark()
         if (!builder.eof()) {
           builder.advanceLexer()
@@ -217,6 +221,79 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       varStatement.done(JSStubElementTypes.VAR_STATEMENT)
       builder.advanceLexer()
       parenthesis.done(JSElementTypes.PARENTHESIZED_EXPRESSION)
+    }
+  }
+
+  inner class VueJSExpressionParser(parser: VueJSParser) : ES6ExpressionParser<VueJSParser>(parser) {
+
+    private var expressionNestingLevel: Int = 0
+
+    override fun parseScriptExpression(isTypeContext: Boolean) {
+      throw UnsupportedOperationException()
+    }
+
+    //regex, curly, square, paren
+
+    fun parseFilterOptional(): Boolean {
+      var pipe: PsiBuilder.Marker = builder.mark()
+      var firstParam: PsiBuilder.Marker = builder.mark()
+      expressionNestingLevel = 0
+      if (!parseExpressionOptional()) {
+        firstParam.drop()
+        pipe.drop()
+        return false
+      }
+
+      while (builder.tokenType === JSTokenTypes.OR) {
+        firstParam.done(FILTER_LEFT_SIDE_ARGUMENT)
+        builder.advanceLexer()
+        if (builder.tokenType === JSTokenTypes.IDENTIFIER || KEYWORDS.contains(builder.tokenType)) {
+          val pipeName = builder.mark()
+          builder.advanceLexer()
+          pipeName.done(FILTER_REFERENCE_EXPRESSION)
+        }
+        else {
+          builder.error("Expected identifier or string")
+        }
+        val params = builder.mark()
+        if (builder.tokenType === JSTokenTypes.LPAR) {
+          expressionNestingLevel = 2
+          parseArgumentListNoMarker()
+          params.done(FILTER_ARGUMENTS_LIST)
+        }
+        else {
+          params.drop()
+        }
+        pipe.done(FILTER_EXPRESSION)
+        if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
+          builder.error("Expected | or end of expression")
+          while (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
+            builder.advanceLexer()
+          }
+        }
+        firstParam = pipe.precede()
+        pipe = firstParam.precede()
+      }
+      firstParam.drop()
+      pipe.drop()
+      return true
+    }
+
+    override fun parseAssignmentExpression(allowIn: Boolean): Boolean {
+      expressionNestingLevel++
+      try {
+        return super.parseAssignmentExpression(allowIn)
+      }
+      finally {
+        expressionNestingLevel--
+      }
+    }
+
+    override fun getCurrentBinarySignPriority(allowIn: Boolean, advance: Boolean): Int {
+      return if (builder.tokenType === JSTokenTypes.OR && expressionNestingLevel <= 1) {
+        -1
+      }
+      else super.getCurrentBinarySignPriority(allowIn, advance)
     }
   }
 }

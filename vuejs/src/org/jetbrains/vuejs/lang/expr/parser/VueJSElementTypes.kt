@@ -2,28 +2,46 @@
 package org.jetbrains.vuejs.lang.expr.parser
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.javascript.types.JSExpressionElementType
 import com.intellij.psi.tree.ICompositeElementType
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSEmbeddedExpressionImpl
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSSlotPropsExpressionImpl
-import org.jetbrains.vuejs.lang.expr.psi.impl.VueJSVForExpressionImpl
+import org.jetbrains.vuejs.lang.expr.psi.impl.*
 
 object VueJSElementTypes {
 
-  val V_FOR_EXPRESSION: IElementType = object : VueJSCompositeElementType("V_FOR_EXPRESSION") {
-    override fun createCompositeNode(): ASTNode = VueJSVForExpressionImpl(this)
+  val FILTER_ARGUMENTS_LIST: IElementType = VueJSExpressionElementType(
+    "FILTER_ARGUMENTS_LIST", ::VueJSFilterArgumentsListImpl)
+
+  val FILTER_REFERENCE_EXPRESSION: IElementType = VueJSExpressionElementType(
+    "FILTER_REFERENCE_EXPRESSION", ::VueJSFilterReferenceExpressionImpl)
+
+  val FILTER_LEFT_SIDE_ARGUMENT: IElementType = VueJSExpressionElementType(
+    "FILTER_LEFT_SIDE_ARGUMENT", ::VueJSFilterLeftSideArgumentImpl)
+
+  val FILTER_EXPRESSION: IElementType = VueJSExpressionElementType(
+    "FILTER_EXPRESSION", ::VueJSFilterExpressionImpl)
+
+  val V_FOR_EXPRESSION: IElementType = VueJSExpressionElementType(
+    "V_FOR_EXPRESSION", ::VueJSVForExpressionImpl)
+
+  val SLOT_PROPS_EXPRESSION: IElementType = VueJSExpressionElementType(
+    "SLOT_PROPS_EXPRESSION", ::VueJSSlotPropsExpressionImpl)
+
+  val EMBEDDED_EXPR_STATEMENT: IElementType = VueJSElementType(
+    "VUE:EMBEDDED_EXPR_STATEMENT", ::VueJSEmbeddedExpressionImpl)
+
+
+  private open class VueJSElementType(@NonNls debugName: String, private val myClassConstructor: (VueJSElementType) -> ASTNode)
+    : IElementType(debugName, VueJSLanguage.INSTANCE), ICompositeElementType {
+    final override fun createCompositeNode(): ASTNode = myClassConstructor(this)
   }
 
-  val SLOT_PROPS_EXPRESSION: IElementType = object : VueJSCompositeElementType("SLOT_PROPS_EXPRESSION") {
-    override fun createCompositeNode(): ASTNode = VueJSSlotPropsExpressionImpl(this)
-  }
+  private class VueJSExpressionElementType(@NonNls debugName: String,
+                                           classConstructor: (VueJSElementType) -> ASTNode)
+    : VueJSElementType(debugName, classConstructor), JSExpressionElementType
 
-  val EMBEDDED_EXPR_STATEMENT: IElementType = object : VueJSCompositeElementType("VUE:EMBEDDED_EXPR_STATEMENT") {
-    override fun createCompositeNode(): ASTNode = VueJSEmbeddedExpressionImpl(this)
-  }
 
-  private abstract class VueJSCompositeElementType(debugName: String)
-    : IElementType(debugName, VueJSLanguage.INSTANCE), ICompositeElementType
 }
 

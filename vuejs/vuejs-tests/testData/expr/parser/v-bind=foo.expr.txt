@@ -1,5 +1,191 @@
 JSFile:test.js.v-bind:foo.expr
   VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiElement(JS:OR)('|')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('lowercase')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('lowercase')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('mod')
+      VueJSFilterArgumentsList
+        PsiElement(JS:LPAR)('(')
+        JSLiteralExpression
+          PsiElement(JS:FALSE_KEYWORD)('false')
+        PsiElement(JS:COMMA)(',')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('12')
+        PsiElement(JS:RPAR)(')')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        VueJSFilterExpression
+          VueJSFilterLeftSideArgument
+            VueJSFilterExpression
+              VueJSFilterLeftSideArgument
+                JSLiteralExpression
+                  PsiElement(JS:STRING_LITERAL)('"foo"')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:OR)('|')
+              PsiWhiteSpace(' ')
+              VueJSFilterReferenceExpression
+                PsiElement(JS:IDENTIFIER)('first')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          VueJSFilterReferenceExpression
+            PsiElement(JS:IDENTIFIER)('second')
+          VueJSFilterArgumentsList
+            PsiElement(JS:LPAR)('(')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('34')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('third')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSParenthesizedExpression
+          PsiElement(JS:LPAR)('(')
+          JSBinaryExpression
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)('"foo"')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('123')
+          PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('foo')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        VueJSFilterExpression
+          VueJSFilterLeftSideArgument
+            VueJSFilterExpression
+              VueJSFilterLeftSideArgument
+                JSParenthesizedExpression
+                  PsiElement(JS:LPAR)('(')
+                  JSBinaryExpression
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"foo"')
+                    PsiWhiteSpace(' ')
+                    PsiElement(JS:OR)('|')
+                    PsiWhiteSpace(' ')
+                    JSLiteralExpression
+                      PsiElement(JS:NUMERIC_LITERAL)('123')
+                  PsiElement(JS:RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:OR)('|')
+              PsiWhiteSpace(' ')
+              VueJSFilterReferenceExpression
+                PsiElement(JS:IDENTIFIER)('first')
+            PsiErrorElement:Expected | or end of expression
+              <empty list>
+            PsiWhiteSpace(' ')
+            PsiElement(JS:PLUS)('+')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          VueJSFilterReferenceExpression
+            PsiElement(JS:IDENTIFIER)('second')
+          VueJSFilterArgumentsList
+            PsiElement(JS:LPAR)('(')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('12')
+            PsiElement(JS:COMMA)(',')
+            PsiWhiteSpace(' ')
+            JSBinaryExpression
+              JSBinaryExpression
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('34')
+                PsiWhiteSpace(' ')
+                PsiElement(JS:PLUS)('+')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:OR)('|')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('23')
+            PsiElement(JS:RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('third')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSObjectLiteralExpression
+          PsiElement(JS:LBRACE)('{')
+          JSProperty
+            PsiElement(JS:IDENTIFIER)('foo')
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSBinaryExpression
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiWhiteSpace(' ')
+              PsiElement(JS:OR)('|')
+              PsiWhiteSpace(' ')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('34')
+          PsiElement(JS:RBRACE)('}')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:IDENTIFIER)('boo')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
     JSBinaryExpression
       JSLiteralExpression
         PsiElement(JS:NUMERIC_LITERAL)('0')
