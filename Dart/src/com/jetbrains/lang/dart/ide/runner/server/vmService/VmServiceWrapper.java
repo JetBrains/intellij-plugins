@@ -15,7 +15,6 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
-import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartAsyncMarkerFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEvaluator;
@@ -100,7 +99,7 @@ public class VmServiceWrapper implements Disposable {
             getVm(new VmServiceConsumers.VmConsumerWrapper() {
               @Override
               public void received(final VM vm) {
-                if (vm.getIsolates().isEmpty()) {
+                if (vm.getIsolates().size() == 0) {
                   Logging.getLogger().logError("No isolates found after VM start: " + vm.getIsolates().size());
                 }
 
@@ -117,11 +116,6 @@ public class VmServiceWrapper implements Disposable {
                         return;
                       }
 
-                      // This is the entry point for attaching a debugger to a running app.
-                      if (eventKind == EventKind.Resume) {
-                        attachIsolate(isolateRef, isolate);
-                        return;
-                      }
                       // if event is not PauseStart it means that PauseStart event will follow later and will be handled by listener
                       handleIsolate(isolateRef, eventKind == EventKind.PauseStart);
 
@@ -217,26 +211,6 @@ public class VmServiceWrapper implements Disposable {
     }
   }
 
-  public void attachIsolate(@NotNull IsolateRef isolateRef, @NotNull Isolate isolate) {
-    boolean newIsolate = myIsolatesInfo.addIsolate(isolateRef);
-    // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
-    if (newIsolate) {
-      XDebugSessionImpl session = (XDebugSessionImpl)myDebugProcess.getSession();
-      ApplicationManager.getApplication().runReadAction(() -> {
-        session.reset();
-        session.initBreakpoints();
-      });
-      addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                         myDebugProcess.getBreakOnExceptionMode(),
-                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
-                                                           @Override
-                                                           public void received(Success response) {
-                                                             setInitialBreakpointsAndCheckExtensions(isolateRef, isolate);
-                                                           }
-                                                         }));
-    }
-  }
-
   private void checkInitialResume(IsolateRef isolateRef) {
     if (myIsolatesInfo.getShouldInitialResume(isolateRef)) {
       resumeIsolate(isolateRef.getId(), null);
@@ -262,12 +236,6 @@ public class VmServiceWrapper implements Disposable {
     else {
       doSetInitialBreakpointsAndResume(isolateRef);
     }
-  }
-
-  private void setInitialBreakpointsAndCheckExtensions(@NotNull IsolateRef isolateRef, @NotNull Isolate isolate) {
-    doSetBreakpointsForIsolate(myBreakpointHandler.getXBreakpoints(), isolateRef.getId(), () -> {
-      myIsolatesInfo.setBreakpointsSet(isolateRef);
-    });
   }
 
   private void doSetInitialBreakpointsAndResume(@NotNull final IsolateRef isolateRef) {
@@ -584,6 +552,41 @@ public class VmServiceWrapper implements Disposable {
   public void callToString(@NotNull final String isolateId,
                            @NotNull final String targetId,
                            @NotNull final InvokeConsumer callback) {
-    addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));
+    // For 3.11 and after we use "invoke"; before that, we use "eval";
+    if (supportsInvoke()) {
+      addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), true, callback));
+    }
+    else {
+      myDebugProcess.getVmServiceWrapper()
+        .evaluateInTargetContext(isolateId, targetId, "toString()", new EvaluateConsumer() {
+          @Override
+          public void onError(RPCError error) {
+            callback.onError(error);
+          }
+
+          @Override
+          public void received(ErrorRef response) {
+            callback.received(response);
+          }
+
+          @Override
+          public void received(InstanceRef response) {
+            callback.received(response);
+          }
+
+          @Override
+          public void received(Sentinel response) {
+            callback.received(response);
+          }
+        });
+    }
+  }
+
+  /**
+   * Return whether the "invoke" call is supported by this connection.
+   */
+  private boolean supportsInvoke() {
+    final Version version = myVmService.getRuntimeVersion();
+    return version.getMajor() >= 3 && version.getMinor() >= 11;
   }
 }
