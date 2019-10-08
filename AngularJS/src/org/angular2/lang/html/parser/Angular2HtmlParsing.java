@@ -260,7 +260,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
         if (contentType != null) {
           final PsiBuilder.Marker contentStart = mark();
           advance();
-          contentStart.collapse(contentType);
+          if (contentType == NG_CONTENT_SELECTOR) {
+            contentStart.done(contentType);
+          }
+          else {
+            contentStart.collapse(contentType);
+          }
         }
         else {
           advance(); // Single token att value

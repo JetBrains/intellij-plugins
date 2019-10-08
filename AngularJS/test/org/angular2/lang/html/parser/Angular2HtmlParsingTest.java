@@ -340,4 +340,12 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgNonBindable4() throws Exception {
     doTestHtml("<p ngNonBindable>{{foo}}<p>{{bar}}");
   }
+
+  public void testNgNonQuotedAttrs() throws Exception {
+    doTestHtml("<div (click)=doIt()></div>\n" +
+               "<div [id]=foo></div>\n" +
+               "<div #foo=bar></div>\n" +
+               "<ng-content select=[header-content]></ng-content>\n");
+  }
+
 }
