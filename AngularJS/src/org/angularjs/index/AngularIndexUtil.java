@@ -14,10 +14,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -154,6 +151,10 @@ public class AngularIndexUtil {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      // Do not try to resolve anything on EDT
+      if (ApplicationManager.getApplication().isDispatchThread()) {
+        return CachedValueProvider.Result.create(-1, ModificationTracker.EVER_CHANGED);
+      }
       int version = -1;
       PsiElement resolve;
       if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
@@ -236,7 +237,7 @@ public class AngularIndexUtil {
         allKeys,
         key -> id instanceof StubIndexKey
                ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
-               : !fileIndex.processValues(id, key, null, (FileBasedIndex.ValueProcessor)(file, value) -> false, scope)
+               : !fileIndex.processValues(id, key, null, (file, value) -> false, scope)
       );
       return CachedValueProvider.Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
