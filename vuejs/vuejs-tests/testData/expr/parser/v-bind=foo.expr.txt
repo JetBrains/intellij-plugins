@@ -152,6 +152,9 @@ JSFile:test.js.v-bind:foo.expr
               JSLiteralExpression
                 PsiElement(JS:NUMERIC_LITERAL)('23')
             PsiElement(JS:RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expected | or end of expression
+            PsiElement(JS:IDENTIFIER)('foo')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')

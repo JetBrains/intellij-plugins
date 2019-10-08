@@ -10,6 +10,8 @@ import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.ProcessingContext
 import com.intellij.util.Processor
@@ -30,10 +32,12 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
       val container = VueModelManager.findEnclosingContainer(ref)
       container?.acceptEntities(object : VueModelVisitor() {
         override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
-          val source = filter.source
-          if (source != null && proximity !== Proximity.OUT_OF_SCOPE) {
-            result.consume(JSCompletionUtil.withJSLookupPriority(JSLookupUtilImpl.createLookupElement(source, name),
-                                                                 getJSLookupPriorityOf(proximity)))
+          if (proximity !== Proximity.OUT_OF_SCOPE) {
+            (filter.source
+             ?: JSImplicitElementImpl.Builder(name, ref).setType(JSImplicitElement.Type.Method).forbidAstAccess ().toImplicitElement())
+              .let { JSLookupUtilImpl.createLookupElement(it, name) }
+              .let { JSCompletionUtil.withJSLookupPriority(it, getJSLookupPriorityOf(proximity)) }
+              .let { result.consume(it) }
           }
           return proximity !== Proximity.OUT_OF_SCOPE
         }

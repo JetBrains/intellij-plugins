@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.JSBundle
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
@@ -35,9 +37,13 @@ class VueHighlightingTest : BasePlatformTestCase() {
                                 JSAnnotatorInspection(),
                                 JSUnresolvedVariableInspection(),
                                 JSUnresolvedFunctionInspection(),
+                                JSValidateTypesInspection(),
                                 ThisExpressionReferencesGlobalObjectJSInspection(),
                                 JSValidateTypesInspection(),
                                 TypeScriptValidateTypesInspection(),
+                                TypeScriptUnresolvedVariableInspection(),
+                                TypeScriptUnresolvedFunctionInspection(),
+                                JSCheckFunctionSignaturesInspection(),
                                 XmlUnboundNsPrefixInspection(),
                                 CheckEmptyTagInspection())
   }
@@ -293,6 +299,8 @@ const props = {seeMe: {}}
     </div>
 </template>
 <script lang='ts'>
+    import {Component, Prop} from "vue-property-decorator" 
+    
     interface Foo {
       one: string,
       two: string,
@@ -1451,6 +1459,12 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
 
   fun testPropsWithOptions() {
     myFixture.configureByFiles("propsWithOptions/usage.vue", "propsWithOptions/component.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testFilters() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("filters.vue")
     myFixture.checkHighlighting()
   }
 }

@@ -1901,6 +1901,22 @@ export default class UsageComponent extends Vue {
     }
   }
 
+  fun testFilters() {
+    createPackageJsonWithVueDependency(myFixture, "\"some_lib\":\"0.0.0\"")
+    myFixture.copyDirectoryToProject("filters/",".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    for ((filterName, resolvedItemText) in listOf(
+      Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),
+      Pair("globalFilter", "function (value) { return 12 }"),
+      Pair("appFilter", "appFilter: function (value, param) { return \"\" }"),
+      Pair("webTypesFilter", "declare function myFilter(value: boolean): string")
+    )) {
+      val element = myFixture.resolveReference("<caret>${filterName}")
+      TestCase.assertEquals(filterName, resolvedItemText, element.text)
+    }
+    myFixture.assertUnresolvedReference("<caret>wrongFilter")
+  }
+
 }
 
 fun globalMixinText(): String {

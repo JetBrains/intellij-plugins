@@ -6,6 +6,7 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
+import com.intellij.testFramework.UsefulTestCase.assertEmpty
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
@@ -133,4 +134,14 @@ fun CodeInsightTestFixture.resolveReference(signature: String): PsiElement {
   }
   TestCase.assertNotNull("Reference resolves to null at '$signature'", resolve)
   return resolve!!
+}
+
+fun CodeInsightTestFixture.assertUnresolvedReference(signature: String) {
+  val offsetBySignature = file.findOffsetBySignature(signature)
+  val ref = file.findReferenceAt(offsetBySignature)
+  TestCase.assertNotNull(ref)
+  TestCase.assertNull(ref!!.resolve())
+  if (ref is PsiPolyVariantReference) {
+    assertEmpty(ref.multiResolve(false))
+  }
 }

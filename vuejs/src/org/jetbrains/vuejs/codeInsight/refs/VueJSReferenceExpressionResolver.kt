@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
@@ -56,8 +57,10 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       }
     })
     return filters.asSequence()
-      .mapNotNull { it.source }
-      .map { JSResolveResult(it) }
+      .map {
+        JSResolveResult(it.source ?: JSImplicitElementImpl.Builder(myReferencedName!!, expression)
+          .forbidAstAccess().toImplicitElement())
+      }
       .toList()
       .toTypedArray()
   }

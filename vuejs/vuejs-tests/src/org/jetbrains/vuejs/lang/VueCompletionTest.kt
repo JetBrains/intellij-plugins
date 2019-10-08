@@ -1567,6 +1567,14 @@ $script""")
     }
   }
 
+  fun testFiltersCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"some_lib\": \"0.0.0\"")
+    myFixture.copyDirectoryToProject("filters", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter", "webTypesFilter").sorted(),myFixture.lookupElementStrings!!.sorted())
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
