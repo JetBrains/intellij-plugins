@@ -101,9 +101,9 @@ public class AngularConfigTest extends BasePlatformTestCase {
         assert file != null : entry.getKey();
         String value = StreamEx.ofNullable(config.getProject(file))
           .flatCollection(project -> project.getTsLintConfigurations())
-          .filter(lintConfig -> lintConfig.accept(file))
+          .map(lintConfig -> lintConfig.getTsLintConfig(file))
+          .nonNull()
           .findFirst()
-          .map(lintConfig -> lintConfig.getTsLintConfig())
           .map(lintFile -> lintFile.getPath())
           .orElse(null);
         if (value != null) {

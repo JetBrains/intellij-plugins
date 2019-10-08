@@ -13,7 +13,7 @@
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
-           tsLintConfig=temp:///src/tslint.json
+           tsLintConfig=null
            tsConfigs=[temp:///src/src/tsconfig.app.json]
            includes=null
            excludes=[**/node_modules/**]
