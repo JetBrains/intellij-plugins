@@ -1,6 +1,6 @@
 {
-  "src/test.spec.ts": "/src/tslint.json",
-  "src/test.ts": "/src/tslint.json",
+  "src/test.spec.ts": "/src/src/tslint.json",
+  "src/test.ts": "/src/src/tslint.json",
   "e2e/test.ts": "/src/tslint-e2e.json",
   "projects/test-ng-attr/src/test.ts": "/src/projects/test-ng-attr/tslint.json"
 }

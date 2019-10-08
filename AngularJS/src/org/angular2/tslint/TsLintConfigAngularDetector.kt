@@ -20,11 +20,12 @@ class TsLintConfigAngularDetector : TsLintConfigDetector {
     }
     return AngularConfigProvider.getAngularProject(project, file ?: return null)
       ?.tsLintConfigurations
-      ?.find { it.tsLintConfig != null && it.accept(file) }
+      ?.map { Pair(it, it.getTsLintConfig(file)) }
+      ?.firstOrNull { it.second != null }
       ?.let {
         TsLintConfigDetector.TsLintConfigs(
-          it.tsLintConfig!!,
-          it.tsConfigs.find { tsConfig -> configGraphIncludesFile(project, file, tsConfig) })
+          it.second!!,
+          it.first.tsConfigs.find { tsConfig -> configGraphIncludesFile(project, file, tsConfig) })
       }
   }
 }
