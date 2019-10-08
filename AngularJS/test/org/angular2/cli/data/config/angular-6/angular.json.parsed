@@ -13,7 +13,7 @@
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
-           tsLintConfig=temp:///src/tslint.json
+           tsLintConfig=null
            tsConfigs=[temp:///src/src/tsconfig.app.json, temp:///src/src/tsconfig.spec.json]
            includes=null
            excludes=[**/node_modules/**]
@@ -32,7 +32,7 @@
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
-           tsLintConfig=temp:///src/tslint.json
+           tsLintConfig=null
            tsConfigs=[temp:///src/e2e/tsconfig.e2e.json]
            includes=null
            excludes=[**/node_modules/**]

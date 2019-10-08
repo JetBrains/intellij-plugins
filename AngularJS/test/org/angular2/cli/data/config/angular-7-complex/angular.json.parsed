@@ -13,7 +13,7 @@
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
-           tsLintConfig=temp:///src/tslint.json
+           tsLintConfig=null
            tsConfigs=[temp:///src/src/tsconfig.app.json, temp:///src/src/tsconfig.spec.json]
            includes=null
            excludes=[**/node_modules/**]
@@ -51,7 +51,7 @@
        tsLintConfigurations: [
          TsLintConfiguration {
            name=null
-           tsLintConfig=temp:///src/projects/test-ng-attr/tslint.json
+           tsLintConfig=null
            tsConfigs=[temp:///src/projects/test-ng-attr/tsconfig.lib.json, temp:///src/projects/test-ng-attr/tsconfig.spec.json]
            includes=null
            excludes=[**/node_modules/**]
