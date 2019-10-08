@@ -5,7 +5,7 @@ import {Component} from "@angular/core"
   selector: `test`,
   template: `
     <ng-content select="foo,[bar]"></ng-content>
-    <ng-content select="bar[foo]"></ng-content>
+    <ng-content select=bar[foo]></ng-content>
     <ng-content select=":not([goo])"></ng-content>
   `
 })
