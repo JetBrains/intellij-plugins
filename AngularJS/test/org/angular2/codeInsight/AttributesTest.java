@@ -42,13 +42,12 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
-import static org.angularjs.AngularTestUtil.renderLookupItems;
+import static org.angularjs.AngularTestUtil.*;
 
 public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "attributes";
+    return getBaseTestDataPath(getClass()) + "attributes";
   }
 
   @NotNull
@@ -80,7 +79,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("event.html", "custom.ts", "package.json");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "(mouseover)");
-    AngularTestUtil.moveToOffsetBySignature("<some-tag <caret>>", myFixture);
+    moveToOffsetBySignature("<some-tag <caret>>", myFixture);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "(mouseover)");
   }
@@ -120,7 +119,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testTemplateReferenceSmart2() {
     myFixture.configureByFiles("binding.type.html", "package.json");
     final PsiFile file = myFixture.getFile();
-    final int offset = AngularTestUtil.findOffsetBySignature("user<caret>name,", file);
+    final int offset = findOffsetBySignature("user<caret>name,", file);
     final JSReferenceExpression ref = PsiTreeUtil.getParentOfType(file.findElementAt(offset), JSReferenceExpression.class);
     final JSSimpleTypeProcessor processor = new JSSimpleTypeProcessor();
     JSTypeEvaluator.evaluateTypes(ref, file, processor);
@@ -318,7 +317,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testForCompletion2TypeScript() {
     myFixture.configureByFiles("for2.html", "ng_for_of.ts", "package.json");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
+    int offsetBySignature = findOffsetBySignature("ngF<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
@@ -329,13 +328,13 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = resolveReference("ngF<caret>");
     assertEquals("ng_for_of.ts", resolve.getContainingFile().getName());
     assertEquals("ngFor", resolve.getText());
-    assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", getDirectiveDefinitionText(resolve));
   }
 
   public void testForCompletion2Javascript() {
     configureWithMetadataFiles(myFixture, "common");
     myFixture.configureByFiles("for2.html");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
+    int offsetBySignature = findOffsetBySignature("ngF<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "ngFor", "[ngForOf]");
@@ -344,7 +343,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testIfCompletion4JavascriptUmd() {
     configureWithMetadataFiles(myFixture, "common");
     myFixture.configureByFiles("if4.html");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
+    int offsetBySignature = findOffsetBySignature("*<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "*ngIf");
@@ -370,7 +369,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testTemplateUrl20Completion() {
     myFixture.configureByFiles("custom.ts", "package.json", "custom.html");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("templateUrl: '<caret>", myFixture.getFile());
+    int offsetBySignature = findOffsetBySignature("templateUrl: '<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "custom.ts", "package.json", "custom.html");
@@ -385,7 +384,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testStyleUrls20Completion() {
     myFixture.configureByFiles("custom.ts", "package.json", "custom.html");
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature("styleUrls: ['<caret>", myFixture.getFile());
+    int offsetBySignature = findOffsetBySignature("styleUrls: ['<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "custom.ts", "package.json", "custom.html");
@@ -618,7 +617,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
       String checks = attr.getValue();
       for (int i = 0; i < attrWrap.size(); i++) {
         Pair<String, String> wrap = attrWrap.get(i);
-        int offsetBySignature = AngularTestUtil.findOffsetBySignature(
+        int offsetBySignature = findOffsetBySignature(
           wrap.first + "<caret>" + name + wrap.second + "=", myFixture.getFile());
         PsiPolyVariantReference ref = (PsiPolyVariantReference)myFixture.getFile().findReferenceAt(offsetBySignature);
         String messageStart = "Attribute " + wrap.first + name + wrap.second;
@@ -671,7 +670,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     Registry.get("ide.completion.variant.limit").setValue(10000, getTestRootDisposable());
     myFixture.configureByFiles("exportAsMultipleNames.ts", "package.json");
     for (String name : asList("r", "f", "g")) {
-      AngularTestUtil.moveToOffsetBySignature("{{ " + name + ".<caret> }}", myFixture);
+      moveToOffsetBySignature("{{ " + name + ".<caret> }}", myFixture);
       myFixture.completeBasic();
       if (name.equals("g")) {
         assertContainsElements(myFixture.getLookupElementStrings(), "length", "type");
@@ -958,11 +957,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testTypeAttrWithFormsCompletion() {
     configureWithMetadataFiles(myFixture, "common", "forms");
     myFixture.configureByFiles("typeAttrWithForms.html", "typeAttrWithForms.ts");
-    AngularTestUtil.moveToOffsetBySignature("<button <caret>>", myFixture);
+    moveToOffsetBySignature("<button <caret>>", myFixture);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "type");
 
-    AngularTestUtil.moveToOffsetBySignature("<input <caret>/>", myFixture);
+    moveToOffsetBySignature("<input <caret>/>", myFixture);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "type");
   }
@@ -987,7 +986,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
     for (Map.Entry<String, List<String>> entry : data.entrySet()) {
       String location = entry.getKey();
-      assertSameElements(AngularTestUtil.multiResolveReference(location.charAt(0) + "<caret>" + location.substring(1), myFixture)
+      assertSameElements(multiResolveReference(location.charAt(0) + "<caret>" + location.substring(1), myFixture)
                            .stream()
                            .map(el -> {
                              if (el.getText() != null) {
@@ -1044,6 +1043,16 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     configureWithMetadataFiles(myFixture, "ionic4.1");
     myFixture.configureByFiles("ionicAttributes.html");
     myFixture.checkHighlighting();
+  }
+
+  public void testSvgAttributes() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("svg-test.html", "svg-test.ts", "package.json");
+    myFixture.checkHighlighting();
+    moveToOffsetBySignature("<svg:clipPath id=\"clip\"><caret>", myFixture);
+    myFixture.type("<svg:circle [attr.");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "cx]", "cy]", "visibility]", "text-rendering]");
   }
 
 }

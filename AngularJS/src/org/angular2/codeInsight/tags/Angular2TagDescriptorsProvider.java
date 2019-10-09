@@ -167,8 +167,15 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
         elementDescriptor = nsDescriptor.getElementDescriptor(xmlTag);
       }
     }
-    return elementDescriptor instanceof HtmlElementDescriptorImpl
-           ? new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor)
-           : null;
+    if (elementDescriptor instanceof HtmlElementDescriptorImpl) {
+      return new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor);
+    }
+    if (elementDescriptor != null
+        && !(elementDescriptor instanceof Angular2NonHtmlWrappedDescriptor)
+        && !(elementDescriptor instanceof Angular2TagDescriptor)
+    ) {
+      return new Angular2NonHtmlWrappedDescriptor(elementDescriptor);
+    }
+    return null;
   }
 }

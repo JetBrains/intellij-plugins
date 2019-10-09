@@ -21,6 +21,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
+import com.intellij.xml.XmlElementDescriptor;
+import org.angular2.codeInsight.tags.Angular2NonHtmlWrappedDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -50,6 +52,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
   @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
+
+  private static final ThreadLocal<Boolean> gettingDescriptors = new ThreadLocal<>();
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull BiFunction<? super XmlTag, ? super Predicate<String>, XmlAttributeDescriptor[]> attrDescrProvider) {
@@ -91,7 +95,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag) {
-    return getAttributeDescriptors(xmlTag, a -> true);
+    if (gettingDescriptors.get() == Boolean.TRUE) return XmlAttributeDescriptor.EMPTY;
+    // Required to avoid infinite recursion in case Angular2NonHtmlWrappedDescriptor wraps descriptor provider,
+    // which in getAttributeDescriptors calls RelaxedHtmlFromSchemaElementDescriptor.addAttrDescriptorsForFacelets()
+    gettingDescriptors.set(true);
+    try {
+      return getAttributeDescriptors(xmlTag, a -> true);
+    } finally {
+      gettingDescriptors.set(false);
+    }
   }
 
   private static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag,
@@ -256,7 +268,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NotNull
   private static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
-      Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
+      Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag));
       allowedElementProperties.addAll(ContainerUtil.map(
         getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
       JSType tagClass = getHtmlElementClassType(xmlTag, xmlTag.getName());
@@ -328,13 +340,18 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NotNull
   public static XmlAttributeDescriptor[] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
-    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(tag.getDescriptor(), HtmlElementDescriptorImpl.class);
-    if (descriptor == null) {
+    XmlElementDescriptor descriptor = tag.getDescriptor();
+    if (descriptor instanceof Angular2NonHtmlWrappedDescriptor) {
+      return ObjectUtils.notNull(((Angular2NonHtmlWrappedDescriptor)descriptor).getDefaultAttributeDescriptors(tag),
+                                 XmlAttributeDescriptor.EMPTY);
+    }
+    if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
       descriptor = ObjectUtils.tryCast(HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag), HtmlElementDescriptorImpl.class);
       if (descriptor == null) {
         return XmlAttributeDescriptor.EMPTY;
       }
     }
-    return ObjectUtils.notNull(descriptor.getDefaultAttributeDescriptors(tag), XmlAttributeDescriptor.EMPTY);
+    return ObjectUtils.notNull(((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(tag),
+                               XmlAttributeDescriptor.EMPTY);
   }
 }
