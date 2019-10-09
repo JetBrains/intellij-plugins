@@ -59,6 +59,7 @@ public class Angular2MetadataModuleExportStub extends Angular2MetadataElementStu
       })
       .nonNull()
       .mapToEntry(p -> p.first, p -> p.second)
+      .distinct()
       .toImmutableMap();
   }
 
