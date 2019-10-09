@@ -21,7 +21,7 @@ fun resolveTagSrcReference(tag: XmlTag): PsiElement? {
   if (tagStub != null) {
     tagStub.childrenStubs
       .asSequence()
-      .mapNotNull { (it as XmlAttributeStub<*>).psi }
+      .mapNotNull { (it as? XmlAttributeStub<*>)?.psi }
       .filter { it.name == SRC_ATTRIBUTE_NAME && it.value != null }
       .firstOrNull()
       ?.let {
