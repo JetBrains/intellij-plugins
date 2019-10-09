@@ -2547,4 +2547,16 @@ public class DartAnalysisServerService implements Disposable {
       server.completion_registerLibraryPaths(paths);
     }
   }
+
+  /**
+   * Subscribe for verbose analysis server `server.log` notifications.
+   */
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void setServerLogSubscription() {
+    final RemoteAnalysisServerImpl server = myServer;
+    if (server != null) {
+      // This will override the previous server domain subscription for only STATUS.
+      server.server_setSubscriptions(Lists.newArrayList(ServerService.STATUS, ServerService.LOG));
+    }
+  }
 }
