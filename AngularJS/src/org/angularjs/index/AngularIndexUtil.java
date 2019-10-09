@@ -9,7 +9,9 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
@@ -21,7 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
@@ -38,17 +40,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 /**
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
   public static final int BASE_VERSION = 65;
+  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
+
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
+  private static final Key<Future<Result<Integer>>> GET_VERSION_FUTURE_KEY = new Key<>("angularjs.get.version.future");
 
   @Nullable
   public static JSImplicitElement resolve(@NotNull Project project,
@@ -151,24 +155,45 @@ public class AngularIndexUtil {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
-      // Do not try to resolve anything on EDT
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        return CachedValueProvider.Result.create(-1, ModificationTracker.EVER_CHANGED);
+      Application application = ApplicationManager.getApplication();
+
+      // Special handling on EDT to avoid freeze
+      if (application.isDispatchThread()) {
+        Future<Result<Integer>> future = project.getUserData(GET_VERSION_FUTURE_KEY);
+
+        // If previous calculation isn't done, don't even try to run new one
+        if (future == null || future.isDone()) {
+          future = application.executeOnPooledThread(() -> ReadAction.compute(() -> calculateAngularJSVersion(project)));
+          project.putUserData(GET_VERSION_FUTURE_KEY, future);
+          try {
+            // Resolve with timeout on EDT
+            Result<Integer> result = future.get(50, TimeUnit.MILLISECONDS);
+            project.putUserData(GET_VERSION_FUTURE_KEY, null);
+            return result;
+          }
+          catch (TimeoutException | ExecutionException | InterruptedException ignored) {
+          }
+        }
+        return Result.create(-1, ModificationTracker.EVER_CHANGED);
       }
-      int version = -1;
-      PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
-        version = 13;
-      }
-      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
-        version = 12;
-      }
-      if (resolve != null) {
-        return CachedValueProvider.Result.create(version, resolve.getContainingFile());
-      }
-      return CachedValueProvider.Result
-        .create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project));
+      return calculateAngularJSVersion(project);
     });
+  }
+
+  private static Result<Integer> calculateAngularJSVersion(@NotNull final Project project) {
+    int version = -1;
+    PsiElement resolve;
+    if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
+      version = 13;
+    }
+    else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
+      version = 12;
+    }
+    if (resolve != null) {
+      return Result.create(version, resolve.getContainingFile());
+    }
+    return Result.create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                         ProjectRootModificationTracker.getInstance(project));
   }
 
   public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
@@ -223,7 +248,7 @@ public class AngularIndexUtil {
   private static class AngularKeysProvider implements ParameterizedCachedValueProvider<Collection<String>, Pair<Project, ID<String, ?>>> {
     @SuppressWarnings("unchecked")
     @Override
-    public CachedValueProvider.Result<Collection<String>> compute(final Pair<Project, ID<String, ?>> projectAndIndex) {
+    public Result<Collection<String>> compute(final Pair<Project, ID<String, ?>> projectAndIndex) {
       final Project project = projectAndIndex.first;
       final ID<String, ?> id = projectAndIndex.second;
       final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
@@ -239,7 +264,7 @@ public class AngularIndexUtil {
                ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
                : !fileIndex.processValues(id, key, null, (file, value) -> false, scope)
       );
-      return CachedValueProvider.Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
+      return Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }
