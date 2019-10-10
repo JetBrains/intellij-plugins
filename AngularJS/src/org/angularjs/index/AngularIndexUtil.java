@@ -201,7 +201,8 @@ public class AngularIndexUtil {
     // If previous calculation isn't done, don't even try to run new one
     if (future == null || future.isDone()) {
       future = ApplicationManager.getApplication().executeOnPooledThread(() -> ReadAction.compute(
-        () -> getCachedAngularJSVersion(project)));
+        () -> project.isInitialized() ? getCachedAngularJSVersion(project) : -1
+      ));
       project.putUserData(GET_VERSION_FUTURE_KEY, future);
       try {
         Integer result = future.get(50, TimeUnit.MILLISECONDS);
