@@ -31,6 +31,7 @@ import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.MoveTest;
 import org.angular2.refactoring.RenameTest;
 import org.angular2.resharper.Angular2ReSharperTestSuite;
+import org.angular2.svg.AngularSvgTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -76,6 +77,7 @@ import org.junit.runners.Suite;
   ComponentDeclarationNavigationTest.class,
   MetadataTest.class,
   NgMaterialTest.class,
+  AngularSvgTest.class,
   GotoSymbolTest.class,
   GotoRelatedTest.class,
   CssClassTest.class,
