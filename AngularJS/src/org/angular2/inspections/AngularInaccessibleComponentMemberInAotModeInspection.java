@@ -5,7 +5,7 @@ import com.intellij.codeInspection.*;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.intentions.TypeScriptPublicModifierIntention;
+import com.intellij.lang.javascript.intentions.JSPublicModifierIntention;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -144,7 +144,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     );
   }
 
-  static class AngularMakePublicQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
+  static class AngularMakePublicQuickFix extends JSPublicModifierIntention implements LocalQuickFix {
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
