@@ -188,7 +188,7 @@
             </constraints>
             <properties>
               <labelFor value="f158"/>
-              <text value="Webdev server &amp;port:"/>
+              <text value="Legacy webdev server &amp;port:"/>
             </properties>
           </component>
           <component id="f158" class="com.intellij.ui.PortField" binding="myPortField">

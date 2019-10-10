@@ -44,6 +44,9 @@ public class DartWebdevConsoleView extends ConsoleViewImpl {
 
   @Override
   public void print(@NotNull String text, @NotNull ConsoleViewContentType contentType) {
+    if (!text.startsWith("[{")) {
+      super.print(text, contentType);
+    }
     final String logMessage = DartDaemonParserUtil.getLogMessage(text.trim());
     if (logMessage != null && !logMessage.isEmpty()) {
       super.print(logMessage + "\n", contentType);

@@ -19,6 +19,8 @@ public class DartWebdevParameters implements Cloneable {
   @Nullable
   private String myHTMLFilePath = null;
 
+  private int myWebdevPort = -1;
+
   private static final String MIN_DART_SDK_VERSION_FOR_WEBDEV = "2.5.0";
 
   @Nullable
@@ -28,6 +30,14 @@ public class DartWebdevParameters implements Cloneable {
 
   public void setHTMLFilePath(final @Nullable String htmlFilePath) {
     myHTMLFilePath = htmlFilePath;
+  }
+
+  public int getWebdevPort() {
+    return myWebdevPort;
+  }
+
+  public void setWebdevPort(final int webdevPort) {
+    myWebdevPort = webdevPort;
   }
 
   @NotNull

@@ -22,6 +22,7 @@ import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +105,9 @@ public class DartWebdevRunningState extends CommandLineState {
 
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
     commandLine.addParameters("global", "run", "webdev", "daemon");
+    if (myDartWebdevParameters.getWebdevPort() != -1) {
+      commandLine.addParameter("web:" + myDartWebdevParameters.getWebdevPort());
+    }
 
     return commandLine;
   }
