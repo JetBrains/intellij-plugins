@@ -18,6 +18,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
 import com.intellij.xml.util.CheckEmptyTagInspection
+import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -792,8 +793,8 @@ Vue.component('global-comp-literal', {
   <test-empty-tags/>
   <test-empty-tags></test-empty-tags>
 
-  <warning descr="Empty tag doesn't work in some browsers"><div/></warning>
-  <warning descr="Empty tag doesn't work in some browsers"><h1/></warning>
+  <div/>
+  <h1/>
   <img src="aaa.jpg"/>
 </template>
 
@@ -907,7 +908,7 @@ Vue.component('global-comp-literal', {
 <template>
   <LongVue/>
   <ShortComponent/>
-  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+  <<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/>
   <UsageComponent/>
 </template>
 <script>
@@ -937,7 +938,7 @@ export default class UsageComponent extends Vue {
   <template>
     <LongVue/>
     <ShortComponent/>
-    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+    <<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/>
     <UsageComponent/>
   </template>
   <script lang="ts">
@@ -1029,7 +1030,7 @@ export default class UsageComponent extends Vue {
     myFixture.configureByText("LocalComponentExtendsInClassSyntax.vue", """
 <template>
     <<warning descr="Element CompForClass doesn't have required attribute prop-from-a2">CompForClass</warning> />
-    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/></warning>
+    <<warning descr="Unknown html tag OtherCompForClass">OtherCompForClass</warning>/>
 </template>
 
 <script>
@@ -1321,7 +1322,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     myFixture.configureByText("b-component.vue", """
       <template>
         <HW msg="foo"/>
-        <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/></warning>
+        <<warning descr="Unknown html tag HW2">HW2</warning> msg="foo"/>
       </template>
       <script>
         import HW from './a-component.vue'
@@ -1467,6 +1468,17 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     myFixture.configureByFile("filters.vue")
     myFixture.checkHighlighting()
   }
+
+  fun testEmptyTags() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.enableInspections(CheckTagEmptyBodyInspection())
+    myFixture.copyDirectoryToProject("emptyTags", ".")
+    for (file in listOf("test.vue", "test-html.html", "test-reg.html")) {
+      myFixture.configureFromTempProjectFile(file)
+      myFixture.checkHighlighting()
+    }
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {

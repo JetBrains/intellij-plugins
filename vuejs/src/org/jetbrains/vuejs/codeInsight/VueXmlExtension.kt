@@ -13,8 +13,11 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.VueComponent
 import org.jetbrains.vuejs.model.VueModelDirectiveProperties
+import org.jetbrains.vuejs.model.VueModelManager
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
@@ -63,8 +66,13 @@ class VueXmlExtension : HtmlXmlExtension() {
     } != null
   }
 
-  override fun isCollapsibleTag(tag: XmlTag?): Boolean = false
-  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSelfClosingTagAllowed(tag)
+  override fun isCollapsibleTag(tag: XmlTag?): Boolean =
+    tag != null && isVueComponentTemplateContext(tag)
+
+  override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean =
+    isVueComponentTemplateContext(tag)
+    || super.isSelfClosingTagAllowed(tag)
+
   override fun isSingleTagException(tag: XmlTag): Boolean = tag.descriptor is VueElementDescriptor || super.isSingleTagException(tag)
 
   override fun createTagNameReference(nameElement: ASTNode?, startTagFlag: Boolean): TagNameReference? {
@@ -74,4 +82,11 @@ class VueXmlExtension : HtmlXmlExtension() {
     }
     return super.createTagNameReference(nameElement, startTagFlag)
   }
+
+  private fun isVueComponentTemplateContext(tag: XmlTag) =
+    tag.containingFile.let {
+      it.virtualFile.fileType == VueFileType.INSTANCE
+      || VueModelManager.findEnclosingContainer(it) is VueComponent
+    }
+
 }
