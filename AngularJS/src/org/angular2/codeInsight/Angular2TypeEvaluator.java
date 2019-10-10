@@ -160,6 +160,15 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
+  protected void doAddType(@NotNull JSType type, @Nullable PsiElement source) {
+    if (type instanceof JSUnknownType) {
+      // convert unknown to any to have less strict type validation in Angular
+      type = JSAnyType.get(type.getSource());
+    }
+    super.doAddType(type, source);
+  }
+
+  @Override
   protected void processThisQualifierInExecutionScope(@NotNull JSThisExpression thisQualifier, PsiElement thisScope) {
     if (thisScope instanceof Angular2EmbeddedExpression) {
       TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);

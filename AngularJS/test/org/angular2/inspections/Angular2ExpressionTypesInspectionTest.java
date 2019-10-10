@@ -52,7 +52,6 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
 
   public void testNgForOfAnyType() {
     myFixture.copyDirectoryToProject("node_modules", "./node_modules");
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
     myFixture.configureByFiles("ngForOfAnyType.ts", "package.json");
     myFixture.checkHighlighting();
   }
