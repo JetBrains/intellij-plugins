@@ -54,10 +54,10 @@ public final class Angular2TemplateScopesResolver {
 
   private static boolean checkLanguage(@NotNull PsiElement element) {
     return element.getLanguage().is(Angular2Language.INSTANCE)
-           || element.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+           || element.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
            || (element.getParent() != null
                && (element.getParent().getLanguage().is(Angular2Language.INSTANCE)
-                   || element.getParent().getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+                   || element.getParent().getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
                ));
   }
 

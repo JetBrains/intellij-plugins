@@ -18,6 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
+import com.intellij.xml.util.HtmlUtil;
 import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
@@ -48,7 +49,9 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
 
   @Override
   public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
-    if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
+    if (!(xmlTag instanceof HtmlTag)
+        || !Angular2LangUtil.isAngular2Context(xmlTag)
+        || HtmlUtil.SVG_NAMESPACE.equals(xmlTag.getNamespace())) {
       return;
     }
     final Project project = xmlTag.getProject();

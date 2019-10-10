@@ -39,7 +39,7 @@ public class Angular2HtmlBlock extends XmlBlock {
 
   @Override
   protected boolean useMyFormatter(Language myLanguage, Language childLanguage, PsiElement childPsi) {
-    return (childLanguage == Angular2HtmlLanguage.INSTANCE)
+    return (childLanguage != null && childLanguage.isKindOf(Angular2HtmlLanguage.INSTANCE))
            || super.useMyFormatter(myLanguage, childLanguage, childPsi);
   }
 

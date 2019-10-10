@@ -213,7 +213,7 @@
                      level="ERROR"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
-    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
+    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="after default"/>
     <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
@@ -225,6 +225,12 @@
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
     <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
+
+    <!-- Angular 2 SVG contributions -->
+    <lang.parserDefinition language="Angular2Svg" implementationClass="org.angular2.lang.svg.parser.Angular2SvgParserDefinition"/>
+    <fileType name="Angular2Svg" implementationClass="org.angular2.lang.svg.Angular2SvgFileType" fieldName="INSTANCE"
+              language="Angular2Svg"/>
+    <lang.substitutor language="SVG" implementationClass="org.angular2.lang.svg.Angular2SvgLanguageSubstitutor"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"

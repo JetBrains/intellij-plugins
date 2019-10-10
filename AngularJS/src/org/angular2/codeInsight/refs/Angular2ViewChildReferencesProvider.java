@@ -80,7 +80,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     private void processVariables(BiPredicate<? super String, ? super PsiElement> processor) {
       final PsiFile template = getTemplate();
       if (template != null) {
-        if (template.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
+        if (template.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)) {
           template.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
             @Override
             public void visitReference(Angular2HtmlReference reference) {

@@ -2,6 +2,7 @@
 package org.angular2.lang.html;
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.lang.Language;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,10 @@ public class Angular2HtmlFileType extends HtmlFileType {
 
   protected Angular2HtmlFileType() {
     super(Angular2HtmlLanguage.INSTANCE);
+  }
+
+  protected Angular2HtmlFileType(Language language) {
+    super(language);
   }
 
   @NotNull

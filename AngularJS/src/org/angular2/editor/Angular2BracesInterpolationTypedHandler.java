@@ -37,7 +37,7 @@ public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegat
                                 @NotNull PsiFile file,
                                 @NotNull FileType fileType) {
     final Language language = file.getLanguage();
-    if (Angular2HtmlLanguage.INSTANCE.equals(language)) {
+    if (language.isKindOf(Angular2HtmlLanguage.INSTANCE)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);
     }
     return Result.CONTINUE;

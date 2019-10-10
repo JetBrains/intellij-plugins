@@ -24,6 +24,7 @@ import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer;
 import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.svg.Angular2SvgLanguage;
 
 import java.util.Set;
 
@@ -37,6 +38,7 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
     XMLLanguage.INSTANCE,
     HTMLLanguage.INSTANCE,
     Angular2HtmlLanguage.INSTANCE,
+    Angular2SvgLanguage.INSTANCE,
     Angular2Language.INSTANCE,
     Language.ANY
   );

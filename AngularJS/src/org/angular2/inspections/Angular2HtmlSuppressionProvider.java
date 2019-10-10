@@ -20,7 +20,7 @@ public class Angular2HtmlSuppressionProvider extends DefaultXmlSuppressionProvid
 
   @Override
   public boolean isProviderAvailable(@NotNull PsiFile file) {
-    return file.getLanguage() == Angular2HtmlLanguage.INSTANCE;
+    return file.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE);
   }
 
   @Override
@@ -33,5 +33,4 @@ public class Angular2HtmlSuppressionProvider extends DefaultXmlSuppressionProvid
     }
     return super.isSuppressedFor(element, inspectionId);
   }
-
 }

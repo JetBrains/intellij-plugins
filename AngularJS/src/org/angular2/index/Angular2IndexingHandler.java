@@ -289,7 +289,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static List<TypeScriptClass> findComponentClasses(@NotNull PsiElement context) {
     final PsiFile file = context.getContainingFile();
     if (file == null
-        || !(file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+        || !(file.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
              || file.getLanguage().is(Angular2Language.INSTANCE)
              || isStylesheet(file))) {
       return emptyList();

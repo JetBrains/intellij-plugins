@@ -49,7 +49,7 @@ public class Angular2Injector implements MultiHostInjector {
     final PsiElement parent = context.getParent();
     if (parent == null
         || parent.getLanguage().is(Angular2Language.INSTANCE)
-        || parent.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+        || parent.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
         || !Angular2LangUtil.isAngular2Context(context)) {
       return;
     }

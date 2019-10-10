@@ -37,6 +37,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlExtension;
+import com.intellij.xml.util.HtmlUtil;
 import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
@@ -308,6 +309,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           }
 
           Set<String> standardHtmlEvents = new HashSet<>(Angular2AttributeDescriptorsProvider.getStandardTagEventAttributeNames(tag));
+          boolean svg = HtmlUtil.SVG_NAMESPACE.equals(tag.getNamespace());
           result.runRemainingContributors(parameters, toPass -> {
             for (String str : toPass.getLookupElement().getAllLookupStrings()) {
               if (standardHtmlEvents.contains(str)
@@ -315,9 +317,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
                 return;
               }
             }
+            LookupElement element = toPass.getLookupElement();
+            if (svg && !(element instanceof PrioritizedLookupElement)
+                && element.getPsiElement() == null) {
+              element = PrioritizedLookupElement.withPriority(element, Angular2AttributeDescriptor.AttributePriority.NORMAL.getValue() + 1);
+            }
+
             result.withPrefixMatcher(new TemplateBindingsPrefixMatcher(toPass.getPrefixMatcher()))
               .withRelevanceSorter(toPass.getSorter())
-              .addElement(toPass.getLookupElement());
+              .addElement(element);
           });
 
           //add abbreviations and prefixes in the end

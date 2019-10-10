@@ -21,7 +21,6 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.IncorrectOperationException;
-import java.util.HashSet;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2Bundle;
@@ -33,6 +32,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
                                         boolean isOnTheFly,
                                         @NotNull LocalInspectionToolSession session) {
     Language fileLang = holder.getFile().getLanguage();
-    if (Angular2HtmlLanguage.INSTANCE.is(fileLang)
+    if (fileLang.isKindOf(Angular2HtmlLanguage.INSTANCE)
         || Angular2Language.INSTANCE.is(fileLang)) {
       return new Angular2ElementVisitor() {
         @Override
