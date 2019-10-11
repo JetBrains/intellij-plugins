@@ -135,6 +135,7 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull private final Project myProject;
   private boolean myInitializationOnServerStartupDone = false;
+  private boolean mySubscribeToServerLog = false;
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
@@ -2055,7 +2056,7 @@ public class DartAnalysisServerService implements Disposable {
 
       try {
         startedServer.start();
-        startedServer.server_setSubscriptions(Collections.singletonList(ServerService.STATUS));
+        server_setSubscriptions();
         if (Registry.is("dart.projects.without.pubspec", false) && isAnalyzedFilesSubscriptionEnabled()) {
           startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
@@ -2545,6 +2546,25 @@ public class DartAnalysisServerService implements Disposable {
     final AnalysisServer server = myServer;
     if (server != null) {
       server.completion_registerLibraryPaths(paths);
+    }
+  }
+
+  /**
+   * Subscribe for verbose analysis server `server.log` notifications.
+   */
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void setServerLogSubscription(boolean subscribeToLog) {
+    if (mySubscribeToServerLog != subscribeToLog) {
+      mySubscribeToServerLog = subscribeToLog;
+      server_setSubscriptions();
+    }
+  }
+
+  private void server_setSubscriptions() {
+    final RemoteAnalysisServerImpl server = myServer;
+    if (server != null) {
+      server.server_setSubscriptions(mySubscribeToServerLog ? Lists.newArrayList(ServerService.STATUS, ServerService.LOG)
+                                                            : Collections.singletonList(ServerService.STATUS));
     }
   }
 }
