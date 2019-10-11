@@ -6,7 +6,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.javascript.JSRunConfigurationBuilder;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.javascript.nodejs.packageJson.PackageJsonGetDependenciesAction;
+import com.intellij.javascript.nodejs.packageJson.notification.PackageJsonGetDependenciesAction;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
