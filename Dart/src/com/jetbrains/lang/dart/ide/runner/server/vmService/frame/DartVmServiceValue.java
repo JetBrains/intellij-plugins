@@ -153,39 +153,9 @@ public class DartVmServiceValue extends XNamedValue {
 
     // computeDefaultPresentation is called internally here when no result is got.
     // The reason for this is that the async method used cannot be properly waited.
-    computeDebugPresentation(node);
+    computeDefaultPresentation(node);
 
     // todo handle other special kinds: Type, TypeParameter, Pattern, may be some others as well
-  }
-
-  private void computeDebugPresentation(final XValueNode node) {
-    myDebugProcess.getVmServiceWrapper()
-      .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toStringDeep()", new VmServiceConsumers.EvaluateConsumerWrapper() {
-        @Override
-        public void received(final InstanceRef toStringInstanceRef) {
-          if (toStringInstanceRef.getKind() == InstanceKind.String) {
-            String content = toStringInstanceRef.getValueAsString();
-            int firstLineBreak = content.indexOf('\n');
-            String summary = firstLineBreak < 0 ? content : content.substring(0, firstLineBreak);
-            node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), summary, true);
-            if (toStringInstanceRef.getValueAsStringIsTruncated()) {
-              addFullStringValueEvaluator(node, toStringInstanceRef);
-            }
-            else if (firstLineBreak >= 0) {
-              // Multi-line content. Display a View link to reveal full content.
-              node.setFullValueEvaluator(new ImmediateFullValueEvaluator("...View", content));
-            }
-          }
-          else {
-            noGoodResult();
-          }
-        }
-
-        @Override
-        public void noGoodResult() {
-          computeDefaultPresentation(node);
-        }
-      });
   }
 
   private Icon getIcon() {
@@ -320,30 +290,48 @@ public class DartVmServiceValue extends XNamedValue {
   }
 
   private void computeDefaultPresentation(@NotNull final XValueNode node) {
+    final String typeName = myInstanceRef.getClassRef().getName();
+
+    // Check if the string value is populated.
+    if (myInstanceRef.getValueAsString() != null && !myInstanceRef.getValueAsStringIsTruncated()) {
+      node.setPresentation(getIcon(), typeName, myInstanceRef.getValueAsString(), true);
+      return;
+    }
+
     myDebugProcess.getVmServiceWrapper().callToString(myIsolateId, myInstanceRef.getId(), new VmServiceConsumers.InvokeConsumerWrapper() {
       @Override
       public void received(final InstanceRef toStringInstanceRef) {
         if (toStringInstanceRef.getKind() == InstanceKind.String) {
-          String string = toStringInstanceRef.getValueAsString();
-          // default toString() implementation returns "Instance of 'ClassName'" - no interest to show
-          if (string.equals("Instance of '" + myInstanceRef.getClassRef().getName() + "'")) {
-            noGoodResult();
+          final String value = toStringInstanceRef.getValueAsString();
+          // We don't need to show the default implementation of toString() ("Instance of ...").
+          if (value.startsWith("Instance of ")) {
+            node.setPresentation(getIcon(), typeName, "", true);
           }
           else {
-            if (toStringInstanceRef.getValueAsStringIsTruncated()) {
-              addFullStringValueEvaluator(node, toStringInstanceRef);
-            }
-            node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), string, true);
+            node.setPresentation(getIcon(), typeName, value, true);
           }
         }
         else {
-          noGoodResult(); // unlikely possible
+          preesentationFallback(node);
         }
       }
 
       @Override
       public void noGoodResult() {
-        node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
+        preesentationFallback(node);
+      }
+
+      private void preesentationFallback(@NotNull final XValueNode node) {
+        if (myInstanceRef.getValueAsString() != null) {
+          node.setPresentation(
+            getIcon(),
+            typeName,
+            myInstanceRef.getValueAsString() + (myInstanceRef.getValueAsStringIsTruncated() ? "..." : ""),
+            true);
+        }
+        else {
+          node.setPresentation(getIcon(), typeName, "", true);
+        }
       }
     });
   }
