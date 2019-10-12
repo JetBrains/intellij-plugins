@@ -1,15 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.rules
 
+import com.intellij.grazie.ide.ui.components.dsl.actionGroup
+import com.intellij.grazie.ide.ui.components.dsl.panel
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.ide.CommonActionsManager
 import com.intellij.ide.DefaultTreeExpander
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.picocontainer.Disposable
-import com.intellij.grazie.ide.ui.components.dsl.actionGroup
-import com.intellij.grazie.ide.ui.components.dsl.panel
-import com.intellij.grazie.language.Lang
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.tree.DefaultMutableTreeNode
@@ -37,7 +37,7 @@ class GrazieRulesPanel(onSelectionChanged: (meta: Any) -> Unit) : Disposable {
           add(actionManager.createExpandAllAction(treeExpander, tree))
           add(actionManager.createCollapseAllAction(treeExpander, tree))
 
-          add(ActionManager.getInstance().createActionToolbar("GraziRulesPanel", this, true).component, BorderLayout.WEST)
+          add(ActionManager.getInstance().createActionToolbar("GrazieRulesPanel", this, true).component, BorderLayout.WEST)
         }
 
         add(filter as Component, BorderLayout.CENTER)

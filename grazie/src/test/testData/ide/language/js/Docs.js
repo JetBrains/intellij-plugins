@@ -1,5 +1,5 @@
 /**
- * Module description <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>
+ * Module description <TYPO descr="Typo: In word 'eror'">eror</TYPO>
  * @module ExampleClassWithNoTypos
  */
 
@@ -44,12 +44,12 @@ class ExampleClassWithTypos {
     }
 
     /**
-     * It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
+     * It <warning descr="IT_VBZ">add</warning> a [member] to this <TYPO descr="Typo: In word 'grooup'">grooup</TYPO>.
      * @param {String} member member to add
      * @return {Number} the new size <warning descr="DT_DT">a the</warning> group.
      */
     badFunction(member) {
-        return 1; // It <warning descr="IT_VBZ">are</warning> <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1; // It <warning descr="IT_VBZ">are</warning> <TYPO descr="Typo: In word 'eror'">eror</TYPO> in the comment
     }
 }
 
@@ -62,9 +62,9 @@ class ExampleClassWithTypos {
  * <warning descr="WORD_REPEAT_RULE">Он он</warning> ошибка.
  */
 class ForMultiLanguageSupport {
-    // er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+    // er überprüfte die Rechnungen noch <TYPO descr="Typo: In word 'einal'">einal</TYPO>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
     // das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
-    // das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
+    // das <TYPO descr="Typo: In word 'daert'">daert</TYPO> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
 }
 
 module.exports = ExampleClassWithNoTypos;

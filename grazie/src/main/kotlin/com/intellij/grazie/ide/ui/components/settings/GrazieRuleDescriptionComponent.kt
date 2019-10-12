@@ -1,6 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.settings
 
+import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.dsl.padding
+import com.intellij.grazie.ide.ui.components.dsl.pane
+import com.intellij.grazie.ide.ui.components.dsl.panel
+import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
+import com.intellij.grazie.ide.ui.components.rules.RuleWithLang
+import com.intellij.grazie.ide.ui.components.utils.GrazieLinkLabel
+import com.intellij.grazie.jlanguage.Lang
+import com.intellij.grazie.jlanguage.LangTool
+import com.intellij.grazie.utils.*
 import com.intellij.ide.BrowserUtil
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SideBorder
@@ -13,17 +23,6 @@ import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.ide.ui.components.dsl.padding
-import com.intellij.grazie.ide.ui.components.dsl.pane
-import com.intellij.grazie.ide.ui.components.dsl.panel
-import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
-import com.intellij.grazie.ide.ui.components.rules.RuleWithLang
-import com.intellij.grazie.ide.ui.components.utils.GrazieLinkLabel
-import com.intellij.grazie.language.Lang
-import com.intellij.grazie.language.LangTool
-import com.intellij.grazie.utils.*
-import com.intellij.grazie.utils.orFalse
 import java.awt.BorderLayout
 import javax.swing.ScrollPaneConstants
 

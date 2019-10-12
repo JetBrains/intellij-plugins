@@ -1,15 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.langlist
 
+import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.dsl.padding
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.ui.*
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.util.ui.EditableModel
 import com.intellij.util.ui.JBUI
-import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.ide.ui.components.dsl.padding
-import com.intellij.grazie.language.Lang
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.*
@@ -19,7 +19,7 @@ class GrazieAddDeleteListPanel(private val download: (Lang) -> Boolean, private 
   AddDeleteListPanel<Lang>(null, GrazieConfig.get().enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName))) {
   private val decorator: ToolbarDecorator =
     @Suppress("UNCHECKED_CAST")
-    GraziListToolbarDecorator(myList as JList<Any>)
+    GrazieListToolbarDecorator(myList as JList<Any>)
       .setAddAction { addElement(findItemToAdd()) }
       .setToolbarPosition(ActionToolbarPosition.BOTTOM)
       .setRemoveAction {
@@ -78,7 +78,7 @@ class GrazieAddDeleteListPanel(private val download: (Lang) -> Boolean, private 
     langs.forEach(::addElement)
   }
 
-  private class GraziListToolbarDecorator(val list: JList<Any>) : ToolbarDecorator() {
+  private class GrazieListToolbarDecorator(val list: JList<Any>) : ToolbarDecorator() {
     init {
       myRemoveActionEnabled = true
       myAddActionEnabled = true

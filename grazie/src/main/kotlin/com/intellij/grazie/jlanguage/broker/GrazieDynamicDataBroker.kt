@@ -1,15 +1,22 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.language.broker
+package com.intellij.grazie.jlanguage.broker
 
 import com.intellij.grazie.GrazieDynamic
 import org.languagetool.tools.databroker.ResourceDataBroker
 import java.io.InputStream
 import java.net.URL
+import java.util.*
 
 object GrazieDynamicDataBroker : ResourceDataBroker {
+  override fun getAsURL(path: String) = GrazieDynamic.getResource(path)
+
+  override fun getAsStream(path: String) = GrazieDynamic.getResourceAsStream(path)
+
+  override fun getResourceBundle(baseName: String, locale: Locale) = GrazieDynamic.getResourceBundle(baseName, locale)
+
   override fun getFromResourceDirAsStream(path: String): InputStream? {
     val completePath = getCompleteResourceUrl(path)
-    val resourceAsStream = GrazieDynamic.getResourceAsStream(completePath)
+    val resourceAsStream = getAsStream(completePath)
     assertNotNull(resourceAsStream, path, completePath)
     return resourceAsStream
   }
@@ -17,18 +24,16 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
 
   override fun getFromResourceDirAsUrl(path: String): URL? {
     val completePath = getCompleteResourceUrl(path)
-    val resource = GrazieDynamic.getResource(completePath)
+    val resource = getAsURL(completePath)
     assertNotNull(resource, path, completePath)
     return resource
   }
 
-  private fun getCompleteResourceUrl(path: String): String {
-    return appendPath(resourceDir, path)
-  }
+  private fun getCompleteResourceUrl(path: String) = appendPath(resourceDir, path)
 
   override fun getFromRulesDirAsStream(path: String): InputStream? {
     val completePath = getCompleteRulesUrl(path)
-    val resourceAsStream = GrazieDynamic.getResourceAsStream(completePath)
+    val resourceAsStream = getAsStream(completePath)
     assertNotNull(resourceAsStream, path, completePath)
     return resourceAsStream
   }
@@ -36,7 +41,7 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
 
   override fun getFromRulesDirAsUrl(path: String): URL? {
     val completePath = getCompleteRulesUrl(path)
-    val resource = GrazieDynamic.getResource(completePath)
+    val resource = getAsURL(completePath)
     assertNotNull(resource, path, completePath)
     return resource
   }
@@ -47,9 +52,7 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
     }
   }
 
-  private fun getCompleteRulesUrl(path: String): String {
-    return appendPath(rulesDir, path)
-  }
+  private fun getCompleteRulesUrl(path: String): String = appendPath(rulesDir, path)
 
   private fun appendPath(baseDir: String, path: String): String {
     val completePath = StringBuilder(baseDir)
@@ -65,21 +68,11 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
     return completePath.toString()
   }
 
-  override fun resourceExists(path: String): Boolean {
-    val completePath = getCompleteResourceUrl(path)
-    return GrazieDynamic.getResource(completePath) != null
-  }
+  override fun resourceExists(path: String) = getAsURL(getCompleteResourceUrl(path)) != null
 
-  override fun ruleFileExists(path: String): Boolean {
-    val completePath = getCompleteRulesUrl(path)
-    return GrazieDynamic.getResource(completePath) != null
-  }
+  override fun ruleFileExists(path: String) = getAsURL(getCompleteRulesUrl(path)) != null
 
-  override fun getResourceDir(): String {
-    return ResourceDataBroker.RESOURCE_DIR
-  }
+  override fun getResourceDir() = ResourceDataBroker.RESOURCE_DIR
 
-  override fun getRulesDir(): String {
-    return ResourceDataBroker.RULES_DIR
-  }
+  override fun getRulesDir() = ResourceDataBroker.RULES_DIR
 }

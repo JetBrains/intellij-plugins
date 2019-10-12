@@ -5,6 +5,10 @@ import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
+import com.intellij.grazie.grammar.Typo
+import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
+import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.utils.trimToNull
 import com.intellij.ide.DataManager
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -14,20 +18,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
 import icons.SpellcheckerIcons
-import com.intellij.grazie.grammar.Typo
-import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.utils.isSpellingTypo
-import com.intellij.grazie.utils.toAbsoluteSelectionRange
-import com.intellij.grazie.utils.trimToNull
 import javax.swing.Icon
 import kotlin.math.min
 
 class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
   override fun getFamilyName() = msg("grazie.quickfix.replacetypo.family")
 
-  override fun getName() = msg("grazie.quickfix.replacetypo.text", (typo.info.match.shortMessage.trimToNull()
-                                                                   ?: typo.info.category.description).toLowerCase())
+  override fun getName() = msg("grazie.quickfix.replacetypo.text", (typo.info.shortMessage.trimToNull()
+                                                                    ?: typo.info.rule.category.name).toLowerCase())
 
   override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
@@ -41,22 +39,23 @@ class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconabl
         editor = getInjectedEditorForInjectedFile(editor, element.containingFile)
       }
 
-      val selectionRange = typo.toAbsoluteSelectionRange()
-      editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
-
-      val items = typo.fixes.map { LookupElementBuilder.create(it) }
-      LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())?.registerFUCollector(typo)
+      val selectionRange = descriptor.textRangeInElement.shiftLeft(element.textOffset)
+      if (editor.document.getText(selectionRange) == typo.location.errorText) {
+        editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
+        val items = typo.fixes.map { LookupElementBuilder.create(it) }
+        LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())?.registerFUCollector(typo)
+      }
     }
   }
 
   private fun LookupEx.registerFUCollector(typo: Typo) {
     addLookupListener(object : LookupListener {
       override fun lookupCanceled(event: LookupEvent) {
-        GrazieFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = true, isSpellcheck = typo.isSpellingTypo)
+        GrazieFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = true)
       }
 
       override fun itemSelected(event: LookupEvent) {
-        GrazieFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = false, isSpellcheck = typo.isSpellingTypo)
+        GrazieFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = false)
       }
     })
   }

@@ -1,8 +1,8 @@
-class ClassWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning> {
+class ClassWith<TYPO descr="Typo: In word 'Eror'">Eror</TYPO> {
 
-    String memberWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning> = "error";
+    String memberWith<TYPO descr="Typo: In word 'Eror'">Eror</TYPO> = "error";
 
-    void <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>Function(Integer <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>) {
-        String variableWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning> = "error";
+    void <TYPO descr="Typo: In word 'eror'">eror</TYPO>Function(Integer <TYPO descr="Typo: In word 'eror'">eror</TYPO>) {
+        String variableWith<TYPO descr="Typo: In word 'Eror'">Eror</TYPO> = "error";
     }
 }

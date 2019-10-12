@@ -4,7 +4,7 @@ package com.intellij.grazie.remote
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.GraziePlugin
-import com.intellij.grazie.language.Lang
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.openapi.project.Project
 
 object GrazieRemote {

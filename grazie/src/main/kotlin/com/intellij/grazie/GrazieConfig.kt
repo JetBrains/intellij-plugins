@@ -1,15 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie
 
+import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.grazie.language.Lang
-import com.intellij.grazie.utils.ifTrue
 
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
@@ -25,7 +24,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
 
     val missedLanguages: Set<Lang>
       get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
-              ((nativeLanguage.jLanguage == null).ifTrue { setOf(nativeLanguage) } ?: emptySet())
+              (setOf(nativeLanguage).takeIf { nativeLanguage.jLanguage == null } ?: emptySet())
 
     fun clone() = State(
       enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
@@ -42,8 +41,8 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
                userDisabledRules: Set<String> = this.userDisabledRules,
                userEnabledRules: Set<String> = this.userEnabledRules,
                lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
-                                                                        enabledCommitIntegration,
-                                                                        userWords, userDisabledRules, userEnabledRules, lastSeenVersion,
+                                                                        enabledCommitIntegration, userWords, userDisabledRules,
+                                                                        userEnabledRules, lastSeenVersion,
                                                                         enabledLanguages.filter { it.jLanguage != null }.toSet())
   }
 
@@ -53,7 +52,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
     /**
      * Get copy of Grazie config state
      *
-     * Should never be called in GraziStateLifecycle actions
+     * Should never be called in GrazieStateLifecycle actions
      */
     fun get() = instance.state
 

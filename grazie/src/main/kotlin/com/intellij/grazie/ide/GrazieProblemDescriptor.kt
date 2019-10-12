@@ -3,43 +3,31 @@ package com.intellij.grazie.ide
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptorBase
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
-import com.intellij.grazie.ide.quickfix.GrazieAddWordQuickFix
 import com.intellij.grazie.ide.quickfix.GrazieDisableRuleQuickFix
-import com.intellij.grazie.ide.quickfix.GrazieRenameTypoQuickFix
 import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
-import com.intellij.grazie.utils.buildList
 
-class GrazieProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
+class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
   fix.location.element!!, fix.location.element!!,
   fix.toDescriptionTemplate(isOnTheFly),
   fix.toFixes(isOnTheFly).toTypedArray(),
-  fix.info.category.highlight, false,
+  ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false,
   fix.toSelectionRange(), true, isOnTheFly
 ) {
   companion object {
     private fun Typo.toFixes(isOnTheFly: Boolean) = buildList<LocalQuickFix> {
-      if (info.rule.isDictionaryBasedSpellingRule) {
-        add(GrazieAddWordQuickFix(this@toFixes))
-      }
-
-      if (fixes.isNotEmpty() && isOnTheFly) {
-        if (location.shouldUseRename) {
-          add(GrazieRenameTypoQuickFix(this@toFixes))
-        }
-        else {
+      if (isOnTheFly && !ApplicationManager.getApplication().isUnitTestMode) {
+        if (fixes.isNotEmpty()) {
           GrazieFUCounterCollector.typoFound(this@toFixes)
           add(GrazieReplaceTypoQuickFix(this@toFixes))
         }
-      }
 
-      // disable spelling rule will not affect anything
-      if (!isSpellingTypo) {
         add(GrazieDisableRuleQuickFix(this@toFixes))
       }
     }
@@ -51,10 +39,10 @@ class GrazieProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescr
           +info.rule.toDescriptionSanitized()
         }
         else {
-          if (fixes.isNotEmpty()) {
+          if (!location.errorText.isNullOrBlank() && fixes.none { it.isBlank() }) {
             p {
               style = "padding-bottom: 10px;"
-              +"$word &rarr; ${fixes.take(3).joinToString(separator = "/")}"
+              +"${location.errorText} &rarr; ${fixes.take(3).joinToString(separator = "/")}"
               if (!isOnTheFly) nbsp()
             }
           }
@@ -87,7 +75,7 @@ class GrazieProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescr
                 }
               }
 
-              if (it.corrections.any { !it.isNullOrBlank() }) {
+              if (it.corrections.any { correction -> !correction.isNullOrBlank() }) {
                 tr {
                   td {
                     valign = "top"
@@ -108,6 +96,4 @@ class GrazieProblemDescriptor(val fix: Typo, isOnTheFly: Boolean) : ProblemDescr
       }
     }
   }
-
-  override fun getProblemGroup() = fix.info.category
 }

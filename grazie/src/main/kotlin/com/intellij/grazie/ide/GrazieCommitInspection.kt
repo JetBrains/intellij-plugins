@@ -5,11 +5,11 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.openapi.project.Project
 import com.intellij.vcs.commit.message.BaseCommitMessageInspection
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
-import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 
 class GrazieCommitInspection : BaseCommitMessageInspection() {
   companion object : GrazieStateLifecycle {
@@ -19,10 +19,10 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
       with(CommitMessageInspectionProfile.getInstance(project)) {
         if (state.enabledCommitIntegration) {
           addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), emptyMap())
-          setToolEnabled("GraziCommit", true, project)
+          setToolEnabled("GrazieCommit", true, project)
         }
         else {
-          if (getToolsOrNull("GraziCommit", project) != null) setToolEnabled("GraziCommit", false, project)
+          if (getToolsOrNull("GrazieCommit", project) != null) setToolEnabled("GrazieCommit", false, project)
           //TODO-tanvd how to remove tool?
         }
       }
@@ -34,6 +34,8 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
       init(newState, project)
     }
   }
+
+  override fun getShortName() = "GrazieCommit"
 
   override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.find("TYPO") ?: HighlightDisplayLevel.WARNING
 

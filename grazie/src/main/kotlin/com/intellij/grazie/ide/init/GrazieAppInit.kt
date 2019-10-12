@@ -4,8 +4,8 @@ package com.intellij.grazie.ide.init
 import com.intellij.grazie.ide.GrazieCommitInspection
 import com.intellij.grazie.ide.GrazieInspection
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.grazie.language.LangDetector
-import com.intellij.grazie.language.LangTool
+import com.intellij.grazie.jlanguage.LangDetector
+import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.grazie.spellcheck.GrazieSpellchecker
 import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.openapi.application.ApplicationManager
@@ -15,8 +15,8 @@ class GrazieAppInit : ApplicationInitializedListener {
     val connection = ApplicationManager.getApplication().messageBus.connect()
     connection.subscribe(GrazieStateLifecycle.topic, LangTool)
     connection.subscribe(GrazieStateLifecycle.topic, LangDetector)
-    connection.subscribe(GrazieStateLifecycle.topic, GrazieSpellchecker)
     connection.subscribe(GrazieStateLifecycle.topic, GrazieCommitInspection)
     connection.subscribe(GrazieStateLifecycle.topic, GrazieInspection)
+    connection.subscribe(GrazieStateLifecycle.topic, GrazieSpellchecker)
   }
 }

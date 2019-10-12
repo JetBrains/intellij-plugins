@@ -1,6 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.settings
 
+import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.ide.ui.components.dsl.border
+import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.dsl.padding
+import com.intellij.grazie.ide.ui.components.dsl.panel
+import com.intellij.grazie.jlanguage.Lang
+import com.intellij.grazie.remote.GrazieRemote
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.ui.layout.migLayout.*
@@ -10,13 +17,6 @@ import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
 import org.picocontainer.Disposable
-import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.ui.components.dsl.border
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.ide.ui.components.dsl.padding
-import com.intellij.grazie.ide.ui.components.dsl.panel
-import com.intellij.grazie.language.Lang
-import com.intellij.grazie.remote.GrazieRemote
 import javax.swing.JComponent
 
 class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {

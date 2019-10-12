@@ -5,9 +5,8 @@ import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import java.io.File
 
-enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String, shortCode: String) {
-  ENGLISH(listOf("BritishEnglish", "AmericanEnglish", "CanadianEnglish", "AustralianEnglish", "NewZealandEnglish", "SouthAfricanEnglish"),
-          "14 MB", "en"),
+enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String, val shortCode: String) {
+  ENGLISH(listOf("BritishEnglish", "AmericanEnglish", "CanadianEnglish", "AustralianEnglish", "NewZealandEnglish", "SouthAfricanEnglish"), "14 MB", "en"),
   RUSSIAN(listOf("Russian"), "3 MB", "ru"),
   PERSIAN(listOf("Persian"), "1 MB", "fa"),
   FRENCH(listOf("French"), "4 MB", "fr"),

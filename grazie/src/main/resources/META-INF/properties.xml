@@ -1,5 +1,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij.grazie">
-        <languageSupport language="Properties" implementationClass="com.intellij.grazie.ide.language.properties.PropertiesSupport"/>
+        <grammar.strategy language="Properties"
+                          implementationClass="com.intellij.grazie.ide.language.properties.PropertyGrammarCheckingStrategy"/>
     </extensions>
 </idea-plugin>

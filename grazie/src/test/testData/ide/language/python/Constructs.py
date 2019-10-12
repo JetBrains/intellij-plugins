@@ -1,8 +1,8 @@
-variableWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning> = "error"
+variableWith<TYPO descr="Typo: In word 'Eror'">Eror</TYPO> = "error"
 
-def <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>Function(<warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>):
+def <TYPO descr="Typo: In word 'eror'">eror</TYPO>Function(<TYPO descr="Typo: In word 'eror'">eror</TYPO>):
     pass
 
-class ClassWith<warning descr="MORFOLOGIK_RULE_EN_US">Eror</warning>:
-    def __init__(self, <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>):
-        self.<warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> = eror
+class ClassWith<TYPO descr="Typo: In word 'Eror'">Eror</TYPO>:
+    def __init__(self, <TYPO descr="Typo: In word 'eror'">eror</TYPO>):
+        self.<TYPO descr="Typo: In word 'eror'">eror</TYPO> = eror

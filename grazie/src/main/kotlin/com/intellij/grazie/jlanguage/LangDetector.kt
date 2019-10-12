@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.language
+package com.intellij.grazie.jlanguage
 
-import com.intellij.openapi.project.Project
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.openapi.project.Project
 import tanvd.grazi.langdetect.detector.LanguageDetector
 import tanvd.grazi.langdetect.detector.LanguageDetectorBuilder
 import tanvd.grazi.langdetect.ngram.NgramExtractor

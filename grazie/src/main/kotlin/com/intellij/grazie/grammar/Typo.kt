@@ -1,170 +1,119 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.grammar
 
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.annotation.ProblemGroup
+import com.intellij.grazie.jlanguage.Lang
+import com.intellij.grazie.utils.LinkedSet
+import com.intellij.grazie.utils.PsiPointer
+import com.intellij.grazie.utils.toIntRange
+import com.intellij.grazie.utils.withOffset
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
 import org.slf4j.LoggerFactory
-import com.intellij.grazie.language.Lang
-import com.intellij.grazie.language.LangToolFixes
-import com.intellij.grazie.utils.PsiPointer
-import com.intellij.grazie.utils.toIntRange
-import com.intellij.grazie.utils.typoCategory
-import com.intellij.grazie.utils.withOffset
 
-data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
+data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<String> = LinkedSet()) {
   companion object {
     private val logger = LoggerFactory.getLogger(Typo::class.java)
   }
 
-  data class Location(val range: IntRange, val pointer: PsiPointer<PsiElement>? = null, val shouldUseRename: Boolean = false) {
+  data class Location(val errorRange: IntRange, val patternRange: IntRange, val pointer: PsiPointer<PsiElement>? = null) {
     val element: PsiElement?
       get() = pointer?.element
 
-    fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
-
-    fun isAtStart(skipWhitespace: Boolean = true): Boolean {
-      var start = 0
-      val element = pointer!!
-      while (start < element.element!!.text.length && start !in range && (skipWhitespace && element.element!!.text[start].isWhitespace())) {
-        start++
-      }
-      return start in range
-    }
-
-    fun isAtEnd(skipWhitespace: Boolean = true): Boolean {
-      val element = pointer!!
-      var end = element.element!!.text.length - 1
-      while (end >= 0 && end !in range && (skipWhitespace && element.element!!.text[end].isWhitespace())) {
-        end--
-      }
-      return end in range
-    }
-
-
-    /**
-     * Checks if [innerElement] covers the start of typo location
-     * Assumed that [pointer] at a typo is ancestor to passed [innerElement]
-     */
-    fun isAtStartOfInnerElement(innerElement: PsiElement): Boolean {
-      require(PsiTreeUtil.isAncestor(pointer!!.element, innerElement, false))
-
-      //delta between the innerElement and [pointer] that is ancestor for this innerElement.
-      val delta = (innerElement.textRange.startOffset - pointer.element!!.textRange.startOffset)
-      val rangeForElement = IntRange(range.start - delta, range.last - delta)
-
-      var start = 0
-      while (start < innerElement.text.length && start !in rangeForElement && innerElement.text[start].isWhitespace()) {
-        start++
-      }
-      return start in rangeForElement
-    }
-
-    /**
-     * Checks if [innerElement] covers the end of typo location
-     * Assumed that [pointer] at a typo is ancestor to [innerElement]
-     */
-    fun isAtEndOfInnerElement(innerElement: PsiElement): Boolean {
-      require(PsiTreeUtil.isAncestor(pointer!!.element, innerElement, false))
-
-      //delta between the innerElement and [pointer] that is ancestor for this innerElement.
-      val delta = (innerElement.textRange.startOffset - pointer.element!!.textRange.startOffset)
-      val rangeForElement = IntRange(range.start - delta, range.last - delta)
-
-      var end = innerElement.text.length - 1
-      while (end >= 0 && end !in rangeForElement && innerElement.text[end].isWhitespace()) {
-        end--
-      }
-      return end in rangeForElement
-    }
-  }
-
-  data class Info(val lang: Lang, val rule: Rule, val match: RuleMatch, val category: Category) {
-    val incorrectExample: IncorrectExample?
-      get() {
-        val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }
-        return (withCorrections.takeIf { it.isNotEmpty() }
-                ?: rule.incorrectExamples).minBy { it.example.length }
-      }
-  }
-
-  val word: String by lazy {
-    try {
-      location.pointer?.element!!.text.subSequence(location.range).toString()
+    val errorText = try {
+      pointer?.element?.text?.subSequence(errorRange)?.toString()
     }
     catch (t: Throwable) {
-      logger.warn("Got an exception during getting typo word:\n${location.pointer?.element!!.text}\n${info.match.sentence.text}")
+      logger.warn("Got an exception during getting typo word:\n${pointer?.element!!.text}")
       throw t
+    }
+
+    fun withOffset(offset: Int) = copy(errorRange = IntRange(errorRange.start + offset, errorRange.endInclusive + offset))
+  }
+
+  data class Info(val lang: Lang, val rule: Rule, val shortMessage: String) {
+    val incorrectExample: IncorrectExample? by lazy {
+      val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }.takeIf { it.isNotEmpty() }
+      (withCorrections ?: rule.incorrectExamples).minBy { it.example.length }
     }
   }
 
   /** Constructor for LangTool, applies fixes to RuleMatch (Main constructor doesn't apply fixes) */
   constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
-    Location(match.toIntRange().withOffset(offset)),
-    Info(lang, match.rule, match, match.typoCategory),
-    match.suggestedReplacements.map { LangToolFixes.fixSuggestion(match.rule, it) }
+    Location(match.toIntRange(offset), IntRange(match.patternStartPos, match.patternEndPos - 1).withOffset(offset)),
+    Info(lang, match.rule, match.shortMessage),
+    LinkedSet(match.suggestedReplacements)
   )
 
+  /**
+   * A grammar typo category
+   *
+   * All typos have categories that can be found in the Grazie plugin UI tree in settings/preferences.
+   */
   @Suppress("unused")
-  enum class Category(val value: String, val description: String) : ProblemGroup {
+  enum class Category {
+    /** General categories  */
+
+    TEXT_ANALYSIS,
+
     /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
-    CASING("CASING", "Wrong case"),
+    CASING,
 
     /** Rules about spelling terms as one word or as separate words.  */
-    COMPOUNDING("COMPOUNDING", "Compounding"),
+    COMPOUNDING,
 
-    GRAMMAR("GRAMMAR", "Grammar"),
+    GRAMMAR,
 
     /** Spelling issues.  */
-    TYPOS("TYPOS", "Typo"),
+    TYPOS,
 
-    PUNCTUATION("PUNCTUATION", "Punctuation"),
+    PUNCTUATION,
 
     /** Problems like incorrectly used dash or quote characters.  */
-    TYPOGRAPHY("TYPOGRAPHY", "Typography"),
+    TYPOGRAPHY,
 
     /** Words that are easily confused, like 'there' and 'their' in English.  */
-    CONFUSED_WORDS("CONFUSED_WORDS", "Confused word"),
+    CONFUSED_WORDS,
 
-    REPETITIONS("REPETITIONS", "Repetition"),
+    REPETITIONS,
 
-    REDUNDANCY("REDUNDANCY", "Redundancy"),
+    REDUNDANCY,
 
     /** General style issues not covered by other categories, like overly verbose wording.  */
-    STYLE("STYLE", "Style"),
+    STYLE,
 
-    GENDER_NEUTRALITY("GENDER_NEUTRALITY", "Gender neutrality"),
+    GENDER_NEUTRALITY,
 
     /** Logic, content, and consistency problems.  */
-    SEMANTICS("SEMANTICS", "Semantics"),
+    SEMANTICS,
 
     /** Colloquial style.  */
-    COLLOQUIALISMS("COLLOQUIALISMS", "Colloquialism"),
+    COLLOQUIALISMS,
 
     /** Regionalisms: words used only in another language variant or used with different meanings.  */
-    REGIONALISMS("REGIONALISMS", "Regionalism"),
+    REGIONALISMS,
 
     /** False friends: words easily confused by language learners because a similar word exists in their native language.  */
-    FALSE_FRIENDS("FALSE_FRIENDS", "Other language word"),
+    FALSE_FRIENDS,
 
     /** Rules that only make sense when editing Wikipedia (typically turned off by default in LanguageTool).  */
-    WIKIPEDIA("WIKIPEDIA", "Wikipedia style"),
+    WIKIPEDIA,
 
     /** Miscellaneous rules that don't fit elsewhere.  */
-    MISC("MISC", "Miscellaneous"),
+    MISC,
 
-    OTHER("OTHER", "Other mistake");
 
-    val highlight: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+    /** English categories */
 
-    override fun getProblemName() = description
-
-    companion object {
-      operator fun get(value: String) = values().find { it.value == value } ?: OTHER
-    }
+    AMERICAN_ENGLISH,
+    AMERICAN_ENGLISH_STYLE,
+    BRITISH_ENGLISH,
+    BRE_STYLE_OXFORD_SPELLING,
+    CREATIVE_WRITING,
+    MISUSED_TERMS_EU_PUBLICATIONS,
+    NONSTANDARD_PHRASES,
+    PLAIN_ENGLISH;
   }
+
 }

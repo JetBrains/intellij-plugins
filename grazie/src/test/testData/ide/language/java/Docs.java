@@ -34,7 +34,7 @@ class ExampleClassWithNoTypos<T> {
  *
  * <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
  *
- * @param T the <warning descr="KIND_OF_A">type of a</warning> <warning descr="MORFOLOGIK_RULE_EN_US">membr</warning> in this group.
+ * @param T the <warning descr="KIND_OF_A">type of a</warning> <TYPO descr="Typo: In word 'membr'">membr</TYPO> in this group.
  */
 class ExampleClassWithTypos<T> {
 
@@ -43,20 +43,20 @@ class ExampleClassWithTypos<T> {
     /**
      * Creates an empty group.
      *
-     * @param name the <warning descr="COMMA_WHICH">name which</warning> group
+     * @param name the <warning descr="COMMA_WHICH">name which</warning> <warning descr="PUNCTUATION_PARAGRAPH_END">group</warning>
      */
     public ExampleClassWithTypos(String name) {
         this.name = name;
     }
 
     /**
-     * It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
+     * It <warning descr="IT_VBZ">add</warning> a [member] to this <TYPO descr="Typo: In word 'grooup'">grooup</TYPO>.
      *
      * @param member member to add
      * @return the new size of <warning descr="DT_DT">a the</warning> group.
      */
     Integer badFunction(T member) {
-        return 1; // It <warning descr="IT_VBZ">are</warning> <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1; // It <warning descr="IT_VBZ">are</warning> <TYPO descr="Typo: In word 'eror'">eror</TYPO> in the comment
     }
 }
 
@@ -69,7 +69,7 @@ class ExampleClassWithTypos<T> {
  * <warning descr="WORD_REPEAT_RULE">Он он</warning> ошибка.
  */
 class ForMultiLanguageSupport {
-    // er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+    // er überprüfte die Rechnungen noch <TYPO descr="Typo: In word 'einal'">einal</TYPO>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
     // das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
-    // das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
+    // das <TYPO descr="Typo: In word 'daert'">daert</TYPO> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
 }

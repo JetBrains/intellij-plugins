@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.grammar
 
-import com.intellij.grazie.GraziTestBase
-import com.intellij.grazie.language.LangDetector
+import com.intellij.grazie.GrazieTestBase
+import com.intellij.grazie.jlanguage.LangDetector
 
-class LangDetectorTest : GraziTestBase(true) {
+class LangDetectorTest : GrazieTestBase() {
   fun `test english detection`() {
     var lang = LangDetector.getLang("The manager wants to speak to every employees in his office." +
                                     " The reason we were late is because there was an accident." +
@@ -103,16 +103,15 @@ class LangDetectorTest : GraziTestBase(true) {
   }
 
   fun `test japanese detection`() {
-    val lang = LangDetector.getLang("歌わさせていただきます" +
+    var lang = LangDetector.getLang("歌わさせていただきます" +
                                     "この件に関しては言わずもがなだ。" +
                                     "鼻にも掛けない。" +
                                     "取り沙汰される。" +
                                     "アルプス一万尺")
     assertEquals("ja", lang?.shortCode)
 
-    // FIXME japanese detection is awful
-    //        lang = LangDetector.getLang("しつこい")
-    //        assertEquals("ja", lang?.shortCode)
+    lang = LangDetector.getLang("アルプス一万尺")
+    assertEquals("ja", lang?.shortCode)
   }
 
   fun `test persian detection`() {

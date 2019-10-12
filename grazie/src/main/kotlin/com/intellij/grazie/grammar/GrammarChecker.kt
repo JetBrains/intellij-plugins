@@ -1,144 +1,100 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.grammar
 
-import com.intellij.psi.PsiElement
+import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor
+import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
 import com.intellij.grazie.utils.Text
-import com.intellij.grazie.utils.toPointer
-import com.intellij.grazie.utils.LinkedSet
-import com.intellij.grazie.utils.ifTrue
 import com.intellij.grazie.utils.orTrue
+import com.intellij.grazie.utils.processElements
+import com.intellij.grazie.utils.toPointer
+import com.intellij.psi.PsiElement
+import java.rmi.UnexpectedException
+import java.util.*
+import kotlin.collections.ArrayList
 
-class GrammarChecker(private val charRules: CharRules = CharRules(), private val textRules: TextRules = TextRules()) {
+object GrammarChecker {
+  private data class Token(val info: GraziePsiElementProcessor.TokenInfo, val range: IntRange, val shift: Int)
 
-  /** Rules working on a level of chars and previous part of string */
-  data class CharRules(val ignore: LinkedSet<(CharSequence, Char) -> Boolean> = LinkedSet(),
-                       val replace: LinkedSet<(CharSequence, Char) -> Char?> = LinkedSet()) {
-    constructor(fst: CharRules, snd: CharRules) : this(LinkedSet(fst.ignore + snd.ignore), LinkedSet(fst.replace + snd.replace))
+  private fun canIgnoreWhitespace(prefix: CharSequence, current: Char) = prefix.lastOrNull()?.isWhitespace().orTrue() && current.isWhitespace()
 
-    fun ignore(prev: CharSequence, cur: Char) = ignore.any { it(prev, cur) }
-    fun replace(prev: CharSequence, cur: Char) = replace.asSequence().mapNotNull { it(prev, cur) }.firstOrNull() ?: cur
+  fun check(root: PsiElement, strategy: GrammarCheckingStrategy): Set<Typo> {
+    val processor = GraziePsiElementProcessor<PsiElement>(root, strategy)
+    processElements(root, processor)
+    return check(root, processor.getResult(), strategy)
   }
 
-  /** Rules working on a level of the whole text */
-  data class TextRules(val ignoreFully: LinkedSet<(String) -> Boolean> = LinkedSet(),
-                       val ignoreByIndex: LinkedSet<(String, Int) -> Boolean> = LinkedSet()) {
-    constructor(fst: TextRules, snd: TextRules) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully),
-                                                       LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
-
-    fun ignore(text: String): Boolean = ignoreFully.any { it(text) }
-    fun ignore(text: String, idx: Int): Boolean = ignoreByIndex.any { it(text, idx) }
-  }
-
-  data class TokenRules<T : PsiElement>(val ignoreFully: LinkedSet<(T) -> Boolean> = LinkedSet(),
-                                        val ignoreByIndex: LinkedSet<(T, Int) -> Boolean> = LinkedSet()) {
-    constructor(fst: TokenRules<T>, snd: TokenRules<T>) : this(LinkedSet(fst.ignoreFully + snd.ignoreFully),
-                                                               LinkedSet(fst.ignoreByIndex + snd.ignoreByIndex))
-
-    fun ignore(token: T): Boolean = ignoreFully.any { it(token) }
-    fun ignore(token: T, idx: Int): Boolean = ignoreByIndex.any { it(token, idx) }
-  }
-
-
-  constructor(checker: GrammarChecker, charRules: CharRules = CharRules(), textRules: TextRules = TextRules())
-    : this(CharRules(checker.charRules, charRules), TextRules(checker.textRules, textRules))
-
-  companion object {
-    object Rules {
-      /** Deduplicate sequential blanks */
-      val flatBlanks: (CharSequence, Char) -> Boolean = { prefix, cur ->
-        prefix.lastOrNull()?.isWhitespace().orTrue() && cur.isWhitespace()
-      }
-
-      //TODO probably we need to flat them only if previous char is not end of sentence punctuation mark
-      /** Replace all newlines with space characters */
-      val flatNewlines: (CharSequence, Char) -> Char? = { _, cur ->
-        Text.isNewline(cur).ifTrue { ' ' }
-      }
-
-      val ignoreFullyBlank: (String) -> Boolean = { it.isBlank() }
-
-      val ignoreBorderQuotes: (String, Int) -> Boolean = { text, idx ->
-        fun isSymmetricallyQuotedPart(idx: Int): Boolean {
-          val prev = text[idx]
-          val oppositePrev = text[text.length - idx - 1]
-          return prev == oppositePrev && Text.isQuote(prev)
-        }
-
-        val leftRange = (0 until idx)
-        val rightRange = (idx + 1) until text.length
-
-        //Trim quotes only if all previous were quotes that should be trimmed too
-        //`all` is lazy and will return false once see not quote
-        isSymmetricallyQuotedPart(idx) && (leftRange.all { isSymmetricallyQuotedPart(it) } || rightRange.all {
-          isSymmetricallyQuotedPart(it)
-        })
-      }
-    }
-
-    val default = GrammarChecker(
-      CharRules(linkedSetOf(Rules.flatBlanks), linkedSetOf(Rules.flatNewlines)),
-      TextRules(ignoreFully = linkedSetOf(Rules.ignoreFullyBlank), ignoreByIndex = linkedSetOf(Rules.ignoreBorderQuotes))
-    )
-  }
-
-  fun <T : PsiElement> check(vararg tokens: T, tokenRules: TokenRules<T> = TokenRules()): Set<Typo> = check(tokens.toList(), tokenRules)
-
-  fun <T : PsiElement> check(tokens: Collection<T>, tokenRules: TokenRules<T> = TokenRules()): Set<Typo> {
+  private fun check(root: PsiElement, tokens: Collection<GraziePsiElementProcessor.TokenInfo>, strategy: GrammarCheckingStrategy): Set<Typo> {
     if (tokens.isEmpty()) return emptySet()
 
-    val indicesShift = HashMap<Int, Int>()
-    val tokenMapping = HashMap<IntRange, T>()
-
-    val resultText = buildString {
-      var index = 0
-      //iterate through non-ignored tokens
-      for ((token, text) in tokens.map { it to it.text }.filterNot { (token, text) ->
-        textRules.ignore(text) || tokenRules.ignore(token)
-      }) {
-        val tokenStartIndex = index
-
-        var excluded = 0
-        indicesShift[index] = excluded
-        for ((tokenIndex, char) in text.withIndex()) {
-          //perform replacing of char (depending on already seen string)
-          @Suppress("NAME_SHADOWING") val char = charRules.replace(this, char)
-
-          //check if char should be ignored
-          if (charRules.ignore(this, char) || textRules.ignore(text, tokenIndex) || tokenRules.ignore(token, tokenIndex)) {
-            indicesShift[index] = ++excluded
-            continue
-          }
-
-          append(char)
-
-          index++
-        }
-        if (tokenStartIndex < index) {
-          tokenMapping[IntRange(tokenStartIndex, index - 1)] = token
-        }
-
-        if (!lastOrNull()?.isWhitespace().orTrue()) {
-          append(' ')
-          index++
-        }
+    // ranges of absorbed elements
+    val absorbs = LinkedList<IntRange>().apply {
+      var last = 0
+      tokens.forEach {
+        val begin = it.token.textOffset - root.textOffset
+        if (last != begin) add(IntRange(last, begin - 1))
+        last = begin + it.token.textLength
       }
     }
 
-    val typos = GrammarEngine.getTypos(resultText)
-
-    val sortedIndexesShift = indicesShift.entries.sortedBy { it.key }
-
-    return typos.mapNotNull { typo ->
-      tokenMapping.filter { typo.location.range.start in it.key }.entries.firstOrNull()?.let { (range, firstToken) ->
-        val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
-        if (firstToken == secondToken) {
-          val startShift = sortedIndexesShift.lastOrNull { it.key <= typo.location.range.start }?.value ?: 0
-          val endShift = sortedIndexesShift.lastOrNull { it.key <= typo.location.range.endInclusive }?.value ?: 0
-          val newRange = IntRange(typo.location.range.start + startShift - range.start,
-                                  typo.location.range.endInclusive + endShift - range.start)
-          typo.copy(location = typo.location.copy(range = newRange, pointer = firstToken.toPointer()))
+    // tokens with IntRange mappings from text
+    val mappings = ArrayList<Token>(tokens.size)
+    val replaces = strategy.getReplaceCharRules(root)
+    var offset = 0
+    val text = buildString {
+      var index = 0
+      for ((info, text) in tokens.filter { it.behavior != GrammarCheckingStrategy.ElementBehavior.STEALTH }.map { it to it.token.text }) {
+        var tokenIndex = 0 // index inside current token
+        var shift = 0      // shift inside current token
+        text.asSequence().map { replaces.fold(it) { acc, rule -> rule(this, acc) } }.forEach { char ->
+          // shift whitespaces in the beginning of the tokens
+          if (tokenIndex <= 1 && canIgnoreWhitespace(this, char)) {
+            shift++
+          }
+          else {
+            append(char)
+            tokenIndex++
+          }
         }
-        else null
+
+        mappings.add(Token(info, IntRange(index, index + tokenIndex), shift))
+        index += tokenIndex
+      }
+
+      offset = Text.quotesOffset(this)
+      setLength(length - offset) // remove closing quotes and whitespaces
+      while (length > 0 && get(length - 1).isWhitespace()) deleteCharAt(length - 1)
+
+      while (offset < length && get(offset).isWhitespace()) offset++
+      repeat(offset) { deleteCharAt(0) } // remove opening quotes and whitespace
+    }
+
+    return GrammarEngine.getTypos(text, offset = offset).mapNotNull { typo ->
+      val typoRange = typo.location.errorRange
+      val typoTokens = mappings.filter { it.range.endInclusive > typoRange.start && it.range.start <= typoRange.endInclusive }
+
+      if (typoTokens.isEmpty()) throw UnexpectedException("No tokens for range in typo")
+
+      val patternRange = with(typo.location.patternRange) {
+        val (startToken, endToken) = mappings.filter { it.range.endInclusive > start && it.range.start <= endInclusive }.let { it.first() to it.last() }
+        IntRange(startToken.info.token.textOffset - root.textOffset + start - startToken.range.start + startToken.shift,
+                 endToken.info.token.textOffset - root.textOffset + endInclusive - endToken.range.start + endToken.shift)
+      }
+
+      val (startToken, endToken) = typoTokens.first() to typoTokens.last()
+      // calculate new typo range in the root element
+      val newRange = IntRange(startToken.info.token.textOffset - root.textOffset + typoRange.start - startToken.range.start + startToken.shift,
+        endToken.info.token.textOffset - root.textOffset + typoRange.endInclusive - endToken.range.start + endToken.shift)
+
+      val ignoredRules = typoTokens.fold(emptySet<String>()) { acc, token -> token.info.ignoredGroup.rules + acc }
+      val ignoredCategories = typoTokens.fold(emptySet<Typo.Category>()) { acc, token -> token.info.ignoredCategories + acc }.map { it.name }
+
+      when {
+        absorbs.any { patternRange.start in it || patternRange.endInclusive in it || it.start in patternRange } -> null // typo pattern in absorb element
+        !strategy.isTypoAccepted(root, newRange, patternRange) -> null                                                  // typo not accepted by strategy
+        typo.info.rule.category.id.toString() in ignoredCategories -> null                                              // typo rule in ignored category
+        typo.info.rule.id in ignoredRules -> null                                                                       // typo rule in ignored group
+
+        else -> typo.copy(location = typo.location.copy(errorRange = newRange, pointer = root.toPointer()))
       }
     }.toSet()
   }

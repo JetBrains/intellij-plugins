@@ -3,23 +3,13 @@ package com.intellij.grazie.utils
 
 import org.apache.commons.text.similarity.LevenshteinDistance
 
+@Suppress("MemberVisibilityCanBePrivate")
 object Text {
   private val newLineCharRegex = Regex("\\n")
-
-  fun containsBlank(str: String) = str.any { it.isWhitespace() }
 
   fun isNewline(char: Char) = newLineCharRegex.matches(char)
 
   fun isQuote(char: Char) = char in setOf('\'', '\"')
-
-  private val urlRegex = Regex("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)")
-  fun isURL(str: String) = urlRegex.matches(str)
-
-  private val filePathRegex = Regex("([/A-z0-9-_+])*(/[A-z0-9-_+.]*)+")
-  fun isFilePath(str: String) = filePathRegex.matches(str)
-
-  fun isHiddenFile(str: String) = str.startsWith(".")
-  fun isHtmlUnicodeSymbol(str: String) = str.startsWith("&")
 
   object Levenshtein {
     private val levenshtein = LevenshteinDistance()
@@ -27,7 +17,17 @@ object Text {
     fun distance(str1: CharSequence?, str2: CharSequence?): Int = levenshtein.apply(str1, str2)
   }
 
-  fun isLatin(str: String) = str.matches(Regex("\\p{IsLatin}+"))
+  fun quotesOffset(str: CharSequence): Int {
+    var index = 0
+    while (index < str.length / 2) {
+      if (str[index] != str[str.length - index - 1] || !isQuote(str[index])) {
+        return index
+      }
+      index++
+    }
+
+    return index
+  }
 }
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */

@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.language
+package com.intellij.grazie.jlanguage
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.grazie.language.broker.GrazieDynamicClassBroker
-import com.intellij.grazie.language.broker.GrazieDynamicDataBroker
+import com.intellij.grazie.jlanguage.broker.GrazieDynamicClassBroker
+import com.intellij.grazie.jlanguage.broker.GrazieDynamicDataBroker
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.config.UserConfig
@@ -29,7 +29,9 @@ object LangTool : GrazieStateLifecycle {
 
     return langs.getOrPut(lang) {
       JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
-        lang.configure(this)
+        allRules.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
+          disableRule(it.id)
+        }
 
         state.userDisabledRules.forEach { id -> disableRule(id) }
         state.userEnabledRules.forEach { id -> enableRule(id) }
@@ -37,10 +39,8 @@ object LangTool : GrazieStateLifecycle {
     }
   }
 
-  fun getSpeller(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): Rule? {
-    return spellers.getOrPut(lang) {
-      getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule }
-    }
+  fun getSpeller(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): Rule? = spellers.getOrPut(lang) {
+    getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule }
   }
 
   override fun init(state: GrazieConfig.State, project: Project) {

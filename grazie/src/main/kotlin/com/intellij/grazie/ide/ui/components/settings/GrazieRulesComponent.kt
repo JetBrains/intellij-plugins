@@ -1,9 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.settings
 
-import org.picocontainer.Disposable
 import com.intellij.grazie.ide.ui.components.rules.GrazieRulesPanel
-import com.intellij.grazie.language.Lang
+import com.intellij.grazie.jlanguage.Lang
+import org.picocontainer.Disposable
 
 class GrazieRulesComponent(onSelectionChanged: (Any) -> Unit) : Disposable {
   private val rules = GrazieRulesPanel(onSelectionChanged)

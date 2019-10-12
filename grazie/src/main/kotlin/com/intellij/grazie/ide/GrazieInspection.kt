@@ -4,16 +4,16 @@ package com.intellij.grazie.ide
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.grammar.GrammarChecker
+import com.intellij.grazie.grammar.Typo
+import com.intellij.grazie.ide.language.LanguageGrammarChecking
+import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.grazie.utils.isInjectedFragment
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.grammar.Typo
-import com.intellij.grazie.ide.language.LanguageSupport
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.grazie.spellcheck.GrazieSpellchecker
-import com.intellij.grazie.utils.isInjectedFragment
 
 class GrazieInspection : LocalInspectionTool() {
   companion object : GrazieStateLifecycle {
@@ -34,12 +34,8 @@ class GrazieInspection : LocalInspectionTool() {
         if (element == null || element.isInjectedFragment()) return
 
         val typos = HashSet<Typo>()
-        for (ext in LanguageSupport.allForLanguageOrAny(element.language).filter { it.isRelevant(element) }) {
-          typos.addAll(ext.getTypos(element))
-        }
-
-        if (GrazieConfig.get().enabledSpellcheck) {
-          typos.addAll(GrazieSpellchecker.getTypos(element))
+        for (strategy in LanguageGrammarChecking.allForLanguageOrAny(element.language).filter { it.isMyContextRoot(element) }) {
+          typos.addAll(GrammarChecker.check(element, strategy))
         }
 
         typos.map { GrazieProblemDescriptor(it, isOnTheFly) }.forEach {

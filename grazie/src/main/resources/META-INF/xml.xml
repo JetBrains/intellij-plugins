@@ -1,5 +1,5 @@
 <idea-plugin>
     <extensions defaultExtensionNs="com.intellij.grazie">
-        <languageSupport language="XML" implementationClass="com.intellij.grazie.ide.language.xml.XmlSupport"/>
+        <grammar.strategy language="XML" implementationClass="com.intellij.grazie.ide.language.xml.XmlGrammarCheckingStrategy"/>
     </extensions>
 </idea-plugin>

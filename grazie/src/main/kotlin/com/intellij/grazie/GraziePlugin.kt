@@ -3,7 +3,6 @@ package com.intellij.grazie
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.PluginId
 import java.io.File
 
@@ -17,10 +16,7 @@ object GraziePlugin {
     get() = descriptor.version
 
   val classLoader: ClassLoader
-    get() = if (ApplicationManager.getApplication().isUnitTestMode)
-      ClassLoader.getSystemClassLoader()
-    else
-      descriptor.pluginClassLoader
+    get() = descriptor.pluginClassLoader
 
   val libFolder: File
     get() = descriptor.path.resolve("lib")

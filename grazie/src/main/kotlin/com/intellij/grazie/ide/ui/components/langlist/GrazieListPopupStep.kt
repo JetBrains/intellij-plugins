@@ -1,11 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.langlist
 
+import com.intellij.grazie.jlanguage.Lang
+import com.intellij.grazie.utils.ifTrue
 import com.intellij.openapi.ui.popup.ListSeparator
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.grazie.language.Lang
-import com.intellij.grazie.utils.ifTrue
 
 class GrazieListPopupStep(title: String, downloadedLangs: List<Lang>, private val otherLangs: List<Lang>,
                           private val download: (Lang) -> Boolean,

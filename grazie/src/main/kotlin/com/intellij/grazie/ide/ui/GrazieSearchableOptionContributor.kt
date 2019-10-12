@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui
 
+import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.ide.ui.search.SearchableOptionContributor
 import com.intellij.ide.ui.search.SearchableOptionProcessor
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.language.Lang
 
 class GrazieSearchableOptionContributor : SearchableOptionContributor() {
   private val id = "reference.settingsdialog.project.grazie"

@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Module description <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning>"""
+"""Module description <TYPO descr="Typo: In word 'eror'">eror</TYPO>"""
 
 
 class ExampleClassWithNoTypos:
@@ -50,7 +50,7 @@ class ExampleClassWithTypos:
 
     def bad_function(self, member):
         """
-        It <warning descr="IT_VBZ">add</warning> a [member] to this <warning descr="MORFOLOGIK_RULE_EN_US">grooup</warning>.
+        It <warning descr="IT_VBZ">add</warning> a [member] to this <TYPO descr="Typo: In word 'grooup'">grooup</TYPO>.
 
         Args:
             member (str): member to add to the group.
@@ -59,7 +59,7 @@ class ExampleClassWithTypos:
             int: the new size of <warning descr="DT_DT">a the</warning> group.
 
         """
-        return 1  # It are <warning descr="MORFOLOGIK_RULE_EN_US">eror</warning> comment
+        return 1  # It are <TYPO descr="Typo: In word 'eror'">eror</TYPO> comment
 
 
 class ForMultiLanguageSupport:
@@ -74,8 +74,8 @@ class ForMultiLanguageSupport:
 
     def __init__(self):
         """
-        Er überprüfte die Rechnungen noch <warning descr="MORFOLOGIK_RULE_EN_US">einal</warning>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
+        Er überprüfte die Rechnungen noch <TYPO descr="Typo: In word 'einal'">einal</TYPO>, um ganz <warning descr="COMPOUND_INFINITIV_RULE">sicher zu gehen</warning>.
         Das ist <warning descr="FUEHR_FUER">führ</warning> Dich!
-        Das <warning descr="MORFOLOGIK_RULE_EN_US">daert</warning> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
+        Das <TYPO descr="Typo: In word 'daert'">daert</TYPO> geschätzt fünf <warning descr="MANNSTUNDE">Mannstunden</warning>.
         """
         pass

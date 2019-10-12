@@ -5,7 +5,7 @@ import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.GrazieDynamic
 import com.intellij.grazie.GraziePlugin
 import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.language.Lang
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.openapi.project.Project
 import com.intellij.util.download.DownloadableFileService
 import com.intellij.util.lang.UrlClassLoader

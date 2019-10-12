@@ -1,15 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.settings
 
-import com.intellij.icons.AllIcons
-import com.intellij.ui.components.labels.LinkLabel
-import com.intellij.util.ui.JBUI
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.ide.ui.components.dsl.padding
 import com.intellij.grazie.ide.ui.components.dsl.panel
 import com.intellij.grazie.ide.ui.components.langlist.GrazieAddDeleteListPanel
-import com.intellij.grazie.language.Lang
+import com.intellij.grazie.jlanguage.Lang
+import com.intellij.icons.AllIcons
+import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 
 class GrazieLanguagesComponent(download: (Lang) -> Boolean, onLanguageAdded: (Lang) -> Unit, onLanguageRemoved: (Lang) -> Unit) {

@@ -1,11 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.ui.components.utils
 
+import com.intellij.grazie.ide.ui.components.dsl.panel
 import com.intellij.icons.AllIcons
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.ui.components.labels.LinkListener
 import com.intellij.ui.components.panels.HorizontalLayout
-import com.intellij.grazie.ide.ui.components.dsl.panel
 import javax.swing.Icon
 import javax.swing.JLabel
 
