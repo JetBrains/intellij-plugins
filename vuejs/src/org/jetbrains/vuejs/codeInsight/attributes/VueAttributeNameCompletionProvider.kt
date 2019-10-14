@@ -41,8 +41,9 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     private val EVENT_MODIFIERS = arrayOf("stop", "prevent", "capture", "self", "once", "passive", "native")
 
     private fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
-      ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
-         ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
+      (context?.descriptor as? HtmlElementDescriptorImpl
+       ?: HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
+        ?.getDefaultAttributeDescriptors(context) ?: emptyArray()
   }
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
@@ -124,15 +125,13 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       result.addElement(lookupElement(prefix + emit.name))
     }
 
-    val descriptor = tag?.descriptor as? HtmlElementDescriptorImpl
-                     ?: HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag)
-                     ?: return
-    for (attrDescriptor in descriptor.getAttributesDescriptors(tag)) {
-      val name = attrDescriptor.name
-      if (name.startsWith("on")) {
-        result.addElement(lookupElement(prefix + name.substring("on".length), priority = LOW, icon = null))
+    getDefaultHtmlAttributes(tag).asSequence()
+      .map { it.name }
+      .filter { it.startsWith("on") }
+      .map { it.substring(2) }
+      .forEach {
+        result.addElement(lookupElement(prefix + it, priority = LOW, icon = null))
       }
-    }
   }
 
   private fun addModifierCompletions(result: CompletionResultSet, attrInfo: VueDirectiveInfo) {
@@ -177,11 +176,12 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     newResult.addElement(lookupElement(lookupItemPrefix + "key", priority = LOW))
 
     // v-bind:any-standard-attribute support
-    for (attribute in getDefaultHtmlAttributes(attr.parent)) {
-      if (!attribute.name.startsWith("on")) {
-        newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, priority = LOW, icon = null))
+    getDefaultHtmlAttributes(attr.parent).asSequence()
+      .map { it.name }
+      .filter { !it.startsWith("on") }
+      .forEach {
+        newResult.addElement(lookupElement(lookupItemPrefix + it, priority = LOW, icon = null))
       }
-    }
 
     for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
       newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, priority = HIGH))

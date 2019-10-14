@@ -1426,6 +1426,25 @@ $script""")
         .sorted())
   }
 
+  fun testBindProposalsStdTag() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByText("b-component.vue", """
+      <template>
+        <a v-bind:<caret>
+      <template>
+    """)
+    myFixture.completeBasic()
+    assertEquals(
+      listOf("about", "accesskey", "autocapitalize", "autofocus", "base", "charset", "class", "content", "contenteditable", "coords",
+             "datatype", "dir", "download", "draggable", "hidden", "href", "hreflang", "id", "inlist", "inputmode", "is", "itemid",
+             "itemprop", "itemref", "itemscope", "itemtype", "key", "lang", "methods", "name", "nonce", "prefix", "property",
+             "referrerpolicy", "rel", "resource", "rev", "role", "shape", "slot", "space", "spellcheck", "style", "tabindex", "target",
+             "title", "translate", "type", "typeof", "urn", "vocab"),
+      myFixture.lookupElementStrings!!
+        .filter { !it.contains("aria-") }
+        .sorted())
+  }
+
   fun testAttributeNamePriority() {
     createPackageJsonWithVueDependency(myFixture, """"vuetify": "0.0.0"""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
@@ -1572,7 +1591,8 @@ $script""")
     myFixture.copyDirectoryToProject("filters", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter", "webTypesFilter").sorted(),myFixture.lookupElementStrings!!.sorted())
+    TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter", "webTypesFilter").sorted(),
+                          myFixture.lookupElementStrings!!.sorted())
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
