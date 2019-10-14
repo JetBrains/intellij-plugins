@@ -339,7 +339,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public String getName() {
         return _name;
     }
