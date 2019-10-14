@@ -18,7 +18,7 @@ public class HbLanguage extends Language implements TemplateLanguage, Injectable
   }
 
   public HbLanguage() {
-    super("Handlebars", "text/x-handlebars-template", "text/x-handlebars");
+    super("Handlebars", "text/x-handlebars-template", "text/x-handlebars", "text/ractive");
   }
 
   public HbLanguage(@Nullable Language baseLanguage, @NotNull @NonNls final String ID, @NotNull @NonNls final String... mimeTypes) {
