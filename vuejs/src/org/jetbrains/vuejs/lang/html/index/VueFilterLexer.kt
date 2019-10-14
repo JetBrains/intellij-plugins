@@ -22,7 +22,6 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 import kotlin.experimental.or
 
 class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexer) : BaseFilterLexer(originalLexer,
@@ -115,9 +114,8 @@ class VueFilterLexer(occurrenceConsumer: OccurrenceConsumer, originalLexer: Lexe
       JSExtendedLanguagesTokenSetProvider.SKIP_WORDS_SCAN_SET,
       XmlFilterLexer.NO_WORDS_TOKEN_SET,
       create(
-        XmlTokenType.XML_COMMA,
+        XmlTokenType.XML_COMMA
         // VueTokenTypes.ESCAPE_SEQUENCE,
-        VueHighlightingLexer.EXPRESSION_WHITE_SPACE
       )
     )
   }

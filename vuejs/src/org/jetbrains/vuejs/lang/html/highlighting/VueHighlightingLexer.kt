@@ -3,20 +3,15 @@ package org.jetbrains.vuejs.lang.html.highlighting
 
 import com.intellij.lang.HtmlScriptContentProvider
 import com.intellij.lang.Language
-import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
-import com.intellij.lang.javascript.types.JSWhiteSpaceElementType
 import com.intellij.lexer.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.psi.xml.XmlTokenType.XML_REAL_WHITE_SPACE
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.highlighting.VueJSSyntaxHighlighter
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.getBaseLexerState
-import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.isLexerWithinInterpolation
 import org.jetbrains.vuejs.lang.html.lexer.VueLexer.VueMergingLexer.Companion.isLexerWithinUnterminatedInterpolation
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHandle
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
@@ -27,12 +22,6 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
                            private val interpolationConfig: Pair<String, String>?)
   : HtmlHighlightingLexer(VueHighlightingMergingLexer(FlexAdapter(_VueLexer(interpolationConfig))),
                           true, null) {
-
-  companion object {
-    @NonNls
-    val EXPRESSION_WHITE_SPACE: IElementType = object : IElementType("VueJS:EXPRESSION_WHITE_SPACE",
-                                                                     VueJSLanguage.INSTANCE), JSWhiteSpaceElementType {}
-  }
 
   private val helper: VueLexerHelper = VueLexerHelper(object : VueLexerHandle {
 
@@ -101,22 +90,15 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel,
 
   override fun getTokenType(): IElementType? {
     val type = helper.getTokenType(super.getTokenType())
-    if ((type === XmlTokenType.TAG_WHITE_SPACE && isLexerWithinInterpolation(state))
-        || (type === XmlTokenType.XML_WHITE_SPACE && hasSeenScript()))
-      return EXPRESSION_WHITE_SPACE
-    if (type === XmlTokenType.TAG_WHITE_SPACE && (getBaseLexerState(state) == 0
-                                                  || isLexerWithinUnterminatedInterpolation(state))) {
+    if ((type === XmlTokenType.TAG_WHITE_SPACE
+         && (getBaseLexerState(state) == 0 || isLexerWithinUnterminatedInterpolation(state)))) {
       return XML_REAL_WHITE_SPACE
     }
     return type
   }
 
   override fun getInlineScriptHighlightingLexer(): Lexer? {
-    return object : MergingLexerAdapterBase(VueJSSyntaxHighlighter().highlightingLexer) {
-      override fun getMergeFunction(): MergeFunction {
-        return MergeFunction { type, _ -> if (type === JSTokenTypes.WHITE_SPACE) EXPRESSION_WHITE_SPACE else type }
-      }
-    }
+    return VueJSSyntaxHighlighter().highlightingLexer
   }
 
   override fun createELLexer(newLexer: Lexer?): Lexer? {
