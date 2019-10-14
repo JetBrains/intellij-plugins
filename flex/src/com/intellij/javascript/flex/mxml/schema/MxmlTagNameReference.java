@@ -46,7 +46,7 @@ public class MxmlTagNameReference extends TagNameReference {
     }
     else {
       final XmlTag tag = getTagElement();
-      if (tag == null || !myStartTagFlag) return tag;
+      if (tag == null) return null;
 
       final String newNamespace = newPackage.isEmpty() ? "*" : newPackage + ".*";
       String newPrefix = tag.getPrefixByNamespace(newNamespace);
