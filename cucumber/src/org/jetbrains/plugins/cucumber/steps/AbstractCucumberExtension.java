@@ -9,11 +9,6 @@ import java.util.List;
 
 public abstract class AbstractCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
-  public List<PsiElement> resolveStep(@NotNull PsiElement step) {
-    return null;
-  }
-
-  @Override
   public void flush(@NotNull final Project project) {
   }
 

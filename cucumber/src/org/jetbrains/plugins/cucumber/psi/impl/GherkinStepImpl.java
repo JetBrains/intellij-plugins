@@ -58,12 +58,6 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
-  @Nullable
-  public String getStepName() {
-    return getElementText();
-  }
-
-  @Override
   @NotNull
   protected String getElementText() {
     final ASTNode node = getNode();

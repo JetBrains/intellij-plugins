@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiNamedElement;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -32,14 +31,6 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
   String RENAME_BAD_SYMBOLS_MESSAGE = CucumberBundle.message("cucumber.refactor.rename.bad_symbols");
 
   ASTNode getKeyword();
-
-  /**
-   * Deprecated
-   * Use getName() instead
-   */
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-  String getStepName();
 
   @Override
   @NotNull

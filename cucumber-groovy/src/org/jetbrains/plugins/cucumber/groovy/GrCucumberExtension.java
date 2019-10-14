@@ -20,7 +20,6 @@ import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.NotIndexedCucumberExtension;
 import org.jetbrains.plugins.groovy.GroovyFileType;
@@ -28,7 +27,9 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Max Medvedev
@@ -67,25 +68,6 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
       }
     }
     return null;
-  }
-
-  @NotNull
-  @Override
-  public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = new HashSet<>();
-    }
-    final Set<String> glues = gluesFromOtherFiles;
-
-    for (AbstractStepDefinition stepDefinition : getAllStepDefinitions(file.getProject())) {
-      final PsiElement stepDefinitionElement = stepDefinition.getElement();
-      final String glue = getGlue(stepDefinitionElement);
-      if (glue != null) {
-        glues.add(glue);
-      }
-    }
-
-    return glues;
   }
 
   @Override
