@@ -123,8 +123,8 @@ export default {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
-    TestCase.assertTrue(property is JSProperty)
-    TestCase.assertEquals("testRight", (property as JSProperty).name)
+    TestCase.assertTrue((property as JSImplicitElement).context is JSFunctionItem)
+    TestCase.assertEquals("testRight", (property.context as JSFunctionItem).name)
   }
 
   fun testResolveIntoComputedES6FunctionProperty() {
@@ -145,8 +145,8 @@ export default {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
-    TestCase.assertTrue(property is JSProperty)
-    TestCase.assertEquals("testRight", (property as JSProperty).name)
+    TestCase.assertTrue((property as JSImplicitElement).context is JSFunctionItem)
+    TestCase.assertEquals("testRight", (property.context as JSFunctionItem).name)
   }
 
   fun testResolveIntoMethodsFromBoundAttributes() {

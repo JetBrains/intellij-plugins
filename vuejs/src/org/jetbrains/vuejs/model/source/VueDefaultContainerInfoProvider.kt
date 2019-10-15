@@ -219,7 +219,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     };
 
     fun readMembers(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
-      val detailsFilter = if (isFunctions) FUNCTION_FILTER else { _: PsiElement -> true }
       val property = descriptor.findProperty(propertyName) ?: return emptyList()
 
       var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
@@ -236,27 +235,27 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
           propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
                           .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
           if ((propsObject == null && canBeArray) || this === Delimiters) {
-            return readPropsFromArray(resolved, detailsFilter)
+            return readPropsFromArray(resolved)
           }
         }
       }
       if (propsObject != null && this !== Delimiters) {
-        return filteredObjectProperties(propsObject, detailsFilter)
+        return filteredObjectProperties(propsObject)
       }
-      return if (canBeArray) readPropsFromArray(property, detailsFilter) else return emptyList()
+      return if (canBeArray) readPropsFromArray(property) else return emptyList()
     }
 
     protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
     protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null
 
-    private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression, filter: (PsiElement) -> Boolean) =
+    private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression) =
       propsObject.properties.filter {
         val propName = it.name
-        propName != null && filter(it)
+        propName != null
       }.map { Pair(it.name!!, it) }
 
-    private fun readPropsFromArray(holder: PsiElement, filter: (PsiElement) -> Boolean): List<Pair<String, JSElement>> =
-      getStringLiteralsFromInitializerArray(holder) { _, element -> filter(element) }
+    private fun readPropsFromArray(holder: PsiElement): List<Pair<String, JSElement>> =
+      getStringLiteralsFromInitializerArray(holder)
         .map { Pair(getTextIfLiteral(it) ?: "", it) }
 
     companion object {
@@ -270,10 +269,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             it.context is JSParenthesizedExpression && it.context?.context == resolved ||
             it.context is JSReturnStatement
           }
-      }
-
-      private val FUNCTION_FILTER = { element: PsiElement ->
-        element is JSFunctionProperty || element is JSProperty && element.value is JSFunction
       }
     }
   }
