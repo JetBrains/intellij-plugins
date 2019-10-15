@@ -1,0 +1,7 @@
+Feature:
+
+  Scenario Outline: Foo
+    Given thing <argument>
+  Examples:
+    | argument |
+    | xyzzy    |

@@ -82,6 +82,11 @@
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/GherkinDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/GherkinDarcula.xml"/>
+
+    <intentionAction>
+      <className>org.jetbrains.plugins.cucumber.intentions.ScenarioToOutlineIntention</className>
+      <category>Cucumber</category>
+    </intentionAction>
   </extensions>
 
   <extensionPoints>
