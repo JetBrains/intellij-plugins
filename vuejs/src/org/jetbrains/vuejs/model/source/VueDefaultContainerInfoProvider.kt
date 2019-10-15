@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
@@ -213,8 +214,14 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
       var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
       val initializerReference = JSPsiImplUtils.getInitializerReference(property)
       if (propsObject == null && initializerReference != null) {
-        val resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
-        if (resolved != null) {
+        var resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
+        if (resolved is ES6ImportExportDeclarationPart) {
+          resolved = VueComponents.meaningfulExpression(resolved)
+        }
+        if (resolved is JSObjectLiteralExpression) {
+          propsObject = resolved
+        }
+        else if (resolved != null) {
           propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
                           .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
           if ((propsObject == null && canBeArray) || this === Delimiters) {

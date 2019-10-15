@@ -1917,6 +1917,14 @@ export default class UsageComponent extends Vue {
     myFixture.assertUnresolvedReference("<caret>wrongFilter")
   }
 
+  fun testImportedProps() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.copyDirectoryToProject("props-import-resolve", ".")
+    myFixture.configureFromTempProjectFile("main.vue")
+    val element = myFixture.resolveReference("\"user<caret>Id\"")
+    assertEquals("props.js", element.containingFile.name)
+  }
+
 }
 
 fun globalMixinText(): String {
