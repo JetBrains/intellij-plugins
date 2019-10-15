@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.inspections;
 
+import com.intellij.codeInspection.AbstractBaseJavaLocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.codeInspection.ex.BaseLocalInspectionTool;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nls;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-public class CucumberJavaStepDefClassInDefaultPackageInspection extends BaseLocalInspectionTool {
+public class CucumberJavaStepDefClassInDefaultPackageInspection extends AbstractBaseJavaLocalInspectionTool {
 
   @Override
   @Nls
