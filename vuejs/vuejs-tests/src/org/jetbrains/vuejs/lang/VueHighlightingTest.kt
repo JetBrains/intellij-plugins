@@ -41,6 +41,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
                                 JSValidateTypesInspection(),
                                 ThisExpressionReferencesGlobalObjectJSInspection(),
                                 JSValidateTypesInspection(),
+                                JSIncompatibleTypesComparisonInspection(),
                                 TypeScriptValidateTypesInspection(),
                                 TypeScriptUnresolvedVariableInspection(),
                                 TypeScriptUnresolvedFunctionInspection(),
@@ -1477,6 +1478,12 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
       myFixture.configureFromTempProjectFile(file)
       myFixture.checkHighlighting()
     }
+  }
+
+  fun testComputedPropType() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("computedPropType.vue")
+    myFixture.checkHighlighting()
   }
 
 }
