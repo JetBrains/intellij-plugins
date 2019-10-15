@@ -33,7 +33,7 @@ public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExte
     scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
     String mainClassName = ((JUnitConfiguration)configuration).getPersistentData().MAIN_CLASS_NAME;
-    PsiClass mainClass = JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope);
+    PsiClass mainClass = mainClassName != null ? JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope) : null;
     if (mainClass == null) {
       return;
     }
