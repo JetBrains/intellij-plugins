@@ -36,7 +36,7 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public PsiIdentifier getNameIdentifier() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
 
@@ -59,13 +59,13 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public Language getLanguage() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class PsiFieldMock implements PsiField {
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -304,13 +304,13 @@ public class PsiFieldMock implements PsiField {
     @Override
     @NotNull
     public GlobalSearchScope getResolveScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public SearchScope getUseScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -303,7 +303,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
       @Override
       @NotNull
       public SdkModificator getSdkModificator() {
-        return null;
+        throw new UnsupportedOperationException();
       }
 
       @Override

@@ -173,13 +173,13 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public List<Pair<PsiMethod, PsiSubstitutor>> findMethodsAndTheirSubstitutorsByName(String name, boolean checkBases) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public List<Pair<PsiMethod, PsiSubstitutor>> getAllMethodsAndTheirSubstitutors() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -235,19 +235,19 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public Collection<HierarchicalMethodSignature> getVisibleSignatures() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public Language getLanguage() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -348,7 +348,7 @@ public class PsiClassMock implements PsiClass {
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -409,7 +409,8 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    public PsiElement addRangeBefore(@NotNull PsiElement first, @NotNull PsiElement last, PsiElement anchor) throws IncorrectOperationException {
+    public PsiElement addRangeBefore(@NotNull PsiElement first, @NotNull PsiElement last, PsiElement anchor)
+      throws IncorrectOperationException {
         return null;
     }
 
@@ -474,8 +475,11 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    public boolean processDeclarations(@NotNull PsiScopeProcessor processor, @NotNull ResolveState state, @Nullable PsiElement lastParent, @NotNull PsiElement place) {
-      return false;
+    public boolean processDeclarations(@NotNull PsiScopeProcessor processor,
+                                       @NotNull ResolveState state,
+                                       @Nullable PsiElement lastParent,
+                                       @NotNull PsiElement place) {
+        return false;
     }
 
     @Override
@@ -492,13 +496,13 @@ public class PsiClassMock implements PsiClass {
     @Override
     @NotNull
     public GlobalSearchScope getResolveScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public SearchScope getUseScope() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -507,13 +511,13 @@ public class PsiClassMock implements PsiClass {
         return null;
     }
 
-  @Override
-  public boolean isEquivalentTo(PsiElement another) {
-    return PsiClassImplUtil.isClassEquivalentTo(this, another);
-  }
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        return PsiClassImplUtil.isClassEquivalentTo(this, another);
+    }
 
-  @Override
-  public <T> T getUserData(@NotNull Key<T> key) {
+    @Override
+    public <T> T getUserData(@NotNull Key<T> key) {
         return null;
     }
 

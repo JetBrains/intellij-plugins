@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ApplicationManager;
@@ -132,7 +131,7 @@ public class FlexGotoImplementationsTest extends JavaCodeInsightTestCase {
 
       if (methodName != null) {
         element = ((JSClass)element).findFunctionByName(methodName);
-        assertTrue("Class " + classQName + " has not have method " + methodName, element instanceof JSFunction);
+        assertNotNull("Class " + classQName + " has not have method " + methodName, element);
       }
 
       PsiElement navElement = element.getNavigationElement();

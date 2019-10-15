@@ -12,14 +12,12 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.structureView.JSStructureViewModel;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.icons.RowIcon;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -53,7 +51,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
         return FlexModuleType.MODULE_TYPE_ID;
       }
 
-      @Nullable
+      @NotNull
       @Override
       public Sdk getSdk() {
         return FlexTestUtils.createSdk(getPathToMockFlex(FlexStructureViewTest.class, getTestName(false)),

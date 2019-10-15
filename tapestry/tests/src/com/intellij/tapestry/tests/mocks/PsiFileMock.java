@@ -60,7 +60,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public FileType getFileType() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public FileViewProvider getViewProvider() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public String getName() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -107,13 +107,13 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public Language getLanguage() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -351,13 +351,13 @@ public class PsiFileMock implements PsiFile {
     @Override
     @NotNull
     public GlobalSearchScope getResolveScope() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
     @NotNull
     public SearchScope getUseScope() {
-        return null;
+      throw new UnsupportedOperationException();
     }
 
     @Override
