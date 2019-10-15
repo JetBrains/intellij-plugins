@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
@@ -191,7 +191,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Nullable
   @Override
   public XDebuggerEvaluator getEvaluator() {
-    return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    // Enable Expression evaluation for all run configurations except webdev run instances, until supported, progress tracked here:
+    // https://github.com/dart-lang/webdev/issues/715
+    if (!myDebugProcess.isWebdevDebug()) {
+      return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
+    }
+    return null;
   }
 
   public boolean isInDartSdkPatchFile() {

@@ -49,7 +49,7 @@ import java.util.Enumeration;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
-  private static final int WEBDEV_PORT_DEFAULT = 53322;
+  public static final int WEBDEV_PORT_DEFAULT = 53322;
   private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
