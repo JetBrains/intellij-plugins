@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.ExecutionException;
@@ -27,6 +27,7 @@ import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
+import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
@@ -48,7 +49,8 @@ public class DartRunner extends GenericProgramRunner {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
            (profile instanceof DartCommandLineRunConfiguration ||
             profile instanceof DartTestRunConfiguration ||
-            profile instanceof DartRemoteDebugConfiguration);
+            profile instanceof DartRemoteDebugConfiguration ||
+            profile instanceof DartWebdevConfiguration);
   }
 
   @Override
@@ -97,12 +99,14 @@ public class DartRunner extends GenericProgramRunner {
     final ExecutionResult executionResult;
     final String debuggingHost;
     final int observatoryPort;
+    final Project project = env.getProject();
+    final DartVmServiceDebugProcess.DebugType debugType;
 
     if (runConfiguration instanceof DartRunConfigurationBase) {
       contextFileOrDir = ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().getDartFileOrDirectory();
 
       final String cwd =
-        ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(env.getProject());
+        ((DartRunConfigurationBase)runConfiguration).getRunnerParameters().computeProcessWorkingDirectory(project);
       currentWorkingDirectory = LocalFileSystem.getInstance().findFileByPath((cwd));
 
       executionResult = state.execute(env.getExecutor(), this);
@@ -112,6 +116,7 @@ public class DartRunner extends GenericProgramRunner {
 
       debuggingHost = null;
       observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
+      debugType = DartVmServiceDebugProcess.DebugType.CLI;
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
       final String path = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getDartProjectPath();
@@ -126,6 +131,23 @@ public class DartRunner extends GenericProgramRunner {
 
       debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
       observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
+      debugType = DartVmServiceDebugProcess.DebugType.REMOTE;
+    }
+    else if (runConfiguration instanceof DartWebdevConfiguration) {
+      contextFileOrDir = ((DartWebdevConfiguration)runConfiguration).getParameters().getHtmlFile();
+
+      final String cwd =
+        ((DartWebdevConfiguration)runConfiguration).getParameters().computeProcessWorkingDirectory(project);
+      currentWorkingDirectory = LocalFileSystem.getInstance().findFileByPath((cwd));
+
+      executionResult = state.execute(env.getExecutor(), this);
+      if (executionResult == null) {
+        return null;
+      }
+
+      debuggingHost = null;
+      observatoryPort = -1;
+      debugType = DartVmServiceDebugProcess.DebugType.WEBDEV;
     }
     else {
       LOG.error("Unexpected run configuration: " + runConfiguration.getClass().getName());
@@ -134,19 +156,19 @@ public class DartRunner extends GenericProgramRunner {
 
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(env.getProject());
+    final XDebuggerManager debuggerManager = XDebuggerManager.getInstance(project);
     final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        final DartUrlResolver dartUrlResolver = getDartUrlResolver(env.getProject(), contextFileOrDir);
+        final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
         return new DartVmServiceDebugProcess(session,
                                              StringUtil.notNullize(debuggingHost, "localhost"),
                                              observatoryPort,
                                              executionResult,
                                              dartUrlResolver,
                                              dasExecutionContextId,
-                                             runConfiguration instanceof DartRemoteDebugConfiguration,
+                                             debugType,
                                              getTimeout(),
                                              currentWorkingDirectory);
       }
