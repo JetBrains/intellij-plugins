@@ -371,8 +371,7 @@ export default {
 }
 </script>""")
     myFixture.completeBasic()
-    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "MyMessage", "testRight")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "testWrong")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "MyMessage", "testRight", "testWrong")
   }
 
   fun testCompleteMethodsInBoundAttributes() {
@@ -1593,6 +1592,17 @@ $script""")
     myFixture.completeBasic()
     TestCase.assertEquals(listOf("localFilter", "globalFilter", "appFilter", "webTypesFilter").sorted(),
                           myFixture.lookupElementStrings!!.sorted())
+  }
+
+  fun testComplexThisContext() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"0.0.0\"")
+    myFixture.copyDirectoryToProject("../libs/vuex", ".")
+    myFixture.copyDirectoryToProject("../types", ".")
+    myFixture.configureByFile("complexThisContext.vue")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,
+                           "\$store", "exampleComputed", "anotherComputed",
+                           "exampleMethod", "anotherMethod")
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

@@ -22,7 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
-import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
@@ -84,7 +83,7 @@ class VueInjector : MultiHostInjector {
     }
 
     private fun getDelimiterValue(holder: PsiElement, key: String): String? {
-      val list = getStringLiteralsFromInitializerArray(holder, EMPTY_FILTER)
+      val list = getStringLiteralsFromInitializerArray(holder)
       if (list.size != 2) return null
       val literal = list[if (JSInjectionBracesUtil.START_SYMBOL_KEY == key) 0 else 1] as? JSLiteralExpression ?: return null
       return es6Unquote(literal.significantValue!!)

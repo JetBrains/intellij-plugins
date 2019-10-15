@@ -61,9 +61,7 @@ fun es6Unquote(s: String): String {
   return s
 }
 
-val EMPTY_FILTER: (String, PsiElement) -> Boolean = { _, _ -> true }
-fun getStringLiteralsFromInitializerArray(holder: PsiElement,
-                                          filter: (String, PsiElement) -> Boolean): List<JSLiteralExpression> {
+fun getStringLiteralsFromInitializerArray(holder: PsiElement): List<JSLiteralExpression> {
   return JSStubBasedPsiTreeUtil.findDescendants<JSLiteralExpression>(holder,
                                                                      TokenSet.create(JSStubElementTypes.LITERAL_EXPRESSION,
                                                                                      JSStubElementTypes.STRING_TEMPLATE_EXPRESSION))
@@ -71,7 +69,6 @@ fun getStringLiteralsFromInitializerArray(holder: PsiElement,
       val context = it.context
       !it.significantValue.isNullOrBlank() &&
       QUOTES.contains(it.significantValue!![0]) &&
-      filter(es6Unquote(it.significantValue!!), it) &&
       ((context is JSArrayLiteralExpression) && (context.parent == holder) || context == holder)
     }
 }
