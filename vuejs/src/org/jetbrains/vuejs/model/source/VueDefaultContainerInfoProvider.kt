@@ -183,7 +183,18 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                       override val source: PsiElement?) : VueDataProperty
 
   private class VueSourceComputedProperty(override val name: String,
-                                          override val source: PsiElement?) : VueComputedProperty
+                                          sourceElement: PsiElement?) : VueComputedProperty {
+    override val source: JSLocalImplicitElementImpl
+    override val jsType: JSType?
+
+    init {
+      val functionSource = (sourceElement as? JSProperty)?.tryGetFunctionInitializer() ?: sourceElement
+      source = JSLocalImplicitElementImpl(name, (functionSource as? JSFunctionItem)?.returnType,
+                                          functionSource, JSImplicitElement.Type.Property)
+      jsType = source.jsType
+    }
+
+  }
 
   private class VueSourceMethod(override val name: String,
                                 override val source: PsiElement?) : VueMethod
