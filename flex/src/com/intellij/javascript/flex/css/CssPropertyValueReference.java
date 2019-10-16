@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.openapi.util.TextRange;
@@ -78,9 +79,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
 
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
-    assert manipulator != null;
-    return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
+    return ElementManipulators.handleContentChange(myElement, getRangeInElement(), newElementName);
   }
 
   @Override

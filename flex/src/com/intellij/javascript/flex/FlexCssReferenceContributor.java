@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -81,7 +82,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
               for (ActionScriptCreateClassOrInterfaceFix fix : fixes) {
                 fix.setCreatedClassFqnConsumer(newFqn -> {
                   if (FileModificationService.getInstance().preparePsiElementForWrite(element)){
-                    ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
+                    ElementManipulators.handleContentChange(element, newFqn);
                   }
                 });
               }

@@ -69,7 +69,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final TextRange rangeInElement = ElementManipulators.getManipulator(psiElement).getRangeInElement(psiElement);
+    final TextRange rangeInElement = ElementManipulators.getValueTextRange(psiElement);
     final String fullPath = psiElement.getText();
     final String trimmedPath = rangeInElement.substring(fullPath);
     final TextRange trimmedPathRange = TextRange.from(rangeInElement.getStartOffset(),
