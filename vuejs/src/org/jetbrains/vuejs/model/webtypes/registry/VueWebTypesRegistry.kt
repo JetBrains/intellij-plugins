@@ -10,8 +10,8 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.cache.CacheLoader
 import com.intellij.javaee.ExternalResourceManager
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
+import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
@@ -241,10 +241,10 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     })
     val packageInfo: MutableList<NodePackageBasicInfo> = mutableListOf()
     NpmRegistryService.getInstance().findPackages(null,
-                                                                                              NpmRegistryService.fullTextSearch(PACKAGE_PREFIX),
-                                                                                              50,
-                                                                                              { it.name.startsWith("$PACKAGE_PREFIX/") },
-                                                                                              { packageInfo.add(it) })
+                                                  NpmRegistryService.fullTextSearch(PACKAGE_PREFIX),
+                                                  50,
+                                                  { it.name.startsWith("$PACKAGE_PREFIX/") },
+                                                  { packageInfo.add(it) })
 
     val availableVersions: SortedMap<String, SortedMap<SemVer, String>> = StreamEx.of(packageInfo)
       .parallel()
@@ -380,21 +380,23 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
           do {
             ProgressManager.checkCanceled()
             try {
-              val result = future.get(CHECK_TIMEOUT, TimeUnit.NANOSECONDS)
-              if (result is ProcessCanceledException) {
-                // retry at the next occasion without waiting
-                synchronized(myLock) {
-                  myFuture = null
+              when (val result = future.get(CHECK_TIMEOUT, TimeUnit.NANOSECONDS)) {
+                is ProcessCanceledException -> {
+                  // retry at the next occasion without waiting
+                  synchronized(myLock) {
+                    myFuture = null
+                  }
+                  return null
                 }
-                return null
-              }
-              else if (result is Exception) {
+                is ExecutionException -> throw result
                 // wrap it and pass to the exception catch block below
-                throw ExecutionException(result)
+                is Exception -> throw ExecutionException(result)
+                else -> {
+                  // future returns either T or Exception, so result must be T at this point
+                  @Suppress("UNCHECKED_CAST")
+                  return result as T
+                }
               }
-              // future returns either T or Exception, so result must be T at this point
-              @Suppress("UNCHECKED_CAST")
-              return result as T
             }
             catch (e: TimeoutException) {
               timeout -= CHECK_TIMEOUT
