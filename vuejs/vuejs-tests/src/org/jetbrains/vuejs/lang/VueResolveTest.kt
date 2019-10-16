@@ -1923,6 +1923,7 @@ export default class UsageComponent extends Vue {
     myFixture.configureFromTempProjectFile("main.vue")
     val element = myFixture.resolveReference("\"user<caret>Id\"")
     assertEquals("props.js", element.containingFile.name)
+    myFixture.assertUnresolvedReference("\"user<caret>Id2\"")
   }
 
 }
