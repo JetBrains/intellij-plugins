@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import one.util.streamex.EntryStream
 import org.jetbrains.vuejs.index.BOOTSTRAP_VUE
 import org.jetbrains.vuejs.index.SHARDS_VUE
@@ -47,6 +48,7 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
           CachedValueProvider.Result(if (result.isEmpty()) null
                                      else VueSourcePlugin(result, psiDirectory),
                                      NodeModulesDirectoryManager.getInstance(psiDirectory.project).nodeModulesDirChangeTracker,
+                                     PsiModificationTracker.MODIFICATION_COUNT,
                                      psiDirectory)
         }
       }

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
@@ -72,6 +73,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       .toSet()
     dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     dependencies.add(enabledPackagesResult.dependencyItems)
+    dependencies.add(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
     PackageJsonUtil.processUpPackageJsonFilesInAllScope(packageJson) { candidate ->
       result.addAll(getPlugins(candidate, enabledPackages))
       dependencies.add(candidate)
