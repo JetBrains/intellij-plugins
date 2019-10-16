@@ -118,7 +118,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
 
             VirtualFile wwwFolder = baseDir.findChild(PhoneGapUtil.FOLDER_WWW);
             if (wwwFolder != null) {
-              if (PhoneGapStartupActivity.isIonic2WwwDirectory(wwwFolder, baseDir)) {
+              if (PhoneGapStartupActivity.isIonic2WwwDirectory(baseDir)) {
                 PropertiesComponent.getInstance(project).setValue(EXCLUDED_WWW_DIRECTORY, true);
                 PhoneGapStartupActivity.excludeFolder(project, wwwFolder);
               }
