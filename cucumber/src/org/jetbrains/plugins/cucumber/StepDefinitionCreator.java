@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -18,18 +17,6 @@ public interface StepDefinitionCreator {
   PsiFile createStepDefinitionContainer(@NotNull final PsiDirectory dir, @NotNull final String name);
 
   /**
-   * Creates step definition. Use @{code StepDefinitionCreator#createStepDefinition(GherkinStep, PsiFile, boolean)} instead
-   * @param step to implement
-   * @param file where to create step definition
-   * @return true if success, false otherwise
-   */
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
-  default boolean createStepDefinition(@NotNull final GherkinStep step, @NotNull final PsiFile file) {
-    return false;
-  }
-
-  /**
    * Creates step definition
    * @param step to implement
    * @param file where to create step definition
@@ -38,7 +25,7 @@ public interface StepDefinitionCreator {
    * @return true if success, false otherwise
    */
   default boolean createStepDefinition(@NotNull final GherkinStep step, @NotNull final PsiFile file, boolean withTemplate) {
-    return createStepDefinition(step, file);
+    return false;
   }
 
   /**
