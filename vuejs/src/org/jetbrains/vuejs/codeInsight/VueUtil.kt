@@ -38,6 +38,8 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import java.util.concurrent.ConcurrentHashMap
 
+const val LANG_ATTRIBUTE_NAME = "lang"
+
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
   for (i in split.indices) {
@@ -86,7 +88,7 @@ fun getTextIfLiteral(holder: PsiElement?): String? {
   return null
 }
 
-fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute("lang")?.value?.trim()
+fun detectLanguage(tag: XmlTag?): String? = tag?.getAttribute(LANG_ATTRIBUTE_NAME)?.value?.trim()
 
 fun detectVueScriptLanguage(file: PsiFile): String? {
   val xmlFile = file as? XmlFile ?: return null

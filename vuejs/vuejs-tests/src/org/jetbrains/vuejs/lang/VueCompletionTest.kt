@@ -1605,6 +1605,19 @@ $script""")
                            "exampleMethod", "anotherMethod")
   }
 
+  fun testTopLevelTags() {
+    createPackageJsonWithVueDependency(myFixture)
+    for((tag, list) in listOf(
+      Pair("template", listOf("lang", "src", "functional")),
+      Pair("script", listOf("lang", "id", "src")),
+      Pair("style", listOf("lang", "src", "module", "scoped"))
+    )) {
+      myFixture.configureByText("test.vue", "<$tag <caret>")
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.lookupElementStrings!!, list)
+    }
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

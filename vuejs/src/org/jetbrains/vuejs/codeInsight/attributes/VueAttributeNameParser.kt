@@ -2,8 +2,10 @@
 package org.jetbrains.vuejs.codeInsight.attributes
 
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.MultiMap
 import com.intellij.xml.util.HtmlUtil.*
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
@@ -57,15 +59,7 @@ class VueAttributeNameParser private constructor() {
           nameEnd = attributeName.length
         }
         name = attributeName.substring(0, nameEnd)
-        val attributeKind =
-          if (name == SRC_ATTRIBUTE_NAME) {
-            listOf(VueAttributeKind.TEMPLATE_SRC, VueAttributeKind.STYLE_SRC, VueAttributeKind.SCRIPT_SRC)
-              .find { isValid(it) }
-          }
-          else {
-            attributeKindMap[name]?.takeIf(isValid)
-          }
-          ?: VueAttributeKind.PLAIN
+        val attributeKind = attributeKindMap.get(name).find(isValid) ?: VueAttributeKind.PLAIN
         return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
       if (paramsPos >= attributeName.length
@@ -123,16 +117,20 @@ class VueAttributeNameParser private constructor() {
       return result
     }
 
-    private val attributeKindMap = StreamEx.of(*VueAttributeKind.values())
-      .mapToEntry({ it.attributeName }, { it })
-      .filterKeys { it != SRC_ATTRIBUTE_NAME }
-      .nonNullKeys()
-      .toMap()
+    private val attributeKindMap: MultiMap<String, VueAttributeKind> = MultiMap.createSmart()
 
     private val directiveKindMap = StreamEx.of(*VueDirectiveKind.values())
       .mapToEntry({ it.directiveName }, { it })
       .nonNullKeys()
       .toMap()
+
+    init {
+      VueAttributeKind.values().asSequence()
+        .filter { it.attributeName != null }
+        .forEach {
+          attributeKindMap.putValue(it.attributeName, it)
+        }
+    }
   }
 
   open class VueAttributeInfo internal constructor(val name: String,
@@ -222,10 +220,13 @@ class VueAttributeNameParser private constructor() {
     STYLE_SCOPED("scoped", requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_MODULE("module", requiresValue = false, requiresTag = STYLE_TAG_NAME),
     STYLE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
+    STYLE_LANG(LANG_ATTRIBUTE_NAME, requiresTag = STYLE_TAG_NAME),
     TEMPLATE_FUNCTIONAL("functional", requiresValue = false, requiresTag = TEMPLATE_TAG_NAME),
     TEMPLATE_SRC(SRC_ATTRIBUTE_NAME, requiresTag = TEMPLATE_TAG_NAME),
+    TEMPLATE_LANG(LANG_ATTRIBUTE_NAME, requiresTag = TEMPLATE_TAG_NAME),
     SCRIPT_ID(ID_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME, onlyTopLevelTag = false),
     SCRIPT_SRC(SRC_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
+    SCRIPT_LANG(LANG_ATTRIBUTE_NAME, requiresTag = SCRIPT_TAG_NAME),
     ;
 
     fun isValidIn(context: String?, isTopLevel: Boolean): Boolean {

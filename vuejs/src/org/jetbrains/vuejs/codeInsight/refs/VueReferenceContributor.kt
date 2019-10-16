@@ -17,6 +17,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.util.ProcessingContext
 import com.intellij.xml.util.HtmlUtil.*
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.lexer.VueLexerHelper
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.getAvailableSlots
@@ -60,7 +61,7 @@ class VueReferenceContributor : PsiReferenceContributor() {
           val suitableFileTypes =
             (element.parent as? XmlAttribute)
               ?.parent
-              ?.getAttribute("lang")
+              ?.getAttribute(LANG_ATTRIBUTE_NAME)
               ?.value
               ?.let { VueLexerHelper.styleViaLang(Language.findLanguageByID("CSS"), it) }
               ?.associatedFileType

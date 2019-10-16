@@ -31,6 +31,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
@@ -133,7 +134,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
         }
 
         val addedExport: JSExportAssignment
-        val lang = scriptTag.getAttribute("lang")?.value
+        val lang = scriptTag.getAttribute(LANG_ATTRIBUTE_NAME)?.value
         val dummyScript = createDummyScript(file.project, lang, isClass, fileName)
         if (content != null && content.children.any { it !is PsiWhiteSpace && it !is PsiComment }) {
           val dummyContent = PsiTreeUtil.findChildOfType(dummyScript, JSEmbeddedContent::class.java)!!
