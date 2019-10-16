@@ -4,17 +4,16 @@ package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -32,9 +31,7 @@ import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders;
 
 public class PhoneGapStartupActivity implements StartupActivity {
-
-  public static final ExecutorService EXECUTOR = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("PhoneGap Service");
-
+  
   public static final String EXCLUDED_WWW_DIRECTORY = "excluded.www.directory";
 
   @Override
@@ -46,44 +43,74 @@ public class PhoneGapStartupActivity implements StartupActivity {
       PhoneGapExecutableChecker.check(project);
     }
 
-    project.getMessageBus().connect(project).subscribe(
-      VirtualFileManager.VFS_CHANGES,
-      new BulkFileListener() {
-        @Override
-        public void after(@NotNull List<? extends VFileEvent> events) {
-
-          for (VFileEvent event : events) {
-            if (event instanceof VFileCreateEvent) {
-              if (!isProcess(event)) continue;
-              VirtualFile file = event.getFile();
-              if (file == null) continue;
-              EXECUTOR.execute(() -> updateModuleExcludeByFSEvent(project, file, Collections.emptySet(),
-                                                                  new HashSet<>(getExcludedFolderNames(file))));
-            }
-            else if (event instanceof VFileDeleteEvent) {
-              if (!isProcess(event)) continue;
-              VirtualFile file = event.getFile();
-              if (file == null) continue;
-              EXECUTOR.execute(() -> updateModuleExcludeByFSEvent(project, file, getExcludedFolderNames(file),
-                                                                  Collections.emptySet()));
-            }
+    VirtualFileManager.getInstance().addAsyncFileListener(new AsyncFileListener() {
+      @Nullable
+      @Override
+      public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+        List<Runnable> toApply = null;
+        
+        for (VFileEvent event : events) {
+          Runnable runnable = null;
+          if (event instanceof VFileCreateEvent) {
+            ProgressManager.checkCanceled();
+            
+            if (!isProcess(event)) continue;
+            VirtualFile parent = getEventParent(event);
+            if (parent == null) continue;
+            runnable = getUpdateModuleExcludeByFSEventRunnable(project, parent, Collections.emptySet(),
+                                                               new HashSet<>(getExcludedFolderNames(event)));
+          }
+          else if (event instanceof VFileDeleteEvent) {
+            if (!isProcess(event)) continue;
+            VirtualFile parent = getEventParent(event);
+            if (parent == null) continue;
+            runnable = getUpdateModuleExcludeByFSEventRunnable(project, parent, getExcludedFolderNames(event),
+                                                               Collections.emptySet());
+          }
+          if (runnable != null) {
+            if (toApply == null) toApply = new ArrayList<>();
+            toApply.add(runnable);
           }
         }
-
-        private boolean isProcess(@NotNull VFileEvent event) {
-          return PhoneGapSettings.getInstance().isExcludePlatformFolder() &&
-                 shouldExcludeDirectory(event);
-        }
+        List<Runnable> finalToApply = toApply;
+        return finalToApply == null ? null : new ChangeApplier() {
+          @Override
+          public void afterVfsChange() {
+            finalToApply.forEach(Runnable::run);
+          }
+        };
       }
-    );
+
+      private boolean isProcess(@NotNull VFileEvent event) {
+        return PhoneGapSettings.getInstance().isExcludePlatformFolder() &&
+               shouldExcludeDirectory(event);
+      }
+
+    }, project);
   }
 
   private static boolean shouldExcludeDirectory(@NotNull VFileEvent event) {
-    VirtualFile file = event.getFile();
-    if (file == null) return false;
-    String name = file.getName();
+    String path = event.getPath();
+    if (path.endsWith("/" + FOLDER_PLATFORMS)) return true;
+    if (!path.endsWith("/" + FOLDER_WWW)) return false;
 
-    return shouldExcludeDirectory(name, file);
+    VirtualFile candidateParent = getEventParent(event);
+    if (candidateParent == null || !candidateParent.isValid()) return false;
+
+    return isIonic2WwwDirectory(candidateParent);
+  }
+
+  @Nullable
+  private static VirtualFile getEventParent(@NotNull VFileEvent event) {
+    VirtualFile candidateParent;
+    if (event instanceof VFileCreateEvent) {
+      candidateParent = ((VFileCreateEvent)event).getParent();
+    }
+    else {
+      VirtualFile file = event.getFile();
+      candidateParent = file != null ? file.getParent() : null;
+    }
+    return candidateParent;
   }
 
   private static boolean shouldExcludeDirectory(@NotNull String name, @NotNull VirtualFile file) {
@@ -101,31 +128,26 @@ public class PhoneGapStartupActivity implements StartupActivity {
     return parent.findChild(IONIC_CONFIG) != null && parent.findChild("tsconfig.json") != null;
   }
 
-
-  private static Set<String> getExcludedFolderNames(@NotNull VirtualFile file) {
-    return ContainerUtil.newHashSet(file.getUrl());
+  @NotNull
+  private static Set<String> getExcludedFolderNames(@NotNull VFileEvent event) {
+    return Collections.singleton(VirtualFileManager.constructUrl(event.getFileSystem().getProtocol(), event.getPath()));
   }
 
-  private static void updateModuleExcludeByFSEvent(@NotNull Project project,
-                                                   @NotNull VirtualFile eventFile,
-                                                   @NotNull Set<String> oldToUpdateFolders,
-                                                   @NotNull Set<String> newToUpdateFolders) {
-    ReadAction.run(() -> {
-      if (project.isDisposedOrDisposeInProgress() || !isPhoneGapProject(project)) return;
-
-      Module module = ModuleUtilCore.findModuleForFile(eventFile, project);
-      if (module == null) {
-        return;
-      }
-      VirtualFile directory = eventFile.getParent();
-      VirtualFile contentRoot = getContentRoot(module, directory);
-      if (contentRoot == null) {
-        return;
-      }
-      ApplicationManager.getApplication()
-        .invokeLater(() -> updateExcludedFolders(module, contentRoot, oldToUpdateFolders, newToUpdateFolders),
-                     project.getDisposedOrDisposeInProgress());
-    });
+  @Nullable
+  private static Runnable getUpdateModuleExcludeByFSEventRunnable(@NotNull Project project,
+                                                                  @NotNull VirtualFile parent,
+                                                                  @NotNull Set<String> oldToUpdateFolders,
+                                                                  @NotNull Set<String> newToUpdateFolders) {
+    Module module = ModuleUtilCore.findModuleForFile(parent, project);
+    if (module == null) {
+      return null;
+    }
+    
+    VirtualFile contentRoot = getContentRoot(module, parent);
+    if (contentRoot == null) {
+      return null;
+    }
+    return () -> updateExcludedFolders(module, contentRoot, oldToUpdateFolders, newToUpdateFolders);
   }
 
   private static void excludeWorkingDirectories(@NotNull Project project) {
