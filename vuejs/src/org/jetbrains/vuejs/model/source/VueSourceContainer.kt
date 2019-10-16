@@ -35,7 +35,7 @@ abstract class VueSourceContainer(sourceElement: JSImplicitElement,
   override val components: Map<String, VueComponent> get() = get(COMPONENTS)
   override val directives: Map<String, VueDirective> get() = get(DIRECTIVES)
   override val mixins: List<VueMixin> get() = get(MIXINS)
-  override val filters: Map<String, VueFilter> = get(FILTERS)
+  override val filters: Map<String, VueFilter> get() = get(FILTERS)
 
   private fun <T> get(accessor: MemberAccessor<T>): T {
     return accessor.get(initializer, clazz)
