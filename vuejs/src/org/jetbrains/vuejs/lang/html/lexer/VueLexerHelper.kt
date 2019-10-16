@@ -13,6 +13,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.lang.html.highlighting.VueHighlightingLexer
 import org.jetbrains.vuejs.lang.html.parser.VueElementTypes
 
@@ -116,13 +117,13 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
     override fun handleElement(lexer: Lexer) {
       if (!handle.seenTag && !handle.inTagState) {
         if (handle.seenScript || seenTemplate) {
-          if ("lang" == lexer.tokenText) {
+          if (LANG_ATTRIBUTE_NAME == lexer.tokenText) {
             handle.seenScriptType = true
             handle.seenScript = true
           }
         }
         else if (handle.seenStyle) {
-          if ("lang" == lexer.tokenText) {
+          if (LANG_ATTRIBUTE_NAME == lexer.tokenText) {
             handle.seenStyleType = true
           }
         }

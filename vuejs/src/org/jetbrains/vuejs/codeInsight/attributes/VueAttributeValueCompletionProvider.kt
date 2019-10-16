@@ -11,9 +11,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
 import com.intellij.util.containers.ContainerUtil
-import com.intellij.xml.util.HtmlUtil.*
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.PLAIN
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.SLOT
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.model.getAvailableSlots
 import java.util.*
 
@@ -33,23 +31,14 @@ class VueAttributeValueCompletionProvider : CompletionProvider<CompletionParamet
     }
   }
 
-  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> {
-    val attrInfo = VueAttributeNameParser.parse(xmlAttribute.name, xmlTag)
-    when (attrInfo.kind) {
-      PLAIN ->
-        if (xmlAttribute.name == "lang") {
-          when (xmlTag.name) {
-            SCRIPT_TAG_NAME -> return VUE_SCRIPT_LANGUAGE
-            STYLE_TAG_NAME -> return VUE_STYLE_LANGUAGE
-            TEMPLATE_TAG_NAME -> return VUE_TEMPLATE_LANGUAGE
-          }
-        }
-      SLOT -> return getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
-      else -> {
-      }
+  private fun listOfCompletions(xmlTag: XmlTag, xmlAttribute: XmlAttribute): Set<String> =
+    when (VueAttributeNameParser.parse(xmlAttribute.name, xmlTag).kind) {
+      SCRIPT_LANG -> VUE_SCRIPT_LANGUAGE
+      STYLE_LANG -> VUE_STYLE_LANGUAGE
+      TEMPLATE_LANG -> VUE_TEMPLATE_LANGUAGE
+      SLOT -> getAvailableSlots(xmlAttribute, false).map { it.name }.toSet()
+      else -> emptySet()
     }
-    return emptySet()
-  }
 
   private fun vueStyleLanguages(): Set<String> {
     val result = mutableListOf<String>()
