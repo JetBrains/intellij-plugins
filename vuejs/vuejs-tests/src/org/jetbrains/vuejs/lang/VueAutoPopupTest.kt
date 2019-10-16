@@ -8,13 +8,13 @@ class VueAutoPopupTest : CompletionAutoPopupTestCase() {
   fun testEventsAfterAt() {
     myFixture.configureByText("a.vue", "<div <caret>>")
     type("@")
-    myFixture.assertPreferredCompletionItems(0, "@abort", "@autocomplete", "@autocompleteerror", "@blur", "@cancel", "@canplay")
+    assertContainsElements(myFixture.lookupElementStrings!!,"@abort", "@autocomplete", "@autocompleteerror", "@blur", "@cancel", "@canplay")
   }
 
   fun testEventsAfterVOnColon() {
     myFixture.configureByText("a.vue", "<div v-on<caret>>")
     type(":")
-    myFixture.assertPreferredCompletionItems(0, "abort", "autocomplete", "autocompleteerror", "blur", "cancel", "canplay")
+    assertContainsElements(myFixture.lookupElementStrings!!,"abort", "autocomplete", "autocompleteerror", "blur", "cancel", "canplay")
   }
 
   fun testVBindShorthand() {
@@ -22,7 +22,7 @@ class VueAutoPopupTest : CompletionAutoPopupTestCase() {
     type(":")
     TestCase.assertNotNull(myFixture.lookup)
     type("a")
-    myFixture.assertPreferredCompletionItems(0, ":about", ":accesskey", ":align", ":aria-activedescendant")
+    assertContainsElements(myFixture.lookupElementStrings!!,":about", ":accesskey", ":align", ":aria-activedescendant")
   }
 
   fun testNoAutopopupAfterMinus() {
