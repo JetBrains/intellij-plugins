@@ -8,10 +8,21 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Util methods for parsing JSON out of the webdev daemon protocol, typically of the form:
  * <code>[{"event":"event-name","params":{"some-key":"some-value"}}]</code>
- * <p/>
- * TODO(jwren) This class currently has two methods which could be refactored and cleaned up to share some code.
  */
 public class DartDaemonParserUtil {
+
+  @Nullable
+  private static JsonObject parseDaemonLog(@NotNull final String text) throws JsonSyntaxException {
+    if (text.isEmpty() || !text.startsWith("[{")) {
+      return null;
+    }
+    final JsonParser jsonParser = new JsonParser();
+    final JsonElement jsonElement = jsonParser.parse(text);
+    if (jsonElement instanceof JsonArray && jsonElement.getAsJsonArray().size() >= 1) {
+      return jsonElement.getAsJsonArray().get(0).getAsJsonObject();
+    }
+    return null;
+  }
 
   /**
    * Given the json log:
@@ -22,27 +33,25 @@ public class DartDaemonParserUtil {
    */
   @Nullable
   public static String getWsUri(@NotNull final String text) throws Exception {
-    if (text.isEmpty() || !text.startsWith("[{")) {
-      return null;
-    }
-    final JsonObject obj;
-    final JsonParser jp = new JsonParser();
-    final JsonElement elem = jp.parse(text);
-    obj = elem.getAsJsonArray().get(0).getAsJsonObject();
+    final JsonObject jsonObject = parseDaemonLog(text);
 
-    final JsonPrimitive primEvent = obj.getAsJsonPrimitive("event");
+    if (jsonObject == null) {
+      throw new Exception("Parse JSON from daemon did not parse as a JsonObject: \"" + text + "\"");
+    }
+
+    final JsonPrimitive primEvent = jsonObject.getAsJsonPrimitive("event");
     if (primEvent == null) {
-      throw new Exception("Parse JSON from daemon did not have an \"event\" key: " + text);
+      throw new Exception("Parse JSON from daemon did not have an \"event\" key: \"" + text + "\"");
     }
 
     final String eventName = primEvent.getAsString();
     if (eventName == null) {
-      throw new Exception("Parse JSON from daemon did not have an \"event\" value: " + text);
+      throw new Exception("Parse JSON from daemon did not have an \"event\" value: \"" + text + "\"");
     }
 
-    final JsonObject params = obj.getAsJsonObject("params");
+    final JsonObject params = jsonObject.getAsJsonObject("params");
     if (params == null) {
-      throw new Exception("Parse JSON from daemon did not have a \"params\" value: " + text);
+      throw new Exception("Parse JSON from daemon did not have a \"params\" value: \"" + text + "\"");
     }
 
     if (eventName.equals("app.debugPort")) {
@@ -71,17 +80,19 @@ public class DartDaemonParserUtil {
     if (text.isEmpty() || !text.startsWith("[{")) {
       return null;
     }
-    final JsonObject obj;
+    final JsonObject jsonObject;
     try {
-      final JsonParser jp = new JsonParser();
-      final JsonElement elem = jp.parse(text);
-      obj = elem.getAsJsonArray().get(0).getAsJsonObject();
+      jsonObject = parseDaemonLog(text);
     }
     catch (JsonSyntaxException e) {
       return null;
     }
 
-    final JsonPrimitive primEvent = obj.getAsJsonPrimitive("event");
+    if (jsonObject == null) {
+      return null;
+    }
+
+    final JsonPrimitive primEvent = jsonObject.getAsJsonPrimitive("event");
     if (primEvent == null) {
       return null;
     }
@@ -91,7 +102,7 @@ public class DartDaemonParserUtil {
       return null;
     }
 
-    final JsonObject params = obj.getAsJsonObject("params");
+    final JsonObject params = jsonObject.getAsJsonObject("params");
     if (params == null) {
       return null;
     }
