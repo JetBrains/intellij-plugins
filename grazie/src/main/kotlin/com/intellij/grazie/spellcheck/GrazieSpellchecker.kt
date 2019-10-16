@@ -34,6 +34,21 @@ object GrazieSpellchecker : GrazieStateLifecycle {
   private val transform = Transformation()
 
   data class SpellerTool(val tool: JLanguageTool, val speller: Rule, val suggestLimit: Int) {
+    fun isMyDomain(word: String): Boolean {
+      val domain = Lang[tool.language]!!.unicodeBlock.blocks
+
+      var offset = 0
+      while (offset < word.length) {
+        val codepoint = Character.codePointAt(word, offset)
+
+        if (Character.UnicodeBlock.of(codepoint) in domain) return true
+
+        offset += Character.charCount(codepoint)
+      }
+
+      return false
+    }
+
     fun check(word: String): Boolean = synchronized(speller) {
       val match = speller.match(tool.getRawAnalyzedSentence(word))
       //If match array is empty then word is correct in that language
@@ -51,24 +66,24 @@ object GrazieSpellchecker : GrazieStateLifecycle {
       rule?.let { SpellerTool(LangTool.getTool(lang), rule, MAX_SUGGESTIONS_COUNT) }
     }.toLinkedSet()
 
-  fun isCorrect(word: String) = checkers.any { speller ->
-    try {
-      speller.check(word)
-    }
-    catch (t: Throwable) {
-      logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
-      false
+  fun isCorrect(word: String) = checkers.filter { it.isMyDomain(word) }.let {
+    if (it.isEmpty()) true else it.any { speller ->
+      try {
+        speller.check(word)
+      } catch (t: Throwable) {
+        logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
+        false
+      }
     }
   }
 
   /**
    * Checks text for spelling mistakes.
    */
-  fun getSuggestions(word: String) = checkers.mapNotNull { speller ->
+  fun getSuggestions(word: String) = checkers.filter { it.isMyDomain(word) }.mapNotNull { speller ->
     try {
       speller.suggest(word)
-    }
-    catch (t: Throwable) {
+    } catch (t: Throwable) {
       logger.warn("Got exception during suggest for spelling mistakes by LanguageTool with word: $word", t)
       null
     }

@@ -39,7 +39,7 @@ class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconabl
         editor = getInjectedEditorForInjectedFile(editor, element.containingFile)
       }
 
-      val selectionRange = descriptor.textRangeInElement.shiftLeft(element.textOffset)
+      val selectionRange = descriptor.textRangeInElement.shiftRight(element.textOffset)
       if (editor.document.getText(selectionRange) == typo.location.errorText) {
         editor.selectionModel.setSelection(selectionRange.startOffset, min(selectionRange.endOffset, editor.document.textLength))
         val items = typo.fixes.map { LookupElementBuilder.create(it) }
