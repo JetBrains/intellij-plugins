@@ -23,8 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
+  private static final String CUCUMBER_JAVA_5_STEP_DEFINITION_ANNOTATION_CLASS_NAME = "io.cucumber.java.StepDefinitionAnnotation";
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
   public static final String ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "org.zuchini.annotations.StepAnnotation";
+  private static final String[] CUCUMBER_JAVA_STEP_DEFINITION_ANNOTATION_CLASSES =
+    new String[]{CUCUMBER_JAVA_5_STEP_DEFINITION_ANNOTATION_CLASS_NAME, CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
+      ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION};
 
   @NotNull
   @Override
@@ -42,12 +46,14 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
 
-    PsiClass stepDefAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
-                                                                                               dependenciesScope);
-    if (stepDefAnnotationClass == null) {
-      stepDefAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
-                                                                                        dependenciesScope);
+    PsiClass stepDefAnnotationClass = null;
+    for (String className : CUCUMBER_JAVA_STEP_DEFINITION_ANNOTATION_CLASSES) {
+      stepDefAnnotationClass = JavaPsiFacade.getInstance(module.getProject()).findClass(className, dependenciesScope);
+      if (stepDefAnnotationClass != null) {
+        break;
+      }
     }
+
     if (stepDefAnnotationClass == null) {
       return Collections.emptyList();
     }
