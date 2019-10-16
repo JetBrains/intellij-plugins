@@ -45,6 +45,6 @@ public class TimelineFlags extends Response {
    * currently set.
    */
   public String getRecorderName() {
-    return json.get("recorderName").getAsString();
+    return getAsString("recorderName");
   }
 }

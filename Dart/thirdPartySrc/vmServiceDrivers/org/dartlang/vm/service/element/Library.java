@@ -44,7 +44,7 @@ public class Library extends Obj {
    * Is this library debuggable? Default true.
    */
   public boolean getDebuggable() {
-    return json.get("debuggable").getAsBoolean();
+    return getAsBoolean("debuggable");
   }
 
   /**
@@ -75,7 +75,7 @@ public class Library extends Obj {
    * The name of this library.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -94,7 +94,7 @@ public class Library extends Obj {
    * The uri of this library.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 
   /**

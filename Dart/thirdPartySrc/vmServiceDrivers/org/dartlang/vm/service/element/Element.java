@@ -1,6 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -14,6 +17,30 @@ public class Element {
 
   public Element(JsonObject json) {
     this.json = json;
+  }
+
+  /**
+   * A utility method to handle null values and JsonNull values.
+   */
+  String getAsString(String name) {
+    final JsonElement element = json.get(name);
+    return (element == null || element == JsonNull.INSTANCE) ? null : element.getAsString();
+  }
+
+  /**
+   * A utility method to handle null values and JsonNull values.
+   */
+  int getAsInt(String name) {
+    final JsonElement element = json.get(name);
+    return (element == null || element == JsonNull.INSTANCE) ? -1 : element.getAsInt();
+  }
+
+  /**
+   * A utility method to handle null values and JsonNull values.
+   */
+  boolean getAsBoolean(String name) {
+    final JsonElement element = json.get(name);
+    return (element == null || element == JsonNull.INSTANCE) ? false : element.getAsBoolean();
   }
 
   /**

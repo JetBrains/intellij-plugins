@@ -29,14 +29,14 @@ public class Timeline extends Response {
    * The duration of time covered by the timeline.
    */
   public int getTimeExtentMicros() {
-    return json.get("timeExtentMicros") == null ? -1 : json.get("timeExtentMicros").getAsInt();
+    return getAsInt("timeExtentMicros");
   }
 
   /**
    * The start of the period of time in which traceEvents were collected.
    */
   public int getTimeOriginMicros() {
-    return json.get("timeOriginMicros") == null ? -1 : json.get("timeOriginMicros").getAsInt();
+    return getAsInt("timeOriginMicros");
   }
 
   /**

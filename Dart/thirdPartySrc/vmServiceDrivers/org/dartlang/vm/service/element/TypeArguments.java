@@ -33,7 +33,7 @@ public class TypeArguments extends Obj {
    * A name for this type argument list.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**

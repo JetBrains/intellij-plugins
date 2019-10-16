@@ -31,13 +31,13 @@ public class LibraryRef extends ObjRef {
    * The name of this library.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * The uri of this library.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }

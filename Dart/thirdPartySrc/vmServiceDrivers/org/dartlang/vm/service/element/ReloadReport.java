@@ -28,6 +28,6 @@ public class ReloadReport extends Response {
    * Did the reload succeed or fail?
    */
   public boolean getSuccess() {
-    return json.get("success").getAsBoolean();
+    return getAsBoolean("success");
   }
 }

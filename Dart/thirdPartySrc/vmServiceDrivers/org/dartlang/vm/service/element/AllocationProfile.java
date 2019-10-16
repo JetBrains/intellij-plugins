@@ -33,7 +33,7 @@ public class AllocationProfile extends Response {
    * Can return <code>null</code>.
    */
   public int getDateLastAccumulatorReset() {
-    return json.get("dateLastAccumulatorReset") == null ? -1 : json.get("dateLastAccumulatorReset").getAsInt();
+    return getAsInt("dateLastAccumulatorReset");
   }
 
   /**
@@ -44,7 +44,7 @@ public class AllocationProfile extends Response {
    * Can return <code>null</code>.
    */
   public int getDateLastServiceGC() {
-    return json.get("dateLastServiceGC") == null ? -1 : json.get("dateLastServiceGC").getAsInt();
+    return getAsInt("dateLastServiceGC");
   }
 
   /**

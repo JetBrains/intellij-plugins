@@ -33,6 +33,6 @@ public class Response extends Element {
    * distinguish between different kinds of responses.
    */
   public String getType() {
-    return json.get("type").getAsString();
+    return getAsString("type");
   }
 }

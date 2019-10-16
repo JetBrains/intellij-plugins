@@ -93,6 +93,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private final AtomicLong lastRequestTime = new AtomicLong(0);
 
   /**
+   * The following is a subset of the list provided in the `allFixes` list,
+   * dart-sdk-dir/analysis_server/lib/src/edit/fix/dartfix_info.dart
+   */
+  public static final String DART_FIX_INFO_NON_NULLABLE = "non-nullable";
+
+  /**
    * The listener that will receive notification when new analysis results become available.
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
@@ -350,9 +356,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void edit_dartfix(List<String> included,
                            List<String> includedFixes,
+                           boolean includePedanticFixes,
                            boolean includeRequiredFixes,
                            List<String> excludedFixes,
+                           String outputDir,
                            DartfixConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities
+                          .generateEditDartfix(id, included, includedFixes, includePedanticFixes, includeRequiredFixes, excludedFixes, outputDir),
+                        consumer);
   }
 
   @Override
@@ -481,12 +493,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer) {
-  }
+  public void flutter_getWidgetDescription(String file, int offset, GetWidgetDescriptionConsumer consumer) {}
 
   @Override
-  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {
-  }
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {}
+
+  public void flutter_setWidgetPropertyValue(int id, FlutterWidgetPropertyValue value, SetWidgetPropertyValueConsumer consumer) {}
 
   @Override
   public boolean isSocketOpen() {
@@ -764,6 +776,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Edit Domain
     //
+    else if (consumer instanceof DartfixConsumer) {
+      new DartfixProcessor((DartfixConsumer)consumer).process(resultObject, requestError);
+    }
     else if (consumer instanceof FormatConsumer) {
       new FormatProcessor((FormatConsumer)consumer).process(resultObject, requestError);
     }

@@ -63,7 +63,7 @@ public class Func extends Obj {
    * The name of this function.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**

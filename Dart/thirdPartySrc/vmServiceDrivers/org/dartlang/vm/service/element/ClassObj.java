@@ -83,11 +83,10 @@ public class ClassObj extends Obj {
   }
 
   /**
-   * The library which contains this class. TODO: This should be @Library, but the VM can return
-   * @Instance objects here.
+   * The library which contains this class.
    */
-  public ObjRef getLibrary() {
-    return new ObjRef((JsonObject) json.get("library"));
+  public LibraryRef getLibrary() {
+    return new LibraryRef((JsonObject) json.get("library"));
   }
 
   /**
@@ -123,7 +122,7 @@ public class ClassObj extends Obj {
    * The name of this class.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -171,13 +170,13 @@ public class ClassObj extends Obj {
    * Is this an abstract class?
    */
   public boolean isAbstract() {
-    return json.get("abstract").getAsBoolean();
+    return getAsBoolean("abstract");
   }
 
   /**
    * Is this a const class?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 }
