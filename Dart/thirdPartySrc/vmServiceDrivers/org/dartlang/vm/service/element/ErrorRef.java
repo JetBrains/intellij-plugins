@@ -44,6 +44,6 @@ public class ErrorRef extends ObjRef {
    * A description of the error.
    */
   public String getMessage() {
-    return json.get("message").getAsString();
+    return getAsString("message");
   }
 }

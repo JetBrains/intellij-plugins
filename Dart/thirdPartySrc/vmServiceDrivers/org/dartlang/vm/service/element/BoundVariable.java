@@ -32,25 +32,25 @@ public class BoundVariable extends Response {
    * The token position where this variable was declared.
    */
   public int getDeclarationTokenPos() {
-    return json.get("declarationTokenPos") == null ? -1 : json.get("declarationTokenPos").getAsInt();
+    return getAsInt("declarationTokenPos");
   }
 
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * The last token position where this variable is visible to the scope.
    */
   public int getScopeEndTokenPos() {
-    return json.get("scopeEndTokenPos") == null ? -1 : json.get("scopeEndTokenPos").getAsInt();
+    return getAsInt("scopeEndTokenPos");
   }
 
   /**
    * The first token position where this variable is visible to the scope.
    */
   public int getScopeStartTokenPos() {
-    return json.get("scopeStartTokenPos") == null ? -1 : json.get("scopeStartTokenPos").getAsInt();
+    return getAsInt("scopeStartTokenPos");
   }
 
   /**

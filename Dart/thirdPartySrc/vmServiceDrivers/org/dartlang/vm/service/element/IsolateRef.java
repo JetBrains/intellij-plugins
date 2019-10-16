@@ -31,20 +31,20 @@ public class IsolateRef extends Response {
    * The id which is passed to the getIsolate RPC to load this isolate.
    */
   public String getId() {
-    return json.get("id").getAsString();
+    return getAsString("id");
   }
 
   /**
    * A name identifying this isolate. Not guaranteed to be unique.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
    * A numeric id for this isolate, represented as a string. Unique.
    */
   public String getNumber() {
-    return json.get("number").getAsString();
+    return getAsString("number");
   }
 }

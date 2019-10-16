@@ -140,6 +140,11 @@ public enum EventKind {
   ServiceUnregistered,
 
   /**
+   * Notification that a VM flag has been changed via the service protocol.
+   */
+  VMFlagUpdate,
+
+  /**
    * Notification that VM identifying information has changed. Currently used to notify of changes
    * to the VM debugging name via setVMName.
    */

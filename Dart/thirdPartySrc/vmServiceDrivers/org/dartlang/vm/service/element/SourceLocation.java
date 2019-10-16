@@ -33,7 +33,7 @@ public class SourceLocation extends Response {
    * Can return <code>null</code>.
    */
   public int getEndTokenPos() {
-    return json.get("endTokenPos") == null ? -1 : json.get("endTokenPos").getAsInt();
+    return getAsInt("endTokenPos");
   }
 
   /**
@@ -47,6 +47,6 @@ public class SourceLocation extends Response {
    * The first token of the location.
    */
   public int getTokenPos() {
-    return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
+    return getAsInt("tokenPos");
   }
 }

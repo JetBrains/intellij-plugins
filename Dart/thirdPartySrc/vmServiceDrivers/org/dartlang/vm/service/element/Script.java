@@ -32,7 +32,7 @@ public class Script extends Obj {
    * Can return <code>null</code>.
    */
   public int getColumnOffset() {
-    return json.get("columnOffset") == null ? -1 : json.get("columnOffset").getAsInt();
+    return getAsInt("columnOffset");
   }
 
   /**
@@ -46,7 +46,7 @@ public class Script extends Obj {
    * Can return <code>null</code>.
    */
   public int getLineOffset() {
-    return json.get("lineOffset") == null ? -1 : json.get("lineOffset").getAsInt();
+    return getAsInt("lineOffset");
   }
 
   /**
@@ -55,7 +55,7 @@ public class Script extends Obj {
    * Can return <code>null</code>.
    */
   public String getSource() {
-    return json.get("source") == null ? null : json.get("source").getAsString();
+    return getAsString("source");
   }
 
   /**
@@ -72,6 +72,6 @@ public class Script extends Obj {
    * The uri from which this script was loaded.
    */
   public String getUri() {
-    return json.get("uri").getAsString();
+    return getAsString("uri");
   }
 }

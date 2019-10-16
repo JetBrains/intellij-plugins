@@ -31,7 +31,7 @@ public class FuncRef extends ObjRef {
    * The name of this function.
    */
   public String getName() {
-    return json.get("name").getAsString();
+    return getAsString("name");
   }
 
   /**
@@ -53,13 +53,13 @@ public class FuncRef extends ObjRef {
    * Is this function const?
    */
   public boolean isConst() {
-    return json.get("const").getAsBoolean();
+    return getAsBoolean("const");
   }
 
   /**
    * Is this function static?
    */
   public boolean isStatic() {
-    return json.get("static").getAsBoolean();
+    return getAsBoolean("static");
   }
 }

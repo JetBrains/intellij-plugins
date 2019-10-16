@@ -44,6 +44,6 @@ public class Sentinel extends Response {
    * A reasonable string representation of this sentinel.
    */
   public String getValueAsString() {
-    return json.get("valueAsString").getAsString();
+    return getAsString("valueAsString");
   }
 }

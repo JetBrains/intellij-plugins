@@ -55,7 +55,7 @@ public class Obj extends Response {
    * Can return <code>null</code>.
    */
   public boolean getFixedId() {
-    return json.get("fixedId") == null ? false : json.get("fixedId").getAsBoolean();
+    return getAsBoolean("fixedId");
   }
 
   /**
@@ -64,7 +64,7 @@ public class Obj extends Response {
    * Some objects may get a new id when they are reloaded.
    */
   public String getId() {
-    return json.get("id").getAsString();
+    return getAsString("id");
   }
 
   /**
@@ -78,6 +78,6 @@ public class Obj extends Response {
    * Can return <code>null</code>.
    */
   public int getSize() {
-    return json.get("size") == null ? -1 : json.get("size").getAsInt();
+    return getAsInt("size");
   }
 }

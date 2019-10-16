@@ -44,6 +44,6 @@ public class InstanceSet extends Response {
    * The number of instances of the requested type currently allocated.
    */
   public int getTotalCount() {
-    return json.get("totalCount") == null ? -1 : json.get("totalCount").getAsInt();
+    return getAsInt("totalCount");
   }
 }
