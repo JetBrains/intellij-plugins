@@ -9,25 +9,24 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DartWebdevParameters implements Cloneable {
   private static final String MIN_DART_SDK_VERSION_FOR_WEBDEV = "2.5.0";
 
-  @NotNull
-  private String myHtmlFilePath = "";
+  @NotNull private String myHtmlFilePath = "";
   private int myWebdevPort = DartConfigurable.WEBDEV_PORT_DEFAULT;
-
+  @NotNull private String myWorkingDirectory = "";
 
   @NotNull
   public String getHtmlFilePath() {
     return myHtmlFilePath;
   }
 
-  public void setHtmlFilePath(final @NotNull String htmlFilePath) {
+  public void setHtmlFilePath(@NotNull final String htmlFilePath) {
     myHtmlFilePath = htmlFilePath;
   }
 
@@ -37,6 +36,30 @@ public class DartWebdevParameters implements Cloneable {
 
   public void setWebdevPort(final int webdevPort) {
     myWebdevPort = webdevPort;
+  }
+
+  public void setWorkingDirectory(@NotNull final String workingDirectory) {
+    myWorkingDirectory = workingDirectory;
+  }
+
+  @NotNull
+  public String getWorkingDirectory() {
+    return myWorkingDirectory;
+  }
+
+  @Nullable
+  public String computeRelativeHtmlFile() {
+    if (StringUtil.isEmptyOrSpaces(myHtmlFilePath) || StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
+      return null;
+    }
+    if (myWorkingDirectory.length() >= myHtmlFilePath.length()) {
+      return null;
+    }
+    if (myWorkingDirectory.endsWith("/")) {
+      return myHtmlFilePath.substring(myWorkingDirectory.length());
+    } else {
+      return myHtmlFilePath.substring(myWorkingDirectory.length() + 1);
+    }
   }
 
   @NotNull
@@ -57,16 +80,6 @@ public class DartWebdevParameters implements Cloneable {
     return htmlFile;
   }
 
-  @NotNull
-  public String computeProcessWorkingDirectory(@NotNull final Project project) {
-    try {
-      return DartCommandLineRunnerParameters.suggestDartWorkingDir(project, getHtmlFile());
-    }
-    catch (RuntimeConfigurationError error) {
-      return "";
-    }
-  }
-
   public void check(@NotNull final Project project) throws RuntimeConfigurationError {
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
@@ -78,8 +91,21 @@ public class DartWebdevParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("old.dart.sdk.for.webdev", MIN_DART_SDK_VERSION_FOR_WEBDEV, sdkVersion));
     }
 
-    if (StringUtil.isEmptyOrSpaces(myHtmlFilePath)) {
-      throw new RuntimeConfigurationError(DartBundle.message("path.to.html.file.not.set"));
+    // check html file
+    getHtmlFile();
+
+    // check working directory
+    if (StringUtil.isEmptyOrSpaces(myWorkingDirectory)) {
+      throw new RuntimeConfigurationError(DartBundle.message("work.dir.not.set"));
+    }
+    final VirtualFile workDir = LocalFileSystem.getInstance().findFileByPath(myWorkingDirectory);
+    if (workDir == null || !workDir.isDirectory()) {
+      throw new RuntimeConfigurationError(
+        DartBundle.message("work.dir.does.not.exist", FileUtil.toSystemDependentName(myWorkingDirectory)));
+    }
+
+    if (!getHtmlFilePath().contains(myWorkingDirectory)) {
+      throw new RuntimeConfigurationError(DartBundle.message("path.to.html.file.not.in.work.dir"));
     }
   }
 

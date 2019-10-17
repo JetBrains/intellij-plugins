@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -55,7 +56,7 @@ public class DartWebdevRunningState extends CommandLineState {
       ((TextConsoleBuilderImpl)builder).setUsePredefinedMessageFilter(false);
     }
 
-    builder.addFilter(new DartRelativePathsConsoleFilter(project, myDartWebdevParameters.computeProcessWorkingDirectory(project)));
+    builder.addFilter(new DartRelativePathsConsoleFilter(project, myDartWebdevParameters.getWorkingDirectory()));
     DartWebdevConsoleView.install(env.getProject(), this);
   }
 
@@ -100,7 +101,7 @@ public class DartWebdevRunningState extends CommandLineState {
     }
 
     final GeneralCommandLine commandLine = new GeneralCommandLine()
-      .withWorkDirectory(myDartWebdevParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
+      .withWorkDirectory(myDartWebdevParameters.getWorkingDirectory());
     commandLine.setCharset(StandardCharsets.UTF_8);
 
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
@@ -109,6 +110,11 @@ public class DartWebdevRunningState extends CommandLineState {
       // TODO served folder name based on HTML file path
       String folderToServe = "web";
       commandLine.addParameter(folderToServe + ":" + myDartWebdevParameters.getWebdevPort());
+    }
+
+    final String relativeHtmlFile = myDartWebdevParameters.computeRelativeHtmlFile();
+    if (!StringUtil.isEmptyOrSpaces(relativeHtmlFile)) {
+      commandLine.addParameter(relativeHtmlFile);
     }
 
     return commandLine;
