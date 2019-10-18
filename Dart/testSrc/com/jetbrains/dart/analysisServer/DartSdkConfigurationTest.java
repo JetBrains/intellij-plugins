@@ -35,6 +35,7 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
       "file://" + sdkHomePath + "/lib/mirrors",
       "file://" + sdkHomePath + "/lib/svg",
       "file://" + sdkHomePath + "/lib/typed_data",
+      "file://" + sdkHomePath + "/lib/wasm",
       "file://" + sdkHomePath + "/lib/web_audio",
       "file://" + sdkHomePath + "/lib/web_gl",
       "file://" + sdkHomePath + "/lib/web_sql",
