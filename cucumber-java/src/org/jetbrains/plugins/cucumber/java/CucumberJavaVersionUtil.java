@@ -24,6 +24,7 @@ import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.CUCUMBER_1_1_
 
 
 public class CucumberJavaVersionUtil {
+  public static final String CUCUMBER_CORE_VERSION_5 = "5";
   public static final String CUCUMBER_CORE_VERSION_4_5 = "4.5";
   public static final String CUCUMBER_CORE_VERSION_4 = "4";
   public static final String CUCUMBER_CORE_VERSION_3 = "3";
@@ -35,6 +36,7 @@ public class CucumberJavaVersionUtil {
   private static final List<Pair<String, String>> VERSION_CLASS_MARKERS = new ArrayList<>();
 
   static {
+    VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.plugin.event.EventHandler", CUCUMBER_CORE_VERSION_5));
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.core.cli.Main", CUCUMBER_CORE_VERSION_4_5));
     VERSION_CLASS_MARKERS.add(Pair.create("cucumber.api.event.ConcurrentEventListener", CUCUMBER_CORE_VERSION_4));
     VERSION_CLASS_MARKERS.add(Pair.create("cucumber.runner.TestCase", CUCUMBER_CORE_VERSION_3));
