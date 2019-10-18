@@ -9,7 +9,7 @@ import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("name", "description", "doc-url", "source", "accepts", "returns", "arguments")
-class VueFilter {
+class VueFilter : SourceEntity {
 
   /**
    *
@@ -46,7 +46,7 @@ class VueFilter {
   @JsonPropertyDescription("Short description to be rendered in documentation popup. May contain HTML tags.")
   @get:JsonProperty("description")
   @set:JsonProperty("description")
-  var description: String? = null
+  override var description: String? = null
   /**
    * Link to online documentation.
    *
@@ -63,7 +63,7 @@ class VueFilter {
   @JsonPropertyDescription("Link to online documentation.")
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
-  var docUrl: String? = null
+  override var docUrl: String? = null
   /**
    * Allows to specify the source of the entity. For Vue.js component this may be for instance a class.
    *
@@ -80,7 +80,7 @@ class VueFilter {
   @JsonPropertyDescription("Allows to specify the source of the entity. For Vue.js component this may be for instance a class.")
   @get:JsonProperty("source")
   @set:JsonProperty("source")
-  var source: Source? = null
+  override var source: Source? = null
   /**
    * Specify type according to selected language for type syntax. The type can be specified by a string expression, an object with list of imports and an expression, or an array of possible types.
    *

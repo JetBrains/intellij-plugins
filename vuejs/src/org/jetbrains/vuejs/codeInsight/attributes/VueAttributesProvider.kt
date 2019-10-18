@@ -32,6 +32,17 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       .forEach { result.add(it) }
 
     val contributedDirectives = mutableSetOf<String>()
+    VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelVisitor() {
+      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+        if (contributedDirectives.add(name)) {
+          result.add(VueAttributeDescriptor(context, "v-" + fromAsset(name), directive.source,
+                                            listOf(directive), directive.acceptsNoValue, directive.acceptsValue,
+                                            AttributePriority.of(proximity)))
+        }
+        return true
+      }
+    }, VueModelVisitor.Proximity.GLOBAL)
+
     StreamEx.of(*VueDirectiveKind.values())
       .filter {
         // 'on' should not be proposed without colon. It is added separately in VueTagAttributeCompletionProvider
@@ -42,14 +53,6 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       .map { VueAttributeDescriptor(context, "v-" + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
       .forEach { result.add(it) }
 
-    VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelVisitor() {
-      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-        if (contributedDirectives.add(name)) {
-          result.add(VueAttributeDescriptor(context, "v-" + fromAsset(name), directive.source, true, AttributePriority.of(proximity)))
-        }
-        return true
-      }
-    }, VueModelVisitor.Proximity.GLOBAL)
     return result.toTypedArray()
   }
 
@@ -82,14 +85,14 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                    getAvailableSlots(context, true)
                      .find { it.name == slotName }
                      ?.let {
-                       VueAttributeDescriptor(context, attributeName, it.source, true)
+                       VueAttributeDescriptor(context, attributeName, it.source, listOf(it), true)
                      }
                  }
 
                  info.directiveKind == VueDirectiveKind.CUSTOM ->
-                   return resolveDirective(info.name, context)
+                   return findAttributeDescriptor(info.name, context)
 
-                 else -> null
+                 else -> findAttributeDescriptor(info.name, context)
                }
                ?: return VueAttributeDescriptor(context, attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
       }
@@ -97,24 +100,25 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     }
   }
 
-  private fun resolveDirective(directiveName: String, context: XmlTag): VueAttributeDescriptor? {
-    val searchName = fromAsset(directiveName)
-    val directives = mutableListOf<VueDirective>()
-    var minProximity = VueModelVisitor.Proximity.OUT_OF_SCOPE
-    VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelProximityVisitor() {
-      override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
-        return acceptSameProximity(proximity, fromAsset(name) == searchName) {
-          directives.add(directive)
-          minProximity = proximity
+  companion object {
+    internal fun findAttributeDescriptor(directiveName: String, context: XmlTag): VueAttributeDescriptor? {
+      val searchName = fromAsset(directiveName)
+      val directives = mutableListOf<VueDirective>()
+      var minProximity = VueModelVisitor.Proximity.OUT_OF_SCOPE
+      VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelProximityVisitor() {
+        override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+          return acceptSameProximity(proximity, fromAsset(name) == searchName) {
+            directives.add(directive)
+            minProximity = proximity
+          }
         }
-      }
-    }, VueModelVisitor.Proximity.GLOBAL)
+      }, VueModelVisitor.Proximity.GLOBAL)
 
-    return directives.firstOrNull()?.let {
-      VueAttributeDescriptor(context, "v-" + fromAsset(it.defaultName ?: searchName),
-                             it.source,
-                             true,
-                             AttributePriority.of(minProximity))
+      return directives.firstOrNull()?.let {
+        VueAttributeDescriptor(context, "v-" + fromAsset(it.defaultName ?: searchName),
+                               it.source, listOf(it), it.acceptsNoValue, it.acceptsValue,
+                               AttributePriority.of(minProximity))
+      }
     }
   }
 }

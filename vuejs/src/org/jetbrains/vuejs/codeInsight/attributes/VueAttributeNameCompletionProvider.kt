@@ -16,8 +16,12 @@ import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.*
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider.Companion.findAttributeDescriptor
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.context.isVueContext
+import org.jetbrains.vuejs.model.VueDirective
+import org.jetbrains.vuejs.model.VueDirectiveModifier
 import org.jetbrains.vuejs.model.getAvailableSlots
 import javax.swing.Icon
 
@@ -44,56 +48,111 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       (context?.descriptor as? HtmlElementDescriptorImpl
        ?: HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
         ?.getDefaultAttributeDescriptors(context) ?: emptyArray()
+
+    private val SPECIAL_CHARS = setOf('[', '.', '\\', '^', '$', '(', '+')
+    private val SPECIAL_CHARS_ONE_BACK = setOf('?', '*', '{')
+
+    fun getPatternCompletablePrefix(pattern: Regex?): String {
+      val patternStr = pattern?.pattern ?: return ""
+      if (patternStr.contains('|')) return ""
+      for (i in 0..patternStr.length) {
+        val char = patternStr[i]
+        if (SPECIAL_CHARS.contains(char)) {
+          return patternStr.substring(0 until i)
+        }
+        else if (SPECIAL_CHARS_ONE_BACK.contains(char)) {
+          return if (i < 1) "" else patternStr.substring(0 until i - 1)
+        }
+      }
+      return patternStr
+    }
   }
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
     if (!isVueContext(parameters.position)) return
 
     val attr = parameters.position.parent as? XmlAttribute ?: return
-    addAttributeDescriptorCompletions(attr, parameters, result)
-
-    val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), attr.parent)
-    when ((attrInfo as? VueDirectiveInfo)?.directiveKind) {
-      ON -> {
-        addEventCompletions(attr, attrInfo, result)
-        return
-      }
-      BIND -> {
-        addBindCompletions(attr, result)
-        return
-      }
-      SLOT -> {
-        addSlotCompletions(attr, result)
-        return
-      }
-      else -> {
-      }
-    }
-
-    val insertHandler = InsertHandler<LookupElement> { insertionContext, _ ->
+    val argumentsInsertHandler = InsertHandler<LookupElement> { insertionContext, _ ->
       insertionContext.setLaterRunnable {
         CodeCompletionHandlerBase(
           CompletionType.BASIC).invokeCompletion(parameters.originalFile.project, parameters.editor)
       }
     }
-    result.addElement(lookupElement("v-on:", priority = LOW, insertHandler = insertHandler))
-    result.addElement(lookupElement("v-bind:", priority = LOW, insertHandler = insertHandler))
-    result.addElement(lookupElement("v-slot:", priority = LOW, insertHandler = insertHandler))
+
+    val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), attr.parent)
+
+    val providedAttributes = addTagDescriptorCompletions(attr, attrInfo, parameters, result, argumentsInsertHandler)
+    if (attrInfo is VueDirectiveInfo) {
+      val directive: VueDirective? = when (attrInfo.directiveKind) {
+        ON, BIND, SLOT -> findAttributeDescriptor(attrInfo.name, attr.parent)
+        else -> (attr.descriptor as? VueAttributeDescriptor)
+      }?.getSources()?.getOrNull(0) as? VueDirective
+
+      if (attrInfo.modifiers.isNotEmpty()) {
+        addModifierCompletions(result, directive, attrInfo)
+      }
+      else {
+        when (attrInfo.directiveKind) {
+          ON -> {
+            addEventCompletions(attr, result)
+            return
+          }
+          BIND -> {
+            addBindCompletions(attr, result)
+            return
+          }
+          SLOT -> {
+            addSlotCompletions(attr, result)
+            return
+          }
+          else -> {
+            val argument = directive?.argument
+            val argumentPrefix = getPatternCompletablePrefix(argument?.pattern)
+            if (attrInfo.arguments != null && argumentPrefix.isNotBlank()) {
+              val prefix = result.prefixMatcher.prefix
+              val newResult = if (prefix == "v-" + attrInfo.name + ":") result.withPrefixMatcher("") else result
+              newResult.addElement(lookupElement(argumentPrefix, argument,
+                                                 typeText = argument!!.pattern?.toString(), insertHandler = null))
+            }
+          }
+        }
+      }
+    }
+
+    for (kind in listOf(ON, BIND, SLOT)) {
+      val attrName = "v-${kind.directiveName}:"
+      if (providedAttributes.add(attrName)) {
+        result.addElement(lookupElement(attrName, null, priority = LOW, insertHandler = argumentsInsertHandler))
+      }
+    }
   }
 
-  private fun addAttributeDescriptorCompletions(attr: XmlAttribute, parameters: CompletionParameters, result: CompletionResultSet) {
-    val tag = attr.parent ?: return
+  private fun addTagDescriptorCompletions(attr: XmlAttribute,
+                                          attrInfo: VueAttributeNameParser.VueAttributeInfo,
+                                          parameters: CompletionParameters,
+                                          result: CompletionResultSet,
+                                          argumentsInsertHandler: InsertHandler<LookupElement>): MutableSet<String> {
     val providedAttributes = mutableSetOf<String>()
-    (tag.descriptor ?: return).getAttributesDescriptors(tag)
+    val proposeWithArg = attrInfo.modifiers.isEmpty() && (attrInfo as? VueDirectiveInfo)?.arguments == null
+    val tag = attr.parent ?: return providedAttributes
+    (tag.descriptor ?: return providedAttributes).getAttributesDescriptors(tag)
       .filterIsInstance<VueAttributeDescriptor>()
       .forEach {
         if (providedAttributes.add(it.name)) {
-          var insertHandler = XmlAttributeInsertHandler.INSTANCE
-          if (HtmlUtil.isShortNotationOfBooleanAttributePreferred() &&
-              HtmlUtil.isBooleanAttribute(it, tag)) {
-            insertHandler = null
+          val directive = it.getSources().getOrNull(0) as? VueDirective
+          if (directive?.argument != null && providedAttributes.add(it.name + ":") && proposeWithArg) {
+            val priority = if (directive.argument?.required != true) LOW else it.priority
+            result.addElement(lookupElement(it.name + ":", it, priority = priority, insertHandler = argumentsInsertHandler))
           }
-          result.addElement(lookupElement(it.name, it.priority, insertHandler = insertHandler))
+          if (directive?.argument?.required != true) {
+            var insertHandler = XmlAttributeInsertHandler.INSTANCE
+            if ((HtmlUtil.isShortNotationOfBooleanAttributePreferred() &&
+                 HtmlUtil.isBooleanAttribute(it, tag))
+                || directive?.modifiers?.isNotEmpty() == true) {
+              insertHandler = null
+            }
+            result.addElement(lookupElement(it.name, it, priority = it.priority, insertHandler = insertHandler))
+          }
         }
       }
 
@@ -107,64 +166,95 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
         .withRelevanceSorter(toPass.sorter)
         .addElement(toPass.lookupElement)
     }
+    return providedAttributes
   }
 
-  private fun addEventCompletions(attr: XmlAttribute, attrInfo: VueDirectiveInfo, result: CompletionResultSet) {
-    if (attrInfo.modifiers.isEmpty()) {
-      val prefix = result.prefixMatcher.prefix
-      val newResult = if (prefix == "v-on:") result.withPrefixMatcher("") else result
-      addEventCompletions(attr.parent, newResult, if (prefix.startsWith("@")) "@" else "")
-    }
-    else {
-      addModifierCompletions(result, attrInfo)
-    }
-  }
-
-  private fun addEventCompletions(tag: XmlTag?, result: CompletionResultSet, prefix: String) {
-    (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
-      result.addElement(lookupElement(prefix + emit.name))
-    }
-
-    getDefaultHtmlAttributes(tag).asSequence()
-      .map { it.name }
-      .filter { it.startsWith("on") }
-      .map { it.substring(2) }
-      .forEach {
-        result.addElement(lookupElement(prefix + it, priority = LOW, icon = null))
-      }
-  }
-
-  private fun addModifierCompletions(result: CompletionResultSet, attrInfo: VueDirectiveInfo) {
+  private fun addModifierCompletions(result: CompletionResultSet, directive: VueDirective?, attrInfo: VueDirectiveInfo) {
     val prefix = result.prefixMatcher.prefix
     val lastDotIndex = prefix.lastIndexOf('.')
     if (lastDotIndex < 0) return
 
     val newResult = result.withPrefixMatcher(prefix.substring(lastDotIndex + 1))
-    val usedModifiers = attrInfo.modifiers
 
-    doAddModifierCompletions(newResult, usedModifiers, EVENT_MODIFIERS)
+    if (attrInfo.directiveKind == ON) {
+      addEventModifierCompletions(newResult, directive, attrInfo)
+    }
+    else if (directive != null) {
+      doAddModifierCompletions(newResult, attrInfo.modifiers, directive.modifiers)
+    }
+  }
+
+  private fun addEventModifierCompletions(result: CompletionResultSet, directive: VueDirective?, attrInfo: VueDirectiveInfo) {
+    val usedModifiers = attrInfo.modifiers
+    val documentedModifiers = directive?.modifiers?.associateBy { it.name } ?: mapOf()
+    if (directive != null) {
+      val toSkip = KEY_MODIFIERS.toMutableSet()
+      toSkip.addAll(MOUSE_BUTTON_MODIFIERS)
+      toSkip.addAll(SYSTEM_MODIFIERS)
+      toSkip.addAll(usedModifiers)
+      doAddModifierCompletions(result, toSkip, directive.modifiers)
+    }
+    else {
+      doAddModifierCompletions(result, usedModifiers, documentedModifiers, EVENT_MODIFIERS)
+    }
 
     val eventName = attrInfo.arguments ?: return
     if (KEY_EVENTS.contains(eventName)) {
-      doAddModifierCompletions(newResult, usedModifiers, KEY_MODIFIERS)
+      doAddModifierCompletions(result, usedModifiers, documentedModifiers, KEY_MODIFIERS)
       // Do we also want to suggest the full list of https://vuejs.org/v2/guide/events.html#Automatic-Key-Modifiers?
     }
 
     if (MOUSE_BUTTON_EVENTS.contains(eventName)) {
-      doAddModifierCompletions(newResult, usedModifiers, MOUSE_BUTTON_MODIFIERS)
+      doAddModifierCompletions(result, usedModifiers, documentedModifiers, MOUSE_BUTTON_MODIFIERS)
     }
 
     if (KEY_EVENTS.contains(eventName) || MOUSE_EVENTS.contains(eventName)) {
-      doAddModifierCompletions(newResult, usedModifiers, SYSTEM_MODIFIERS)
+      doAddModifierCompletions(result, usedModifiers, documentedModifiers, SYSTEM_MODIFIERS)
     }
   }
 
-  private fun doAddModifierCompletions(result: CompletionResultSet, usedModifiers: Collection<String>, modifiers: Array<String>) {
+  private fun doAddModifierCompletions(result: CompletionResultSet, usedModifiers: Collection<String>,
+                                       documentedModifiers: Map<String, VueDirectiveModifier>,
+                                       modifiers: Array<String>) {
     modifiers.forEach {
       if (!usedModifiers.contains(it)) {
-        result.addElement(lookupElement(it, insertHandler = null))
+        result.addElement(lookupElement(it, documentedModifiers[it] ?: FakeModifier(it), priority = NORMAL, insertHandler = null))
       }
     }
+  }
+
+  private fun doAddModifierCompletions(result: CompletionResultSet,
+                                       usedModifiers: Collection<String>,
+                                       modifiers: List<VueDirectiveModifier>) {
+    modifiers.forEach {
+      if (it.pattern != null) {
+        val prefix = getPatternCompletablePrefix(it.pattern!!)
+        if (prefix.isNotBlank()) {
+          result.addElement(lookupElement(prefix, it, insertHandler = null,
+                                          presentableText = it.name, typeText = it.pattern?.toString()))
+        }
+      }
+      else if (!usedModifiers.contains(it.name)) {
+        result.addElement(lookupElement(it.name, it, insertHandler = null))
+      }
+    }
+  }
+
+  private fun addEventCompletions(attr: XmlAttribute, result: CompletionResultSet) {
+    val originalPrefix = result.prefixMatcher.prefix
+    val newResult = if (originalPrefix == "v-on:") result.withPrefixMatcher("") else result
+    val tag = attr.parent
+    val prefix = if (originalPrefix.startsWith("@")) "@" else ""
+
+    (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
+      newResult.addElement(lookupElement(prefix + emit.name, emit))
+    }
+
+    getDefaultHtmlAttributes(tag).asSequence()
+      .filter { it.name.startsWith("on") }
+      .forEach {
+        newResult.addElement(lookupElement(prefix + it.name.substring(2), it, priority = LOW, icon = null))
+      }
   }
 
   private fun addBindCompletions(attr: XmlAttribute, result: CompletionResultSet) {
@@ -173,18 +263,17 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val lookupItemPrefix = if (prefix.startsWith(":")) ":" else ""
 
     // special binding
-    newResult.addElement(lookupElement(lookupItemPrefix + "key", priority = LOW))
+    newResult.addElement(lookupElement(lookupItemPrefix + "key", null, priority = LOW))
 
     // v-bind:any-standard-attribute support
     getDefaultHtmlAttributes(attr.parent).asSequence()
-      .map { it.name }
-      .filter { !it.startsWith("on") }
+      .filter { !it.name.startsWith("on") }
       .forEach {
-        newResult.addElement(lookupElement(lookupItemPrefix + it, priority = LOW, icon = null))
+        newResult.addElement(lookupElement(lookupItemPrefix + it.name, it, priority = LOW, icon = null))
       }
 
     for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
-      newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, priority = HIGH))
+      newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, attribute, priority = HIGH))
     }
   }
 
@@ -193,19 +282,32 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val newResult = if (prefix == "v-slot:") result.withPrefixMatcher("") else result
     val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
     for (slot in getAvailableSlots(attr, true)) {
-      newResult.addElement(lookupElement(lookupItemPrefix + slot.name, priority = HIGH))
+      // TODO provide insert handler for scoped slots
+      newResult.addElement(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
     }
   }
 
   private fun lookupElement(name: String,
+                            source: Any?,
                             priority: VueAttributeDescriptor.AttributePriority = NORMAL,
                             insertHandler: InsertHandler<LookupElement>? = XmlAttributeInsertHandler.INSTANCE,
-                            icon: Icon? = VuejsIcons.Vue): LookupElement {
-    return PrioritizedLookupElement.withPriority(LookupElementBuilder.create(name)
+                            icon: Icon? = VuejsIcons.Vue,
+                            presentableText: String? = null,
+                            typeText: String? = null): LookupElement {
+    val lookupObject = when (source) {
+                         is VueAttributeDescriptor -> source.getSources().getOrNull(0)?.documentation
+                         is VueDocumentedItem -> source.documentation
+                         else -> source
+                       } ?: name
+    return PrioritizedLookupElement.withPriority(LookupElementBuilder.create(lookupObject, name)
                                                    .withIcon(icon)
+                                                   .withPresentableText(presentableText ?: name)
+                                                   .withTypeText(typeText, true)
                                                    .withBoldness(priority === HIGH)
                                                    .withInsertHandler(insertHandler),
                                                  priority.value)
   }
+
+  private class FakeModifier(override val name: String) : VueDirectiveModifier
 
 }

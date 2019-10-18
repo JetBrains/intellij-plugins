@@ -31,6 +31,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
@@ -66,7 +67,10 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val element = item.`object` as? PsiElement ?: return
+    val element = item.`object`.castSafelyTo<Pair<*, *>>()
+                    ?.second?.castSafelyTo<SmartPsiElementPointer<*>>()
+                    ?.element
+                  ?: return
     val importedFile = element.containingFile
     if (importedFile == context.file) return
     val nodeModule = NodeModuleSearchUtil.findDependencyRoot(element.containingFile.virtualFile)

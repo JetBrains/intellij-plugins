@@ -11,6 +11,7 @@ import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 import org.jetbrains.vuejs.model.VueInputProperty
 import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.VueModelVisitor.Proximity.*
@@ -19,13 +20,15 @@ import javax.swing.Icon
 open class VueAttributeDescriptor(protected val tag: XmlTag,
                                   private val name: String,
                                   internal val element: PsiElement? = null,
+                                  private val sources: List<VueDocumentedItem> = listOf(),
                                   private val acceptsNoValue: Boolean = false,
+                                  private val acceptsValue: Boolean = true,
                                   val priority: AttributePriority = AttributePriority.NORMAL,
                                   isRequired: Boolean = false)
   : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
 
   constructor(tag: XmlTag, name: String, prop: VueInputProperty) : this(
-    tag, name, prop.source,
+    tag, name, prop.source, listOf(prop),
     isRequired = prop.required,
     acceptsNoValue = isBooleanProp(prop),
     priority = AttributePriority.HIGH)
@@ -36,6 +39,15 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
   }
 
   fun getInfo(): VueAttributeInfo = info.value
+
+  fun getSources(): List<VueDocumentedItem> = sources.toList()
+
+  override fun validateValue(context: XmlElement?, value: String?): String? {
+    if (value != null && !acceptsValue) {
+      return "$name does not accept any value."
+    }
+    return null
+  }
 
   override fun isRequired(): Boolean = _isRequired
   override fun getName(): String = name

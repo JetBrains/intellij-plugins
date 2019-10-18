@@ -1,23 +1,31 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.webtypes
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
+import org.jetbrains.vuejs.codeInsight.documentation.VueItemDocumentation
 import org.jetbrains.vuejs.model.webtypes.json.Source
+import org.jetbrains.vuejs.model.webtypes.json.SourceEntity
 
-open class VueWebTypesSourceEntity(protected val project: Project,
-                                   private val sourceInfo: Source?,
-                                   private val sourceSymbolResolver: WebTypesSourceSymbolResolver): UserDataHolderBase() {
+internal open class VueWebTypesSourceEntity(sourceEntity: SourceEntity,
+                                            protected val context: VueWebTypesEntitiesContainer.WebTypesContext)
+  : VueDocumentedItem, UserDataHolderBase() {
 
+  @Suppress("LeakingThis")
+  override val documentation: VueItemDocumentation = VueWebTypesItemDocumentation(
+    sourceEntity, this, context, this::createCustomSections)
+
+  open fun createCustomSections(): Map<String, String> = emptyMap()
+
+  private val sourceInfo: Source? = sourceEntity.source
   val source: PsiElement?
     get() {
       return sourceInfo?.let {
-        CachedValuesManager.getManager(project).getCachedValue(this) {
-          sourceSymbolResolver.resolve(it)
+        CachedValuesManager.getManager(context.project).getCachedValue(this) {
+          context.resolveSourceSymbol(it)
         }
       }
     }
-
 }

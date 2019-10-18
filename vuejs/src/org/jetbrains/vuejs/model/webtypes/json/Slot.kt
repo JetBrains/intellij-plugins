@@ -6,7 +6,7 @@ import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("name", "pattern", "description", "doc-url", "vue-properties")
-class Slot {
+class Slot : DocumentedItem {
 
   /**
    *
@@ -61,7 +61,7 @@ class Slot {
   @JsonPropertyDescription("Short description to be rendered in documentation popup. May contain HTML tags.")
   @get:JsonProperty("description")
   @set:JsonProperty("description")
-  var description: String? = null
+  override var description: String? = null
   /**
    * Link to online documentation.
    *
@@ -78,7 +78,7 @@ class Slot {
   @JsonPropertyDescription("Link to online documentation.")
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
-  var docUrl: String? = null
+  override var docUrl: String? = null
   /**
    * Specify properties of the slot scope
    *
