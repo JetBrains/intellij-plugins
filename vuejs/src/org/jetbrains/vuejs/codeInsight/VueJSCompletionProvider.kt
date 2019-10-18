@@ -34,7 +34,7 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
         override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
           if (proximity !== Proximity.OUT_OF_SCOPE) {
             (filter.source
-             ?: JSImplicitElementImpl.Builder(name, ref).setType(JSImplicitElement.Type.Method).forbidAstAccess ().toImplicitElement())
+             ?: JSImplicitElementImpl.Builder(name, ref).setType(JSImplicitElement.Type.Method).forbidAstAccess().toImplicitElement())
               .let { JSLookupUtilImpl.createLookupElement(it, name) }
               .let { JSCompletionUtil.withJSLookupPriority(it, getJSLookupPriorityOf(proximity)) }
               .let { result.consume(it) }

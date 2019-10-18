@@ -9,7 +9,7 @@ import java.util.*
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("name", "description", "doc-url", "attributes", "source", "events", "slots", "vue-scoped-slots", "vue-model")
-class Tag {
+class Tag : SourceEntity {
 
   /**
    *
@@ -46,7 +46,7 @@ class Tag {
   @JsonPropertyDescription("Short description to be rendered in documentation popup. May contain HTML tags.")
   @get:JsonProperty("description")
   @set:JsonProperty("description")
-  var description: String? = null
+  override var description: String? = null
   /**
    * Link to online documentation.
    *
@@ -63,7 +63,7 @@ class Tag {
   @JsonPropertyDescription("Link to online documentation.")
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
-  var docUrl: String? = null
+  override var docUrl: String? = null
   @JsonProperty("attributes")
   @get:JsonProperty("attributes")
   @set:JsonProperty("attributes")
@@ -84,7 +84,7 @@ class Tag {
   @JsonPropertyDescription("Allows to specify the source of the entity. For Vue.js component this may be for instance a class.")
   @get:JsonProperty("source")
   @set:JsonProperty("source")
-  var source: Source? = null
+  override var source: Source? = null
   /**
    *
    *

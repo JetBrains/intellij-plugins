@@ -67,6 +67,10 @@ class VueElementDescriptor(private val tag: XmlTag, private val sources: Collect
     return result.toTypedArray()
   }
 
+  fun getSources(): List<VueComponent> {
+    return sources.toList()
+  }
+
   fun getPsiSources(): List<PsiElement> {
     return sources.mapNotNull { it.source }
       .ifEmpty {

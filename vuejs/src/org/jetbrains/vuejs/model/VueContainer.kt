@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
 
 interface VueContainer : VueEntitiesContainer {
   val data: List<VueDataProperty>
@@ -29,17 +30,17 @@ class VueModelDirectiveProperties(
   }
 }
 
+interface VueNamedSymbol : VueDocumentedItem {
+  val name: String
+  val source: PsiElement? get() = null
+}
+
 interface VueSlot : VueNamedSymbol {
   val scope: JSType? get() = null
 }
 
 interface VueEmitCall : VueNamedSymbol {
   val eventJSType: JSType? get() = null
-}
-
-interface VueNamedSymbol {
-  val name: String
-  val source: PsiElement? get() = null
 }
 
 interface VueProperty : VueNamedSymbol {

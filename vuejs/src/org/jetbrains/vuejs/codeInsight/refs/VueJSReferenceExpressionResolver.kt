@@ -28,10 +28,26 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
                                        ignorePerformanceLimits: Boolean) :
   JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
 
+  companion object {
+    fun resolveFiltersFromReferenceExpression(expression: VueJSFilterReferenceExpression): List<VueFilter> {
+      val container = VueModelManager.findEnclosingContainer(expression)
+      val filters = mutableListOf<VueFilter>()
+      val referenceName = expression.referenceName
+      container?.acceptEntities(object : VueModelProximityVisitor() {
+        override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+          return acceptSameProximity(proximity, name == referenceName) {
+            filters.add(filter)
+          }
+        }
+      })
+      return filters
+    }
+  }
+
   override fun resolve(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY
     if (myRef is VueJSFilterReferenceExpression) {
-      return resolveFilterNameReference(expression, incompleteCode)
+      return resolveFilterNameReference(myRef, incompleteCode)
     }
     if (myQualifier == null || myQualifier is JSThisExpression) {
       resolveTemplateVariable(expression).let { if (it.isNotEmpty()) return it }
@@ -39,7 +55,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     return super.resolve(expression, incompleteCode)
   }
 
-  private fun resolveFilterNameReference(expression: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> {
+  private fun resolveFilterNameReference(expression: VueJSFilterReferenceExpression, incompleteCode: Boolean): Array<ResolveResult> {
     if (!incompleteCode) {
       val results = expression.multiResolve(true)
       //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
@@ -47,15 +63,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
     }
     assert(myReferencedName != null)
 
-    val container = VueModelManager.findEnclosingContainer(expression)
-    val filters = mutableListOf<VueFilter>()
-    container?.acceptEntities(object : VueModelProximityVisitor() {
-      override fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
-        return acceptSameProximity(proximity, name == myReferencedName) {
-          filters.add(filter)
-        }
-      }
-    })
+    val filters = resolveFiltersFromReferenceExpression(expression)
     return filters.asSequence()
       .map {
         JSResolveResult(it.source ?: JSImplicitElementImpl.Builder(myReferencedName!!, expression)

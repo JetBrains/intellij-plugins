@@ -172,6 +172,11 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderComponentInfoProvider"
                                  id="templateLoader"
                                  order="after defaultTemplate"/>
+
+    <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
+                                language="Vue" order="before html"/>
+    <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
+                                language="VueJS"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
