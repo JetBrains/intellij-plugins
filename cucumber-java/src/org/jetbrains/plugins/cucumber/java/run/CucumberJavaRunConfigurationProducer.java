@@ -18,6 +18,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
@@ -33,6 +34,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String FORMATTER_OPTIONS_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_3 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter";
   public static final String FORMATTER_OPTIONS_4 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter";
+  public static final String FORMATTER_OPTIONS_5 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter";
 
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                    "cucumber.annotation.After",
@@ -160,18 +162,21 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
 
   @NotNull
   private static String getSMFormatterOptions(@NotNull String cucumberCoreVersion) {
-    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_0)) {
-      return FORMATTER_OPTIONS_1_0;
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_5) >= 0) {
+      return FORMATTER_OPTIONS_5;
     }
-    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_2)) {
-      return FORMATTER_OPTIONS_1_2;
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_4) >= 0) {
+      return FORMATTER_OPTIONS_4;
     }
-    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_2)) {
-      return FORMATTER_OPTIONS_2;
-    }
-    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_3)) {
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_3) >= 0) {
       return FORMATTER_OPTIONS_3;
     }
-    return FORMATTER_OPTIONS_4;
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_2) >= 0) {
+      return FORMATTER_OPTIONS_2;
+    }
+    if (VersionComparatorUtil.compare(cucumberCoreVersion, CUCUMBER_CORE_VERSION_1_2) >= 0) {
+      return FORMATTER_OPTIONS_1_2;
+    }
+    return FORMATTER_OPTIONS_1_0;
   }
 }

@@ -146,7 +146,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
     // Attach SM formatter's folder/jar for Cucumber v3/v4
     String cucumberCoreVersion = getCucumberCoreVersion();
-    for (int i = 4; i >= 3; i--) {
+    for (int i = 5; i >= 3; i--) {
       if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
         if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
           result.add(cucumberJvmFormatterClassPath.replace(".jar", i + ".jar"));
