@@ -344,7 +344,7 @@ public class PsiFieldMock implements PsiField {
         return _name;
     }
 
-    public PsiFieldMock setMockName(String name) {
+    public PsiFieldMock setMockName(@NotNull String name) {
         _name = name;
 
         return this;
