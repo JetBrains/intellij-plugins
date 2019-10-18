@@ -122,7 +122,7 @@ public class AvailableSuggestion {
 
   public static AvailableSuggestion fromJson(JsonObject jsonObject) {
     String label = jsonObject.get("label").getAsString();
-    String declaringLibraryUri = jsonObject.get("declaringLibraryUri").getAsString();
+    String declaringLibraryUri = jsonObject.get("declaringLibraryUri") != null ? jsonObject.get("declaringLibraryUri").getAsString() : null;
     Element element = Element.fromJson(jsonObject.get("element").getAsJsonObject());
     String defaultArgumentListString = jsonObject.get("defaultArgumentListString") == null ? null : jsonObject.get("defaultArgumentListString").getAsString();
     int[] defaultArgumentListTextRanges = jsonObject.get("defaultArgumentListTextRanges") == null ? null : JsonUtilities.decodeIntArray(jsonObject.get("defaultArgumentListTextRanges").getAsJsonArray());
