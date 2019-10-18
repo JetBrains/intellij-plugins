@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder("name", "pattern", "description", "doc-url")
-class VueModifier {
+class VueModifier : DocumentedItem {
 
   /**
    *
@@ -63,7 +63,7 @@ class VueModifier {
   @JsonPropertyDescription("Short description to be rendered in documentation popup. May contain HTML tags.")
   @get:JsonProperty("description")
   @set:JsonProperty("description")
-  var description: String? = null
+  override var description: String? = null
   /**
    * Link to online documentation.
    *
@@ -80,6 +80,6 @@ class VueModifier {
   @JsonPropertyDescription("Link to online documentation.")
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
-  var docUrl: String? = null
+  override var docUrl: String? = null
 
 }

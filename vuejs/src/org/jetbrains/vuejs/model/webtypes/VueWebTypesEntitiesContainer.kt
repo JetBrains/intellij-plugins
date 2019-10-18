@@ -1,18 +1,24 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.webtypes
 
+import com.intellij.lang.javascript.documentation.JSMarkdownUtil
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Html
+import org.jetbrains.vuejs.model.webtypes.json.Source
 import org.jetbrains.vuejs.model.webtypes.json.WebTypes
 import java.util.*
+import java.util.regex.PatternSyntaxException
 
 open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFile,
                                         webTypes: WebTypes, owner: VueEntitiesContainer) : VueEntitiesContainer {
@@ -34,27 +40,43 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
         TypeScriptTypeProvider()::getType
       else
         { _: Any? -> null }
+    val descriptionRenderer: (String) -> String? =
+      when (webTypes.contributions?.html?.descriptionMarkup) {
+        Html.DescriptionMarkup.HTML -> { doc -> doc }
+        Html.DescriptionMarkup.MARKDOWN -> { doc -> JSMarkdownUtil.toHtml(doc, false) }
+        else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc) }
+      }
     val psiPackageJson = PsiManager.getInstance(project).findFile(packageJson)
     val sourceSymbolResolver = WebTypesSourceSymbolResolver(psiPackageJson!!, webTypes.name ?: "unknown")
+
+    val support = object : WebTypesContext {
+      override val project: Project = project
+      override val pluginName: String? = webTypes.name
+      override val parent: VueEntitiesContainer = owner
+
+      override fun getType(webTypesType: Any?): JSType? = typeProvider(webTypesType)
+      override fun resolveSourceSymbol(source: Source): CachedValueProvider.Result<PsiElement?> = sourceSymbolResolver.resolve(source)
+      override fun renderDescription(description: String): String? = descriptionRenderer(description)
+    }
 
     components = webTypes.contributions
                    ?.html
                    ?.tags
                    ?.filter { it.name != null }
-                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, project, owner, typeProvider, sourceSymbolResolver) })
+                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it, support) })
                  ?: Collections.emptyMap()
     directives = webTypes.contributions
                    ?.html
                    ?.attributes
                    ?.filter { it.name?.startsWith("v-") ?: false }
-                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, project, owner, sourceSymbolResolver) })
+                   ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, support) })
                  ?: Collections.emptyMap()
     filters = webTypes.contributions
                 ?.html
                 ?.vueFilters
                 ?.filter { it.name != null }
                 ?.distinctBy { it.name }
-                ?.associateBy({ it.name!! }, { VueWebTypesFilter(it, project, owner, sourceSymbolResolver) })
+                ?.associateBy({ it.name!! }, { VueWebTypesFilter(it, support) })
               ?: Collections.emptyMap()
   }
 
@@ -79,6 +101,43 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
       }
       return null
     }
+  }
+
+  internal interface WebTypesContext {
+    val pluginName: String?
+    val project: Project
+    val parent: VueEntitiesContainer
+
+    fun getType(webTypesType: Any?): JSType?
+    fun resolveSourceSymbol(source: Source): CachedValueProvider.Result<PsiElement?>
+    fun renderDescription(description: String): String?
+
+    fun createPattern(pattern: Any?): Regex? {
+      return try {
+        when (pattern) {
+          is String -> Regex(pattern)
+          is Map<*, *> -> {
+            val regex = pattern["regex"] as? String ?: return null
+            val ignoreCase = pattern["case-sensitive"] as? Boolean == false
+            if (ignoreCase) {
+              Regex(regex, RegexOption.IGNORE_CASE)
+            }
+            else {
+              Regex(regex)
+            }
+          }
+          else -> null
+        }
+      }
+      catch (exception: PatternSyntaxException) {
+        LOG.warn(exception)
+        null
+      }
+    }
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(VueWebTypesEntitiesContainer::class.java)
   }
 
 }

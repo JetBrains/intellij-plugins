@@ -6,9 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 
+/**
+ * Provide information about directive argument
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder("pattern", "description", "doc-url")
-class VueArgument {
+@JsonPropertyOrder("pattern", "description", "doc-url", "required")
+class VueArgument : DocumentedItem {
 
   /**
    * A RegEx pattern to match whole content. Syntax should work with at least ECMA, Java and Python implementations.
@@ -29,22 +33,23 @@ class VueArgument {
   @set:JsonProperty("pattern")
   var pattern: Any? = null
   /**
-   * Short description to be rendered in documentation popup. May contain HTML tags.
+   * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
    *
    */
   /**
-   * Short description to be rendered in documentation popup. May contain HTML tags.
+   * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
    *
    */
   /**
-   * Short description to be rendered in documentation popup. May contain HTML tags.
+   * Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.
    *
    */
   @JsonProperty("description")
-  @JsonPropertyDescription("Short description to be rendered in documentation popup. May contain HTML tags.")
+  @JsonPropertyDescription(
+    "Short description to be rendered in documentation popup. It will be rendered according to description-markup setting.")
   @get:JsonProperty("description")
   @set:JsonProperty("description")
-  var description: String? = null
+  override var description: String? = null
   /**
    * Link to online documentation.
    *
@@ -61,6 +66,23 @@ class VueArgument {
   @JsonPropertyDescription("Link to online documentation.")
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
-  var docUrl: String? = null
+  override var docUrl: String? = null
+  /**
+   * Whether directive requires an argument
+   *
+   */
+  /**
+   * Whether directive requires an argument
+   *
+   */
+  /**
+   * Whether directive requires an argument
+   *
+   */
+  @JsonProperty("required")
+  @JsonPropertyDescription("Whether directive requires an argument")
+  @get:JsonProperty("required")
+  @set:JsonProperty("required")
+  var required: Boolean? = false
 
 }

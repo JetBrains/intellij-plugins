@@ -1,39 +1,33 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.webtypes
 
-import com.intellij.lang.javascript.psi.JSType
-import com.intellij.openapi.project.Project
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
 
-class VueWebTypesComponent(tag: Tag,
-                           project: Project,
-                           private val parent: VueEntitiesContainer,
-                           typeProvider: (Any?) -> JSType?,
-                           sourceSymbolResolver: WebTypesSourceSymbolResolver)
-  : VueWebTypesSourceEntity(project, tag.source, sourceSymbolResolver), VueRegularComponent {
+internal class VueWebTypesComponent(tag: Tag, context: VueWebTypesEntitiesContainer.WebTypesContext)
+  : VueWebTypesSourceEntity(tag, context), VueRegularComponent {
 
-  override val global: VueGlobal? get() = parent.global
-  override val parents: List<VueEntitiesContainer> get() = listOf(parent)
+  override val global: VueGlobal? get() = context.parent.global
+  override val parents: List<VueEntitiesContainer> get() = listOf(context.parent)
 
   override val data: List<VueDataProperty> = Collections.emptyList()
   override val computed: List<VueComputedProperty> = Collections.emptyList()
   override val methods: List<VueMethod> = Collections.emptyList()
   override val props: List<VueInputProperty> = tag.attributes.asSequence()
     .filter { it.name != null }
-    .map { VueWebTypesInputProperty(it, typeProvider) }
+    .map { VueWebTypesInputProperty(it, context) }
     .toList()
 
   override val emits: List<VueEmitCall> = tag.events.asSequence()
     .filter { it.name != null }
-    .map { VueWebTypesEmitCall(it) }
+    .map { VueWebTypesEmitCall(it, context) }
     .toList()
 
   override val slots: List<VueSlot> = tag.slots.asSequence()
     .plus(tag.vueScopedSlots)
     .filter { it.name != null }
-    .map { VueWebTypesSlot(it) }
+    .map { VueWebTypesSlot(it, context) }
     .toList()
 
   override val extends: List<VueContainer> = emptyList()
@@ -41,13 +35,9 @@ class VueWebTypesComponent(tag: Tag,
   override val directives: Map<String, VueDirective> = Collections.emptyMap()
   override val filters: Map<String, VueFilter> = Collections.emptyMap()
   override val mixins: List<VueMixin> = Collections.emptyList()
-  override val model: VueModelDirectiveProperties = tag.vueModel
-                                                      ?.let {
-                                                        VueModelDirectiveProperties(
-                                                          it.prop,
-                                                          it.event)
-                                                      }
-                                                    ?: VueModelDirectiveProperties()
+  override val model: VueModelDirectiveProperties =
+    tag.vueModel?.let { VueModelDirectiveProperties(it.prop, it.event) }
+    ?: VueModelDirectiveProperties()
   override val defaultName: String = tag.name!!
 
 }

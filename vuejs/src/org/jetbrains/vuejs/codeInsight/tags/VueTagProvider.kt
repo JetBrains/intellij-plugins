@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.library.JSLibraryUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.XmlElementDescriptor
@@ -71,7 +71,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         else null
         nameMapper(name).forEach {
           if (providedNames.add(it)) {
-            elements.add(createVueLookup(component.source, it,
+            elements.add(createVueLookup(component, it,
                                          proximity != Proximity.OUT_OF_SCOPE,
                                          scriptLanguage,
                                          priorityOf(proximity),
@@ -93,13 +93,16 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     }
   }
 
-  private fun createVueLookup(element: PsiElement?,
+  private fun createVueLookup(component: VueComponent,
                               name: String,
                               shouldNotBeImported: Boolean,
                               scriptLanguage: String?,
                               priority: Double,
                               moduleName: String? = null): LookupElement {
-    var builder = (if (element != null) LookupElementBuilder.create(element, name) else LookupElementBuilder.create(name))
+    val element = component.source
+    var builder = LookupElementBuilder.create(Pair(component.documentation,
+                                                   element?.let(SmartPointerManager::createPointer)),
+                                              name)
       .withIcon(VuejsIcons.Vue)
     if (priority == LOCAL_PRIORITY) {
       builder = builder.bold()
