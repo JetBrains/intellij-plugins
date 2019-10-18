@@ -59,7 +59,7 @@ public class DartCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
+  public RunnerSettings createConfigurationData(@NotNull final ConfigurationInfoProvider settingsProvider) {
     return new CoverageRunnerData();
   }
 
