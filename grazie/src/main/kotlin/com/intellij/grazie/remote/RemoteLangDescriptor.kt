@@ -25,5 +25,5 @@ enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String
 
   val fileName: String by lazy { "$shortCode-${msg("grazie.languagetool.version")}.jar" }
   val file: File by lazy { GrazieDynamic.dynamicFolder.resolve(fileName) }
-  val url: String by lazy { "${msg("grazie.maven.repo.url")}/$fileName" }
+  val url: String by lazy { "${msg("grazie.languagetool.model.url")}/${msg("grazie.languagetool.version")}/$fileName" }
 }
