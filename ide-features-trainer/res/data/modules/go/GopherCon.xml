@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="GopherCon" lessonsPath="GopherCon/" version="0.1" id="gophercon" fileType="SCRATCH"  description="Welcome to the crash course prepared specifically for the conference.">
+<module name="The Hitchhiker's Guide to GoLand" lessonsPath="GopherCon/" version="0.1" id="gophercon" fileType="SCRATCH"  description="Welcome to the crash course prepared specifically for the conference.">
   <lesson-kt sample="00.Actions.go.sample" implementationClass="training.learn.lesson.general.GotoActionLesson" lang="go"/>
   <lesson-kt sample="01.Select.go.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="go"/>
   <lesson filename="02.Comment.xml" lang="go"/>
