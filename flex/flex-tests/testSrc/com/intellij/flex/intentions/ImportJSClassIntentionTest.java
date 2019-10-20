@@ -38,6 +38,8 @@ public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
 
       final String testName = getTestName(false);
       myFixture.configureByFiles(testName + ".as", testName + "_2.as");
+      myFixture.type(" ");
+      myFixture.type("\b");
       myFixture.doHighlighting();
       myFixture.checkResultByFile(testName + "_after.as");
     }
