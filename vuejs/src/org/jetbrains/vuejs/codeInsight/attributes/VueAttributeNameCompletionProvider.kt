@@ -267,9 +267,9 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
     // v-bind:any-standard-attribute support
     getDefaultHtmlAttributes(attr.parent).asSequence()
-      .filter { !it.name.startsWith("on") }
+      .filter { it.getName(attr).let { name -> !name.startsWith("on") && !name.contains(':')} }
       .forEach {
-        newResult.addElement(lookupElement(lookupItemPrefix + it.name, it, priority = LOW, icon = null))
+        newResult.addElement(lookupElement(lookupItemPrefix + it.getName(attr), it, priority = LOW, icon = null))
       }
 
     for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
