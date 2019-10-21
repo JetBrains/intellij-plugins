@@ -283,7 +283,16 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
     for (slot in getAvailableSlots(attr, true)) {
       // TODO provide insert handler for scoped slots
-      newResult.addElement(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
+      if (slot.pattern != null) {
+        val patternPrefix = getPatternCompletablePrefix(slot.pattern!!)
+        if (patternPrefix.isNotBlank()) {
+          result.addElement(lookupElement(patternPrefix, slot, insertHandler = null,
+                                          presentableText = slot.name, priority = HIGH,
+                                          typeText = slot.pattern?.toString()))
+        }
+      } else {
+        newResult.addElement(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
+      }
     }
   }
 

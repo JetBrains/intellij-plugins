@@ -8,5 +8,6 @@ internal class VueWebTypesSlot(slot: Slot, context: VueWebTypesEntitiesContainer
   : VueWebTypesDocumentedItem(slot, context), VueSlot {
 
   override val name: String = slot.name!!
+  override val pattern: Regex? = context.createPattern(slot.pattern)
 
 }

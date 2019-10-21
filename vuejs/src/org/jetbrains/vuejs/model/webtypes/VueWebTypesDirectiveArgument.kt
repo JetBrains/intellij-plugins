@@ -3,8 +3,6 @@ package org.jetbrains.vuejs.model.webtypes
 
 import org.jetbrains.vuejs.model.VueDirectiveArgument
 import org.jetbrains.vuejs.model.webtypes.json.VueArgument
-import java.util.*
-import kotlin.collections.LinkedHashMap
 
 internal class VueWebTypesDirectiveArgument(argument: VueArgument,
                                             context: VueWebTypesEntitiesContainer.WebTypesContext)
@@ -12,12 +10,4 @@ internal class VueWebTypesDirectiveArgument(argument: VueArgument,
 
   override val required: Boolean = argument.required == true
   override val pattern: Regex? = context.createPattern(argument.pattern)
-
-  override fun createCustomSections(): Map<String, String> {
-    val result = LinkedHashMap<String, String>()
-    result["Required"] = required.toString().toLowerCase(Locale.US)
-    pattern?.let { result["Pattern"] = it.toString() }
-    return result
-  }
-
 }

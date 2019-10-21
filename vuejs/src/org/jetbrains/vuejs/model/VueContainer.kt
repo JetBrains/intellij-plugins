@@ -37,6 +37,7 @@ interface VueNamedSymbol : VueDocumentedItem {
 
 interface VueSlot : VueNamedSymbol {
   val scope: JSType? get() = null
+  val pattern: Regex? get() = null
 }
 
 interface VueEmitCall : VueNamedSymbol {
@@ -49,6 +50,7 @@ interface VueProperty : VueNamedSymbol {
 
 interface VueInputProperty : VueProperty {
   val required: Boolean
+  val defaultValue: String? get() = null
 }
 
 interface VueDataProperty : VueProperty

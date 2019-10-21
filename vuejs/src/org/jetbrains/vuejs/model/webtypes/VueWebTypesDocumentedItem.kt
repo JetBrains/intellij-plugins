@@ -9,9 +9,5 @@ internal open class VueWebTypesDocumentedItem(item: DocumentedItem,
                                               protected val context: VueWebTypesEntitiesContainer.WebTypesContext) : VueDocumentedItem {
 
   @Suppress("LeakingThis")
-  override val documentation: VueItemDocumentation = VueWebTypesItemDocumentation(
-    item, this, context, this::createCustomSections)
-
-  open fun createCustomSections(): Map<String, String> = emptyMap()
-
+  override val documentation: VueItemDocumentation = VueWebTypesItemDocumentation(item, this, context)
 }
