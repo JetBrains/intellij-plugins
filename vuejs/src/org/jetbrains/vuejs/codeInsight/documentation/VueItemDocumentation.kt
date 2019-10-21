@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.vuejs.model.*
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 interface VueItemDocumentation {
   /**
@@ -60,5 +62,29 @@ interface VueItemDocumentation {
         is VueDirectiveArgument -> null
         else -> throw IncorrectOperationException(item.javaClass.name)
       }
+
+    fun createSections(item: VueDocumentedItem): Map<String, String> {
+      val sections = LinkedHashMap<String, String>()
+      when (item) {
+        is VueDirective -> {
+          item.argument?.documentation?.description?.let { sections["Argument"] = it }
+        }
+        is VueDirectiveArgument -> {
+          item.pattern?.let { sections["Pattern"] = it.toString() }
+          sections["Required"] = item.required.toString().toLowerCase(Locale.US)
+        }
+        is VueDirectiveModifier -> {
+          item.pattern?.let { sections["Pattern"] = it.toString() }
+        }
+        is VueSlot -> {
+          item.pattern?.let { sections["Pattern"] = it.toString() }
+        }
+        is VueInputProperty -> {
+          sections["Required"] = item.required.toString()
+          item.defaultValue?.let { sections["Default"] = it }
+        }
+      }
+      return sections
+    }
   }
 }

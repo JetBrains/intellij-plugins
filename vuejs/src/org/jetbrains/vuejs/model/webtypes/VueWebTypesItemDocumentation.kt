@@ -8,8 +8,7 @@ import org.jetbrains.vuejs.model.webtypes.json.DocumentedItem
 
 internal class VueWebTypesItemDocumentation(itemJson: DocumentedItem,
                                             private val itemModel: VueDocumentedItem,
-                                            private val context: VueWebTypesEntitiesContainer.WebTypesContext,
-                                            private val customSectionsProvider: () -> Map<String, String> = { emptyMap() }) : VueItemDocumentation {
+                                            private val context: VueWebTypesEntitiesContainer.WebTypesContext) : VueItemDocumentation {
   override val defaultName: String? get() = VueItemDocumentation.nameOf(itemModel)
   override val type: String get() = VueItemDocumentation.typeOf(itemModel)
 
@@ -18,7 +17,7 @@ internal class VueWebTypesItemDocumentation(itemJson: DocumentedItem,
   override val description: String? get() = lazyDescription.value
   override val docUrl: String? = itemJson.docUrl
   override val library: String? get() = context.pluginName
-  override val customSections: Map<String, String> get() = customSectionsProvider()
+  override val customSections: Map<String, String> get() = VueItemDocumentation.createSections(itemModel)
 
   init {
     val rawDescription = itemJson.description

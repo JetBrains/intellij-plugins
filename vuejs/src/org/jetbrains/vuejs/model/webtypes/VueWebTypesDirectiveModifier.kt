@@ -10,10 +10,4 @@ internal class VueWebTypesDirectiveModifier(modifier: VueModifier,
 
   override val name: String = modifier.name!!
   override val pattern: Regex? = context.createPattern(modifier.pattern)
-
-  override fun createCustomSections(): Map<String, String> {
-    return pattern?.let { mapOf(Pair("Pattern", it.toString())) }
-           ?: super.createCustomSections()
-  }
-
 }

@@ -22,10 +22,4 @@ internal class VueWebTypesDirective(attribute: Attribute_,
     .map { VueWebTypesDirectiveModifier(it, context) }
     .toList()
   override val argument: VueDirectiveArgument? = attribute.vueArgument?.let { VueWebTypesDirectiveArgument(it, context) }
-
-  override fun createCustomSections(): Map<String, String> {
-    val result = LinkedHashMap<String, String>()
-    argument?.documentation?.description?.let { result["Argument"] = it }
-    return result
-  }
 }

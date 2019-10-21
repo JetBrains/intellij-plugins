@@ -1618,6 +1618,14 @@ $script""")
     }
   }
 
+  fun testCustomModifiers() {
+    createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
+    myFixture.copyDirectoryToProject("modifiers", ".")
+    myFixture.configureFromTempProjectFile("App.vue")
+    myFixture.completeBasic()
+    assertEquals(listOf("ba","foo"), myFixture.lookupElementStrings!!)
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")

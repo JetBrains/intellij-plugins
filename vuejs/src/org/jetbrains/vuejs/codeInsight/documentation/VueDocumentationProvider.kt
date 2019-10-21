@@ -27,32 +27,32 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
   }
 
   override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): MutableList<String>? {
-    return if (getVueDocumentedItem(element, originalElement) != null) mutableListOf() else null
+    return (element as? PsiWrappedVueDocumentedItem)?.let {
+        it.item.docUrl?.let { url -> mutableListOf(url) } ?: mutableListOf()
+      }
   }
 
   override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
-    return getVueDocumentedItem(null, contextElement)?.second
+    return getVueDocumentedItem(contextElement)
+      ?.let { PsiWrappedVueDocumentedItem(it.first, it.second) }
   }
 
   override fun generateDoc(element: PsiElement?, originalElement: PsiElement?): String? {
-    return getVueDocumentedItem(element, originalElement)?.let { (item, psi) -> generateDoc(item, (psi as? PsiNamedElement)?.name ?: "") }
+    return (element as? PsiWrappedVueDocumentedItem)
+      ?.let { generateDoc(it.item) }
   }
 
   override fun getDocumentationElementForLookupItem(psiManager: PsiManager?, `object`: Any?, element: PsiElement?): PsiElement? {
-    val documentationItem = `object`?.castSafelyTo<Pair<*,*>>()
+    val documentationItem = `object`?.castSafelyTo<Pair<*, *>>()
       ?.first
       ?.castSafelyTo<VueItemDocumentation>()
     if (documentationItem != null && element != null) {
-      // We need to deliver our VueDocumentedItem wrapped in fake psi element to generateDoc method
       return PsiWrappedVueDocumentedItem(documentationItem, element)
     }
     return null
   }
 
-  private fun getVueDocumentedItem(element: PsiElement?, originalElement: PsiElement?): Pair<VueItemDocumentation, PsiElement?>? {
-    if (element is PsiWrappedVueDocumentedItem) {
-      return Pair(element.item, null)
-    }
+  private fun getVueDocumentedItem(originalElement: PsiElement?): Pair<VueItemDocumentation, PsiElement>? {
     val docSource = when (originalElement?.node?.elementType) {
       XmlTokenType.XML_NAME, JSTokenTypes.IDENTIFIER -> originalElement?.parent
       else -> originalElement
@@ -76,15 +76,14 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
     }
   }
 
-  private fun generateDoc(item: VueItemDocumentation, fallbackName: String): String? {
+  private fun generateDoc(item: VueItemDocumentation): String? {
     val result = StringBuilder().append(DEFINITION_START)
-    val name = item.defaultName ?: fallbackName
+    val name = item.defaultName ?: ""
     if (name.isBlank()) {
       result.append("Vue ").append(item.type)
     }
     else {
       result.append(name)
-        .append(GRAYED_START).append(" - Vue ").append(item.type).append(GRAYED_END)
     }
     result.append(DEFINITION_END)
     item.description?.let { result.append(CONTENT_START).append(it).append(CONTENT_END) }
@@ -100,12 +99,13 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
       }
       result.append(SECTIONS_END)
     }
-    item.docUrl?.let { result.append(CONTENT_START).append("<p><a href='$it'>$it</a>").append(CONTENT_END) }
     return result.toString()
   }
 
-  private class PsiWrappedVueDocumentedItem(val item: VueItemDocumentation, private val source: PsiElement) : FakePsiElement() {
+  private class PsiWrappedVueDocumentedItem(val item: VueItemDocumentation,
+                                            private val source: PsiElement) : FakePsiElement(), PsiNamedElement {
     override fun getParent(): PsiElement? = source
+    override fun getName(): String? = item.defaultName ?: "Vue " + item.type
   }
 
 }
