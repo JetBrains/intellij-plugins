@@ -32,7 +32,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.util.TimeoutUtil;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -176,7 +176,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   }
 
   private void checkTestSourceRoots(final String... sourceRootUrls) {
-    final Collection<String> roots = new THashSet<>(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true)));
+    final Collection<String> roots = ContainerUtil.set(ModuleRootManager.getInstance(myModule).getSourceRootUrls(true));
     roots.removeAll(Arrays.asList(ModuleRootManager.getInstance(myModule).getSourceRootUrls(false)));
     assertSameElements(roots, Arrays.asList(sourceRootUrls));
   }

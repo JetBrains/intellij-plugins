@@ -6,12 +6,11 @@ import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -110,7 +109,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
   }
 
   private static @NonNls final Set<String> doNotNeedQoting =
-    new THashSet<>(Arrays.asList("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity"));
+    ContainerUtil.set("null", "NaN", "undefined", "true", "false", "Infinity", "-Infinity");
   private static boolean needsQuoting(final String value) {
     return !doNotNeedQoting.contains(value);
   }

@@ -18,10 +18,8 @@ import com.intellij.psi.templateLanguages.TemplateDataElementType;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
@@ -108,7 +106,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   @NotNull
   @Override
   public Set<Language> getLanguages() {
-    return new THashSet<>(Arrays.asList(myBaseLanguage, getTemplateDataLanguage()));
+    return ContainerUtil.set(myBaseLanguage, getTemplateDataLanguage());
   }
 
   @NotNull

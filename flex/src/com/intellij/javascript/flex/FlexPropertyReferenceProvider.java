@@ -10,18 +10,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author yole
  */
 public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
-  private static final Set<String> ourMethodsWithPropertyReferences = new THashSet<>(
-    Arrays.asList("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
-                  "getUint", "getBoolean"));
+  private static final Set<String> ourMethodsWithPropertyReferences = ContainerUtil
+    .set("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
+         "getUint", "getBoolean");
 
   @NotNull
   @Override
