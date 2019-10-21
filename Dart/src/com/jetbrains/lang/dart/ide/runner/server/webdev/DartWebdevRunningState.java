@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -94,21 +95,38 @@ public class DartWebdevRunningState extends CommandLineState {
   }
 
   private GeneralCommandLine createCommandLine() throws ExecutionException {
-    final DartSdk sdk = DartSdk.getDartSdk(getEnvironment().getProject());
+    final Project project = getEnvironment().getProject();
+    final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
 
-    final GeneralCommandLine commandLine = new GeneralCommandLine()
-      .withWorkDirectory(myDartWebdevParameters.computeProcessWorkingDirectory(getEnvironment().getProject()));
+    final String workingDir = myDartWebdevParameters.computeProcessWorkingDirectory(project);
+    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
     commandLine.setCharset(StandardCharsets.UTF_8);
 
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
     commandLine.addParameters("global", "run", "webdev", "daemon");
-    if (myDartWebdevParameters.getWebdevPort() != -1) {
-      // TODO served folder name based on HTML file path
-      String folderToServe = "web";
-      commandLine.addParameter(folderToServe + ":" + myDartWebdevParameters.getWebdevPort());
+
+    // Compute the relative html file path and first directory name in the relative html file path
+    final String htmlFilePath = myDartWebdevParameters.getHtmlFilePath();
+
+    // workingDir  =  "/.../webdev/example"
+    // htmlFilePath = "/.../webdev/example/web/index.html"
+    final String htmlFilePathRelativeFromWorkingDir =
+      htmlFilePath.startsWith(workingDir + "/") ? htmlFilePath.substring(workingDir.length() + 1) : null;
+
+    // htmlFilePathRelativeFromWorkingDir = "web/index.html"
+    final int firstSlashIndex = htmlFilePathRelativeFromWorkingDir == null ? -1 : htmlFilePathRelativeFromWorkingDir.indexOf('/');
+    final String firstDirName = firstSlashIndex == -1 ? null : htmlFilePathRelativeFromWorkingDir.substring(0, firstSlashIndex);
+
+    // firstDirName = "web"
+    // Append the "web:<port>" and "--launch-app=web/index.html"
+    if (myDartWebdevParameters.getWebdevPort() != -1 && StringUtil.isNotEmpty(firstDirName)) {
+      commandLine.addParameter(firstDirName + ":" + myDartWebdevParameters.getWebdevPort());
+    }
+    if (htmlFilePathRelativeFromWorkingDir != null) {
+      commandLine.addParameter("--launch-app=" + htmlFilePathRelativeFromWorkingDir);
     }
 
     return commandLine;

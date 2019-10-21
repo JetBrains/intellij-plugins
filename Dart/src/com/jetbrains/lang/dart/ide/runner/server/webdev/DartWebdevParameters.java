@@ -21,7 +21,6 @@ public class DartWebdevParameters implements Cloneable {
   private String myHtmlFilePath = "";
   private int myWebdevPort = DartConfigurable.WEBDEV_PORT_DEFAULT;
 
-
   @NotNull
   public String getHtmlFilePath() {
     return myHtmlFilePath;
