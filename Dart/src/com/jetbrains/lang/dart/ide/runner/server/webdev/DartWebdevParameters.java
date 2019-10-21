@@ -67,6 +67,7 @@ public class DartWebdevParameters implements Cloneable {
   }
 
   public void check(@NotNull final Project project) throws RuntimeConfigurationError {
+    // check sdk
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"),
@@ -77,8 +78,14 @@ public class DartWebdevParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("old.dart.sdk.for.webdev", MIN_DART_SDK_VERSION_FOR_WEBDEV, sdkVersion));
     }
 
-    if (StringUtil.isEmptyOrSpaces(myHtmlFilePath)) {
-      throw new RuntimeConfigurationError(DartBundle.message("path.to.html.file.not.set"));
+    // check html file
+    final VirtualFile htmlVirtualFile = getHtmlFile();
+
+    // check computed working directory
+    final String workingDirVirtualFile = computeProcessWorkingDirectory(project);
+    final String expectedPubspecParentPath = htmlVirtualFile.getParent().getParent().getPath();
+    if (!expectedPubspecParentPath.equals(workingDirVirtualFile)) {
+      throw new RuntimeConfigurationError(DartBundle.message("webdev.debug.html.file.depth", expectedPubspecParentPath + "/pubspec.yaml"));
     }
   }
 
