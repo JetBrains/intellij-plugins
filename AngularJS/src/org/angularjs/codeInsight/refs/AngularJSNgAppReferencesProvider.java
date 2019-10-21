@@ -57,7 +57,7 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
                 InjectedLanguageManager.getInstance(getElement().getProject()).getTopLevelFile(getElement().getContainingFile());
               final VirtualFile appDefinitionFile = topLevelFile.getVirtualFile();
               final VirtualFile[] includedFilesArr = FileIncludeManager.getManager(getElement().getProject()).getIncludedFiles(appDefinitionFile, true, true);
-              includedFiles = new HashSet<>(Arrays.asList(includedFilesArr));
+              includedFiles = ContainerUtil.set(includedFilesArr);
             }
             return includedFiles.contains(element.getContainingFile().getVirtualFile());
           }

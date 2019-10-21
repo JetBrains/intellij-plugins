@@ -3,6 +3,7 @@ package jetbrains.communicator.jabber.impl;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -393,7 +394,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   private void updateJabberUsers(boolean removeUsersNotInRoster) {
     LOG.debug("Roster changed - update user model");
-    Set<User> currentUsers = new HashSet<>(Arrays.asList(myUserModel.getAllUsers()));
+    Set<User> currentUsers = ContainerUtil.set(myUserModel.getAllUsers());
     for (RosterEntry rosterEntry : getRoster().getEntries()) {
       User user = addJabberUserToUserModelOrUpdateInfo(rosterEntry);
       currentUsers.remove(user);

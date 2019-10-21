@@ -20,7 +20,6 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.StdLanguages;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.MultiplePsiFilesPerDocumentFileViewProvider;
@@ -28,18 +27,17 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
-import gnu.trove.THashSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 
 /**
  * Created by Lera Nikolaenko
  */
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
-  private static final THashSet<Language> ourRelevantLanguages = new THashSet<>(Arrays.asList(HTMLLanguage.INSTANCE, CfmlLanguage.INSTANCE));
+  private static final Set<Language> ourRelevantLanguages = ContainerUtil.set(HTMLLanguage.INSTANCE, CfmlLanguage.INSTANCE);
 
   public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {
     super(manager, virtualFile, physical);

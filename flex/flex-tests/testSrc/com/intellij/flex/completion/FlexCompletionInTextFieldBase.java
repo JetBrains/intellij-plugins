@@ -14,11 +14,10 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 
 public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTextFieldTest {
 
@@ -76,7 +75,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
   }
 
   static void assertContains(LookupElement[] items, boolean contains, String... expected) {
-    Collection<String> c = new HashSet<>(Arrays.asList(expected));
+    Collection<String> c = ContainerUtil.set(expected);
     for (LookupElement item : items) {
       final String s = item.getLookupString();
       final boolean removed = c.remove(s);
