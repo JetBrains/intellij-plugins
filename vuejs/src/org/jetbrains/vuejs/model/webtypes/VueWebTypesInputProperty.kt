@@ -14,4 +14,5 @@ internal class VueWebTypesInputProperty(attribute: Attribute, context: VueWebTyp
   override val required: Boolean = attribute.required ?: false
   override val jsType: JSType? = ((attribute.value as? Map<*, *>)?.get("type") ?: attribute.type)
     ?.let { context.getType(it) }
+  override val defaultValue: String? = attribute.default
 }

@@ -14,10 +14,7 @@ internal open class VueWebTypesSourceEntity(sourceEntity: SourceEntity,
   : VueDocumentedItem, UserDataHolderBase() {
 
   @Suppress("LeakingThis")
-  override val documentation: VueItemDocumentation = VueWebTypesItemDocumentation(
-    sourceEntity, this, context, this::createCustomSections)
-
-  open fun createCustomSections(): Map<String, String> = emptyMap()
+  override val documentation: VueItemDocumentation = VueWebTypesItemDocumentation(sourceEntity, this, context)
 
   private val sourceInfo: Source? = sourceEntity.source
   val source: PsiElement?
