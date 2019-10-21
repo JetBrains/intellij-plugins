@@ -1414,11 +1414,11 @@ $script""")
     myFixture.completeBasic()
     assertEquals(
       listOf("!color#100", "!dismissible#100", "!icon#100", "!mode#100", "!origin#100", "!outline#100", "!transition#100",
-             "!type#100", "!value#100", "about#25", "accesskey#25", "align#25", "autocapitalize#25", "autofocus#25", "base#25",
+             "!type#100", "!value#100", "about#25", "accesskey#25", "align#25", "autocapitalize#25", "autofocus#25",
              "class#25", "content#25", "contenteditable#25", "datafld#25", "dataformatas#25", "datasrc#25", "datatype#25",
              "dir#25", "draggable#25", "hidden#25", "id#25", "inlist#25", "inputmode#25", "is#25", "itemid#25", "itemprop#25",
              "itemref#25", "itemscope#25", "itemtype#25", "key#25", "lang#25", "nonce#25", "prefix#25", "property#25", "rel#25",
-             "resource#25", "rev#25", "role#25", "slot#25", "space#25", "spellcheck#25", "style#25", "tabindex#25", "title#25",
+             "resource#25", "rev#25", "role#25", "slot#25", "spellcheck#25", "style#25", "tabindex#25", "title#25",
              "translate#25", "typeof#25", "vocab#25"),
       renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
         .filter { !it.contains("aria-") }
@@ -1434,10 +1434,10 @@ $script""")
     """)
     myFixture.completeBasic()
     assertEquals(
-      listOf("about", "accesskey", "autocapitalize", "autofocus", "base", "charset", "class", "content", "contenteditable", "coords",
+      listOf("about", "accesskey", "autocapitalize", "autofocus", "charset", "class", "content", "contenteditable", "coords",
              "datatype", "dir", "download", "draggable", "hidden", "href", "hreflang", "id", "inlist", "inputmode", "is", "itemid",
              "itemprop", "itemref", "itemscope", "itemtype", "key", "lang", "methods", "name", "nonce", "prefix", "property",
-             "referrerpolicy", "rel", "resource", "rev", "role", "shape", "slot", "space", "spellcheck", "style", "tabindex", "target",
+             "referrerpolicy", "rel", "resource", "rev", "role", "shape", "slot", "spellcheck", "style", "tabindex", "target",
              "title", "translate", "type", "typeof", "urn", "vocab"),
       myFixture.lookupElementStrings!!
         .filter { !it.contains("aria-") }
