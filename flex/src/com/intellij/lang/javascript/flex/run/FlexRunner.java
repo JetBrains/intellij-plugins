@@ -249,21 +249,7 @@ public class FlexRunner extends FlexBaseRunner {
 
     @Override
     public void onData(final String line) {
-      Runnable runnable = () -> myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        try {
-          SwingUtilities.invokeAndWait(runnable);
-        }
-        catch (InterruptedException e) {
-          throw new RuntimeException(e);
-        }
-        catch (InvocationTargetException e) {
-          throw new RuntimeException(e);
-        }
-      }
-      else {
-        runnable.run();
-      }
+      myProcessHandler.notifyTextAvailable(line + "\n", ProcessOutputTypes.STDOUT);
     }
 
     @Override

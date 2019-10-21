@@ -130,18 +130,7 @@ public class FlexSdkUtils {
   }
 
   private static Sdk createSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return doCreateSdk(sdkType, sdkHomePath);
-    }
-    else {
-      final Ref<Sdk> sdkRef = new Ref<>();
-      ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)));
-      return sdkRef.get();
-    }
-  }
-
-  private static Sdk doCreateSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {
-    return WriteAction.compute(() -> {
+    return WriteAction.computeAndWait(() -> {
       final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
       final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
       final Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, sdkHomePath, "");
