@@ -1,6 +1,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.codeInsight.documentation.DocumentationManager
+import com.intellij.lang.documentation.ExternalDocumentationProvider
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
@@ -25,4 +26,22 @@ class VueDocumentationTest : BasePlatformTestCase() {
     TestCase.assertNotNull(inlineDoc)
     TestCase.assertTrue(inlineDoc!!.trim().contains("Fictive mixins comment"))
   }
+
+  fun testTSLibraryElement() {
+    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureByText("testDocumentationFromDefinitions.vue", """
+<script>
+  const foo: Promise
+  foo.th<caret>en()
+</script>
+""")
+    val element = myFixture.file.findElementAt(myFixture.caretOffset)
+    val elementAtCaret = myFixture.elementAtCaret
+    val documentationProvider = DocumentationManager.getProviderFromElement(elementAtCaret, element)
+    documentationProvider as ExternalDocumentationProvider
+    val urls = documentationProvider.getUrlFor(elementAtCaret, element)
+    TestCase.assertNotNull(urls)
+    TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls))
+  }
+
 }
