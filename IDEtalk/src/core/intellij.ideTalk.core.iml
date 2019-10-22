@@ -27,5 +27,17 @@
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
+    <orderEntry type="module-library" exported="">
+      <library name="picocontainer" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.picocontainer:picocontainer:1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/1.2/picocontainer-1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/1.2/picocontainer-1.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

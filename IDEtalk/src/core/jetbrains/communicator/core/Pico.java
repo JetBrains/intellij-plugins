@@ -20,7 +20,7 @@ import java.util.Enumeration;
 /**
  * @author Kir Maximov
  */
-public class Pico extends DefaultPicoContainer {
+public final class Pico extends DefaultPicoContainer {
   private static final Logger LOG = Logger.getLogger(Pico.class);
 
   private static Pico ourInstance;
