@@ -13,6 +13,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.Attribu
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind
 import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.model.*
 
@@ -77,13 +78,20 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                  info.directiveKind == VueDirectiveKind.BIND ->
                    info.arguments?.let { HtmlNSDescriptorImpl.getCommonAttributeDescriptor(it, context) }
 
-                 info.directiveKind == VueDirectiveKind.ON ->
-                   info.arguments?.let { HtmlNSDescriptorImpl.getCommonAttributeDescriptor("on$it", context) }
+                 info.directiveKind == VueDirectiveKind.ON -> {
+                   info.arguments?.let { eventName ->
+                     val event = (context.descriptor as? VueElementDescriptor)
+                       ?.getEmitCalls()
+                       ?.find { it.name == eventName}
+                       ?.let { VueAttributeDescriptor(context, it.name, it.source, listOf(it), false) }
+                     event ?: HtmlNSDescriptorImpl.getCommonAttributeDescriptor("on$eventName", context)
+                   }
+                 }
 
                  info.directiveKind == VueDirectiveKind.SLOT -> {
                    val slotName = info.arguments ?: DEFAULT_SLOT_NAME
                    getAvailableSlots(context, true)
-                     .find { it.name == slotName }
+                     .find { it.name == slotName || it.pattern?.matches(slotName) == true }
                      ?.let {
                        VueAttributeDescriptor(context, attributeName, it.source, listOf(it), true)
                      }
