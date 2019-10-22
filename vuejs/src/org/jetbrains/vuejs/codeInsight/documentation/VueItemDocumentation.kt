@@ -3,8 +3,6 @@ package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.vuejs.model.*
-import java.util.*
-import kotlin.collections.LinkedHashMap
 
 interface VueItemDocumentation {
   /**
@@ -67,21 +65,27 @@ interface VueItemDocumentation {
       val sections = LinkedHashMap<String, String>()
       when (item) {
         is VueDirective -> {
-          item.argument?.documentation?.description?.let { sections["Argument"] = it }
+          item.argument?.documentation?.description?.let { sections["Argument:"] = it }
         }
         is VueDirectiveArgument -> {
-          item.pattern?.let { sections["Pattern"] = it.toString() }
-          sections["Required"] = item.required.toString().toLowerCase(Locale.US)
+          if (item.required) {
+            sections["Required"] = ""
+          }
+          item.pattern?.let { sections["Pattern:"] = it.toString() }
         }
         is VueDirectiveModifier -> {
-          item.pattern?.let { sections["Pattern"] = it.toString() }
+          item.pattern?.let { sections["Pattern:"] = it.toString() }
         }
         is VueSlot -> {
-          item.pattern?.let { sections["Pattern"] = it.toString() }
+          item.pattern?.let { sections["Pattern:"] = it.toString() }
         }
         is VueInputProperty -> {
-          sections["Required"] = item.required.toString()
-          item.defaultValue?.let { sections["Default"] = it }
+          if (item.required) {
+            sections["Required"] = ""
+          }
+          item.defaultValue
+            ?.takeIf { it != "null" }
+            ?.let { sections["Default:"] = it }
         }
       }
       return sections

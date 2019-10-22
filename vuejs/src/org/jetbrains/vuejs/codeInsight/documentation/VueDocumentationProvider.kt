@@ -28,8 +28,8 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
 
   override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): MutableList<String>? {
     return (element as? PsiWrappedVueDocumentedItem)?.let {
-        it.item.docUrl?.let { url -> mutableListOf(url) } ?: mutableListOf()
-      }
+      it.item.docUrl?.let { url -> mutableListOf(url) } ?: mutableListOf()
+    }
   }
 
   override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
@@ -53,9 +53,18 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
   }
 
   private fun getVueDocumentedItem(originalElement: PsiElement?): Pair<VueItemDocumentation, PsiElement>? {
-    val docSource = when (originalElement?.node?.elementType) {
-      XmlTokenType.XML_NAME, JSTokenTypes.IDENTIFIER -> originalElement?.parent
+    val toCheck = when (originalElement?.node?.elementType) {
+      XmlTokenType.XML_TAG_END,
+      XmlTokenType.TAG_WHITE_SPACE,
+      XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER,
+      XmlTokenType.XML_WHITE_SPACE -> originalElement?.containingFile
+        ?.findElementAt(originalElement.textOffset- 1)
       else -> originalElement
+    }
+    val docSource = when (toCheck?.node?.elementType) {
+      XmlTokenType.XML_NAME,
+      JSTokenTypes.IDENTIFIER -> toCheck?.parent
+      else -> toCheck
     }
     return when (docSource) {
       is XmlTag -> docSource.descriptor
@@ -89,12 +98,12 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
     item.description?.let { result.append(CONTENT_START).append(it).append(CONTENT_END) }
 
     val details = LinkedHashMap(item.customSections)
-    item.library?.let { details["Library"] = "<p>$it" }
+    item.library?.let { details["Library:"] = "<p>${if (it == "vue") "Vue" else it}" }
 
     if (details.isNotEmpty()) {
       result.append(SECTIONS_START)
       details.entries.forEach { (name, value) ->
-        result.append(SECTION_HEADER_START).append(if (name.endsWith(':')) name.capitalize() else "${name.capitalize()}:")
+        result.append(SECTION_HEADER_START).append(name)
           .append(SECTION_SEPARATOR).append(value).append(SECTION_END)
       }
       result.append(SECTIONS_END)
