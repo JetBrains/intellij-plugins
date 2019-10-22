@@ -304,8 +304,8 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
                             presentableText: String? = null,
                             typeText: String? = null): LookupElement {
     val lookupObject = when (source) {
-                         is VueAttributeDescriptor -> source.getSources().getOrNull(0)?.documentation
-                         is VueDocumentedItem -> source.documentation
+                         is VueAttributeDescriptor -> source.getSources().getOrNull(0)?.documentation?.let { Pair(it, null) }
+                         is VueDocumentedItem -> Pair(source.documentation, null)
                          else -> source
                        } ?: name
     return PrioritizedLookupElement.withPriority(LookupElementBuilder.create(lookupObject, name)
