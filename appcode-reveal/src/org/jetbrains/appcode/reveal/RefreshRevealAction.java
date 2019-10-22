@@ -85,7 +85,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
     else if (myDisabled) {
       title += " (Action is disabled until configuration relaunch)";
-    }                                    
+    }
 
     e.getPresentation().setText(title, false);
   }
