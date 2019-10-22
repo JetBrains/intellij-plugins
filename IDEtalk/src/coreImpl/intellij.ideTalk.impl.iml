@@ -12,5 +12,6 @@
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="JDOM" level="project" />
     <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" />
   </component>
 </module>

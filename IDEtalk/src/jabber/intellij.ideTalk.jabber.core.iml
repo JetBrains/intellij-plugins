@@ -10,8 +10,8 @@
     <orderEntry type="module-library" exported="">
       <library name="Smack">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
+          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smack.jar!/" />
+          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -22,5 +22,6 @@
     <orderEntry type="library" name="Log4J" level="project" />
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="JDOM" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.extensions" />
   </component>
 </module>
