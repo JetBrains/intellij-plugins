@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -95,7 +96,7 @@ public class Reveal {
       }
       result = new File(bundle, libraryPath);
     }
-    
+
     return result.exists() ? result : null;
   }
 
@@ -151,7 +152,7 @@ public class Reveal {
     if (inspectionScript == null) {
       throw new ExecutionException("Cannot refresh Reveal. Inspection script could not be found.");
     }
-    
+
     try {
       List<String> args = ContainerUtil.newArrayList(ExecUtil.getOsascriptPath(),
                                                      inspectionScript.toString(),
