@@ -9,9 +9,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartWebdevParameters implements Cloneable {
@@ -57,13 +57,17 @@ public class DartWebdevParameters implements Cloneable {
   }
 
   @NotNull
-  public String computeProcessWorkingDirectory(@NotNull final Project project) {
-    try {
-      return DartCommandLineRunnerParameters.suggestDartWorkingDir(project, getHtmlFile());
+  public VirtualFile getWorkingDirectory(@NotNull final Project project) throws RuntimeConfigurationError {
+    VirtualFile htmlFile = getHtmlFile();
+    VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, htmlFile);
+    if (pubspecFile == null) {
+      throw new RuntimeConfigurationError(DartBundle.message("html.file.not.within.dart.project"));
     }
-    catch (RuntimeConfigurationError error) {
-      return "";
+    VirtualFile dartProjectRoot = pubspecFile.getParent();
+    if (htmlFile.getParent().equals(dartProjectRoot)) {
+      throw new RuntimeConfigurationError(DartBundle.message("html.file.right.in.dart.project.root"));
     }
+    return dartProjectRoot;
   }
 
   public void check(@NotNull final Project project) throws RuntimeConfigurationError {
@@ -77,9 +81,9 @@ public class DartWebdevParameters implements Cloneable {
       throw new RuntimeConfigurationError(DartBundle.message("old.dart.sdk.for.webdev", MIN_DART_SDK_VERSION_FOR_WEBDEV, sdkVersion));
     }
 
-    if (StringUtil.isEmptyOrSpaces(myHtmlFilePath)) {
-      throw new RuntimeConfigurationError(DartBundle.message("path.to.html.file.not.set"));
-    }
+    // check html file
+    getHtmlFile();
+    getWorkingDirectory(project);
   }
 
   @Override

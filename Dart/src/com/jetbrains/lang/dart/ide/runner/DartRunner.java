@@ -141,9 +141,7 @@ public class DartRunner extends GenericProgramRunner {
     else if (runConfiguration instanceof DartWebdevConfiguration) {
       contextFileOrDir = ((DartWebdevConfiguration)runConfiguration).getParameters().getHtmlFile();
 
-      final String cwd =
-        ((DartWebdevConfiguration)runConfiguration).getParameters().computeProcessWorkingDirectory(project);
-      currentWorkingDirectory = LocalFileSystem.getInstance().findFileByPath((cwd));
+      currentWorkingDirectory = ((DartWebdevConfiguration)runConfiguration).getParameters().getWorkingDirectory(project);
 
       executionResult = state.execute(env.getExecutor(), this);
       if (executionResult == null) {
