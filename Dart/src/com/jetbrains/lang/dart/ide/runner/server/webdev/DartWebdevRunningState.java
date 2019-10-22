@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
@@ -56,7 +57,11 @@ public class DartWebdevRunningState extends CommandLineState {
       ((TextConsoleBuilderImpl)builder).setUsePredefinedMessageFilter(false);
     }
 
-    builder.addFilter(new DartRelativePathsConsoleFilter(project, myDartWebdevParameters.computeProcessWorkingDirectory(project)));
+    try {
+      builder.addFilter(new DartRelativePathsConsoleFilter(project, myDartWebdevParameters.getWorkingDirectory(project).getPath()));
+    }
+    catch (RuntimeConfigurationError ignore) {/* can't happen because checked in myDartWebdevParameters.check(project) */}
+
     DartWebdevConsoleView.install(env.getProject(), this);
   }
 
@@ -101,8 +106,15 @@ public class DartWebdevRunningState extends CommandLineState {
       throw new ExecutionException(DartBundle.message("dart.sdk.is.not.configured"));
     }
 
-    final String workingDir = myDartWebdevParameters.computeProcessWorkingDirectory(project);
-    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir);
+    VirtualFile workingDir;
+    try {
+      workingDir = myDartWebdevParameters.getWorkingDirectory(project);
+    }
+    catch (RuntimeConfigurationError error) {
+      throw new ExecutionException(DartBundle.message("html.file.not.within.dart.project"));
+    }
+
+    final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(workingDir.getPath());
     commandLine.setCharset(StandardCharsets.UTF_8);
 
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(sdk)));
@@ -114,7 +126,7 @@ public class DartWebdevRunningState extends CommandLineState {
     // workingDir  =  "/.../webdev/example"
     // htmlFilePath = "/.../webdev/example/web/index.html"
     final String htmlFilePathRelativeFromWorkingDir =
-      htmlFilePath.startsWith(workingDir + "/") ? htmlFilePath.substring(workingDir.length() + 1) : null;
+      htmlFilePath.startsWith(workingDir + "/") ? htmlFilePath.substring(workingDir.getPath().length() + 1) : null;
 
     // htmlFilePathRelativeFromWorkingDir = "web/index.html"
     final int firstSlashIndex = htmlFilePathRelativeFromWorkingDir == null ? -1 : htmlFilePathRelativeFromWorkingDir.indexOf('/');
