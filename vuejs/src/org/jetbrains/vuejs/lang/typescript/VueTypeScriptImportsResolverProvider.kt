@@ -34,7 +34,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
     if (!isVueContext(contextFile, project)) return null
 
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, context, contextFile)
-    val vueResolver = VueFileImportsResolver(project, context, typeScriptNodeResolver(project))
+    val vueResolver = VueFileImportsResolver(project, context, TypeScriptNodeReference.TS_PROCESSOR)
     return flattenAndAppendResolver(defaultProvider, vueResolver)
   }
 
@@ -42,7 +42,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
     if (!enableVueTSService(project)) return null
 
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, config)
-    val nodeProcessor = typeScriptNodeResolver(project)
+    val nodeProcessor = TypeScriptNodeReference.TS_PROCESSOR
     val vueResolver = VueFileImportsResolver(project, config.resolveContext, nodeProcessor)
     return flattenAndAppendResolver(defaultProvider, vueResolver)
   }
@@ -62,7 +62,4 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
 
     return TypeScriptCompositeImportsResolverImpl(result)
   }
-
-  private fun typeScriptNodeResolver(project: Project) =
-    TypeScriptNodeReference.TypeScriptNodeModuleDirectorySearchProcessor(project)
 }
