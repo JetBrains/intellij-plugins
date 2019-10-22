@@ -47,6 +47,7 @@ import org.junit.runners.Suite;
   VueExternalFilesLinkingTest.class,
   VueExtractComponentTest.class,
   VueDocumentationTest.class,
+  VueWebTypesDocumentationTest.class,
   VueCreateTsVariableTest.class,
   VueCopyrightTest.class,
   VueAutoPopupTest.class,
