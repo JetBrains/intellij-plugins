@@ -246,14 +246,20 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val tag = attr.parent
     val prefix = if (originalPrefix.startsWith("@")) "@" else ""
 
+    val events = mutableSetOf<String>()
     (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
-      newResult.addElement(lookupElement(prefix + emit.name, emit))
+      if (events.add(emit.name)) {
+        newResult.addElement(lookupElement(prefix + emit.name, emit))
+      }
     }
 
     getDefaultHtmlAttributes(tag).asSequence()
       .filter { it.name.startsWith("on") }
       .forEach {
-        newResult.addElement(lookupElement(prefix + it.name.substring(2), it, priority = LOW, icon = null))
+        val eventName = it.name.substring(2)
+        if (events.add(eventName)) {
+          newResult.addElement(lookupElement(prefix + eventName, it, priority = LOW, icon = null))
+        }
       }
   }
 
@@ -262,19 +268,29 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val newResult = if (prefix == "v-bind:") result.withPrefixMatcher("") else result
     val lookupItemPrefix = if (prefix.startsWith(":")) ":" else ""
 
+    val bindings = mutableSetOf<String>()
+    (attr.parent?.descriptor as? VueElementDescriptor)
+      ?.getProps()
+      ?.forEach { attribute ->
+        if (bindings.add(attribute.name)) {
+          newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, attribute, priority = HIGH))
+        }
+      }
+
     // special binding
-    newResult.addElement(lookupElement(lookupItemPrefix + "key", null, priority = LOW))
+    if (bindings.add("key")) {
+      newResult.addElement(lookupElement(lookupItemPrefix + "key", null, priority = LOW))
+    }
 
     // v-bind:any-standard-attribute support
     getDefaultHtmlAttributes(attr.parent).asSequence()
-      .filter { it.getName(attr).let { name -> !name.startsWith("on") && !name.contains(':')} }
+      .filter { it.getName(attr).let { name -> !name.startsWith("on") && !name.contains(':') } }
       .forEach {
-        newResult.addElement(lookupElement(lookupItemPrefix + it.getName(attr), it, priority = LOW, icon = null))
+        val name = it.getName(attr)
+        if (bindings.add(name)) {
+          newResult.addElement(lookupElement(lookupItemPrefix + name, it, priority = LOW, icon = null))
+        }
       }
-
-    for (attribute in (attr.parent?.descriptor as? VueElementDescriptor)?.getProps() ?: return) {
-      newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, attribute, priority = HIGH))
-    }
   }
 
   private fun addSlotCompletions(attr: XmlAttribute, result: CompletionResultSet) {
@@ -290,7 +306,8 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
                                           presentableText = slot.name, priority = HIGH,
                                           typeText = slot.pattern?.toString()))
         }
-      } else {
+      }
+      else {
         newResult.addElement(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
       }
     }
