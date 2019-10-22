@@ -1,12 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.resolve.*
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
-import com.intellij.lang.javascript.psi.types.JSTypeContext
-import com.intellij.lang.javascript.psi.types.JSTypeSource
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluationHelper
+import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
@@ -17,7 +18,7 @@ import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
 class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor, helper: JSTypeEvaluationHelper)
-  : JSTypeEvaluator(context, processor, helper) {
+  : TypeScriptTypeEvaluator(context, processor, helper) {
 
   override fun addTypeFromVariableResolveResult(jsVariable: JSFieldVariable) {
     if (evaluateTypeFromVForVariable(jsVariable)) return
@@ -93,7 +94,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
 
   private fun addVForVarType(source: PsiElement, vararg types: JSType) {
     val typeSource = JSTypeSourceFactory.createTypeSource(source, false)
-    addType(JSCompositeTypeImpl.getCommonType(types.toList(), typeSource, false), source, true)
+    val commonType = (JSTupleTypeImpl(typeSource, types.toMutableList(), false, 0, false).toArrayType(false) as JSArrayType).type
+    addType(commonType, source, true)
   }
 
   companion object {

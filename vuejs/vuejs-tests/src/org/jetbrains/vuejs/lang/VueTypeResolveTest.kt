@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.idea.Bombed
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
@@ -9,7 +8,6 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.psi.util.parentOfType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
-import java.util.*
 
 class VueTypeResolveTest : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/typeResolve/"
@@ -22,7 +20,6 @@ class VueTypeResolveTest : BasePlatformTestCase() {
              Triple("obj", "*", "string|number"))
   }
 
-  @Bombed(month = Calendar.OCTOBER, day = 23, user = "Konstantin.Ulitin")
   fun testVForTS() {
     myFixture.configureByFile("vFor-ts.vue")
     testVFor(Triple("el", "string", "number"),
