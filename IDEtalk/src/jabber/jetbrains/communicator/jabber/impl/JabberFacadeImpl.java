@@ -143,12 +143,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
       }
 
       XMPPConnection connection;
-      if (forceOldSSL) {
-        connection = new SSLXMPPConnection(server, port, serviceName);
-      }
-      else {
-        connection = new XMPPConnection(server, port, serviceName);
-      }
+      connection = new XMPPConnection(server, port, serviceName);
 
       if (createAccount && connection.getAccountManager().supportsAccountCreation()) {
         connection.getAccountManager().createAccount(user, password.replaceAll("&", "&amp;"));

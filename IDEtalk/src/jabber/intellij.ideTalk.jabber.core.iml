@@ -2,22 +2,15 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smack">
+      <sourceFolder url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smack" isTestSource="false" generated="true" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.platform.extensions" />
-    <orderEntry type="module-library" exported="">
-      <library name="Smack">
-        <CLASSES>
-          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smack.jar!/" />
-          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/smackx.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.ideTalk.core" />
     <orderEntry type="library" name="Log4J" level="project" />
