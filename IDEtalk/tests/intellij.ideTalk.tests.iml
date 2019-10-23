@@ -28,7 +28,7 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/jmock-1.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/jmock-1.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
