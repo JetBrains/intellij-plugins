@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    NanoContainer XML DTD
+    Authors: Mauro Talevi
+
+    The doctype for XML documents conforming to this DTD is
+
+    <!DOCTYPE container PUBLIC "-//NanoContainer//DTD NanoContainer XML 1.0//EN"
+                                 "http://nanocontainer.org/dtd/nanocontainer-xml-1_0.dtd">
+-->
+
+<!--
+    The container is the document root.  A container element represents a PicoContainer.
+    A container allows to specify the classpath for the container, component implementations,
+    component adapters and component instances.
+    A container may contain child containers.
+-->
+<!ELEMENT container (
+    (classpath | container | component-adapter-factory | component-implementation | component-adapter | component-instance )*
+)>
+
+<!--
+    Specifies the implementation class of the org.picocontainer.ComponentAdapterFactory
+    used globally by the container
+-->
+<!ATTLIST container component-adapter-factory CDATA #IMPLIED>
+
+<!--
+    Specifies the implementation class of the org.nanocontainer.script.xml.XMLComponentInstanceFactory
+    used globally by the container
+-->
+<!ATTLIST container component-instance-factory CDATA #IMPLIED>
+
+<!--
+    Specifies the implementation class of the org.picocontainer.ComponentMonitor
+    used globally by the container
+-->
+<!ATTLIST container component-monitor CDATA #IMPLIED>
+
+<!--
+    Defines the classpath for the parent container
+-->
+<!ELEMENT classpath (
+    (element)*
+)>
+
+<!--
+    Defines the classpath element
+-->
+<!ELEMENT element EMPTY>
+
+<!--
+    Classpath elements can be specified by file.
+-->
+<!ATTLIST element file CDATA #IMPLIED>
+
+<!--
+    Classpath elements can be specified by URL.
+-->
+<!ATTLIST element url CDATA #IMPLIED>
+
+<!--
+    Defines a org.picocontainer.defaults.ContainerAdapterFactory
+-->
+<!ELEMENT component-adapter-factory (
+    (component-adapter-factory | parameter)*
+)>
+
+<!--
+    Component adapter factories must specify a class
+-->
+<!ATTLIST component-adapter-factory class CDATA #REQUIRED>
+
+<!--
+    Component adapter factories may optionally specify a key with to address the adapter factory
+-->
+<!ATTLIST component-adapter-factory key CDATA #IMPLIED>
+
+<!--
+    Registers the implemention of a component
+-->
+<!ELEMENT component-implementation (
+    (parameter)*
+)>
+
+<!--
+    Component implementations must specify a class
+-->
+<!ATTLIST component-implementation class CDATA #REQUIRED>
+
+<!--
+    Component implementations may optionally specify a key with which to register the implementation
+-->
+<!ATTLIST component-implementation key CDATA #IMPLIED>
+
+<!--
+    Component implementations may optionally specify a key that is the name of a class type with which to register the implementation
+-->
+<!ATTLIST component-implementation class-name-key CDATA #IMPLIED>
+
+<!--
+    Registers a org.picocontainer.ContainerAdapter
+-->
+<!ELEMENT component-adapter (
+    (parameter)*
+)>
+
+<!--
+    Component adapters must specify a class
+-->
+<!ATTLIST component-adapter class CDATA #REQUIRED>
+
+<!--
+    Component adapters must specify a key with which to register the adapter
+-->
+<!ATTLIST component-adapter key CDATA #IMPLIED>
+
+<!--
+    Component instances may optionally specify a key that is the name of a class type with which to register the adapter
+-->
+<!ATTLIST component-adapter class-name-key CDATA #IMPLIED>
+
+<!--
+    Component adapters may optionally specify s org.picocontainer.ComponentAdapterFactory
+    implementation class or a key of an already defined compoennt-adapter-factory
+    which overrides the globally specified one.
+-->
+<!ATTLIST component-adapter factory CDATA #IMPLIED>
+
+<!--
+    Registers an instance of a component
+-->
+<!ELEMENT component-instance (
+    (parameter)*
+)>
+
+<!--
+    Component instances may optionally specify a org.nanocontainer.script.xml.XMLComponentInstanceFactory
+    implementation class which overrides the globally specified one.
+-->
+<!ATTLIST component-instance factory CDATA #IMPLIED>
+
+<!--
+    Component instances may optionally specify a key with which to register the instance
+-->
+<!ATTLIST component-instance key CDATA #IMPLIED>
+
+<!--
+    Component instances may optionally specify a key that is the name of a class type with which to register the instance
+-->
+<!ATTLIST component-instance class-name-key CDATA #IMPLIED>
+
+<!--
+    Defines the parameter for component implementations and instances.
+    The parameter element may contain other elements - which are used by the NanoContainer
+    default org.nanocontainer.script.xml.XMLComponentInstanceFactory.
+-->
+<!ELEMENT parameter (
+    (boolean|short|int|long|float|double|char|string|file|url|class)*
+)>
+
+<!--
+    Parameters may optionally specify a org.nanocontainer.script.xml.XMLComponentInstanceFactory
+    implementation class which overrides the globally specified one.
+-->
+<!ATTLIST parameter factory CDATA #IMPLIED>
+
+<!--
+    Parameters may specify a key which references other component-implementations or component-instances
+    defined in the container
+-->
+<!ATTLIST parameter key CDATA #IMPLIED>
+
+<!--
+    Parameters may specify whether empty-collections are allowed or not.  This is used, for example, in this constructor:
+    http://www.picocontainer.org/picocontainer/latest/picocontainer/apidocs/org/picocontainer/defaults/ComponentParameter.html#ComponentParameter(boolean)
+-->
+<!ATTLIST parameter empty-collection CDATA #IMPLIED>
+
+<!--
+    Parameters may specify the component's type.  This is used, for example, in this constructor:
+    http://www.picocontainer.org/picocontainer/latest/picocontainer/apidocs/org/picocontainer/defaults/ComponentParameter.html#ComponentParameter(java.lang.Class,%20boolean)
+
+    If this is specified, the empty-collection attribute must also be specified.
+-->
+<!ATTLIST parameter component-value-type CDATA #IMPLIED>
+
+<!--
+    Parameters may specify the component adapter's key type.  This is used in this constructor:
+    http://www.picocontainer.org/picocontainer/latest/picocontainer/apidocs/org/picocontainer/defaults/ComponentParameter.html#ComponentParameter(java.lang.Class,%20java.lang.Class,%20boolean)
+
+    If this is specified, both empty-collection and component-value-type attributes must also be specified.
+-->
+<!ATTLIST parameter component-key-type CDATA #IMPLIED>
+
+<!--
+    Defines the parameter element used by the NanoContainer
+    default org.nanocontainer.script.xml.XMLComponentInstanceFactory.
+-->
+<!ELEMENT boolean (#PCDATA)>
+<!ELEMENT short (#PCDATA)>
+<!ELEMENT int (#PCDATA)>
+<!ELEMENT long (#PCDATA)>
+<!ELEMENT float (#PCDATA)>
+<!ELEMENT double (#PCDATA)>
+<!ELEMENT char (#PCDATA)>
+<!ELEMENT string (#PCDATA)>
+<!ELEMENT file (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT class (#PCDATA)>
+

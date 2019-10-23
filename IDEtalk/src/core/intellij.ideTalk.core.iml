@@ -9,35 +9,17 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
+    <content url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/src/coreImpl">
+      <sourceFolder url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/src/coreImpl" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Log4J" level="project" />
     <orderEntry type="library" name="JDOM" level="project" />
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/nanocontainer-1.0-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
-    <orderEntry type="module-library" exported="">
-      <library name="picocontainer" type="repository">
-        <properties include-transitive-deps="false" maven-id="org.picocontainer:picocontainer:1.2" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/1.2/picocontainer-1.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/picocontainer/picocontainer/1.2/picocontainer-1.2-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>

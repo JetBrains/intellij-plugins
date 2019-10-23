@@ -9,7 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.ideTalk.jabber" />
     <orderEntry type="module" module-name="intellij.ideTalk.p2p" />
-    <orderEntry type="module" module-name="intellij.ideTalk.impl" />
     <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
     <orderEntry type="module" module-name="intellij.ideTalk" />
     <orderEntry type="module" module-name="intellij.java.execution" />
@@ -29,7 +28,7 @@
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../lib/jmock-1.0.1.jar!/" />
+          <root url="jar://$IDEA_PROJECT_HOME$/contrib/IDEtalk/lib/jmock-1.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
