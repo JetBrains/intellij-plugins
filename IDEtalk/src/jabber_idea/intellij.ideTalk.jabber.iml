@@ -7,11 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="intellij.ideTalk" />
-    <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="module" module-name="intellij.ideTalk.core" />
-    <orderEntry type="library" name="Log4J" level="project" />
+    <orderEntry type="module" module-name="intellij.ideTalk" />
+    <orderEntry type="module" module-name="intellij.ideTalk.jabber.core" />
     <orderEntry type="module" module-name="intellij.platform.util.ui" />
   </component>
 </module>

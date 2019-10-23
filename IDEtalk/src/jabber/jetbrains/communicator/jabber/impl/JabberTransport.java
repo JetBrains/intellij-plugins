@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
@@ -18,7 +19,6 @@ import jetbrains.communicator.jabber.JabberUI;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.IgnoreList;
 import jetbrains.communicator.util.UIUtil;
-import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ import static jetbrains.communicator.util.CommunicatorStrings.getMsg;
  */
 public class JabberTransport implements Transport, ConnectionListener, Disposable {
   @NonNls
-  private static final Logger LOG = Logger.getLogger(JabberTransport.class);
+  private static final Logger LOG = Logger.getInstance(JabberTransport.class);
 
   private static final int RESPONSE_TIMEOUT = 120*1000;
   @NonNls public static final String CODE = "Jabber";

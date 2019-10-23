@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.actions;
 
 import com.intellij.icons.AllIcons;
@@ -6,8 +6,8 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.communicator.core.Pico;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.prefs.BackingStoreException;
@@ -17,7 +17,7 @@ import java.util.prefs.Preferences;
  * @author Kir
  */
 public class OptionsButton extends DropDownButton {
-  private static final Logger LOG = Logger.getLogger(OptionsButton.class);
+  private static final Logger LOG = Logger.getInstance(OptionsButton.class);
 
   private AnAction myResetSettingsAction;
 

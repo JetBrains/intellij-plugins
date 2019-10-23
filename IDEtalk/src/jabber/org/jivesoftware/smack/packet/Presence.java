@@ -58,7 +58,7 @@ import org.jivesoftware.smack.util.StringUtils;
  */
 public class Presence extends Packet {
 
-    private Type type = Type.available;
+    private Type type;
     private String status = null;
     private int priority = -1;
     private Mode mode = Mode.available;
@@ -168,6 +168,7 @@ public class Presence extends Packet {
         this.mode = mode;
     }
 
+    @Override
     public String toXML() {
         StringBuilder buf = new StringBuilder();
         buf.append("<presence");
@@ -203,7 +204,7 @@ public class Presence extends Packet {
         }
 
         buf.append("</presence>");
-        
+
         return buf.toString();
     }
 

@@ -1,6 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.jabber.register;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.DocumentAdapter;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.ide.CanceledException;
@@ -10,7 +11,6 @@ import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TextAcceptor;
 import jetbrains.communicator.util.UIUtil;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jivesoftware.smack.XMPPException;
 
@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class RegistrationForm {
   private static final String USE_EXISTING_ACCOUNT_KEY = "UseExistingAccount";
-  private static final Logger LOG = Logger.getLogger(RegistrationForm.class);
+  private static final Logger LOG = Logger.getInstance(RegistrationForm.class);
 
   private JTextField myNickname;
   private JLabel myNicknameLabel;

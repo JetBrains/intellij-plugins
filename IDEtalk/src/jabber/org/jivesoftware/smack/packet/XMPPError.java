@@ -49,8 +49,8 @@ package org.jivesoftware.smack.packet;
  */
 public class XMPPError {
 
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     /**
      * Creates a new  error with the specified code and no message..

@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class RosterPacket extends IQ {
 
-    private final List<Item> rosterItems = new ArrayList<Item>();
+    private final List<Item> rosterItems = new ArrayList<>();
 
     /**
      * Adds a roster item to the packet.

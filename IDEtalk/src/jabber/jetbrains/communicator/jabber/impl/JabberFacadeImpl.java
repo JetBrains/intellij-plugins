@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.xstream.XStream;
@@ -14,7 +15,6 @@ import jetbrains.communicator.jabber.VCardInfo;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import jetbrains.communicator.util.XStreamUtil;
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class JabberFacadeImpl implements JabberFacade, Disposable {
   @NonNls
-  private static final Logger LOG = Logger.getLogger(JabberFacadeImpl.class);
+  private static final Logger LOG = Logger.getInstance(JabberFacadeImpl.class);
 
   public static final String FILE_NAME = "jabberSettings.xml";
   private JabberSettings mySettings;
@@ -86,9 +86,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         result.add(element.getAttributeValue("jid"));
       }
       return ArrayUtilRt.toStringArray(result);
-    } catch (JDOMException e) {
-      LOG.error(e.getMessage(), e);
-    } catch (IOException e) {
+    } catch (JDOMException | IOException e) {
       LOG.error(e.getMessage(), e);
     }
     return new String[]{"jabber.org"};
@@ -170,7 +168,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
       }
       return message;
     } catch (IllegalStateException e) {
-      LOG.info(e, e);
+      LOG.info(e.getMessage(), e);
       return e.getMessage();
     }
 

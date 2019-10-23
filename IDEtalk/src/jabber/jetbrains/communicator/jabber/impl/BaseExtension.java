@@ -1,22 +1,8 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.openapi.diagnostic.Logger;
 import jetbrains.communicator.core.transport.Transport;
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -35,7 +21,7 @@ import java.io.StringReader;
  * @author Kir
  */
 public abstract class BaseExtension implements PacketExtension, PacketExtensionProvider {
-  private static final Logger LOG = Logger.getLogger(BaseExtension.class);
+  private static final Logger LOG = Logger.getInstance(BaseExtension.class);
   static final String NAMESPACE = Transport.NAMESPACE + "/jabber";
 
   @Override
@@ -92,7 +78,7 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
             sb.append(xmlOutputter.escapeElementEntities(parser.getText()));
             break;
           case XmlPullParser.START_TAG:
-            sb.append('<' + parser.getName());
+            sb.append('<').append(parser.getName());
             int attributeCount = parser.getAttributeCount();
             for (int i = 0; i < attributeCount; i ++) {
               String attributeValue = xmlOutputter.escapeAttributeEntities(parser.getAttributeValue(i));
@@ -103,7 +89,7 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
             sb.append('>');
             break;
           case XmlPullParser.END_TAG:
-            sb.append("</" + parser.getName() + '>');
+            sb.append("</").append(parser.getName()).append('>');
             break;
           default:
         }

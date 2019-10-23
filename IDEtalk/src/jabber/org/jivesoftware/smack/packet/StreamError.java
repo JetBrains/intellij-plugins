@@ -82,7 +82,7 @@ package org.jivesoftware.smack.packet;
  */
 public class StreamError {
 
-    private String code;
+    private final String code;
 
     public StreamError(String code) {
         super();

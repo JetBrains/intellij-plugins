@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -43,7 +44,6 @@ import jetbrains.communicator.idea.history.ShowHistoryDialog;
 import jetbrains.communicator.idea.sendMessage.IncomingLocalMessage;
 import jetbrains.communicator.idea.sendMessage.IncomingStacktraceMessage;
 import jetbrains.communicator.idea.viewFiles.ViewFilesDialog;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +60,7 @@ import java.util.concurrent.Future;
  * @author Kir Maximov
  */
 public class IDEAFacade implements IDEFacade {
-  private static final Logger LOG = Logger.getLogger(IDEAFacade.class);
+  private static final Logger LOG = Logger.getInstance(IDEAFacade.class);
 
   private ViewFilesDialog myViewFilesDialog;
 
@@ -207,7 +207,7 @@ public class IDEAFacade implements IDEFacade {
       try {
         new ProjectsDataFiller(result).fillProjectsData();
       } catch (Throwable e) {
-        LOG.info(e, e);
+        LOG.info(e.getMessage(), e);
       }
     });
 

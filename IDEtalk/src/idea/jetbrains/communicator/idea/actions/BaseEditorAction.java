@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -10,7 +11,6 @@ import jetbrains.communicator.commands.FileCommand;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.VFSUtil;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
@@ -20,7 +20,7 @@ import org.picocontainer.MutablePicoContainer;
  */
 public class BaseEditorAction<T extends FileCommand> extends BaseAction<T> {
   @NonNls
-  private static final Logger LOG = Logger.getLogger(BaseEditorAction.class);
+  private static final Logger LOG = Logger.getInstance(BaseEditorAction.class);
 
   public BaseEditorAction(Class<T> commandClass) {
     super(commandClass);

@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
@@ -10,13 +12,11 @@ import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.XStreamUtil;
-import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.Set;
  * @author Kir
  */
 public class JabberUserFinderImpl implements JabberUserFinder {
-  private static final Logger LOG = Logger.getLogger(JabberUserFinderImpl.class);
+  private static final Logger LOG = Logger.getInstance(JabberUserFinderImpl.class);
 
   private static final String REAL_URL = "http://idetalk.jetbrains.com/registry.php";
   static final String TEST_URL = "http://localhost/ideTalk/registry.php";
@@ -59,14 +59,13 @@ public class JabberUserFinderImpl implements JabberUserFinder {
         if (csv != null) {
           String[] strings = csv.split(",");
           for (String userId : strings) {
-            if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(userId)) {
+            if (!StringUtil.isEmptyOrSpaces(userId)) {
               users.add(myUserModel.createUser(userId, JabberTransport.CODE));
             }
           }
         }
-      } catch (MalformedURLException e) {
-        LOG.debug(e.getMessage(), e);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.debug(e.getMessage(), e);
       }
     }
