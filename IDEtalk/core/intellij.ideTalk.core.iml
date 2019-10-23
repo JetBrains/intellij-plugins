@@ -2,10 +2,10 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/core">
-      <sourceFolder url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/core/src" isTestSource="false" />
-      <sourceFolder url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/core/resources" type="java-resource" />
-      <excludeFolder url="file://$IDEA_PROJECT_HOME$/contrib/IDEtalk/core/target" />
+    <content url="file://$MODULE_DIR$/contrib">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/core/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
