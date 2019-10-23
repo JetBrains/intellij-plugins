@@ -35,22 +35,22 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
   fun findScriptContentProviderVue(mimeType: String?,
                                    delegate: (String) -> HtmlScriptContentProvider?,
                                    languageLevel: JSLanguageLevel): HtmlScriptContentProvider? {
-    var provider: HtmlScriptContentProvider?
+    val provider: HtmlScriptContentProvider?
     if (mimeType != null) {
       provider = delegate(mimeType) ?: scriptContentViaLang()
     }
     else {
       provider = LanguageHtmlScriptContentProvider.getScriptContentProvider(languageLevel.dialect)
     }
-    provider ?: return null
-    if (provider.scriptElementType == XmlElementType.HTML_EMBEDDED_CONTENT) {
-      provider = object : HtmlScriptContentProvider {
+    val elementType = provider?.scriptElementType ?: return null
+    if (elementType == XmlElementType.HTML_EMBEDDED_CONTENT) {
+      return object : HtmlScriptContentProvider {
         override fun getScriptElementType(): IElementType = VueElementTypes.VUE_EMBEDDED_CONTENT
         override fun getHighlightingLexer(): Lexer? = VueHighlightingLexer(languageLevel, null)
       }
     }
-    val moduleType = JSElementTypes.toModuleContentType(provider.scriptElementType)
-    if (provider.scriptElementType == moduleType) return provider
+    val moduleType =  JSElementTypes.toModuleContentType(elementType)
+    if (elementType == moduleType) return provider
     return object : HtmlScriptContentProvider {
       override fun getScriptElementType(): IElementType = moduleType
       override fun getHighlightingLexer(): Lexer? = provider.highlightingLexer
