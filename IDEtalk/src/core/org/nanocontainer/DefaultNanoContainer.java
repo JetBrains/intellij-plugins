@@ -182,7 +182,7 @@ public class DefaultNanoContainer implements NanoContainer {
         return permissionsMap;
     }
 
-    private URL[] getURLs(List classPathElemelements) {
+    private static URL[] getURLs(List classPathElemelements) {
         final URL[] urls = new URL[classPathElemelements.size()];
         for(int i = 0; i < urls.length; i++) {
             urls[i] = ((ClassPathElement) classPathElemelements.get(i)).getUrl();

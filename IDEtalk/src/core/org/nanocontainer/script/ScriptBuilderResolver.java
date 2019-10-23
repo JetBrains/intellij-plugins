@@ -138,7 +138,7 @@ public class ScriptBuilderResolver {
      * @param fileName String
      * @return String
      */
-    private String getExtension(String fileName) {
+    private static String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 

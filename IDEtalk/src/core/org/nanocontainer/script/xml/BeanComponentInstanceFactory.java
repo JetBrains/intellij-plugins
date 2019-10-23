@@ -50,13 +50,13 @@ public class BeanComponentInstanceFactory implements XMLComponentInstanceFactory
         return instance;
     }
 
-    private ComponentAdapter createComponentAdapter(String className, ClassLoader classLoader) throws ClassNotFoundException {
+    private static ComponentAdapter createComponentAdapter(String className, ClassLoader classLoader) throws ClassNotFoundException {
         Class implementation = classLoader.loadClass(className);
         ComponentAdapterFactory factory = new DefaultComponentAdapterFactory();
         return factory.createComponentAdapter(className, implementation, new Parameter[]{});
     }
 
-    private Properties createProperties(NodeList nodes) {
+    private static Properties createProperties(NodeList nodes) {
         Properties properties = new Properties();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node n = nodes.item(i);

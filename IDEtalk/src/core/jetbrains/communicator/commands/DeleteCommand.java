@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package jetbrains.communicator.commands;
 
@@ -105,7 +91,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     return question.toString();
   }
 
-  private void appendAndBetweenGroupsAndUsers(StringBuffer question, List groupsToDelete, List usersToDelete) {
+  private static void appendAndBetweenGroupsAndUsers(StringBuffer question, List groupsToDelete, List usersToDelete) {
     if (groupsToDelete.size() > 1) {
       question.append(" \n");
     }
@@ -118,7 +104,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     }
   }
 
-  private void buildListOfDeletedUsersAndGroups(Object[] selectedNodes, List usersToDelete, List groupsToDelete) {
+  private static void buildListOfDeletedUsersAndGroups(Object[] selectedNodes, List usersToDelete, List groupsToDelete) {
     for (Object selectedNode : selectedNodes) {
       if (selectedNode instanceof User) {
         usersToDelete.add(selectedNode);
@@ -136,7 +122,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     }
   }
 
-  private void appendItems(StringBuffer question, List items, String itemName, boolean useCommasOnly, ItemTextExtractor extractor) {
+  private static void appendItems(StringBuffer question, List items, String itemName, boolean useCommasOnly, ItemTextExtractor extractor) {
     if (!items.isEmpty()) {
       CommunicatorStrings.appendItemName(question, itemName, items.size());
       question.append(' ');
@@ -145,7 +131,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     }
   }
 
-  private void appendTail(StringBuffer question, List items, ItemTextExtractor extractor, boolean useCommasOnly) {
+  private static void appendTail(StringBuffer question, List items, ItemTextExtractor extractor, boolean useCommasOnly) {
     if (items.size() >= 2) {
       question.append(extractor.getText(items.get(items.size() - 2)));
       if (items.size() >= 3 || useCommasOnly) {
@@ -161,7 +147,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     question.append(extractor.getText(items.get(items.size() - 1)));
   }
 
-  private void appendCommaSeparated(StringBuffer question, List items, ItemTextExtractor extractor) {
+  private static void appendCommaSeparated(StringBuffer question, List items, ItemTextExtractor extractor) {
     for (int i = 0; i < items.size() - 2; i++) {
       String itemText = extractor.getText(items.get(i));
       question.append(itemText).append(", ");

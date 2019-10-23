@@ -99,7 +99,7 @@ public class ProjectsData {
     return getProjectFiles(NON_PROJECT_KEY);
   }
 
-  private void addFileInfo(Vector<List> files, VFile fileInfo) {
+  private static void addFileInfo(Vector<List> files, VFile fileInfo) {
     files.add(fileInfo.asVector());
   }
 

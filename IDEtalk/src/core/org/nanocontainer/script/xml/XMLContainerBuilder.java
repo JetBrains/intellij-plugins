@@ -271,7 +271,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     registerComponentsAndChildContainers(nano, childElement, metaContainer);
   }
 
-  private void registerClasspath(NanoContainer container, Element classpathElement) throws IOException, ClassNotFoundException {
+  private static void registerClasspath(NanoContainer container, Element classpathElement) throws IOException, ClassNotFoundException {
     NodeList children = classpathElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       if (children.item(i) instanceof Element) {
@@ -296,7 +296,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     }
   }
 
-  private void registerPermissions(ClassPathElement classPathElement, Element classPathXmlElement) throws ClassNotFoundException {
+  private static void registerPermissions(ClassPathElement classPathElement, Element classPathXmlElement) throws ClassNotFoundException {
     NodeList children = classPathXmlElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       if (children.item(i) instanceof Element) {
@@ -481,7 +481,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     return factory.makeInstance(pico, instanceElement, getClassLoader());
   }
 
-  private Element getFirstChildElement(Element parent, boolean fail) {
+  private static Element getFirstChildElement(Element parent, boolean fail) {
     NodeList children = parent.getChildNodes();
     Element child = null;
     for (int i = 0; i < children.getLength(); i++) {
@@ -533,7 +533,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     container.getPico().registerComponent(componentAdapterFactory.createComponentAdapter(key, implementationClass, parameters));
   }
 
-  private ComponentAdapterFactory createComponentAdapterFactory(String factoryName, NanoContainer metaContainer)
+  private static ComponentAdapterFactory createComponentAdapterFactory(String factoryName, NanoContainer metaContainer)
     throws ClassNotFoundException, PicoCompositionException {
     if (notSet(factoryName)) {
       factoryName = DEFAULT_COMPONENT_ADAPTER_FACTORY;
@@ -549,7 +549,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     return (ComponentAdapterFactory)metaContainer.getPico().getComponentInstance(key);
   }
 
-  private boolean notSet(Object string) {
+  private static boolean notSet(Object string) {
     return string == null || string.equals(EMPTY);
   }
 }

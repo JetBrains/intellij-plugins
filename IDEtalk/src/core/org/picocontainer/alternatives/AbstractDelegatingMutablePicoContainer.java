@@ -122,11 +122,6 @@ public abstract class AbstractDelegatingMutablePicoContainer implements MutableP
   }
 
   @Override
-  public void accept(PicoVisitor visitor) {
-    this.delegate.accept(visitor);
-  }
-
-  @Override
   public List getComponentInstancesOfType(Class type) throws PicoException {
     return this.delegate.getComponentInstancesOfType(type);
   }
