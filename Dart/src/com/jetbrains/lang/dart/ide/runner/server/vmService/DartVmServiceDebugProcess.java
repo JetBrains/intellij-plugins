@@ -15,6 +15,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -338,6 +339,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   public void guessRemoteProjectRoot(@NotNull final ElementList<LibraryRef> libraries) {
+    // Don't try to guess the project root for Bazel / "dart.projects.without.pubspec" projects,
+    // myRemoteProjectRootUri will always be null
+    if (Registry.is("dart.projects.without.pubspec", false)) return;
+
     final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
     final VirtualFile projectRoot = pubspec != null ? pubspec.getParent() : myCurrentWorkingDirectory;
 
