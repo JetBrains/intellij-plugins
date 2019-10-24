@@ -168,7 +168,7 @@ public class KarmaExecutionSession {
       commandLine.addParameter("--testName=" + testNamesPattern);
       myFolder.addLastParameterFrom(commandLine);
     }
-    NodeCommandLineConfigurator.find(interpreter).configure(commandLine);
+    NodeCommandLineConfigurator.find(interpreter).configure(commandLine, NodeCommandLineConfigurator.defaultOptions(myProject));
     return commandLine;
   }
 
