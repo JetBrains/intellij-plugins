@@ -26,4 +26,8 @@ class VueCopyPasteTest : BasePlatformTestCase() {
   fun testSimpleWithNoImports() {
     doTest(3)
   }
+
+  fun testSimpleWithNoImportsBindingContext() {
+    doTest(3)
+  }
 }
