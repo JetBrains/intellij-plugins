@@ -116,7 +116,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testMixJsAndJs2_2() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_6, getProject(), () -> {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
       String testName = getTestName(false);
       PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
       assertEquals(3, references.length);
