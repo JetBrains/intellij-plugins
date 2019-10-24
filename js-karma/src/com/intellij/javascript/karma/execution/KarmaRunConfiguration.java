@@ -70,7 +70,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
   public NodePackage getKarmaPackage() {
     if (isTemplate()) {
       NodePackage pkg = myRunSettings.getKarmaPackage();
-      return pkg != null ? pkg : new NodePackage("");
+      return pkg != null ? pkg : KarmaUtil.PKG_DESCRIPTOR.createPackage("");
     }
     NodePackage karmaPackage = getOrInitKarmaPackage();
     if (karmaPackage.isEmptyPath()) {
@@ -94,7 +94,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
         if (projectKarmaPackage.isEmptyPath()) {
           KarmaProjectSettings.setKarmaPackage(project, pkg);
         }
-        pkg = new NodePackage("");
+        pkg = KarmaUtil.PKG_DESCRIPTOR.createPackage("");
       }
       myRunSettings = myRunSettings.toBuilder().setKarmaPackage(pkg).build();
     }

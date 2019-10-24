@@ -1,6 +1,7 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,7 +21,7 @@ public class KarmaProjectSettings {
   @NotNull
   public static NodePackage getKarmaPackage(@NotNull Project project) {
     String path = StringUtil.notNullize(PropertiesComponent.getInstance(project).getValue(KARMA_PACKAGE_DIR__KEY));
-    return new NodePackage(path);
+    return KarmaUtil.PKG_DESCRIPTOR.createPackage(path);
   }
 
   public static void setKarmaPackage(@NotNull Project project, @NotNull NodePackage karmaPackage) {

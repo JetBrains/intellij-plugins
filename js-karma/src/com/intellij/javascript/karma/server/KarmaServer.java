@@ -14,6 +14,7 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.testing.AngularCliConfig;
 import com.intellij.lang.javascript.ConsoleCommandLineFolder;
@@ -67,7 +68,7 @@ public class KarmaServer {
   public KarmaServer(@NotNull Project project, @NotNull KarmaServerSettings serverSettings) throws IOException {
     myServerSettings = serverSettings;
     myCoveragePeer = serverSettings.isWithCoverage() ? new KarmaCoveragePeer() : null;
-    KillableColoredProcessHandler processHandler = startServer(serverSettings, myCoveragePeer, myCommandLineFolder);
+    KillableColoredProcessHandler processHandler = startServer(project, serverSettings, myCoveragePeer, myCommandLineFolder);
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
@@ -146,12 +147,13 @@ public class KarmaServer {
   }
 
   @NotNull
-  private static KillableColoredProcessHandler startServer(@NotNull KarmaServerSettings serverSettings,
+  private static KillableColoredProcessHandler startServer(@NotNull Project project,
+                                                           @NotNull KarmaServerSettings serverSettings,
                                                            @Nullable KarmaCoveragePeer coveragePeer,
                                                            @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException {
     GeneralCommandLine commandLine = ReadAction.compute(() -> {
       try {
-        return createCommandLine(serverSettings, coveragePeer, commandLineFolder);
+        return createCommandLine(project, serverSettings, coveragePeer, commandLineFolder);
       }
       catch (ExecutionException e) {
         throw new IOException("Can not create command line", e);
@@ -170,7 +172,8 @@ public class KarmaServer {
   }
 
   @NotNull
-  private static GeneralCommandLine createCommandLine(@NotNull KarmaServerSettings serverSettings,
+  private static GeneralCommandLine createCommandLine(@NotNull Project project,
+                                                      @NotNull KarmaServerSettings serverSettings,
                                                       @Nullable KarmaCoveragePeer coveragePeer,
                                                       @NotNull ConsoleCommandLineFolder commandLineFolder) throws IOException,
                                                                                                                   ExecutionException {
@@ -195,6 +198,12 @@ public class KarmaServer {
     String userConfigFileName = PathUtil.getFileName(serverSettings.getConfigurationFilePath());
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
+      if (pkg instanceof YarnPnpNodePackage) {
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter());
+      }
+      else {
+        commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
+      }
       commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("ng", "test");
@@ -224,7 +233,12 @@ public class KarmaServer {
       }
     }
     else {
-      commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
+      if (pkg instanceof YarnPnpNodePackage) {
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter());
+      }
+      else {
+        commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
+      }
       commandLine.addParameter("start");
       commandLine.addParameter(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath());
       commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);

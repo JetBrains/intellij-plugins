@@ -2,8 +2,8 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jdom.Element;
@@ -44,7 +44,7 @@ public class KarmaRunSettingsSerializationUtil {
 
     String karmaPackageDir = JDOMExternalizerUtil.readCustomField(element, KARMA_PACKAGE_DIR);
     if (karmaPackageDir != null) {
-      builder.setKarmaPackage(new NodePackage(karmaPackageDir));
+      builder.setKarmaPackage(KarmaUtil.PKG_DESCRIPTOR.createPackage(karmaPackageDir));
     }
 
     builder.setWorkingDirectory(StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, WORKING_DIRECTORY)));
