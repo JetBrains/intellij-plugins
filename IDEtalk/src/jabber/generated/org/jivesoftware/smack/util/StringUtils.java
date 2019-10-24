@@ -28,7 +28,7 @@ import java.util.Random;
 /**
  * A collection of utility methods for String objects.
  */
-public class StringUtils {
+public final class StringUtils {
 
     private static final char[] QUOTE_ENCODE = "&quot;".toCharArray();
     private static final char[] AMP_ENCODE = "&amp;".toCharArray();
@@ -167,7 +167,7 @@ public class StringUtils {
                 if (i > last) {
                     out.append(input, last, i - last);
                 }
-                // Do nothing if the string is of the form &#235; (unicode value) 
+                // Do nothing if the string is of the form &#235; (unicode value)
                 if (!(len > i + 5
                     && input[i + 1] == '#'
                     && Character.isDigit(input[i + 2])
