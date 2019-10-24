@@ -302,6 +302,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     if (result != null) return result;
 
     File plistFile = new File(product, "Info.plist");
+    if (!plistFile.isFile()) {
+      plistFile = new File(product, "Contents/Info.plist");
+    }
+
     Plist plist = PlistDriver.readAnyFormatSafe(plistFile);
     if (plist == null) throw new ExecutionException("Info.plist not found at " + plistFile);
 
