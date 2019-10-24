@@ -56,6 +56,7 @@ import org.junit.runners.Suite;
   TemplateLoaderCompletionTest.class,
   PugTemplateTest.class,
   VueModuleImportTest.class,
+  VueCopyPasteTest.class,
   VueTypeScriptHighlightingTest.class,
   VueTypeScriptDuplicateTest.class,
   VueTypeScriptLineMarkersTest.class
