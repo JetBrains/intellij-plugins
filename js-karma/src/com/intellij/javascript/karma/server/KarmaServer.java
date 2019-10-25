@@ -204,7 +204,6 @@ public class KarmaServer {
       else {
         commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       }
-      commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
       commandLine.addParameter("test");
       commandLineFolder.addPlaceholderTexts("ng", "test");
       File configFile = KarmaJsSourcesLocator.getInstance().getIntellijConfigFile();
