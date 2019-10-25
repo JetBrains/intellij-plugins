@@ -1,0 +1,34 @@
+<xml type="Scenario" name="Extract Method refactoring with returns" id="Goland2019.2.ExtractMethodRefactoringWithReturns" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strings"
+)
+
+func main() {
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Printf("Enter text: ")
+		text, _ := reader.ReadString('\n')
+		text = strings.TrimSpace(text)
+		if text == "quit"{
+			return
+		} else if text == "foo" {
+			fmt.Printf("foo")
+		} else {
+			fmt.Printf("bar")
+		}
+	}
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="16:9"/>
+    <Text>With the <control>Extract method</control> refactoring, you can take a code fragment, move it to a separate method and replace the old code with a call to the new method. If the code exits in the return statement, it is extracted as is. Read more about the <control>Extract method</control> refactoring in the <a href = "https://www.jetbrains.com/help/go/extract-method.html#extract-a-method" target = "_blank">Extract a function or a method</a> article.</Text>
+    <Try action="ExtractMethod" trigger="ExtractMethod">See that the caret is before the <code>if</code> clause that you can extract. Press <action>ExtractMethod</action>.</Try>
+    <Try action="EditorEscape" trigger="EditorEscape">Type <code>handler</code> and press <action>EditorEscape</action> to finish this lesson.</Try>
+    <Win/>
+</xml>
