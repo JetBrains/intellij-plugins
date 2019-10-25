@@ -12,6 +12,7 @@
     </language>
     <language lang="go">
         <module name="modules/go/GopherCon.xml"/>
+        <module name="modules/go/GoLand2019.2.xml"/>
     </language>
     <language lang="swift">
         <module name="modules/swift/Editor.xml"/>
