@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.core.impl.users;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.transport.TransportEvent;
@@ -80,9 +81,9 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public String[] getGroups() {
-    Set<String> result = new TreeSet<>();
+    Set<String> result;
     synchronized (myUsersGroupsLock) {
-      result.addAll(myGroups);
+      result = new TreeSet<>(myGroups);
     }
 
     String lastGroup = null;
@@ -144,7 +145,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   @Override
   public void addGroup(String groupName) {
-    if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(groupName)) {
+    if (!StringUtil.isEmptyOrSpaces(groupName)) {
       final String trimmedName = groupName.trim();
 
       if (Arrays.asList(getGroups()).contains(trimmedName)) return;

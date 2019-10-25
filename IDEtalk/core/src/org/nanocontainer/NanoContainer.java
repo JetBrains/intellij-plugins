@@ -27,7 +27,6 @@ import java.net.URL;
  * @author Aslak Helles&oslash;y
  */
 public interface NanoContainer {
-
   ComponentAdapter registerComponentImplementation(String componentImplementationClassName)
     throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
 
@@ -72,7 +71,6 @@ public interface NanoContainer {
    * @return the adapter matching the class.
    */
   Object getComponentInstanceOfType(String componentType);
-
 
   MutablePicoContainer addDecoratingPicoContainer(Class picoContainerClass);
 }
