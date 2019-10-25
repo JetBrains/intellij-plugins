@@ -41,7 +41,6 @@ class RubyLangSupport : AbstractLangSupport() {
     }
     val rubyVersion = RubyVersionUtil.getShortVersion(
             sdk.versionString ?: throw InvalidSdkException("SDK should have a version"))
-            ?: throw InvalidSdkException("Invalid version: " + sdk.versionString)
     if (VersionComparatorUtil.compare(rubyVersion, "2.3.0") < 0) {
       throw InvalidSdkException("Ruby version should be at least 2.3")
     }
@@ -119,10 +118,7 @@ class RubyLangSupport : AbstractLangSupport() {
         }
         source.getAllEditors(file).forEach {
           ((it as? TextEditor)?.editor as? EditorEx)?.let { editorEx ->
-            //TODO: replace with EditorModificationUtil#setReadOnlyHint in 2019.2 API or
-            // implement WritingAccessProvider (it has no getReadOnlyMessage in 2019.1)
-            // also it will provide lock icon
-            EditorModificationUtil.READ_ONLY_VIEW_MESSAGE_KEY.set(editorEx, LearnBundle.message("learn.project.read.only.hint"))
+            EditorModificationUtil.setReadOnlyHint(editorEx, LearnBundle.message("learn.project.read.only.hint"))
             editorEx.isViewer = true
           }
         }
