@@ -3,9 +3,7 @@ package com.intellij.javascript.flex.documentation;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptFunctionImpl;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.documentation.JSQuickNavigateBuilder;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSQualifiedName;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -135,5 +133,10 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
   @Override
   protected boolean shouldAppendFunctionKeyword(@NotNull JSFunction function, @Nullable PsiElement parent) {
     return parent instanceof JSClass || super.shouldAppendFunctionKeyword(function, parent);
+  }
+
+  @Override
+  protected JSType getVariableOrFieldType(@NotNull JSTypeDeclarationOwner variable) {
+    return variable.getJSType();
   }
 }
