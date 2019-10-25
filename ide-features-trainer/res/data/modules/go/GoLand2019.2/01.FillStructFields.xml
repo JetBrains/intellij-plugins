@@ -1,0 +1,29 @@
+<xml type="Scenario" name="Fill struct fields" id="Goland2019.2.FillStructFields" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import "fmt"
+
+type Address struct {
+	street string
+}
+
+type Person struct {
+	name string
+	age int
+	address Address
+}
+
+
+func main() {
+	p := Person{}
+	fmt.Println(p)
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="17:17"/>
+    <Text>When you create a new struct, you can automatically generate field names for it. Check the article about the <control>Fill struct fields</control> intention actions at <a href = "https://www.jetbrains.com/help/go/auto-completing-code.html#fill-struct-fields-code-completion" target = "_blank">the GoLand documentation</a>.</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is placed between curly braces of the <emphasis>Person</emphasis> struct. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try check="training.check.go.GoCheckFillStructFields">Now select <strong>Fill all fields</strong> and press <action>EditorEnter</action>.</Try>
+    <Win/>
+</xml>
