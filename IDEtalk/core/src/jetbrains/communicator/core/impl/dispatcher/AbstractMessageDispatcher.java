@@ -29,9 +29,8 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
   private final MyEventListener myEventListener;
 
   private final Object myUser2MessagesLock = new Object();
-  private final Map<User,List<Message>> myUser2Messages = new HashMap<>();
+  private final Map<User, List<Message>> myUser2Messages = new HashMap<>();
   private final EventBroadcaster myEventBroadcaster;
-  private boolean myDispatching;
 
   protected AbstractMessageDispatcher(EventBroadcaster eventBroadcaster, File dataDir) {
     myDataDir = dataDir;
@@ -43,54 +42,46 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
   @Override
   public void dispose() {
     myEventListener.dispose();
-    //noinspection HardCodedStringLiteral
     LOG.debug("Disposed.");
   }
 
   protected abstract String getEventsFileName();
 
   protected boolean performDispatch(User user, Message message) {
-    try {
-      myDispatching = true;
-      if (LOG.isDebugEnabled()) {
-        //noinspection HardCodedStringLiteral
-        LOG.debug("Start dispatching " + message + " to " + user);
-      }
-      boolean result = message.send(user);
-
-      synchronized(myUser2MessagesLock) {
-        List<Message> userMessages = getMessages(user);
-        if (result) {
-          userMessages.remove(message);
-          if (userMessages.size() == 0) {
-            myUser2Messages.remove(user);
-          }
-        }
-        else if (!userMessages.contains(message) ){
-          userMessages.add(message);
-        }
-      }
-
-      if (LOG.isDebugEnabled()) {
-        //noinspection HardCodedStringLiteral
-        LOG.debug("End   dispatching " + message + " to " + user);
-      }
-      return result;
-    } finally {
-      myDispatching = false;
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Start dispatching " + message + " to " + user);
     }
+    boolean result = message.send(user);
+
+    synchronized (myUser2MessagesLock) {
+      List<Message> userMessages = getMessages(user);
+      if (result) {
+        userMessages.remove(message);
+        if (userMessages.size() == 0) {
+          myUser2Messages.remove(user);
+        }
+      }
+      else if (!userMessages.contains(message)) {
+        userMessages.add(message);
+      }
+    }
+
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("End   dispatching " + message + " to " + user);
+    }
+    return result;
   }
 
   @Override
   public boolean hasUsersWithMessages() {
-    synchronized(myUser2MessagesLock) {
+    synchronized (myUser2MessagesLock) {
       return !myUser2Messages.isEmpty();
     }
   }
 
   @Override
   public User[] getUsersWithMessages() {
-    synchronized(myUser2MessagesLock) {
+    synchronized (myUser2MessagesLock) {
       Set<User> users = myUser2Messages.keySet();
       return users.toArray(new User[0]);
     }
@@ -122,38 +113,18 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     return result;
   }
 
-  boolean isMessageDispatchInProgress() {
-    return myDispatching;
-  }
-
   protected void addPendingMessage(User user, Message message) {
     if (message == null) return;
 
-    synchronized(myUser2MessagesLock) {
+    synchronized (myUser2MessagesLock) {
       List<Message> userMessages = getMessages(user);
       if (!userMessages.contains(message)) {
         if (LOG.isDebugEnabled()) {
-          //noinspection HardCodedStringLiteral
           LOG.debug("Added pending message " + message + "\nfor user " + user);
         }
         userMessages.add(message);
         save();
       }
-    }
-  }
-
-  protected void removePendingMessage(User user, int messageIndex) {
-    synchronized(myUser2MessagesLock) {
-      List<Message> userMessages = getMessages(user);
-      userMessages.remove(messageIndex);
-      save();
-    }
-  }
-
-  protected void clearAll() {
-    synchronized (myUser2MessagesLock) {
-      myUser2Messages.clear();
-      save();
     }
   }
 
@@ -172,7 +143,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     synchronized (myUser2MessagesLock) {
       Object pendingEventsStorable = XStreamUtil.fromXml(getXStream(), getFileName(), false);
       if (pendingEventsStorable instanceof MessagesStorable) {
-        loadFromStorableMessages((MessagesStorable) pendingEventsStorable);
+        loadFromStorableMessages((MessagesStorable)pendingEventsStorable);
       }
     }
   }
@@ -193,12 +164,11 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     }
   }
 
-  @SuppressWarnings({"HardCodedStringLiteral"})
   protected void save() {
     if (myDataDir == null || !myDataDir.exists()) return;
 
     LOG.debug("Save start");
-    synchronized(myUser2MessagesLock) {
+    synchronized (myUser2MessagesLock) {
       XStreamUtil.toXml(getXStream(), getFileName(), createStorableMessages());
     }
     LOG.debug("Save finish");
@@ -208,7 +178,6 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     return new MessagesStorable(myUser2Messages);
   }
 
-  @SuppressWarnings({"HardCodedStringLiteral"})
   private XStream getXStream() {
     if (myXStream == null) {
       myXStream = XStreamUtil.createXStream();
@@ -233,8 +202,9 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
 
     @Override
     public void afterChange(IDEtalkEvent event) {
-      event.accept(new EventVisitor(){
-        @Override public void visitUserRemoved(UserEvent.Removed event) {
+      event.accept(new EventVisitor() {
+        @Override
+        public void visitUserRemoved(UserEvent.Removed event) {
           removeUser(event.getUser());
         }
       });
@@ -243,8 +213,9 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
 
   protected interface MessageProcessor {
 
-    /** returns true if processing should be stopped */
+    /**
+     * returns true if processing should be stopped
+     */
     boolean process(User user, Message message);
   }
-
 }

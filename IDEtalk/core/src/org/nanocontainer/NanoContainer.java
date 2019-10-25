@@ -17,11 +17,10 @@ import java.net.URL;
 /**
  * A NanoContainer is a container that contains a PicoContainer. -Like
  * <a href="http://www.monkeon.co.uk/russiandolls/">Russian dolls</a>.
- *
+ * <p>
  * A NanoContainer adapts a {@link MutablePicoContainer} through a similar API that
  * is based only on Strings. (It uses reflection to look up classes before registering them
  * with the adapted PicoContainer). This adapter API is used primarily by the various
- * {@link org.nanocontainer.script.ScriptedContainerBuilder} implementations in the
  * org.nanocontainer.script.[scripting engine] packages.
  *
  * @author Paul Hammant
@@ -29,49 +28,51 @@ import java.net.URL;
  */
 public interface NanoContainer {
 
-    ComponentAdapter registerComponentImplementation(String componentImplementationClassName) throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
+  ComponentAdapter registerComponentImplementation(String componentImplementationClassName)
+    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
 
-    ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName) throws ClassNotFoundException;
+  ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName) throws ClassNotFoundException;
 
-    ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName, Parameter[] parameters) throws ClassNotFoundException;
-
-
-    ComponentAdapter registerComponentImplementation(Object key,
-                                                     String componentImplementationClassName,
-                                                     String[] parameterTypesAsString,
-                                                     String[] parameterValuesAsString) throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
-
-    ComponentAdapter registerComponentImplementation(String componentImplementationClassName,
-                                                     String[] parameterTypesAsString,
-                                                     String[] parameterValuesAsString) throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
-
-    /**
-     * Adds a new URL that will be used in classloading
-     *
-     * @param url
-     */
-    ClassPathElement addClassLoaderURL(URL url);
-
-    /**
-     * Returns the wrapped PicoContainer instance (russian doll concept). The method name is short
-     * in order to favour the use of nano.pico from Groovy.
-     *
-     * @return the wrapped PicoContainer instance.
-     */
-    MutablePicoContainer getPico();
-
-    ClassLoader getComponentClassLoader();
-
-    /**
-     * Find a component instance matching the specified type.
-     *
-     * @param componentType the type of the component.
-     * @return the adapter matching the class.
-     */
-    Object getComponentInstanceOfType(String componentType);
+  ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName, Parameter[] parameters)
+    throws ClassNotFoundException;
 
 
-    MutablePicoContainer addDecoratingPicoContainer(Class picoContainerClass);
+  ComponentAdapter registerComponentImplementation(Object key,
+                                                   String componentImplementationClassName,
+                                                   String[] parameterTypesAsString,
+                                                   String[] parameterValuesAsString)
+    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
+
+  ComponentAdapter registerComponentImplementation(String componentImplementationClassName,
+                                                   String[] parameterTypesAsString,
+                                                   String[] parameterValuesAsString)
+    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException;
+
+  /**
+   * Adds a new URL that will be used in classloading
+   *
+   * @param url
+   */
+  ClassPathElement addClassLoaderURL(URL url);
+
+  /**
+   * Returns the wrapped PicoContainer instance (russian doll concept). The method name is short
+   * in order to favour the use of nano.pico from Groovy.
+   *
+   * @return the wrapped PicoContainer instance.
+   */
+  MutablePicoContainer getPico();
+
+  ClassLoader getComponentClassLoader();
+
+  /**
+   * Find a component instance matching the specified type.
+   *
+   * @param componentType the type of the component.
+   * @return the adapter matching the class.
+   */
+  Object getComponentInstanceOfType(String componentType);
 
 
+  MutablePicoContainer addDecoratingPicoContainer(Class picoContainerClass);
 }

@@ -14,18 +14,13 @@ import org.nanocontainer.ClassNameKey;
 import org.nanocontainer.ClassPathElement;
 import org.nanocontainer.DefaultNanoContainer;
 import org.nanocontainer.NanoContainer;
-import org.nanocontainer.integrationkit.ContainerPopulator;
-import org.nanocontainer.integrationkit.PicoCompositionException;
-import org.nanocontainer.reflection.DefaultNanoPicoContainer;
-import org.nanocontainer.script.NanoContainerMarkupException;
-import org.nanocontainer.script.ScriptedContainerBuilder;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
+import org.picocontainer.PicoException;
 import org.picocontainer.defaults.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -50,7 +45,7 @@ import java.util.List;
  * @author Mauro Talevi
  * @version $Revision$
  */
-public final class XMLContainerBuilder extends ScriptedContainerBuilder implements ContainerPopulator {
+public final class XMLContainerBuilder {
   private final static String DEFAULT_COMPONENT_ADAPTER_FACTORY = DefaultComponentAdapterFactory.class.getName();
   private final static String DEFAULT_COMPONENT_INSTANCE_FACTORY = BeanComponentInstanceFactory.class.getName();
 
@@ -63,8 +58,6 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   private final static String COMPONENT_INSTANCE = "component-instance";
   private final static String COMPONENT_ADAPTER = "component-adapter";
   private final static String COMPONENT_ADAPTER_FACTORY = "component-adapter-factory";
-  private final static String COMPONENT_INSTANCE_FACTORY = "component-instance-factory";
-  private final static String COMPONENT_MONITOR = "component-monitor";
   private final static String DECORATING_PICOCONTAINER = "decorating-picocontainer";
   private final static String CLASS = "class";
   private final static String FACTORY = "factory";
@@ -81,40 +74,18 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   private final static String VALUE = "value";
 
   private static final String EMPTY = "";
+  private final ClassLoader myClassLoader;
 
   private Element rootElement;
-  /**
-   * The XMLComponentInstanceFactory globally defined for the container.
-   * It may be overridden at node level.
-   */
-  private XMLComponentInstanceFactory componentInstanceFactory;
 
   public XMLContainerBuilder(Reader script, ClassLoader classLoader) {
-    super(script, classLoader);
+    myClassLoader = classLoader;
     try {
       DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       parse(documentBuilder, new InputSource(script));
     }
     catch (ParserConfigurationException e) {
-      throw new NanoContainerMarkupException(e);
-    }
-  }
-
-  public XMLContainerBuilder(final URL script, ClassLoader classLoader) {
-    super(script, classLoader);
-    try {
-      DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-      documentBuilder.setEntityResolver(new EntityResolver() {
-        @Override
-        public InputSource resolveEntity(String publicId, String systemId) throws IOException {
-          URL url = new URL(script, systemId);
-          return new InputSource(url.openStream());
-        }
-      });
-      parse(documentBuilder, new InputSource(script.toString()));
-    }
-    catch (ParserConfigurationException e) {
-      throw new NanoContainerMarkupException(e);
+      throw new PicoException(e);
     }
   }
 
@@ -123,54 +94,32 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
       rootElement = documentBuilder.parse(inputSource).getDocumentElement();
     }
     catch (SAXException e) {
-      throw new NanoContainerMarkupException(e);
+      throw new PicoException(e);
     }
     catch (IOException e) {
-      throw new NanoContainerMarkupException(e);
+      throw new PicoException(e);
     }
   }
 
-  @Override
-  protected PicoContainer createContainerFromScript(PicoContainer parentContainer, Object assemblyScope) {
-    try {
-      // create ComponentInstanceFactory for the container
-      componentInstanceFactory = createComponentInstanceFactory(rootElement.getAttribute(COMPONENT_INSTANCE_FACTORY));
-      MutablePicoContainer childContainer = createMutablePicoContainer(rootElement.getAttribute(COMPONENT_ADAPTER_FACTORY),
-                                                                       rootElement.getAttribute(COMPONENT_MONITOR), parentContainer);
-      populateContainer(childContainer);
-      return childContainer;
-    }
-    catch (ClassNotFoundException e) {
-      throw new NanoContainerMarkupException("Class not found:" + e.getMessage(), e);
-    }
-  }
-
-  private MutablePicoContainer createMutablePicoContainer(String cafName, String monitorName, PicoContainer parentContainer)
-    throws PicoCompositionException, ClassNotFoundException {
-    return new DefaultNanoPicoContainer(getClassLoader(),
-                                        createComponentAdapterFactory(cafName, new DefaultNanoContainer(getClassLoader())),
-                                        parentContainer);
-  }
-
-  @Override
   public void populateContainer(MutablePicoContainer container) {
     try {
       String parentClass = rootElement.getAttribute("parentclassloader");
-      ClassLoader classLoader = getClassLoader();
+      ClassLoader classLoader = myClassLoader;
       if (parentClass != null && !EMPTY.equals(parentClass)) {
         classLoader = classLoader.loadClass(parentClass).getClassLoader();
       }
       NanoContainer nanoContainer = new DefaultNanoContainer(classLoader, container);
-      registerComponentsAndChildContainers(nanoContainer, rootElement, new DefaultNanoContainer(getClassLoader()));
+      registerComponentsAndChildContainers(nanoContainer, rootElement, new DefaultNanoContainer(myClassLoader));
     }
     catch (ClassNotFoundException e) {
-      throw new NanoContainerMarkupException("Class not found: " + e.getMessage(), e);
+      String message = "Class not found: " + e.getMessage();
+      throw new PicoException(message, e);
     }
     catch (IOException e) {
-      throw new NanoContainerMarkupException(e);
+      throw new PicoException(e);
     }
     catch (SAXException e) {
-      throw new NanoContainerMarkupException(e);
+      throw new PicoException(e);
     }
   }
 
@@ -179,7 +128,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
                                                     NanoContainer knownComponentAdapterFactories)
     throws ClassNotFoundException, IOException, SAXException {
 
-    NanoContainer metaContainer = new DefaultNanoContainer(getClassLoader(), knownComponentAdapterFactories.getPico());
+    NanoContainer metaContainer = new DefaultNanoContainer(myClassLoader, knownComponentAdapterFactories.getPico());
     NodeList children = containerElement.getChildNodes();
     // register classpath first, regardless of order in the document.
     for (int i = 0; i < children.getLength(); i++) {
@@ -219,8 +168,9 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
         else if (DECORATING_PICOCONTAINER.equals(name)) {
           addDecoratingPicoContainer(parentContainer, childElement);
         }
-        else if (CLASSPATH.equals(name) != true) {
-          throw new NanoContainerMarkupException("Unsupported element:" + name);
+        else if (!CLASSPATH.equals(name)) {
+          String message = "Unsupported element:" + name;
+          throw new PicoException(message);
         }
       }
     }
@@ -230,7 +180,8 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   private void addComponentAdapterFactory(Element element, NanoContainer metaContainer)
     throws MalformedURLException, ClassNotFoundException {
     if (notSet(element.getAttribute(KEY))) {
-      throw new NanoContainerMarkupException("'" + KEY + "' attribute not specified for " + element.getNodeName());
+      String message = "'" + KEY + "' attribute not specified for " + element.getNodeName();
+      throw new PicoException(message);
     }
     Element node = (Element)element.cloneNode(false);
     NodeList children = element.getChildNodes();
@@ -239,8 +190,9 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
         Element childElement = (Element)children.item(i);
         String name = childElement.getNodeName();
         if (COMPONENT_ADAPTER_FACTORY.equals(name)) {
-          if (!"".equals(childElement.getAttribute(KEY))) {
-            throw new NanoContainerMarkupException("'" + KEY + "' attribute must not be specified for nested " + element.getNodeName());
+          if (childElement.getAttribute(KEY) != null && !childElement.getAttribute(KEY).isEmpty()) {
+            String message = "'" + KEY + "' attribute must not be specified for nested " + element.getNodeName();
+            throw new PicoException(message);
           }
           childElement = (Element)childElement.cloneNode(true);
           String key = String.valueOf(System.identityHashCode(childElement));
@@ -279,7 +231,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
 
         String fileName = childElement.getAttribute(FILE);
         String urlSpec = childElement.getAttribute(URL);
-        URL url = null;
+        URL url;
         if (urlSpec != null && !EMPTY.equals(urlSpec)) {
           url = new URL(urlSpec);
         }
@@ -319,7 +271,8 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     throws ClassNotFoundException, MalformedURLException {
     String className = element.getAttribute(CLASS);
     if (notSet(className)) {
-      throw new NanoContainerMarkupException("'" + CLASS + "' attribute not specified for " + element.getNodeName());
+      String message = "'" + CLASS + "' attribute not specified for " + element.getNodeName();
+      throw new PicoException(message);
     }
 
     Parameter[] parameters = createChildParameters(container, element);
@@ -328,7 +281,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     String classKey = element.getAttribute(CLASS_NAME_KEY);
     if (notSet(key)) {
       if (!notSet(classKey)) {
-        key = getClassLoader().loadClass(classKey);
+        key = myClassLoader.loadClass(classKey);
       }
       else {
         key = clazz;
@@ -345,7 +298,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   private void addDecoratingPicoContainer(NanoContainer parentContainer, Element childElement) throws ClassNotFoundException {
     String className = childElement.getAttribute("class");
 
-    parentContainer.addDecoratingPicoContainer(getClassLoader().loadClass(className));
+    parentContainer.addDecoratingPicoContainer(myClassLoader.loadClass(className));
   }
 
 
@@ -363,7 +316,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
 
     Parameter[] parameters = null;
     if (!parametersList.isEmpty()) {
-      parameters = (Parameter[])parametersList.toArray(new Parameter[parametersList.size()]);
+      parameters = (Parameter[])parametersList.toArray(new Parameter[0]);
     }
     return parameters;
   }
@@ -415,14 +368,15 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
       if (emptyCollectionString == null || componentValueTypeString == null ||
           EMPTY.equals(emptyCollectionString) || EMPTY.equals(componentValueTypeString)) {
 
-        throw new NanoContainerMarkupException("The componentKeyType attribute was specified (" +
-                                               componentKeyTypeString + ") but one or both of the emptyCollection (" +
-                                               emptyCollectionString + ") or componentValueType (" + componentValueTypeString +
-                                               ") was empty or null.");
+        String message = "The componentKeyType attribute was specified (" +
+                         componentKeyTypeString + ") but one or both of the emptyCollection (" +
+                         emptyCollectionString + ") or componentValueType (" + componentValueTypeString +
+                         ") was empty or null.";
+        throw new PicoException(message);
       }
 
-      Class componentKeyType = getClassLoader().loadClass(componentKeyTypeString);
-      Class componentValueType = getClassLoader().loadClass(componentValueTypeString);
+      Class componentKeyType = myClassLoader.loadClass(componentKeyTypeString);
+      Class componentValueType = myClassLoader.loadClass(componentValueTypeString);
 
       boolean emptyCollection = Boolean.valueOf(emptyCollectionString).booleanValue();
 
@@ -431,12 +385,13 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
     else if (componentValueTypeString != null && !EMPTY.equals(componentValueTypeString)) {
       if (emptyCollectionString == null || EMPTY.equals(emptyCollectionString)) {
 
-        throw new NanoContainerMarkupException("The componentValueType attribute was specified (" +
-                                               componentValueTypeString + ") but the emptyCollection (" +
-                                               emptyCollectionString + ") was empty or null.");
+        String message = "The componentValueType attribute was specified (" +
+                         componentValueTypeString + ") but the emptyCollection (" +
+                         emptyCollectionString + ") was empty or null.";
+        throw new PicoException(message);
       }
 
-      Class componentValueType = getClassLoader().loadClass(componentValueTypeString);
+      Class componentValueType = myClassLoader.loadClass(componentValueTypeString);
 
       boolean emptyCollection = Boolean.valueOf(emptyCollectionString).booleanValue();
 
@@ -458,13 +413,13 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   }
 
   private void registerComponentInstance(NanoContainer container, Element element)
-    throws ClassNotFoundException, PicoCompositionException, MalformedURLException {
+    throws ClassNotFoundException, MalformedURLException {
     Object instance = createInstance(container.getPico(), element);
     String key = element.getAttribute(KEY);
     String classKey = element.getAttribute(CLASS_NAME_KEY);
     if (notSet(key)) {
       if (!notSet(classKey)) {
-        container.getPico().registerComponentInstance(getClassLoader().loadClass(classKey), instance);
+        container.getPico().registerComponentInstance(myClassLoader.loadClass(classKey), instance);
       }
       else {
         container.getPico().registerComponentInstance(instance);
@@ -476,9 +431,9 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   }
 
   private Object createInstance(PicoContainer pico, Element element) throws ClassNotFoundException, MalformedURLException {
-    XMLComponentInstanceFactory factory = createComponentInstanceFactory(element.getAttribute(FACTORY));
+    BeanComponentInstanceFactory factory = createComponentInstanceFactory(element.getAttribute(FACTORY));
     Element instanceElement = getFirstChildElement(element, true);
-    return factory.makeInstance(pico, instanceElement, getClassLoader());
+    return factory.makeInstance(pico, instanceElement, myClassLoader);
   }
 
   private static Element getFirstChildElement(Element parent, boolean fail) {
@@ -491,38 +446,37 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
       }
     }
     if (child == null && fail) {
-      throw new NanoContainerMarkupException(parent.getNodeName() + " needs a child element");
+      String message = parent.getNodeName() + " needs a child element";
+      throw new PicoException(message);
     }
     return child;
   }
 
-  private XMLComponentInstanceFactory createComponentInstanceFactory(String factoryClass) throws ClassNotFoundException {
+  private BeanComponentInstanceFactory createComponentInstanceFactory(String factoryClass) throws ClassNotFoundException {
     if (notSet(factoryClass)) {
       // no factory has been specified for the node
       // return globally defined factory for the container - if there is one
-      if (componentInstanceFactory != null) {
-        return componentInstanceFactory;
-      }
       factoryClass = DEFAULT_COMPONENT_INSTANCE_FACTORY;
     }
 
-    NanoContainer adapter = new DefaultNanoContainer(getClassLoader());
-    adapter.registerComponentImplementation(XMLComponentInstanceFactory.class.getName(), factoryClass);
-    return (XMLComponentInstanceFactory)adapter.getPico().getComponentInstances().get(0);
+    NanoContainer adapter = new DefaultNanoContainer(myClassLoader);
+    adapter.registerComponentImplementation(BeanComponentInstanceFactory.class.getName(), factoryClass);
+    return (BeanComponentInstanceFactory)adapter.getPico().getComponentInstances().get(0);
   }
 
   private void registerComponentAdapter(NanoContainer container, Element element, NanoContainer metaContainer)
-    throws ClassNotFoundException, PicoCompositionException, MalformedURLException {
+    throws ClassNotFoundException, MalformedURLException {
     String className = element.getAttribute(CLASS);
     if (notSet(className)) {
-      throw new NanoContainerMarkupException("'" + CLASS + "' attribute not specified for " + element.getNodeName());
+      String message = "'" + CLASS + "' attribute not specified for " + element.getNodeName();
+      throw new PicoException(message);
     }
-    Class implementationClass = getClassLoader().loadClass(className);
+    Class implementationClass = myClassLoader.loadClass(className);
     Object key = element.getAttribute(KEY);
     String classKey = element.getAttribute(CLASS_NAME_KEY);
     if (notSet(key)) {
       if (!notSet(classKey)) {
-        key = getClassLoader().loadClass(classKey);
+        key = myClassLoader.loadClass(classKey);
       }
       else {
         key = implementationClass;
@@ -534,7 +488,7 @@ public final class XMLContainerBuilder extends ScriptedContainerBuilder implemen
   }
 
   private static ComponentAdapterFactory createComponentAdapterFactory(String factoryName, NanoContainer metaContainer)
-    throws ClassNotFoundException, PicoCompositionException {
+    throws ClassNotFoundException {
     if (notSet(factoryName)) {
       factoryName = DEFAULT_COMPONENT_ADAPTER_FACTORY;
     }

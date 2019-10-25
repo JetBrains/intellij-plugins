@@ -12,13 +12,11 @@ import org.picocontainer.ComponentAdapter;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.defaults.BeanPropertyComponentAdapter;
-import org.picocontainer.defaults.ComponentAdapterFactory;
 import org.picocontainer.defaults.DefaultComponentAdapterFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.net.MalformedURLException;
 import java.util.Properties;
 
 /**
@@ -29,52 +27,50 @@ import java.util.Properties;
  * @author Marcos Tarruella
  * @author Mauro Talevi
  */
-public class BeanComponentInstanceFactory implements XMLComponentInstanceFactory {
+public final class BeanComponentInstanceFactory {
+  private static final String NAME_ATTRIBUTE = "name";
 
-    private static final String NAME_ATTRIBUTE = "name";
+  public Object makeInstance(PicoContainer pico, Element element, ClassLoader classLoader)
+    throws ClassNotFoundException {
+    String className = element.getNodeName();
+    Object instance;
 
-    @Override
-    public Object makeInstance(PicoContainer pico, Element element, ClassLoader classLoader) throws ClassNotFoundException, MalformedURLException {
-        String className = element.getNodeName();
-        Object instance = null;
+    if (element.getChildNodes().getLength() == 1) {
+      instance = BeanPropertyComponentAdapter.convert(className, element.getFirstChild().getNodeValue(), classLoader);
+    }
+    else {
+      BeanPropertyComponentAdapter propertyComponentAdapter =
+        new BeanPropertyComponentAdapter(createComponentAdapter(className, classLoader));
+      Properties properties = createProperties(element.getChildNodes());
+      propertyComponentAdapter.setProperties(properties);
+      instance = propertyComponentAdapter.getComponentInstance(pico);
+    }
+    return instance;
+  }
 
-        if (element.getChildNodes().getLength() == 1) {
-            instance = BeanPropertyComponentAdapter.convert(className, element.getFirstChild().getNodeValue(), classLoader);
-        } else {
-            BeanPropertyComponentAdapter propertyComponentAdapter =
-                    new BeanPropertyComponentAdapter(createComponentAdapter(className, classLoader));
-            Properties properties = createProperties(element.getChildNodes());
-            propertyComponentAdapter.setProperties(properties);
-            instance = propertyComponentAdapter.getComponentInstance(pico);
+  private static ComponentAdapter createComponentAdapter(String className, ClassLoader classLoader) throws ClassNotFoundException {
+    return DefaultComponentAdapterFactory.createAdapter(className, classLoader.loadClass(className), new Parameter[]{});
+  }
+
+  private static Properties createProperties(NodeList nodes) {
+    Properties properties = new Properties();
+    for (int i = 0; i < nodes.getLength(); i++) {
+      Node n = nodes.item(i);
+      if (n.getNodeType() == Node.ELEMENT_NODE) {
+        String name = n.getNodeName();
+
+        //Provide for a new 'name' attribute in properties.
+        if (n.hasAttributes()) {
+          String mappedName = n.getAttributes().getNamedItem(NAME_ATTRIBUTE).getNodeValue();
+          if (mappedName != null) {
+            name = mappedName;
+          }
         }
-        return instance;
+
+        String value = n.getFirstChild().getNodeValue();
+        properties.setProperty(name, value);
+      }
     }
-
-    private static ComponentAdapter createComponentAdapter(String className, ClassLoader classLoader) throws ClassNotFoundException {
-        Class implementation = classLoader.loadClass(className);
-        ComponentAdapterFactory factory = new DefaultComponentAdapterFactory();
-        return factory.createComponentAdapter(className, implementation, new Parameter[]{});
-    }
-
-    private static Properties createProperties(NodeList nodes) {
-        Properties properties = new Properties();
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Node n = nodes.item(i);
-            if (n.getNodeType() == Node.ELEMENT_NODE) {
-                String name = n.getNodeName();
-
-                //Provide for a new 'name' attribute in properties.
-                if (n.hasAttributes()) {
-                    String mappedName = n.getAttributes().getNamedItem(NAME_ATTRIBUTE).getNodeValue();
-                    if (mappedName != null) {
-                        name = mappedName;
-                    }
-                }
-
-                String value = n.getFirstChild().getNodeValue();
-                properties.setProperty(name, value);
-            }
-        }
-        return properties;
-    }
+    return properties;
+  }
 }

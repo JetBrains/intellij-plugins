@@ -17,6 +17,5 @@ import org.picocontainer.MutablePicoContainer;
  * @version $Revision$
  */
 public interface NanoPicoContainer extends MutablePicoContainer, NanoContainer {
-
   MutablePicoContainer makeChildContainer(String name);
 }
