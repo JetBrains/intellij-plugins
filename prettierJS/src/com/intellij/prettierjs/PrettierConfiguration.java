@@ -4,10 +4,12 @@ package com.intellij.prettierjs;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
+import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.application.ReadAction;
@@ -15,6 +17,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -30,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -41,6 +45,7 @@ public final class PrettierConfiguration implements JSNpmLinterState {
   private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
   private static final String OLD_PACKAGE_PROPERTY = "node.js.selected.package.prettier";
   private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
+  private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
 
   public PrettierConfiguration(@NotNull Project project) {
     myProject = project;
@@ -94,7 +99,7 @@ public final class PrettierConfiguration implements JSNpmLinterState {
     String value = ObjectUtils.coalesce(PropertiesComponent.getInstance(myProject).getValue(PACKAGE_PROPERTY),
                                         PropertiesComponent.getInstance(myProject).getValue(OLD_PACKAGE_PROPERTY),
                                         "");
-    return new NodePackage(value);
+    return PKG_DESC.createPackage(value);
   }
 
   public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
@@ -127,17 +132,26 @@ public final class PrettierConfiguration implements JSNpmLinterState {
 
   @Nullable
   private NodePackage localPackageIfInDependencies() {
-    if (myProject.isDefault() || myProject.getBasePath() == null) {
+    VirtualFile projectRoot = ProjectUtil.guessProjectDir(myProject);
+    if (myProject.isDefault() || projectRoot == null) {
       return null;
     }
-    final PackageJsonData data = JSLinterUtil.getTopLevelPackageJsonData(myProject);
-    if (data != null && data.isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
-      final String basePath = FileUtil.toSystemDependentName(myProject.getBasePath());
-      return new NodePackage((basePath.endsWith(File.separator) ? basePath : (basePath + File.separator))
-                             + NodeModuleUtil.NODE_MODULES + File.separator
-                             + PrettierUtil.PACKAGE_NAME);
+    VirtualFile packageJson = JSLinterConfigFileUtil.findDistinctConfigInContentRoots(
+      myProject, Collections.singletonList(PackageJsonUtil.FILE_NAME)
+    );
+    if (packageJson == null || !PackageJsonData.getOrCreate(packageJson).isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
+      return null;
     }
-    return null;
+    YarnPnpNodePackage yarnPnpNodePackage = YarnPnpNodePackage.create(
+      myProject, packageJson, PrettierUtil.PACKAGE_NAME, true, false
+    );
+    if (yarnPnpNodePackage != null) {
+      return yarnPnpNodePackage;
+    }
+    final String basePath = FileUtil.toSystemDependentName(projectRoot.getPath());
+    return new NodePackage(StringUtil.trimEnd(basePath, File.separator) + File.separator
+                           + NodeModuleUtil.NODE_MODULES + File.separator
+                           + PrettierUtil.PACKAGE_NAME);
   }
 
   @Nullable
