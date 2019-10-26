@@ -65,7 +65,11 @@ public class PrettierCodeStyleImporter extends JSLinterCodeStyleImporter<Prettie
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
     String configFilePath = configPsi.getVirtualFile().getPath();
     String convertConfigScriptPath = getPluginDirectory(PrettierCodeStyleImporter.class, "prettierLanguageService/convert-prettier-config.js").getAbsolutePath();
-    List<String> parameters = Arrays.asList(convertConfigScriptPath, linterPackage.getSystemDependentPath(), configFilePath);
+    String absPkgPathToRequire = linterPackage.getAbsolutePackagePathToRequire(configPsi.getProject());
+    if (absPkgPathToRequire == null) {
+      throw new ExecutionException("Cannot find absolute package path to require: " + linterPackage);
+    }
+    List<String> parameters = Arrays.asList(convertConfigScriptPath, absPkgPathToRequire, configFilePath);
     String text = runToolWithArguments(configPsi, interpreter, parameters);
     if (LOG.isTraceEnabled()) {
       LOG.trace(String.format("Prettier: computed effective config for file %s:\n%s", configFilePath, text));

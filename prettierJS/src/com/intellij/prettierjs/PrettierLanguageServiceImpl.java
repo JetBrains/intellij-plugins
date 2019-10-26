@@ -1,6 +1,7 @@
 package com.intellij.prettierjs;
 
 import com.google.gson.JsonObject;
+import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
@@ -49,14 +50,13 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                                                 @NotNull String text,
                                                 @NotNull NodePackage prettierPackage,
                                                 @Nullable TextRange range) {
-    String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
       return CompletableFuture.completedFuture(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
     ReformatFileCommand command =
-      new ReformatFileCommand(filePath, prettierPackagePath, ignoreFilePath, text, range, myFlushConfigCache);
+      new ReformatFileCommand(myProject, filePath, prettierPackage, ignoreFilePath, text, range, myFlushConfigCache);
     return process.execute(command, (ignored, response) -> {
       myFlushConfigCache = false;
       return parseReformatResponse(response);
@@ -124,6 +124,12 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                              .getInterpreterRef()
                              .resolve(myProject));
     }
+
+    @NotNull
+    @Override
+    protected NodeCommandLineConfigurator.Options getNodeCommandLineConfiguratorOptions(@NotNull Project project) {
+      return NodeCommandLineConfigurator.defaultOptions(myProject);
+    }
   }
 
   private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
@@ -135,14 +141,15 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     public Integer end;
     public final boolean flushConfigCache;
 
-    ReformatFileCommand(@NotNull String filePath,
-                        @NotNull String prettierPath,
+    ReformatFileCommand(@NotNull Project project,
+                        @NotNull String filePath,
+                        @NotNull NodePackage prettierPackage,
                         @Nullable String ignoreFilePath,
                         @NotNull String content,
                         @Nullable TextRange range,
                         boolean flushConfigCache) {
       this.path = LocalFilePath.create(filePath);
-      this.prettierPath = LocalFilePath.create(prettierPath);
+      this.prettierPath = createPackagePath(project, prettierPackage);
       this.ignoreFilePath = ignoreFilePath;
       this.content = content;
       this.flushConfigCache = flushConfigCache;
@@ -150,6 +157,16 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         start = range.getStartOffset();
         end = range.getEndOffset();
       }
+    }
+
+    @NotNull
+    private static LocalFilePath createPackagePath(@NotNull Project project, @NotNull NodePackage prettierPackage) {
+      String packagePathToRequire = prettierPackage.getAbsolutePackagePathToRequire(project);
+      if (packagePathToRequire == null) {
+        LOGGER.warn("Cannot find absolute package path to require. " + prettierPackage + " of " + prettierPackage.getClass());
+        packagePathToRequire = prettierPackage.getName();
+      }
+      return LocalFilePath.create(packagePathToRequire);
     }
 
     @NotNull
