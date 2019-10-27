@@ -33,6 +33,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestBundle;
@@ -68,7 +69,7 @@ public class ExportPackageParser extends BasePackageParser {
     else if (parent instanceof Attribute) {
       Attribute attribute = (Attribute)parent;
       if (Constants.USES_DIRECTIVE.equals(attribute.getName())) {
-        List<PsiReference> references = ContainerUtil.newSmartList();
+        List<PsiReference> references = new SmartList<>();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TOKEN_FILTER)) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;

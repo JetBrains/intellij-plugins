@@ -35,6 +35,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
@@ -154,7 +155,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
         Set<String> projectRepositoryUrls =
           ContainerUtil.map2Set(model.getRepositories().getRepositories(), repository -> repository.getUrl().getStringValue());
 
-        List<MavenRepository> newRepositories = ContainerUtil.newSmartList(result.getBundleRepository().getMavenRepositories());
+        List<MavenRepository> newRepositories = new SmartList<>(result.getBundleRepository().getMavenRepositories());
 
         for (Iterator<MavenRepository> i = newRepositories.iterator(); i.hasNext(); ) {
           MavenRepository repository = i.next();

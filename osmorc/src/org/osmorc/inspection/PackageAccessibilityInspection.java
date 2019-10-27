@@ -38,6 +38,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +81,7 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
       return null;
     }
 
-    final List<ProblemDescriptor> problems = ContainerUtil.newSmartList();
+    final List<ProblemDescriptor> problems = new SmartList<>();
     DependenciesBuilder.analyzeFileDependencies(file, new DependenciesBuilder.DependencyProcessor() {
       @Override
       public void process(PsiElement place, PsiElement dependency) {
