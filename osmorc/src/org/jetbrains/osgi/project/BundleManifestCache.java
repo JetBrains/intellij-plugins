@@ -22,6 +22,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +94,7 @@ public class BundleManifestCache {
     CachedValue<BundleManifest> value = myCache.computeIfAbsent(facet, k -> CachedValuesManager.getManager(myProject).createCachedValue(() -> {
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       BundleManifest manifest = null;
-      List<Object> dependencies = ContainerUtil.newSmartList(configuration);
+      List<Object> dependencies = new SmartList<>(configuration);
 
       switch (configuration.getManifestGenerationMode()) {
         case Manually: {

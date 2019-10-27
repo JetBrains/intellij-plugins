@@ -41,6 +41,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Function;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
@@ -139,7 +140,7 @@ public final class OsmorcProjectComponent {
   private class MyModuleRenameHandler implements ModuleListener {
     @Override
     public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
-      final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
+      final List<Pair<SelectedBundle, String>> pairs = new SmartList<>();
       OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
       for (Module module : modules) {
         String oldName = oldNameProvider.fun(module);
