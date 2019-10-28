@@ -12,8 +12,14 @@ internal class VueWebTypesDirective(attribute: Attribute_,
                                     context: VueWebTypesEntitiesContainer.WebTypesContext)
   : VueWebTypesSourceEntity(attribute, context), VueDirective {
 
+  init {
+    assert(attribute.name!!.startsWith("v-")) {
+      attribute.name!!
+    }
+  }
+
   override val parents: List<VueEntitiesContainer> = listOf(context.parent)
-  override val defaultName: String? = attribute.name
+  override val defaultName: String? = attribute.name!!.substring(2)
   override val acceptsValue: Boolean = (attribute.value as? Map<*, *>)?.get("kind") != "no-value"
   override val acceptsNoValue: Boolean = !acceptsValue || (attribute.value as? Map<*, *>)?.get("required") != true
   override val jsType: JSType? = context.getType(attribute.value)

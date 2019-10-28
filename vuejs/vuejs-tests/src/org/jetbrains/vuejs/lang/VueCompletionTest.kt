@@ -1105,6 +1105,15 @@ $script""")
     checkJSStringCompletion(myFixture.lookupElements!!, true)
   }
 
+  fun testTypescriptVForCompletionWebTypes() {
+    myFixture.copyDirectoryToProject("../types", ".")
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByText("TypescriptVForCompletionWebTypes.vue",
+                              "<template><div v-for=\"fooBar1 in goodTypes\">{{<caret>}}</li></template>")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "fooBar1")
+  }
+
   fun testLocalComponentsExtendsCompletion() {
     createLocalComponentsExtendsData(myFixture, false)
     myFixture.completeBasic()
