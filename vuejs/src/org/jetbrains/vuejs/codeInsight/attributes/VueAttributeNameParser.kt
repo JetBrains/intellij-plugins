@@ -5,7 +5,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.containers.MultiMap
 import com.intellij.xml.util.HtmlUtil.*
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.model.DEPRECATED_SLOT_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_NAME_ATTRIBUTE
 import org.jetbrains.vuejs.model.SLOT_TAG_NAME
@@ -26,26 +26,26 @@ class VueAttributeNameParser private constructor() {
       val kind: VueDirectiveKind
       var paramsPos: Int
       var isShorthand = false
-      if (attributeName.startsWith('@')) {
+      if (attributeName.startsWith(ATTR_EVENT_SHORTHAND)) {
         name = "on"
         kind = VueDirectiveKind.ON
         paramsPos = 0
         isShorthand = true
       }
-      else if (attributeName.startsWith(':')) {
+      else if (attributeName.startsWith(ATTR_ARGUMENT_PREFIX)) {
         name = "bind"
         kind = VueDirectiveKind.BIND
         paramsPos = 0
         isShorthand = true
       }
-      else if (attributeName.startsWith('#')) {
+      else if (attributeName.startsWith(ATTR_SLOT_SHORTHAND)) {
         name = "slot"
         kind = VueDirectiveKind.SLOT
         paramsPos = 0
         isShorthand = true
       }
-      else if (attributeName.startsWith("v-") && attributeName.length > 2) {
-        var nameEnd = attributeName.indexOfFirst { it == '.' || it == ':' }
+      else if (attributeName.startsWith(ATTR_DIRECTIVE_PREFIX) && attributeName.length > 2) {
+        var nameEnd = attributeName.indexOfFirst { it == ATTR_MODIFIER_PREFIX || it == ATTR_ARGUMENT_PREFIX }
         if (nameEnd < 0) {
           nameEnd = attributeName.length
         }
@@ -54,7 +54,7 @@ class VueAttributeNameParser private constructor() {
         paramsPos = nameEnd
       }
       else {
-        var nameEnd = attributeName.indexOf('.')
+        var nameEnd = attributeName.indexOf(ATTR_MODIFIER_PREFIX)
         if (nameEnd < 0) {
           nameEnd = attributeName.length
         }
@@ -63,15 +63,15 @@ class VueAttributeNameParser private constructor() {
         return VueAttributeInfo(name, attributeKind, parseModifiers(attributeName, nameEnd))
       }
       if (paramsPos >= attributeName.length
-          || (attributeName[paramsPos] != '@'
-              && attributeName[paramsPos] != ':'
-              && attributeName[paramsPos] != '#'
-              && attributeName[paramsPos] != '.')) {
+          || (attributeName[paramsPos] != ATTR_EVENT_SHORTHAND
+              && attributeName[paramsPos] != ATTR_ARGUMENT_PREFIX
+              && attributeName[paramsPos] != ATTR_SLOT_SHORTHAND
+              && attributeName[paramsPos] != ATTR_MODIFIER_PREFIX)) {
         return VueDirectiveInfo(name, kind, isShorthand = isShorthand)
       }
 
       val arguments: String?
-      if (attributeName[paramsPos] == '.') {
+      if (attributeName[paramsPos] == ATTR_MODIFIER_PREFIX) {
         return VueDirectiveInfo(name, kind, null, isShorthand, parseModifiers(attributeName, paramsPos))
       }
       else {
@@ -83,7 +83,7 @@ class VueAttributeNameParser private constructor() {
         paramsPos = lastBracket + 1
       }
       else {
-        val firstDot = attributeName.indexOf('.', paramsPos)
+        val firstDot = attributeName.indexOf(ATTR_MODIFIER_PREFIX, paramsPos)
         if (firstDot > 0) {
           arguments = attributeName.substring(paramsPos, firstDot)
           paramsPos = firstDot
@@ -97,14 +97,14 @@ class VueAttributeNameParser private constructor() {
     }
 
     private fun parseModifiers(modifiers: String, startPos: Int): Set<String> {
-      if (startPos >= modifiers.length || modifiers[startPos] != '.') {
+      if (startPos >= modifiers.length || modifiers[startPos] != ATTR_MODIFIER_PREFIX) {
         return emptySet()
       }
       val result = mutableSetOf<String>()
       var currentIndex = startPos
       var prevDot = startPos
       while (++currentIndex < modifiers.length) {
-        if (modifiers[currentIndex] == '.') {
+        if (modifiers[currentIndex] == ATTR_MODIFIER_PREFIX) {
           if (prevDot < currentIndex) {
             result.add(modifiers.substring(prevDot + 1, currentIndex))
           }

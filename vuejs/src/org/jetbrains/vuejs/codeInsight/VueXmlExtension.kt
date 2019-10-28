@@ -23,8 +23,8 @@ class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
-    if (namespacePrefix != null && (namespacePrefix.startsWith("v-")
-                                    || namespacePrefix.startsWith("@"))) {
+    if (namespacePrefix != null && (namespacePrefix.startsWith(ATTR_DIRECTIVE_PREFIX)
+                                    || namespacePrefix.startsWith(ATTR_EVENT_SHORTHAND))) {
       findAttributeSchema(context, namespacePrefix)
         ?.let { return it }
     }

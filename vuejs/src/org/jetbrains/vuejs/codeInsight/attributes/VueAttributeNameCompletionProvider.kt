@@ -121,7 +121,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     }
 
     for (kind in listOf(ON, BIND, SLOT)) {
-      val attrName = "v-${kind.directiveName}:"
+      val attrName = ATTR_DIRECTIVE_PREFIX + kind.directiveName + ATTR_ARGUMENT_PREFIX
       if (providedAttributes.add(attrName)) {
         result.addElement(lookupElement(attrName, null, priority = LOW, insertHandler = argumentsInsertHandler))
       }
@@ -141,9 +141,10 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       .forEach {
         if (providedAttributes.add(it.name)) {
           val directive = it.getSources().getOrNull(0) as? VueDirective
-          if (directive?.argument != null && providedAttributes.add(it.name + ":") && proposeWithArg) {
+          if (directive?.argument != null && providedAttributes.add(it.name + ATTR_ARGUMENT_PREFIX) && proposeWithArg) {
             val priority = if (directive.argument?.required != true) LOW else it.priority
-            result.addElement(lookupElement(it.name + ":", it, priority = priority, insertHandler = argumentsInsertHandler))
+            result.addElement(lookupElement(it.name + ATTR_ARGUMENT_PREFIX, it, priority = priority,
+                                            insertHandler = argumentsInsertHandler))
           }
           if (directive?.argument?.required != true) {
             var insertHandler = XmlAttributeInsertHandler.INSTANCE
@@ -172,7 +173,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
   private fun addModifierCompletions(result: CompletionResultSet, directive: VueDirective?, attrInfo: VueDirectiveInfo) {
     val prefix = result.prefixMatcher.prefix
-    val lastDotIndex = prefix.lastIndexOf('.')
+    val lastDotIndex = prefix.lastIndexOf(ATTR_MODIFIER_PREFIX)
     if (lastDotIndex < 0) return
 
     val newResult = result.withPrefixMatcher(prefix.substring(lastDotIndex + 1))
@@ -245,7 +246,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val originalPrefix = result.prefixMatcher.prefix
     val newResult = if (originalPrefix == "v-on:") result.withPrefixMatcher("") else result
     val tag = attr.parent
-    val prefix = if (originalPrefix.startsWith("@")) "@" else ""
+    val prefix = if (originalPrefix.startsWith(ATTR_EVENT_SHORTHAND)) ATTR_EVENT_SHORTHAND.toString() else ""
 
     val events = mutableSetOf<String>()
     (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
@@ -267,7 +268,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
   private fun addBindCompletions(attr: XmlAttribute, result: CompletionResultSet) {
     val prefix = result.prefixMatcher.prefix
     val newResult = if (prefix == "v-bind:") result.withPrefixMatcher("") else result
-    val lookupItemPrefix = if (prefix.startsWith(":")) ":" else ""
+    val lookupItemPrefix = if (prefix.startsWith(ATTR_ARGUMENT_PREFIX)) ATTR_ARGUMENT_PREFIX.toString() else ""
 
     val bindings = mutableSetOf<String>()
     (attr.parent?.descriptor as? VueElementDescriptor)
