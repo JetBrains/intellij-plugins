@@ -18,7 +18,7 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 /**
  * @author yole
  */
-public class CucumberStepInspection extends GherkinInspection implements UnfairLocalInspectionTool {
+public class CucumberStepInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
     return true;
