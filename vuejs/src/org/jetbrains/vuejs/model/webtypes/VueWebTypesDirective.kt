@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.lang.javascript.psi.JSType
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.model.VueDirective
 import org.jetbrains.vuejs.model.VueDirectiveArgument
 import org.jetbrains.vuejs.model.VueDirectiveModifier
@@ -13,7 +14,7 @@ internal class VueWebTypesDirective(attribute: Attribute_,
   : VueWebTypesSourceEntity(attribute, context), VueDirective {
 
   init {
-    assert(attribute.name!!.startsWith("v-")) {
+    assert(attribute.name!!.startsWith(ATTR_DIRECTIVE_PREFIX)) {
       attribute.name!!
     }
   }

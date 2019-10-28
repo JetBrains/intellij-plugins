@@ -7,6 +7,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.LOW
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.NONE
@@ -36,7 +37,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     VueModelManager.findEnclosingContainer(context)?.acceptEntities(object : VueModelVisitor() {
       override fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
         if (contributedDirectives.add(name)) {
-          result.add(VueAttributeDescriptor(context, "v-" + fromAsset(name), directive.source,
+          result.add(VueAttributeDescriptor(context, ATTR_DIRECTIVE_PREFIX + fromAsset(name), directive.source,
                                             listOf(directive), directive.acceptsNoValue, directive.acceptsValue,
                                             AttributePriority.of(proximity)))
         }
@@ -51,7 +52,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
         && it.directiveName != null
         && contributedDirectives.add(it.directiveName!!)
       }
-      .map { VueAttributeDescriptor(context, "v-" + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
+      .map { VueAttributeDescriptor(context, ATTR_DIRECTIVE_PREFIX + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
       .forEach { result.add(it) }
 
     return result.toTypedArray()

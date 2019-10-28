@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Html
@@ -68,7 +69,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
     directives = webTypes.contributions
                    ?.html
                    ?.attributes
-                   ?.filter { it.name?.startsWith("v-") ?: false }
+                   ?.filter { it.name?.startsWith(ATTR_DIRECTIVE_PREFIX) ?: false }
                    ?.associateBy({ it.name!!.substring(2) }, { VueWebTypesDirective(it, support) })
                  ?: Collections.emptyMap()
     filters = webTypes.contributions
