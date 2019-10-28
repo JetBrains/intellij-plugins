@@ -98,9 +98,9 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                  }
 
                  info.directiveKind == VueDirectiveKind.CUSTOM ->
-                   return findAttributeDescriptor(info.name, context)
+                   return findAttributeDescriptor(attributeName, info.name, context)
 
-                 else -> findAttributeDescriptor(info.name, context)
+                 else -> findAttributeDescriptor(attributeName, info.name, context)
                }
                ?: return VueAttributeDescriptor(context, attributeName, acceptsNoValue = !info.requiresValue, priority = LOW)
       }
@@ -109,7 +109,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   companion object {
-    internal fun findAttributeDescriptor(directiveName: String, context: XmlTag): VueAttributeDescriptor? {
+    internal fun findAttributeDescriptor(attributeName: String, directiveName: String, context: XmlTag): VueAttributeDescriptor? {
       val searchName = fromAsset(directiveName)
       val directives = mutableListOf<VueDirective>()
       var minProximity = VueModelVisitor.Proximity.OUT_OF_SCOPE
@@ -123,7 +123,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       }, VueModelVisitor.Proximity.GLOBAL)
 
       return directives.firstOrNull()?.let {
-        VueAttributeDescriptor(context, "v-" + fromAsset(it.defaultName ?: searchName),
+        VueAttributeDescriptor(context, attributeName,
                                it.source, listOf(it), it.acceptsNoValue, it.acceptsValue,
                                AttributePriority.of(minProximity))
       }

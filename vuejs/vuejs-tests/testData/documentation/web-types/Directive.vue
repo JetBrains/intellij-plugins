@@ -1,3 +1,3 @@
 <template>
-  <div v-coo<caret>l=""
+  <div v-cool<caret>:foo.foo.ba456=""
 </template>
