@@ -170,7 +170,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   private static void findSourceRoots(final VirtualFile dir, final SdkModificator sdkModificator) {
-    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor(VirtualFileVisitor.SKIP_ROOT) {
+    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor<Void>(VirtualFileVisitor.SKIP_ROOT) {
       @Override
       public boolean visitFile(@NotNull VirtualFile child) {
         if (child.isDirectory() && child.getName().equals("src")) {
