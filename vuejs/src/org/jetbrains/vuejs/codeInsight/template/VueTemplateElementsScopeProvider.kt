@@ -77,7 +77,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
   }
 
-  private open class Angular2BaseScopeBuilder internal constructor(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
+  private open class VueBaseScopeBuilder internal constructor(private val myTemplateFile: PsiFile) : XmlRecursiveElementVisitor() {
     private val scopes = Stack<VueTemplateElementScope>()
 
     val topLevelScope: VueTemplateElementScope
@@ -108,7 +108,7 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
     }
   }
 
-  private class VueTemplateScopeBuilder internal constructor(templateFile: PsiFile) : Angular2BaseScopeBuilder(templateFile) {
+  private class VueTemplateScopeBuilder internal constructor(templateFile: PsiFile) : VueBaseScopeBuilder(templateFile) {
 
     override fun visitXmlTag(tag: XmlTag) {
       val tagHasVariables = tag.attributes
