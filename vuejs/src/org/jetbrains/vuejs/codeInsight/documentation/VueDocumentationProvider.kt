@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_MODIFIER_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -36,7 +37,7 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
   }
 
   override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
-    return getVueDocumentedItem(contextElement, editor.caretModel.primaryCaret.offset)
+    return getVueDocumentedItem(contextElement, editor.caretModel.offset)
       ?.let { PsiWrappedVueDocumentedItem(it.first, it.second) }
   }
 
@@ -129,7 +130,7 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
         && offset <= attrName.length
         && info is VueAttributeNameParser.VueDirectiveInfo
         && source is VueDirective) {
-      val argumentOffset = offset - if (info.isShorthand) 1 else (2 + info.name.length + 1)
+      val argumentOffset = offset - if (info.isShorthand) 1 else (ATTR_DIRECTIVE_PREFIX.length + info.name.length + 1)
       if (argumentOffset >= 0) {
         if (info.arguments != null && argumentOffset <= info.arguments.length) {
           return source.argument ?: source
