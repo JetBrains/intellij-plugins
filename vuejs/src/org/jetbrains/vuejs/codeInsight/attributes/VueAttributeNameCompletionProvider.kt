@@ -13,6 +13,7 @@ import com.intellij.util.ProcessingContext
 import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.util.HtmlUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor.AttributePriority.*
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveInfo
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueDirectiveKind.*
@@ -84,7 +85,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     val providedAttributes = addTagDescriptorCompletions(attr, attrInfo, parameters, result, argumentsInsertHandler)
     if (attrInfo is VueDirectiveInfo) {
       val directive: VueDirective? = when (attrInfo.directiveKind) {
-        ON, BIND, SLOT -> findAttributeDescriptor(attrInfo.name, attr.parent)
+        ON, BIND, SLOT -> findAttributeDescriptor(ATTR_DIRECTIVE_PREFIX + fromAsset(attrInfo.name), attrInfo.name, attr.parent)
         else -> (attr.descriptor as? VueAttributeDescriptor)
       }?.getSources()?.getOrNull(0) as? VueDirective
 
@@ -110,7 +111,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
             val argumentPrefix = getPatternCompletablePrefix(argument?.pattern)
             if (attrInfo.arguments != null && argumentPrefix.isNotBlank()) {
               val prefix = result.prefixMatcher.prefix
-              val newResult = if (prefix == "v-" + attrInfo.name + ":") result.withPrefixMatcher("") else result
+              val newResult = if (prefix == ATTR_DIRECTIVE_PREFIX + attrInfo.name + ATTR_ARGUMENT_PREFIX) result.withPrefixMatcher("") else result
               newResult.addElement(lookupElement(argumentPrefix, argument,
                                                  typeText = argument!!.pattern?.toString(), insertHandler = null))
             }

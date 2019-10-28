@@ -39,6 +39,11 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import java.util.concurrent.ConcurrentHashMap
 
 const val LANG_ATTRIBUTE_NAME = "lang"
+const val ATTR_DIRECTIVE_PREFIX = "v-"
+const val ATTR_EVENT_SHORTHAND = '@'
+const val ATTR_SLOT_SHORTHAND = '#'
+const val ATTR_ARGUMENT_PREFIX = ':'
+const val ATTR_MODIFIER_PREFIX = '.'
 
 fun fromAsset(text: String): String {
   val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
