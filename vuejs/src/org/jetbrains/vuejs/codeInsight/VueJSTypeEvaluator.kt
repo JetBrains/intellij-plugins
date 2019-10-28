@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSVForVariable
 
@@ -45,7 +46,14 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
             val type = JSTypeUtils.getIterableComponentType(collectionType)
             if (type != null) {
               addType(type, expression)
-            } else {
+            }
+            else if ((collectionType.isTypeScript || collectionType.sourceElement?.language == VueJSLanguage.INSTANCE)
+                     && collectionType is JSRecordType) {
+              addType(TypeScriptIndexedAccessJSTypeImpl(collectionType,
+                                                        TypeScriptTypeOperatorJSTypeImpl(collectionType, collectionType.source),
+                                                        collectionType.source), expression)
+            }
+            else {
               addVForVarType(
                 collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
             }
@@ -66,7 +74,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
           val recordType = collectionType.asRecordType()
           if (recordType.findPropertySignature(JSCommonTypeNames.ITERATOR_SYMBOL) != null) {
             addVForVarType(collectionExpr, ::JSNumberType)
-          } else {
+          }
+          else {
             val indexerTypes = JSRecordType.IndexSignatureKind.values()
               .asSequence()
               .mapNotNull { recordType.findIndexer(it) }
@@ -75,6 +84,10 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
 
             if (indexerTypes.isNotEmpty()) {
               addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
+            }
+            else if ((collectionType.isTypeScript || collectionType.sourceElement?.language == VueJSLanguage.INSTANCE)
+                     && collectionType is JSRecordType) {
+              addType(TypeScriptTypeOperatorJSTypeImpl(collectionType, collectionType.source), collectionExpr)
             }
             else {
               addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)

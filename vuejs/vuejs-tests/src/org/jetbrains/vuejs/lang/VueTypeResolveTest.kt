@@ -25,10 +25,11 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     testVFor(Triple("el", "string", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "boolean,*", "string"),
-             Triple("objNum", "string,*", "number"),
-             Triple("objMix", "Foo2,*", "string|number"),
+             Triple("obj", "boolean", "string"),
+             Triple("objNum", "string,string|string", "number"),
+             Triple("objMix", "Foo2,string|boolean", "string|number"),
              Triple("objIter", "boolean", "number"),
+             Triple("objInit", "number", "\"a\"|\"b\"|\"c\"|\"d\""),
              Triple("state", "ShopState,Foo2", "number"))
   }
 
