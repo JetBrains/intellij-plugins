@@ -269,6 +269,7 @@ public class FlexMoveTest extends JSMoveTestBase {
             return super.getTargetName();
           }
 
+          @NotNull
           @Override
           public TargetDirectoryWrapper getTargetDirectory(final PsiDirectory dir) {
             if (justRename) {
