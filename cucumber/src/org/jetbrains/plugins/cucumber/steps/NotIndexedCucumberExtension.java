@@ -27,7 +27,6 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   @Override
   public Object getDataObject(@NotNull final Project project) {
     final DataObject result = new DataObject();
-    result.myUpdateQueue.setPassThrough(false);
 
     PsiManager.getInstance(project).addPsiTreeChangeListener(result.myCucumberPsiTreeListener);
 
