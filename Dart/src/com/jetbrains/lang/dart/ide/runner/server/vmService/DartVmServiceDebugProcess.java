@@ -15,6 +15,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,6 +43,7 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceEv
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceStackFrame;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.DartVmServiceSuspendContext;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartDaemonParserUtil;
+import com.jetbrains.lang.dart.util.DartBazelFileUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import gnu.trove.THashMap;
@@ -85,6 +87,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   private final int myTimeout;
   @Nullable private final VirtualFile myCurrentWorkingDirectory;
   @Nullable protected String myRemoteProjectRootUri;
+  @Nullable private String myBazelWorkspacePath;
 
   @NotNull private final OpenDartObservatoryUrlAction myOpenObservatoryAction =
     new OpenDartObservatoryUrlAction(null, () -> myVmConnected && !getSession().isStopped());
@@ -505,22 +508,24 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       return result;
     }
 
+    final String filePath = file.getPath();
+
     // file:
     if (uriByIde.startsWith(DartUrlResolver.FILE_PREFIX)) {
       result.add(threeSlashize(uriByIde));
     }
     else {
       result.add(uriByIde);
-      result.add(threeSlashize(new File(file.getPath()).toURI().toString()));
+      result.add(threeSlashize(new File(filePath).toURI().toString()));
     }
 
     // straight path - used by some VM embedders
-    result.add(file.getPath());
+    result.add(filePath);
 
     // package: (if applicable)
     if (myDASExecutionContextId != null) {
       final String uriByServer =
-        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, file.getPath(), null);
+        DartAnalysisServerService.getInstance(getSession().getProject()).execution_mapUri(myDASExecutionContextId, filePath, null);
       if (uriByServer != null) {
         result.add(uriByServer);
       }
@@ -531,7 +536,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       final VirtualFile pubspec = myDartUrlResolver.getPubspecYamlFile();
       if (pubspec != null) {
         final String projectPath = pubspec.getParent().getPath();
-        final String filePath = file.getPath();
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
@@ -539,13 +543,29 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       else if (myCurrentWorkingDirectory != null) {
         // Handle projects with no pubspecs.
         final String projectPath = myCurrentWorkingDirectory.getPath();
-        final String filePath = file.getPath();
         if (filePath.startsWith(projectPath)) {
           result.add(myRemoteProjectRootUri + filePath.substring(projectPath.length()));
         }
       }
     }
 
+    // Bazel / "dart.projects.without.pubspec" case
+    if (Registry.is("dart.projects.without.pubspec", false)) {
+      if (myBazelWorkspacePath == null || !filePath.startsWith(myBazelWorkspacePath)) {
+        final VirtualFile workspaceVFile = DartBazelFileUtil.getBazelWorkspace(file);
+        if (workspaceVFile != null) {
+          myBazelWorkspacePath = workspaceVFile.getPath();
+        }
+      }
+      if (myBazelWorkspacePath != null) {
+        final int libIndex = filePath.lastIndexOf("lib/");
+        if (libIndex != -1) {
+          result.add(DartUrlResolver.PACKAGE_PREFIX +
+                     filePath.substring(myBazelWorkspacePath.length() + 1, libIndex - 1).replace("/", ".") +
+                     "/" + filePath.substring(libIndex + "lib/".length()));
+        }
+      }
+    }
     return result;
   }
 
@@ -575,6 +595,16 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         return LocalFileSystem.getInstance().findFileByPath(myCurrentWorkingDirectory.getPath() + relativeFromCWD);
       }
 
+      if (Registry.is("dart.projects.without.pubspec", false) &&
+          myBazelWorkspacePath != null &&
+          uri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+        final int slashIndex = uri.indexOf('/');
+        if (slashIndex != -1) {
+          final String packageName = uri.substring(DartUrlResolver.PACKAGE_PREFIX.length(), slashIndex).replace('.', '/');
+          return LocalFileSystem.getInstance()
+            .findFileByPath(myBazelWorkspacePath + "/" + packageName + "/lib" + uri.substring(slashIndex));
+        }
+      }
       return myDartUrlResolver.findFileByDartUrl(uri);
     });
 
@@ -609,6 +639,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
     final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
     if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
+
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);
   }
 
