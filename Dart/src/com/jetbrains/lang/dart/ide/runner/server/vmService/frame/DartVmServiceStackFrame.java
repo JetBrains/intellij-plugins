@@ -163,12 +163,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
 
       @Override
       public void received(Sentinel sentinel) {
-        node.setErrorMessage(sentinel.getValueAsString());
+        addVars(node, vars);
       }
 
       @Override
       public void onError(RPCError error) {
-        node.setErrorMessage(error.getMessage());
+        addVars(node, vars);
       }
     });
   }
