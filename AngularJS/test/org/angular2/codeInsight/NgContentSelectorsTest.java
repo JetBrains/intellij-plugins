@@ -6,6 +6,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.html.HtmlTag;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.Arrays;
@@ -22,7 +23,8 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testHighlighting() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                HtmlUnknownTagInspection.class);
+                                HtmlUnknownTagInspection.class,
+                                AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("highlighting.html", "component.ts", "package.json");
     myFixture.checkHighlighting();
   }
