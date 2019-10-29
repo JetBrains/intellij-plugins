@@ -24,8 +24,9 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
   abstract val tsLintConfigurations: List<AngularLintConfiguration>
 
   internal open fun resolveFile(filePath: String?): VirtualFile? {
-    return filePath?.let {
-      rootDir?.findFileByRelativePath(it) ?: angularCliFolder.findFileByRelativePath(it)
+    return filePath?.let { path ->
+      rootDir?.takeIf { it.isValid }?.findFileByRelativePath(path)
+      ?: angularCliFolder.takeIf { it.isValid }?.findFileByRelativePath(path)
     }
   }
 
