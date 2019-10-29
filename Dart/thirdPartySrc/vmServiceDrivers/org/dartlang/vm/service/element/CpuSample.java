@@ -16,6 +16,8 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**
@@ -61,6 +63,7 @@ public class CpuSample extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public boolean getTruncated() {
     return getAsBoolean("truncated");
   }
@@ -71,6 +74,7 @@ public class CpuSample extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public String getUserTag() {
     return getAsString("userTag");
   }
@@ -81,6 +85,7 @@ public class CpuSample extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public String getVmTag() {
     return getAsString("vmTag");
   }

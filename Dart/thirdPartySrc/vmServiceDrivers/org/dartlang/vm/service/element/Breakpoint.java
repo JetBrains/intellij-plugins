@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Breakpoint} describes a debugger breakpoint.
@@ -40,6 +41,7 @@ public class Breakpoint extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public boolean getIsSyntheticAsyncContinuation() {
     return getAsBoolean("isSyntheticAsyncContinuation");
   }

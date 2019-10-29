@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * See getInboundReferences.
@@ -32,6 +33,7 @@ public class InboundReference extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public FieldRef getParentField() {
     JsonObject obj = (JsonObject) json.get("parentField");
     if (obj == null) return null;
@@ -48,6 +50,7 @@ public class InboundReference extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getParentListIndex() {
     return getAsInt("parentListIndex");
   }

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.google.gson.JsonElement;
@@ -20,9 +21,9 @@ class DartStaticFieldsGroup extends XValueGroup {
   @NotNull private final SmartList<? extends FieldRef> myFieldRefs;
 
   DartStaticFieldsGroup(@NotNull final DartVmServiceDebugProcess debugProcess,
-                               @NotNull final String isolateId,
-                               @NotNull final String className,
-                               @NotNull final SmartList<? extends FieldRef> fieldsRefs) {
+                        @NotNull final String isolateId,
+                        @NotNull final String className,
+                        @NotNull final SmartList<? extends FieldRef> fieldsRefs) {
     super("static");
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
@@ -57,23 +58,25 @@ class DartStaticFieldsGroup extends XValueGroup {
         public void received(Obj field) {
           final InstanceRef instanceRef = ((Field)field).getStaticValue();
           // static field may be not initialized yet, in this case this instanceRef is in fact a Sentinel
-          if ("@Instance".equals(instanceRef.getType())) {
-            list.add(new DartVmServiceValue(myDebugProcess, myIsolateId, ((Field)field).getName(), instanceRef, null, fieldRef, false));
-          }
-          else if ("Sentinel".equals(instanceRef.getType())) {
-            list.add(new XNamedValue(((Field)field).getName()) {
-              @Override
-              public void computeSourcePosition(@NotNull XNavigatable navigatable) {
-                DartVmServiceValue.doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, fieldRef);
-              }
+          if (instanceRef != null) {
+            if ("@Instance".equals(instanceRef.getType())) {
+              list.add(new DartVmServiceValue(myDebugProcess, myIsolateId, ((Field)field).getName(), instanceRef, null, fieldRef, false));
+            }
+            else if ("Sentinel".equals(instanceRef.getType())) {
+              list.add(new XNamedValue(((Field)field).getName()) {
+                @Override
+                public void computeSourcePosition(@NotNull XNavigatable navigatable) {
+                  DartVmServiceValue.doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, fieldRef);
+                }
 
-              @Override
-              public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
-                final JsonElement valueAsString = instanceRef.getJson().get("valueAsString");
-                final String value = valueAsString == null ? "not initialized" : valueAsString.getAsString();
-                node.setPresentation(AllIcons.Nodes.Field, null, value, false);
-              }
-            });
+                @Override
+                public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
+                  final JsonElement valueAsString = instanceRef.getJson().get("valueAsString");
+                  final String value = valueAsString == null ? "not initialized" : valueAsString.getAsString();
+                  node.setPresentation(AllIcons.Nodes.Field, null, value, false);
+                }
+              });
+            }
           }
 
           if (counter.decrementAndGet() == 0) {

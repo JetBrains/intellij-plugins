@@ -18,6 +18,8 @@ package org.dartlang.vm.service.element;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**
@@ -47,6 +49,7 @@ public class Isolate extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ErrorObj getError() {
     JsonObject obj = (JsonObject) json.get("error");
     if (obj == null) return null;
@@ -75,6 +78,7 @@ public class Isolate extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public List<String> getExtensionRPCs() {
     return json.get("extensionRPCs") == null ? null : getListString("extensionRPCs");
   }
@@ -143,6 +147,7 @@ public class Isolate extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public LibraryRef getRootLib() {
     JsonObject obj = (JsonObject) json.get("rootLib");
     if (obj == null) return null;

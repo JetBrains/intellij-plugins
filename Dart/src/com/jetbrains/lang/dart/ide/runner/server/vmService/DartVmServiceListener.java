@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,6 +22,8 @@ import org.dartlang.vm.service.VmServiceListener;
 import org.dartlang.vm.service.element.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class DartVmServiceListener implements VmServiceListener {
   private static final Logger LOG = Logger.getInstance(DartVmServiceListener.class.getName());
@@ -50,7 +53,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case BreakpointRemoved:
         break;
       case BreakpointResolved:
-        myBreakpointHandler.breakpointResolved(event.getBreakpoint());
+        myBreakpointHandler.breakpointResolved(Objects.requireNonNull(event.getBreakpoint()));
         break;
       case Extension:
         break;
@@ -59,7 +62,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case Inspect:
         break;
       case IsolateExit:
-        myDebugProcess.isolateExit(event.getIsolate());
+        myDebugProcess.isolateExit(Objects.requireNonNull(event.getIsolate()));
         break;
       case IsolateReload:
         break;
@@ -69,12 +72,14 @@ public class DartVmServiceListener implements VmServiceListener {
         break;
       case IsolateUpdate:
         break;
+      case Logging:
+        break;
       case None:
         break;
       case PauseBreakpoint:
       case PauseException:
       case PauseInterrupted:
-        myDebugProcess.isolateSuspended(event.getIsolate());
+        myDebugProcess.isolateSuspended(Objects.requireNonNull(event.getIsolate()));
 
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
@@ -85,23 +90,25 @@ public class DartVmServiceListener implements VmServiceListener {
       case PausePostRequest:
         // We get this event after an isolate reload call, when pause after reload has been requested.
         // This adds the "supports.pausePostRequest" capability.
-        myDebugProcess.getVmServiceWrapper().restoreBreakpointsForIsolate(event.getIsolate().getId(),
+        myDebugProcess.getVmServiceWrapper().restoreBreakpointsForIsolate(Objects.requireNonNull(event.getIsolate()).getId(),
                                                                           () -> myDebugProcess.getVmServiceWrapper()
                                                                             .resumeIsolate(event.getIsolate().getId(), null));
         break;
       case PauseExit:
         break;
       case PauseStart:
-        myDebugProcess.getVmServiceWrapper().handleIsolate(event.getIsolate(), true);
+        myDebugProcess.getVmServiceWrapper().handleIsolate(Objects.requireNonNull(event.getIsolate()), true);
         break;
       case Resume:
-        myDebugProcess.isolateResumed(event.getIsolate());
+        myDebugProcess.isolateResumed(Objects.requireNonNull(event.getIsolate()));
         break;
       case ServiceExtensionAdded:
         break;
       case ServiceRegistered:
         break;
       case ServiceUnregistered:
+        break;
+      case VMFlagUpdate:
         break;
       case VMUpdate:
         break;
@@ -241,7 +248,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case Float64x2:
       case Int32x4:
       case StackTrace:
-        return instanceRef.getValueAsString();
+        return Objects.requireNonNull(instanceRef.getValueAsString());
       default:
         return "Instance of " + instanceRef.getClassRef().getName();
     }

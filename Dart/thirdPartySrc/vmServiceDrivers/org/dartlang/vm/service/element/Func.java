@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Func} represents a Dart language function.
@@ -32,6 +33,7 @@ public class Func extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public CodeRef getCode() {
     JsonObject obj = (JsonObject) json.get("code");
     if (obj == null) return null;
@@ -48,6 +50,7 @@ public class Func extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceLocation getLocation() {
     JsonObject obj = (JsonObject) json.get("location");
     if (obj == null) return null;
