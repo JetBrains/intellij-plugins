@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
@@ -200,9 +199,10 @@ public class AngularIndexUtil {
 
     // If previous calculation isn't done, don't even try to run new one
     if (future == null || future.isDone()) {
-      future = ApplicationManager.getApplication().executeOnPooledThread(() -> ReadAction.compute(
-        () -> project.isInitialized() ? getCachedAngularJSVersion(project) : -1
-      ));
+      future = ApplicationManager.getApplication().executeOnPooledThread(
+        () -> DumbService.getInstance(project).runReadActionInSmartMode(
+          () -> project.isInitialized() ? getCachedAngularJSVersion(project) : -1
+        ));
       project.putUserData(GET_VERSION_FUTURE_KEY, future);
       try {
         Integer result = future.get(50, TimeUnit.MILLISECONDS);
