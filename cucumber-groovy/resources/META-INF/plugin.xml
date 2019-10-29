@@ -39,6 +39,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.groovy">
+    <delegatesToProvider implementation="org.jetbrains.plugins.cucumber.groovy.resolve.CustomWorldDelegatesToProvider"/>
     <membersContributor implementation="org.jetbrains.plugins.cucumber.groovy.resolve.noncode.CustomWorldContributor"/>
   </extensions>
 </idea-plugin>
