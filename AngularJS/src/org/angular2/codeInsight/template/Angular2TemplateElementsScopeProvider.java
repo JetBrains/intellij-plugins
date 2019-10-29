@@ -50,6 +50,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
            || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
   }
 
+  @NotNull
   @Override
   public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     final PsiFile hostFile = CompletionUtil.getOriginalOrSelf(notNull(hostElement, element)).getContainingFile();

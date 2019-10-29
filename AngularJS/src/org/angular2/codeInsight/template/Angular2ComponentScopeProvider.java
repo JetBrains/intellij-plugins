@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 
 public class Angular2ComponentScopeProvider extends Angular2TemplateScopesProvider {
 
+  @NotNull
   @Override
   public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     return Optional.ofNullable(Angular2IndexingHandler.findComponentClass(element))
