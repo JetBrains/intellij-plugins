@@ -24,21 +24,18 @@ public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
   public void testElementSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
            "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
   }
 
   public void testAttributeSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
            "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>");
   }
 
   public void testAttrAndElementSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
     doTest("app-my-table", true,
-           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
            "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>",
            "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
   }
