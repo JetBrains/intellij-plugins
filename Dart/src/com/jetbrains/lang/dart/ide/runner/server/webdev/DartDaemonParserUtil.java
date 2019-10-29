@@ -34,9 +34,8 @@ public class DartDaemonParserUtil {
   @Nullable
   public static String getWsUri(@NotNull final String text) throws Exception {
     final JsonObject jsonObject = parseDaemonLog(text);
-
     if (jsonObject == null) {
-      throw new Exception("Parse JSON from daemon did not parse as a JsonObject: \"" + text + "\"");
+      return null;
     }
 
     final JsonPrimitive primEvent = jsonObject.getAsJsonPrimitive("event");
