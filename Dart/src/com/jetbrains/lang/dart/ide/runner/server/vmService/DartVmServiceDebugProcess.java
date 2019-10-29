@@ -517,9 +517,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       result.add(threeSlashize(new File(filePath).toURI().toString()));
     }
 
-    // straight path - used by some VM embedders
-    result.add(filePath);
-
     // package: (if applicable)
     if (myDASExecutionContextId != null) {
       final String uriByServer =
