@@ -1,34 +1,30 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.*;
-import com.intellij.ide.util.PsiNavigationSupport;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalInspectionToolSession;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.intentions.JSPublicModifierIntention;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.IncorrectOperationException;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.inspections.quickfixes.AngularMakePublicQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,8 +84,9 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
           retainReferenced(template, candidates);
           for (JSElement member : candidates) {
             holder.registerProblem(
-              notNull(member instanceof PsiNameIdentifierOwner ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
-                                                               : null, member),
+              notNull(member instanceof PsiNameIdentifierOwner
+                      ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
+                      : null, member),
               capitalize(Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member",
                                                 getAccessModifier(member), getKind(member), getName(member))),
               new AngularMakePublicQuickFix());
@@ -100,7 +97,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     return PsiElementVisitor.EMPTY_VISITOR;
   }
 
-  private static boolean accept(@Nullable PsiElement member) {
+  public static boolean accept(@Nullable PsiElement member) {
     if (member instanceof JSAttributeListOwner
         && !(member instanceof JSFunction && ((JSFunction)member).isConstructor())) {
       JSAttributeList attributes = ((JSAttributeListOwner)member).getAttributeList();
@@ -142,94 +139,5 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
         }
       }
     );
-  }
-
-  static class AngularMakePublicQuickFix extends JSPublicModifierIntention implements LocalQuickFix {
-
-    @Nls(capitalization = Nls.Capitalization.Sentence)
-    @NotNull
-    @Override
-    public String getName() {
-      return getText();
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-      return isInvokedInJsFile(element)
-            ? super.isAvailable(project, editor, element)
-            : accept(locateMemberToEdit(element));
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-      if (isInvokedInJsFile(element)) {
-        super.invoke(project, editor, element);
-        return;
-      }
-
-      PsiElement member = locateMemberToEdit(element);
-      if (!accept(member)) {
-        return;
-      }
-      if (editor != null) {
-        PsiNavigationSupport.getInstance().createNavigatable(
-              project,
-              member.getContainingFile().getVirtualFile(),
-              member.getTextOffset()
-        ).navigate(true);
-      }
-
-      super.invoke(
-            project,
-            editor,
-            member instanceof PsiNameIdentifierOwner
-                  ? ((PsiNameIdentifierOwner) member).getNameIdentifier()
-                  : member
-      );
-    }
-
-    @Nullable
-    private PsiElement locateMemberToEdit(@NotNull PsiElement element) {
-      element = element instanceof PsiWhiteSpace
-            ? element.getPrevSibling()
-            : element.getParent();
-
-      if (!(element instanceof JSReferenceExpression)) {
-        element = element.getPrevSibling();
-      }
-      if (element instanceof JSReferenceExpression) {
-        element = ((JSReferenceExpression)element).resolve();
-      }
-      if (element instanceof PsiNameIdentifierOwner) {
-        element = ((PsiNameIdentifierOwner) element).getNameIdentifier();
-      }
-      if (element == null) {
-        return null;
-      }
-      PsiElement member = getField(element);
-      if (member == null) {
-        member = element instanceof JSFunction ? element : getFunction(element);
-      }
-      return member;
-    }
-
-    @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      invoke(project, null, descriptor.getPsiElement());
-    }
-
-    @NotNull
-    @Override
-    public Priority getPriority() {
-      return Priority.HIGH;
-    }
-
-    private static boolean isInvokedInJsFile(@NotNull final PsiElement element) {
-      final Language language =
-            element.getContainingFile()
-                   .getLanguage()
-                   .getBaseLanguage();
-      return JavascriptLanguage.INSTANCE.is(language);
-    }
   }
 }
