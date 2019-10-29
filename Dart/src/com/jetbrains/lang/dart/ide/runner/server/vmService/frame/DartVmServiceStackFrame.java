@@ -78,7 +78,8 @@ public class DartVmServiceStackFrame extends XStackFrame {
   public void customizePresentation(@NotNull final ColoredTextContainer component) {
     final String unoptimizedPrefix = "[Unoptimized] ";
 
-    String name = StringUtil.trimEnd(myVmFrame.getCode().getName(), "="); // trim setter postfix
+    final CodeRef code = myVmFrame.getCode();
+    String name = code == null ? "unnamed" : StringUtil.trimEnd(code.getName(), "="); // trim setter postfix
     name = StringUtil.trimStart(name, unoptimizedPrefix);
 
     final boolean causal = myVmFrame.getKind() == FrameKind.AsyncCausal;
@@ -92,10 +93,12 @@ public class DartVmServiceStackFrame extends XStackFrame {
     component.setIcon(AllIcons.Debugger.Frame);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public Object getEqualityObject() {
-    return myVmFrame.getLocation().getScript().getId() + ":" + myVmFrame.getCode().getId();
+    SourceLocation location = myVmFrame.getLocation();
+    CodeRef code = myVmFrame.getCode();
+    return location != null && code != null ? location.getScript().getId() + ":" + code.getId() : null;
   }
 
   @Override
@@ -177,10 +180,11 @@ public class DartVmServiceStackFrame extends XStackFrame {
       final Object value = var.getValue();
       if (value instanceof InstanceRef) {
         final InstanceRef instanceRef = (InstanceRef)value;
+        final SourceLocation location = myVmFrame.getLocation();
         final DartVmServiceValue.LocalVarSourceLocation varLocation =
-          "this".equals(var.getName())
+          "this".equals(var.getName()) || location == null
           ? null
-          : new DartVmServiceValue.LocalVarSourceLocation(myVmFrame.getLocation().getScript(), var.getDeclarationTokenPos());
+          : new DartVmServiceValue.LocalVarSourceLocation(location.getScript(), var.getDeclarationTokenPos());
         childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), instanceRef, varLocation, null, false));
       }
     }

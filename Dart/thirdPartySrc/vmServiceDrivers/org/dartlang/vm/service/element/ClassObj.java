@@ -17,6 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link ClassObj} provides information about a Dart language class.
@@ -33,6 +34,7 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ErrorRef getError() {
     JsonObject obj = (JsonObject) json.get("error");
     if (obj == null) return null;
@@ -94,6 +96,7 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceLocation getLocation() {
     JsonObject obj = (JsonObject) json.get("location");
     if (obj == null) return null;
@@ -112,6 +115,7 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public InstanceRef getMixin() {
     JsonObject obj = (JsonObject) json.get("mixin");
     if (obj == null) return null;
@@ -142,6 +146,7 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ClassRef getSuperClass() {
     JsonObject obj = (JsonObject) json.get("super");
     if (obj == null) return null;
@@ -160,6 +165,7 @@ public class ClassObj extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public InstanceRef getSuperType() {
     JsonObject obj = (JsonObject) json.get("superType");
     if (obj == null) return null;

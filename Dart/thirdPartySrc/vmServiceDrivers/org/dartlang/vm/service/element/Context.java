@@ -17,6 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Context} is a data structure which holds the captured variables for some closure.
@@ -40,6 +41,7 @@ public class Context extends Obj {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public Context getParent() {
     JsonObject obj = (JsonObject) json.get("parent");
     if (obj == null) return null;

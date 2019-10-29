@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A {@link Message} provides information about a pending isolate message and the function that
@@ -33,6 +34,7 @@ public class Message extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public FuncRef getHandler() {
     JsonObject obj = (JsonObject) json.get("handler");
     if (obj == null) return null;
@@ -57,6 +59,7 @@ public class Message extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceLocation getLocation() {
     JsonObject obj = (JsonObject) json.get("location");
     if (obj == null) return null;
