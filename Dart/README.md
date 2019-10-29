@@ -81,6 +81,17 @@ Prerequisites:
      - not break any of the tests mentioned above
      - if possible, additional tests for the change in functionality should be included
 
+### How to open the Dart Analysis Server with Observatory and Dart DevTools
+
+1. Open the Registry... dialog by opening Find Action, `Ctrl + Shift + A` and typing `Registry...`
+2. Find the key `dart.server.vm.options` and include the flags: `--disable-service-auth-codes --observe=8888`
+3. Restart the Dart Analysis Server by clicking on the `Restart Dart Analysis Server` button in the Analysis window
+4. Open a [Observatory](https://dart-lang.github.io/observatory/) browser at [`http://localhost:8888/`](http://localhost:8888/)
+5. To open [Dart Devtools](https://flutter.dev/docs/development/tools/devtools/overview), copy the `ws://localhost:8888/ws` portion of
+   `vm@ws://localhost:8888/ws` out of the `name` field at the top of Observatory.
+6. If you haven't already install DevTools with `pub global activate devtools`, the Dart SDK must be `2.3.0` or higher
+7. Launch DevTools with `devtools`, when prompted paste in the `ws://localhost:8888/ws` contents
+
 ---
 
 ## Alternative way of the Dart-plugin project setup
