@@ -17,6 +17,7 @@ public abstract class Angular2TemplateScopesProvider {
   /**
    * If Angular expression is injected the @{code hostElement} is not null.
    */
+  @NotNull
   public abstract List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element,
                                                                   @Nullable PsiElement hostElement);
 }

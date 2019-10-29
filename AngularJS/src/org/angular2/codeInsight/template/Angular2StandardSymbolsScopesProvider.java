@@ -32,6 +32,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   @NonNls public static final String $ANY = "$any";
   @NonNls public static final String $EVENT = "$event";
 
+  @NotNull
   @Override
   public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     SmartList<Angular2TemplateScope> result = new SmartList<>(new Angular2$AnyScope(element.getContainingFile()));
