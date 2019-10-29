@@ -3,7 +3,11 @@ package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2InjectionUtils;
@@ -15,6 +19,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT;
 
 public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
 
@@ -27,7 +37,20 @@ public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
   @Nullable
   @Override
   public String getActionText(@NotNull DataContext context) {
-    PsiElement symbol = Angular2InjectionUtils.getTargetElementFromContext(context);
+    Project project = context.getData(PROJECT);
+    if (project == null || DumbService.isDumb(project)) {
+      return null;
+    }
+    Future<PsiElement> symbolFuture = ApplicationManager.getApplication().executeOnPooledThread(() ->
+      ReadAction.compute(() -> Angular2InjectionUtils.getTargetElementFromContext(context))
+    );
+    PsiElement symbol;
+    try {
+      symbol = symbolFuture.get(200, TimeUnit.MILLISECONDS);
+    }
+    catch (InterruptedException | ExecutionException | TimeoutException e) {
+      return null;
+    }
     List<Angular2Directive> directives;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && !(directives = Angular2EntitiesProvider.findDirectives((Angular2DirectiveSelectorPsiElement)symbol)).isEmpty()) {
