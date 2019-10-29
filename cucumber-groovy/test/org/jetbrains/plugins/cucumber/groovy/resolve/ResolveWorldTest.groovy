@@ -45,10 +45,28 @@ Before() {
   }
 
   @Test
+  void 'custom world method in hook in inner closure'() {
+    resolveMethodTest '''\
+Before() {
+    [1,2,3].each { <caret>customMethod() }
+}
+'''
+  }
+
+  @Test
   void resolveCustomWorldInStep() {
     resolveMethodTest '''\
 Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
     assert "foo" == custom<caret>Method()
+}
+'''
+  }
+
+  @Test
+  void 'custom world method in step in inner closure'() {
+    resolveMethodTest '''\
+Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
+    [1,2,3].each { <caret>customMethod() }
 }
 '''
   }
