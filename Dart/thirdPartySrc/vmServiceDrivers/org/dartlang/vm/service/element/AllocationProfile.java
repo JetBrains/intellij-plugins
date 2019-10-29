@@ -17,6 +17,7 @@ package org.dartlang.vm.service.element;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class AllocationProfile extends Response {
@@ -32,6 +33,7 @@ public class AllocationProfile extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getDateLastAccumulatorReset() {
     return getAsInt("dateLastAccumulatorReset");
   }
@@ -43,6 +45,7 @@ public class AllocationProfile extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getDateLastServiceGC() {
     return getAsInt("dateLastServiceGC");
   }

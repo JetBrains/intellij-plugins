@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * See RetainingPath.
@@ -32,6 +33,7 @@ public class RetainingObject extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public String getParentField() {
     return getAsString("parentField");
   }
@@ -41,6 +43,7 @@ public class RetainingObject extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getParentListIndex() {
     return getAsInt("parentListIndex");
   }
@@ -50,6 +53,7 @@ public class RetainingObject extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ObjRef getParentMapKey() {
     JsonObject obj = (JsonObject) json.get("parentMapKey");
     if (obj == null) return null;

@@ -631,11 +631,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     }
 
     if (tokenPosToLineAndColumn == null) {
-      tokenPosToLineAndColumn = createTokenPosToLineAndColumnMap(script.getTokenPosTable());
-      myScriptIdToLinesAndColumnsMap.put(scriptRef.getId(), tokenPosToLineAndColumn);
+      List<List<Integer>> table = script.getTokenPosTable();
+      if (table != null) {
+        tokenPosToLineAndColumn = createTokenPosToLineAndColumnMap(table);
+        myScriptIdToLinesAndColumnsMap.put(scriptRef.getId(), tokenPosToLineAndColumn);
+      }
     }
 
-    final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn.get(tokenPos);
+    final Pair<Integer, Integer> lineAndColumn = tokenPosToLineAndColumn != null ? tokenPosToLineAndColumn.get(tokenPos) : null;
     if (lineAndColumn == null) return XDebuggerUtil.getInstance().createPositionByOffset(file, 0);
 
     return XDebuggerUtil.getInstance().createPosition(file, lineAndColumn.first, lineAndColumn.second);

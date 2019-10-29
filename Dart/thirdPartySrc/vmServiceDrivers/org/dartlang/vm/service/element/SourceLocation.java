@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The {@link SourceLocation} class is used to designate a position or range in some script.
@@ -32,6 +33,7 @@ public class SourceLocation extends Response {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public int getEndTokenPos() {
     return getAsInt("endTokenPos");
   }

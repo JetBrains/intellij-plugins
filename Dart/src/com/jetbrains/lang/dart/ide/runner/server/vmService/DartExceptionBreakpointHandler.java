@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.intellij.openapi.project.Project;
@@ -13,6 +14,8 @@ import org.dartlang.vm.service.element.ExceptionPauseMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoint<DartExceptionBreakpointProperties>> {
 
   private final DartVmServiceDebugProcess myDebugProcess;
@@ -26,9 +29,10 @@ public class DartExceptionBreakpointHandler extends XBreakpointHandler<XBreakpoi
   public static XBreakpoint<DartExceptionBreakpointProperties> getDefaultExceptionBreakpoint(@NotNull final Project project) {
     final XBreakpointManager bpManager = XDebuggerManager.getInstance(project).getBreakpointManager();
     final DartExceptionBreakpointType bpType = XBreakpointType.EXTENSION_POINT_NAME.findExtension(DartExceptionBreakpointType.class);
-    final XBreakpoint<DartExceptionBreakpointProperties> breakpoint = bpManager.getDefaultBreakpoint(bpType);
-    assert breakpoint != null;
-    return breakpoint;
+    assert bpType != null;
+    Set<XBreakpoint<DartExceptionBreakpointProperties>> breakpoints = bpManager.getDefaultBreakpoints(bpType);
+    assert breakpoints.size() == 1 : breakpoints;
+    return breakpoints.iterator().next();
   }
 
   @NotNull

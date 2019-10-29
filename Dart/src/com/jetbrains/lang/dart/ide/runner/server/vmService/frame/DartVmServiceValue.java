@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 // TODO: implement some combination of XValue.getEvaluationExpression() /
 // XValue.calculateEvaluationExpression() in order to support evaluate expression in variable values.
@@ -194,14 +195,14 @@ public class DartVmServiceValue extends XNamedValue {
     switch (myInstanceRef.getKind()) {
       case Null:
       case Bool:
-        node.setPresentation(getIcon(), new XKeywordValuePresentation(myInstanceRef.getValueAsString()), false);
+        node.setPresentation(getIcon(), new XKeywordValuePresentation(Objects.requireNonNull(myInstanceRef.getValueAsString())), false);
         break;
       case Double:
       case Int:
         node.setPresentation(getIcon(), new XNumericValuePresentation(myInstanceRef.getValueAsString()), false);
         break;
       case String:
-        final String presentableValue = StringUtil.replace(myInstanceRef.getValueAsString(), "\"", "\\\"");
+        final String presentableValue = StringUtil.replace(Objects.requireNonNull(myInstanceRef.getValueAsString()), "\"", "\\\"");
         node.setPresentation(getIcon(), new XStringValuePresentation(presentableValue), false);
 
         if (myInstanceRef.getValueAsStringIsTruncated()) {
@@ -212,7 +213,8 @@ public class DartVmServiceValue extends XNamedValue {
       case Float64x2:
       case Int32x4:
       case StackTrace:
-        node.setFullValueEvaluator(new ImmediateFullValueEvaluator("Click to see stack trace...", myInstanceRef.getValueAsString()));
+        node.setFullValueEvaluator(new ImmediateFullValueEvaluator("Click to see stack trace...",
+                                                                   Objects.requireNonNull(myInstanceRef.getValueAsString())));
         node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), "", true);
         break;
       default:
@@ -230,7 +232,7 @@ public class DartVmServiceValue extends XNamedValue {
           @Override
           public void received(Obj instance) {
             assert instance instanceof Instance && ((Instance)instance).getKind() == InstanceKind.String : instance;
-            callback.evaluated(((Instance)instance).getValueAsString());
+            callback.evaluated(Objects.requireNonNull(((Instance)instance).getValueAsString()));
           }
 
           @Override
@@ -250,10 +252,10 @@ public class DartVmServiceValue extends XNamedValue {
   private boolean computeRegExpPresentation(@NotNull final XValueNode node) {
     if (myInstanceRef.getKind() == InstanceKind.RegExp) {
       // The pattern is always an instance of kind String.
-      final InstanceRef pattern = myInstanceRef.getPattern();
+      final InstanceRef pattern = Objects.requireNonNull(myInstanceRef.getPattern());
       assert pattern.getKind() == InstanceKind.String : pattern;
 
-      final String patternString = StringUtil.replace(pattern.getValueAsString(), "\"", "\\\"");
+      final String patternString = StringUtil.replace(Objects.requireNonNull(pattern.getValueAsString()), "\"", "\\\"");
       node.setPresentation(getIcon(), new XStringValuePresentation(patternString) {
         @Nullable
         @Override
@@ -302,7 +304,7 @@ public class DartVmServiceValue extends XNamedValue {
       @Override
       public void received(final InstanceRef toStringInstanceRef) {
         if (toStringInstanceRef.getKind() == InstanceKind.String) {
-          final String value = toStringInstanceRef.getValueAsString();
+          final String value = Objects.requireNonNull(toStringInstanceRef.getValueAsString());
           // We don't need to show the default implementation of toString() ("Instance of ...").
           if (value.startsWith("Instance of ")) {
             node.setPresentation(getIcon(), typeName, "", true);
@@ -312,16 +314,16 @@ public class DartVmServiceValue extends XNamedValue {
           }
         }
         else {
-          preesentationFallback(node);
+          presentationFallback(node);
         }
       }
 
       @Override
       public void noGoodResult() {
-        preesentationFallback(node);
+        presentationFallback(node);
       }
 
-      private void preesentationFallback(@NotNull final XValueNode node) {
+      private void presentationFallback(@NotNull final XValueNode node) {
         if (myInstanceRef.getValueAsString() != null) {
           node.setPresentation(
             getIcon(),
@@ -377,7 +379,7 @@ public class DartVmServiceValue extends XNamedValue {
           addListChildren(node, ((Instance)instance).getElements());
         }
         else if (myInstanceRef.getKind() == InstanceKind.Map) {
-          addMapChildren(node, ((Instance)instance).getAssociations());
+          addMapChildren(node, Objects.requireNonNull(((Instance)instance).getAssociations()));
         }
         else {
           assert false : myInstanceRef.getKind();
@@ -444,7 +446,12 @@ public class DartVmServiceValue extends XNamedValue {
     node.addChildren(childrenList, true);
   }
 
-  private void addFields(@NotNull final XCompositeNode node, @NotNull final ElementList<BoundField> fields) {
+  private void addFields(@NotNull final XCompositeNode node, @Nullable final ElementList<BoundField> fields) {
+    if (fields == null) {
+      node.addChildren(XValueChildrenList.EMPTY, true);
+      return;
+    }
+
     final XValueChildrenList childrenList = new XValueChildrenList(fields.size());
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
@@ -461,7 +468,7 @@ public class DartVmServiceValue extends XNamedValue {
     // getValueAsString() is provided for the instance kinds: Null, Bool, Double, Int, String (value may be truncated), Float32x4, Float64x2, Int32x4, StackTrace
     switch (instanceRef.getKind()) {
       case String:
-        String string = instanceRef.getValueAsString();
+        String string = Objects.requireNonNull(instanceRef.getValueAsString());
         if (string.length() > 103) string = string.substring(0, 100) + "...";
         return "\"" + StringUtil.replace(string, "\"", "\\\"") + "\"";
       case Null:
@@ -472,7 +479,7 @@ public class DartVmServiceValue extends XNamedValue {
       case Float64x2:
       case Int32x4:
         // case StackTrace:  getValueAsString() is too long for StackTrace
-        return instanceRef.getValueAsString();
+        return Objects.requireNonNull(instanceRef.getValueAsString());
       default:
         return "[" + instanceRef.getClassRef().getName() + "]";
     }

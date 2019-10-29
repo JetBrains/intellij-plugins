@@ -16,6 +16,8 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 /**
@@ -42,6 +44,7 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public SourceReportCoverage getCoverage() {
     JsonObject obj = (JsonObject) json.get("coverage");
     if (obj == null) return null;
@@ -66,6 +69,7 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public ErrorRef getError() {
     JsonObject obj = (JsonObject) json.get("error");
     if (obj == null) return null;
@@ -84,6 +88,7 @@ public class SourceReportRange extends Element {
    *
    * Can return <code>null</code>.
    */
+  @Nullable
   public List<Integer> getPossibleBreakpoints() {
     return getListInt("possibleBreakpoints");
   }
