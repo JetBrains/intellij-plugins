@@ -61,7 +61,7 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
 
     protected NgContentSelectorBasedAttributeDescriptor(@NotNull XmlTag xmlTag,
                                                         @NotNull Angular2DirectiveSelectorPsiElement selector) {
-      super(xmlTag, selector.getName(), AttributePriority.HIGH, Collections.singleton(selector), false);
+      super(xmlTag, selector.getName(), AttributePriority.HIGH, Collections.singleton(selector), true);
     }
   }
 }
