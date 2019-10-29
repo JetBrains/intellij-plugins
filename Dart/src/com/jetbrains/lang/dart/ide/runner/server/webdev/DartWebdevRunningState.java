@@ -126,7 +126,7 @@ public class DartWebdevRunningState extends CommandLineState {
     // workingDir  =  "/.../webdev/example"
     // htmlFilePath = "/.../webdev/example/web/index.html"
     final String htmlFilePathRelativeFromWorkingDir =
-      htmlFilePath.startsWith(workingDir + "/") ? htmlFilePath.substring(workingDir.getPath().length() + 1) : null;
+      htmlFilePath.startsWith(workingDir.getPath() + "/") ? htmlFilePath.substring(workingDir.getPath().length() + 1) : null;
 
     // htmlFilePathRelativeFromWorkingDir = "web/index.html"
     final int firstSlashIndex = htmlFilePathRelativeFromWorkingDir == null ? -1 : htmlFilePathRelativeFromWorkingDir.indexOf('/');
