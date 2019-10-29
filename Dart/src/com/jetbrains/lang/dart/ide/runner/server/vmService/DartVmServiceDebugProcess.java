@@ -179,17 +179,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
-          String wsUri = null;
           try {
-            wsUri = DartDaemonParserUtil.getWsUri(event.getText().trim());
+            String wsUri = DartDaemonParserUtil.getWsUri(event.getText().trim());
+            if (wsUri != null) {
+              getProcessHandler().removeProcessListener(this);
+              scheduleConnect(wsUri);
+            }
           }
           catch (Exception e) {
             LOG.debug(e);
-          }
-
-          if (wsUri != null) {
-            getProcessHandler().removeProcessListener(this);
-            scheduleConnect(wsUri);
           }
         }
       });
