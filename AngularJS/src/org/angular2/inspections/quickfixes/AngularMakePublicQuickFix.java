@@ -4,7 +4,8 @@ package org.angular2.inspections.quickfixes;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.ide.util.PsiNavigationSupport;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.Language;
+import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.intentions.JSPublicModifierIntention;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -15,6 +16,7 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.IncorrectOperationException;
 import org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection;
+import org.angular2.lang.expr.Angular2Language;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,14 +34,14 @@ public class AngularMakePublicQuickFix extends JSPublicModifierIntention impleme
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-    return isInvokedInTypeScriptFile(element)
-           ? super.isAvailable(project, editor, element)
-           : AngularInaccessibleComponentMemberInAotModeInspection.accept(locateMemberToEdit(element));
+    return isAngularTemplateElement(element)
+           ? AngularInaccessibleComponentMemberInAotModeInspection.accept(locateMemberToEdit(element))
+           : super.isAvailable(project, editor, element);
   }
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
-    if (isInvokedInTypeScriptFile(element)) {
+    if (!isAngularTemplateElement(element)) {
       super.invoke(project, editor, element);
       return;
     }
@@ -97,7 +99,8 @@ public class AngularMakePublicQuickFix extends JSPublicModifierIntention impleme
     return Priority.HIGH;
   }
 
-  private static boolean isInvokedInTypeScriptFile(@NotNull final PsiElement element) {
-    return JavaScriptSupportLoader.TYPESCRIPT.is(element.getContainingFile().getLanguage());
+  private static boolean isAngularTemplateElement(@NotNull final PsiElement element) {
+    Language language = element.getContainingFile().getLanguage();
+    return language instanceof HTMLLanguage || language instanceof Angular2Language;
   }
 }
