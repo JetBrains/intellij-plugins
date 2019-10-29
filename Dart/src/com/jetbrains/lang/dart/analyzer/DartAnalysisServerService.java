@@ -71,6 +71,7 @@ import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
@@ -2044,6 +2045,11 @@ public class DartAnalysisServerService implements Disposable {
       }
       catch (MissingResourceException e) {
         // NOP
+      }
+      String sdkVersion = DartSdk.getDartSdk(myProject).getVersion();
+      if (StringUtil.compareVersionNumbers(sdkVersion, DartConfigurable.ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0 &&
+          DartConfigurable.getMLCodeCompletionEnabled(myProject)) {
+        serverArgsRaw += " --enable-completion-model";
       }
 
       myServerSocket =

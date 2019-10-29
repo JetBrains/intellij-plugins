@@ -55,6 +55,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
+  public static final boolean ML_CODE_COMPLETION_DEFAULT_VALUE = false;
+  private static final String ML_CODE_COMPLETION_PROPERTY_NAME = "analysis.server.settings.ml.completion.enable";
+  public static final String ML_CODE_COMPLETION_MIN_DART_SDK_VERSION = "2.5.0";
+
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
 
@@ -73,6 +77,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private CheckboxTreeTable myModulesCheckboxTreeTable;
   private JBLabel myErrorLabel;
+  private JBCheckBox myEnableMLCodeCompletion;
 
   private final @NotNull Project myProject;
   private final boolean myShowModulesPanel;
@@ -244,6 +249,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     }
 
     if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
+    if (myEnableMLCodeCompletion.isSelected() != getMLCodeCompletionEnabled(myProject)) return true;
 
     if (myShowModulesPanel) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
@@ -290,6 +296,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
 
     myPortField.setNumber(getWebdevPort(myProject));
+    myEnableMLCodeCompletion.setSelected(getMLCodeCompletionEnabled(myProject));
 
     if (myShowModulesPanel) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -351,6 +358,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
         }
 
         setWebdevPort(myProject, myPortField.getNumber());
+        setMLCodeCompletionEnabled(myProject, myEnableMLCodeCompletion.isSelected());
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
@@ -408,6 +416,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
                ? DartBundle.message("warning.no.modules.selected.dart.support.will.be.disabled")
                : DartBundle.message("warning.no.projects.selected.dart.support.will.be.disabled");
       }
+    }
+
+    if (myEnableMLCodeCompletion.isSelected() &&
+        StringUtil.compareVersionNumbers(myVersionLabel.getText(), ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) < 0) {
+      return DartBundle.message("warning.old.sdk.ml.completion");
     }
 
     return null;
@@ -476,5 +489,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static void setWebdevPort(@NotNull Project project, int port) {
     PropertiesComponent.getInstance(project).setValue(WEBDEV_PORT_PROPERTY_NAME, port, WEBDEV_PORT_DEFAULT);
+  }
+
+  public static boolean getMLCodeCompletionEnabled(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getBoolean(ML_CODE_COMPLETION_PROPERTY_NAME, ML_CODE_COMPLETION_DEFAULT_VALUE);
+  }
+
+  private static void setMLCodeCompletionEnabled(@NotNull Project project, boolean enabled) {
+    PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
   }
 }
