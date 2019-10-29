@@ -81,7 +81,7 @@ class D extends C {
     return <error>new C()</error>;
   }
 
-  public <error bundleMsg="javascript.validation.message.function.override.without.parent.method">override</error> function currentImage2():C {
+  public <error descr="Method does not override method from super class">override</error> function currentImage2():C {
     return null;
   }
 }
