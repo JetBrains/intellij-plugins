@@ -50,7 +50,7 @@ public class AngularCliUtil {
 
   @Nullable
   public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
-    if (dir == null) return null;
+    if (dir == null || !dir.isValid()) return null;
     for (String name : ANGULAR_JSON_NAMES) {
       VirtualFile cliJson = dir.findChild(name);
       if (cliJson != null) {
