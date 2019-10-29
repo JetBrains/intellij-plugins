@@ -78,7 +78,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     quickFixes.add(new RemoveAttributeQuickFix(attribute.getName()));
     ProblemHighlightType severity;
     // TODO take into account 'CUSTOM_ELEMENTS_SCHEMA' and 'NO_ERRORS_SCHEMA' value of '@NgModule.schemas'
-    severity = (info.type != EVENT || templateTag) && scope.isFullyResolved()
+    severity = scope.isFullyResolved()
                ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                : ProblemHighlightType.WEAK_WARNING;
     @PropertyKey(resourceBundle = BUNDLE) final String messageKey;

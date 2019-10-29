@@ -27,6 +27,11 @@
 
 <ng-template *ngFor="t"></ng-template>
 
-<div [innerHTML]="s" (click)="s" onclick=""></div>
+<div [innerHTML]="s"
+     (click)="s"
+     <error descr="Event foo is not emitted by any applicable directives nor by div element">(foo)</error>="a"
+     <warning descr="Attribute onfoo is not allowed here">onfoo</warning>=""
+     onclick=""
+></div>
 
 <div ref-a #b></div>
