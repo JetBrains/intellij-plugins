@@ -37,9 +37,6 @@ def collect_test_scripts
 end
 
 def require_all_test_scripts(test_scripts)
-  puts "Loading files.... "
-  puts SEPARATOR
-
   i = 1
   test_scripts.each do |test_script|
     begin
@@ -50,7 +47,6 @@ def require_all_test_scripts(test_scripts)
       # such way will support debugging out of the box
       require test_script
 
-      puts "#{i}. #{test_script}:1"
       i += 1
     rescue Exception => e
       message_factory = Rake::TeamCity::MessageFactory
@@ -64,8 +60,6 @@ def require_all_test_scripts(test_scripts)
       puts message_factory.create_test_finished(test_name, 0)
     end
   end
-  puts " \n"
-  puts "#{i-1} files were loaded."
 end
 
 # DRB: just pass tests files to drb runner
@@ -160,7 +154,6 @@ end
 #########################################
 #########################################
 #########################################
-SEPARATOR = "========================================="
 
 # If work directory was specified
 puts "Work directory: #{IntelliJ::WORK_DIR}" if IntelliJ::WORK_DIR
@@ -184,16 +177,6 @@ unless array.empty?
 end
 
 unless drb_runner.nil?
-  # DRB
-  puts " \n"
-  puts "#{test_scripts.length} test scripts were detected:"
-  puts SEPARATOR
-
-  test_scripts.each_with_index do |test_script, i|
-    puts "#{i+1}. #{test_script}:1"
-  end
-  puts SEPARATOR
-
   # Parses launch arguments - ruby interpreter and its arguments
   drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
 else
@@ -201,9 +184,6 @@ else
 
   # usual mode: tests will be launched in same process
   require_all_test_scripts(test_scripts)
-  puts SEPARATOR
-
-  puts "Running tests..."
 
   unless ::Rake::TeamCity::RunnerUtils.use_minitest?
     # TestUnit:
