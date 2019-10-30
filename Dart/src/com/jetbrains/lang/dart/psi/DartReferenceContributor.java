@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.psi;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -49,13 +50,12 @@ public class DartReferenceContributor extends PsiReferenceContributor {
         return PsiReference.EMPTY_ARRAY;
       }
 
-      final VirtualFile file = DartResolveUtil.getRealVirtualFile(
-        InjectedLanguageManager.getInstance(element.getProject()).getTopLevelFile(element));
+      final Project project = element.getProject();
+      final VirtualFile file = DartResolveUtil.getRealVirtualFile(InjectedLanguageManager.getInstance(project).getTopLevelFile(element));
       if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return PsiReference.EMPTY_ARRAY;
 
       final List<PsiReference> result = new SmartList<>();
-      final TextRange elementRangeInHost =
-        InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextRange());
+      final TextRange elementRangeInHost = InjectedLanguageManager.getInstance(project).injectedToHost(element, element.getTextRange());
 
       final Processor<DartServerData.DartNavigationRegion> processor = navigationRegion -> {
         int navRegStartOffset = navigationRegion.getOffset();
@@ -71,7 +71,7 @@ public class DartReferenceContributor extends PsiReferenceContributor {
         return true;
       };
 
-      DartAnalysisServerService das = DartAnalysisServerService.getInstance(element.getProject());
+      DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
       DartResolver.processRegionsInRange(das.getNavigation(file), elementRangeInHost, processor);
 
       return result.toArray(PsiReference.EMPTY_ARRAY);
