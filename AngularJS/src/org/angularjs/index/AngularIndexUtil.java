@@ -9,31 +9,31 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
-import com.intellij.util.CachedValueBase;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,6 @@ public class AngularIndexUtil {
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  private static final Key<CachedValue<Integer>> ANGULARJS_VERSION_KEY = new Key<>("angularjs.version");
 
   @Nullable
   public static JSImplicitElement resolve(@NotNull Project project,
@@ -155,37 +154,22 @@ public class AngularIndexUtil {
 
   private static int getAngularJSVersion(@NotNull final Project project) {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
-    Application app = ApplicationManager.getApplication();
-    if (app.isDispatchThread() && !app.isUnitTestMode()) {
-      // Short path if there is already cached value
-      CachedValue<Integer> value = project.getUserData(ANGULARJS_VERSION_KEY);
-      if (value instanceof CachedValueBase && ((CachedValueBase<?>)value).isFromMyProject(project)) {
-        Getter<Integer> data = value.getUpToDateOrNull();
-        if (data != null) {
-          return data.get();
-        }
-      }
-      // Special handling on EDT to avoid freeze - do not let any of the indexes be updated
-      return FileBasedIndexImpl.disableUpToDateCheckIn(() -> calculateAngularJSVersion(project).getValue());
-    }
-    return CachedValuesManager.getManager(project).getCachedValue(project, ANGULARJS_VERSION_KEY, () ->
-      calculateAngularJSVersion(project), false);
-  }
 
-  private static Result<Integer> calculateAngularJSVersion(@NotNull final Project project) {
-    int version = -1;
-    PsiElement resolve;
-    if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
-      version = 13;
-    }
-    else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
-      version = 12;
-    }
-    if (resolve != null) {
-      return Result.create(version, resolve.getContainingFile());
-    }
-    return Result.create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                         ProjectRootModificationTracker.getInstance(project));
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      int version = -1;
+      PsiElement resolve;
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
+        version = 13;
+      }
+      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
+        version = 12;
+      }
+      if (resolve != null) {
+        return CachedValueProvider.Result.create(version, resolve.getContainingFile());
+      }
+      return CachedValueProvider.Result
+        .create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project));
+    });
   }
 
   public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
