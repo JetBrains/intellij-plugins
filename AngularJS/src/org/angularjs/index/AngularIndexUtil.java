@@ -33,6 +33,7 @@ import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.FileBasedIndexImpl;
 import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Dennis.Ushakov
@@ -53,7 +54,6 @@ public class AngularIndexUtil {
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  private static final Key<Future<Integer>> GET_VERSION_FUTURE_KEY = new Key<>("angularjs.get.version.future");
   private static final Key<CachedValue<Integer>> ANGULARJS_VERSION_KEY = new Key<>("angularjs.version");
 
   @Nullable
@@ -157,62 +157,35 @@ public class AngularIndexUtil {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
     Application app = ApplicationManager.getApplication();
     if (app.isDispatchThread() && !app.isUnitTestMode()) {
-      return getAngularJSVersionOnEDT(project);
+      // Short path if there is already cached value
+      CachedValue<Integer> value = project.getUserData(ANGULARJS_VERSION_KEY);
+      if (value instanceof CachedValueBase && ((CachedValueBase<?>)value).isFromMyProject(project)) {
+        Getter<Integer> data = value.getUpToDateOrNull();
+        if (data != null) {
+          return data.get();
+        }
+      }
+      // Special handling on EDT to avoid freeze - do not let any of the indexes be updated
+      return FileBasedIndexImpl.disableUpToDateCheckIn(() -> calculateAngularJSVersion(project).getValue());
     }
-    return getCachedAngularJSVersion(project);
+    return CachedValuesManager.getManager(project).getCachedValue(project, ANGULARJS_VERSION_KEY, () ->
+      calculateAngularJSVersion(project), false);
   }
 
-  private static int getCachedAngularJSVersion(@NotNull final Project project) {
-    return CachedValuesManager.getManager(project).getCachedValue(project, ANGULARJS_VERSION_KEY, () -> {
-      int version = -1;
-      PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
-        version = 13;
-      }
-      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
-        version = 12;
-      }
-      if (resolve != null) {
-        return Result.create(version, resolve.getContainingFile());
-      }
-      return Result.create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                           ProjectRootModificationTracker.getInstance(project));
-    }, false);
-  }
-
-  /**
-   * Special handling on EDT to avoid freeze - this isn't a perfect solution and might result
-   * in instability of some editor features running on EDT, on the other hand changing logic to
-   * depend on package.json and node_modules content as is case with Angular might cause regressions
-   * in support for older projects.
-   */
-  private static int getAngularJSVersionOnEDT(@NotNull final Project project) {
-    // Short path to avoid delegating to other thread if there is up-to-date cached value
-    CachedValue<Integer> value = project.getUserData(ANGULARJS_VERSION_KEY);
-    if (value instanceof CachedValueBase && ((CachedValueBase<?>)value).isFromMyProject(project)) {
-      Getter<Integer> data = value.getUpToDateOrNull();
-      if (data != null) {
-        return data.get();
-      }
+  private static Result<Integer> calculateAngularJSVersion(@NotNull final Project project) {
+    int version = -1;
+    PsiElement resolve;
+    if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
+      version = 13;
     }
-    Future<Integer> future = project.getUserData(GET_VERSION_FUTURE_KEY);
-
-    // If previous calculation isn't done, don't even try to run new one
-    if (future == null || future.isDone()) {
-      future = ApplicationManager.getApplication().executeOnPooledThread(
-        () -> DumbService.getInstance(project).runReadActionInSmartMode(
-          () -> project.isInitialized() ? getCachedAngularJSVersion(project) : -1
-        ));
-      project.putUserData(GET_VERSION_FUTURE_KEY, future);
-      try {
-        Integer result = future.get(50, TimeUnit.MILLISECONDS);
-        project.putUserData(GET_VERSION_FUTURE_KEY, null);
-        return result;
-      }
-      catch (TimeoutException | ExecutionException | InterruptedException ignored) {
-      }
+    else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
+      version = 12;
     }
-    return -1;
+    if (resolve != null) {
+      return Result.create(version, resolve.getContainingFile());
+    }
+    return Result.create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                         ProjectRootModificationTracker.getInstance(project));
   }
 
   public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
