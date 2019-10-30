@@ -43,3 +43,6 @@ fun <T> buildSet(body: MutableSet<T>.() -> Unit): Set<T> {
 fun <T> Collection<T>.toLinkedSet() = LinkedSet<T>(this)
 
 typealias LinkedSet<T> = LinkedHashSet<T>
+
+val IntRange.length
+  get() = endInclusive - start + 1

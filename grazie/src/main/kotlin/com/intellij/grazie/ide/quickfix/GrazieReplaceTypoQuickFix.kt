@@ -13,6 +13,7 @@ import com.intellij.ide.DataManager
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
@@ -52,6 +53,21 @@ class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconabl
     addLookupListener(object : LookupListener {
       override fun lookupCanceled(event: LookupEvent) {
         GrazieFUCounterCollector.quickfixApplied(typo.info.rule.id, cancelled = true)
+      }
+
+      override fun beforeItemSelected(event: LookupEvent): Boolean {
+        runWriteAction {
+          val length = editor.document.textLength
+          val shift = typo.location.element!!.textOffset
+          for ((begin, end) in typo.location.textRanges.reversed().map { it.start + shift to it.endInclusive + shift }) {
+            if (begin < length) {
+              editor.document.deleteString(begin, min(end, length))
+            }
+          }
+        }
+
+        editor.selectionModel.removeSelection()
+        return true
       }
 
       override fun itemSelected(event: LookupEvent) {

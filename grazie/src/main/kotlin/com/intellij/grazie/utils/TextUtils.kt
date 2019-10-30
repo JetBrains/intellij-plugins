@@ -6,8 +6,11 @@ import org.apache.commons.text.similarity.LevenshteinDistance
 @Suppress("MemberVisibilityCanBePrivate")
 object Text {
   private val newLineCharRegex = Regex("\\n")
+  private val punctuationRegex = Regex("\\p{Punct}\\p{IsPunctuation}]")
 
   fun isNewline(char: Char) = newLineCharRegex.matches(char)
+
+  fun isPunctuation(char: Char) = punctuationRegex.matches(char)
 
   fun isQuote(char: Char) = char in setOf('\'', '\"')
 
@@ -27,6 +30,35 @@ object Text {
     }
 
     return index
+  }
+
+  /**
+   * Finds indent indexes for each line (indent of specific [chars])
+   *
+   * @param str source text
+   * @param chars characters, which considered as indentation
+   * @return list of IntRanges for such indents
+   */
+  fun indentIndexes(str: CharSequence, chars: Set<Char>): List<IntRange> {
+    val result = ArrayList<IntRange>()
+    var save = -1
+    for ((index, char) in str.withIndex()) {
+      if ((isNewline(char) || (index == 0 && char in chars)) && save == -1) {
+        // for first line without \n
+        save = index + if (index == 0) 0 else 1
+      } else {
+        if (save != -1) {
+          if (char !in chars) {
+            if (index > save) result.add(IntRange(save, index - 1))
+            save = if (isNewline(char)) index + 1 else -1
+          }
+        }
+      }
+    }
+
+    if (save != -1) result.add(IntRange(save, str.length - 1))
+
+    return result
   }
 }
 

@@ -67,6 +67,16 @@ interface GrammarCheckingStrategy {
   fun getElementBehavior(root: PsiElement, child: PsiElement) = TEXT
 
   /**
+   * Specify ranges, which will be removed from text before checking (like STEALTH behavior)
+   *
+   * @param root root element previously selected in [isMyContextRoot]
+   * @param text extracted text from root element without [ABSORB] and [STEALTH] ones
+   * in which you need to specify the ranges to remove from the grammar checking
+   * @return list of ranges in the [text] to be ignored
+   */
+  fun getStealthyRanges(root: PsiElement, text: CharSequence) = emptyList<IntRange>()
+
+  /**
    * Determine if typo is will be shown to user. The final check before add typo to [ProblemsHolder].
    *
    * @param root root element previously selected in [isMyContextRoot]
@@ -101,5 +111,6 @@ interface GrammarCheckingStrategy {
    * @param root root element previously selected in [isMyContextRoot]
    * @return list of char replacement rules for whole root context
    */
+  @Deprecated("Use getStealthyRanges() if you don't need some chars")
   fun getReplaceCharRules(root: PsiElement): List<ReplaceCharRule> = listOf(ReplaceNewLines)
 }

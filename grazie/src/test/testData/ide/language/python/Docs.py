@@ -33,7 +33,7 @@ class ExampleClassWithNoTypos:
 
 
 class ExampleClassWithTypos:
-    """It is <warning descr="ARTICLE_MISSING">friend</warning>
+    """It is <warning descr="ARTICLE_MISSING">friend</warning> there
 
     <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
 

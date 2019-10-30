@@ -17,7 +17,8 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
     private val logger = LoggerFactory.getLogger(Typo::class.java)
   }
 
-  data class Location(val errorRange: IntRange, val patternRange: IntRange, val pointer: PsiPointer<PsiElement>? = null) {
+  data class Location(val errorRange: IntRange, val patternRange: IntRange, val textRanges: Collection<IntRange> = emptyList(),
+                      val pointer: PsiPointer<PsiElement>? = null) {
     val element: PsiElement?
       get() = pointer?.element
 
@@ -69,6 +70,8 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
     TYPOS,
 
     PUNCTUATION,
+
+    LOGIC,
 
     /** Problems like incorrectly used dash or quote characters.  */
     TYPOGRAPHY,

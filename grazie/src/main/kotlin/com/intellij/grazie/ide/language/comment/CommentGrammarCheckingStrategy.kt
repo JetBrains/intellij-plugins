@@ -2,16 +2,15 @@
 package com.intellij.grazie.ide.language.comment
 
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
-import com.intellij.grazie.grammar.strategy.impl.ReplaceAsterisk
-import com.intellij.grazie.grammar.strategy.impl.ReplaceSlashes
-import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
+import com.intellij.grazie.utils.Text
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 
 class CommentGrammarCheckingStrategy : GrammarCheckingStrategy {
   override fun isMyContextRoot(element: PsiElement) = element is PsiCommentImpl
 
-  override fun getReplaceCharRules(root: PsiElement) = listOf(ReplaceAsterisk, ReplaceSlashes)
+  override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
 
-  override fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement) = RuleGroup.WHITESPACES
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = Text.indentIndexes(text, setOf(' ', '*', '/'))
 }

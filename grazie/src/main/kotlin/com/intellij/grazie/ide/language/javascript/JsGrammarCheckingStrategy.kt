@@ -3,7 +3,9 @@ package com.intellij.grazie.ide.language.javascript
 
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.grammar.strategy.BaseGrammarCheckingStrategy
+import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.grazie.utils.Text
 import com.intellij.lang.javascript.JSDocTokenTypes.*
 import com.intellij.lang.javascript.JSTokenTypes.*
 import com.intellij.lang.javascript.psi.JSLiteralExpression
@@ -31,4 +33,8 @@ class JsGrammarCheckingStrategy : BaseGrammarCheckingStrategy {
   override fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement) = RuleGroup.LITERALS.takeIf { root is JSLiteralExpression }
 
   override fun getIgnoredTypoCategories(root: PsiElement, child: PsiElement) = setOf(Typo.Category.CASING).takeIf { child.parent is JSDocComment }
+
+  override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
+
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = Text.indentIndexes(text, setOf(' '))
 }

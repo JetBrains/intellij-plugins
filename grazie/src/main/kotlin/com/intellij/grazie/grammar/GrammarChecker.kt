@@ -4,97 +4,111 @@ package com.intellij.grazie.grammar
 import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
 import com.intellij.grazie.utils.Text
-import com.intellij.grazie.utils.orTrue
+import com.intellij.grazie.utils.length
 import com.intellij.grazie.utils.processElements
 import com.intellij.grazie.utils.toPointer
 import com.intellij.psi.PsiElement
-import java.rmi.UnexpectedException
 import java.util.*
 import kotlin.collections.ArrayList
 
 object GrammarChecker {
-  private data class Token(val info: GraziePsiElementProcessor.TokenInfo, val range: IntRange, val shift: Int)
-
-  private fun canIgnoreWhitespace(prefix: CharSequence, current: Char) = prefix.lastOrNull()?.isWhitespace().orTrue() && current.isWhitespace()
+  private data class Shift(val start: Int, val length: Int, val totalDeleted: Int)
 
   fun check(root: PsiElement, strategy: GrammarCheckingStrategy): Set<Typo> {
     val processor = GraziePsiElementProcessor<PsiElement>(root, strategy)
     processElements(root, processor)
-    return check(root, processor.getResult(), strategy)
-  }
 
-  private fun check(root: PsiElement, tokens: Collection<GraziePsiElementProcessor.TokenInfo>, strategy: GrammarCheckingStrategy): Set<Typo> {
-    if (tokens.isEmpty()) return emptySet()
+    val text = processor.getResultedText()
+    val shifts = ArrayList<Shift>()
 
-    // ranges of absorbed elements
-    val absorbs = LinkedList<IntRange>().apply {
-      var last = 0
-      tokens.forEach {
-        val begin = it.token.textOffset - root.textOffset
-        if (last != begin) add(IntRange(last, begin - 1))
-        last = begin + it.token.textLength
-      }
-    }
-
-    // tokens with IntRange mappings from text
-    val mappings = ArrayList<Token>(tokens.size)
-    val replaces = strategy.getReplaceCharRules(root)
-    var offset = 0
-    val text = buildString {
-      var index = 0
-      for ((info, text) in tokens.filter { it.behavior != GrammarCheckingStrategy.ElementBehavior.STEALTH }.map { it to it.token.text }) {
-        var tokenIndex = 0 // index inside current token
-        var shift = 0      // shift inside current token
-        text.asSequence().map { replaces.fold(it) { acc, rule -> rule(this, acc) } }.forEach { char ->
-          // shift whitespaces in the beginning of the tokens
-          if (tokenIndex <= 1 && canIgnoreWhitespace(this, char)) {
-            shift++
-          }
-          else {
-            append(char)
-            tokenIndex++
-          }
+    var stealthed = 0 // count of newly removed characters from text after getResultedShifts()
+    var total = 0
+    val iterator = processor.getResultedShifts().listIterator()
+    for (range in strategy.getStealthyRanges(root, text).sortedWith(Comparator.comparingInt { it.start })) {
+      var deleted = 0
+      for ((position, length) in iterator) {
+        if (position < range.start) {
+          // shift before range
+          shifts.add(Shift(position - stealthed, length, total + length))
+        } else if (position in range) {
+          // shift inside range (combine in one)
+          deleted += length
+        } else {
+          // shift after length - step back
+          iterator.previous()
+          break
         }
 
-        mappings.add(Token(info, IntRange(index, index + tokenIndex), shift))
-        index += tokenIndex
+        total += length
       }
 
-      offset = Text.quotesOffset(this)
-      setLength(length - offset) // remove closing quotes and whitespaces
-      while (length > 0 && get(length - 1).isWhitespace()) deleteCharAt(length - 1)
+      text.delete(range.start - stealthed, range.endInclusive + 1 - stealthed)
 
-      while (offset < length && get(offset).isWhitespace()) offset++
-      repeat(offset) { deleteCharAt(0) } // remove opening quotes and whitespace
+      val length = range.length
+      total += length
+
+      shifts.add(Shift(range.start - stealthed, deleted + length, total))
+      stealthed += length
     }
 
-    return GrammarEngine.getTypos(text, offset = offset).mapNotNull { typo ->
+    // after processing all ranges there still can be shifts
+    for ((position, length) in iterator) {
+      total += length
+      shifts.add(Shift(position, length, total))
+    }
+
+    return check(root, text, shifts, processor.getResultedTokens(), strategy)
+  }
+
+  private fun check(root: PsiElement, text: StringBuilder, shifts: ArrayList<Shift>,
+                    tokens: Collection<GraziePsiElementProcessor.TokenInfo>, strategy: GrammarCheckingStrategy): Set<Typo> {
+    if (tokens.isEmpty()) return emptySet()
+
+    var offset = Text.quotesOffset(text)
+    text.setLength(text.length - offset) // remove closing quotes and whitespaces
+    while (text.isNotEmpty() && text[text.length - 1].isWhitespace()) text.deleteCharAt(text.length - 1)
+
+    while (offset < text.length && text[offset].isWhitespace()) offset++
+    repeat(offset) { text.deleteCharAt(0) } // remove opening quotes and whitespace
+
+    return GrammarEngine.getTypos(text.toString(), offset = offset).mapNotNull { typo ->
       val typoRange = typo.location.errorRange
-      val typoTokens = mappings.filter { it.range.endInclusive > typoRange.start && it.range.start <= typoRange.endInclusive }
 
-      if (typoTokens.isEmpty()) throw UnexpectedException("No tokens for range in typo")
-
-      val patternRange = with(typo.location.patternRange) {
-        val (startToken, endToken) = mappings.filter { it.range.endInclusive > start && it.range.start <= endInclusive }.let { it.first() to it.last() }
-        IntRange(startToken.info.token.textOffset - root.textOffset + start - startToken.range.start + startToken.shift,
-                 endToken.info.token.textOffset - root.textOffset + endInclusive - endToken.range.start + endToken.shift)
+      // finds position in root element for text range
+      fun findPosition(position: Int): Int {
+        val index = shifts.binarySearch { it.start.compareTo(position + 1) }
+        return when {
+          index >= 0 -> shifts[index].totalDeleted
+          -(index + 1) > 0 -> shifts[-(index + 1) - 1].totalDeleted
+          else -> 0
+        } + position
       }
 
-      val (startToken, endToken) = typoTokens.first() to typoTokens.last()
-      // calculate new typo range in the root element
-      val newRange = IntRange(startToken.info.token.textOffset - root.textOffset + typoRange.start - startToken.range.start + startToken.shift,
-        endToken.info.token.textOffset - root.textOffset + typoRange.endInclusive - endToken.range.start + endToken.shift)
+      val range = IntRange(findPosition(typoRange.start), findPosition(typoRange.endInclusive))
+      val patternRange = IntRange(findPosition(typo.location.patternRange.start), findPosition(typo.location.patternRange.endInclusive))
 
-      val ignoredRules = typoTokens.fold(emptySet<String>()) { acc, token -> token.info.ignoredGroup.rules + acc }
-      val ignoredCategories = typoTokens.fold(emptySet<Typo.Category>()) { acc, token -> token.info.ignoredCategories + acc }.map { it.name }
+      val textRangesToDelete = ArrayList<IntRange>()
+      var start = range.start
+      // take all shifts inside typo and invert them
+      shifts.filter { it.start > typoRange.start && it.start <= typoRange.endInclusive }.forEach { shift ->
+        textRangesToDelete.add(IntRange(start, shift.start + shift.totalDeleted - shift.length - 1))
+        start = shift.start + shift.totalDeleted
+      }
+      textRangesToDelete.add(IntRange(start, range.endInclusive + 1))
 
+      val typoTokens = tokens.filter { it.range.endInclusive >= range.start && it.range.start <= range.endInclusive }
+      check(typoTokens.isNotEmpty()) { "No tokens for range in typo" }
+
+      val category = Typo.Category.values().find { it.name == typo.info.rule.category.id.toString() }
       when {
-        absorbs.any { patternRange.start in it || patternRange.endInclusive in it || it.start in patternRange } -> null // typo pattern in absorb element
-        !strategy.isTypoAccepted(root, newRange, patternRange) -> null                                                  // typo not accepted by strategy
-        typo.info.rule.category.id.toString() in ignoredCategories -> null                                              // typo rule in ignored category
-        typo.info.rule.id in ignoredRules -> null                                                                       // typo rule in ignored group
+        !strategy.isTypoAccepted(root, range, patternRange) -> null                                // typo not accepted by strategy
+        typoTokens.any { token ->
+          token.behavior == GrammarCheckingStrategy.ElementBehavior.ABSORB ||                      // typo pattern in absorb element
+            category in token.ignoredCategories ||                                                 // typo rule in ignored category
+            typo.info.rule.id in token.ignoredGroup.rules                                          // typo rule in ignored group
+        } -> null
 
-        else -> typo.copy(location = typo.location.copy(errorRange = newRange, pointer = root.toPointer()))
+        else -> typo.copy(location = typo.location.copy(errorRange = range, textRanges = textRangesToDelete, pointer = root.toPointer()))
       }
     }.toSet()
   }

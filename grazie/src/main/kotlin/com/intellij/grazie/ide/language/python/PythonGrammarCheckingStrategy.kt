@@ -2,7 +2,9 @@
 package com.intellij.grazie.ide.language.python
 
 import com.intellij.grazie.grammar.strategy.BaseGrammarCheckingStrategy
+import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.grazie.utils.Text
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.jetbrains.python.PyTokenTypes.FSTRING_TEXT
@@ -20,7 +22,9 @@ class PythonGrammarCheckingStrategy : BaseGrammarCheckingStrategy {
     return false
   }
 
-  override fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement) = if (root is PyStringLiteralExpression) {
-    if (!root.isDocString) RuleGroup.LITERALS else RuleGroup.LITERALS + RuleGroup.WHITESPACES
-  } else null
+  override fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement) = if (root is PyStringLiteralExpression) RuleGroup.LITERALS else null
+
+  override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
+
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = Text.indentIndexes(text, setOf(' '))
 }
