@@ -157,6 +157,7 @@ public class VmServiceWrapper implements Disposable {
     addRequest(() -> myVmService.getVM(consumer));
   }
 
+  @NotNull
   public CompletableFuture<Isolate> getCachedIsolate(@NotNull final String isolateId) {
     return myIsolatesInfo.getCachedIsolate(isolateId, () -> {
       CompletableFuture<Isolate> isolateFuture = new CompletableFuture<>();

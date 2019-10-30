@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import gnu.trove.THashMap;
@@ -97,10 +98,12 @@ public class IsolatesInfo {
     }
   }
 
-  public synchronized CompletableFuture<Isolate> getCachedIsolate(String isolateId, Supplier<CompletableFuture<Isolate>> isolateSupplier) {
+  @NotNull
+  public synchronized CompletableFuture<Isolate> getCachedIsolate(String isolateId,
+                                                                  Supplier<? extends CompletableFuture<Isolate>> isolateSupplier) {
     IsolateInfo info = myIsolateIdToInfoMap.get(isolateId);
     if (info == null) {
-      return null;
+      return CompletableFuture.completedFuture(null);
     }
     CompletableFuture<Isolate> cachedIsolate = info.getCachedIsolate();
     if (cachedIsolate != null) {
