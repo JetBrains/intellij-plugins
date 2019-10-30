@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.angular2.codeInsight.tags.Angular2StandardTagDescriptor.mergeWithAngularDescriptorIfPossible;
 
@@ -108,6 +109,11 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Override
   public PsiElement getDeclaration() {
     return ContainerUtil.getFirstItem(myResolver.getDeclarations());
+  }
+
+  @NotNull
+  public List<Angular2Directive> getSourceDirectives() {
+    return myResolver.getSourceDirectives();
   }
 
   private Collection<? extends PsiElement> getSelectors(Angular2Directive directive) {
