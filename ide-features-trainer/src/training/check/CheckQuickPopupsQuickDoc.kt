@@ -22,8 +22,4 @@ class CheckQuickPopupsQuickDoc : Check {
     val activeDocComponent = QuickDocUtil.getActiveDocComponent(project!!)
     return activeDocComponent == null || !activeDocComponent.isShowing
   }
-
-  override fun listenAllKeys(): Boolean {
-    return true
-  }
 }

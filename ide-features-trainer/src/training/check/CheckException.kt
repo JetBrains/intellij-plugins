@@ -27,8 +27,4 @@ class CheckException : Check {
     val javaCodeReferenceElement = PsiTreeUtil.findChildOfType(referenceList, PsiJavaCodeReferenceElement::class.java)
     return javaCodeReferenceElement!!.text == "IOException"
   }
-
-  override fun listenAllKeys(): Boolean {
-    return true
-  }
 }

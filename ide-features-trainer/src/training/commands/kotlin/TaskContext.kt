@@ -106,8 +106,6 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
         // do nothing
       }
 
-      override fun listenAllKeys(): Boolean = false
-
       // Some checks are needed to be performed in EDT thread
       // For example, selection information  could not be got (for some magic reason) from another thread
       // Also we need to commit document

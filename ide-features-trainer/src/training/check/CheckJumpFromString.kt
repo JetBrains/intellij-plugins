@@ -25,8 +25,4 @@ class CheckJumpFromString : Check {
     val elementAt = psiFile.findElementAt(caretModel.offset)!!
     return elementAt.parent != null && elementAt.parent.text == "String"
   }
-
-  override fun listenAllKeys(): Boolean {
-    return false
-  }
 }

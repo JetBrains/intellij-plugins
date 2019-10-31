@@ -20,8 +20,4 @@ class CheckFindBar : Check {
   override fun check(): Boolean {
     return editor!!.headerComponent == null
   }
-
-  override fun listenAllKeys(): Boolean {
-    return false
-  }
 }
