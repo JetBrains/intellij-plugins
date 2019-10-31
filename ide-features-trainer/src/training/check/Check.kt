@@ -10,5 +10,4 @@ interface Check {
   fun set(project: Project, editor: Editor)
   fun before()
   fun check(): Boolean
-  fun listenAllKeys(): Boolean
 }
