@@ -98,6 +98,7 @@ class VueInjector : MultiHostInjector {
     if (context is XmlAttributeValueImpl
         && !context.value.isBlank()
         && parent is XmlAttribute
+        && parent.parent != null
         && ((parent.descriptor as? VueAttributeDescriptor)?.getInfo()
             ?: VueAttributeNameParser.parse(parent.name, parent.parent))
           .injectJS) {
