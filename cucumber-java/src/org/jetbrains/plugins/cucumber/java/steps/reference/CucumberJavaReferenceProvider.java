@@ -35,7 +35,11 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    String cucumberExpression = CucumberJavaUtil.getStepAnnotationValue(method, null);
+    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
+    if (stepAnnotation == null || !PsiTreeUtil.isAncestor(stepAnnotation, literalExpression, true)) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+    String cucumberExpression = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
     if (cucumberExpression == null) {
       return PsiReference.EMPTY_ARRAY;
     }
