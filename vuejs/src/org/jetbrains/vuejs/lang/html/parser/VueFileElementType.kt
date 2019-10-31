@@ -4,12 +4,12 @@ package org.jetbrains.vuejs.lang.html.parser
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.PsiBuilderFactory
-import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.tree.IStubFileElementType
+import com.intellij.psi.xml.HtmlFileElementType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLanguage.INSTANCE) {
@@ -32,7 +32,7 @@ class VueFileElementType : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLa
   }
 
   override fun getStubVersion(): Int {
-    return JSFileElementType.getVersion() + 3
+    return HtmlFileElementType.getHtmlStubVersion() + 3
   }
 
   override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode {
