@@ -8,9 +8,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiForStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 
-/**
- * Created by karashevich on 21/08/15.
- */
 public class CheckStatementCompletionIf implements Check{
 
     Project project;

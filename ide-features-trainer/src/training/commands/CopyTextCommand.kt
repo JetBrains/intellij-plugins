@@ -9,9 +9,6 @@ import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class CopyTextCommand internal constructor() : Command(Command.CommandType.COPYTEXT) {
 
   @Throws(InterruptedException::class)

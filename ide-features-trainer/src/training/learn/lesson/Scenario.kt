@@ -4,9 +4,6 @@ package training.learn.lesson
 import org.jdom.Element
 import training.util.DataLoader
 
-/**
- * Created by karashevich on 30/12/14.
- */
 class Scenario(var path: String) {
 
   val root: Element = DataLoader.getXmlRootElement(path)

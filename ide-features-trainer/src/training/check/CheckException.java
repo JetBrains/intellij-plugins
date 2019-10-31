@@ -6,9 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 
-/**
- * Created by karashevich on 21/08/15.
- */
 public class CheckException implements Check{
 
     Project project;

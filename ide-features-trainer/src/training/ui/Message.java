@@ -15,9 +15,6 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by karashevich on 01/09/15.
- */
 public class Message {
 
 

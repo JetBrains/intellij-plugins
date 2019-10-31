@@ -8,9 +8,6 @@ import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 
-/**
- * Created by karashevich on 27/02/15.
- */
 open class LessonListenerAdapter : LessonListener {
 
   override fun lessonStarted(lesson: Lesson) { }

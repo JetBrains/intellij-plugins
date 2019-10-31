@@ -3,9 +3,6 @@ package training.learn.log
 import training.learn.interfaces.Lesson
 import java.util.*
 
-/**
- * Created by karashevich on 13/10/15.
- */
 class LessonLog(lesson: Lesson) {
 
   var myLesson: Lesson? = lesson

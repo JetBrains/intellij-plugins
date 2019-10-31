@@ -2,9 +2,6 @@ package training.editor.actions
 
 import org.jetbrains.annotations.NonNls
 
-/**
- * Created by karashevich on 19/08/15.
- */
 interface LearnActions {
 
   val actionId: String

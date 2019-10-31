@@ -1,8 +1,5 @@
 package training.commands
 
-/**
- * Created by karashevich on 30/01/15.
- */
 @Deprecated("")
 class ExpandAllBlocksCommand : Command(Command.CommandType.EXPANDALLBLOCKS) {
 

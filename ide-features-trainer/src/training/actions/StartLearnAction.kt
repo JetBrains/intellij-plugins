@@ -15,9 +15,6 @@ import training.ui.views.LanguageChoosePanel
 import javax.swing.JComponent
 
 
-/**
- * Created by karashevich on 15/07/16.
- */
 class StartLearnAction : AnAction(
   LearnBundle.message("learn.WelcomeScreen.StartLearn.text", ApplicationNamesInfo.getInstance().fullProductName),
   LearnBundle.message("learn.WelcomeScreen.StartLearn.description"), LearnIcons.chevronIcon) {

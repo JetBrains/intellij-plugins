@@ -10,9 +10,6 @@ import java.io.InputStream
 import java.net.URL
 import javax.imageio.ImageIO
 
-/**
- * Created by karashevich on 31/03/15.
- */
 object DataLoader {
   val DATA_PATH = "/data/"
   val IMAGES_PATH = "/img/"

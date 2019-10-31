@@ -12,9 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Locale;
 
-/**
- * Created by jetbrains on 05/08/16.
- */
 public class JdkSetupUtil {
 
     @NonNls

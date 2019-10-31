@@ -2,9 +2,6 @@ package training.commands
 
 import org.jdom.Element
 
-/**
- * Created by karashevich on 30/01/15.
- */
 object CommandFactory {
 
   fun buildCommand(element: Element?): Command {
