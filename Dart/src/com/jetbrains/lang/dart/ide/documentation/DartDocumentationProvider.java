@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -24,6 +25,8 @@ import java.util.List;
 
 public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "https://api.dartlang.org/stable/";
+
+  private static final Logger LOG = Logger.getInstance(DartDocumentationProvider.class);
 
   @Override
   public String generateDoc(@NotNull final PsiElement element, @Nullable final PsiElement originalElement) {
@@ -179,7 +182,19 @@ public class DartDocumentationProvider implements DocumentationProvider {
     if (element != null) {
       final PsiFile psiFile = element.getContainingFile();
       final int offset = element.getTextOffset();
-      return getSingleHover(psiFile, offset);
+      if (psiFile != null) {
+        return getSingleHover(psiFile, offset);
+      }
+      else {
+        // This is not expected, but we have seen logs in 2019.1.4 and 2019.2.3 to this effect, getSingleHover asserts that psiFile will not
+        // be null.
+        final PsiElement parentElement = element.getParent();
+        final String errorMessage = "The `getContainingFile()` call on " +
+                                    element +
+                                    " returned null" +
+                                    (parentElement != null ? ", the parent element type is: " + parentElement : "");
+        LOG.error(errorMessage, new Exception());
+      }
     }
     return null;
   }
