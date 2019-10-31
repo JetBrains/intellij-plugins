@@ -84,6 +84,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "data", "render", "props", "propsData", "computed", "methods", "watch",
                                                   "mixins", "components", "directives", "filters")
 
+    private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
+    
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
       obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
 
@@ -163,21 +165,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     return JSCompositeTypeFactory.createContextualUnionType(type.types, type.source)
   }
 
-  override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
-    val obj = property.parent as JSObjectLiteralExpression
+  override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
 
-    val out = outData ?: JSElementIndexingDataImpl()
-    //Bootstrap-vue components
-    if (property.containingFile.name == "index.js" && property.parent is JSObjectLiteralExpression) {
-      val parent = PsiTreeUtil.findFirstParent(property, Condition {
-        return@Condition it is JSVarStatement && it.variables.firstOrNull()?.name == "components"
-      })
-      if (parent != null) {
-        val componentName = property.name ?: ""
-        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
-      }
-    }
-    if (MIXINS_PROP == property.name && property.value is JSArrayLiteralExpression) {
+  override fun processProperty(name: String?, property: JSProperty, out: JSElementIndexingData): Boolean {
+    if (MIXINS_PROP == name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions
         .forEach {
           if (it is JSReferenceExpression) {
@@ -188,10 +179,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
           }
         }
     }
-    else if (EXTENDS_PROP == property.name && property.value is JSReferenceExpression) {
+    else if (EXTENDS_PROP == name && property.value is JSReferenceExpression) {
       recordExtends(out, property, property.value)
     }
-    else if (DIRECTIVES_PROP == property.name) {
+    else if (DIRECTIVES_PROP == name) {
       (property.value as? JSObjectLiteralExpression)?.properties?.forEach { directive ->
         if (!directive.name.isNullOrBlank()) {
           if (directive.value is JSReferenceExpression) {
@@ -204,14 +195,15 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     //Vuetify typescript components
-    else if (NAME_PROP == property.name && property.value is JSLiteralExpression) {
+    else if (NAME_PROP == name && property.value is JSLiteralExpression) {
       val componentName = (property.value as JSLiteralExpression).stringValue
+      val obj = property.parent as JSObjectLiteralExpression
       if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
                                                                     true) && obj.containingFile.fileType is TypeScriptFileType) {
         out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
       }
     }
-    else if (TEMPLATE_PROP == property.name) {
+    else if (TEMPLATE_PROP == name) {
       if (isPossiblyVueContainerInitializer(property.parent as? JSObjectLiteralExpression)) {
         val value = property.value
         if (value is JSLiteralExpression && value.isQuotedLiteral) {
@@ -239,22 +231,44 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
       }
     }
+    
+    return true
+  }
 
-    val firstProperty = obj.firstProperty ?: return outData
+  override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
+    val obj = property.parent as? JSObjectLiteralExpression
+
+    var out = outData
+    //Bootstrap-vue components
+    if (property.containingFile.name == "index.js" && property.parent is JSObjectLiteralExpression) {
+      val parent = PsiTreeUtil.findFirstParent(property, Condition {
+        return@Condition it is JSVarStatement && it.variables.firstOrNull()?.name == "components"
+      })
+      if (parent != null) {
+        val componentName = property.name ?: ""
+        if (out == null) out = JSElementIndexingDataImpl()
+        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
+      }
+    }
+
+    val firstProperty = obj?.firstProperty ?: return outData
     if (firstProperty == property) {
       val parent = obj.parent
       if (parent is JSExportAssignment ||
           (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
         if (isPossiblyVueContainerInitializer(obj)) {
+          if (out == null) out = JSElementIndexingDataImpl()
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
         }
       }
       else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
+        if (out == null) out = JSElementIndexingDataImpl()
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
     }
-    return if (out.isEmpty) outData else out
+    
+    return out
   }
 
   override fun processDecorator(decorator: ES6Decorator, data: JSElementIndexingDataImpl?): JSElementIndexingDataImpl? {
