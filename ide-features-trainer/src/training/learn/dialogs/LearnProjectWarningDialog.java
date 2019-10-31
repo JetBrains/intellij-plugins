@@ -6,7 +6,6 @@ package training.learn.dialogs;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import training.learn.LearnBundle;
 
@@ -14,14 +13,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LearnProjectWarningDialog extends DialogWrapper {
-    private final Project myProject;
-
-    private StateRestoringCheckBox myCbDoNotAskAgain;
 
 
     public LearnProjectWarningDialog(Project project) {
         super(project, true);
-        myProject = project;
         setTitle(LearnBundle.INSTANCE.message("dialog.learnProjectWarning.title"));
         init();
     }
@@ -49,16 +44,6 @@ public class LearnProjectWarningDialog extends DialogWrapper {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.anchor = GridBagConstraints.WEST;
         panel.add(new JLabel(warningMessage), gbc);
-
-//        gbc.gridy++;
-//        gbc.gridx = 0;
-//        gbc.weightx = 0.0;
-//        gbc.gridwidth = 1;
-//        myCbDoNotAskAgain = new StateRestoringCheckBox();
-//        myCbDoNotAskAgain.setText(LearnBundle.message("dialog.invalidSdk.checkbox"));
-//        panel.add(myCbDoNotAskAgain, gbc);
-
-//        myCbDoNotAskAgain.setSelected(true);
 
         return panel;
     }

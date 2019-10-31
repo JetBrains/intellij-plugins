@@ -17,7 +17,7 @@ class BlockCaretAction(private val editor: Editor) : DumbAwareAction(LearnAction
 
 
   init {
-    actionHandlers = ArrayList<Runnable>()
+    actionHandlers = ArrayList()
 
     //collect all shortcuts for caret actions
     val superShortcut = ArrayList<Shortcut>()
@@ -65,13 +65,4 @@ class BlockCaretAction(private val editor: Editor) : DumbAwareAction(LearnAction
     actionHandlers!!.add(runnable)
   }
 
-  fun removeActionHandler(runnable: Runnable) {
-    if (actionHandlers!!.contains(runnable)) {
-      actionHandlers!!.remove(runnable)
-    }
-  }
-
-  fun removeAllActionHandlers() {
-    actionHandlers = null
-  }
 }

@@ -17,7 +17,6 @@ import java.awt.*;
 
 public class SdkModuleProblemDialog extends DialogWrapper {
     private final Project myProject;
-    private final String necessarySdkVersion;
 
     private StateRestoringCheckBox myCbOpenProjectSdkPreferences;
 
@@ -25,7 +24,6 @@ public class SdkModuleProblemDialog extends DialogWrapper {
     public SdkModuleProblemDialog(Project project) {
         super(project, true);
         myProject = project;
-        necessarySdkVersion = null;
         setTitle(LearnBundle.INSTANCE.message("dialog.emptyModule.title"));
         init();
     }

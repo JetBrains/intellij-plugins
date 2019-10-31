@@ -3,9 +3,4 @@
  */
 package training.learn.exceptons
 
-class LessonIsOpenedException : Exception {
-
-  constructor(s: String) : super(s) {}
-
-  constructor() : super() {}
-}
+class LessonIsOpenedException(s: String) : Exception(s)

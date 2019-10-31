@@ -96,9 +96,6 @@ class JavaLangSupport : AbstractLangSupport() {
     }
   }
 
-  @Throws(NoJavaModuleException::class)
-  private fun checkJavaModule(project: Project) = { if (ModuleManager.getInstance(project).modules.isEmpty()) throw NoJavaModuleException() }
-
   private fun getJdkList(): ArrayList<Sdk> {
 
     val type = JavaSdk.getInstance()

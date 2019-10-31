@@ -28,7 +28,6 @@ class UISettings {
   val eastInset: Int by lazy { JBUI.scale(32) }
   val checkWidth: Int by lazy { LearnIcons.checkMarkGray.iconWidth }
   val checkRightIndent: Int by lazy { 5 }
-  val leftIndent: Int by lazy { JBUI.scale(17) }
 
   //GAPS
   val headerGap: Int by lazy { JBUI.scale(2) }
@@ -41,9 +40,7 @@ class UISettings {
   val beforeButtonGap: Int by lazy { JBUI.scale(20) }
   val afterButtonGap: Int by lazy { JBUI.scale(44) }
   val afterCaptionGap: Int by lazy { JBUI.scale(12) }
-  val rateQuestionGap: Int by lazy { JBUI.scale(16) }
   val groupGap: Int by lazy { JBUI.scale(24) }
-  val labelLineGap: Int by lazy { JBUI.scale(12) }
   val moduleNameSeparatorGap: Int by lazy { JBUI.scale(5) }
   val moduleNameLessonsGap: Int by lazy { JBUI.scale(10) }
   val languagePanelButtonsGap: Int by lazy { JBUI.scale(8) }
@@ -56,12 +53,10 @@ class UISettings {
   val italicFont: Font by lazy { plainFont.deriveFont(Font.ITALIC) }
   val boldFont: Font by lazy { plainFont.deriveFont(Font.BOLD) }
   val lessonHeaderFont: Font by lazy { Font(fontFace, Font.BOLD, fontSize + 2) }
-  val radioButtonLabelFont: Font by lazy { Font(fontFace, Font.PLAIN, fontSize - 2) }
 
   //COLORS
   val defaultTextColor = JBColor(Color(30, 30, 30), Color(208, 208, 208))
   val lessonActiveColor = JBColor(Color(0, 0, 0), Color(202, 202, 202))
-  val lessonCodeColor = JBColor(Color(27, 78, 128), Color(85, 161, 255))
   val lessonLinkColor = JBColor(Color(17, 96, 166), Color(104, 159, 220))
   val shortcutTextColor = JBColor(Color(12, 12, 12), Color(200, 200, 200))
   val separatorColor = JBColor(Color(204, 204, 204), Color(149, 149, 149))
@@ -69,7 +64,6 @@ class UISettings {
   val passedColor = JBColor(Color(105, 105, 105), Color(103, 103, 103))
   val backgroundColor = Color(245, 245, 245)
   val descriptionColor = Color(128, 128, 128)
-  val radioButtonLabelColor = descriptionColor
   var questionColor = lessonActiveColor
 
   //BORDERS
@@ -102,7 +96,7 @@ class UISettings {
     }
 
     fun rigidGap(settingsValue: KProperty<Int>, isVertical: Boolean = true): Box.Filler {
-      val value = settingsValue.call(training.ui.UISettings.instance)
+      val value = settingsValue.call(instance)
       return rigidGap(settingsValue.name, value, isVertical)
     }
   }

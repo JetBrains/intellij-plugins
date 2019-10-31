@@ -58,9 +58,6 @@ class PythonLangSupport : AbstractLangSupport() {
     else throw NoSdkException()
   }
 
-  fun addToSdkList() {
-  }
-
   //detect sdk with version 2.7 and higher
   fun detectPySdks(): List<Sdk> {
     val model = ProjectSdksModel()

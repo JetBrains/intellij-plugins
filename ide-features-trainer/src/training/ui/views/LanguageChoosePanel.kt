@@ -231,10 +231,6 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
     }
 
 
-    fun updateMainPanel() {
-        mainPanel!!.removeAll()
-    }
-
     private inner class MyJTextPane internal constructor(widthOfText: Int) : JTextPane() {
 
         private var myWidth = 314

@@ -4,9 +4,8 @@
 package training.commands
 
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.util.text.CharArrayCharSequence
 
-class TypeTextCommand : Command(Command.CommandType.TYPETEXT) {
+class TypeTextCommand : Command(CommandType.TYPETEXT) {
 
   override fun execute(executionList: ExecutionList) {
     executeWithPollOnEdt(executionList) {
@@ -29,18 +28,4 @@ class TypeTextCommand : Command(Command.CommandType.TYPETEXT) {
     }
   }
 
-  private fun typeText(executionList: ExecutionList, text: String, startOffset: Int) {
-
-  }
-
-  private fun typeChar(executionList: ExecutionList, char: Char, startOffset: Int, relativeOffset: Int) {
-    WriteCommandAction.runWriteCommandAction(executionList.project, Runnable {
-      executionList.editor.document.insertString(relativeOffset + startOffset, char.toSequence())
-      executionList.editor.caretModel.moveToOffset(relativeOffset + 1 + startOffset)
-    })
-  }
-
-  private fun Char.toSequence(): CharSequence {
-    return CharArrayCharSequence(this)
-  }
 }

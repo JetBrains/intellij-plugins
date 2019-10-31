@@ -12,22 +12,15 @@ import training.lang.LangManager
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
-import javax.swing.JPanel
 
 
-class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
+class LearnToolWindow internal constructor() : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
 
-  val myContentPanel: JPanel = JPanel()
   //TODO: remove public modificator set ScrollPane before release
   var scrollPane: JBScrollPane? = null
   private var myLearnPanel: LearnPanel? = null
   private var modulesPanel: ModulesPanel? = null
   private var myProject: Project? = null
-
-  internal constructor() : super(true, true)
-
-  constructor(vertical: Boolean) : super(vertical) {}
-  constructor(vertical: Boolean, borderless: Boolean) : super(vertical, borderless) {}
 
   fun init(project: Project) {
 

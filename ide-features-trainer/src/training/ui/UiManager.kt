@@ -88,11 +88,6 @@ object UiManager {
     LOG.debug("clearLessonPanels")
   }
 
-  fun hideLearnPanelButtons() {
-    learnPanelPerProject.values.forEach { it.hideButtons() }
-    LOG.debug("hideLearnPanelButtons")
-  }
-
   fun setLessonNameOnLearnPanels(lessonName: String) {
     learnPanelPerProject.values.forEach { it.setLessonName(lessonName) }
     LOG.debug("setLessonNameOnLearnPanels")

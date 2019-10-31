@@ -12,7 +12,6 @@ import training.learn.exceptons.NoProjectException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.learn.log.LessonLog
-import java.awt.Dimension
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.*
@@ -34,26 +33,6 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
     passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
   }
 
-  @Deprecated("")
-  @Throws(IOException::class, FontFormatException::class, LessonIsOpenedException::class)
-  fun open(infoPanelDimension: Dimension) {
-    //init infoPanel, check that XmlLesson has not opened yet
-    if (isOpen) throw LessonIsOpenedException(this.name + "is opened")
-    onStart()
-    isOpen = true
-  }
-
-
-  @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
-  fun open() {
-    var currentProject = CourseManager.instance.currentProject
-    if (currentProject == null) {
-      currentProject = CourseManager.instance.learnProject
-    }
-    if (currentProject == null) throw NoProjectException()
-    CourseManager.instance.openLesson(currentProject, this)
-  }
-
   @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
   fun open(projectWhereToOpenLesson: Project) {
     CourseManager.instance.openLesson(projectWhereToOpenLesson, this)
@@ -65,22 +44,10 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
     lessonLog.resetCounter()
   }
 
-  private fun onItemPassed() {
-  }
-
   //call onPass handlers in lessonListeners
   override fun onPass() {
     super.onPass()
     lessonLog.log("XmlLesson passed")
-  }
-
-  @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class, LessonIsOpenedException::class)
-  fun onNextLesson() {
-    lessonListeners.forEach { it.lessonNext(this) }
-  }
-
-  fun passItem() {
-    onItemPassed()
   }
 
   override fun equals(other: Any?): Boolean {

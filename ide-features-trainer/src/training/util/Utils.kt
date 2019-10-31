@@ -38,10 +38,6 @@ fun findLanguageByID(id: String?): Language? {
   return languageByID
 }
 
-fun getCurrentProject(): Project? {
-  return CommonDataKeys.PROJECT.getData(DataManager.getInstance().dataContext)
-}
-
 fun editorPointForBalloon(myEditor: Editor): Point {
   val offset = myEditor.caretModel.currentCaret.offset
   val position = myEditor.offsetToVisualPosition(offset)

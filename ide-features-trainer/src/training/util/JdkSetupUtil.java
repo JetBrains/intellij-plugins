@@ -3,7 +3,6 @@
  */
 package training.util;
 
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Version;
@@ -13,15 +12,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Locale;
 
 public class JdkSetupUtil {
 
-    @NonNls
-    private static final String productJdkConfigFileName =
-            getExecutable() + (SystemInfo.isWindows ? ((SystemInfo.is64Bit) ? "64.exe.jdk" : ".exe.jdk") : ".jdk");
-    @NonNls
-    private static final File productJdkConfigFile = new File(PathManager.getConfigPath(), productJdkConfigFileName);
     @NonNls
     private static final File bundledJdkFile = getBundledJDKFile();
 
@@ -79,12 +72,6 @@ public class JdkSetupUtil {
         }
 
         return jdkBundleList;
-    }
-
-    @NotNull
-    private static String getExecutable() {
-        final String executable = System.getProperty("idea.executable");
-        return executable != null ? executable : ApplicationNamesInfo.getInstance().getProductName().toLowerCase(Locale.US);
     }
 
     public static String getJavaHomePath(JdkBundle jdkBundle){
