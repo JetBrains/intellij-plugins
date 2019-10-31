@@ -8,6 +8,7 @@ import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
 import com.intellij.grazie.ide.quickfix.supress.GrazieSuppressCategoryQuickFix
 import com.intellij.grazie.ide.quickfix.supress.GrazieSuppressRuleQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
@@ -28,7 +29,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
         }
 
         add(GrazieSuppressRuleQuickFix(this@toFixes.info.rule))
-        add(GrazieSuppressCategoryQuickFix(this@toFixes.info.lang, this@toFixes.info.rule.category))
+        add(GrazieSuppressCategoryQuickFix(this@toFixes.info.lang, ComparableCategory(this@toFixes.info.rule.category)))
       }
     }
 

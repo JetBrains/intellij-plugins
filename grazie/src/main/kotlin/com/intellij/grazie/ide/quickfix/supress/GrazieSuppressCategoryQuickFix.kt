@@ -6,16 +6,16 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
-import org.languagetool.rules.Category
 import org.languagetool.rules.Rule
 import javax.swing.Icon
 
-class GrazieSuppressCategoryQuickFix(private val lang: Lang, private val category: Category) : LocalQuickFix, Iconable, LowPriorityAction {
+class GrazieSuppressCategoryQuickFix(private val lang: Lang, private val category: ComparableCategory) : LocalQuickFix, Iconable, LowPriorityAction {
   override fun getFamilyName(): String = msg("grazie.quickfix.suppress.category.family")
 
   override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
@@ -30,7 +30,7 @@ class GrazieSuppressCategoryQuickFix(private val lang: Lang, private val categor
         fun Rule.isActive() = (id in state.userEnabledRules && id !in state.userDisabledRules)
           || (id !in state.userDisabledRules && id !in state.userEnabledRules && this in activeRules)
 
-        allRules.filter { it.category == category && it.isActive() }.distinctBy { it.id }
+        allRules.filter { ComparableCategory(it.category) == category  && it.isActive() }.distinctBy { it.id }
       }
 
       state.update(
