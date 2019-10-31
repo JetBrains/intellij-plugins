@@ -1,8 +1,5 @@
 package training.util;
 
-/**
- * Created by karashevich on 11/08/15.
- */
 public class XmlModuleConstants {
     public final static String MODULE_ALLMODULE_FILENAME = "modules.xml";
     public final static String MODULE_TYPE_ATTR = "module";

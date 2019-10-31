@@ -5,9 +5,6 @@ import com.intellij.openapi.wm.ex.WindowManagerEx
 import com.intellij.ui.JBColor
 import java.awt.Color
 
-/**
- * Created by karashevich on 26/10/15.
- */
 class DemoModeUI {
   private var demoModeWidget: DemoModeWidget? = null
   private var myProject: Project? = null

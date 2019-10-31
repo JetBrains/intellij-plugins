@@ -19,9 +19,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import training.util.LearnUiUtil
 
-/**
- * Created by karashevich on 28/07/15.
- */
 class ShowStatusBar : AnAction() {
 
   override fun actionPerformed(anActionEvent: AnActionEvent) {

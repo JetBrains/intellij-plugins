@@ -13,9 +13,6 @@ import training.learn.LearnBundle;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by karashevich on 09/09/15.
- */
 public class NoSdkProblemDialog extends DialogWrapper {
     private final Project myProject;
     private final String necessarySdkVersion;

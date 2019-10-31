@@ -1,8 +1,5 @@
 package training.util;
 
-/**
- * Created by karashevich on 19/03/15.
- */
 public class XmlUtil {
 
     public static String removeHtmlTags(String text) {

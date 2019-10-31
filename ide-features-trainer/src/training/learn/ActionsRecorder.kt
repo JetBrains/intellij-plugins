@@ -24,9 +24,6 @@ import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.util.concurrent.CompletableFuture
 
-/**
- * Created by karashevich on 18/12/14.
- */
 class ActionsRecorder(private val project: Project,
                       private val document: Document) : Disposable {
 

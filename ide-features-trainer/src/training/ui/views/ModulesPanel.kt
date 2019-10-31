@@ -32,9 +32,6 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-/**
- * Created by karashevich on 26/06/15.
- */
 class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
     private var modulesPanel: JPanel = JPanel()

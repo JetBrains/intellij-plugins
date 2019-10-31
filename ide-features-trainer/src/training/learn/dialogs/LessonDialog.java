@@ -10,9 +10,6 @@ import training.learn.LearnBundle;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by karashevich on 15/01/16.
- */
 public class LessonDialog extends DialogWrapper {
     private LessonDialogPanel myLessonDialogPanel;
 

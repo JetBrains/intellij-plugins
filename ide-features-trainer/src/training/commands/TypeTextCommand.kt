@@ -3,9 +3,6 @@ package training.commands
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.util.text.CharArrayCharSequence
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class TypeTextCommand : Command(Command.CommandType.TYPETEXT) {
 
   override fun execute(executionList: ExecutionList) {

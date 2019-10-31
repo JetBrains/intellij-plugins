@@ -6,9 +6,6 @@ import com.intellij.openapi.editor.LogicalPosition
 import java.util.concurrent.ExecutionException
 
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
 
   //always put the caret at the end of the selection

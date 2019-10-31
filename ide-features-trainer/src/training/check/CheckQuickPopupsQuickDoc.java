@@ -5,9 +5,6 @@ import com.intellij.codeInsight.documentation.QuickDocUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 
-/**
- * Created by karashevich on 21/08/15.
- */
 public class CheckQuickPopupsQuickDoc implements Check{
 
     Project project;
