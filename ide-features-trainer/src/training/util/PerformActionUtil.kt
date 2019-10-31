@@ -1,64 +1,52 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.util;
+package training.util
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.keymap.KeymapManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.KeyboardShortcut
+import com.intellij.openapi.actionSystem.Shortcut
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.project.Project
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
+import java.util.concurrent.ExecutionException
+import javax.swing.JOptionPane
+import javax.swing.KeyStroke
 
-import javax.swing.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.util.concurrent.ExecutionException;
-
-public class PerformActionUtil {
-
-    public static InputEvent getInputEvent(String actionName) {
-        final Shortcut[] shortcuts = KeymapManager.getInstance().getActiveKeymap().getShortcuts(actionName);
-        KeyStroke keyStroke = null;
-        for (Shortcut each : shortcuts) {
-            if (each instanceof KeyboardShortcut) {
-                keyStroke = ((KeyboardShortcut) each).getFirstKeyStroke();
-                if (keyStroke != null) break;
-            }
-        }
-
-        if (keyStroke != null) {
-            return new KeyEvent(JOptionPane.getRootFrame(),
-                    KeyEvent.KEY_PRESSED,
-                    System.currentTimeMillis(),
-                    keyStroke.getModifiers(),
-                    keyStroke.getKeyCode(),
-                    keyStroke.getKeyChar(),
-                    KeyEvent.KEY_LOCATION_STANDARD);
-        } else {
-            return new MouseEvent(JOptionPane.getRootFrame(), MouseEvent.MOUSE_PRESSED, 0, 0, 0, 0, 1, false, MouseEvent.BUTTON1);
-        }
+object PerformActionUtil {
+  private fun getInputEvent(actionName: String): InputEvent {
+    val shortcuts: Array<Shortcut> = KeymapManager.getInstance().activeKeymap.getShortcuts(actionName)
+    var keyStroke: KeyStroke? = null
+    for (each in shortcuts) {
+      if (each is KeyboardShortcut) {
+        keyStroke = each.firstKeyStroke
+        if (keyStroke != null) break
+      }
     }
-
-    public static void performAction(final String actionName, final Editor editor, final Project project, final Runnable runnable) throws InterruptedException, ExecutionException {
-
-        final ActionManager am = ActionManager.getInstance();
-        final AnAction targetAction = am.getAction(actionName);
-        final InputEvent inputEvent = getInputEvent(actionName);
-
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                WriteCommandAction.runWriteCommandAction(project, new Runnable() {
-                    @Override
-                    public void run() {
-                        am.tryToExecute(targetAction, inputEvent, editor.getContentComponent(), null, true).doWhenDone(runnable);
-                    }
-                });
-            }
-        });
+    return if (keyStroke != null) {
+      KeyEvent(JOptionPane.getRootFrame(),
+              KeyEvent.KEY_PRESSED,
+              System.currentTimeMillis(),
+              keyStroke.modifiers,
+              keyStroke.keyCode,
+              keyStroke.keyChar,
+              KeyEvent.KEY_LOCATION_STANDARD)
+    } else {
+      MouseEvent(JOptionPane.getRootFrame(), MouseEvent.MOUSE_PRESSED, 0, 0, 0, 0, 1, false, MouseEvent.BUTTON1)
     }
+  }
 
-
+  @Throws(InterruptedException::class, ExecutionException::class)
+  fun performAction(actionName: String, editor: Editor, project: Project?, runnable: Runnable?) {
+    val am: ActionManager = ActionManager.getInstance()
+    val targetAction: AnAction? = am.getAction(actionName)
+    val inputEvent = getInputEvent(actionName)
+    ApplicationManager.getApplication().invokeLater { WriteCommandAction.runWriteCommandAction(project) { am.tryToExecute(targetAction!!, inputEvent, editor.contentComponent, null, true).doWhenDone(runnable!!) } }
+  }
 }
