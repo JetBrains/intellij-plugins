@@ -13,7 +13,7 @@ class ActionCommand : Command(CommandType.ACTION) {
     val editor = executionList.editor
     val project = executionList.project
     val actionType = element.getAttribute("action")!!.value
-    PerformActionUtil.performAction(actionType, editor, project) { startNextCommand(executionList) }
+    PerformActionUtil.performAction(actionType, editor, project, Runnable { startNextCommand(executionList) })
   }
 
 }
