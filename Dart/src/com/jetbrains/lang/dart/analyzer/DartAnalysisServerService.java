@@ -14,7 +14,6 @@ import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonObject;
 import com.intellij.codeInsight.intention.IntentionManager;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -33,34 +32,26 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
-import com.intellij.util.*;
+import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
@@ -72,7 +63,6 @@ import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUpdateChecker;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -191,16 +181,7 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull private final List<DartQuickAssistIntentionListener> myQuickAssistIntentionListeners = new SmartList<>();
   @NotNull private final List<DartQuickFixListener> myQuickFixListeners = new SmartList<>();
 
-  private static final String ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY =
-    "com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.enableAnalyzedFilesSubscription";
-
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
-
-    @Override
-    public void computedAnalyzedFiles(List<String> filePaths) {
-      configureImportedLibraries(filePaths);
-    }
-
     @Override
     public void computedAvailableSuggestions(@NotNull List<AvailableSuggestionSet> changed, @NotNull int[] removed) {
       myServerData.computedAvailableSuggestions(changed, removed);
@@ -377,17 +358,6 @@ public class DartAnalysisServerService implements Disposable {
     }
   };
 
-  public static boolean isAnalyzedFilesSubscriptionEnabled() {
-    PropertiesComponent properties = PropertiesComponent.getInstance();
-    return properties.getBoolean(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, false);
-  }
-
-  @SuppressWarnings("unused") // Third-party access
-  public static void setEnableAnalyzedFilesSubscription(final boolean value) {
-    PropertiesComponent properties = PropertiesComponent.getInstance();
-    properties.setValue(ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY, value, false);
-  }
-
   private static int ensureNotZero(int i) {
     return i == 0 ? Integer.MAX_VALUE : i;
   }
@@ -536,50 +506,6 @@ public class DartAnalysisServerService implements Disposable {
     public List<SourceEdit> getEdits() {
       return myEdits;
     }
-  }
-
-  private void configureImportedLibraries(@NotNull final Collection<String> filePaths) {
-    DumbService.getInstance(myProject).smartInvokeLater(() -> doConfigureImportedLibraries(myProject, filePaths));
-  }
-
-  private static void doConfigureImportedLibraries(@NotNull final Project project, @NotNull final Collection<String> filePaths) {
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) return;
-
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    final SortedSet<String> folderPaths = new TreeSet<>();
-    final Collection<String> rootsToAddToLib = new THashSet<>();
-
-    for (final String path : filePaths) {
-      if (path != null) {
-        folderPaths.add(PathUtil.getParentPath(FileUtil.toSystemIndependentName(path)));
-      }
-    }
-
-    outer:
-    for (final String path : folderPaths) {
-      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(path);
-      if (!path.startsWith(sdk.getHomePath() + "/") && (vFile == null || !fileIndex.isInContent(vFile))) {
-        for (String configuredPath : rootsToAddToLib) {
-          if (path.startsWith(configuredPath + "/")) {
-            continue outer; // folderPaths is sorted so subfolders go after parent folder
-          }
-        }
-        rootsToAddToLib.add(path);
-      }
-    }
-
-    final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
-
-    final Condition<Module> moduleFilter = module -> DartSdkLibUtil.isDartSdkEnabled(module) &&
-                                                     !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                                                                       falseProcessor, module.getModuleContentScope(),
-                                                                                       project, null);
-
-    final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
-    libInfo.addRoots(rootsToAddToLib);
-    final Library library = DartFileListener.updatePackagesLibraryRoots(project, libInfo);
-    DartFileListener.updateDependenciesOnDartPackagesLibrary(project, moduleFilter, library);
   }
 
   public DartAnalysisServerService(@NotNull final Project project) {
@@ -2065,9 +1991,6 @@ public class DartAnalysisServerService implements Disposable {
       try {
         startedServer.start();
         server_setSubscriptions();
-        if (Registry.is("dart.projects.without.pubspec", false) && isAnalyzedFilesSubscriptionEnabled()) {
-          startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
-        }
         startedServer.completion_setSubscriptions(ImmutableList.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
 
         if (!myInitializationOnServerStartupDone) {
