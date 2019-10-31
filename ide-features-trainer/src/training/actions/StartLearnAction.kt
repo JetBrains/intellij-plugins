@@ -10,27 +10,15 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.registry.Registry
 import training.lang.LangManager
 import training.learn.LearnBundle
 import training.ui.LearnIcons
 import training.ui.views.LanguageChoosePanel
 import javax.swing.JComponent
 
-
 class StartLearnAction : AnAction(
   LearnBundle.message("learn.WelcomeScreen.StartLearn.text", ApplicationNamesInfo.getInstance().fullProductName),
   LearnBundle.message("learn.WelcomeScreen.StartLearn.description"), LearnIcons.chevronIcon) {
-
-  companion object {
-    private val SHOW_ACTION_ON_WELCOME_SCREEN = "training.show.on.welcome.screen"
-
-    fun isEnabled(): Boolean {
-      return Registry.`is`(SHOW_ACTION_ON_WELCOME_SCREEN)
-    }
-
-    val ACTION_ID = "Learn.WelcomeScreen.StartLearn"
-  }
 
   override fun actionPerformed(e: AnActionEvent) {
     if (LangManager.getInstance().isLangUndefined()) {

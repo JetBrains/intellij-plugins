@@ -35,12 +35,6 @@ class CourseManager internal constructor() {
   val modules: List<Module>
     get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
 
-  val currentProject: Project?
-    get() {
-      val lastFocusedFrame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return null
-      return lastFocusedFrame.project
-    }
-
   var showGotMessage = true
 
   init {
@@ -110,20 +104,6 @@ class CourseManager internal constructor() {
         .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
   }
 
-  fun calcNotPassedLessons(): Int {
-    if (modules.isEmpty()) return 0
-    return modules
-        .flatMap { it.lessons }
-        .count { !it.passed }
-  }
-
-  fun calcPassedLessons(): Int {
-    if (modules.isEmpty()) return 0
-    return modules
-        .flatMap { it.lessons }
-        .count { it.passed }
-  }
-
   /**
    * @return null if lesson has no module or it is only one lesson in module
    */
@@ -176,8 +156,6 @@ class CourseManager internal constructor() {
   }
 
   companion object {
-    const val NOTIFICATION_ID = "Training plugin"
-
     val instance: CourseManager
       get() = ServiceManager.getService(CourseManager::class.java)
   }

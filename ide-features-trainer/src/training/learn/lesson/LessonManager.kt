@@ -106,11 +106,6 @@ class LessonManager {
       UiManager.setButtonSkipActionOnLearnPanels(null, null, false)
   }
 
-  fun addMessage(message: String) {
-    UiManager.addMessageToLearnPanels(message)
-    UiManager.updateToolWindowScrollPane()
-  }
-
   fun addMessages(messages: Array<Message>) {
     UiManager.addMessagesToLearnPanels(messages)
     UiManager.updateToolWindowScrollPane()
@@ -176,22 +171,12 @@ class LessonManager {
     UiManager.clearLessonPanels()
   }
 
-  private fun hideButtons() {
-    UiManager.hideLearnPanelButtons()
-  }
-
   private fun removeActionsRecorders() {
     for (actionsRecorder in actionsRecorders) {
       Disposer.dispose(actionsRecorder)
     }
     actionsRecorders.clear()
   }
-
-  private var isMouseBlocked: Boolean
-    get() = mouseBlocked
-    set(mouseBlocked) {
-      LessonManager.mouseBlocked = mouseBlocked
-    }
 
   fun unblockCaret() {
     val myBlockActions = ArrayList<BlockCaretAction>()
@@ -208,13 +193,6 @@ class LessonManager {
 
 
   fun blockCaret(editor: Editor) {
-
-    //        try {
-    //            LearnUiUtil.getInstance().drawIcon(myProject, getEditor());
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        }
-
     myLearnActions!!
         .filterIsInstance<BlockCaretAction>()
         .forEach { return }

@@ -308,12 +308,6 @@ class OpenLessonAction : AnAction() {
     return vf
   }
 
-  //
-//    private fun showSdkProblemDialog(project: Project, sdkMessage: String) {
-//        val dialog = SdkProjectProblemDialog(project, sdkMessage)
-//        dialog.show()
-//    }
-//
   private fun showModuleProblemDialog(project: Project) {
     val dialog = SdkModuleProblemDialog(project)
     dialog.show()

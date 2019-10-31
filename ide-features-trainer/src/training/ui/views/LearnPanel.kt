@@ -158,7 +158,7 @@ class LearnPanel : JPanel() {
         for (message in messages) {
             if (message.type == Message.MessageType.LINK) {
                 //add link handler
-                message.setRunnable {
+                message.runnable = Runnable {
                     if(message.link.isNullOrEmpty()) {
                         val lesson = CourseManager.instance.findLesson(message.text)
                         if (lesson != null) {
@@ -213,21 +213,9 @@ class LearnPanel : JPanel() {
         button!!.isVisible = true
         lessonPanel!!.revalidate()
         lessonPanel!!.repaint()
-        //        button.requestFocus(true); focus requesting is danger here, may interfere with windows like File Structure
-    }
-
-
-    fun hideButtons() {
-        if (button!!.isVisible) button!!.isVisible = false
-        this.repaint()
     }
 
     fun clearLessonPanel() {
-        //        while (messages.size() > 0){
-        //            lessonMessageContainer.remove(messages.get(0).getPanel());
-        //            messages.remove(0);
-        //        }
-        //        lessonMessageContainer.removeAll();
         lessonNameLabel!!.icon = null
         lessonMessagePane!!.clear()
         //remove links from lessonMessagePane
@@ -235,7 +223,6 @@ class LearnPanel : JPanel() {
         for (mouseListener in mouseListeners) {
             lessonMessagePane!!.removeMouseListener(mouseListener)
         }
-        //        messages.clear();
         this.revalidate()
         this.repaint()
     }

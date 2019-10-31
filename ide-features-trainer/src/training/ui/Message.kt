@@ -20,20 +20,8 @@ class Message(val text: String, val type: MessageType) {
 
   var startOffset = 0
   var endOffset = 0
-  private var link: String? = null
+  var link: String? = null
   var runnable: Runnable? = null
-
-  fun isText(): Boolean {
-    return type == MessageType.TEXT_REGULAR || type == MessageType.TEXT_BOLD
-  }
-
-  fun getLink(): String? {
-    return link
-  }
-
-  fun setLink(link: String?) {
-    this.link = link
-  }
 
   override fun toString(): String {
     return "Message{" +
