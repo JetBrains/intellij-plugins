@@ -15,7 +15,7 @@ import javax.swing.Icon
 class GrazieDisableRuleQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
   override fun getFamilyName(): String = msg("grazie.quickfix.disablerule.family")
 
-  override fun getName() = msg("grazie.quickfix.disablerule.text", typo.info.rule.category.name)
+  override fun getName() = msg("grazie.quickfix.disablerule.text", "'${typo.info.rule.description}'")
 
   override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
 
