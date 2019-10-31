@@ -16,8 +16,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.index.createImplicitElement
+import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.libraries.vuex.VuexStoreUtils.VUEX_COMPONENT_FUNCTIONS
 
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
@@ -25,6 +24,8 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   private val VUEX_INDEXES = mapOf(
     VueFrameworkHandler.record(VuexStoreIndex.KEY)
   )
+
+  private val INTERESTING_PROPERTIES = arrayOf(VuexStoreUtils.STATE, VuexStoreUtils.ACTION, VuexStoreUtils.MUTATION, VuexStoreUtils.GETTER)
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     return node
@@ -51,10 +52,10 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     return callExpr != null && withinInitializer && shouldCreateStubForCallExpression(callExpr)
   }
 
-  override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
-    val out = outData ?: JSElementIndexingDataImpl()
-
-    if (VuexStoreUtils.STATE == property.name) {
+  override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
+  
+  override fun processProperty(name: String?, property: JSProperty, out: JSElementIndexingData): Boolean {
+    if (VuexStoreUtils.STATE == name) {
       val properties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
       properties
         .filter { it.parent.parent == property && it.name != null }
@@ -62,7 +63,9 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
           out.addImplicitElement(createImplicitElement(it.name!!, it, VuexStoreIndex.JS_KEY, VuexStoreUtils.STATE))
         }
     }
-    else if (VuexStoreUtils.ACTION == property.name || VuexStoreUtils.MUTATION == property.name || VuexStoreUtils.GETTER == property.name) {
+    else if (VuexStoreUtils.ACTION == name || 
+             VuexStoreUtils.MUTATION == name || 
+             VuexStoreUtils.GETTER == name) {
       //Actions can be action: function(){} or action(){}
       val es6properties = PsiTreeUtil.findChildrenOfType(property, ES6FunctionProperty::class.java)
       val jsProperties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
@@ -82,11 +85,11 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
               val reference = JSSymbolUtil.resolveLocallyIncludingDefinitions(expr.referenceName!!, expr)
               val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
               if (referenceText != null) out.addImplicitElement(
-                createImplicitElement(referenceText.toString(), it, VuexStoreIndex.JS_KEY, property.name))
+                createImplicitElement(referenceText.toString(), it, VuexStoreIndex.JS_KEY, name))
             }
           }
           if (it.name != null) {
-            out.addImplicitElement(createImplicitElement(it.name!!, it, VuexStoreIndex.JS_KEY, property.name))
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VuexStoreIndex.JS_KEY, name))
           }
 
         }
@@ -94,11 +97,11 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
         .filter { it.parent.parent == property }
         .forEach {
           if (it.name != null) {
-            out.addImplicitElement(createImplicitElement(it.name!!, it, VuexStoreIndex.JS_KEY, property.name))
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VuexStoreIndex.JS_KEY, name))
           }
         }
     }
-    return if (out.isEmpty) outData else out
+    return true
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
