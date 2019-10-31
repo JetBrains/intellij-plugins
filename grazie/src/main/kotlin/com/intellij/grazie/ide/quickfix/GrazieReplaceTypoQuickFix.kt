@@ -23,10 +23,10 @@ import javax.swing.Icon
 import kotlin.math.min
 
 class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
-  override fun getFamilyName() = msg("grazie.quickfix.replacetypo.family")
+  override fun getFamilyName() = msg("grazie.quickfix.replace.typo.family")
 
-  override fun getName() = msg("grazie.quickfix.replacetypo.text", (typo.info.shortMessage.trimToNull()
-                                                                    ?: typo.info.rule.category.name).toLowerCase())
+  override fun getName() = msg("grazie.quickfix.replace.typo.text", (typo.info.shortMessage.trimToNull()
+    ?: typo.info.rule.category.name).toLowerCase())
 
   override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
