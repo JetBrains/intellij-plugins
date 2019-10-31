@@ -102,7 +102,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
 
       override fun check(): Boolean = checkState(state!!, calculateAction())
 
-      override fun set(project: Project?, editor: Editor?) {
+      override fun set(project: Project, editor: Editor) {
         // do nothing
       }
 
