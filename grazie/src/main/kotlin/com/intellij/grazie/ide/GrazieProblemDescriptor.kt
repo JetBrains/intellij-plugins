@@ -27,7 +27,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
           add(GrazieReplaceTypoQuickFix(this@toFixes))
         }
 
-        add(GrazieSuppressRuleQuickFix(this@toFixes.info.lang, this@toFixes.info.rule))
+        add(GrazieSuppressRuleQuickFix(this@toFixes.info.rule))
         add(GrazieSuppressCategoryQuickFix(this@toFixes.info.lang, this@toFixes.info.rule.category))
       }
     }

@@ -1,24 +1,26 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide.quickfix.supress
 
+import com.intellij.codeInsight.intention.PriorityAction
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.SuppressQuickFix
 import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.jlanguage.Lang
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.Iconable
 import org.languagetool.rules.Rule
+import javax.swing.Icon
 
-class GrazieSuppressRuleQuickFix(private val lang: Lang, private val rule: Rule) : SuppressQuickFix {
-  override fun isAvailable(project: Project, context: PsiElement) = context.isValid
+class GrazieSuppressRuleQuickFix(private val rule: Rule) : LocalQuickFix, Iconable, PriorityAction {
+  //Should have priority more than category suppress
+  override fun getPriority() = PriorityAction.Priority.NORMAL
 
-  override fun isSuppressAll(): Boolean = false
+  override fun getFamilyName(): String = msg("grazie.quickfix.suppress.rule.family")
 
-  override fun getFamilyName(): String = msg("grazie.quickfix.disable.rule.family")
+  override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
 
-  override fun getName() = msg("grazie.quickfix.disable.rule.text", "'${rule.description}'")
+  override fun getName() = msg("grazie.quickfix.suppress.rule.text", "'${rule.description}'")
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     GrazieConfig.update { state ->
