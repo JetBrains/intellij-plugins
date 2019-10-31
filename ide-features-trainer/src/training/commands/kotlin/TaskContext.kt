@@ -60,12 +60,6 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     trigger(actionId, { Unit }, { _, _ -> checkState() })
   }
 
-  /** Check that IDE state have been changed by single action as expected */
-  fun <T : Any> changeCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) {
-    val check = getCheck(calculateState, checkState)
-    steps.add(recorder.futureCheck { check.check() })
-  }
-
   /**
    * Check that IDE state is as expected
    * In some rare cases DSL could wish to complete a future by itself

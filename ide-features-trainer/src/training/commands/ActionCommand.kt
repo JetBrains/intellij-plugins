@@ -5,10 +5,7 @@ package training.commands
 
 import training.util.PerformActionUtil
 
-class ActionCommand : Command(Command.CommandType.ACTION) {
-  companion object {
-    const val SHORTCUT = "<shortcut>"
-  }
+class ActionCommand : Command(CommandType.ACTION) {
 
   override fun execute(executionList: ExecutionList) {
 
@@ -20,6 +17,3 @@ class ActionCommand : Command(Command.CommandType.ACTION) {
   }
 
 }
-
-
-

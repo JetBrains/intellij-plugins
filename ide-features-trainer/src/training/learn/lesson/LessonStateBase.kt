@@ -41,16 +41,8 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
 
 object LessonStateManager {
 
-  fun isPassed(lesson: Lesson): Boolean {
-    return LessonStateBase.instance.myMap[lesson.id]?.equals(LessonState.PASSED) ?: false
-  }
-
   fun setPassed(lesson: Lesson) {
     LessonStateBase.instance.myMap.put(lesson.id, LessonState.PASSED)
-  }
-
-  fun addLesson(lesson: Lesson) {
-    LessonStateBase.instance.myMap.put(lesson.id, if (lesson.passed) LessonState.PASSED else LessonState.NOT_PASSED)
   }
 
   fun resetPassedStatus() {

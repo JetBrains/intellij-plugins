@@ -5,23 +5,20 @@ package training.commands
 
 import com.intellij.openapi.application.ApplicationManager
 import training.check.Check
-import training.keymap.KeymapUtil
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.Message
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
-class TryCommand : Command(Command.CommandType.TRY) {
+class TryCommand : Command(CommandType.TRY) {
 
   @Throws(Exception::class)
   override fun execute(executionList: ExecutionList) {
 
     val element = executionList.elements.poll()
-    var check: Check? = null
-    //        updateDescription(element, infoPanel, editor);
+    val check: Check?
 
-    val lesson = executionList.lesson
     val editor = executionList.editor
 
     var checkFuture: CompletableFuture<Boolean>? = null
@@ -61,23 +58,6 @@ class TryCommand : Command(Command.CommandType.TRY) {
       triggerFuture?.get()
       LessonManager.instance.passExercise()
       ApplicationManager.getApplication().invokeLater { startNextCommand(executionList) }
-    }
-  }
-
-  private fun resolveShortcut(text: String, actionId: String): String {
-    val shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId)
-    val shortcutText = KeymapUtil.getKeyStrokeText(shortcutByActionId)
-    return substitution(text, shortcutText)
-  }
-
-  companion object {
-
-    fun substitution(text: String, shortcutString: String): String {
-      return if (text.contains(ActionCommand.SHORTCUT)) {
-        text.replace(ActionCommand.SHORTCUT, shortcutString)
-      } else {
-        text
-      }
     }
   }
 

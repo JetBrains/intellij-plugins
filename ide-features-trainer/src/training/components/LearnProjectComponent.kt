@@ -101,50 +101,6 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     }
   }
 
-  fun startTrackActivity(project: Project) {
-    val alarm = Alarm()
-    if (ActivityManager.instance.lastActivityTime == -1L) return
-    if (CourseManager.instance.calcNotPassedLessons() == 0) return
-    if (CourseManager.instance.calcPassedLessons() == 0) return
-    alarm.addRequest({
-      val lastActivityTime = ActivityManager.instance.lastActivityTime
-      val currentTimeMillis = System.currentTimeMillis()
-      val TWO_WEEKS = TimeUnit.DAYS.toMillis(14)
-
-      if (currentTimeMillis - lastActivityTime!! > TWO_WEEKS) {
-        val message = StringBuilder()
-        val unpassedLessons = CourseManager.instance.calcNotPassedLessons()
-
-        message.append(LearnBundle.message("learn.activity.message", unpassedLessons, if (unpassedLessons == 1) ""
-        else LearnBundle.message("learn.activity.message.lessons"))).append("<br/>")
-        val notification = Notification(CourseManager.NOTIFICATION_ID,
-            LearnBundle.message("learn.activity.title"),
-            message.toString(),
-            NotificationType.INFORMATION)
-        val learnAction = object : AnAction(LearnBundle.message("learn.activity.learn")) {
-          override fun actionPerformed(e: AnActionEvent) {
-            val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
-            toolWindow.activate(null)
-            notification.expire()
-          }
-        }
-        val laterAction = object : AnAction(LearnBundle.message("learn.activity.later")) {
-          override fun actionPerformed(e: AnActionEvent) {
-            notification.expire()
-          }
-        }
-        val neverAction = object : AnAction(LearnBundle.message("learn.activity.never")) {
-          override fun actionPerformed(e: AnActionEvent) {
-            ActivityManager.instance.lastActivityTime = -1
-            notification.expire()
-          }
-        }
-        notification.addAction(learnAction).addAction(laterAction).addAction(neverAction).notify(project)
-      }
-      Disposer.dispose(alarm)
-    }, 30000)
-  }
-
   private fun showGotMessage(tittle: String, message: String, gotMessageClicked: () -> Unit) {
 
     ApplicationManager.getApplication().invokeLater {
@@ -226,7 +182,6 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     }
 
   companion object {
-    private val LOG = Logger.getInstance(LearnProjectComponent::class.java.name)
     private val SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown"
 
     private val NOTIFICATION_GROUP : NotificationGroup by lazy {

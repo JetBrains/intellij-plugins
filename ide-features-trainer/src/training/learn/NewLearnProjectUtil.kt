@@ -6,7 +6,6 @@ package training.learn
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.SystemDependent
@@ -18,13 +17,6 @@ object NewLearnProjectUtil {
 
   fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
-    val projectManager = ProjectManagerEx.getInstanceEx()
-
-    val projectFilePath = projectFilePath(langSupport)
-//    val projectDir = File(projectFilePath).parentFile
-//    FileUtil.ensureExists(projectDir)
-//    val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
-//    FileUtil.ensureExists(ideaDir)
 
     val newProject: Project =
         langSupport.createProject(langSupport.defaultProjectName, projectToClose) ?: error("Could not create project for " + langSupport.primaryLanguage)
@@ -54,7 +46,6 @@ object NewLearnProjectUtil {
       FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
 
   fun showDialogOpenLearnProject(project: Project): Boolean {
-    //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
     val dialog = LearnProjectWarningDialog(project)
     dialog.show()
     return dialog.isOK
