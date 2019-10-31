@@ -1,54 +1,40 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.check;
+package training.check
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiKeyword;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiKeyword
+import com.intellij.psi.util.PsiTreeUtil
 
-import java.util.Collection;
+class CheckTryFinally : Check {
+  internal var project: Project? = null
+  internal var editor: Editor? = null
 
-public class CheckTryFinally implements Check{
+  override fun set(project: Project, editor: Editor) {
+    this.project = project
+    this.editor = editor
+  }
 
-    Project project;
-    Editor editor;
+  override fun before() {}
 
-    @Override
-    public void set(Project project, Editor editor) {
-        this.project = project;
-        this.editor = editor;
+  override fun check(): Boolean {
+    val document = editor!!.document
+    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    var tryText = false
+    var finallyText = false
+    val childrenOfType: Collection<PsiKeyword> = PsiTreeUtil.findChildrenOfType(psiFile as PsiElement?, PsiKeyword::class.java)
+    for (aChildrenOfType in childrenOfType) {
+      if (aChildrenOfType.text == "try") tryText = true
+      if (aChildrenOfType.text == "finally") finallyText = true
     }
+    return tryText && finallyText
+  }
 
-    @Override
-    public void before() {
-    }
-
-    @Override
-    public boolean check() {
-        final Document document = editor.getDocument();
-        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-
-        boolean tryText = false;
-        boolean finallyText = false;
-
-        final Collection<PsiKeyword> childrenOfType = PsiTreeUtil.findChildrenOfType((PsiElement) psiFile, PsiKeyword.class);
-        for (PsiKeyword aChildrenOfType : childrenOfType) {
-            if (aChildrenOfType.getText().equals("try")) tryText = true;
-            if (aChildrenOfType.getText().equals("finally")) finallyText = true;
-        }
-
-        return (tryText && finallyText);
-    }
-
-    @Override
-    public boolean listenAllKeys() {
-        return false;
-    }
-
+  override fun listenAllKeys(): Boolean {
+    return false
+  }
 }
