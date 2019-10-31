@@ -2021,6 +2021,14 @@ public class DartAnalysisServerService implements Disposable {
         return;
       }
 
+      // To use a Dart Analysis Server locally, uncomment the line below and replace the `localDartSdkPath` value with your path on disk.
+      // When configuring the Dart Plugin, set the Dart SDK to your locally built Dart SDK.
+      // Directions here on getting the Dart SDK sources: https://github.com/dart-lang/sdk/wiki/Building
+      //
+      //final String localDartSdkPath = ".../dart-sdk/sdk/";
+      //analysisServerPath =
+      //  FileUtil.toSystemDependentName(localDartSdkPath + "pkg/analysis_server/bin/server.dart");
+
       final DebugPrintStream debugStream = str -> {
         str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
         synchronized (myDebugLog) {
