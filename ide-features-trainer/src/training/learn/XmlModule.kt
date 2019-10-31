@@ -19,7 +19,6 @@ import training.learn.lesson.kimpl.parseLessonSample
 import training.util.DataLoader
 import training.util.DataLoader.getResourceAsStream
 import training.util.XmlModuleConstants
-import training.util.XmlModuleConstants.*
 import training.util.isFeatureTrainerSnapshot
 import java.io.IOException
 import java.net.URISyntaxException
@@ -51,11 +50,11 @@ class XmlModule(override val name: String,
 
   init {
     val xroot = XRoot(root)
-    description = xroot.valueNullable(MODULE_DESCRIPTION_ATTR)
-    answersPath = xroot.valueNullable(MODULE_ANSWER_PATH_ATTR)
-    id = xroot.valueNullable(MODULE_ID_ATTR)
-    sdkType = getSdkTypeFromString(xroot.valueNullable(MODULE_SDK_TYPE))
-    val fileTypeAttr = xroot.valueNotNull(MODULE_FILE_TYPE)
+    description = xroot.valueNullable(XmlModuleConstants.MODULE_DESCRIPTION_ATTR)
+    answersPath = xroot.valueNullable(XmlModuleConstants.MODULE_ANSWER_PATH_ATTR)
+    id = xroot.valueNullable(XmlModuleConstants.MODULE_ID_ATTR)
+    sdkType = getSdkTypeFromString(xroot.valueNullable(XmlModuleConstants.MODULE_SDK_TYPE))
+    val fileTypeAttr = xroot.valueNotNull(XmlModuleConstants.MODULE_FILE_TYPE)
     moduleType = when {
       fileTypeAttr.toUpperCase() == ModuleType.SCRATCH.toString().toUpperCase() -> ModuleType.SCRATCH
       fileTypeAttr.toUpperCase() == ModuleType.PROJECT.toString().toUpperCase() -> ModuleType.PROJECT
@@ -84,27 +83,27 @@ class XmlModule(override val name: String,
   }
 
   private fun initLessons(modulePath: String) {
-    val lessonPathAttribute = root.getAttribute(MODULE_LESSONS_PATH_ATTR)
+    val lessonPathAttribute = root.getAttribute(XmlModuleConstants.MODULE_LESSONS_PATH_ATTR)
 
     //retrieve list of xml files inside lessonsPath directory
     val lessonsPath = if (lessonPathAttribute != null) modulePath + lessonPathAttribute.value
     else null
 
     for (lessonElement in root.children) {
-      if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(MODULE_LESSON_UNFINISHED_ATTR) == "true") {
+      if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_UNFINISHED_ATTR) == "true") {
         continue // do not show unfinished lessons in release
       }
       when (lessonElement.name) {
-        MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let {addXmlLesson(lessonElement, it) }
-            ?: LOG.error("Need to specify $MODULE_LESSONS_PATH_ATTR in module attributes")
-        MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
+        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let {addXmlLesson(lessonElement, it) }
+            ?: LOG.error("Need to specify ${XmlModuleConstants.MODULE_LESSONS_PATH_ATTR} in module attributes")
+        XmlModuleConstants.MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
         else -> LOG.error("Unknown element ${lessonElement.name} in  XmlModule file")
       }
     }
   }
 
   private fun addXmlLesson(lessonElement: Element, lessonsPath: String) {
-    val lessonFilename = lessonElement.getAttributeValue(MODULE_LESSON_FILENAME_ATTR)
+    val lessonFilename = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_FILENAME_ATTR)
     val lessonPath = lessonsPath + lessonFilename
     try {
       val scenario = Scenario(lessonPath)
@@ -120,8 +119,8 @@ class XmlModule(override val name: String,
   }
 
   private fun addKtLesson(lessonElement: Element, lessonsPath: String?) {
-    val lessonImplementation = lessonElement.getAttributeValue(MODULE_LESSON_IMPLEMENTATION_ATTR)
-    val lessonSampleName = lessonElement.getAttributeValue(MODULE_LESSON_SAMPLE_ATTR)
+    val lessonImplementation = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR)
+    val lessonSampleName = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_SAMPLE_ATTR)
 
     val lesson : Any
     if (lessonSampleName != null) {
@@ -129,7 +128,7 @@ class XmlModule(override val name: String,
         LOG.error("Lesson $lessonImplementation requires sample $lessonSampleName but lessons path des not specified")
         return
       }
-      val lessonLanguage = lessonElement.getAttributeValue(MODULE_LESSON_LANGUAGE_ATTR)
+      val lessonLanguage = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_LANGUAGE_ATTR)
       val lessonConstructor = Class.forName(lessonImplementation).
           getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
 
@@ -143,7 +142,7 @@ class XmlModule(override val name: String,
       lesson = lessonConstructor.newInstance(this)
     }
     if (lesson !is KLesson) {
-      LOG.error("Class $lessonImplementation specified in $MODULE_LESSON_IMPLEMENTATION_ATTR attribute should refer to existed Kotlin class")
+      LOG.error("Class $lessonImplementation specified in ${XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR} attribute should refer to existed Kotlin class")
       return
     }
     lessons.add(lesson)
