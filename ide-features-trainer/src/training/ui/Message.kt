@@ -1,148 +1,92 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.ui;
+package training.ui
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import org.jdom.Element;
-import org.jdom.Text;
-import org.jdom.output.XMLOutputter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import training.keymap.KeymapUtil;
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.util.text.StringUtil
+import org.jdom.Content
+import org.jdom.Element
+import org.jdom.Text
+import org.jdom.output.XMLOutputter
+import training.keymap.KeymapUtil.getKeyStrokeText
+import training.keymap.KeymapUtil.getShortcutByActionId
+import java.util.function.Consumer
 
-import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
+class Message(val text: String, val type: MessageType) {
 
-public class Message {
+  enum class MessageType { TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK, ICON }
 
+  var startOffset = 0
+  var endOffset = 0
+  private var link: String? = null
+  var runnable: Runnable? = null
 
-    public int getStartOffset() {
-        return startOffset;
-    }
+  fun isText(): Boolean {
+    return type == MessageType.TEXT_REGULAR || type == MessageType.TEXT_BOLD
+  }
 
-    public void setStartOffset(int startOffset) {
-        this.startOffset = startOffset;
-    }
+  fun getLink(): String? {
+    return link
+  }
 
-    public int getEndOffset() {
-        return endOffset;
-    }
+  fun setLink(link: String?) {
+    this.link = link
+  }
 
-    public void setEndOffset(int endOffset) {
-        this.endOffset = endOffset;
-    }
+  override fun toString(): String {
+    return "Message{" +
+            "messageText='" + text + '\''.toString() +
+            ", messageType=" + type +
+            '}'
+  }
 
-    @NotNull
-    public static Message[] convert(@Nullable Element element) {
-        if (element == null) {
-            return new Message[0];
+  companion object {
+    fun convert(element: Element?): Array<Message> {
+      if (element == null) {
+        return arrayOf()
+      }
+      val list: MutableList<Message> = mutableListOf()
+      element.content.forEach(Consumer { content: Content ->
+        if (content is Text) {
+          list.add(Message(content.getValue(), MessageType.TEXT_REGULAR))
+        } else if (content is Element) {
+          val outputter = XMLOutputter()
+          var type = MessageType.TEXT_REGULAR
+          var text: String = outputter.outputString(content.content)
+          text = StringUtil.unescapeXmlEntities(text)
+          var link: String? = null
+          when (content.name) {
+            "icon" -> type = MessageType.ICON
+            "code" -> type = MessageType.CODE
+            "shortcut" -> type = MessageType.SHORTCUT
+            "strong" -> type = MessageType.TEXT_BOLD
+            "a" -> {
+              type = MessageType.LINK
+              link = content.getAttributeValue("href")
+            }
+            "action" -> {
+              type = MessageType.SHORTCUT
+              val shortcutByActionId = getShortcutByActionId(text)
+              text = if (shortcutByActionId != null) {
+                getKeyStrokeText(shortcutByActionId)
+              } else {
+                getKeyStrokeText(getShortcutByActionId("GotoAction")) + " → " + ActionManager.getInstance().getAction(text).templatePresentation.text
+              }
+            }
+            "ide" -> {
+              type = MessageType.TEXT_REGULAR
+              text = ApplicationNamesInfo.getInstance().fullProductName
+            }
+          }
+          val message = Message(text, type)
+          message.link = link
+          list.add(message)
         }
-        List<Message> list = new ArrayList<>();
-        element.getContent().forEach(content -> {
-            if (content instanceof Text) {
-                list.add(new Message(content.getValue(), MessageType.TEXT_REGULAR));
-            }
-            else if (content instanceof Element) {
-                XMLOutputter outputter = new XMLOutputter();
-                MessageType type = MessageType.TEXT_REGULAR;
-                Element elementContent = (Element) content;
-                String text = outputter.outputString(elementContent.getContent());
-                text = StringUtil.unescapeXmlEntities(text);
-                String link = null;
-                switch (elementContent.getName()) {
-                    case "icon":
-                        type = MessageType.ICON;
-                        break;
-                    case "code":
-                        type = MessageType.CODE;
-                        break;
-                    case "shortcut":
-                        type = MessageType.SHORTCUT;
-                        break;
-                    case "strong":
-                        type = MessageType.TEXT_BOLD;
-                        break;
-                    case "a":
-                        type = MessageType.LINK;
-                        link = elementContent.getAttributeValue("href");
-                        break;
-                    case "action":
-                        type = MessageType.SHORTCUT;
-                        final KeyStroke shortcutByActionId = KeymapUtil.INSTANCE.getShortcutByActionId(text);
-                        if (shortcutByActionId != null) {
-                            text = KeymapUtil.INSTANCE.getKeyStrokeText(shortcutByActionId);
-                        }else{
-                            text = KeymapUtil.INSTANCE.getKeyStrokeText(KeymapUtil.INSTANCE.getShortcutByActionId("GotoAction")) + " → "+ ActionManager.getInstance().getAction(text).getTemplatePresentation().getText();
-                        }
-                        break;
-                    case "ide":
-                        type = MessageType.TEXT_REGULAR;
-                        text = ApplicationNamesInfo.getInstance().getFullProductName();
-                        break;
-                }
-                Message message = new Message(text, type);
-                message.link = link;
-                list.add(message);
-            }
-        });
-        return ContainerUtil.toArray(list, new Message[0]);
+      })
+      return list.toTypedArray()
     }
+  }
 
-    public enum MessageType {TEXT_REGULAR, TEXT_BOLD, SHORTCUT, CODE, LINK, CHECK, ICON}
-    @NotNull
-    private String messageText;
-    private int startOffset;
-    private int endOffset;
-    private String link;
-    @Nullable
-    private Runnable runnable = null;
-
-    @NotNull
-    private MessageType messageType;
-    public Message(@NotNull String messageText, @NotNull MessageType messageType) {
-        this.messageText = messageText;
-        this.messageType = messageType;
-    }
-
-    @Nullable
-    public Runnable getRunnable() {
-        return runnable;
-    }
-
-    public void setRunnable(@Nullable Runnable runnable) {
-        this.runnable = runnable;
-    }
-
-    public String getText() {
-        return messageText;
-    }
-
-    public MessageType getType() {
-        return messageType;
-    }
-
-    public boolean isText() {
-        return messageType == MessageType.TEXT_REGULAR || messageType == MessageType.TEXT_BOLD;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "messageText='" + messageText + '\'' +
-                ", messageType=" + messageType +
-                '}';
-    }
 }
