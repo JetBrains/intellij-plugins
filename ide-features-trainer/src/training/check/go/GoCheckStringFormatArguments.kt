@@ -29,6 +29,4 @@ class GoCheckStringFormatArguments : Check {
         return block.statementList.any { it.text == """fmt.Printf("hello %s #%d", subj.name, subj.id)""" }
     }
 
-    override fun listenAllKeys(): Boolean = false
-
 }

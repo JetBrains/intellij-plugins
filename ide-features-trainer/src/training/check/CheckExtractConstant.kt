@@ -21,8 +21,4 @@ class CheckExtractConstant : Check {
   override fun check(): Boolean {
     return InplaceRefactoring.getActiveInplaceRenamer(editor) == null
   }
-
-  override fun listenAllKeys(): Boolean {
-    return true
-  }
 }

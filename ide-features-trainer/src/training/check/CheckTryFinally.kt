@@ -33,8 +33,4 @@ class CheckTryFinally : Check {
     }
     return tryText && finallyText
   }
-
-  override fun listenAllKeys(): Boolean {
-    return false
-  }
 }

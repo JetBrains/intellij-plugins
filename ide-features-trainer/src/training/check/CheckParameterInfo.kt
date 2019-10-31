@@ -42,8 +42,4 @@ class CheckParameterInfo : Check {
     }
     return false
   }
-
-  override fun listenAllKeys(): Boolean {
-    return false
-  }
 }

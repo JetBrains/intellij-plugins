@@ -28,6 +28,4 @@ class GoCheckImplementsStringer : Check {
     return file.methods.any { it.name == "String" }
   }
 
-  override fun listenAllKeys(): Boolean = false
-
 }

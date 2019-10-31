@@ -34,8 +34,4 @@ class CheckReaderClose : Check {
     val nextSibling: PsiElement = finallyKeyword.nextSibling.nextSibling
     return nextSibling is PsiCodeBlock && nextSibling.getText().contains("fileReader.close();")
   }
-
-  override fun listenAllKeys(): Boolean {
-    return false
-  }
 }
