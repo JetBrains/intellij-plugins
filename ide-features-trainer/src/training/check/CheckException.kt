@@ -1,44 +1,34 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.check;
+package training.check
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.*
+import com.intellij.psi.util.PsiTreeUtil
 
-public class CheckException implements Check{
+class CheckException : Check {
+  internal var project: Project? = null
+  internal var editor: Editor? = null
 
-    Project project;
-    Editor editor;
+  override fun set(project: Project, editor: Editor) {
+    this.project = project
+    this.editor = editor
+  }
 
-    @Override
-    public void set(Project project, Editor editor) {
-        this.project = project;
-        this.editor = editor;
-    }
+  override fun before() {}
+  
+  override fun check(): Boolean {
+    val document = editor!!.document
+    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    val mainMethod = PsiTreeUtil.findChildOfType(psiFile as PsiElement?, PsiMethod::class.java)
+    val referenceList = PsiTreeUtil.findChildOfType(mainMethod as PsiElement?, PsiReferenceList::class.java)
+    val javaCodeReferenceElement = PsiTreeUtil.findChildOfType(referenceList, PsiJavaCodeReferenceElement::class.java)
+    return javaCodeReferenceElement!!.text == "IOException"
+  }
 
-    @Override
-    public void before() {
-    }
-
-    @Override
-    public boolean check() {
-        final Document document = editor.getDocument();
-        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-
-        final PsiMethod mainMethod = PsiTreeUtil.findChildOfType((PsiElement) psiFile, PsiMethod.class);
-        final PsiReferenceList referenceList = PsiTreeUtil.findChildOfType((PsiElement) mainMethod, PsiReferenceList.class);
-        final PsiJavaCodeReferenceElement javaCodeReferenceElement = PsiTreeUtil.findChildOfType(referenceList, PsiJavaCodeReferenceElement.class);
-        if (javaCodeReferenceElement.getText().equals("IOException")) return true;
-        return false;
-    }
-
-    @Override
-    public boolean listenAllKeys() {
-        return true;
-    }
-
+  override fun listenAllKeys(): Boolean {
+    return true
+  }
 }

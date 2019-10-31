@@ -1,35 +1,27 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.check;
+package training.check
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 
-public class CheckFindBar implements Check{
+class CheckFindBar : Check {
+  internal var project: Project? = null
+  internal var editor: Editor? = null
 
+  override fun set(project: Project, editor: Editor) {
+    this.project = project
+    this.editor = editor
+  }
 
-    Project project;
-    Editor editor;
+  override fun before() {}
+  
+  override fun check(): Boolean {
+    return editor!!.headerComponent == null
+  }
 
-    @Override
-    public void set(Project project, Editor editor) {
-        this.project = project;
-        this.editor = editor;
-    }
-
-    @Override
-    public void before() {
-
-    }
-
-    @Override
-    public boolean check() {
-        return (editor.getHeaderComponent() == null);
-    }
-
-    @Override
-    public boolean listenAllKeys() {
-        return false;
-    }
+  override fun listenAllKeys(): Boolean {
+    return false
+  }
 }

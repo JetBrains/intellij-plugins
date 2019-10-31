@@ -1,64 +1,49 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.check;
+package training.check
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiLiteralExpression
+import com.intellij.psi.PsiMethodCallExpression
+import com.intellij.psi.util.PsiTreeUtil
 
-import java.util.Collection;
+class CheckParameterInfo : Check {
+  internal var project: Project? = null
+  internal var editor: Editor? = null
 
-public class CheckParameterInfo implements Check{
+  override fun set(project: Project, editor: Editor) {
+    this.project = project
+    this.editor = editor
+  }
 
-    Project project;
-    Editor editor;
+  override fun before() {}
 
-    @Override
-    public void set(Project project, Editor editor) {
-        this.project = project;
-        this.editor = editor;
+  override fun check(): Boolean {
+    val document = editor!!.document
+    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    val childrenOfType: Collection<PsiMethodCallExpression> = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethodCallExpression::class.java)
+    var myMethodCall: PsiMethodCallExpression? = null
+    for (methodCall in childrenOfType) {
+      methodCall.methodExpression.canonicalText == "frame.getSize"
+      myMethodCall = methodCall
+      break
     }
-
-    @Override
-    public void before() {
+    if (myMethodCall == null) return false
+    val literals: Collection<PsiLiteralExpression> = PsiTreeUtil.findChildrenOfType(myMethodCall, PsiLiteralExpression::class.java)
+    if (literals.size != 2) return false else {
+      if (literals.toTypedArray()[0].value is Int && literals.toTypedArray()[1].value is Int) {
+        val width = literals.toTypedArray()[0].value as Int?
+        val height = literals.toTypedArray()[1].value as Int?
+        if (width != null && height != null && width == 175 && height == 100) return true
+      }
     }
+    return false
+  }
 
-    @Override
-    public boolean check() {
-        final Document document = editor.getDocument();
-        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-
-        final Collection<PsiMethodCallExpression> childrenOfType = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethodCallExpression.class);
-        PsiMethodCallExpression myMethodCall = null;
-        for(PsiMethodCallExpression methodCall: childrenOfType){
-            methodCall.getMethodExpression().getCanonicalText().equals("frame.getSize");
-            myMethodCall = methodCall;
-            break;
-        }
-
-        if (myMethodCall == null) return false;
-        final Collection<PsiLiteralExpression> literals = PsiTreeUtil.findChildrenOfType(myMethodCall, PsiLiteralExpression.class);
-        if (literals.size() != 2) return false;
-        else {
-            if (((PsiLiteralExpression)literals.toArray()[0]).getValue() instanceof Integer && ((PsiLiteralExpression)literals.toArray()[1]).getValue() instanceof Integer) {
-                final Integer width = (Integer)((PsiLiteralExpression) literals.toArray()[0]).getValue();
-                final Integer height = (Integer)((PsiLiteralExpression) literals.toArray()[1]).getValue();
-                if (width != null && height != null && width == 175 && height == 100) return true;
-            }
-        }
-        return false;
-
-    }
-
-    @Override
-    public boolean listenAllKeys() {
-        return false;
-    }
-
+  override fun listenAllKeys(): Boolean {
+    return false
+  }
 }

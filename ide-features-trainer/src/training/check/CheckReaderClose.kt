@@ -1,57 +1,41 @@
 /*
  * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
-package training.check;
+package training.check
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiCodeBlock
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiKeyword
+import com.intellij.psi.util.PsiTreeUtil
 
-import java.util.Collection;
+class CheckReaderClose : Check {
+  internal var project: Project? = null
+  internal var editor: Editor? = null
 
-public class CheckReaderClose implements Check{
+  override fun set(project: Project, editor: Editor) {
+    this.project = project
+    this.editor = editor
+  }
 
-    Project project;
-    Editor editor;
+  override fun before() {}
 
-    @Override
-    public void set(Project project, Editor editor) {
-        this.project = project;
-        this.editor = editor;
+  override fun check(): Boolean {
+    val document = editor!!.document
+    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    var finallyKeyword: PsiKeyword? = null
+    val childrenOfType: Collection<PsiKeyword> = PsiTreeUtil.findChildrenOfType(psiFile as PsiElement?, PsiKeyword::class.java)
+    for (psiKeyword in childrenOfType) {
+      if (psiKeyword.text == "finally") finallyKeyword = psiKeyword
     }
+    if (finallyKeyword == null) return false
+    val nextSibling: PsiElement = finallyKeyword.nextSibling.nextSibling
+    return nextSibling is PsiCodeBlock && nextSibling.getText().contains("fileReader.close();")
+  }
 
-    @Override
-    public void before() {
-    }
-
-    @Override
-    public boolean check() {
-        final Document document = editor.getDocument();
-        final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-
-        PsiKeyword finallyKeyword = null;
-        final Collection<PsiKeyword> childrenOfType = PsiTreeUtil.findChildrenOfType((PsiElement) psiFile, PsiKeyword.class);
-        for (PsiKeyword psiKeyword : childrenOfType) {
-            if(psiKeyword.getText().equals("finally")) finallyKeyword = psiKeyword;
-        }
-        if (finallyKeyword == null) return false;
-
-        final PsiElement nextSibling = finallyKeyword.getNextSibling().getNextSibling();
-        if ((nextSibling instanceof PsiCodeBlock) && (nextSibling).getText().contains("fileReader.close();"))
-            return true;
-
-//        final PsiJavaCodeReferenceElement javaCodeReferenceElement = PsiTreeUtil.findChildOfType(referenceList, PsiJavaCodeReferenceElement.class);
-
-//        if (javaCodeReferenceElement.getText().equals("IOException")) return true;
-        return false;
-
-    }
-
-    @Override
-    public boolean listenAllKeys() {
-        return false;
-    }
-
+  override fun listenAllKeys(): Boolean {
+    return false
+  }
 }
