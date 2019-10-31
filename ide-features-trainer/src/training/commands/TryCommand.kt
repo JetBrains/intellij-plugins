@@ -9,9 +9,6 @@ import training.ui.Message
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class TryCommand : Command(Command.CommandType.TRY) {
 
   @Throws(Exception::class)

@@ -7,9 +7,6 @@ import org.jetbrains.annotations.PropertyKey
 import java.lang.ref.Reference
 import java.util.*
 
-/**
- * Created by karashevich on 09/09/15.
- */
 open class BundlePlace(val bundleAppendix: String)
 
 object LearnBundle {

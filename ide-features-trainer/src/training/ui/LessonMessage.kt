@@ -2,9 +2,6 @@ package training.ui
 
 import java.util.*
 
-/**
- * Created by karashevich on 30/06/15.
- */
 internal class LessonMessage {
 
   val myMessages: ArrayList<Message> = ArrayList<Message>()

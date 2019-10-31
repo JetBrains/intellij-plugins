@@ -9,9 +9,6 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.ExecutionException
 
-/**
- * Created by karashevich on 27/02/15.
- */
 interface LessonListener : EventListener {
 
   fun lessonStarted(lesson: Lesson)

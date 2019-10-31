@@ -25,9 +25,6 @@ import java.awt.Component
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-/**
- * Created by karashevich on 26/10/15.
- */
 internal class DemoModeWidget(project: Project) : EditorBasedWidget(
   project), StatusBarWidget.Multiframe, StatusBarWidget.TextPresentation, CaretListener, SelectionListener {
 

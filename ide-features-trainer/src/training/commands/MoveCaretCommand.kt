@@ -6,9 +6,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.LogicalPosition
 import org.jdom.Element
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class MoveCaretCommand : Command(Command.CommandType.MOVECARET) {
 
   override fun execute(executionList: ExecutionList) {

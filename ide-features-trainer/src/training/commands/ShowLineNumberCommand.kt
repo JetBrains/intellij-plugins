@@ -3,9 +3,6 @@ package training.commands
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 
-/**
- * Created by karashevich on 30/01/15.
- */
 class ShowLineNumberCommand : Command(Command.CommandType.SHOWLINENUMBER) {
 
   override fun execute(executionList: ExecutionList) {

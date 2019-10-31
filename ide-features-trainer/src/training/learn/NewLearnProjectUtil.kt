@@ -11,9 +11,6 @@ import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import training.learn.exceptons.NoSdkException
 
-/**
- * Created by karashevich on 24/09/15.
- */
 object NewLearnProjectUtil {
 
   fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project {

@@ -10,9 +10,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * Created by karashevich on 26/10/15.
- */
 public class HighlightComponent extends JComponent {
     @NotNull
     private Color myColor;

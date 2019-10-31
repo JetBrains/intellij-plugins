@@ -34,10 +34,6 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-/**
- * Created by karashevich on 01/09/15.
- */
-
 class LessonMessagePane : JTextPane() {
 
     private val lessonMessages = CopyOnWriteArrayList<LessonMessage>()

@@ -24,9 +24,6 @@ import java.awt.event.MouseEvent;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by karashevich on 02/02/15.
- */
 public class PerformActionUtil {
 
     public static InputEvent getInputEvent(String actionName) {

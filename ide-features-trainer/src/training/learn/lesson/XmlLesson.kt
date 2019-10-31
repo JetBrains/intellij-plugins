@@ -15,9 +15,6 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.ExecutionException
 
-/**
- * Created by karashevich on 29/01/15.
- */
 data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module): Lesson {
 
   override var lessonListeners: MutableList<LessonListener> = ArrayList()

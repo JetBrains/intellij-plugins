@@ -11,9 +11,6 @@ import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 
-/**
- * Created by karashevich on 30/01/15.
- */
 object LessonProcessor {
 
   val LOG = Logger.getInstance(this.javaClass.canonicalName)

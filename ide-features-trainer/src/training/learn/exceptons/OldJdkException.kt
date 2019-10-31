@@ -2,9 +2,6 @@ package training.learn.exceptons
 
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 
-/**
- * Created by karashevich on 09/09/15.
- */
 class OldJdkException : InvalidSdkException {
 
   constructor(s: String) : super(s) {}

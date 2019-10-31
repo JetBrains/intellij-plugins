@@ -5,9 +5,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbAwareAction
 import java.util.*
 
-/**
- * Created by karashevich on 19/08/15.
- */
 class BlockCaretAction(private val editor: Editor) : DumbAwareAction(LearnActions.LEARN_BLOCK_EDITOR_CARET_ACTION), LearnActions {
 
   override val actionId: String

@@ -37,9 +37,6 @@ import training.ui.UiManager
 import java.awt.Point
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by karashevich on 17/03/16.
- */
 class LearnProjectComponent private constructor(private val myProject: Project) : ProjectComponent {
 
 

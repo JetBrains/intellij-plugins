@@ -21,9 +21,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by karashevich on 27/07/15.
- */
 public class LearnUiUtil {
 
   public enum IdeComponent {

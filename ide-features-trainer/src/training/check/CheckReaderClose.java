@@ -8,9 +8,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 
 import java.util.Collection;
 
-/**
- * Created by karashevich on 21/08/15.
- */
 public class CheckReaderClose implements Check{
 
     Project project;

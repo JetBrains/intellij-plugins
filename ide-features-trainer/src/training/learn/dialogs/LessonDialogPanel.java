@@ -30,9 +30,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 
-/**
- * Created by karashevich on 15/01/16.
- */
 class LessonDialogPanel extends JPanel{
     private static final int DEFAULT_WIDTH = 300;
     private static final int DEFAULT_HEIGHT = 150;

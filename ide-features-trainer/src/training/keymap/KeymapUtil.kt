@@ -7,9 +7,6 @@ import com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 import javax.swing.KeyStroke
 
-/**
- * Created by karashevich on 18/03/15.
- */
 object KeymapUtil {
 
   /**

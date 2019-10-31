@@ -24,9 +24,6 @@ import java.util.*
 import java.util.concurrent.Executor
 
 
-/**
- * Created by karashevich on 18/03/16.
- */
 class LessonManager {
   private var currentLessonExecutor: LessonExecutor? = null
 

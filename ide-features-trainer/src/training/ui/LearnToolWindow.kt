@@ -12,9 +12,6 @@ import training.ui.views.ModulesPanel
 import javax.swing.JPanel
 
 
-/**
- * Created by karashevich on 17/03/16.
- */
 class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
 
   val myContentPanel: JPanel = JPanel()

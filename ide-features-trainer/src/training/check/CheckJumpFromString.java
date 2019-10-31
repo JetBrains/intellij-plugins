@@ -9,9 +9,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 
-/**
- * Created by karashevich on 22/09/15.
- */
 public class CheckJumpFromString implements Check {
 
     Project project;

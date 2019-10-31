@@ -10,9 +10,6 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
 
-/**
- * Created by karashevich on 24/02/15.
- */
 class MouseListenerHolder(private val myEditor: Editor?) {
 
   private var myMouseListeners: Array<MouseListener>? = null

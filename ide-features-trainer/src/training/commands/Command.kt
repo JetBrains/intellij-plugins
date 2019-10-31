@@ -3,9 +3,6 @@ package training.commands
 import com.intellij.openapi.application.ApplicationManager
 import org.jdom.Element
 
-/**
- * Created by karashevich on 30/01/15.
- */
 abstract class Command(val commandType: Command.CommandType) {
 
   enum class CommandType {
