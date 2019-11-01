@@ -135,6 +135,7 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull private String myServerVersion = "";
   @NotNull private String mySdkVersion = "";
+  private boolean myMLBasedCodeCompletion = false;
   @Nullable private String mySdkHome = null;
 
   private final DartServerRootsHandler myRootsHandler;
@@ -1981,8 +1982,10 @@ public class DartAnalysisServerService implements Disposable {
         // NOP
       }
 
-      if (StringUtil.compareVersionNumbers(sdk.getVersion(), DartConfigurable.ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0 &&
-          DartConfigurable.isMLCodeCompletionEnabled(myProject)) {
+      boolean mlBasedCodeCompletion =
+        StringUtil.compareVersionNumbers(sdk.getVersion(), DartConfigurable.ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0 &&
+        DartConfigurable.isMLCodeCompletionEnabled(myProject);
+      if (mlBasedCodeCompletion) {
         serverArgsRaw += " --enable-completion-model";
       }
 
@@ -2040,6 +2043,7 @@ public class DartAnalysisServerService implements Disposable {
         });
 
         mySdkVersion = sdk.getVersion();
+        myMLBasedCodeCompletion = mlBasedCodeCompletion;
 
         startedServer.analysis_updateOptions(new AnalysisOptions(true, true, true, true, true, false, true, false));
 
@@ -2093,7 +2097,14 @@ public class DartAnalysisServerService implements Disposable {
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
+      boolean mlBasedCodeCompletion =
+        StringUtil.compareVersionNumbers(sdk.getVersion(), DartConfigurable.ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0 &&
+        DartConfigurable.isMLCodeCompletionEnabled(myProject);
+      if (myServer == null ||
+          !sdk.getHomePath().equals(mySdkHome) ||
+          !sdk.getVersion().equals(mySdkVersion) ||
+          myMLBasedCodeCompletion != mlBasedCodeCompletion ||
+          !myServer.isSocketOpen()) {
         stopServer();
         DartProblemsView.getInstance(myProject).setInitialCurrentFileBeforeServerStart(getCurrentOpenFile());
         startServer(sdk);
