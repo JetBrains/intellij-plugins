@@ -55,6 +55,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
+  private static final boolean ML_CODE_COMPLETION_DEFAULT_VALUE = false;
+  private static final String ML_CODE_COMPLETION_PROPERTY_NAME = "dart.analysis.ml.code.completion";
+  public static final String ML_CODE_COMPLETION_MIN_DART_SDK_VERSION = "2.5";
+
   private JPanel myMainPanel;
   private JBCheckBox myEnableDartSupportCheckBox;
 
@@ -66,6 +70,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox<DartSdkUpdateOption> mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
+
+  private JBCheckBox myMLCodeCompletionCheckBox;
+  // disabled and unchecked, shown in UI instead of myMLCodeCompletionCheckBox if selected Dart SDK is older than 2.5
+  private JBCheckBox myMLCodeCompletionCheckBoxFake;
+
   private PortField myPortField;
 
   private JBLabel myModulesPanelLabel;
@@ -243,6 +252,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
 
+    if (isMLCompletionApplicable()) {
+      if (myMLCodeCompletionCheckBox.isSelected() != isMLCodeCompletionEnabled(myProject)) return true;
+    }
+
     if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
 
     if (myShowModulesPanel) {
@@ -288,6 +301,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
+    // No isMLCompletionApplicable() check here is intentional.
+    myMLCodeCompletionCheckBox.setSelected(isMLCodeCompletionEnabled(myProject));
 
     myPortField.setNumber(getWebdevPort(myProject));
 
@@ -350,6 +366,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
         }
 
+        if (isMLCompletionApplicable()) {
+          setMLCodeCompletionEnabled(myProject, myMLCodeCompletionCheckBox.isSelected());
+        }
+
         setWebdevPort(myProject, myPortField.getNumber());
       }
       else {
@@ -383,6 +403,17 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     myCheckSdkUpdateCheckBoxFake.setVisible(flutter);
     myCheckSdkUpdateCheckBoxFake.setEnabled(false);
+
+    boolean mlCompletionApplicable = isMLCompletionApplicable();
+    myMLCodeCompletionCheckBox.setVisible(mlCompletionApplicable);
+    myMLCodeCompletionCheckBoxFake.setVisible(!mlCompletionApplicable);
+    myMLCodeCompletionCheckBoxFake.setEnabled(false);
+  }
+
+  private boolean isMLCompletionApplicable() {
+    String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
+    String version = sdkHomePath.isEmpty() ? null : DartSdkUtil.getSdkVersion(sdkHomePath);
+    return version != null && StringUtil.compareVersionNumbers(version, ML_CODE_COMPLETION_MIN_DART_SDK_VERSION) >= 0;
   }
 
   private void updateErrorLabel() {
@@ -476,5 +507,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static void setWebdevPort(@NotNull Project project, int port) {
     PropertiesComponent.getInstance(project).setValue(WEBDEV_PORT_PROPERTY_NAME, port, WEBDEV_PORT_DEFAULT);
+  }
+
+  public static boolean isMLCodeCompletionEnabled(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getBoolean(ML_CODE_COMPLETION_PROPERTY_NAME, ML_CODE_COMPLETION_DEFAULT_VALUE);
+  }
+
+  private static void setMLCodeCompletionEnabled(@NotNull Project project, boolean enabled) {
+    PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
   }
 }
