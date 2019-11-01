@@ -12,6 +12,9 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartWebdevConfigurationEditorForm;
@@ -54,6 +57,28 @@ public class DartWebdevConfiguration extends LocatableConfigurationBase<DartWebd
   public RunProfileState getState(@NotNull final Executor executor,
                                   @NotNull final ExecutionEnvironment env) throws ExecutionException {
     return new DartWebdevRunningState(env);
+  }
+
+  @Nullable
+  @Override
+  public String suggestedName() {
+    // Attempt to compute the relative path to the html file, i.e. some "web/index.html"
+    // If not successful, return at least the file name, i.e. some "index.html"
+    final String htmlFilePath = myParameters.getHtmlFilePath();
+    String htmlFilePathRelativeFromWorkingDir = null;
+    try {
+      VirtualFile workingDir = myParameters.getWorkingDirectory(getProject());
+      htmlFilePathRelativeFromWorkingDir =
+        htmlFilePath.startsWith(workingDir.getPath() + "/") ? htmlFilePath.substring(workingDir.getPath().length() + 1) : null;
+    }
+    catch (RuntimeConfigurationError ignore) {
+    }
+
+    if (StringUtil.isNotEmpty(htmlFilePathRelativeFromWorkingDir)) {
+      return htmlFilePathRelativeFromWorkingDir;
+    }
+
+    return StringUtil.isEmpty(htmlFilePath) ? "Dart web app" : PathUtil.getFileName(htmlFilePath);
   }
 
   @Override
