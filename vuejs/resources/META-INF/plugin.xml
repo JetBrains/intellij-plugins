@@ -50,6 +50,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <applicationService serviceImplementation="org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
+    <css.elementDescriptorProvider implementation="org.jetbrains.vuejs.css.VueCssElementDescriptorProvider"/>
     <fileType name="Vue.js" extensions="vue" language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFileType"
               fieldName="INSTANCE"/>
     <lang.substitutor language="HTML" implementationClass="org.jetbrains.vuejs.lang.html.VueLanguageSubstitutor"/>
