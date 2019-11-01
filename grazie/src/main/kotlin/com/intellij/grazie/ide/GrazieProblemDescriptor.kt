@@ -1,14 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptorBase
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
 import com.intellij.grazie.ide.quickfix.supress.GrazieSuppressCategoryQuickFix
 import com.intellij.grazie.ide.quickfix.supress.GrazieSuppressRuleQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.html.*
@@ -29,7 +30,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
         }
 
         add(GrazieSuppressRuleQuickFix(this@toFixes.info.rule))
-        add(GrazieSuppressCategoryQuickFix(this@toFixes.info.lang, ComparableCategory(this@toFixes.info.rule.category)))
+        add(GrazieSuppressCategoryQuickFix(this@toFixes.info.lang, this@toFixes.info.rule.category))
       }
     }
 
