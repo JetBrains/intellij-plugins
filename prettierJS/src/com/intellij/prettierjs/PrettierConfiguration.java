@@ -2,25 +2,19 @@
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
-import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -32,8 +26,6 @@ import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -108,11 +100,11 @@ public final class PrettierConfiguration implements JSNpmLinterState {
   }
 
   private void detectLocalOrGlobalPackage() {
-    detectPackage(() -> ObjectUtils.coalesce(localPackageIfInDependencies(), findDefaultPackage()));
+    detectPackage(() -> ObjectUtils.coalesce(PKG_DESC.findUnambiguousDependencyPackage(myProject), findDefaultPackage()));
   }
 
   private void detectLocalPackage() {
-    detectPackage(() -> localPackageIfInDependencies());
+    detectPackage(() -> PKG_DESC.findUnambiguousDependencyPackage(myProject));
   }
 
   private void detectPackage(@NotNull Supplier<NodePackage> packageProducer) {
@@ -128,30 +120,6 @@ public final class PrettierConfiguration implements JSNpmLinterState {
     if (detected != null) {
       PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
     }
-  }
-
-  @Nullable
-  private NodePackage localPackageIfInDependencies() {
-    VirtualFile projectRoot = ProjectUtil.guessProjectDir(myProject);
-    if (myProject.isDefault() || projectRoot == null) {
-      return null;
-    }
-    VirtualFile packageJson = JSLinterConfigFileUtil.findDistinctConfigInContentRoots(
-      myProject, Collections.singletonList(PackageJsonUtil.FILE_NAME)
-    );
-    if (packageJson == null || !PackageJsonData.getOrCreate(packageJson).isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
-      return null;
-    }
-    YarnPnpNodePackage yarnPnpNodePackage = YarnPnpNodePackage.create(
-      myProject, packageJson, PrettierUtil.PACKAGE_NAME, true, false
-    );
-    if (yarnPnpNodePackage != null) {
-      return yarnPnpNodePackage;
-    }
-    final String basePath = FileUtil.toSystemDependentName(projectRoot.getPath());
-    return new NodePackage(StringUtil.trimEnd(basePath, File.separator) + File.separator
-                           + NodeModuleUtil.NODE_MODULES + File.separator
-                           + PrettierUtil.PACKAGE_NAME);
   }
 
   @Nullable
