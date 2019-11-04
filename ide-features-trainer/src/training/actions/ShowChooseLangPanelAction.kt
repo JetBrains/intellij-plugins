@@ -18,7 +18,7 @@ class ShowChooseLangPanelAction: AnAction() {
         val project = e.project ?: return
         val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
         val scrollPane = myLearnToolWindow.scrollPane
-        scrollPane!!.setViewportView(myLanguageChoosePanel)
+        scrollPane.setViewportView(myLanguageChoosePanel)
         scrollPane.revalidate()
         scrollPane.repaint()
     }

@@ -13,39 +13,35 @@ import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 
-class LearnToolWindow internal constructor() : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
+class LearnToolWindow internal constructor(private val project: Project) : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
 
   //TODO: remove public modificator set ScrollPane before release
-  var scrollPane: JBScrollPane? = null
-  private var myLearnPanel: LearnPanel? = null
-  private var modulesPanel: ModulesPanel? = null
-  private var myProject: Project? = null
+  var scrollPane: JBScrollPane
+    private set
+  private lateinit var myLearnPanel: LearnPanel
+  private lateinit var modulesPanel: ModulesPanel
 
-  fun init(project: Project) {
-
-    myProject = project
+  init {
     reinitViewsInternal()
     scrollPane = if (LangManager.getInstance().isLangUndefined()) {
-      val myLanguageChoosePanel = LanguageChoosePanel()
-      JBScrollPane(myLanguageChoosePanel)
+      JBScrollPane(LanguageChoosePanel())
     } else {
       JBScrollPane(modulesPanel)
     }
-    setContent(scrollPane!!)
+    setContent(scrollPane)
   }
 
   fun changeLanguage() {
     reinitViewsInternal()
-    val myLanguageChoosePanel = LanguageChoosePanel()
-    scrollPane = JBScrollPane(myLanguageChoosePanel)
-    setContent(scrollPane!!)
+    scrollPane = JBScrollPane(LanguageChoosePanel())
+    setContent(scrollPane)
   }
 
   private fun reinitViewsInternal() {
     myLearnPanel = LearnPanel()
     modulesPanel = ModulesPanel(this)
-    UiManager.modulesPanelPerProject[myProject!!] = modulesPanel!!
-    UiManager.learnPanelPerProject[myProject!!] = myLearnPanel!!
+    UiManager.modulesPanelPerProject[project] = modulesPanel
+    UiManager.learnPanelPerProject[project] = myLearnPanel
   }
 
   //do not call on modulesPanel view view or learnPanel view
@@ -54,11 +50,9 @@ class LearnToolWindow internal constructor() : SimpleToolWindowPanel(true, true)
   }
 
   override fun dispose() {
-    UiManager.learnPanelPerProject.remove(myProject)
-    UiManager.modulesPanelPerProject.remove(myProject)
-    myLearnPanel = null
+    UiManager.learnPanelPerProject.remove(project)
+    UiManager.modulesPanelPerProject.remove(project)
   }
-
 
 }
 

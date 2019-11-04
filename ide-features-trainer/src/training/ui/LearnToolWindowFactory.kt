@@ -12,8 +12,7 @@ import com.intellij.openapi.wm.ToolWindowFactory
 class LearnToolWindowFactory : ToolWindowFactory, DumbAware {
 
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    val learnToolWindow = LearnToolWindow()
-    learnToolWindow.init(project)
+    val learnToolWindow = LearnToolWindow(project)
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(learnToolWindow, null, false)
     content.isCloseable = false
