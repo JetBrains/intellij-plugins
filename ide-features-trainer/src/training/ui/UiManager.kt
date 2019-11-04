@@ -99,7 +99,7 @@ object UiManager {
   }
 
   fun initLessonOnLearnPanels(lesson: Lesson) {
-    learnPanelPerProject.values.forEach { it.modulePanel?.init(lesson) ?: LOG.warn("ModulePanel is null") }
+    learnPanelPerProject.values.forEach { it.modulePanel.init(lesson) }
     LOG.debug("initLessonOnLearnPanels")
   }
 
@@ -143,7 +143,7 @@ object UiManager {
   }
 
   fun updateLessonsForPanels(lesson: Lesson) {
-    learnPanelPerProject.values.forEach { it.modulePanel?.updateLessons(lesson) ?: LOG.warn("ModulePanel is null") }
+    learnPanelPerProject.values.forEach { it.modulePanel.updateLessons(lesson) }
     LOG.debug("updateLessonsForPanels")
   }
 
