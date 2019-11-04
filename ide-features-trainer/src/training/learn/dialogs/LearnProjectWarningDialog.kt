@@ -6,10 +6,10 @@ package training.learn.dialogs
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.util.ui.JBUI
 import training.learn.LearnBundle.message
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.Action
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -24,7 +24,7 @@ class LearnProjectWarningDialog(project: Project?) : DialogWrapper(project, true
     val panel = JPanel(GridBagLayout())
     val gbc = GridBagConstraints()
     val warningMessage = message("dialog.learnProjectWarning.message", ApplicationNamesInfo.getInstance().fullProductName)
-    gbc.insets = Insets(4, 8, 4, 8)
+    gbc.insets = JBUI.insets(4, 8, 4, 8)
     gbc.weighty = 1.0
     gbc.weightx = 1.0
     gbc.gridx = 0

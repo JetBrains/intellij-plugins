@@ -5,10 +5,10 @@ package training.learn.dialogs
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.util.ui.JBUI
 import training.learn.LearnBundle
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.*
 
 class AskToSwitchToLearnProjectBackDialog(private val learnProject: Project, currentProject: Project) : DialogWrapper(currentProject, true) {
@@ -27,7 +27,7 @@ class AskToSwitchToLearnProjectBackDialog(private val learnProject: Project, cur
 
     val warningMessage = LearnBundle.message("dialog.askToSwitchToLearnProject.message", learnProject.name)
 
-    gbc.insets = Insets(4, 8, 4, 8)
+    gbc.insets = JBUI.insets(4, 8, 4, 8)
     gbc.weighty = 1.0
     gbc.weightx = 1.0
     gbc.gridx = 0
