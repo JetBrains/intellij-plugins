@@ -36,8 +36,8 @@ import training.ui.LearnToolWindowFactory
 import training.ui.UiManager
 import java.awt.Point
 
+@Suppress("UnstableApiUsage")
 class LearnProjectComponent private constructor(private val myProject: Project) : ProjectComponent {
-
 
   override fun projectOpened() {
     registerLearnToolWindow(myProject)
