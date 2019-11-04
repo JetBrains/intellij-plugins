@@ -1,14 +1,7 @@
 package com.intellij.coldFusion
 
-import com.intellij.coldFusion.model.files.CfmlFileType
-import com.intellij.ide.highlighter.HighlighterFactory
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.editor.impl.DocumentImpl
-import com.intellij.testFramework.EditorTestUtil.getAllTokens
-import junit.framework.TestCase
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.testFramework.propertyBased.CheckHighlighterConsistency
 import org.jetbrains.annotations.NonNls
 
 class CfmlTypedHandlerTest : CfmlCodeInsightFixtureTestCase() {
@@ -67,25 +60,11 @@ class CfmlTypedHandlerTest : CfmlCodeInsightFixtureTestCase() {
     val s2 = "\" />\n" + "</cfoutput></table>"
     val s = s1 + s2
 
-    val doc = DocumentImpl(s)
-    val editor = EditorFactory.getInstance().createEditor(doc) as EditorEx
-    try {
-      var highlighter = HighlighterFactory.createHighlighter(project, CfmlFileType.INSTANCE)
-      editor.highlighter = highlighter
-      CommandProcessor.getInstance().executeCommand(project, {
-        ApplicationManager.getApplication().runWriteAction {
-          doc.insertString(s1.length, "#")
-        }
-      }, "", null)
-      val tokensAfterUpdate = getAllTokens(highlighter)
-      highlighter = HighlighterFactory.createHighlighter(project, CfmlFileType.INSTANCE)
-      editor.highlighter = highlighter
-      val tokensWithoutUpdate = getAllTokens(highlighter)
-      TestCase.assertEquals(tokensWithoutUpdate, tokensAfterUpdate)
+    myFixture.configureByText("a.cfml", s)
+    WriteCommandAction.runWriteCommandAction(project) {
+      myFixture.editor.document.insertString(s1.length, "#")
     }
-    finally {
-      EditorFactory.getInstance().releaseEditor(editor)
-    }
+    CheckHighlighterConsistency.performCheck(myFixture.editor)
   }
 
   fun testRightBracketInsertion() = doTest('(')
