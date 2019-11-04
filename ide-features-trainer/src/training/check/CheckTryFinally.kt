@@ -11,8 +11,8 @@ import com.intellij.psi.PsiKeyword
 import com.intellij.psi.util.PsiTreeUtil
 
 class CheckTryFinally : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -22,8 +22,8 @@ class CheckTryFinally : Check {
   override fun before() {}
 
   override fun check(): Boolean {
-    val document = editor!!.document
-    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    val document = editor.document
+    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
     var tryText = false
     var finallyText = false
     val childrenOfType: Collection<PsiKeyword> = PsiTreeUtil.findChildrenOfType(psiFile as PsiElement?, PsiKeyword::class.java)
