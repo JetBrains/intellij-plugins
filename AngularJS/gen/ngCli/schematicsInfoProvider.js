@@ -33,7 +33,7 @@ const includeHidden = process.argv[2] === "--includeHidden";
         .map(c => getCollectionSchematics(c, provider, defaultCollectionName))
         .reduce((a, b) => a.concat(...b));
     console.info(JSON.stringify(allSchematics, null, 2));
-})();
+})().catch(err => console.error(err.stack || err));
 function getAvailableSchematicCollections(provider) {
     let result = [];
     let packages = [];
@@ -68,7 +68,6 @@ function getCollectionSchematics(collectionName, provider, defaultCollectionName
             : provider.listSchematics(collection);
     }
     catch (e) {
-        console.error(e);
         return [{
                 name: collectionName,
                 error: "" + e.message
