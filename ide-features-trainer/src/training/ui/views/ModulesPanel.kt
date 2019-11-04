@@ -38,7 +38,7 @@ import javax.swing.text.StyleConstants
 
 class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
-    private var modulesPanel: JPanel = JPanel()
+    private val modulesPanel: JPanel = JPanel()
     private val module2linklabel = BidirectionalMap<Module, LinkLabel<Any>>()
 
     init {
