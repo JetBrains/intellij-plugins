@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
@@ -94,7 +95,7 @@ public class DirectiveUtil {
   public static String normalizeAttributeName(String name, boolean stripStartEnd) {
     if (name == null) return null;
     int index = 0;
-    if (name.startsWith("data-")) {
+    if (name.startsWith(HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
       index = 5;
     }
     else if (name.startsWith("x-")) {

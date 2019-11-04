@@ -30,6 +30,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
@@ -53,7 +54,7 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
       for (String attrName : DirectiveUtil.getAttributeNameVariations(directive.getName())) {
         queryParameters.getOptimizer().searchWord(attrName, queryParameters.getEffectiveSearchScope(), false, directive);
         queryParameters.getOptimizer().searchWord("x-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
-        queryParameters.getOptimizer().searchWord("data-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+        queryParameters.getOptimizer().searchWord(HtmlUtil.HTML5_DATA_ATTR_PREFIX + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
       }
     }
     else if ((pipe = Angular2EntitiesProvider.getPipe(element)) != null) {

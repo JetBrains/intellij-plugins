@@ -4,6 +4,7 @@ package org.angular2.lang.html.parser;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.codeInsight.tags.Angular2NgContentDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
@@ -92,10 +93,9 @@ public class Angular2AttributeNameParser {
     return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
   @NotNull
   public static String normalizeAttributeName(@NotNull String name) {
-    if (StringUtil.startsWithIgnoreCase(name, "data-")) {
+    if (StringUtil.startsWithIgnoreCase(name, HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
       return name.substring(5);
     }
     return name;
