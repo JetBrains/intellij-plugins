@@ -20,8 +20,6 @@ class MouseListenerHolder(private val myEditor: Editor?) {
   private var myMouseDummyListener: MouseListener? = null
   private var mouseBlocked = false
 
-  private val LOG = Logger.getInstance(this.javaClass.canonicalName)
-
   fun grabMouseActions(runInsteadMouseAction: Runnable) {
     try {
       grabMouseActionsInner(runInsteadMouseAction)
@@ -76,4 +74,7 @@ class MouseListenerHolder(private val myEditor: Editor?) {
     mouseBlocked = false
   }
 
+  companion object {
+    private val LOG = Logger.getInstance(MouseListenerHolder::class.java)
+  }
 }

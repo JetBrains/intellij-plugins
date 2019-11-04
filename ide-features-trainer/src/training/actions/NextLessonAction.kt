@@ -19,8 +19,6 @@ import training.ui.views.LearnPanel
  */
 class NextLessonAction : AnAction() {
 
-  val LOG = Logger.getInstance(this.javaClass)
-
   override fun actionPerformed(e: AnActionEvent) {
     //check if the lesson view is active
     val project = e.project
@@ -29,5 +27,9 @@ class NextLessonAction : AnAction() {
     val view = myLearnToolWindow.scrollPane.viewport?.view ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${project.name})")
     //click button to skip or go to the next lesson
     (view as? LearnPanel)?.clickButton()
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(NextLessonAction::class.java)
   }
 }
