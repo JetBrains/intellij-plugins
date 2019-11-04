@@ -17,7 +17,6 @@ import java.io.PrintWriter
 import java.net.URL
 import java.nio.file.Files
 
-
 object ProjectUtils {
 
   private val ideProjectsBasePath by lazy {
@@ -69,9 +68,9 @@ object ProjectUtils {
 
   private fun doImportOrOpenProject(projectDir: VirtualFile): Project? {
     val projectRef = Ref<Project>()
-    TransactionGuard.getInstance().submitTransactionAndWait({
+    TransactionGuard.getInstance().submitTransactionAndWait {
       projectRef.set(ProjectUtil.openOrImport(projectDir.path, null, false))
-    })
+    }
     return projectRef.get()
   }
 

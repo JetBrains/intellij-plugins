@@ -51,7 +51,7 @@ class StartLearnAction : AnAction(
     override fun createCenterPanel(): JComponent? = myLangChoosePanel
   }
 
-  fun doAction() {
+  private fun doAction() {
     val action = ActionManager.getInstance().getAction("learn.open.lesson")
 
     val context = DataContext.EMPTY_CONTEXT

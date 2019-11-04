@@ -38,7 +38,7 @@ import javax.swing.text.StyleConstants
 class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
     private var modulesPanel: JPanel = JPanel()
-    private val module2linklabel: BidirectionalMap<Module, LinkLabel<Any>> = BidirectionalMap()
+    private val module2linklabel = BidirectionalMap<Module, LinkLabel<Any>>()
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
@@ -54,13 +54,12 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
         add(Box.createVerticalGlue())
 
         //set LearnPanel UI
-        this.preferredSize = Dimension(UISettings.instance.width, 100)
-        this.border = UISettings.instance.emptyBorderWithNoEastHalfNorth
+        preferredSize = Dimension(UISettings.instance.width, 100)
+        border = UISettings.instance.emptyBorderWithNoEastHalfNorth
 
         revalidate()
         repaint()
     }
-
 
     private fun setupFontStyles() {
         StyleConstants.setFontFamily(REGULAR, UISettings.instance.fontFace)
@@ -73,7 +72,6 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
         StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f)
         StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f)
     }
-
 
     private fun initMainPanel() {
         modulesPanel.apply {
@@ -176,7 +174,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
     }
 
     private fun createSettingsButtonPanel(): JPanel {
-        val settingsAction = createAnAction(AllIcons.General.Settings) { _ -> UiManager.setLanguageChooserView() }
+        val settingsAction = createAnAction(AllIcons.General.Settings) { UiManager.setLanguageChooserView() }
         val settingsButton = ActionButton(settingsAction,
             Presentation("Settings").apply {
                 icon = AllIcons.Nodes.Editorconfig
@@ -300,22 +298,16 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
             if (done == total)
                 ""
             else
-                done.toString() + " of " + total + " done"
+                "$done of $total done"
         } else {
             null
         }
     }
 
-    private inner class MyJTextPane internal constructor(widthOfText: Int) : JTextPane() {
-
-        private var myWidth = 314
-
-        init {
-            myWidth = widthOfText
-        }
+    private inner class MyJTextPane internal constructor(private val widthOfText: Int) : JTextPane() {
 
         override fun getPreferredSize(): Dimension {
-            return Dimension(myWidth, super.getPreferredSize().height)
+            return Dimension(widthOfText, super.getPreferredSize().height)
         }
 
         override fun getMaximumSize(): Dimension {
@@ -335,10 +327,9 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
     private fun paintModuleCheckmarks(g: Graphics) {
         if (module2linklabel.isNotEmpty()) {
-            for (module in module2linklabel.keys) {
+            for ((module, linkLabel) in module2linklabel.entries) {
                 if (module.giveNotPassedLesson() == null) {
-                    val linkLabel = module2linklabel[module]
-                    val point = linkLabel!!.locationOnScreen
+                    val point = linkLabel.locationOnScreen
                     val basePoint = this.locationOnScreen
                     val y = point.y + 1 - basePoint.y
                     if (!SystemInfo.isMac) {
@@ -350,7 +341,6 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
             }
         }
     }
-
 
     override fun getBackground(): Color {
         return if (!UIUtil.isUnderDarcula())

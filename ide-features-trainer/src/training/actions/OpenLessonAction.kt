@@ -279,12 +279,9 @@ class OpenLessonAction : AnAction() {
   }
 
   @Throws(IOException::class)
-  private fun getScratchFile(project: Project, lesson: Lesson?, filename: String): VirtualFile? {
+  private fun getScratchFile(project: Project, lesson: Lesson, filename: String): VirtualFile? {
     var vf: VirtualFile? = null
-    assert(lesson != null)
-    val myLanguage = lesson!!.lang
-
-    val languageByID = findLanguageByID(myLanguage)
+    val languageByID = findLanguageByID(lesson.lang)
     if (CourseManager.instance.mapModuleVirtualFile.containsKey(lesson.module)) {
       vf = CourseManager.instance.mapModuleVirtualFile[lesson.module]
       ScratchFileService.getInstance().scratchesMapping.setMapping(vf, languageByID)
@@ -325,15 +322,13 @@ class OpenLessonAction : AnAction() {
 
       override fun compute(): VirtualFile {
         val learnProject = CourseManager.instance.learnProject!!
-        val myLanguage = lesson.lang
-        val languageByID = findLanguageByID(myLanguage)
+        val languageByID = findLanguageByID(lesson.lang)
         val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
         val existedFile = lesson.existedFile
         if (existedFile != null) {
           val root = ProjectRootManager.getInstance(learnProject).contentRoots[0]
-          val file: VirtualFile? = root.findFileByRelativePath(existedFile)
-          return file!!
+          return root.findFileByRelativePath(existedFile)!!
         }
 
         val fileName = lesson.module.sanitizedName + "." + extensionFile
@@ -391,7 +386,6 @@ class OpenLessonAction : AnAction() {
     assert(CourseManager.instance.learnProject != null)
 
     return myLearnProject
-
   }
 
   private fun findLearnProjectInOpenedProjects(langSupport: LangSupport): Project? {

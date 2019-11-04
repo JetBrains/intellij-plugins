@@ -23,10 +23,10 @@ class NextLessonAction : AnAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
     //check if the lesson view is active
-    if (e.project == null) { LOG.warn("Unable to perform NextLesson action for 'null' project"); return }
     val project = e.project
-    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[e.project!!] ?: throw Exception("Unable to get Learn toolwindow for project (${project!!.name})")
-    val view = myLearnToolWindow.scrollPane?.viewport?.view ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${e.project?.name})")
+    if (project == null) { LOG.warn("Unable to perform NextLesson action for 'null' project"); return }
+    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: throw Exception("Unable to get Learn toolwindow for project (${project.name})")
+    val view = myLearnToolWindow.scrollPane?.viewport?.view ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${project.name})")
     //click button to skip or go to the next lesson
     (view as? LearnPanel)?.clickButton()
   }

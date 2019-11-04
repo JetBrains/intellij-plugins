@@ -18,7 +18,7 @@ import training.statistic.FeatureUsageStatisticConsts.PASSED
 import training.statistic.FeatureUsageStatisticConsts.START
 import training.util.trainerPluginConfigName
 
-@State(name = "StatisticBase", storages = arrayOf(Storage(value = trainerPluginConfigName)))
+@State(name = "StatisticBase", storages = [Storage(value = trainerPluginConfigName)])
 class StatisticBase : PersistentStateComponent<StatisticBase> {
 
   override fun getState(): StatisticBase = this
@@ -27,21 +27,13 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
     this.persistedLessonId2State.putAll(persistedState.persistedLessonId2State)
   }
 
-  var persistedLessonId2State: LinkedHashMap<String, StatisticData> = LinkedHashMap()
+  private val persistedLessonId2State: LinkedHashMap<String, StatisticData> = linkedMapOf()
   //non persisted history of lessons states
   @Transient
   val sessionLessonId2State: MutableList<Pair<String, StatisticData>> = ArrayList()
 
   companion object {
-    private var cachedService: StatisticBase? = null
-
-    val instance: StatisticBase
-      get() {
-        if (cachedService == null) {
-          cachedService = ServiceManager.getService(StatisticBase::class.java)
-        }
-        return cachedService!!
-      }
+    val instance: StatisticBase by lazy { ServiceManager.getService(StatisticBase::class.java) }
   }
 
   enum class StatisticState { STARTED, PASSED }

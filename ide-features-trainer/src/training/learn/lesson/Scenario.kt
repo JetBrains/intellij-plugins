@@ -3,16 +3,12 @@
  */
 package training.learn.lesson
 
-
 import org.jdom.Element
 import training.util.DataLoader
 
-class Scenario(var path: String) {
+class Scenario(private val path: String) {
 
   val root: Element = DataLoader.getXmlRootElement(path)
-  private val LANG = "lang"
-  private val NAME = "name"
-  private val ID = "id"
 
   val lang: String
     get() {
@@ -28,5 +24,11 @@ class Scenario(var path: String) {
    */
   val id: String
     get() = root.getAttribute(ID).value
+
+  companion object {
+    private const val LANG = "lang"
+    private const val NAME = "name"
+    private const val ID = "id"
+  }
 
 }

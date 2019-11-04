@@ -22,15 +22,13 @@ import training.learn.exceptons.NoJavaModuleException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.util.XmlModuleConstants
-import java.util.*
-import kotlin.collections.HashMap
 
 class CourseManager internal constructor() {
 
   var learnProject: Project? = null
-  var mapModuleVirtualFile = HashMap<Module, VirtualFile>()
+  val mapModuleVirtualFile = mutableMapOf<Module, VirtualFile>()
 
-  private var allModules: MutableList<Module> = ArrayList()
+  private val allModules: MutableList<Module> = mutableListOf()
 
   val modules: List<Module>
     get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
@@ -77,7 +75,7 @@ class CourseManager internal constructor() {
     val action = ActionManager.getInstance().getAction("learn.open.lesson")
     val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
-    val data = HashMap<String, Any?>()
+    val data = mutableMapOf<String, Any?>()
     data[OpenLessonAction.LESSON_DATA_KEY.name] = lesson
     data[OpenLessonAction.PROJECT_WHERE_TO_OPEN_DATA_KEY.name] = projectWhereToOpen
     val context = SimpleDataContext.getSimpleContext(data, parent)

@@ -12,7 +12,7 @@ import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
 
-class CopyTextCommand internal constructor() : Command(Command.CommandType.COPYTEXT) {
+class CopyTextCommand internal constructor() : Command(CommandType.COPYTEXT) {
 
   @Throws(InterruptedException::class)
   override fun execute(executionList: ExecutionList) {

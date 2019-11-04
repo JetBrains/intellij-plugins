@@ -29,7 +29,7 @@ object CommandFactory {
       Command.CommandType.SHOWLINENUMBER -> return ShowLineNumberCommand()
       Command.CommandType.EXPANDALLBLOCKS -> return ExpandAllBlocksCommand()
       Command.CommandType.SETSELECTION -> return SetSelectionCommand()
-      else -> throw BadCommandException("unable to parse command from" + tagName)
+      else -> throw BadCommandException("unable to parse command from$tagName")
     }
   }
 

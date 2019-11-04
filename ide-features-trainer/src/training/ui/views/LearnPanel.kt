@@ -20,7 +20,6 @@ import javax.swing.border.EmptyBorder
 import javax.swing.border.MatteBorder
 import javax.swing.text.BadLocationException
 
-
 /**
  * @author Sergey Karashevich
  */
@@ -37,7 +36,6 @@ class LearnPanel : JPanel() {
     private var lessonMessagePane: LessonMessagePane? = null
     private var buttonPanel: JPanel? = null
     private var button: JButton? = null
-
 
     //XmlModule panel stuff
     var modulePanel: ModulePanel? = null
@@ -159,7 +157,8 @@ class LearnPanel : JPanel() {
             if (message.type == Message.MessageType.LINK) {
                 //add link handler
                 message.runnable = Runnable {
-                    if(message.link.isNullOrEmpty()) {
+                    val link = message.link
+                    if (link == null || link.isEmpty()) {
                         val lesson = CourseManager.instance.findLesson(message.text)
                         if (lesson != null) {
                             try {
@@ -170,11 +169,11 @@ class LearnPanel : JPanel() {
                             }
 
                         }
-                    }else{
+                    } else {
                         val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
                         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
                             try {
-                                desktop.browse(URI(message.link))
+                                desktop.browse(URI(link))
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -370,12 +369,11 @@ class LearnPanel : JPanel() {
         }
 
         fun updateLessons(lesson: Lesson) {
-            for (curLesson in lessonLabelMap.keys) {
-                val lessonLabel = lessonLabelMap[curLesson]
+            for ((curLesson, lessonLabel) in lessonLabelMap.entries) {
                 if (lesson == curLesson) {
-                    lessonLabel!!.setTextColor(UISettings.instance.lessonActiveColor)
+                    lessonLabel.setTextColor(UISettings.instance.lessonActiveColor)
                 } else {
-                    lessonLabel!!.resetTextColor()
+                    lessonLabel.resetTextColor()
                 }
             }
         }
@@ -386,9 +384,8 @@ class LearnPanel : JPanel() {
         }
 
         private fun paintModuleCheckmarks(g: Graphics) {
-            for (lesson in lessonLabelMap.keys) {
+            for ((lesson, jLabel) in lessonLabelMap.entries) {
                 if (lesson.passed) {
-                    val jLabel: MyLinkLabel = lessonLabelMap[lesson]!!
                     val point = jLabel.location
                     if (!SystemInfo.isMac) {
                         LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 1)

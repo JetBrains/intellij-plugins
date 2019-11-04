@@ -6,7 +6,6 @@ package training.migration
 import com.intellij.openapi.diagnostic.Logger
 import training.learn.lesson.LessonState
 import training.learn.lesson.LessonStateBase
-import java.util.*
 
 object MigrationManager {
 
@@ -14,16 +13,14 @@ object MigrationManager {
 
   private val migrateAgents = arrayOf<MigrationAgent>(MigrationAgent074())
 
-  fun processLegacyStates(cachedService: LessonStateBase) {
-    val myMap = HashMap<String, LessonState>()
+  fun processLegacyStates(service: LessonStateBase) {
     migrateAgents.forEach {
       LOG.info("Adding lesson states from previous version (${it.VERSION}) of trainingPlugin / IDE Features Trainer from xml file: ${it.XML_FILE_NAME}")
-      myMap.putAll(it.extractLessonStateMap())
+      service.map.putAll(it.extractLessonStateMap())
     }
-    cachedService.myMap.putAll(myMap)
   }
 
-  abstract class MigrationAgent() {
+  abstract class MigrationAgent {
     abstract val VERSION: String
     abstract val XML_FILE_NAME: String
     abstract fun extractLessonStateMap(): Map<String, LessonState>

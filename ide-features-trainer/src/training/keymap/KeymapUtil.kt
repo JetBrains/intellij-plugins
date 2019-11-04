@@ -25,12 +25,11 @@ object KeymapUtil {
     var keyStroke: KeyStroke? = null
     for (shortcut in shortcuts) {
       if (shortcut is KeyboardShortcut) {
-        val keyboardShortcut = shortcut
-        keyStroke = keyboardShortcut.firstKeyStroke
+        keyStroke = shortcut.firstKeyStroke
         if (actionId != "learn.next.lesson")
           break
         else {
-          if (KeymapManager.getInstance().activeKeymap.getConflicts(actionId, keyboardShortcut).isEmpty())
+          if (KeymapManager.getInstance().activeKeymap.getConflicts(actionId, shortcut).isEmpty())
             break
         }
       }
@@ -62,26 +61,26 @@ object KeymapUtil {
     val result = StringBuilder()
 
     if (SystemInfo.isMac) {
-      if (modifiersString.contains("+")) {
+      return if (modifiersString.contains("+")) {
         for (modifier in modifiersString.getModifiers())
           result.append(modifier)
-        return result.toString()
+        result.toString()
       } else {
-        return modifiersString
+        modifiersString
       }
     } else {
-      if (modifiersString.contains("+")) {
+      return if (modifiersString.contains("+")) {
         for (modifier in modifiersString.getModifiers())
           result.append(modifier).append(" + ")
-        return result.toString().replaceSpacesWithNonBreakSpace()
+        result.toString().replaceSpacesWithNonBreakSpace()
       } else {
-        return (modifiersString + " + ").replaceSpacesWithNonBreakSpace()
+        ("$modifiersString + ").replaceSpacesWithNonBreakSpace()
       }
     }
   }
 
   private fun String.getModifiers(): Array<String>
-          = this.split("[ \\+]".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+          = this.split("[ +]".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
   private fun String.replaceSpacesWithNonBreakSpace(): String
           = this.replace(" ", "\u00A0")
