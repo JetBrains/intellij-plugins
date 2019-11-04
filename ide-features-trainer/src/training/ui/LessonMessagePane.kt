@@ -245,7 +245,7 @@ class LessonMessagePane : JTextPane() {
 
     companion object {
 
-        private val LOG = Logger.getInstance(LessonMessagePane::class.java.canonicalName)
+        private val LOG = Logger.getInstance(LessonMessagePane::class.java)
 
         //Style Attributes for LessonMessagePane(JTextPane)
         private val REGULAR = SimpleAttributeSet()

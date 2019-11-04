@@ -14,8 +14,6 @@ import java.util.*
 
 class MigrationAgent074: MigrationManager.MigrationAgent() {
 
-  val LOG = Logger.getInstance(this.javaClass.canonicalName)
-
   override val VERSION: String
     get() = "0.7.49"
 
@@ -72,4 +70,7 @@ class MigrationAgent074: MigrationManager.MigrationAgent() {
 
   private fun String.withoutWhiteSpaces() = this.replace("\\s+".toRegex(), "")
 
+  companion object {
+    val LOG = Logger.getInstance(MigrationAgent074::class.java)
+  }
 }
