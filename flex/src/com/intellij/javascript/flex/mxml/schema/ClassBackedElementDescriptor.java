@@ -17,6 +17,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -32,7 +33,6 @@ import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
-import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -1395,8 +1395,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     @Override
     public String validateValue(XmlElement context, String value) {
-      final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
-      if (!namesValidator.isIdentifier(value, context.getProject())) {
+      if (!LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject())) {
         return JSBundle.message("invalid.identifier.value");
       }
       return null;

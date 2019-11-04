@@ -41,7 +41,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
     myElement = element;
     myClassName = StringUtil.getShortName(classFqn);
     myIdentifierIsValid =
-      LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage()).isIdentifier(myClassName, null);
+      LanguageNamesValidation.isIdentifier(JavaScriptSupportLoader.JAVASCRIPT.getLanguage(), myClassName);
     myPackageName = StringUtil.getPackageName(classFqn);
   }
 

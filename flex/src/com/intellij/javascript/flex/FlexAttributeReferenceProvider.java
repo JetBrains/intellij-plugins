@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -219,8 +220,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     public LocalQuickFix[] getQuickFixes() {
       final String fqn = myElement.getSimpleValue();
 
-      if (fqn != null && LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
-        .isIdentifier(StringUtil.getShortName(fqn), null)) {
+      if (fqn != null && LanguageNamesValidation.isIdentifier(JavaScriptSupportLoader.JAVASCRIPT.getLanguage(), StringUtil.getShortName(fqn))) {
 
         final String[] baseClasses = myReferenceSet.getBaseClassFqns();
 
