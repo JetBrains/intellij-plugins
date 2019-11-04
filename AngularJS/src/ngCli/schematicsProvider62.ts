@@ -11,13 +11,14 @@ try {
 } catch (e) {
     defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
 }
+let engineHost = command.getEngineHost();
 
-const schematicsProvider: SchematicsProvider = {
+const schematicsProvider: Promise<SchematicsProvider> = Promise.resolve({
     getCollection(collectionName: string): Collection<any, any> {
         return command.getCollection(collectionName);
     },
-    getEngineHost() {
-        return command.getEngineHost();
+    listSchematics(collection): string[] {
+        return engineHost.listSchematics(collection)
     },
     getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
         return command.getSchematic(collection, schematicName, allowPrivate);
@@ -25,6 +26,6 @@ const schematicsProvider: SchematicsProvider = {
     getDefaultSchematicCollection() {
         return defaultCollectionName;
     }
-}
+})
 
 export = schematicsProvider;

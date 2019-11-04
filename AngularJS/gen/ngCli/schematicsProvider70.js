@@ -1,19 +1,19 @@
 "use strict";
-var schematic_command_1 = require("@angular/cli/models/schematic-command");
-var command = new schematic_command_1.SchematicCommand({}, null);
-command.getEngineHost();
-var schematicsProvider = {
-    getCollection: function (collectionName) {
+const schematic_command_1 = require("@angular/cli/models/schematic-command");
+let command = new schematic_command_1.SchematicCommand({}, null);
+let engineHost = command.getEngineHost();
+const schematicsProvider = Promise.resolve({
+    getCollection(collectionName) {
         return command.getCollection(collectionName);
     },
-    getEngineHost: function () {
-        return command.getEngineHost();
+    listSchematics(collection) {
+        return engineHost.listSchematics(collection);
     },
-    getSchematic: function (collection, schematicName, allowPrivate) {
+    getSchematic(collection, schematicName, allowPrivate) {
         return command.getSchematic(collection, schematicName, allowPrivate);
     },
-    getDefaultSchematicCollection: function () {
+    getDefaultSchematicCollection() {
         return command.getDefaultSchematicCollection();
     }
-};
+});
 module.exports = schematicsProvider;
