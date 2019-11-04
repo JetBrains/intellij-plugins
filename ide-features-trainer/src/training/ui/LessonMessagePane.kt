@@ -25,8 +25,7 @@ import javax.swing.text.StyleConstants
 class LessonMessagePane : JTextPane() {
 
     private val lessonMessages = CopyOnWriteArrayList<LessonMessage>()
-
-    private var fontFamily: String? = null
+    private val fontFamily = Font(UISettings.instance.fontFace, Font.PLAIN, UISettings.instance.fontSize).family
 
     //, fontFace, check_width + check_right_indent
     init {
@@ -35,7 +34,6 @@ class LessonMessagePane : JTextPane() {
     }
 
     private fun initStyleConstants() {
-        fontFamily = Font(UISettings.instance.fontFace, Font.PLAIN, UISettings.instance.fontSize).family
         font = Font(UISettings.instance.fontFace, Font.PLAIN, UISettings.instance.fontSize)
 
         StyleConstants.setFontFamily(REGULAR, fontFamily)
@@ -163,8 +161,9 @@ class LessonMessagePane : JTextPane() {
                 val y = me.y
 
                 val clickOffset = viewToModel(Point(x, y))
-                if (clickOffset in startLink..endLink && message.runnable != null) {
-                    message.runnable!!.run()
+                val runnable = message.runnable
+                if (clickOffset in startLink..endLink && runnable != null) {
+                    runnable.run()
                 }
 
             }

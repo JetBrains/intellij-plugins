@@ -26,7 +26,7 @@ class NextLessonAction : AnAction() {
     val project = e.project
     if (project == null) { LOG.warn("Unable to perform NextLesson action for 'null' project"); return }
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: throw Exception("Unable to get Learn toolwindow for project (${project.name})")
-    val view = myLearnToolWindow.scrollPane?.viewport?.view ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${project.name})")
+    val view = myLearnToolWindow.scrollPane.viewport?.view ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${project.name})")
     //click button to skip or go to the next lesson
     (view as? LearnPanel)?.clickButton()
   }
