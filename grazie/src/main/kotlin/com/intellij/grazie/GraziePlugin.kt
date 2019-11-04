@@ -2,15 +2,15 @@
 package com.intellij.grazie
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor
-import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.extensions.PluginId
 import java.io.File
 
-object GraziePlugin {
-  const val id: String = "tanvd.grazi"
+internal object GraziePlugin {
+  const val id = "tanvd.grazi"
 
   private val descriptor: IdeaPluginDescriptor
-    get() = PluginManager.getPlugin(PluginId.getId(id))!!
+    get() = PluginManagerCore.getPlugin(PluginId.getId(id))!!
 
   val version: String
     get() = descriptor.version
