@@ -14,8 +14,8 @@ import training.ui.views.ModulesPanel
 
 object UiManager {
 
-  var learnPanelPerProject = mutableMapOf<Project, LearnPanel>()
-  var modulesPanelPerProject = mutableMapOf<Project, ModulesPanel>()
+  val learnPanelPerProject = mutableMapOf<Project, LearnPanel>()
+  val modulesPanelPerProject = mutableMapOf<Project, ModulesPanel>()
 
   private val LOG = Logger.getInstance(this.javaClass)
 
@@ -149,7 +149,7 @@ object UiManager {
 
   private fun setLessonViewPerProject(project: Project) {
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-    val scrollPane = myLearnToolWindow.scrollPane ?: return
+    val scrollPane = myLearnToolWindow.scrollPane
     scrollPane.setViewportView(learnPanelPerProject[project])
     scrollPane.revalidate()
     scrollPane.repaint()
@@ -157,7 +157,7 @@ object UiManager {
 
   private fun setLanguageViewPerProject(project: Project) {
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-    val scrollPane = myLearnToolWindow.scrollPane ?: return
+    val scrollPane = myLearnToolWindow.scrollPane
     scrollPane.setViewportView(LanguageChoosePanel(place = LanguageChoosePanelPlace.TOOL_WINDOW))
     scrollPane.revalidate()
     scrollPane.repaint()
@@ -167,7 +167,7 @@ object UiManager {
     val modulesPanel = modulesPanelPerProject[project]
     modulesPanel!!.updateMainPanel()
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-    val scrollPane = myLearnToolWindow.scrollPane ?: return
+    val scrollPane = myLearnToolWindow.scrollPane
     scrollPane.setViewportView(modulesPanel)
     scrollPane.revalidate()
     scrollPane.repaint()
@@ -175,7 +175,7 @@ object UiManager {
 
   private fun updateToolWindowScrollPanePerProject(project: Project) {
     val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-    val scrollPane = myLearnToolWindow.scrollPane ?: return
+    val scrollPane = myLearnToolWindow.scrollPane
     scrollPane.viewport.revalidate()
     scrollPane.viewport.repaint()
     scrollPane.revalidate()
