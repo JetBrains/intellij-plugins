@@ -9,7 +9,7 @@ import training.learn.lesson.LessonStateBase
 
 object MigrationManager {
 
-  private val LOG = Logger.getInstance(MigrationManager::class.java.canonicalName)
+  private val LOG = Logger.getInstance(MigrationManager::class.java)
 
   private val migrateAgents = arrayOf<MigrationAgent>(MigrationAgent074())
 

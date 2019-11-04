@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 object LessonProcessor {
 
-  val LOG = Logger.getInstance(this.javaClass.canonicalName)
+  val LOG = Logger.getInstance(LessonProcessor::class.java)
 
   @get:org.jetbrains.annotations.TestOnly
   var currentExecutionList: ExecutionList? = null
