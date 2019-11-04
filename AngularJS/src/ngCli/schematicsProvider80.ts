@@ -5,7 +5,7 @@ import {SchematicCommand} from "@angular/cli/models/schematic-command";
 import {getWorkspace} from "@angular/cli/utilities/config"
 
 let workspace = getWorkspace() as any
-workspace.root.test
+if (!workspace || !workspace.root) throw new Error("Try 9.0 provider")
 
 let command = new (SchematicCommand as any)({workspace}, null, null);
 let engineHost = command.createWorkflow({interactive: false}).engineHost;

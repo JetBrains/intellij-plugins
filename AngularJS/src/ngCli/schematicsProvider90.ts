@@ -7,7 +7,7 @@ import {getWorkspace} from "@angular/cli/utilities/config"
 const schematicsProvider: Promise<SchematicsProvider> = (async function () {
   let workspace = await getWorkspace('local');
   let command = new (SchematicCommand as any)({workspace: workspace}, null, null);
-  let engineHost = (await command.createWorkflow({interactive: false})).engineHost;
+  let {listSchematicNames} = (await command.createWorkflow({interactive: false})).engineHost;
   let defaultSchematicCollection = await command.getDefaultSchematicCollection()
 
   return {
@@ -15,7 +15,7 @@ const schematicsProvider: Promise<SchematicsProvider> = (async function () {
       return command.getCollection(collectionName);
     },
     listSchematics(collection): string[] {
-      return engineHost.listSchematicNames(collection.description)
+      return listSchematicNames(collection.description)
     },
     getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any> {
       return command.getSchematic(collection, schematicName, allowPrivate);
