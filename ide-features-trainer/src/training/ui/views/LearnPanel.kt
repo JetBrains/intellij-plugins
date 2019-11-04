@@ -7,6 +7,7 @@ import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -97,13 +98,13 @@ class LearnPanel : JPanel() {
         lessonMessagePane!!.isFocusable = false
         lessonMessagePane!!.isOpaque = false
         lessonMessagePane!!.alignmentX = Component.LEFT_ALIGNMENT
-        lessonMessagePane!!.margin = Insets(0, 0, 0, 0)
+        lessonMessagePane!!.margin = JBUI.emptyInsets()
         lessonMessagePane!!.border = EmptyBorder(0, 0, 0, 0)
         lessonMessagePane!!.maximumSize = Dimension(UISettings.instance.width, 10000)
 
         //Set Next Button UI
         button = JButton(LearnBundle.message("learn.ui.button.skip"))
-        button!!.margin = Insets(0, 0, 0, 0)
+        button!!.margin = JBUI.emptyInsets()
         button!!.isFocusable = false
         button!!.isVisible = true
         button!!.isEnabled = true

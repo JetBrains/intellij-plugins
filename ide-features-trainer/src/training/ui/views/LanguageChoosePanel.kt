@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -22,7 +23,6 @@ import training.ui.UiManager
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.Insets
 import java.awt.event.ActionEvent
 import javax.swing.*
 import javax.swing.BoxLayout
@@ -69,7 +69,6 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
 
 
     private fun init() {
-
         caption = JLabel()
         caption!!.isOpaque = false
         caption!!.font = UISettings.instance.moduleNameFont
@@ -78,7 +77,7 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         description!!.isOpaque = false
         description!!.isEditable = false
         description!!.alignmentX = Component.LEFT_ALIGNMENT
-        description!!.margin = Insets(0, 0, 0, 0)
+        description!!.margin = JBUI.emptyInsets()
         description!!.border = EmptyBorder(0, 0, 0, 0)
 
         StyleConstants.setFontFamily(REGULAR, UISettings.instance.plainFont.family)

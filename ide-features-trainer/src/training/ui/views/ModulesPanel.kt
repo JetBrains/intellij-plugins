@@ -14,6 +14,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import training.commands.kotlin.TaskContext
 import training.learn.CourseManager
@@ -161,7 +162,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
             }
 
             descriptionPane.alignmentX = Component.LEFT_ALIGNMENT
-            descriptionPane.margin = Insets(0, 0, 0, 0)
+            descriptionPane.margin = JBUI.emptyInsets()
             descriptionPane.border = UISettings.instance.checkmarkShiftBorder
             descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName))
 
@@ -220,7 +221,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
             learnToolWindow.changeLanguage()
           }
         }
-        margin = Insets(0, 0, 0, 0)
+        margin = JBUI.emptyInsets()
         isFocusable = true
         isVisible = true
         isSelected = true
@@ -247,7 +248,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
                     UiManager.setLessonView()
                 }
             }
-            margin = Insets(0, 0, 0, 0)
+            margin = JBUI.emptyInsets()
             isFocusable = true
             isVisible = true
             isSelected = true
