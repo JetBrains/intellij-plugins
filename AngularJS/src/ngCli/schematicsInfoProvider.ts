@@ -43,7 +43,7 @@ interface SchematicsInfo {
 
 const includeHidden = process.argv[2] === "--includeHidden";
 
-(async function(){
+(async function () {
   let provider = await providerPromise;
 
   const defaultCollectionName = provider.getDefaultSchematicCollection();
@@ -61,7 +61,7 @@ const includeHidden = process.argv[2] === "--includeHidden";
 
   console.info(JSON.stringify(allSchematics, null, 2))
 
-})()
+})().catch(err => console.error(err.stack || err))
 
 
 function getAvailableSchematicCollections(provider: SchematicsProvider) {
@@ -98,7 +98,6 @@ function getCollectionSchematics(collectionName: string, provider: SchematicsPro
       ? listAllSchematics(collection)
       : provider.listSchematics(collection);
   } catch (e) {
-    console.error(e)
     return [{
       name: collectionName,
       error: "" + e.message
