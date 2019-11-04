@@ -8,18 +8,17 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.LogicalPosition
 import java.util.concurrent.ExecutionException
 
-
-class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
+class SetSelectionCommand : Command(CommandType.SETSELECTION) {
 
   //always put the caret at the end of the selection
   @Throws(InterruptedException::class, ExecutionException::class, BadCommandException::class)
   override fun execute(executionList: ExecutionList) {
 
-    var start_line: Int
-    var start_column: Int
-    var end_line: Int
-    var end_column: Int
-    var park_caret: Int = 0
+    var startLine: Int
+    var startColumn: Int
+    var endLine: Int
+    var endColumn: Int
+    var parkCaret = 0
 
     val element = executionList.elements.poll()
     val editor = executionList.editor
@@ -29,31 +28,31 @@ class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
       var splitStrings = positionString.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
       assert(splitStrings.size == 2)
 
-      start_line = Integer.parseInt(splitStrings[0])
-      start_column = Integer.parseInt(splitStrings[1])
+      startLine = Integer.parseInt(splitStrings[0])
+      startColumn = Integer.parseInt(splitStrings[1])
 
       if (element.getAttribute(END_SELECT_POSITION) != null) {
         positionString = element.getAttribute(END_SELECT_POSITION)!!.value
         splitStrings = positionString.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         assert(splitStrings.size == 2)
 
-        end_line = Integer.parseInt(splitStrings[0])
-        end_column = Integer.parseInt(splitStrings[1])
+        endLine = Integer.parseInt(splitStrings[0])
+        endColumn = Integer.parseInt(splitStrings[1])
 
-        start_line--
-        start_column--
-        end_line--
-        end_column--
+        startLine--
+        startColumn--
+        endLine--
+        endColumn--
 
         ApplicationManager.getApplication().invokeAndWait {
-          val blockStart = LogicalPosition(start_line, start_column)
-          val blockEnd = LogicalPosition(end_line, end_column)
+          val blockStart = LogicalPosition(startLine, startColumn)
+          val blockEnd = LogicalPosition(endLine, endColumn)
 
-          val start_position = editor.logicalPositionToOffset(blockStart)
-          val end_position = editor.logicalPositionToOffset(blockEnd)
+          val startPosition = editor.logicalPositionToOffset(blockStart)
+          val endPosition = editor.logicalPositionToOffset(blockEnd)
 
-          editor.selectionModel.setSelection(start_position, end_position)
-          park_caret = end_position
+          editor.selectionModel.setSelection(startPosition, endPosition)
+          parkCaret = endPosition
         }
       }
       else {
@@ -70,16 +69,16 @@ class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
         model.isGlobal = false
         model.isReplaceState = false
 
-        val value_start = element.getAttribute(START_SELECT_STRING)!!.value
-        model.stringToFind = value_start
+        val valueStart = element.getAttribute(START_SELECT_STRING)!!.value
+        model.stringToFind = valueStart
         val start = FindManager.getInstance(project).findString(document.charsSequence, 0, model)
 
-        val value_end = element.getAttribute(END_SELECT_STRING)!!.value
-        model.stringToFind = value_end
+        val valueEnd = element.getAttribute(END_SELECT_STRING)!!.value
+        model.stringToFind = valueEnd
         val end = FindManager.getInstance(project).findString(document.charsSequence, 0, model)
 
         selectInDocument(executionList, start.startOffset, end.endOffset)
-        park_caret = end.endOffset
+        parkCaret = end.endOffset
       }
     }
     else {
@@ -88,7 +87,7 @@ class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
 
     //move caret to the end of the selection
     ApplicationManager.getApplication().invokeAndWait {
-      executionList.editor.caretModel.moveToOffset(park_caret)
+      executionList.editor.caretModel.moveToOffset(parkCaret)
     }
     startNextCommand(executionList)
   }
@@ -100,11 +99,11 @@ class SetSelectionCommand : Command(Command.CommandType.SETSELECTION) {
 
   companion object {
 
-    val START_SELECT_POSITION = "start-position"
-    val END_SELECT_POSITION = "end-position"
+    const val START_SELECT_POSITION = "start-position"
+    const val END_SELECT_POSITION = "end-position"
 
-    val START_SELECT_STRING = "start-string"
-    val END_SELECT_STRING = "end-string"
+    const val START_SELECT_STRING = "start-string"
+    const val END_SELECT_STRING = "end-string"
   }
 
 }

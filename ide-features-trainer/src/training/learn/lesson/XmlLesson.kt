@@ -14,13 +14,11 @@ import training.learn.interfaces.Module
 import training.learn.log.LessonLog
 import java.awt.FontFormatException
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.ExecutionException
 
 data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module): Lesson {
 
-  override var lessonListeners: MutableList<LessonListener> = ArrayList()
-    private set
+  override val lessonListeners: MutableList<LessonListener> = mutableListOf()
   override var passed: Boolean = false
   override var isOpen: Boolean = false
   override val name: String = scenario.name

@@ -5,7 +5,7 @@ package training.commands
 
 import training.learn.lesson.LessonManager
 
-class CaretUnblockCommand : Command(Command.CommandType.CARETUNBLOCK) {
+class CaretUnblockCommand : Command(CommandType.CARETUNBLOCK) {
 
   override fun execute(executionList: ExecutionList) {
     executionList.elements.poll()

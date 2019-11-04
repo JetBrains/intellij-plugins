@@ -16,7 +16,6 @@ import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
-import java.util.*
 
 /**
  * @author Sergey Karashevich
@@ -43,7 +42,7 @@ class PythonLangSupport : AbstractLangSupport() {
     if (pySdk == null) {
       val sdkList: List<Sdk> = detectPySdks()
       pySdk = sdkList.firstOrNull() ?: throw NoSdkException("Python")
-      ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(pySdk!!) }
+      ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(pySdk) }
     }
     return pySdk
   }
@@ -51,26 +50,29 @@ class PythonLangSupport : AbstractLangSupport() {
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
-    checkSdkPresence(sdk)
-    if (sdk!!.sdkType is PythonSdkType) {
-      if (!isNoOlderThan27(sdk)) throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+    if (sdk?.sdkType is PythonSdkType) {
+      if (!isNoOlderThan27(sdk)) {
+        throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+      }
     }
-    else throw NoSdkException()
+    else {
+      throw NoSdkException()
+    }
   }
 
   //detect sdk with version 2.7 and higher
-  fun detectPySdks(): List<Sdk> {
+  private fun detectPySdks(): List<Sdk> {
     val model = ProjectSdksModel()
     model.reset(null)
-    val sdkHomes = ArrayList<String>()
+    val sdkHomes = mutableListOf<String>()
     sdkHomes.addAll(VirtualEnvSdkFlavor.INSTANCE.suggestHomePaths(null))
     PythonSdkFlavor.getApplicableFlavors()
         .filter { it !is VirtualEnvSdkFlavor }
         .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
-    Collections.sort(sdkHomes)
-    return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks).mapTo(ArrayList(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
+    sdkHomes.sort()
+    return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks).mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
   }
 
-  fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)
+  private fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)
 
 }

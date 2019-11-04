@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.containers.HashMap
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -32,11 +31,9 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-
 /**
 * @author Sergey Karashevich
 */
-
 sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bundleAppendix) {
     object WELCOME_SCREEN : LanguageChoosePanelPlace("")
     object TOOL_WINDOW : LanguageChoosePanelPlace(".tool.window")
@@ -49,7 +46,7 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
 
     private var mainPanel: JPanel? = null
 
-    private val myRadioButtonMap = HashMap<JRadioButton, LanguageExtensionPoint<LangSupport>>()
+    private val myRadioButtonMap = mutableMapOf<JRadioButton, LanguageExtensionPoint<LangSupport>>()
     private val buttonGroup = ButtonGroup()
 
     init {
@@ -254,12 +251,11 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
                 mainPanel!!.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
     }
 
-
     override fun getBackground(): Color {
-        if (!UIUtil.isUnderDarcula())
-            return UISettings.instance.backgroundColor
+        return if (!UIUtil.isUnderDarcula())
+            UISettings.instance.backgroundColor
         else
-            return UIUtil.getPanelBackground()
+            UIUtil.getPanelBackground()
     }
 
     fun getActiveLangSupport(): LangSupport {

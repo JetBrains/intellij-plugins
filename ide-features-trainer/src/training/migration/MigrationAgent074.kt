@@ -52,7 +52,7 @@ class MigrationAgent074: MigrationManager.MigrationAgent() {
       lessonsList.children.forEach {
         val lessonName = it.getChild("name", "name").getAttributeValue("value")
         val isPassed: Boolean = (it.getChildNullable("name", "passed")?.getAttributeValue("value") ?: "false").toBoolean()
-        if (isPassed) map.put(createId(moduleName, lessonName), if (isPassed) LessonState.PASSED else LessonState.NOT_PASSED)
+        if (isPassed) map[createId(moduleName, lessonName)] = if (isPassed) LessonState.PASSED else LessonState.NOT_PASSED
       }
     }
     return map

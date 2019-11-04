@@ -9,13 +9,12 @@ import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
 class BlockingExecutor : Executor {
-  private val queue : BlockingQueue<Runnable> = ArrayBlockingQueue<Runnable>(100)
+  private val queue : BlockingQueue<Runnable> = ArrayBlockingQueue(100)
 
   override fun execute(action: Runnable?) {
     if (action == null) return
     queue.add(action)
   }
-
 
   fun run() {
     while (true) {

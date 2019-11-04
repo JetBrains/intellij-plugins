@@ -10,14 +10,13 @@ import java.net.URL
 
 object FileUtils {
 
-  fun copyFile(toCopy: File, destFile: File): Boolean {
+  private fun copyFile(toCopy: File, destFile: File): Boolean {
     try {
-      return FileUtils.copyStream(FileInputStream(toCopy),
+      return copyStream(FileInputStream(toCopy),
           FileOutputStream(destFile))
     } catch (e: FileNotFoundException) {
       e.printStackTrace()
     }
-
     return false
   }
 
@@ -25,14 +24,14 @@ object FileUtils {
     assert(destDir.isDirectory)
 
     if (!toCopy.isDirectory) {
-      return FileUtils.copyFile(toCopy, File(destDir, toCopy.name))
+      return copyFile(toCopy, File(destDir, toCopy.name))
     } else {
       val newDestDir = File(destDir, toCopy.name)
       if (!newDestDir.exists() && !newDestDir.mkdir()) {
         return false
       }
-      for (child in toCopy.listFiles()) {
-        if (!FileUtils.copyFilesRecursively(child, newDestDir)) {
+      for (child in toCopy.listFiles() ?: arrayOf()) {
+        if (!copyFilesRecursively(child, newDestDir)) {
           return false
         }
       }
@@ -43,7 +42,6 @@ object FileUtils {
   @Throws(IOException::class)
   fun copyJarResourcesRecursively(destDir: File,
                                   jarConnection: JarURLConnection): Boolean {
-
     val jarFile = jarConnection.jarFile
 
     val entries = jarFile.entries()
@@ -55,12 +53,12 @@ object FileUtils {
         val f = File(destDir, filename)
         if (!entry.isDirectory) {
           val entryInputStream = jarFile.getInputStream(entry)
-          if (!FileUtils.copyStream(entryInputStream, f)) {
+          if (!copyStream(entryInputStream, f)) {
             return false
           }
           entryInputStream.close()
         } else {
-          if (!FileUtils.ensureDirectoryExists(f)) {
+          if (!ensureDirectoryExists(f)) {
             throw IOException("Could not create directory: " + f.absolutePath)
           }
         }
@@ -73,9 +71,9 @@ object FileUtils {
     try {
       val urlConnection = originUrl.openConnection()
       return if (urlConnection is JarURLConnection)
-        FileUtils.copyJarResourcesRecursively(destination, urlConnection)
+        copyJarResourcesRecursively(destination, urlConnection)
       else
-        FileUtils.copyFilesRecursively(File(originUrl.path), destination)
+        copyFilesRecursively(File(originUrl.path), destination)
     } catch (e: IOException) {
       e.printStackTrace()
     }
@@ -84,7 +82,7 @@ object FileUtils {
 
   private fun copyStream(inputStream: InputStream, f: File): Boolean {
     try {
-      return FileUtils.copyStream(inputStream, FileOutputStream(f))
+      return copyStream(inputStream, FileOutputStream(f))
     } catch (e: FileNotFoundException) {
       e.printStackTrace()
     }

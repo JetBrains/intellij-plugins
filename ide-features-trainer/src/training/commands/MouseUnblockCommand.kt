@@ -3,10 +3,9 @@
  */
 package training.commands
 
-
 import training.learn.lesson.LessonManager
 
-class MouseUnblockCommand : Command(Command.CommandType.MOUSEUNBLOCK) {
+class MouseUnblockCommand : Command(CommandType.MOUSEUNBLOCK) {
 
   override fun execute(executionList: ExecutionList) {
     executionList.elements.poll()

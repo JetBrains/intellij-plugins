@@ -4,7 +4,7 @@
 package training.commands
 
 @Deprecated("")
-class ExpandAllBlocksCommand : Command(Command.CommandType.EXPANDALLBLOCKS) {
+class ExpandAllBlocksCommand : Command(CommandType.EXPANDALLBLOCKS) {
 
   override fun execute(executionList: ExecutionList) {
     //Block caret and perform next command
@@ -13,6 +13,5 @@ class ExpandAllBlocksCommand : Command(Command.CommandType.EXPANDALLBLOCKS) {
     executionList.editor.settings.isAutoCodeFoldingEnabled = false
     executionList.editor.settings.isAllowSingleLogicalLineFolding = false
     startNextCommand(executionList)
-
   }
 }

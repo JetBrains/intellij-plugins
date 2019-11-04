@@ -27,7 +27,6 @@ class CheckParameterInfo : Check {
     val childrenOfType: Collection<PsiMethodCallExpression> = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethodCallExpression::class.java)
     var myMethodCall: PsiMethodCallExpression? = null
     for (methodCall in childrenOfType) {
-      methodCall.methodExpression.canonicalText == "frame.getSize"
       myMethodCall = methodCall
       break
     }

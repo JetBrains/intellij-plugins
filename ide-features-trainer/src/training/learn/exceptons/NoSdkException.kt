@@ -11,7 +11,7 @@ import training.learn.LearnBundle
 */
 class NoSdkException : InvalidSdkException {
 
-    constructor(type: String) : super("Cannot start learning: the $type SDK is not specified") {}
+    constructor(type: String) : super("Cannot start learning: the $type SDK is not specified")
 
-    constructor() : super(LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()!!)) {}
+    constructor() : super(LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()))
 }

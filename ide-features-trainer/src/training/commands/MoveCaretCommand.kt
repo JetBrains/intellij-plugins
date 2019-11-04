@@ -9,26 +9,28 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.LogicalPosition
 import org.jdom.Element
 
-class MoveCaretCommand : Command(Command.CommandType.MOVECARET) {
+class MoveCaretCommand : Command(CommandType.MOVECARET) {
 
   override fun execute(executionList: ExecutionList) {
     val element = executionList.elements.poll()
 
     ApplicationManager.getApplication().invokeAndWait {
-      if (element.getAttribute(MOVECARET_OFFSET) != null) {
-        val offsetString = element.getAttribute(MOVECARET_OFFSET)!!.value
-        val offset = Integer.parseInt(offsetString)
-
-        executionList.editor.caretModel.moveToOffset(offset)
+      when {
+        element.getAttribute(MOVECARET_OFFSET) != null -> {
+          val offsetString = element.getAttribute(MOVECARET_OFFSET)!!.value
+          val offset = Integer.parseInt(offsetString)
+          executionList.editor.caretModel.moveToOffset(offset)
+        }
+        element.getAttribute(MOVECARET_POSITION) != null -> {
+          val (line, column) = getLineAndColumn(element)
+          executionList.editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1))
+        }
+        element.getAttribute(MOVECARET_STRING) != null -> {
+          val start = getStartOffsetForText(executionList, element)
+          executionList.editor.caretModel.moveToOffset(start.startOffset)
+        }
       }
-      else if (element.getAttribute(MOVECARET_POSITION) != null) {
-        val (line, column) = getLineAndColumn(element)
-        executionList.editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1))
-      }
-      else if (element.getAttribute(MOVECARET_STRING) != null) {
-        val start = getStartOffsetForText(executionList, element)
-        executionList.editor.caretModel.moveToOffset(start.startOffset)
-      } }
+    }
 
     startNextCommand(executionList)
   }
@@ -43,10 +45,9 @@ class MoveCaretCommand : Command(Command.CommandType.MOVECARET) {
     model.isGlobal = false
     model.isReplaceState = false
 
-    val value_start = element.getAttribute(MOVECARET_STRING)!!.value
-    model.stringToFind = value_start
-    val start = FindManager.getInstance(project).findString(document.charsSequence, 0, model)
-    return start
+    val valueStart = element.getAttribute(MOVECARET_STRING)!!.value
+    model.stringToFind = valueStart
+    return FindManager.getInstance(project).findString(document.charsSequence, 0, model)
   }
 
   private fun getLineAndColumn(element: Element): Pair<Int, Int> {
@@ -58,8 +59,8 @@ class MoveCaretCommand : Command(Command.CommandType.MOVECARET) {
 
   companion object {
 
-    val MOVECARET_OFFSET = "offset"
-    val MOVECARET_POSITION = "position"
-    val MOVECARET_STRING = "string"
+    const val MOVECARET_OFFSET = "offset"
+    const val MOVECARET_POSITION = "position"
+    const val MOVECARET_STRING = "string"
   }
 }

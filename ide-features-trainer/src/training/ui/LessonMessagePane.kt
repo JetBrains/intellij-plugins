@@ -131,7 +131,7 @@ class LessonMessagePane : JTextPane() {
     fun passPreviousMessages() {
         if (lessonMessages.size > 0) {
             val lessonMessage = lessonMessages[lessonMessages.size - 1]
-            lessonMessage.isPassed = true
+            lessonMessage.passed = true
 
             //Repaint text with passed style
             val passedStyle = this.addStyle("PassedStyle", null)
@@ -158,8 +158,8 @@ class LessonMessagePane : JTextPane() {
 
         addMouseListener(object : MouseAdapter() {
 
-            override fun mouseClicked(me: MouseEvent?) {
-                val x = me!!.x
+            override fun mouseClicked(me: MouseEvent) {
+                val x = me.x
                 val y = me.y
 
                 val clickOffset = viewToModel(Point(x, y))
@@ -184,7 +184,7 @@ class LessonMessagePane : JTextPane() {
 
     private fun paintLessonCheckmarks(g: Graphics) {
         for (lessonMessage in lessonMessages) {
-            if (lessonMessage.isPassed) {
+            if (lessonMessage.passed) {
                 var startOffset = lessonMessage.start
                 if (startOffset != 0) startOffset++
                 try {
@@ -206,7 +206,7 @@ class LessonMessagePane : JTextPane() {
     private fun paintMessages(g: Graphics) {
         val g2d = g as Graphics2D
         for (lessonMessage in lessonMessages) {
-            val myMessages = lessonMessage.myMessages
+            val myMessages = lessonMessage.messages
             for (myMessage in myMessages) {
                 if (myMessage.type == Message.MessageType.SHORTCUT) {
                     val startOffset = myMessage.startOffset

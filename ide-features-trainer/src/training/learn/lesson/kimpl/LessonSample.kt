@@ -3,7 +3,6 @@
  */
 package training.learn.lesson.kimpl
 
-
 data class LessonSample(val text: String,
                         val startOffset: Int = 0,
                         val selection: Pair<Int, Int>? = null)

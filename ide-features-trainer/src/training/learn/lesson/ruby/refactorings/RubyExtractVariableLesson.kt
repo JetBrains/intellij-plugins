@@ -30,7 +30,7 @@ class RubyExtractVariableLesson(module: Module) : KLesson("Extract Variable", mo
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
-      task("IntroduceVariable") { it ->
+      task("IntroduceVariable") {
         text("Press ${action(it)} to extract a local variable from the selected expression ${code("i + 1")}.")
         triggerStart("IntroduceVariable")
         test {

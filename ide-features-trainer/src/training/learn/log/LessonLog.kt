@@ -8,8 +8,8 @@ import java.util.*
 
 class LessonLog(lesson: Lesson) {
 
-  val logData = ArrayList<Pair<Date, String>>()
-  var exerciseCount = 0
+  private val logData = mutableListOf<Pair<Date, String>>()
+  private var exerciseCount = 0
 
   fun log(actionString: String) {
     logData.add(Pair(Date(), actionString))
@@ -21,7 +21,7 @@ class LessonLog(lesson: Lesson) {
 
   fun print() {
     for ((first) in logData) {
-      println(first.toString() + ": " + first)
+      println("$first: $first")
     }
   }
 

@@ -181,7 +181,7 @@ class ActionsRecorder(private val project: Project,
     }
     editorListener = object : FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {
-        System.out.println(event.newFile?.name)
+        println(event.newFile?.name)
         event.newFile?.name.let {
           if (mutableListOfActions.isNotEmpty() && mutableListOfActions.first() == event.newFile?.name) mutableListOfActions.removeAt(0)
           if (mutableListOfActions.isEmpty()) future.complete(true)

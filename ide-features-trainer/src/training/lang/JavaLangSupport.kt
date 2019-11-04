@@ -6,7 +6,6 @@ package training.lang
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
-import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
@@ -14,11 +13,9 @@ import com.intellij.openapi.roots.impl.LanguageLevelProjectExtensionImpl
 import com.intellij.openapi.util.Computable
 import com.intellij.pom.java.LanguageLevel
 import training.learn.exceptons.InvalidSdkException
-import training.learn.exceptons.NoJavaModuleException
 import training.learn.exceptons.NoSdkException
 import training.project.ProjectUtils
 import training.util.JdkSetupUtil
-import java.util.*
 
 /**
  * @author Sergey Karashevich
@@ -44,11 +41,10 @@ class JavaLangSupport : AbstractLangSupport() {
     LanguageLevelProjectExtensionImpl.getInstanceImpl(newProject).currentLevel = LanguageLevel.JDK_1_6
   }
 
-
   //Java SDK and project configuration staff
   override fun getSdkForProject(project: Project): Sdk? {
     return if (ApplicationManager.getApplication().isUnitTestMode)
-      ApplicationManager.getApplication().runWriteAction({ getJavaSdk() } as Computable<Sdk>)
+      ApplicationManager.getApplication().runWriteAction(Computable<Sdk> { getJavaSdk() })
     else
       getJavaSdk()
   }
@@ -57,7 +53,7 @@ class JavaLangSupport : AbstractLangSupport() {
 
     //check for stored jdk
     val jdkList = getJdkList()
-    if (!jdkList.isEmpty()) {
+    if (jdkList.isNotEmpty()) {
       jdkList
           .filter { JavaSdk.getInstance().getVersion(it) != null && JavaSdk.getInstance().getVersion(it)!!.isAtLeast(JavaSdkVersion.JDK_1_6) }
           .forEach { return it }
@@ -66,12 +62,12 @@ class JavaLangSupport : AbstractLangSupport() {
     //if no predefined jdks -> add bundled jdk to available list and return it
     val javaSdk = JavaSdk.getInstance()
 
-    val bundleList = JdkSetupUtil.findJdkPaths().toArrayList()
+    val bundleList = JdkSetupUtil.findJdkPaths().bundles
     //we believe that Idea has at least one bundled jdk
-    val jdkBundle = bundleList[0]
+    val jdkBundle = bundleList.first()
     val jdkBundleLocation = JdkSetupUtil.getJavaHomePath(jdkBundle)
-    val jdk_name = "JDK_" + jdkBundle.version!!.toString()
-    val newJdk = javaSdk.createJdk(jdk_name, jdkBundleLocation, false)
+    val jdkName = "JDK_" + jdkBundle.bundleVersion.toString()
+    val newJdk = javaSdk.createJdk(jdkName, jdkBundleLocation, false)
 
     val foundJdk = ProjectJdkTable.getInstance().findJdk(newJdk.name, newJdk.sdkType.name)
     if (foundJdk == null) ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(newJdk) }
@@ -86,22 +82,21 @@ class JavaLangSupport : AbstractLangSupport() {
   }
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
-    checkSdkPresence(sdk)
-    val sdkTypeId = sdk!!.sdkType
+    val sdkTypeId = sdk?.sdkType
     if (sdkTypeId is JavaSdk) {
       val version = sdkTypeId.getVersion(sdk)
-      if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+      if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) {
+        throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+      }
     } else {
       throw NoSdkException()
     }
   }
 
-  private fun getJdkList(): ArrayList<Sdk> {
-
+  private fun getJdkList(): MutableList<Sdk> {
     val type = JavaSdk.getInstance()
     val allJdks = ProjectJdkTable.getInstance().allJdks
-    val compatibleJdks = allJdks.filterTo(ArrayList<Sdk>()) { isCompatibleJdk(it, type) }
-    return compatibleJdks
+    return allJdks.filterTo(mutableListOf()) { isCompatibleJdk(it, type) }
   }
 
   private fun isCompatibleJdk(projectJdk: Sdk, type: SdkType?) = (type == null || projectJdk.sdkType === type)

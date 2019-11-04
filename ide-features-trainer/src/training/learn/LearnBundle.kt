@@ -33,7 +33,7 @@ object LearnBundle {
       var bundle = SoftReference.dereference(ourBundle)
       if (bundle == null) {
         bundle = ResourceBundle.getBundle(BUNDLE)
-        ourBundle = SoftReference<ResourceBundle>(bundle)
+        ourBundle = SoftReference(bundle)
       }
       return bundle!!
     }

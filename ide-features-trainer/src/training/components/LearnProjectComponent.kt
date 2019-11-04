@@ -5,7 +5,6 @@ package training.components
 
 import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.notification.Notification
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
@@ -13,7 +12,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.popup.Balloon
@@ -33,12 +31,10 @@ import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.lesson.LessonManager
-import training.statistic.ActivityManager
 import training.ui.LearnIcons
 import training.ui.LearnToolWindowFactory
 import training.ui.UiManager
 import java.awt.Point
-import java.util.concurrent.TimeUnit
 
 class LearnProjectComponent private constructor(private val myProject: Project) : ProjectComponent {
 
@@ -182,7 +178,7 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     }
 
   companion object {
-    private val SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown"
+    private const val SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown"
 
     private val NOTIFICATION_GROUP : NotificationGroup by lazy {
       NotificationGroup(LearnBundle.message("learn.plugin.name"),

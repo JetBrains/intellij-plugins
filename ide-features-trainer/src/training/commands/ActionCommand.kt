@@ -8,7 +8,6 @@ import training.util.PerformActionUtil
 class ActionCommand : Command(CommandType.ACTION) {
 
   override fun execute(executionList: ExecutionList) {
-
     val element = executionList.elements.poll()
     val editor = executionList.editor
     val project = executionList.project

@@ -59,11 +59,5 @@ abstract class AbstractLangSupport : LangSupport {
         }, null, null)
     }
 
-    protected fun checkSdkPresence(sdk: Sdk?) {
-        if (sdk == null) {
-            throw NoSdkException()
-        }
-    }
-
     override fun toString(): String = primaryLanguage
 }

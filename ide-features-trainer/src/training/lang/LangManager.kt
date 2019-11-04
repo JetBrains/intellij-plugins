@@ -22,7 +22,7 @@ import training.util.trainerPluginConfigName
 class LangManager : PersistentStateComponent<LangManager.State> {
 
   var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
-  var myState = State(null)
+  private var myState = State(null)
 
   private var myLangSupport: LangSupport? = null
 
@@ -60,13 +60,13 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   override fun getState() = myState
 
   fun getLanguageDisplayName(): String {
-    if (myState.languageName == null) return "default"
-    return (findLanguageByID(myState.languageName) ?: return "default").displayName
+    val languageName = myState.languageName ?: return "default"
+    return (findLanguageByID(languageName) ?: return "default").displayName
   }
 
   /** Primary Language Id -> Number of Lessons */
   fun getLanguageToLessonsNumberMap(): Map<String, Int> {
-    val map = HashMap<String, Int>()
+    val map = mutableMapOf<String, Int>()
     val sorted = supportedLanguagesExtensions.sortedBy { it.language }
     for (langSupportExt in sorted) {
       val lessonsCount = CourseManager.instance.calcLessonsForLanguage(langSupportExt.instance)

@@ -20,7 +20,7 @@ interface LangSupport {
         get() = "Learning"
 
     companion object {
-        val EP_NAME = "training.TrainingLangExtension"
+        const val EP_NAME = "training.TrainingLangExtension"
     }
 
     /**

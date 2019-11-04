@@ -13,7 +13,6 @@ import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 
-
 class LearnToolWindow internal constructor() : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
 
   //TODO: remove public modificator set ScrollPane before release

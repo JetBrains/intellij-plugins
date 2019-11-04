@@ -13,15 +13,12 @@ class BlockCaretAction(private val editor: Editor) : DumbAwareAction(LearnAction
   override val actionId: String
     get() = LearnActions.LEARN_BLOCK_EDITOR_CARET_ACTION
 
-  private var actionHandlers: ArrayList<Runnable>? = null
-
+  private val actionHandlers = mutableListOf<Runnable>()
 
   init {
-    actionHandlers = ArrayList()
-
     //collect all shortcuts for caret actions
-    val superShortcut = ArrayList<Shortcut>()
-    val caretActionIds = HashSet<String>()
+    val superShortcut = mutableListOf<Shortcut>()
+    val caretActionIds = mutableSetOf<String>()
     caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN)
     caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN_WITH_SELECTION)
     caretActionIds.add(IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT)
@@ -52,17 +49,11 @@ class BlockCaretAction(private val editor: Editor) : DumbAwareAction(LearnAction
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    if (actionHandlers != null && actionHandlers!!.size > 0) {
-      for (actionHandler in actionHandlers!!) {
-        actionHandler.run()
-      }
-    }
+    actionHandlers.forEach { it.run() }
   }
 
-
   fun addActionHandler(runnable: Runnable) {
-    if (actionHandlers == null) actionHandlers = ArrayList<Runnable>()
-    actionHandlers!!.add(runnable)
+    actionHandlers.add(runnable)
   }
 
 }

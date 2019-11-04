@@ -22,7 +22,6 @@ import training.util.XmlModuleConstants
 import training.util.isFeatureTrainerSnapshot
 import java.io.IOException
 import java.net.URISyntaxException
-import java.util.*
 
 /**
  * @author Sergey Karashevich
@@ -35,7 +34,7 @@ class XmlModule(override val name: String,
   override val description: String?
 
   //used for lessons filtered by LangManger chosen lang
-  override val lessons: ArrayList<Lesson> = ArrayList()
+  override val lessons: MutableList<Lesson> = mutableListOf()
   override val sanitizedName: String
     get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
   override var id: String? = null
@@ -62,7 +61,7 @@ class XmlModule(override val name: String,
     }
     //path where module.xml is located and containing lesson dir
     val find = Regex("/[^/]*.xml").find(moduleXmlPath) ?: throw BadLessonException("Unable to parse a modules xml from '$moduleXmlPath'")
-    val modulePath = moduleXmlPath.substring(0, find.range.start) + "/"
+    val modulePath = moduleXmlPath.substring(0, find.range.first) + "/"
     initLessons(modulePath)
   }
 
@@ -114,7 +113,7 @@ class XmlModule(override val name: String,
       LOG.error(BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e"))
     } catch (e: IOException) {
       //XmlLesson file cannot be read
-      LOG.error(BadLessonException("Probably lesson file cannot be read: " + lessonPath))
+      LOG.error(BadLessonException("Probably lesson file cannot be read: $lessonPath"))
     }
   }
 

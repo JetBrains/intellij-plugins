@@ -16,6 +16,7 @@ import javax.swing.border.Border
 import javax.swing.border.EmptyBorder
 import kotlin.reflect.KProperty
 
+@Suppress("MemberVisibilityCanBePrivate")
 class UISettings {
 
   //GENERAL UI SETTINGS
