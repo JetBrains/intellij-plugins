@@ -41,10 +41,10 @@ sealed class LanguageChoosePanelPlace(bundleAppendix: String) : BundlePlace(bund
 
 class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean = true, val place: LanguageChoosePanelPlace = LanguageChoosePanelPlace.WELCOME_SCREEN ) : JPanel() {
 
-    private var caption: JLabel? = null
-    private var description: MyJTextPane? = null
+    private val caption = JLabel()
+    private val description = MyJTextPane(UISettings.instance.width)
 
-    private var mainPanel: JPanel? = null
+    private val mainPanel = JPanel()
 
     private val myRadioButtonMap = mutableMapOf<JRadioButton, LanguageExtensionPoint<LangSupport>>()
     private val buttonGroup = ButtonGroup()
@@ -67,18 +67,15 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         repaint()
     }
 
-
     private fun init() {
-        caption = JLabel()
-        caption!!.isOpaque = false
-        caption!!.font = UISettings.instance.moduleNameFont
+        caption.isOpaque = false
+        caption.font = UISettings.instance.moduleNameFont
 
-        description = MyJTextPane(UISettings.instance.width)
-        description!!.isOpaque = false
-        description!!.isEditable = false
-        description!!.alignmentX = Component.LEFT_ALIGNMENT
-        description!!.margin = JBUI.emptyInsets()
-        description!!.border = EmptyBorder(0, 0, 0, 0)
+        description.isOpaque = false
+        description.isEditable = false
+        description.alignmentX = Component.LEFT_ALIGNMENT
+        description.margin = JBUI.emptyInsets()
+        description.border = EmptyBorder(0, 0, 0, 0)
 
         StyleConstants.setFontFamily(REGULAR, UISettings.instance.plainFont.family)
         StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
@@ -141,8 +138,7 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
 
 
     private fun initMainPanel() {
-
-        mainPanel = JPanel().apply {
+        mainPanel.apply {
             layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
             isOpaque = false
             isFocusable = false
@@ -160,16 +156,13 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
             e.printStackTrace()
         }
 
-
-        caption!!.text = LearnBundle.messageInPlace("learn.choose.language.caption", place)
+        caption.text = LearnBundle.messageInPlace("learn.choose.language.caption", place)
         try {
-            description!!.document.insertString(0, LearnBundle.messageInPlace("learn.choose.language.description", place), REGULAR)
+            description.document.insertString(0, LearnBundle.messageInPlace("learn.choose.language.description", place), REGULAR)
         } catch (e: BadLocationException) {
             e.printStackTrace()
         }
-
     }
-
 
     @Throws(BadLocationException::class)
     private fun initSouthPanel() {
@@ -182,7 +175,7 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         if (supportedLanguagesExtensions.isEmpty()) {
           val message = "No supported languages found"
           LOG.error(message)
-            mainPanel!!.add(JLabel().apply {
+            mainPanel.add(JLabel().apply {
                 text = message
                 font = UISettings.instance.boldFont
             })
@@ -206,12 +199,12 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         } else {
             buttonGroup.setSelected(buttonGroup.elements.nextElement().model, true)
         }
-        mainPanel!!.add(radioButtonPanel)
-        mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.groupGap))
-        if (addButton) mainPanel!!.add(createLearnButton())
+        mainPanel.add(radioButtonPanel)
+        mainPanel.add(Box.createVerticalStrut(UISettings.instance.groupGap))
+        if (addButton) mainPanel.add(createLearnButton())
         if (addButton && place == LanguageChoosePanelPlace.TOOL_WINDOW) {
-            mainPanel!!.add(Box.createVerticalStrut(UISettings.instance.languagePanelButtonsGap))
-            mainPanel!!.add(createResetResultsButton())
+            mainPanel.add(Box.createVerticalStrut(UISettings.instance.languagePanelButtonsGap))
+            mainPanel.add(createResetResultsButton())
         }
     }
 
@@ -226,17 +219,10 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         return radioButton
     }
 
-
-    private inner class MyJTextPane internal constructor(widthOfText: Int) : JTextPane() {
-
-        private var myWidth = 314
-
-        init {
-            myWidth = widthOfText
-        }
+    private inner class MyJTextPane internal constructor(private val widthOfText: Int) : JTextPane() {
 
         override fun getPreferredSize(): Dimension {
-            return Dimension(myWidth, super.getPreferredSize().height)
+            return Dimension(widthOfText, super.getPreferredSize().height)
         }
 
         override fun getMaximumSize(): Dimension {
@@ -246,8 +232,8 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
     }
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(mainPanel!!.minimumSize.getWidth().toInt() + (UISettings.instance.westInset + UISettings.instance.eastInset),
-                mainPanel!!.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
+        return Dimension(mainPanel.minimumSize.getWidth().toInt() + (UISettings.instance.westInset + UISettings.instance.eastInset),
+                mainPanel.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
     }
 
     override fun getBackground(): Color {

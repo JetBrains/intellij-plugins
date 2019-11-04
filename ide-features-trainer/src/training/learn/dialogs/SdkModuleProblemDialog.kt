@@ -19,7 +19,7 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class SdkModuleProblemDialog(private val project: Project) : DialogWrapper(project, true) {
-  private var myCbOpenProjectSdkPreferences: StateRestoringCheckBox? = null
+  private val myCbOpenProjectSdkPreferences = StateRestoringCheckBox()
 
   override fun createActions(): Array<Action> {
     return arrayOf(okAction, cancelAction)
@@ -42,10 +42,9 @@ class SdkModuleProblemDialog(private val project: Project) : DialogWrapper(proje
     gbc.gridx = 0
     gbc.weightx = 0.0
     gbc.gridwidth = 1
-    myCbOpenProjectSdkPreferences = StateRestoringCheckBox()
-    myCbOpenProjectSdkPreferences!!.text = message("dialog.emptyModule.checkbox")
+    myCbOpenProjectSdkPreferences.text = message("dialog.emptyModule.checkbox")
     panel.add(myCbOpenProjectSdkPreferences, gbc)
-    myCbOpenProjectSdkPreferences!!.isSelected = true
+    myCbOpenProjectSdkPreferences.isSelected = true
     return panel
   }
 
@@ -58,7 +57,7 @@ class SdkModuleProblemDialog(private val project: Project) : DialogWrapper(proje
       Messages.showMessageDialog(project, "Changing Project SDK is not available while indexing is in progress", "Indexing", null)
       return
     }
-    if (myCbOpenProjectSdkPreferences != null && myCbOpenProjectSdkPreferences!!.isSelected) {
+    if (myCbOpenProjectSdkPreferences.isSelected) {
       ModulesConfigurator.showDialog(project, null, null)
       super.doOKAction()
     }
