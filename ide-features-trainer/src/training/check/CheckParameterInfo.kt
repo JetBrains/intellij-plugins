@@ -11,8 +11,8 @@ import com.intellij.psi.PsiMethodCallExpression
 import com.intellij.psi.util.PsiTreeUtil
 
 class CheckParameterInfo : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -22,8 +22,8 @@ class CheckParameterInfo : Check {
   override fun before() {}
 
   override fun check(): Boolean {
-    val document = editor!!.document
-    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    val document = editor.document
+    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
     val childrenOfType: Collection<PsiMethodCallExpression> = PsiTreeUtil.findChildrenOfType(psiFile, PsiMethodCallExpression::class.java)
     var myMethodCall: PsiMethodCallExpression? = null
     for (methodCall in childrenOfType) {

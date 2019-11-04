@@ -7,8 +7,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 
 class CheckFindBar : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -18,6 +18,6 @@ class CheckFindBar : Check {
   override fun before() {}
   
   override fun check(): Boolean {
-    return editor!!.headerComponent == null
+    return editor.headerComponent == null
   }
 }

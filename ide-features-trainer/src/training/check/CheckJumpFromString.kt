@@ -8,8 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 
 class CheckJumpFromString : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -19,9 +19,9 @@ class CheckJumpFromString : Check {
   override fun before() {}
   
   override fun check(): Boolean {
-    val caretModel = editor!!.caretModel
-    val document = editor!!.document
-    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)!!
+    val caretModel = editor.caretModel
+    val document = editor.document
+    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)!!
     val elementAt = psiFile.findElementAt(caretModel.offset)!!
     return elementAt.parent != null && elementAt.parent.text == "String"
   }

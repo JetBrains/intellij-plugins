@@ -9,8 +9,8 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 
 class CheckException : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -20,8 +20,8 @@ class CheckException : Check {
   override fun before() {}
   
   override fun check(): Boolean {
-    val document = editor!!.document
-    val psiFile = PsiDocumentManager.getInstance(project!!).getPsiFile(document)
+    val document = editor.document
+    val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
     val mainMethod = PsiTreeUtil.findChildOfType(psiFile as PsiElement?, PsiMethod::class.java)
     val referenceList = PsiTreeUtil.findChildOfType(mainMethod as PsiElement?, PsiReferenceList::class.java)
     val javaCodeReferenceElement = PsiTreeUtil.findChildOfType(referenceList, PsiJavaCodeReferenceElement::class.java)

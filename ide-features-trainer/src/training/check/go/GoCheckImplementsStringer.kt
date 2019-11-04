@@ -11,8 +11,8 @@ import training.check.Check
 
 class GoCheckImplementsStringer : Check {
 
-  private var project: Project? = null
-  private var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -22,8 +22,8 @@ class GoCheckImplementsStringer : Check {
   override fun before() {}
 
   override fun check(): Boolean {
-    val document = editor?.document ?: return false
-    val manager = project?.let { PsiDocumentManager.getInstance(it) } ?: return false
+    val document = editor.document
+    val manager = PsiDocumentManager.getInstance(project)
     val file = manager.getPsiFile(document) as? GoFile ?: return false
     return file.methods.any { it.name == "String" }
   }
