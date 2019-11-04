@@ -177,12 +177,24 @@ public class DartAnalysisServerService implements Disposable {
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
+  // cached client id
+  @Nullable private static String myClientId = null;
+
+  // cached client version
+  @Nullable private static String myClientVersion = null;
+
   public static String getClientId() {
-    return ApplicationNamesInfo.getInstance().getFullProductName().replaceAll(" ", "-");
+    if (myClientId == null) {
+      myClientId = ApplicationNamesInfo.getInstance().getFullProductName().replaceAll(" ", "-");
+    }
+    return myClientId;
   }
 
   private static String getClientVersion() {
-    return ApplicationInfo.getInstance().getApiVersion();
+    if (myClientVersion == null) {
+      myClientVersion = ApplicationInfo.getInstance().getApiVersion();
+    }
+    return myClientVersion;
   }
 
   @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
