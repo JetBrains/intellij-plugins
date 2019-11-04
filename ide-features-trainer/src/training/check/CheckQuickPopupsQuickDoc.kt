@@ -8,8 +8,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 
 class CheckQuickPopupsQuickDoc : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
@@ -19,7 +19,7 @@ class CheckQuickPopupsQuickDoc : Check {
   override fun before() {}
 
   override fun check(): Boolean {
-    val activeDocComponent = QuickDocUtil.getActiveDocComponent(project!!)
+    val activeDocComponent = QuickDocUtil.getActiveDocComponent(project)
     return activeDocComponent == null || !activeDocComponent.isShowing
   }
 }

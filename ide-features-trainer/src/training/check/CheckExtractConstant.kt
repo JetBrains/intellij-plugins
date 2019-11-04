@@ -8,8 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 
 class CheckExtractConstant : Check {
-  internal var project: Project? = null
-  internal var editor: Editor? = null
+  private lateinit var project: Project
+  private lateinit var editor: Editor
 
   override fun set(project: Project, editor: Editor) {
     this.project = project
