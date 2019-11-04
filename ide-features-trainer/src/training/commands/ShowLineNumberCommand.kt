@@ -6,7 +6,7 @@ package training.commands
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 
-class ShowLineNumberCommand : Command(Command.CommandType.SHOWLINENUMBER) {
+class ShowLineNumberCommand : Command(CommandType.SHOWLINENUMBER) {
 
   override fun execute(executionList: ExecutionList) {
     //Block caret and perform next command

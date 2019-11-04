@@ -19,10 +19,10 @@ class TypeTextCommand : Command(CommandType.TYPETEXT) {
 
       while (isTyping) {
         val finalI = i[0]
-        WriteCommandAction.runWriteCommandAction(executionList.project, Runnable {
+        WriteCommandAction.runWriteCommandAction(executionList.project) {
           executionList.editor.document.insertString(finalI + startOffset, textToType.subSequence(i[0], i[0] + 1))
           executionList.editor.caretModel.moveToOffset(finalI + 1 + startOffset)
-        })
+        }
         isTyping = ++i[0] < textToType.length
       }
     }

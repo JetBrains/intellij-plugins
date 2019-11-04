@@ -5,7 +5,7 @@ package training.commands
 
 import training.learn.lesson.LessonManager
 
-class WinCommand : Command(Command.CommandType.WIN) {
+class WinCommand : Command(CommandType.WIN) {
 
   @Throws(InterruptedException::class)
   override fun execute(executionList: ExecutionList) {

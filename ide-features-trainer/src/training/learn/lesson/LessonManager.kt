@@ -26,19 +26,11 @@ import training.util.editorPointForBalloon
 import java.util.*
 import java.util.concurrent.Executor
 
-
 class LessonManager {
   private var currentLessonExecutor: LessonExecutor? = null
 
   val testActionsExecutor: Executor by lazy {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
-  }
-
-  init {
-    mouseBlocked = false
-    if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
-    lastEditor = null
-    mouseListenerHolder = null
   }
 
   internal fun initDslLesson(editor: Editor, cLesson : Lesson, lessonExecutor: LessonExecutor) {
@@ -63,14 +55,10 @@ class LessonManager {
     }
     clearLessonPanel()
 
-    if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(editor)
+    mouseListenerHolder?.restoreMouseActions(editor)
 
-    if (myLearnActions != null) {
-      for (myLearnAction in myLearnActions!!) {
-        myLearnAction.unregisterAction()
-      }
-      myLearnActions!!.clear()
-    }
+    myLearnActions.forEach { it.unregisterAction() }
+    myLearnActions.clear()
 
     var runnable: Runnable? = null
     var buttonText: String? = null
@@ -139,7 +127,7 @@ class LessonManager {
         if (lesson == null) lesson = module.lessons[0]
 
         val lessonFromNextModule = lesson
-        val nextModule = lessonFromNextModule.module ?: return
+        val nextModule = lessonFromNextModule.module
         UiManager.setButtonNextActionOnLearnPanels(Runnable{
           try {
             CourseManager.instance.openLesson(project, lessonFromNextModule)
@@ -153,7 +141,7 @@ class LessonManager {
   }
 
 
-  fun clearEditor(editor: Editor?) {
+  private fun clearEditor(editor: Editor?) {
     ApplicationManager.getApplication().runWriteAction {
       if (editor != null) {
         val document = editor.document
@@ -181,22 +169,17 @@ class LessonManager {
   fun unblockCaret() {
     val myBlockActions = ArrayList<BlockCaretAction>()
 
-    for (myLearnAction in myLearnActions!!) {
+    for (myLearnAction in myLearnActions) {
       if (myLearnAction is BlockCaretAction) {
         myBlockActions.add(myLearnAction)
         myLearnAction.unregisterAction()
       }
     }
 
-    myLearnActions!!.removeAll(myBlockActions)
+    myLearnActions.removeAll(myBlockActions)
   }
 
-
   fun blockCaret(editor: Editor) {
-    myLearnActions!!
-        .filterIsInstance<BlockCaretAction>()
-        .forEach { return }
-
     val blockCaretAction = BlockCaretAction(editor)
     blockCaretAction.addActionHandler(Runnable {
       try {
@@ -205,7 +188,7 @@ class LessonManager {
         e.printStackTrace()
       }
     })
-    myLearnActions!!.add(blockCaretAction)
+    myLearnActions.add(blockCaretAction)
   }
 
   fun registerActionsRecorder(recorder: ActionsRecorder) {
@@ -220,36 +203,36 @@ class LessonManager {
   }
 
   fun clearAllListeners() {
-    if (lastEditor == null) return
-    if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(lastEditor!!)
-    removeActionsRecorders()
-    unblockCaret()
+    lastEditor?.let {
+      mouseListenerHolder?.restoreMouseActions(it)
+      removeActionsRecorders()
+      unblockCaret()
+    }
   }
 
   fun blockMouse(editor: Editor) {
-    mouseListenerHolder = MouseListenerHolder(editor)
-    mouseListenerHolder!!.grabMouseActions(Runnable {
-      try {
-        showCaretBlockedBalloon()
-      } catch (e: InterruptedException) {
-        e.printStackTrace()
-      }
-    })
+    with(MouseListenerHolder(editor)) {
+      mouseListenerHolder = this
+      grabMouseActions(Runnable {
+        try {
+          showCaretBlockedBalloon()
+        } catch (e: InterruptedException) {
+          e.printStackTrace()
+        }
+      })
+    }
   }
 
   fun unblockMouse(editor: Editor) {
-    if (mouseListenerHolder != null) {
-      mouseListenerHolder!!.restoreMouseActions(editor)
-    }
+    mouseListenerHolder?.restoreMouseActions(editor)
   }
 
   companion object {
     @Volatile
     var externalTestActionsExecutor: Executor? = null
 
-    private var myLearnActions: ArrayList<LearnActions>? = null
-    private var mouseBlocked = false
-    private val actionsRecorders = HashSet<ActionsRecorder>()
+    private val myLearnActions = mutableListOf<LearnActions>()
+    private val actionsRecorders = mutableSetOf<ActionsRecorder>()
     private var lastEditor: Editor? = null
     private var mouseListenerHolder: MouseListenerHolder? = null
 

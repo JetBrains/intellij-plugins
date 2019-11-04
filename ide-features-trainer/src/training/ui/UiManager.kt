@@ -14,8 +14,8 @@ import training.ui.views.ModulesPanel
 
 object UiManager {
 
-  var learnPanelPerProject = HashMap<Project, LearnPanel>()
-  var modulesPanelPerProject = HashMap<Project, ModulesPanel>()
+  var learnPanelPerProject = mutableMapOf<Project, LearnPanel>()
+  var modulesPanelPerProject = mutableMapOf<Project, ModulesPanel>()
 
   private val LOG = Logger.getInstance(this.javaClass)
 

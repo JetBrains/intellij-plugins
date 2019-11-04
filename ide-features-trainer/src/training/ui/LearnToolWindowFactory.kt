@@ -18,13 +18,13 @@ class LearnToolWindowFactory : ToolWindowFactory, DumbAware {
     val content = contentManager.factory.createContent(learnToolWindow, null, false)
     content.isCloseable = false
     contentManager.addContent(content)
-    learnWindowPerProject.put(project, learnToolWindow)
+    learnWindowPerProject[project] = learnToolWindow
     Disposer.register(project, learnToolWindow)
   }
 
   companion object {
-    val LEARN_TOOL_WINDOW = "Learn"
-    val learnWindowPerProject = HashMap<Project, LearnToolWindow>()
+    const val LEARN_TOOL_WINDOW = "Learn"
+    val learnWindowPerProject = mutableMapOf<Project, LearnToolWindow>()
   }
 }
 

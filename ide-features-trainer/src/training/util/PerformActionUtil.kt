@@ -4,7 +4,6 @@
 package training.util
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.KeyboardShortcut
 import com.intellij.openapi.actionSystem.Shortcut
 import com.intellij.openapi.application.ApplicationManager
@@ -26,7 +25,7 @@ object PerformActionUtil {
     for (each in shortcuts) {
       if (each is KeyboardShortcut) {
         keyStroke = each.firstKeyStroke
-        if (keyStroke != null) break
+        break
       }
     }
     return if (keyStroke != null) {
@@ -43,10 +42,14 @@ object PerformActionUtil {
   }
 
   @Throws(InterruptedException::class, ExecutionException::class)
-  fun performAction(actionName: String, editor: Editor, project: Project?, runnable: Runnable?) {
+  fun performAction(actionName: String, editor: Editor, project: Project, runnable: Runnable) {
     val am: ActionManager = ActionManager.getInstance()
-    val targetAction: AnAction? = am.getAction(actionName)
+    val targetAction = am.getAction(actionName)
     val inputEvent = getInputEvent(actionName)
-    ApplicationManager.getApplication().invokeLater { WriteCommandAction.runWriteCommandAction(project) { am.tryToExecute(targetAction!!, inputEvent, editor.contentComponent, null, true).doWhenDone(runnable!!) } }
+    ApplicationManager.getApplication().invokeLater {
+      WriteCommandAction.runWriteCommandAction(project) {
+        am.tryToExecute(targetAction, inputEvent, editor.contentComponent, null, true).doWhenDone(runnable)
+      }
+    }
   }
 }

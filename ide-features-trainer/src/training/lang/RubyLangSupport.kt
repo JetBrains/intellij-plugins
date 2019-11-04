@@ -38,8 +38,10 @@ class RubyLangSupport : AbstractLangSupport() {
   override fun checkSdk(sdk: Sdk?, project: Project) {
     if (project.name != rubyProjectName) return
 
-    checkSdkPresence(sdk)
-    if (sdk!!.sdkType !is RubySdkType) {
+    if (sdk == null) {
+        throw NoSdkException()
+    }
+    if (sdk.sdkType !is RubySdkType) {
       throw InvalidSdkException("Selected SDK should be Ruby SDK")
     }
     val rubyVersion = RubyVersionUtil.getShortVersion(
@@ -85,7 +87,7 @@ class RubyLangSupport : AbstractLangSupport() {
     GemInstallUtil.installGemsRequirements(sdk,
             module,
             listOf(GemDependency.any(bundlerGem.absolutePath)),
-            false, false, false, false, true, null, HashMap())
+            false, false, false, false, true, null, mutableMapOf())
 
     GemRunner.bundle(module, sdk, "install", null, null, null,
             "--local",

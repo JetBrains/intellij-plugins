@@ -10,6 +10,6 @@ interface LearnActions {
   fun unregisterAction()
 
   companion object {
-    val LEARN_BLOCK_EDITOR_CARET_ACTION = "LearnBlockEditorCaretAction"
+    const val LEARN_BLOCK_EDITOR_CARET_ACTION = "LearnBlockEditorCaretAction"
   }
 }

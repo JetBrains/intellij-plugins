@@ -10,13 +10,13 @@ import java.io.FileInputStream
 import java.io.InputStream
 
 object DataLoader {
-  val DATA_PATH = "/data/"
+  private const val DATA_PATH = "/data/"
   //Path to use for online reloading. Should contain the full path to res/ folder, like /Users/user/training/res/.
-  val LIVE_DATA_PATH = ""
+  private const val LIVE_DATA_PATH = ""
 
   val liveMode: Boolean
     get() {
-      return !LIVE_DATA_PATH.isEmpty()
+      return LIVE_DATA_PATH.isNotEmpty()
     }
 
   fun getResourceAsStream(pathFromData: String): InputStream {
