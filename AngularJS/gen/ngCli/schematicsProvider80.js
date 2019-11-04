@@ -2,7 +2,8 @@
 const schematic_command_1 = require("@angular/cli/models/schematic-command");
 const config_1 = require("@angular/cli/utilities/config");
 let workspace = config_1.getWorkspace();
-workspace.root.test;
+if (!workspace || !workspace.root)
+    throw new Error("Try 9.0 provider");
 let command = new schematic_command_1.SchematicCommand({ workspace }, null, null);
 let engineHost = command.createWorkflow({ interactive: false }).engineHost;
 const schematicsProvider = Promise.resolve({
