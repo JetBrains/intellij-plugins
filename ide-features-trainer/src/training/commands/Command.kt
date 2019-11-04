@@ -8,6 +8,7 @@ import org.jdom.Element
 
 abstract class Command(val commandType: CommandType) {
 
+  @Suppress("SpellCheckingInspection")
   enum class CommandType {
     TEXT, TRY, ACTION, NOCOMMAND, MOVECARET, TYPETEXT, COPYTEXT, MOUSEBLOCK, MOUSEUNBLOCK, CARETBLOCK, CARETUNBLOCK, SHOWLINENUMBER, EXPANDALLBLOCKS, WIN, SETSELECTION
   }
