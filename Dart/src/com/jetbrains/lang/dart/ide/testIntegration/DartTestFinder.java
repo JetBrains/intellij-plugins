@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.testIntegration;
 
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -12,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.testIntegration.TestFinder;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -32,14 +34,14 @@ public class DartTestFinder implements TestFinder {
   @NotNull
   @Override
   public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
-    Project project = element.getProject();
-    VirtualFile vFile = element.getContainingFile().getVirtualFile();
-    String topLevelDirName = getTopLevelDirNameForDartFile(project, vFile);
+    final Project project = element.getProject();
+    final VirtualFile vFile = element.getContainingFile().getVirtualFile();
+    final String topLevelDirName = getTopLevelDirNameForDartFile(project, vFile);
     if (topLevelDirName == null || topLevelDirName.equals("test")) return Collections.emptyList();
 
-    GlobalSearchScope testScope = getDirScope(project, vFile, "test");
-    String testFileName = vFile.getNameWithoutExtension() + TEST_DART_SUFFIX;
-    Collection<VirtualFile> testFiles = FilenameIndex.getVirtualFilesByName(project, testFileName, testScope);
+    final GlobalSearchScope testScope = getDirScope(project, vFile, "test");
+    final String testFileName = vFile.getNameWithoutExtension() + TEST_DART_SUFFIX;
+    final Collection<VirtualFile> testFiles = FilenameIndex.getVirtualFilesByName(project, testFileName, testScope);
     return ContainerUtil.mapNotNull(testFiles, file -> element.getManager().findFile(file));
   }
 
@@ -48,11 +50,11 @@ public class DartTestFinder implements TestFinder {
   public Collection<PsiElement> findClassesForTest(@NotNull final PsiElement element) {
     if (!isTest(element)) return Collections.emptyList();
 
-    VirtualFile vFile = element.getContainingFile().getVirtualFile();
+    final VirtualFile vFile = element.getContainingFile().getVirtualFile();
     // https://dart.dev/tools/pub/package-layout
-    GlobalSearchScope subjectScope = getDirScope(element.getProject(), vFile, "benchmark", "bin", "lib", "tool", "web");
-    String subjectFileName = StringUtil.trimEnd(vFile.getName(), TEST_DART_SUFFIX) + ".dart";
-    Collection<VirtualFile> subjectFiles = FilenameIndex.getVirtualFilesByName(element.getProject(), subjectFileName, subjectScope);
+    final GlobalSearchScope subjectScope = getDirScope(element.getProject(), vFile, "benchmark", "bin", "lib", "tool", "web");
+    final String subjectFileName = StringUtil.trimEnd(vFile.getName(), TEST_DART_SUFFIX) + ".dart";
+    final Collection<VirtualFile> subjectFiles = FilenameIndex.getVirtualFilesByName(element.getProject(), subjectFileName, subjectScope);
     return ContainerUtil.mapNotNull(subjectFiles, file -> element.getManager().findFile(file));
   }
 
@@ -63,28 +65,34 @@ public class DartTestFinder implements TestFinder {
   }
 
   @Contract("_, null -> null")
-  private static String getTopLevelDirNameForDartFile(@NotNull Project project, @Nullable VirtualFile file) {
+  private static String getTopLevelDirNameForDartFile(@NotNull final Project project, @Nullable final VirtualFile file) {
     if (file == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return null;
 
-    VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file);
+    final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                                ? DartBuildFileUtil.findPackageRootBuildFile(project, file)
+                                : PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspec == null) return null;
 
-    String rootPathWithSlash = pubspec.getParent().getPath() + "/";
+    final String rootPathWithSlash = pubspec.getParent().getPath() + "/";
     if (!file.getPath().startsWith(rootPathWithSlash)) return null;
 
-    String relPath = file.getPath().substring(rootPathWithSlash.length());
-    int slashIndex = relPath.indexOf('/');
+    final String relPath = file.getPath().substring(rootPathWithSlash.length());
+    final int slashIndex = relPath.indexOf('/');
     if (slashIndex <= 0) return null;
 
     return relPath.substring(0, slashIndex);
   }
 
   @NotNull
-  private static GlobalSearchScope getDirScope(@NotNull Project project, @NotNull VirtualFile contextFile, String... topLevelDirNames) {
-    VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, contextFile);
+  private static GlobalSearchScope getDirScope(@NotNull final Project project,
+                                               @NotNull final VirtualFile contextFile,
+                                               final String... topLevelDirNames) {
+    final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                                ? DartBuildFileUtil.findPackageRootBuildFile(project, contextFile)
+                                : PubspecYamlUtil.findPubspecYamlFile(project, contextFile);
     if (pubspec == null) return GlobalSearchScope.EMPTY_SCOPE;
 
-    VirtualFile[] dirs = ContainerUtil.mapNotNull(topLevelDirNames, pubspec.getParent()::findChild, VirtualFile.EMPTY_ARRAY);
+    final VirtualFile[] dirs = ContainerUtil.mapNotNull(topLevelDirNames, pubspec.getParent()::findChild, VirtualFile.EMPTY_ARRAY);
     return GlobalSearchScopesCore.directoriesScope(project, true, dirs);
   }
 }
