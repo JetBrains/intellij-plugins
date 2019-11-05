@@ -28,10 +28,10 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
     get() = {
       prepareSample(sample)
       actionTask("GotoAction") {
-        "One of the most useful shortcuts is Find Action. It allows you to search through all available actions " +
-            "without having to know their individual shortcuts. Try it now with ${action(it)}." +
-                if (SystemInfo.isMacOSMojave) " (If Terminal search opens instead of Find Action " +
-                        "please read <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>.)" else ""
+        "One of the most useful shortcuts is Find Action. It lets you search through all available actions " +
+                "without having to know their individual shortcuts.\nTry it now with ${action(it)}." +
+                if (SystemInfo.isMacOSMojave) " (If Terminal search opens instead of Find Action, " +
+                        "refer to <a href=\"$FIND_ACTION_WORKAROUND\">this article</a>.)" else ""
       }
       actionTask("About") {
         "Let's say you want to read about the IDE, type <strong>about</strong> and press Enter."
