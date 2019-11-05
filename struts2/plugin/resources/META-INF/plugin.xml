@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright 2015 The authors
+  ~ Copyright 2019 The authors
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
@@ -42,15 +42,15 @@
   <!-- published extension points -->
   <extensionPoints>
     <extensionPoint name="constantContributor"
-                    interface="com.intellij.struts2.model.constant.StrutsConstantContributor"/>
+                    interface="com.intellij.struts2.model.constant.StrutsConstantContributor" dynamic="true"/>
     <extensionPoint name="constantValueClassContributor"
-                    interface="com.intellij.struts2.model.constant.ConstantValueConverterClassContributor"/>
+                    interface="com.intellij.struts2.model.constant.ConstantValueConverterClassContributor" dynamic="true"/>
     <extensionPoint name="resultContributor"
-                    interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
+                    interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor" dynamic="true"/>
     <extensionPoint name="classContributor"
-                    interface="com.intellij.struts2.dom.ExtendableClassConverter$ExtendableClassConverterContributor"/>
+                    interface="com.intellij.struts2.dom.ExtendableClassConverter$ExtendableClassConverterContributor" dynamic="true"/>
     <extensionPoint name="paramNameCustomConverter"
-                    interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter"/>
+                    interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter" dynamic="true"/>
     <extensionPoint name="paramValueConverter"
                     interface="com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry$Provider"/>
   </extensionPoints>
