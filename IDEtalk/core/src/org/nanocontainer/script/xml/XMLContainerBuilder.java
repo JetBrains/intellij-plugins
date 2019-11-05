@@ -13,7 +13,6 @@ package org.nanocontainer.script.xml;
 import org.nanocontainer.ClassNameKey;
 import org.nanocontainer.ClassPathElement;
 import org.nanocontainer.DefaultNanoContainer;
-import org.nanocontainer.NanoContainer;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
@@ -101,14 +100,14 @@ public final class XMLContainerBuilder {
     }
   }
 
-  public void populateContainer(MutablePicoContainer container) {
+  public void populateContainer(DefaultPicoContainer container) {
     try {
       String parentClass = rootElement.getAttribute("parentclassloader");
       ClassLoader classLoader = myClassLoader;
       if (parentClass != null && !EMPTY.equals(parentClass)) {
         classLoader = classLoader.loadClass(parentClass).getClassLoader();
       }
-      NanoContainer nanoContainer = new DefaultNanoContainer(classLoader, container);
+      DefaultNanoContainer nanoContainer = new DefaultNanoContainer(classLoader, container);
       registerComponentsAndChildContainers(nanoContainer, rootElement, new DefaultNanoContainer(myClassLoader));
     }
     catch (ClassNotFoundException e) {
@@ -123,12 +122,12 @@ public final class XMLContainerBuilder {
     }
   }
 
-  private void registerComponentsAndChildContainers(NanoContainer parentContainer,
+  private void registerComponentsAndChildContainers(DefaultNanoContainer parentContainer,
                                                     Element containerElement,
-                                                    NanoContainer knownComponentAdapterFactories)
+                                                    DefaultNanoContainer knownComponentAdapterFactories)
     throws ClassNotFoundException, IOException, SAXException {
 
-    NanoContainer metaContainer = new DefaultNanoContainer(myClassLoader, knownComponentAdapterFactories.getPico());
+    DefaultNanoContainer metaContainer = new DefaultNanoContainer(myClassLoader, knownComponentAdapterFactories.getPico());
     NodeList children = containerElement.getChildNodes();
     // register classpath first, regardless of order in the document.
     for (int i = 0; i < children.getLength(); i++) {
@@ -145,8 +144,8 @@ public final class XMLContainerBuilder {
         Element childElement = (Element)children.item(i);
         String name = childElement.getNodeName();
         if (CONTAINER.equals(name)) {
-          MutablePicoContainer childContainer = parentContainer.getPico().makeChildContainer();
-          NanoContainer childNanoContainer = new DefaultNanoContainer(parentContainer.getComponentClassLoader(), childContainer);
+          DefaultPicoContainer childContainer = parentContainer.getPico().makeChildContainer();
+          DefaultNanoContainer childNanoContainer = new DefaultNanoContainer(parentContainer.getComponentClassLoader(), childContainer);
           registerComponentsAndChildContainers(childNanoContainer, childElement, metaContainer);
         }
         else if (COMPONENT_IMPLEMENTATION.equals(name)
@@ -177,7 +176,7 @@ public final class XMLContainerBuilder {
   }
 
 
-  private void addComponentAdapterFactory(Element element, NanoContainer metaContainer)
+  private void addComponentAdapterFactory(Element element, DefaultNanoContainer metaContainer)
     throws MalformedURLException, ClassNotFoundException {
     if (notSet(element.getAttribute(KEY))) {
       String message = "'" + KEY + "' attribute not specified for " + element.getNodeName();
@@ -212,18 +211,18 @@ public final class XMLContainerBuilder {
     registerComponentImplementation(metaContainer, node);
   }
 
-  private void registerClassLoader(NanoContainer parentContainer, Element childElement, NanoContainer metaContainer)
+  private void registerClassLoader(DefaultNanoContainer parentContainer, Element childElement, DefaultNanoContainer metaContainer)
     throws IOException, SAXException, ClassNotFoundException {
     String parentClass = childElement.getAttribute("parentclassloader");
     ClassLoader parentClassLoader = parentContainer.getComponentClassLoader();
     if (parentClass != null && !EMPTY.equals(parentClass)) {
       parentClassLoader = parentClassLoader.loadClass(parentClass).getClassLoader();
     }
-    NanoContainer nano = new DefaultNanoContainer(parentClassLoader, parentContainer.getPico());
+    DefaultNanoContainer nano = new DefaultNanoContainer(parentClassLoader, parentContainer.getPico());
     registerComponentsAndChildContainers(nano, childElement, metaContainer);
   }
 
-  private static void registerClasspath(NanoContainer container, Element classpathElement) throws IOException, ClassNotFoundException {
+  private static void registerClasspath(DefaultNanoContainer container, Element classpathElement) throws IOException, ClassNotFoundException {
     NodeList children = classpathElement.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       if (children.item(i) instanceof Element) {
@@ -267,8 +266,8 @@ public final class XMLContainerBuilder {
     }
   }
 
-  private void registerComponentImplementation(NanoContainer container, Element element)
-    throws ClassNotFoundException, MalformedURLException {
+  private void registerComponentImplementation(DefaultNanoContainer container, Element element)
+    throws ClassNotFoundException {
     String className = element.getAttribute(CLASS);
     if (notSet(className)) {
       String message = "'" + CLASS + "' attribute not specified for " + element.getNodeName();
@@ -295,14 +294,14 @@ public final class XMLContainerBuilder {
     }
   }
 
-  private void addDecoratingPicoContainer(NanoContainer parentContainer, Element childElement) throws ClassNotFoundException {
+  private void addDecoratingPicoContainer(DefaultNanoContainer parentContainer, Element childElement) throws ClassNotFoundException {
     String className = childElement.getAttribute("class");
 
     parentContainer.addDecoratingPicoContainer(myClassLoader.loadClass(className));
   }
 
 
-  private Parameter[] createChildParameters(NanoContainer container, Element element) throws ClassNotFoundException, MalformedURLException {
+  private Parameter[] createChildParameters(DefaultNanoContainer container, Element element) throws ClassNotFoundException {
     List parametersList = new ArrayList();
     NodeList children = element.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
@@ -353,7 +352,7 @@ public final class XMLContainerBuilder {
    * 5) If there is no child element of the parameter, the first constructor will be used.
    * 6) Otherwise, the return value will be a ConstantParameter with the return from the createInstance value.
    */
-  private Parameter createParameter(PicoContainer pico, Element element) throws ClassNotFoundException, MalformedURLException {
+  private Parameter createParameter(PicoContainer pico, Element element) throws ClassNotFoundException {
     final Parameter parameter;
     String key = element.getAttribute(KEY);
     String emptyCollectionString = element.getAttribute(EMPTY_COLLECTION);
@@ -412,8 +411,8 @@ public final class XMLContainerBuilder {
     return parameter;
   }
 
-  private void registerComponentInstance(NanoContainer container, Element element)
-    throws ClassNotFoundException, MalformedURLException {
+  private void registerComponentInstance(DefaultNanoContainer container, Element element)
+    throws ClassNotFoundException {
     Object instance = createInstance(container.getPico(), element);
     String key = element.getAttribute(KEY);
     String classKey = element.getAttribute(CLASS_NAME_KEY);
@@ -430,7 +429,7 @@ public final class XMLContainerBuilder {
     }
   }
 
-  private Object createInstance(PicoContainer pico, Element element) throws ClassNotFoundException, MalformedURLException {
+  private Object createInstance(PicoContainer pico, Element element) throws ClassNotFoundException {
     BeanComponentInstanceFactory factory = createComponentInstanceFactory(element.getAttribute(FACTORY));
     Element instanceElement = getFirstChildElement(element, true);
     return factory.makeInstance(pico, instanceElement, myClassLoader);
@@ -459,13 +458,13 @@ public final class XMLContainerBuilder {
       factoryClass = DEFAULT_COMPONENT_INSTANCE_FACTORY;
     }
 
-    NanoContainer adapter = new DefaultNanoContainer(myClassLoader);
+    DefaultNanoContainer adapter = new DefaultNanoContainer(myClassLoader);
     adapter.registerComponentImplementation(BeanComponentInstanceFactory.class.getName(), factoryClass);
     return (BeanComponentInstanceFactory)adapter.getPico().getComponentInstances().get(0);
   }
 
-  private void registerComponentAdapter(NanoContainer container, Element element, NanoContainer metaContainer)
-    throws ClassNotFoundException, MalformedURLException {
+  private void registerComponentAdapter(DefaultNanoContainer container, Element element, DefaultNanoContainer metaContainer)
+    throws ClassNotFoundException {
     String className = element.getAttribute(CLASS);
     if (notSet(className)) {
       String message = "'" + CLASS + "' attribute not specified for " + element.getNodeName();
@@ -487,7 +486,7 @@ public final class XMLContainerBuilder {
     container.getPico().registerComponent(componentAdapterFactory.createComponentAdapter(key, implementationClass, parameters));
   }
 
-  private static ComponentAdapterFactory createComponentAdapterFactory(String factoryName, NanoContainer metaContainer)
+  private static ComponentAdapterFactory createComponentAdapterFactory(String factoryName, DefaultNanoContainer metaContainer)
     throws ClassNotFoundException {
     if (notSet(factoryName)) {
       factoryName = DEFAULT_COMPONENT_ADAPTER_FACTORY;

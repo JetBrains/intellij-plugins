@@ -10,7 +10,10 @@
 
 package org.nanocontainer;
 
-import org.picocontainer.*;
+import org.picocontainer.ComponentAdapter;
+import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.Parameter;
+import org.picocontainer.PicoException;
 import org.picocontainer.defaults.BeanPropertyComponentAdapter;
 import org.picocontainer.defaults.ConstantParameter;
 import org.picocontainer.defaults.CustomPermissionsURLClassLoader;
@@ -26,12 +29,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The default implementation of {@link NanoContainer}.
+ * The default implementation of {@link DefaultNanoContainer}.
  *
  * @author Paul Hammant
  * @author Aslak Helles&oslash;y
  */
-public final class DefaultNanoContainer implements NanoContainer {
+public final class DefaultNanoContainer {
   private static final Map<String, String> primitiveNameToBoxedName = new HashMap<>();
 
   static {
@@ -45,7 +48,7 @@ public final class DefaultNanoContainer implements NanoContainer {
   }
 
   private final List<ClassPathElement> classPathElements = new ArrayList<>();
-  private MutablePicoContainer picoContainer;
+  private DefaultPicoContainer picoContainer;
   private final ClassLoader parentClassLoader;
 
   private ClassLoader componentClassLoader;
@@ -56,7 +59,7 @@ public final class DefaultNanoContainer implements NanoContainer {
     return fromMap != null ? fromMap : primitiveOrClass;
   }
 
-  public DefaultNanoContainer(ClassLoader parentClassLoader, MutablePicoContainer picoContainer) {
+  public DefaultNanoContainer(ClassLoader parentClassLoader, DefaultPicoContainer picoContainer) {
     this.parentClassLoader = parentClassLoader;
     if (picoContainer == null) {
       throw new NullPointerException("picoContainer");
@@ -68,13 +71,6 @@ public final class DefaultNanoContainer implements NanoContainer {
     this(parentClassLoader, new DefaultPicoContainer());
   }
 
-  @Override
-  public ComponentAdapter registerComponentImplementation(String componentImplementationClassName)
-    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException {
-    return picoContainer.registerComponentImplementation(loadClass(componentImplementationClassName));
-  }
-
-  @Override
   public ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName)
     throws ClassNotFoundException {
     Class componentImplementation = loadClass(componentImplementationClassName);
@@ -84,39 +80,6 @@ public final class DefaultNanoContainer implements NanoContainer {
     return picoContainer.registerComponentImplementation(key, componentImplementation);
   }
 
-
-  @Override
-  public ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName, Parameter[] parameters)
-    throws ClassNotFoundException {
-    Class componentImplementation = loadClass(componentImplementationClassName);
-    if (key instanceof ClassNameKey) {
-      key = loadClass(((ClassNameKey)key).getClassName());
-    }
-    return picoContainer.registerComponentImplementation(key, componentImplementation, parameters);
-  }
-
-  @Override
-  public ComponentAdapter registerComponentImplementation(Object key,
-                                                          String componentImplementationClassName,
-                                                          String[] parameterTypesAsString,
-                                                          String[] parameterValuesAsString)
-    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException {
-    Class componentImplementation = getComponentClassLoader().loadClass(componentImplementationClassName);
-    if (key instanceof ClassNameKey) {
-      key = loadClass(((ClassNameKey)key).getClassName());
-    }
-    return registerComponentImplementation(parameterTypesAsString, parameterValuesAsString, key, componentImplementation);
-  }
-
-  @Override
-  public ComponentAdapter registerComponentImplementation(String componentImplementationClassName,
-                                                          String[] parameterTypesAsString,
-                                                          String[] parameterValuesAsString)
-    throws PicoRegistrationException, ClassNotFoundException, PicoIntrospectionException {
-    Class componentImplementation = getComponentClassLoader().loadClass(componentImplementationClassName);
-    return registerComponentImplementation(parameterTypesAsString, parameterValuesAsString, componentImplementation,
-      componentImplementation);
-  }
 
   private ComponentAdapter registerComponentImplementation(String[] parameterTypesAsString,
                                                            String[] parameterValuesAsString,
@@ -136,7 +99,6 @@ public final class DefaultNanoContainer implements NanoContainer {
     return classLoader.loadClass(cn);
   }
 
-  @Override
   public ClassPathElement addClassLoaderURL(URL url) {
     if (componentClassLoaderLocked) throw new IllegalStateException("ClassLoader URLs cannot be added once this instance is locked");
 
@@ -145,7 +107,6 @@ public final class DefaultNanoContainer implements NanoContainer {
     return classPathElement;
   }
 
-  @Override
   public ClassLoader getComponentClassLoader() {
     if (componentClassLoader == null) {
       componentClassLoaderLocked = true;
@@ -159,8 +120,7 @@ public final class DefaultNanoContainer implements NanoContainer {
     return componentClassLoader;
   }
 
-  @Override
-  public MutablePicoContainer getPico() {
+  public DefaultPicoContainer getPico() {
     return picoContainer;
   }
 
@@ -182,7 +142,6 @@ public final class DefaultNanoContainer implements NanoContainer {
     return urls;
   }
 
-  @Override
   public Object getComponentInstanceOfType(String componentType) {
     try {
       Class compType = getComponentClassLoader().loadClass(componentType);
@@ -194,12 +153,11 @@ public final class DefaultNanoContainer implements NanoContainer {
     }
   }
 
-  @Override
   public MutablePicoContainer addDecoratingPicoContainer(Class picoContainerClass) {
     DefaultPicoContainer pico = new DefaultPicoContainer();
     pico.registerComponentImplementation(MutablePicoContainer.class, picoContainerClass,
       new Parameter[]{new ConstantParameter(picoContainer)});
-    picoContainer = (MutablePicoContainer)pico.getComponentInstanceOfType(MutablePicoContainer.class);
+    picoContainer = (DefaultPicoContainer)pico.getComponentInstanceOfType(MutablePicoContainer.class);
     return picoContainer;
   }
 }
