@@ -170,7 +170,7 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
   public static String getClientId() {
-    return ApplicationNamesInfo.getInstance().getFullProductName().replaceAll(" ", "-");
+    return ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '-');
   }
 
   private static String getClientVersion() {
