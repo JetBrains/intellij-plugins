@@ -28,14 +28,9 @@ import java.util.Set;
  * it is also able to set javabean properties by discovering an appropriate
  * {@link PropertyEditor} and using its <code>setAsText</code> method.
  * <p/>
- * <em>
- * Note that this class doesn't cache instances. If you want caching,
- * use a {@link CachingComponentAdapter} around this one.
- * </em>
  *
  * @author Aslak Helles&oslash;y
  * @version $Revision: 2793 $
- * @since 1.0
  */
 public class BeanPropertyComponentAdapter extends DecoratingComponentAdapter {
   private Map properties;

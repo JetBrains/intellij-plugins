@@ -13,11 +13,11 @@ import org.picocontainer.*;
 
 import java.util.*;
 
-public class DefaultPicoContainer implements MutablePicoContainer {
+public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   private final Map componentKeyToAdapterCache = new HashMap();
   private final ComponentAdapterFactory componentAdapterFactory;
   private final PicoContainer parent;
-  private final Set<PicoContainer> children = new HashSet<>();
+  private final Set<DefaultPicoContainer> children = new HashSet<>();
 
   private final List componentAdapters = new ArrayList();
   // Keeps track of instantiation order.
@@ -59,12 +59,6 @@ public class DefaultPicoContainer implements MutablePicoContainer {
   /**
    * Creates a new container with a custom ComponentAdapterFactory, LifecycleStrategy for instance registration,
    * and a parent container.
-   * <p/>
-   * <em>
-   * Important note about caching: If you intend the components to be cached, you should pass
-   * in a factory that creates {@link CachingComponentAdapter} instances, such as for example
-   * other ComponentAdapterFactories.
-   * </em>
    *
    * @param componentAdapterFactory                   the factory to use for creation of ComponentAdapters.
    * @param lifecycleStrategyForInstanceRegistrations the lifecylce strategy chosen for regiered
@@ -231,12 +225,10 @@ public class DefaultPicoContainer implements MutablePicoContainer {
     }
   }
 
-  @Override
   public List getComponentInstances() throws PicoException {
     return getComponentInstancesOfType(Object.class);
   }
 
-  @Override
   public List getComponentInstancesOfType(Class componentType) {
     if (componentType == null) {
       return Collections.EMPTY_LIST;
@@ -380,7 +372,7 @@ public class DefaultPicoContainer implements MutablePicoContainer {
   @Override
   public void dispose() {
     if (disposed) throw new IllegalStateException("Already disposed");
-    for (PicoContainer child : children) {
+    for (DefaultPicoContainer child : children) {
       child.dispose();
     }
     this.lifecycleManager.dispose(this);
@@ -393,7 +385,7 @@ public class DefaultPicoContainer implements MutablePicoContainer {
     return pc;
   }
 
-  public boolean addChildContainer(PicoContainer child) {
+  public boolean addChildContainer(DefaultPicoContainer child) {
     return children.add(child);
   }
 }

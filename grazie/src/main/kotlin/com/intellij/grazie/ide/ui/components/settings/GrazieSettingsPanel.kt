@@ -8,6 +8,7 @@ import com.intellij.grazie.ide.ui.components.dsl.padding
 import com.intellij.grazie.ide.ui.components.dsl.panel
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.remote.GrazieRemote
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.ui.layout.migLayout.*
@@ -16,7 +17,6 @@ import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
 import org.jdesktop.swingx.VerticalLayout
-import org.picocontainer.Disposable
 import javax.swing.JComponent
 
 class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {

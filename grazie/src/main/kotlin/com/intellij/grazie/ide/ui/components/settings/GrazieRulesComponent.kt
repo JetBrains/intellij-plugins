@@ -3,7 +3,7 @@ package com.intellij.grazie.ide.ui.components.settings
 
 import com.intellij.grazie.ide.ui.components.rules.GrazieRulesPanel
 import com.intellij.grazie.jlanguage.Lang
-import org.picocontainer.Disposable
+import com.intellij.openapi.Disposable
 
 class GrazieRulesComponent(onSelectionChanged: (Any) -> Unit) : Disposable {
   private val rules = GrazieRulesPanel(onSelectionChanged)

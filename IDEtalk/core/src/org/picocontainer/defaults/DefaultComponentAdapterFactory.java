@@ -15,12 +15,8 @@ import org.picocontainer.Parameter;
 import org.picocontainer.PicoIntrospectionException;
 
 /**
- * Creates instances of {@link ConstructorInjectionComponentAdapter} decorated by
- * {@link CachingComponentAdapter}.
- *
  * @author Jon Tirs&eacute;n
  * @author Aslak Helles&oslash;y
- * @version $Revision: 2779 $
  */
 public final class DefaultComponentAdapterFactory implements ComponentAdapterFactory {
   private final LifecycleStrategy lifecycleStrategy;
