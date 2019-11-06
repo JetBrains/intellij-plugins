@@ -66,7 +66,7 @@ part of dart.core;
  * which is easily created by `new RangeError.range(startIndex, 0, length)`.
  */
 class Error {
-  Error();  // Prevent use as mixin.
+  Error(); // Prevent use as mixin.
 
   /**
    * Safely convert a value to a [String] description.
@@ -96,24 +96,28 @@ class Error {
  * Error thrown by the runtime system when an assert statement fails.
  */
 class AssertionError extends Error {
+  /** Message describing the assertion error. */
+  final Object message;
+  AssertionError([this.message]);
+  String toString() => "Assertion failed";
 }
 
 /**
  * Error thrown by the runtime system when a type assertion fails.
  */
-class TypeError extends AssertionError {
-}
+class TypeError extends AssertionError {}
 
 /**
  * Error thrown by the runtime system when a cast operation fails.
  */
-class CastError extends Error {
-}
+class CastError extends Error {}
 
 /**
  * Error thrown when attempting to throw [:null:].
  */
 class NullThrownError extends Error {
+  @pragma("vm:entry-point")
+  NullThrownError();
   String toString() => "Throw of null.";
 }
 
@@ -137,10 +141,11 @@ class ArgumentError extends Error {
    * If the `message` is not a [String], it is assumed to be a value instead
    * of a message.
    */
+  @pragma("vm:entry-point")
   ArgumentError([this.message])
-     : invalidValue = null,
-       _hasValue = false,
-       name = null;
+      : invalidValue = null,
+        _hasValue = false,
+        name = null;
 
   /**
    * Creates error containing the invalid [value].
@@ -155,34 +160,43 @@ class ArgumentError extends Error {
    * names differ from the interface, it might be more useful to use the
    * interface method's argument name (or just rename arguments to match).
    */
-  ArgumentError.value(value,
-                      [String this.name,
-                       String this.message = "Invalid argument"])
+  @pragma("vm:entry-point")
+  ArgumentError.value(value, [this.name, this.message])
       : invalidValue = value,
         _hasValue = true;
 
   /**
    * Create an argument error for a `null` argument that must not be `null`.
-   *
-   * Shorthand for calling [ArgumentError.value] with a `null` value and a
-   * message of `"Must not be null"`.
    */
-  ArgumentError.notNull([String name])
-      : this.value(null, name, "Must not be null");
+  ArgumentError.notNull([this.name])
+      : _hasValue = false,
+        message = "Must not be null",
+        invalidValue = null;
+
+  /**
+   * Throws if [argument] is `null`.
+   */
+  @Since("2.1")
+  static void checkNotNull(Object argument, [String name]) {
+    if (argument == null) throw ArgumentError.notNull(name);
+  }
+
+  // Helper functions for toString overridden in subclasses.
+  String get _errorName => "Invalid argument${!_hasValue ? "(s)" : ""}";
+  String get _errorExplanation => "";
 
   String toString() {
-    if (!_hasValue) {
-      var result = "Invalid arguments(s)";
-      if (message != null) {
-        result = "$result: $message";
-      }
-      return result;
-    }
     String nameString = "";
     if (name != null) {
       nameString = " ($name)";
     }
-    return "$message$nameString: ${Error.safeToString(invalidValue)}";
+    var message = (this.message == null) ? "" : ": ${this.message}";
+    String prefix = "$_errorName$nameString$message";
+    if (!_hasValue) return prefix;
+    // If we know the invalid value, we can try to describe the problem.
+    String explanation = _errorExplanation;
+    String errorValue = Error.safeToString(invalidValue);
+    return "$prefix$explanation: $errorValue";
   }
 }
 
@@ -200,8 +214,11 @@ class RangeError extends ArgumentError {
   /**
    * Create a new [RangeError] with the given [message].
    */
+  @pragma("vm:entry-point")
   RangeError(var message)
-      : start = null, end = null, super(message);
+      : start = null,
+        end = null,
+        super(message);
 
   /**
    * Create a new [RangeError] with a message for the given [value].
@@ -211,12 +228,13 @@ class RangeError extends ArgumentError {
    * description.
    */
   RangeError.value(num value, [String name, String message])
-      : start = null, end = null,
-        super.value(value, name,
-                    (message != null) ? message : "Value not in range");
+      : start = null,
+        end = null,
+        super.value(
+            value, name, (message != null) ? message : "Value not in range");
 
   /**
-   * Create a new [RangeError] with for an invalid value being outside a range.
+   * Create a new [RangeError] for a value being outside the valid range.
    *
    * The allowed range is from [minValue] to [maxValue], inclusive.
    * If `minValue` or `maxValue` are `null`, the range is infinite in
@@ -229,12 +247,13 @@ class RangeError extends ArgumentError {
    * invalid value, and the [message] can override the default error
    * description.
    */
+  @pragma("vm:entry-point")
   RangeError.range(num invalidValue, int minValue, int maxValue,
-                   [String name, String message])
+      [String name, String message])
       : start = minValue,
         end = maxValue,
-        super.value(invalidValue, name,
-                    (message != null) ? message : "Invalid value");
+        super.value(
+            invalidValue, name, (message != null) ? message : "Invalid value");
 
   /**
    * Creates a new [RangeError] stating that [index] is not a valid index
@@ -247,10 +266,8 @@ class RangeError extends ArgumentError {
    * The [length] is the length of [indexable] at the time of the error.
    * If `length` is omitted, it defaults to `indexable.length`.
    */
-  factory RangeError.index(int index, indexable,
-                           [String name,
-                            String message,
-                            int length]) = IndexError;
+  factory RangeError.index(int index, dynamic indexable,
+      [String name, String message, int length]) = IndexError;
 
   /**
    * Check that a [value] lies in a specific interval.
@@ -259,9 +276,9 @@ class RangeError extends ArgumentError {
    * The interval is from [minValue] to [maxValue], both inclusive.
    */
   static void checkValueInInterval(int value, int minValue, int maxValue,
-                                   [String name, String message]) {
+      [String name, String message]) {
     if (value < minValue || value > maxValue) {
-      throw new RangeError.range(value, minValue, maxValue, name, message);
+      throw RangeError.range(value, minValue, maxValue, name, message);
     }
   }
 
@@ -274,14 +291,15 @@ class RangeError extends ArgumentError {
    * `[]` that accepts an index if `0 <= index < length`.
    *
    * If [length] is provided, it is used as the length of the indexable object,
-   * otherwise the length is found as `idexable.length`.
+   * otherwise the length is found as `indexable.length`.
    */
-  static void checkValidIndex(int index, var indexable,
-                              [String name, int length, String message]) {
-    if (length == null) length = indexable.length;
-    if (index < 0 || index >= length) {
-      if (name == null) name = "index";
-      throw new RangeError.index(index, indexable, name, message, length);
+  static void checkValidIndex(int index, dynamic indexable,
+      [String name, int length, String message]) {
+    length ??= indexable.length;
+    // Comparing with `0` as receiver produces better dart2js type inference.
+    if (0 > index || index >= length) {
+      name ??= "index";
+      throw RangeError.index(index, indexable, name, message, length);
     }
   }
 
@@ -297,18 +315,26 @@ class RangeError extends ArgumentError {
    *
    * The [startName] and [endName] defaults to `"start"` and `"end"`,
    * respectively.
+   *
+   * Returns the actual `end` value, which is `length` if `end` is `null`,
+   * and `end` otherwise.
    */
-  static void checkValidRange(int start, int end, int length,
-                              [String startName, String endName,
-                               String message]) {
-    if (start < 0 || start > length) {
-      if (startName == null) startName = "start";
-      throw new RangeError.range(start, 0, length, startName, message);
+  static int checkValidRange(int start, int end, int length,
+      [String startName, String endName, String message]) {
+    // Comparing with `0` as receiver produces better dart2js type inference.
+    // Ditto `start > end` below.
+    if (0 > start || start > length) {
+      startName ??= "start";
+      throw RangeError.range(start, 0, length, startName, message);
     }
-    if (end != null && (end < start || end > length)) {
-      if (endName == null) endName = "end";
-      throw new RangeError.range(end, start, length, endName, message);
+    if (end != null) {
+      if (start > end || end > length) {
+        endName ??= "end";
+        throw RangeError.range(end, start, length, endName, message);
+      }
+      return end;
     }
+    return length;
   }
 
   /**
@@ -317,12 +343,12 @@ class RangeError extends ArgumentError {
    * Throws if the value is negative.
    */
   static void checkNotNegative(int value, [String name, String message]) {
-    if (value < 0) throw new RangeError.range(value, 0, null, name, message);
+    if (value < 0) throw RangeError.range(value, 0, null, name, message);
   }
 
-  String toString() {
-    if (!_hasValue) return "RangeError: $message";
-    String value = Error.safeToString(invalidValue);
+  String get _errorName => "RangeError";
+  String get _errorExplanation {
+    assert(_hasValue);
     String explanation = "";
     if (start == null) {
       if (end != null) {
@@ -332,14 +358,14 @@ class RangeError extends ArgumentError {
     } else if (end == null) {
       explanation = ": Not greater than or equal to $start";
     } else if (end > start) {
-      explanation = ": Not in range $start..$end, inclusive.";
+      explanation = ": Not in range $start..$end, inclusive";
     } else if (end < start) {
       explanation = ": Valid value range is empty";
     } else {
       // end == start.
       explanation = ": Only valid value is $start";
     }
-    return "RangeError: $message ($value)$explanation";
+    return explanation;
   }
 }
 
@@ -351,7 +377,7 @@ class RangeError extends ArgumentError {
  * and the invalid index itself.
  */
 class IndexError extends ArgumentError implements RangeError {
-  /** The indexable object that [index] was not a valid index into. */
+  /** The indexable object that [invalidValue] was not a valid index into. */
   final indexable;
   /** The length of [indexable] at the time of the error. */
   final int length;
@@ -365,28 +391,30 @@ class IndexError extends ArgumentError implements RangeError {
    *
    * The message is used as part of the string representation of the error.
    */
-  IndexError(int invalidValue, indexable,
-             [String name, String message, int length])
+  IndexError(int invalidValue, dynamic indexable,
+      [String name, String message, int length])
       : this.indexable = indexable,
-        this.length = (length != null) ? length : indexable.length,
+        this.length = length ?? indexable.length,
         super.value(invalidValue, name,
-                    (message != null) ? message : "Index out of range");
+            (message != null) ? message : "Index out of range");
 
   // Getters inherited from RangeError.
   int get start => 0;
   int get end => length - 1;
 
-  String toString() {
+  String get _errorName => "RangeError";
+  String get _errorExplanation {
     assert(_hasValue);
-    String target = Error.safeToString(indexable);
-    var explanation = "index should be less than $length";
+    int invalidValue = this.invalidValue;
     if (invalidValue < 0) {
-      explanation = "index must not be negative";
+      return ": index must not be negative";
     }
-    return "RangeError: $message ($target[$invalidValue]): $explanation";
+    if (length == 0) {
+      return ": no indices are valid";
+    }
+    return ": index should be less than $length";
   }
 }
-
 
 /**
  * Error thrown when control reaches the end of a switch case.
@@ -398,6 +426,10 @@ class IndexError extends ArgumentError implements RangeError {
  */
 class FallThroughError extends Error {
   FallThroughError();
+  @pragma("vm:entry-point")
+  external FallThroughError._create(String url, int line);
+
+  external String toString();
 }
 
 /**
@@ -405,21 +437,28 @@ class FallThroughError extends Error {
  */
 class AbstractClassInstantiationError extends Error {
   final String _className;
-  AbstractClassInstantiationError(String this._className);
-  String toString() => "Cannot instantiate abstract class: '$_className'";
-}
+  AbstractClassInstantiationError(String className) : _className = className;
 
+  external String toString();
+}
 
 /**
  * Error thrown by the default implementation of [:noSuchMethod:] on [Object].
  */
 class NoSuchMethodError extends Error {
-  final Object _receiver;
-  final Symbol _memberName;
-  final List _arguments;
-  final Map<Symbol, dynamic> _namedArguments;
-  final List _existingArgumentNames;
+  /**
+   * Create a [NoSuchMethodError] corresponding to a failed method call.
+   *
+   * The [receiver] is the receiver of the method call.
+   * That is, the object on which the method was attempted called.
+   *
+   * The [invocation] represents the method call that failed. It
+   * should not be `null`.
+   */
+  external NoSuchMethodError.withInvocation(
+      Object receiver, Invocation invocation);
 
+  // Deprecated constructor to be removed after dart2js updates to the above.
   /**
    * Create a [NoSuchMethodError] corresponding to a failed method call.
    *
@@ -438,25 +477,17 @@ class NoSuchMethodError extends Error {
    * The [namedArguments] is a map from [Symbol]s to the values of named
    * arguments that the method was called with.
    *
-   * The optional [exisitingArgumentNames] is the expected parameters of a
-   * method with the same name on the receiver, if available. This is
-   * the signature of the method that would have been called if the parameters
-   * had matched.
+   * This constructor does not handle type arguments.
+   * To include type variables, create an [Invocation] and use
+   * [NoSuchMethodError.withInvocation].
    */
-  NoSuchMethodError(Object receiver,
-                    Symbol memberName,
-                    List positionalArguments,
-                    Map<Symbol ,dynamic> namedArguments,
-                    [List existingArgumentNames = null])
-      : _receiver = receiver,
-        _memberName = memberName,
-        _arguments = positionalArguments,
-        _namedArguments = namedArguments,
-        _existingArgumentNames = existingArgumentNames;
+  @Deprecated("Use NoSuchMethod.withInvocation instead")
+  external NoSuchMethodError(Object receiver, Symbol memberName,
+      List positionalArguments, Map<Symbol, dynamic> namedArguments,
+      [@deprecated List existingArgumentNames]);
 
   external String toString();
 }
-
 
 /**
  * The operation was not allowed by the object.
@@ -464,12 +495,13 @@ class NoSuchMethodError extends Error {
  * This [Error] is thrown when an instance cannot implement one of the methods
  * in its signature.
  */
+@pragma("vm:entry-point")
 class UnsupportedError extends Error {
   final String message;
+  @pragma("vm:entry-point")
   UnsupportedError(this.message);
   String toString() => "Unsupported operation: $message";
 }
-
 
 /**
  * Thrown by operations that have not been implemented yet.
@@ -483,12 +515,11 @@ class UnsupportedError extends Error {
  */
 class UnimplementedError extends Error implements UnsupportedError {
   final String message;
-  UnimplementedError([String this.message]);
+  UnimplementedError([this.message]);
   String toString() => (this.message != null
-                        ? "UnimplementedError: $message"
-                        : "UnimplementedError");
+      ? "UnimplementedError: $message"
+      : "UnimplementedError");
 }
-
 
 /**
  * The operation was not allowed by the current state of the object.
@@ -501,7 +532,6 @@ class StateError extends Error {
   StateError(this.message);
   String toString() => "Bad state: $message";
 }
-
 
 /**
  * Error occurring when a collection is modified during iteration.
@@ -521,20 +551,20 @@ class ConcurrentModificationError extends Error {
       return "Concurrent modification during iteration.";
     }
     return "Concurrent modification during iteration: "
-           "${Error.safeToString(modifiedObject)}.";
+        "${Error.safeToString(modifiedObject)}.";
   }
 }
 
-
 class OutOfMemoryError implements Error {
+  @pragma("vm:entry-point")
   const OutOfMemoryError();
   String toString() => "Out of Memory";
 
   StackTrace get stackTrace => null;
 }
 
-
 class StackOverflowError implements Error {
+  @pragma("vm:entry-point")
   const StackOverflowError();
   String toString() => "Stack Overflow";
 
@@ -550,6 +580,7 @@ class StackOverflowError implements Error {
  */
 class CyclicInitializationError extends Error {
   final String variableName;
+  @pragma("vm:entry-point")
   CyclicInitializationError([this.variableName]);
   String toString() => variableName == null
       ? "Reading static variable during its initialization"

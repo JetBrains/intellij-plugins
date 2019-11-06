@@ -9,6 +9,18 @@ part of dart.async;
 // -------------------------------------------------------------------
 
 /**
+ * Type of a stream controller's `onListen`, `onPause` and `onResume` callbacks.
+ */
+typedef void ControllerCallback();
+
+/**
+ * Type of stream controller `onCancel` callbacks.
+ *
+ * The callback may return either `void` or a future.
+ */
+typedef ControllerCancelCallback();
+
+/**
  * A controller with the stream it controls.
  *
  * This controller allows sending data, error and done events on
@@ -19,32 +31,6 @@ part of dart.async;
  * It's possible to check whether the stream is paused or not, and whether
  * it has subscribers or not, as well as getting a callback when either of
  * these change.
- *
- * If the stream starts or stops having listeners (first listener subscribing,
- * last listener unsubscribing), the `onSubscriptionStateChange` callback
- * is notified as soon as possible. If the subscription stat changes during
- * an event firing or a callback being executed, the change will not be reported
- * until the current event or callback has finished.
- * If the pause state has also changed during an event or callback, only the
- * subscription state callback is notified.
- *
- * If the subscriber state has not changed, but the pause state has, the
- * `onPauseStateChange` callback is notified as soon as possible, after firing
- * a current event or completing another callback. This happens if the stream
- * is not paused, and a listener pauses it, or if the stream has been resumed
- * from pause and has no pending events. If the listeners resume a paused stream
- * while it still has queued events, the controller will still consider the
- * stream paused until all queued events have been dispatched.
- *
- * Whether to invoke a callback depends only on the state before and after
- * a stream action, for example firing an event. If the state changes multiple
- * times during the action, and then ends up in the same state as before, no
- * callback is performed.
- *
- * If listeners are added after the stream has completed (sent a "done" event),
- * the listeners will be sent a "done" event eventually, but they won't affect
- * the stream at all, and won't trigger callbacks. From the controller's point
- * of view, the stream is completely inert when has completed.
  */
 abstract class StreamController<T> implements StreamSink<T> {
   /** The stream that this controller is controlling. */
@@ -55,10 +41,27 @@ abstract class StreamController<T> implements StreamSink<T> {
    *
    * If [sync] is true, the returned stream controller is a
    * [SynchronousStreamController], and must be used with the care
-   * and attention necessary to not break the [Stream] contract.
+   * and attention necessary to not break the [Stream] contract. If in doubt,
+   * use the non-sync version.
    *
-   * The controller will buffer all incoming events until the subscriber is
-   * registered.
+   * Using an asynchronous controller will never give the wrong
+   * behavior, but using a synchronous controller incorrectly can cause
+   * otherwise correct programs to break.
+   *
+   * A synchronous controller is only intended for optimizing event
+   * propagation when one asynchronous event immediately triggers another.
+   * It should not be used unless the calls to [add] or [addError]
+   * are guaranteed to occur in places where it won't break `Stream` invariants.
+   *
+   * Use synchronous controllers only to forward (potentially transformed)
+   * events from another stream or a future.
+   *
+   * A Stream should be inert until a subscriber starts listening on it (using
+   * the [onListen] callback to start producing events). Streams should not
+   * leak resources (like websockets) when no user ever listens on the stream.
+   *
+   * The controller buffers all incoming events until a subscriber is
+   * registered, but this feature should only be used in rare circumstances.
    *
    * The [onPause] function is called when the stream becomes
    * paused. [onResume] is called when the stream resumed.
@@ -72,20 +75,15 @@ abstract class StreamController<T> implements StreamSink<T> {
    * If the stream is canceled before the controller needs new data the
    * [onResume] call might not be executed.
    */
-  factory StreamController({void onListen(),
-                            void onPause(),
-                            void onResume(),
-                            onCancel(),
-                            bool sync: false}) {
-    if (onListen == null && onPause == null &&
-        onResume == null && onCancel == null) {
-      return sync
-          ? new _NoCallbackSyncStreamController/*<T>*/()
-          : new _NoCallbackAsyncStreamController/*<T>*/();
-    }
+  factory StreamController(
+      {void onListen(),
+      void onPause(),
+      void onResume(),
+      onCancel(),
+      bool sync: false}) {
     return sync
-         ? new _SyncStreamController<T>(onListen, onPause, onResume, onCancel)
-         : new _AsyncStreamController<T>(onListen, onPause, onResume, onCancel);
+        ? new _SyncStreamController<T>(onListen, onPause, onResume, onCancel)
+        : new _AsyncStreamController<T>(onListen, onPause, onResume, onCancel);
   }
 
   /**
@@ -93,6 +91,12 @@ abstract class StreamController<T> implements StreamSink<T> {
    *
    * The [Stream] returned by [stream] is a broadcast stream.
    * It can be listened to more than once.
+   *
+   * A Stream should be inert until a subscriber starts listening on it (using
+   * the [onListen] callback to start producing events). Streams should not
+   * leak resources (like websockets) when no user ever listens on the stream.
+   *
+   * Broadcast streams do not buffer events when there is no listener.
    *
    * The controller distributes any events to all currently subscribed
    * listeners at the time when [add], [addError] or [close] is called.
@@ -110,6 +114,9 @@ abstract class StreamController<T> implements StreamSink<T> {
    * The returned stream controller is a [SynchronousStreamController],
    * and must be used with the care and attention necessary to not break
    * the [Stream] contract.
+   * See [Completer.sync] for some explanations on when a synchronous
+   * dispatching can be used.
+   * If in doubt, keep the controller non-sync.
    *
    * If [sync] is false, the event will always be fired at a later time,
    * after the code adding the event has completed.
@@ -130,13 +137,52 @@ abstract class StreamController<T> implements StreamSink<T> {
    * If a listener is added again later, after the [onCancel] was called,
    * the [onListen] will be called again.
    */
-  factory StreamController.broadcast({void onListen(),
-                                      void onCancel(),
-                                      bool sync: false}) {
+  factory StreamController.broadcast(
+      {void onListen(), void onCancel(), bool sync: false}) {
     return sync
         ? new _SyncBroadcastStreamController<T>(onListen, onCancel)
         : new _AsyncBroadcastStreamController<T>(onListen, onCancel);
   }
+
+  /**
+   * The callback which is called when the stream is listened to.
+   *
+   * May be set to `null`, in which case no callback will happen.
+   */
+  ControllerCallback get onListen;
+
+  void set onListen(void onListenHandler());
+
+  /**
+   * The callback which is called when the stream is paused.
+   *
+   * May be set to `null`, in which case no callback will happen.
+   *
+   * Pause related callbacks are not supported on broadcast stream controllers.
+   */
+  ControllerCallback get onPause;
+
+  void set onPause(void onPauseHandler());
+
+  /**
+   * The callback which is called when the stream is resumed.
+   *
+   * May be set to `null`, in which case no callback will happen.
+   *
+   * Pause related callbacks are not supported on broadcast stream controllers.
+   */
+  ControllerCallback get onResume;
+
+  void set onResume(void onResumeHandler());
+
+  /**
+   * The callback which is called when the stream is canceled.
+   *
+   * May be set to `null`, in which case no callback will happen.
+   */
+  ControllerCancelCallback get onCancel;
+
+  void set onCancel(onCancelHandler());
 
   /**
    * Returns a view of this object that only exposes the [StreamSink] interface.
@@ -173,14 +219,40 @@ abstract class StreamController<T> implements StreamSink<T> {
   bool get hasListener;
 
   /**
-   * Send or enqueue an error event.
+   * Sends a data [event].
+   *
+   * Listeners receive this event in a later microtask.
+   *
+   * Note that a synchronous controller (created by passing true to the `sync`
+   * parameter of the `StreamController` constructor) delivers events
+   * immediately. Since this behavior violates the contract mentioned here,
+   * synchronous controllers should only be used as described in the
+   * documentation to ensure that the delivered events always *appear* as if
+   * they were delivered in a separate microtask.
+   */
+  void add(T event);
+
+  /**
+   * Sends or enqueues an error event.
    *
    * If [error] is `null`, it is replaced by a [NullThrownError].
    *
-   * Also allows an objection stack trace object, on top of what [EventSink]
-   * allows.
+   * Listeners receive this event at a later microtask. This behavior can be
+   * overridden by using `sync` controllers. Note, however, that sync
+   * controllers have to satisfy the preconditions mentioned in the
+   * documentation of the constructors.
    */
   void addError(Object error, [StackTrace stackTrace]);
+
+  /**
+   * Closes the stream.
+   *
+   * Listeners receive the done event at a later microtask. This behavior can be
+   * overridden by using `sync` controllers. Note, however, that sync
+   * controllers have to satisfy the preconditions mentioned in the
+   * documentation of the constructors.
+   */
+  Future close();
 
   /**
    * Receives events from [source] and puts them into this controller's stream.
@@ -199,10 +271,10 @@ abstract class StreamController<T> implements StreamSink<T> {
    * forwarded to the controller's stream, and the `addStream` ends
    * after this. If [cancelOnError] is false, all errors are forwarded
    * and only a done event will end the `addStream`.
+   * If [cancelOnError] is omitted, it defaults to false.
    */
-  Future addStream(Stream<T> source, {bool cancelOnError: true});
+  Future addStream(Stream<T> source, {bool cancelOnError});
 }
-
 
 /**
  * A stream controller that delivers its events synchronously.
@@ -226,7 +298,7 @@ abstract class StreamController<T> implements StreamSink<T> {
  * accidentally break other code.
  *
  * Adding events to a synchronous controller should only happen as the
- * very last part of a the handling of the original event.
+ * very last part of the handling of the original event.
  * At that point, adding an event to the stream is equivalent to
  * returning to the event loop and adding the event in the next microtask.
  *
@@ -303,24 +375,26 @@ abstract class SynchronousStreamController<T> implements StreamController<T> {
 
 abstract class _StreamControllerLifecycle<T> {
   StreamSubscription<T> _subscribe(
-      void onData(T data),
-      Function onError,
-      void onDone(),
-      bool cancelOnError);
+      void onData(T data), Function onError, void onDone(), bool cancelOnError);
   void _recordPause(StreamSubscription<T> subscription) {}
   void _recordResume(StreamSubscription<T> subscription) {}
   Future _recordCancel(StreamSubscription<T> subscription) => null;
 }
+
+// Base type for implementations of stream controllers.
+abstract class _StreamControllerBase<T>
+    implements
+        StreamController<T>,
+        _StreamControllerLifecycle<T>,
+        _EventSink<T>,
+        _EventDispatch<T> {}
 
 /**
  * Default implementation of [StreamController].
  *
  * Controls a stream that only supports a single controller.
  */
-abstract class _StreamController<T> implements StreamController<T>,
-                                               _StreamControllerLifecycle<T>,
-                                               _EventSink<T>,
-                                               _EventDispatch<T> {
+abstract class _StreamController<T> implements _StreamControllerBase<T> {
   // The states are bit-flags. More than one can be set at a time.
   //
   // The "subscription state" goes through the states:
@@ -386,15 +460,15 @@ abstract class _StreamController<T> implements StreamController<T>,
   // accessed earlier, or if close is called before subscribing.
   _Future _doneFuture;
 
-  _StreamController();
+  ControllerCallback onListen;
+  ControllerCallback onPause;
+  ControllerCallback onResume;
+  ControllerCancelCallback onCancel;
 
-  _NotificationHandler get _onListen;
-  _NotificationHandler get _onPause;
-  _NotificationHandler get _onResume;
-  _NotificationHandler get _onCancel;
+  _StreamController(this.onListen, this.onPause, this.onResume, this.onCancel);
 
   // Return a new stream every time. The streams are equal, but not identical.
-  Stream<T> get stream => new _ControllerStream(this);
+  Stream<T> get stream => new _ControllerStream<T>(this);
 
   /**
    * Returns a view of this object that only exposes the [StreamSink] interface.
@@ -417,8 +491,8 @@ abstract class _StreamController<T> implements StreamController<T>,
 
   bool get isClosed => (_state & _STATE_CLOSED) != 0;
 
-  bool get isPaused => hasListener ? _subscription._isInputPaused
-                                   : !_isCanceled;
+  bool get isPaused =>
+      hasListener ? _subscription._isInputPaused : !_isCanceled;
 
   bool get _isAddingStream => (_state & _STATE_ADDSTREAM) != 0;
 
@@ -432,34 +506,34 @@ abstract class _StreamController<T> implements StreamController<T>,
   // stream is listened to.
   // While adding a stream, pending events are moved into the
   // state object to allow the state object to use the _varData field.
-  _PendingEvents get _pendingEvents {
+  _PendingEvents<T> get _pendingEvents {
     assert(_isInitialState);
     if (!_isAddingStream) {
       return _varData;
     }
-    _StreamControllerAddStreamState state = _varData;
+    _StreamControllerAddStreamState<T> state = _varData;
     return state.varData;
   }
 
   // Returns the pending events, and creates the object if necessary.
-  _StreamImplEvents _ensurePendingEvents() {
+  _StreamImplEvents<T> _ensurePendingEvents() {
     assert(_isInitialState);
     if (!_isAddingStream) {
-      if (_varData == null) _varData = new _StreamImplEvents();
+      _varData ??= new _StreamImplEvents<T>();
       return _varData;
     }
-    _StreamControllerAddStreamState state = _varData;
-    if (state.varData == null) state.varData = new _StreamImplEvents();
+    _StreamControllerAddStreamState<T> state = _varData;
+    if (state.varData == null) state.varData = new _StreamImplEvents<T>();
     return state.varData;
   }
 
   // Get the current subscription.
   // If we are adding a stream, the subscription is moved into the state
   // object to allow the state object to use the _varData field.
-  _ControllerSubscription get _subscription {
+  _ControllerSubscription<T> get _subscription {
     assert(hasListener);
     if (_isAddingStream) {
-      _StreamControllerAddStreamState addState = _varData;
+      _StreamControllerAddStreamState<T> addState = _varData;
       return addState.varData;
     }
     return _varData;
@@ -479,14 +553,12 @@ abstract class _StreamController<T> implements StreamController<T>,
   }
 
   // StreamSink interface.
-  Future addStream(Stream<T> source, {bool cancelOnError: true}) {
+  Future addStream(Stream<T> source, {bool cancelOnError}) {
     if (!_mayAddEvent) throw _badEventState();
     if (_isCanceled) return new _Future.immediate(null);
-    _StreamControllerAddStreamState addState =
-        new _StreamControllerAddStreamState(this,
-                                            _varData,
-                                            source,
-                                            cancelOnError);
+    _StreamControllerAddStreamState<T> addState =
+        new _StreamControllerAddStreamState<T>(
+            this, _varData, source, cancelOnError ?? false);
     _varData = addState;
     _state |= _STATE_ADDSTREAM;
     return addState.addStreamFuture;
@@ -502,9 +574,7 @@ abstract class _StreamController<T> implements StreamController<T>,
   Future get done => _ensureDoneFuture();
 
   Future _ensureDoneFuture() {
-    if (_doneFuture == null) {
-      _doneFuture = _isCanceled ? Future._nullFuture : new _Future();
-    }
+    _doneFuture ??= _isCanceled ? Future._nullFuture : new _Future();
     return _doneFuture;
   }
 
@@ -584,7 +654,7 @@ abstract class _StreamController<T> implements StreamController<T>,
   void _close() {
     // End of addStream stream.
     assert(_isAddingStream);
-    _StreamControllerAddStreamState addState = _varData;
+    _StreamControllerAddStreamState<T> addState = _varData;
     _varData = addState.varData;
     _state &= ~_STATE_ADDSTREAM;
     addState.complete();
@@ -592,22 +662,18 @@ abstract class _StreamController<T> implements StreamController<T>,
 
   // _StreamControllerLifeCycle interface
 
-  StreamSubscription<T> _subscribe(
-      void onData(T data),
-      Function onError,
-      void onDone(),
-      bool cancelOnError) {
+  StreamSubscription<T> _subscribe(void onData(T data), Function onError,
+      void onDone(), bool cancelOnError) {
     if (!_isInitialState) {
       throw new StateError("Stream has already been listened to.");
     }
-    _ControllerSubscription subscription =
-        new _ControllerSubscription(this, onData, onError, onDone,
-                                    cancelOnError);
+    _ControllerSubscription<T> subscription = new _ControllerSubscription<T>(
+        this, onData, onError, onDone, cancelOnError);
 
-    _PendingEvents pendingEvents = _pendingEvents;
+    _PendingEvents<T> pendingEvents = _pendingEvents;
     _state |= _STATE_SUBSCRIBED;
     if (_isAddingStream) {
-      _StreamControllerAddStreamState addState = _varData;
+      _StreamControllerAddStreamState<T> addState = _varData;
       addState.varData = subscription;
       addState.resume();
     } else {
@@ -615,7 +681,7 @@ abstract class _StreamController<T> implements StreamController<T>,
     }
     subscription._setPendingEvents(pendingEvents);
     subscription._guardCallback(() {
-      _runGuarded(_onListen);
+      _runGuarded(onListen);
     });
 
     return subscription;
@@ -623,8 +689,8 @@ abstract class _StreamController<T> implements StreamController<T>,
 
   Future _recordCancel(StreamSubscription<T> subscription) {
     // When we cancel, we first cancel any stream being added,
-    // Then we call _onCancel, and finally the _doneFuture is completed.
-    // If either of addStream's cancel or _onCancel returns a future,
+    // Then we call `onCancel`, and finally the _doneFuture is completed.
+    // If either of addStream's cancel or `onCancel` returns a future,
     // we wait for it before continuing.
     // Any error during this process ends up in the returned future.
     // If more errors happen, we act as if it happens inside nested try/finallys
@@ -632,19 +698,19 @@ abstract class _StreamController<T> implements StreamController<T>,
     // returned future.
     Future result;
     if (_isAddingStream) {
-      _StreamControllerAddStreamState addState = _varData;
+      _StreamControllerAddStreamState<T> addState = _varData;
       result = addState.cancel();
     }
     _varData = null;
     _state =
         (_state & ~(_STATE_SUBSCRIBED | _STATE_ADDSTREAM)) | _STATE_CANCELED;
 
-    if (_onCancel != null) {
+    if (onCancel != null) {
       if (result == null) {
         // Only introduce a future if one is needed.
         // If _onCancel returns null, no future is needed.
         try {
-          result = _onCancel();
+          result = onCancel();
         } catch (e, s) {
           // Return the error in the returned future.
           // Complete it asynchronously, so there is time for a listener
@@ -653,7 +719,7 @@ abstract class _StreamController<T> implements StreamController<T>,
         }
       } else {
         // Simpler case when we already know that we will return a future.
-        result = result.whenComplete(_onCancel);
+        result = result.whenComplete(onCancel);
       }
     }
 
@@ -674,18 +740,18 @@ abstract class _StreamController<T> implements StreamController<T>,
 
   void _recordPause(StreamSubscription<T> subscription) {
     if (_isAddingStream) {
-      _StreamControllerAddStreamState addState = _varData;
+      _StreamControllerAddStreamState<T> addState = _varData;
       addState.pause();
     }
-    _runGuarded(_onPause);
+    _runGuarded(onPause);
   }
 
   void _recordResume(StreamSubscription<T> subscription) {
     if (_isAddingStream) {
-      _StreamControllerAddStreamState addState = _varData;
+      _StreamControllerAddStreamState<T> addState = _varData;
       addState.resume();
     }
-    _runGuarded(_onResume);
+    _runGuarded(onResume);
   }
 }
 
@@ -710,7 +776,7 @@ abstract class _SyncStreamControllerDispatch<T>
 abstract class _AsyncStreamControllerDispatch<T>
     implements _StreamController<T> {
   void _sendData(T data) {
-    _subscription._addPending(new _DelayedData(data));
+    _subscription._addPending(new _DelayedData<T>(data));
   }
 
   void _sendError(Object error, StackTrace stackTrace) {
@@ -725,53 +791,18 @@ abstract class _AsyncStreamControllerDispatch<T>
 // TODO(lrn): Use common superclass for callback-controllers when VM supports
 // constructors in mixin superclasses.
 
-class _AsyncStreamController<T> extends _StreamController<T>
-                                   with _AsyncStreamControllerDispatch<T> {
-  final _NotificationHandler _onListen;
-  final _NotificationHandler _onPause;
-  final _NotificationHandler _onResume;
-  final _NotificationHandler _onCancel;
+class _AsyncStreamController<T> = _StreamController<T>
+    with _AsyncStreamControllerDispatch<T>;
 
-  _AsyncStreamController(void this._onListen(),
-                         void this._onPause(),
-                         void this._onResume(),
-                         this._onCancel());
-}
-
-class _SyncStreamController<T> extends _StreamController<T>
-                                  with _SyncStreamControllerDispatch<T> {
-  final _NotificationHandler _onListen;
-  final _NotificationHandler _onPause;
-  final _NotificationHandler _onResume;
-  final _NotificationHandler _onCancel;
-
-  _SyncStreamController(void this._onListen(),
-                        void this._onPause(),
-                        void this._onResume(),
-                        this._onCancel());
-}
-
-abstract class _NoCallbacks {
-  _NotificationHandler get _onListen => null;
-  _NotificationHandler get _onPause => null;
-  _NotificationHandler get _onResume => null;
-  _NotificationHandler get _onCancel => null;
-}
-
-class _NoCallbackAsyncStreamController/*<T>*/ = _StreamController/*<T>*/
-       with _AsyncStreamControllerDispatch/*<T>*/, _NoCallbacks;
-
-class _NoCallbackSyncStreamController/*<T>*/ = _StreamController/*<T>*/
-       with _SyncStreamControllerDispatch/*<T>*/, _NoCallbacks;
+class _SyncStreamController<T> = _StreamController<T>
+    with _SyncStreamControllerDispatch<T>;
 
 typedef _NotificationHandler();
 
-Future _runGuarded(_NotificationHandler notificationHandler) {
-  if (notificationHandler == null) return null;
+void _runGuarded(_NotificationHandler notificationHandler) {
+  if (notificationHandler == null) return;
   try {
-    var result = notificationHandler();
-    if (result is Future) return result;
-    return null;
+    notificationHandler();
   } catch (e, s) {
     Zone.current.handleUncaughtError(e, s);
   }
@@ -782,12 +813,9 @@ class _ControllerStream<T> extends _StreamImpl<T> {
 
   _ControllerStream(this._controller);
 
-  StreamSubscription<T> _createSubscription(
-      void onData(T data),
-      Function onError,
-      void onDone(),
-      bool cancelOnError) =>
-    _controller._subscribe(onData, onError, onDone, cancelOnError);
+  StreamSubscription<T> _createSubscription(void onData(T data),
+          Function onError, void onDone(), bool cancelOnError) =>
+      _controller._subscribe(onData, onError, onDone, cancelOnError);
 
   // Override == and hashCode so that new streams returned by the same
   // controller are considered equal. The controller returns a new stream
@@ -795,11 +823,10 @@ class _ControllerStream<T> extends _StreamImpl<T> {
 
   int get hashCode => _controller.hashCode ^ 0x35323532;
 
-  bool operator==(Object other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    if (other is! _ControllerStream) return false;
-    _ControllerStream otherStream = other;
-    return identical(otherStream._controller, this._controller);
+    return other is _ControllerStream &&
+        identical(other._controller, this._controller);
   }
 }
 
@@ -807,7 +834,7 @@ class _ControllerSubscription<T> extends _BufferingStreamSubscription<T> {
   final _StreamControllerLifecycle<T> _controller;
 
   _ControllerSubscription(this._controller, void onData(T data),
-                          Function onError, void onDone(), bool cancelOnError)
+      Function onError, void onDone(), bool cancelOnError)
       : super(onData, onError, onDone, cancelOnError);
 
   Future _onCancel() {
@@ -823,18 +850,22 @@ class _ControllerSubscription<T> extends _BufferingStreamSubscription<T> {
   }
 }
 
-
 /** A class that exposes only the [StreamSink] interface of an object. */
 class _StreamSinkWrapper<T> implements StreamSink<T> {
   final StreamController _target;
   _StreamSinkWrapper(this._target);
-  void add(T data) { _target.add(data); }
+  void add(T data) {
+    _target.add(data);
+  }
+
   void addError(Object error, [StackTrace stackTrace]) {
     _target.addError(error, stackTrace);
   }
+
   Future close() => _target.close();
-  Future addStream(Stream<T> source, {bool cancelOnError: true}) =>
-      _target.addStream(source, cancelOnError: cancelOnError);
+
+  Future addStream(Stream<T> source) => _target.addStream(source);
+
   Future get done => _target.done;
 }
 
@@ -848,17 +879,17 @@ class _AddStreamState<T> {
   // Subscription on stream argument to addStream.
   final StreamSubscription addSubscription;
 
-  _AddStreamState(_EventSink<T> controller, Stream source, bool cancelOnError)
+  _AddStreamState(
+      _EventSink<T> controller, Stream<T> source, bool cancelOnError)
       : addStreamFuture = new _Future(),
         addSubscription = source.listen(controller._add,
-                                        onError: cancelOnError
-                                             ? makeErrorHandler(controller)
-                                             : controller._addError,
-                                        onDone: controller._close,
-                                        cancelOnError: cancelOnError);
+            onError: cancelOnError
+                ? makeErrorHandler(controller)
+                : controller._addError,
+            onDone: controller._close,
+            cancelOnError: cancelOnError);
 
-  static makeErrorHandler(_EventSink controller) =>
-      (e, StackTrace s) {
+  static makeErrorHandler(_EventSink controller) => (e, StackTrace s) {
         controller._addError(e, s);
         controller._close();
       };
@@ -885,7 +916,9 @@ class _AddStreamState<T> {
       addStreamFuture._asyncComplete(null);
       return null;
     }
-    return cancel.whenComplete(() { addStreamFuture._asyncComplete(null); });
+    return cancel.whenComplete(() {
+      addStreamFuture._asyncComplete(null);
+    });
   }
 
   void complete() {
@@ -899,10 +932,8 @@ class _StreamControllerAddStreamState<T> extends _AddStreamState<T> {
   // to store this state object.
   var varData;
 
-  _StreamControllerAddStreamState(_StreamController controller,
-                                  this.varData,
-                                  Stream source,
-                                  bool cancelOnError)
+  _StreamControllerAddStreamState(_StreamController<T> controller, this.varData,
+      Stream<T> source, bool cancelOnError)
       : super(controller, source, cancelOnError) {
     if (controller.isPaused) {
       addSubscription.pause();

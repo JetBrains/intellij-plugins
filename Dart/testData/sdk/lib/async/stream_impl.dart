@@ -49,9 +49,8 @@ abstract class _EventDispatch<T> {
  * but if it happens anyway, the subscription will enqueue the events just as
  * when new events arrive while still firing an old event.
  */
-class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
-                                                 _EventSink<T>,
-                                                 _EventDispatch<T> {
+class _BufferingStreamSubscription<T>
+    implements StreamSubscription<T>, _EventSink<T>, _EventDispatch<T> {
   /** The `cancelOnError` flag from the `listen` call. */
   static const int _STATE_CANCEL_ON_ERROR = 1;
   /**
@@ -80,13 +79,12 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
    *   * a done event is sent.
    *
    * If the subscription is canceled while _STATE_WAIT_FOR_CANCEL is set, the
-   * state is unset, and no furher events must be delivered.
+   * state is unset, and no further events must be delivered.
    */
   static const int _STATE_WAIT_FOR_CANCEL = 16;
   static const int _STATE_IN_CALLBACK = 32;
   static const int _STATE_HAS_PENDING = 64;
   static const int _STATE_PAUSE_COUNT = 128;
-  static const int _STATE_PAUSE_COUNT_SHIFT = 7;
 
   /* Event handlers provided in constructor. */
   _DataHandler<T> _onData;
@@ -106,12 +104,10 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
    *
    * Is created when necessary, or set in constructor for preconfigured events.
    */
-  _PendingEvents _pending;
+  _PendingEvents<T> _pending;
 
-  _BufferingStreamSubscription(void onData(T data),
-                               Function onError,
-                               void onDone(),
-                               bool cancelOnError)
+  _BufferingStreamSubscription(
+      void onData(T data), Function onError, void onDone(), bool cancelOnError)
       : _state = (cancelOnError ? _STATE_CANCEL_ON_ERROR : 0) {
     this.onData(onData);
     this.onError(onError);
@@ -124,7 +120,7 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
    * This can only be done once. The pending events object is used for the
    * rest of the subscription's life cycle.
    */
-  void _setPendingEvents(_PendingEvents pendingEvents) {
+  void _setPendingEvents(_PendingEvents<T> pendingEvents) {
     assert(_pending == null);
     if (pendingEvents == null) return;
     _pending = pendingEvents;
@@ -134,33 +130,30 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
     }
   }
 
-  /**
-   * Extracts the pending events from a canceled stream.
-   *
-   * This can only be done during the [_onCancel] method call. After that,
-   * any remaining pending events will be cleared.
-   */
-  _PendingEvents _extractPending() {
-    assert(_isCanceled);
-    _PendingEvents events = _pending;
-    _pending = null;
-    return events;
-  }
-
   // StreamSubscription interface.
 
   void onData(void handleData(T event)) {
-    if (handleData == null) handleData = _nullDataHandler;
-    _onData = _zone.registerUnaryCallback(handleData);
+    handleData ??= _nullDataHandler;
+    // TODO(floitsch): the return type should be 'void', and the type
+    // should be inferred.
+    _onData = _zone.registerUnaryCallback<dynamic, T>(handleData);
   }
 
   void onError(Function handleError) {
-    if (handleError == null) handleError = _nullErrorHandler;
-    _onError = _registerErrorHandler(handleError, _zone);
+    handleError ??= _nullErrorHandler;
+    if (handleError is void Function(Object, StackTrace)) {
+      _onError = _zone
+          .registerBinaryCallback<dynamic, Object, StackTrace>(handleError);
+    } else if (handleError is void Function(Object)) {
+      _onError = _zone.registerUnaryCallback<dynamic, Object>(handleError);
+    } else {
+      throw new ArgumentError("handleError callback must take either an Object "
+          "(the error), or both an Object (the error) and a StackTrace.");
+    }
   }
 
   void onDone(void handleDone()) {
-    if (handleDone == null) handleDone = _nullDoneHandler;
+    handleDone ??= _nullDoneHandler;
     _onDone = _zone.registerCallback(handleDone);
   }
 
@@ -197,19 +190,28 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
     // error or done event pending (waiting for the cancel to be done) discard
     // that event.
     _state &= ~_STATE_WAIT_FOR_CANCEL;
-    if (_isCanceled) return _cancelFuture;
-    _cancel();
-    return _cancelFuture;
+    if (!_isCanceled) {
+      _cancel();
+    }
+    return _cancelFuture ?? Future._nullFuture;
   }
 
-  Future asFuture([var futureValue]) {
-    _Future<T> result = new _Future<T>();
+  Future<E> asFuture<E>([E futureValue]) {
+    _Future<E> result = new _Future<E>();
 
     // Overwrite the onDone and onError handlers.
-    _onDone = () { result._complete(futureValue); };
-    _onError = (error, stackTrace) {
-      cancel();
-      result._completeError(error, stackTrace);
+    _onDone = () {
+      result._complete(futureValue);
+    };
+    _onError = (error, StackTrace stackTrace) {
+      Future cancelFuture = cancel();
+      if (!identical(cancelFuture, Future._nullFuture)) {
+        cancelFuture.whenComplete(() {
+          result._completeError(error, stackTrace);
+        });
+      } else {
+        result._completeError(error, stackTrace);
+      }
     };
 
     return result;
@@ -241,15 +243,6 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
   }
 
   /**
-   * Increment the pause count.
-   *
-   * Also marks input as paused.
-   */
-  void _incrementPauseCount() {
-    _state = (_state + _STATE_PAUSE_COUNT) | _STATE_INPUT_PAUSED;
-  }
-
-  /**
    * Decrements the pause count.
    *
    * Does not automatically unpause the input (call [_onResume]) when
@@ -269,14 +262,14 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
     if (_canFire) {
       _sendData(data);
     } else {
-      _addPending(new _DelayedData(data));
+      _addPending(new _DelayedData<T>(data));
     }
   }
 
   void _addError(Object error, StackTrace stackTrace) {
     if (_isCanceled) return;
     if (_canFire) {
-      _sendError(error, stackTrace);  // Reports cancel after sending.
+      _sendError(error, stackTrace); // Reports cancel after sending.
     } else {
       _addPending(new _DelayedError(error, stackTrace));
     }
@@ -319,8 +312,10 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
    * of pending events later (if necessary).
    */
   void _addPending(_DelayedEvent event) {
-    _StreamImplEvents pending = _pending;
-    if (_pending == null) pending = _pending = new _StreamImplEvents();
+    _StreamImplEvents<T> pending = _pending;
+    if (_pending == null) {
+      pending = _pending = new _StreamImplEvents<T>();
+    }
     pending.add(event);
     if (!_hasPending) {
       _state |= _STATE_HAS_PENDING;
@@ -343,7 +338,7 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
     _checkState(wasInputPaused);
   }
 
-  void _sendError(var error, StackTrace stackTrace) {
+  void _sendError(Object error, StackTrace stackTrace) {
     assert(!_isCanceled);
     assert(!_isPaused);
     assert(!_inCallback);
@@ -354,10 +349,13 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
       // future to finish we must not report the error.
       if (_isCanceled && !_waitsForCancel) return;
       _state |= _STATE_IN_CALLBACK;
-      if (_onError is ZoneBinaryCallback) {
-        _zone.runBinaryGuarded(_onError, error, stackTrace);
+      // TODO(floitsch): this dynamic should be 'void'.
+      var onError = _onError;
+      if (onError is void Function(Object, StackTrace)) {
+        _zone.runBinaryGuarded<Object, StackTrace>(onError, error, stackTrace);
       } else {
-        _zone.runUnaryGuarded(_onError, error);
+        assert(_onError is void Function(Object));
+        _zone.runUnaryGuarded<Object>(_onError, error);
       }
       _state &= ~_STATE_IN_CALLBACK;
     }
@@ -365,7 +363,8 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
     if (_cancelOnError) {
       _state |= _STATE_WAIT_FOR_CANCEL;
       _cancel();
-      if (_cancelFuture is Future) {
+      if (_cancelFuture != null &&
+          !identical(_cancelFuture, Future._nullFuture)) {
         _cancelFuture.whenComplete(sendError);
       } else {
         sendError();
@@ -393,7 +392,8 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
 
     _cancel();
     _state |= _STATE_WAIT_FOR_CANCEL;
-    if (_cancelFuture is Future) {
+    if (_cancelFuture != null &&
+        !identical(_cancelFuture, Future._nullFuture)) {
       _cancelFuture.whenComplete(sendDone);
     } else {
       sendDone();
@@ -407,7 +407,7 @@ class _BufferingStreamSubscription<T> implements StreamSubscription<T>,
    * during the call, and it checks for state changes after the call
    * that should cause further callbacks.
    */
-  void _guardCallback(callback) {
+  void _guardCallback(void callback()) {
     assert(!_inCallback);
     bool wasInputPaused = _isInputPaused;
     _state |= _STATE_IN_CALLBACK;
@@ -466,11 +466,9 @@ abstract class _StreamImpl<T> extends Stream<T> {
   // Stream interface.
 
   StreamSubscription<T> listen(void onData(T data),
-                               { Function onError,
-                                 void onDone(),
-                                 bool cancelOnError }) {
+      {Function onError, void onDone(), bool cancelOnError}) {
     cancelOnError = identical(true, cancelOnError);
-    StreamSubscription subscription =
+    StreamSubscription<T> subscription =
         _createSubscription(onData, onError, onDone, cancelOnError);
     _onListen(subscription);
     return subscription;
@@ -478,24 +476,21 @@ abstract class _StreamImpl<T> extends Stream<T> {
 
   // -------------------------------------------------------------------
   /** Create a subscription object. Called by [subcribe]. */
-  _BufferingStreamSubscription<T> _createSubscription(
-      void onData(T data),
-      Function onError,
-      void onDone(),
-      bool cancelOnError) {
-    return new _BufferingStreamSubscription<T>(onData, onError, onDone,
-                                               cancelOnError);
+  StreamSubscription<T> _createSubscription(void onData(T data),
+      Function onError, void onDone(), bool cancelOnError) {
+    return new _BufferingStreamSubscription<T>(
+        onData, onError, onDone, cancelOnError);
   }
 
   /** Hook called when the subscription has been created. */
   void _onListen(StreamSubscription subscription) {}
 }
 
-typedef _PendingEvents _EventGenerator();
+typedef _PendingEvents<T> _EventGenerator<T>();
 
 /** Stream that generates its own events. */
 class _GeneratedStreamImpl<T> extends _StreamImpl<T> {
-  final _EventGenerator _pending;
+  final _EventGenerator<T> _pending;
   bool _isUsed = false;
   /**
    * Initializes the stream to have only the events provided by a
@@ -505,21 +500,18 @@ class _GeneratedStreamImpl<T> extends _StreamImpl<T> {
    */
   _GeneratedStreamImpl(this._pending);
 
-  StreamSubscription _createSubscription(
-      void onData(T data),
-      Function onError,
-      void onDone(),
-      bool cancelOnError) {
+  StreamSubscription<T> _createSubscription(void onData(T data),
+      Function onError, void onDone(), bool cancelOnError) {
     if (_isUsed) throw new StateError("Stream has already been listened to.");
     _isUsed = true;
-    return new _BufferingStreamSubscription(
-        onData, onError, onDone, cancelOnError).._setPendingEvents(_pending());
+    return new _BufferingStreamSubscription<T>(
+        onData, onError, onDone, cancelOnError)
+      .._setPendingEvents(_pending());
   }
 }
 
-
 /** Pending events object that gets its events from an [Iterable]. */
-class _IterablePendingEvents<T> extends _PendingEvents {
+class _IterablePendingEvents<T> extends _PendingEvents<T> {
   // The iterator providing data for data events.
   // Set to null when iteration has completed.
   Iterator<T> _iterator;
@@ -528,28 +520,35 @@ class _IterablePendingEvents<T> extends _PendingEvents {
 
   bool get isEmpty => _iterator == null;
 
-  void handleNext(_EventDispatch dispatch) {
+  void handleNext(_EventDispatch<T> dispatch) {
     if (_iterator == null) {
       throw new StateError("No events pending.");
     }
     // Send one event per call to moveNext.
     // If moveNext returns true, send the current element as data.
+    // If current throws, send that error, but keep iterating.
     // If moveNext returns false, send a done event and clear the _iterator.
-    // If moveNext throws an error, send an error and clear the _iterator.
-    // After an error, no further events will be sent.
-    bool isDone;
+    // If moveNext throws an error, send an error and prepare to send a done
+    // event afterwards.
+    bool hasMore;
     try {
-      isDone = !_iterator.moveNext();
+      hasMore = _iterator.moveNext();
+      if (hasMore) {
+        dispatch._sendData(_iterator.current);
+      } else {
+        _iterator = null;
+        dispatch._sendDone();
+      }
     } catch (e, s) {
-      _iterator = null;
-      dispatch._sendError(e, s);
-      return;
-    }
-    if (!isDone) {
-      dispatch._sendData(_iterator.current);
-    } else {
-      _iterator = null;
-      dispatch._sendDone();
+      if (hasMore == null) {
+        // Threw in .moveNext().
+        // Ensure that we send a done afterwards.
+        _iterator = const EmptyIterator<Null>();
+        dispatch._sendError(e, s);
+      } else {
+        // Threw in .current.
+        dispatch._sendError(e, s);
+      }
     }
   }
 
@@ -559,36 +558,33 @@ class _IterablePendingEvents<T> extends _PendingEvents {
   }
 }
 
-
 // Internal helpers.
 
 // Types of the different handlers on a stream. Types used to type fields.
 typedef void _DataHandler<T>(T value);
 typedef void _DoneHandler();
 
-
 /** Default data handler, does nothing. */
-void _nullDataHandler(var value) {}
+void _nullDataHandler(Object value) {}
 
 /** Default error handler, reports the error to the current zone's handler. */
-void _nullErrorHandler(error, [StackTrace stackTrace]) {
+void _nullErrorHandler(Object error, [StackTrace stackTrace]) {
   Zone.current.handleUncaughtError(error, stackTrace);
 }
 
 /** Default done handler, does nothing. */
 void _nullDoneHandler() {}
 
-
 /** A delayed event on a buffering stream subscription. */
-abstract class _DelayedEvent {
+abstract class _DelayedEvent<T> {
   /** Added as a linked list on the [StreamController]. */
   _DelayedEvent next;
   /** Execute the delayed event on the [StreamController]. */
-  void perform(_EventDispatch dispatch);
+  void perform(_EventDispatch<T> dispatch);
 }
 
 /** A delayed data event. */
-class _DelayedData<T> extends _DelayedEvent {
+class _DelayedData<T> extends _DelayedEvent<T> {
   final T value;
   _DelayedData(this.value);
   void perform(_EventDispatch<T> dispatch) {
@@ -622,7 +618,7 @@ class _DelayedDone implements _DelayedEvent {
 }
 
 /** Superclass for provider of pending events. */
-abstract class _PendingEvents {
+abstract class _PendingEvents<T> {
   // No async event has been scheduled.
   static const int _STATE_UNSCHEDULED = 0;
   // An async event has been scheduled to run a function.
@@ -656,7 +652,7 @@ abstract class _PendingEvents {
    * If called more than once, it should be called with the same dispatch as
    * argument each time. It may reuse an earlier argument in some cases.
    */
-  void schedule(_EventDispatch dispatch) {
+  void schedule(_EventDispatch<T> dispatch) {
     if (isScheduled) return;
     assert(!isEmpty);
     if (_eventScheduled) {
@@ -677,19 +673,19 @@ abstract class _PendingEvents {
     if (isScheduled) _state = _STATE_CANCELED;
   }
 
-  void handleNext(_EventDispatch dispatch);
+  void handleNext(_EventDispatch<T> dispatch);
 
   /** Throw away any pending events and cancel scheduled events. */
   void clear();
 }
 
-
 /** Class holding pending events for a [_StreamImpl]. */
-class _StreamImplEvents extends _PendingEvents {
+class _StreamImplEvents<T> extends _PendingEvents<T> {
   /// Single linked list of [_DelayedEvent] objects.
-  _DelayedEvent firstPendingEvent = null;
+  _DelayedEvent firstPendingEvent;
+
   /// Last element in the list of pending events. New events are added after it.
-  _DelayedEvent lastPendingEvent = null;
+  _DelayedEvent lastPendingEvent;
 
   bool get isEmpty => lastPendingEvent == null;
 
@@ -701,7 +697,7 @@ class _StreamImplEvents extends _PendingEvents {
     }
   }
 
-  void handleNext(_EventDispatch dispatch) {
+  void handleNext(_EventDispatch<T> dispatch) {
     assert(!isScheduled);
     _DelayedEvent event = firstPendingEvent;
     firstPendingEvent = event.next;
@@ -717,26 +713,7 @@ class _StreamImplEvents extends _PendingEvents {
   }
 }
 
-class _BroadcastLinkedList {
-  _BroadcastLinkedList _next;
-  _BroadcastLinkedList _previous;
-
-  void _unlink() {
-    _previous._next = _next;
-    _next._previous = _previous;
-    _next = _previous = this;
-  }
-
-  void _insertBefore(_BroadcastLinkedList newNext) {
-    _BroadcastLinkedList newPrevious = newNext._previous;
-    newPrevious._next = this;
-    newNext._previous = _previous;
-    _previous._next = newNext;
-    _previous = newPrevious;
-  }
-}
-
-typedef void _broadcastCallback(StreamSubscription subscription);
+typedef void _BroadcastCallback<T>(StreamSubscription<T> subscription);
 
 /**
  * Done subscription that will send one done event as soon as possible.
@@ -766,7 +743,9 @@ class _DoneStreamSubscription<T> implements StreamSubscription<T> {
 
   void onData(void handleData(T data)) {}
   void onError(Function handleError) {}
-  void onDone(void handleDone()) { _onDone = handleDone; }
+  void onDone(void handleDone()) {
+    _onDone = handleDone;
+  }
 
   void pause([Future resumeSignal]) {
     _state += _PAUSED;
@@ -782,11 +761,13 @@ class _DoneStreamSubscription<T> implements StreamSubscription<T> {
     }
   }
 
-  Future cancel() => null;
+  Future cancel() => Future._nullFuture;
 
-  Future asFuture([futureValue]) {
-    _Future result = new _Future();
-    _onDone = () { result._completeWithValue(null); };
+  Future<E> asFuture<E>([E futureValue]) {
+    _Future<E> result = new _Future<E>();
+    _onDone = () {
+      result._completeWithValue(futureValue);
+    };
     return result;
   }
 
@@ -800,18 +781,25 @@ class _DoneStreamSubscription<T> implements StreamSubscription<T> {
 
 class _AsBroadcastStream<T> extends Stream<T> {
   final Stream<T> _source;
-  final _broadcastCallback _onListenHandler;
-  final _broadcastCallback _onCancelHandler;
+  final _BroadcastCallback<T> _onListenHandler;
+  final _BroadcastCallback<T> _onCancelHandler;
   final Zone _zone;
 
   _AsBroadcastStreamController<T> _controller;
   StreamSubscription<T> _subscription;
 
-  _AsBroadcastStream(this._source,
-                     void onListenHandler(StreamSubscription subscription),
-                     void onCancelHandler(StreamSubscription subscription))
-      : _onListenHandler = Zone.current.registerUnaryCallback(onListenHandler),
-        _onCancelHandler = Zone.current.registerUnaryCallback(onCancelHandler),
+  _AsBroadcastStream(
+      this._source,
+      void onListenHandler(StreamSubscription<T> subscription),
+      void onCancelHandler(StreamSubscription<T> subscription))
+      // TODO(floitsch): the return type should be void and should be
+      // inferred.
+      : _onListenHandler = Zone.current
+            .registerUnaryCallback<dynamic, StreamSubscription<T>>(
+                onListenHandler),
+        _onCancelHandler = Zone.current
+            .registerUnaryCallback<dynamic, StreamSubscription<T>>(
+                onCancelHandler),
         _zone = Zone.current {
     _controller = new _AsBroadcastStreamController<T>(_onListen, _onCancel);
   }
@@ -819,19 +807,14 @@ class _AsBroadcastStream<T> extends Stream<T> {
   bool get isBroadcast => true;
 
   StreamSubscription<T> listen(void onData(T data),
-                               { Function onError,
-                                 void onDone(),
-                                 bool cancelOnError}) {
+      {Function onError, void onDone(), bool cancelOnError}) {
     if (_controller == null || _controller.isClosed) {
       // Return a dummy subscription backed by nothing, since
       // it will only ever send one done event.
       return new _DoneStreamSubscription<T>(onDone);
     }
-    if (_subscription == null) {
-      _subscription = _source.listen(_controller.add,
-                                     onError: _controller.addError,
-                                     onDone: _controller.close);
-    }
+    _subscription ??= _source.listen(_controller.add,
+        onError: _controller.addError, onDone: _controller.close);
     cancelOnError = identical(true, cancelOnError);
     return _controller._subscribe(onData, onError, onDone, cancelOnError);
   }
@@ -839,7 +822,8 @@ class _AsBroadcastStream<T> extends Stream<T> {
   void _onCancel() {
     bool shutdown = (_controller == null) || _controller.isClosed;
     if (_onCancelHandler != null) {
-      _zone.runUnary(_onCancelHandler, new _BroadcastSubscriptionWrapper(this));
+      _zone.runUnary(
+          _onCancelHandler, new _BroadcastSubscriptionWrapper<T>(this));
     }
     if (shutdown) {
       if (_subscription != null) {
@@ -851,7 +835,8 @@ class _AsBroadcastStream<T> extends Stream<T> {
 
   void _onListen() {
     if (_onListenHandler != null) {
-      _zone.runUnary(_onListenHandler, new _BroadcastSubscriptionWrapper(this));
+      _zone.runUnary(
+          _onListenHandler, new _BroadcastSubscriptionWrapper<T>(this));
     }
   }
 
@@ -861,7 +846,7 @@ class _AsBroadcastStream<T> extends Stream<T> {
     // Called by [_controller] when it has no subscribers left.
     StreamSubscription subscription = _subscription;
     _subscription = null;
-    _controller = null;  // Marks the stream as no longer listenable.
+    _controller = null; // Marks the stream as no longer listenable.
     subscription.cancel();
   }
 
@@ -894,7 +879,7 @@ class _BroadcastSubscriptionWrapper<T> implements StreamSubscription<T> {
         "Cannot change handlers of asBroadcastStream source subscription.");
   }
 
-  void onError(void handleError(Object data)) {
+  void onError(Function handleError) {
     throw new UnsupportedError(
         "Cannot change handlers of asBroadcastStream source subscription.");
   }
@@ -914,170 +899,164 @@ class _BroadcastSubscriptionWrapper<T> implements StreamSubscription<T> {
 
   Future cancel() {
     _stream._cancelSubscription();
-    return null;
+    return Future._nullFuture;
   }
 
   bool get isPaused {
     return _stream._isSubscriptionPaused;
   }
 
-  Future asFuture([var futureValue]) {
+  Future<E> asFuture<E>([E futureValue]) {
     throw new UnsupportedError(
         "Cannot change handlers of asBroadcastStream source subscription.");
   }
 }
 
-
 /**
  * Simple implementation of [StreamIterator].
+ *
+ * Pauses the stream between calls to [moveNext].
  */
-class _StreamIteratorImpl<T> implements StreamIterator<T> {
-  // Internal state of the stream iterator.
-  // At any time, it is in one of these states.
-  // The interpretation of the [_futureOrPrefecth] field depends on the state.
-  // In _STATE_MOVING, the _data field holds the most recently returned
-  // future.
-  // When in one of the _STATE_EXTRA_* states, the it may hold the
-  // next data/error object, and the subscription is paused.
-
-  /// The simple state where [_data] holds the data to return, and [moveNext]
-  /// is allowed. The subscription is actively listening.
-  static const int _STATE_FOUND = 0;
-  /// State set after [moveNext] has returned false or an error,
-  /// or after calling [cancel]. The subscription is always canceled.
-  static const int _STATE_DONE = 1;
-  /// State set after calling [moveNext], but before its returned future has
-  /// completed. Calling [moveNext] again is not allowed in this state.
-  /// The subscription is actively listening.
-  static const int _STATE_MOVING = 2;
-  /// States set when another event occurs while in _STATE_FOUND.
-  /// This extra overflow event is cached until the next call to [moveNext],
-  /// which will complete as if it received the event normally.
-  /// The subscription is paused in these states, so we only ever get one
-  /// event too many.
-  static const int _STATE_EXTRA_DATA = 3;
-  static const int _STATE_EXTRA_ERROR = 4;
-  static const int _STATE_EXTRA_DONE = 5;
+class _StreamIterator<T> implements StreamIterator<T> {
+  // The stream iterator is always in one of four states.
+  // The value of the [_stateData] field depends on the state.
+  //
+  // When `_subscription == null` and `_stateData != null`:
+  // The stream iterator has been created, but [moveNext] has not been called
+  // yet. The [_stateData] field contains the stream to listen to on the first
+  // call to [moveNext] and [current] returns `null`.
+  //
+  // When `_subscription != null` and `!_isPaused`:
+  // The user has called [moveNext] and the iterator is waiting for the next
+  // event. The [_stateData] field contains the [_Future] returned by the
+  // [_moveNext] call and [current] returns `null.`
+  //
+  // When `_subscription != null` and `_isPaused`:
+  // The most recent call to [moveNext] has completed with a `true` value
+  // and [current] provides the value of the data event.
+  // The [_stateData] field contains the [current] value.
+  //
+  // When `_subscription == null` and `_stateData == null`:
+  // The stream has completed or been canceled using [cancel].
+  // The stream completes on either a done event or an error event.
+  // The last call to [moveNext] has completed with `false` and [current]
+  // returns `null`.
 
   /// Subscription being listened to.
+  ///
+  /// Set to `null` when the stream subscription is done or canceled.
   StreamSubscription _subscription;
 
-  /// The current element represented by the most recent call to moveNext.
+  /// Data value depending on the current state.
   ///
-  /// Is null between the time moveNext is called and its future completes.
-  T _current = null;
-
-  /// The future returned by the most recent call to [moveNext].
+  /// Before first call to [moveNext]: The stream to listen to.
   ///
-  /// Also used to store the next value/error in case the stream provides an
-  /// event before [moveNext] is called again. In that case, the stream will
-  /// be paused to prevent further events.
-  var _futureOrPrefetch = null;
+  /// After calling [moveNext] but before the returned future completes:
+  /// The returned future.
+  ///
+  /// After calling [moveNext] and the returned future has completed
+  /// with `true`: The value of [current].
+  ///
+  /// After calling [moveNext] and the returned future has completed
+  /// with `false`, or after calling [cancel]: `null`.
+  Object _stateData;
 
-  /// The current state.
-  int _state = _STATE_FOUND;
+  /// Whether the iterator is between calls to `moveNext`.
+  /// This will usually cause the [_subscription] to be paused, but as an
+  /// optimization, we only pause after the [moveNext] future has been
+  /// completed.
+  bool _isPaused = false;
 
-  _StreamIteratorImpl(final Stream<T> stream) {
-    _subscription = stream.listen(_onData,
-                                  onError: _onError,
-                                  onDone: _onDone,
-                                  cancelOnError: true);
+  _StreamIterator(final Stream<T> stream)
+      : _stateData = stream ?? (throw ArgumentError.notNull("stream"));
+
+  T get current {
+    if (_subscription != null && _isPaused) {
+      return _stateData;
+    }
+    return null;
   }
-
-  T get current => _current;
 
   Future<bool> moveNext() {
-    if (_state == _STATE_DONE) {
-      return new _Future<bool>.immediate(false);
-    }
-    if (_state == _STATE_MOVING) {
+    if (_subscription != null) {
+      if (_isPaused) {
+        var future = new _Future<bool>();
+        _stateData = future;
+        _isPaused = false;
+        _subscription.resume();
+        return future;
+      }
       throw new StateError("Already waiting for next.");
     }
-    if (_state == _STATE_FOUND) {
-      _state = _STATE_MOVING;
-      _current = null;
-      _futureOrPrefetch = new _Future<bool>();
-      return _futureOrPrefetch;
-    } else {
-      assert(_state >= _STATE_EXTRA_DATA);
-      switch (_state) {
-        case _STATE_EXTRA_DATA:
-          _state = _STATE_FOUND;
-          _current = _futureOrPrefetch;
-          _futureOrPrefetch = null;
-          _subscription.resume();
-          return new _Future<bool>.immediate(true);
-        case _STATE_EXTRA_ERROR:
-          AsyncError prefetch = _futureOrPrefetch;
-          _clear();
-          return new _Future<bool>.immediateError(prefetch.error,
-                                                  prefetch.stackTrace);
-        case _STATE_EXTRA_DONE:
-          _clear();
-          return new _Future<bool>.immediate(false);
-      }
-    }
+    return _initializeOrDone();
   }
 
-  /** Clears up the internal state when the iterator ends. */
-  void _clear() {
-    _subscription = null;
-    _futureOrPrefetch = null;
-    _current = null;
-    _state = _STATE_DONE;
+  /// Called if there is no active subscription when [moveNext] is called.
+  ///
+  /// Either starts listening on the stream if this is the first call to
+  /// [moveNext], or returns a `false` future because the stream has already
+  /// ended.
+  Future<bool> _initializeOrDone() {
+    assert(_subscription == null);
+    var stateData = _stateData;
+    if (stateData != null) {
+      Stream<T> stream = stateData;
+      _subscription = stream.listen(_onData,
+          onError: _onError, onDone: _onDone, cancelOnError: true);
+      var future = new _Future<bool>();
+      _stateData = future;
+      return future;
+    }
+    return Future._falseFuture;
   }
 
   Future cancel() {
-    StreamSubscription subscription = _subscription;
-    if (subscription == null) return null;
-    if (_state == _STATE_MOVING) {
-      _Future<bool> hasNext = _futureOrPrefetch;
-      _clear();
-      hasNext._complete(false);
-    } else {
-      _clear();
+    StreamSubscription<T> subscription = _subscription;
+    Object stateData = _stateData;
+    _stateData = null;
+    if (subscription != null) {
+      _subscription = null;
+      if (!_isPaused) {
+        _Future<bool> future = stateData;
+        future._asyncComplete(false);
+      }
+      return subscription.cancel();
     }
-    return subscription.cancel();
+    return Future._nullFuture;
   }
 
   void _onData(T data) {
-    if (_state == _STATE_MOVING) {
-      _current = data;
-      _Future<bool> hasNext = _futureOrPrefetch;
-      _futureOrPrefetch = null;
-      _state = _STATE_FOUND;
-      hasNext._complete(true);
-      return;
-    }
-    _subscription.pause();
-    assert(_futureOrPrefetch == null);
-    _futureOrPrefetch = data;
-    _state = _STATE_EXTRA_DATA;
+    assert(_subscription != null && !_isPaused);
+    _Future<bool> moveNextFuture = _stateData;
+    _stateData = data;
+    _isPaused = true;
+    moveNextFuture._complete(true);
+    if (_subscription != null && _isPaused) _subscription.pause();
   }
 
   void _onError(Object error, [StackTrace stackTrace]) {
-    if (_state == _STATE_MOVING) {
-      _Future<bool> hasNext = _futureOrPrefetch;
-      // We have cancelOnError: true, so the subscription is canceled.
-      _clear();
-      hasNext._completeError(error, stackTrace);
-      return;
-    }
-    _subscription.pause();
-    assert(_futureOrPrefetch == null);
-    _futureOrPrefetch = new AsyncError(error, stackTrace);
-    _state = _STATE_EXTRA_ERROR;
+    assert(_subscription != null && !_isPaused);
+    _Future<bool> moveNextFuture = _stateData;
+    _subscription = null;
+    _stateData = null;
+    moveNextFuture._completeError(error, stackTrace);
   }
 
   void _onDone() {
-     if (_state == _STATE_MOVING) {
-      _Future<bool> hasNext = _futureOrPrefetch;
-      _clear();
-      hasNext._complete(false);
-      return;
-    }
-    _subscription.pause();
-    _futureOrPrefetch = null;
-    _state = _STATE_EXTRA_DONE;
+    assert(_subscription != null && !_isPaused);
+    _Future<bool> moveNextFuture = _stateData;
+    _subscription = null;
+    _stateData = null;
+    moveNextFuture._complete(false);
+  }
+}
+
+/** An empty broadcast stream, sending a done event as soon as possible. */
+class _EmptyStream<T> extends Stream<T> {
+  const _EmptyStream() : super._internal();
+  bool get isBroadcast => true;
+  StreamSubscription<T> listen(void onData(T data),
+      {Function onError, void onDone(), bool cancelOnError}) {
+    return new _DoneStreamSubscription<T>(onDone);
   }
 }

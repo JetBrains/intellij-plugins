@@ -5,7 +5,15 @@
 part of dart.core;
 
 /**
- * A sequence of characters.
+ * A sequence of UTF-16 code units.
+ *
+ * Strings are mainly used to represent text. A character may be represented by
+ * multiple code points, each code point consisting of one or two code
+ * units. For example the Papua New Guinea flag character requires four code
+ * units to represent two code points, but should be treated like a single
+ * character: "🇵🇬". Platforms that do not support the flag character may show
+ * the letters "PG" instead. If the code points are swapped, it instead becomes
+ * the Guadeloupe flag "🇬🇵" ("GP").
  *
  * A string can be either single or multiline. Single line strings are
  * written using matching single or double quotes, and multiline strings are
@@ -84,11 +92,10 @@ part of dart.core;
  * [RegExp] to work with regular expressions.
  *
  * Also see:
-
+ *
  * * [Dart Cookbook](https://www.dartlang.org/docs/cookbook/#strings)
- * for String examples and recipes.
- * * [Dart Up and Running]
- * (https://www.dartlang.org/docs/dart-up-and-running/contents/ch03.html#ch03-strings-and-regular-expressions)
+ *   for String examples and recipes.
+ * * [Dart Up and Running](https://www.dartlang.org/docs/dart-up-and-running/ch03.html#strings-and-regular-expressions)
  */
 abstract class String implements Comparable<String>, Pattern {
   /**
@@ -112,7 +119,7 @@ abstract class String implements Comparable<String>, Pattern {
    * `0 <= start <= end <= charCodes.length`.
    */
   external factory String.fromCharCodes(Iterable<int> charCodes,
-                                        [int start = 0, int end]);
+      [int start = 0, int end]);
 
   /**
    * Allocates a new String for the specified [charCode].
@@ -144,8 +151,14 @@ abstract class String implements Comparable<String>, Pattern {
    *
    *     var isDeclared = const String.fromEnvironment("maybeDeclared") != null;
    */
+  // The .fromEnvironment() constructors are special in that we do not want
+  // users to call them using "new". We prohibit that by giving them bodies
+  // that throw, even though const constructors are not allowed to have bodies.
+  // Disable those static errors.
+  //ignore: const_constructor_with_body
+  //ignore: const_factory
   external const factory String.fromEnvironment(String name,
-                                                {String defaultValue});
+      {String defaultValue});
 
   /**
    * Gets the character (as a single-code-unit [String]) at the given [index].
@@ -188,7 +201,7 @@ abstract class String implements Comparable<String>, Pattern {
   /**
    * Returns a hash code derived from the code units of the string.
    *
-   * This is compatible with [operator==]. Strings with the same sequence
+   * This is compatible with [operator ==]. Strings with the same sequence
    * of code units have the same hash code.
    */
   int get hashCode;
@@ -208,6 +221,24 @@ abstract class String implements Comparable<String>, Pattern {
    * combining accent character '◌́'.
    */
   bool operator ==(Object other);
+
+  /**
+   * Compares this string to [other].
+   *
+   * Returns a negative value if `this` is ordered before `other`,
+   * a positive value if `this` is ordered after `other`,
+   * or zero if `this` and `other` are equivalent.
+   *
+   * The ordering is the same as the ordering of the code points at the first
+   * position where the two strings differ.
+   * If one string is a prefix of the other,
+   * then the shorter string is ordered before the longer string.
+   * If the strings have exactly the same content, they are equivalent with
+   * regard to the ordering.
+   * Ordering does not check for Unicode equivalence.
+   * The comparison is case sensitive.
+   */
+  int compareTo(String other);
 
   /**
    * Returns true if this string ends with [other]. For example:
@@ -252,7 +283,7 @@ abstract class String implements Comparable<String>, Pattern {
    *
    *     string.indexOf(new RegExp(r'dart'));       // -1
    *
-   * [start] must not be negative or greater than [length].
+   * [start] must be non-negative and not greater than [length].
    */
   int indexOf(Pattern pattern, [int start]);
 
@@ -264,11 +295,11 @@ abstract class String implements Comparable<String>, Pattern {
    *     string.lastIndexOf('a');                    // 6
    *     string.lastIndexOf(new RegExp(r'a(r|n)'));  // 6
    *
-   * Returns -1 if [other] could not be found.
+   * Returns -1 if [pattern] could not be found in this string.
    *
    *     string.lastIndexOf(new RegExp(r'DART'));    // -1
    *
-   * [start] must not be negative or greater than [length].
+   * The [start] must be non-negative and not greater than [length].
    */
   int lastIndexOf(Pattern pattern, [int start]);
 
@@ -304,26 +335,25 @@ abstract class String implements Comparable<String>, Pattern {
    *
    * If the string contains leading or trailing whitespace, a new string with no
    * leading and no trailing whitespace is returned:
-   *
-   *     '\tDart is fun\n'.trim(); // 'Dart is fun'
-   *
+   * ```dart
+   * '\tDart is fun\n'.trim(); // 'Dart is fun'
+   * ```
    * Otherwise, the original string itself is returned:
-   *
-   *     var str1 = 'Dart';
-   *     var str2 = str1.trim();
-   *     identical(str1, str2);    // true
-   *
+   * ```dart
+   * var str1 = 'Dart';
+   * var str2 = str1.trim();
+   * identical(str1, str2);    // true
+   * ```
    * Whitespace is defined by the Unicode White_Space property (as defined in
    * version 6.2 or later) and the BOM character, 0xFEFF.
    *
-   * Here is the list of trimmed characters (following version 6.2):
-   *
+   * Here is the list of trimmed characters according to Unicode version 6.3:
+   * ```
    *     0009..000D    ; White_Space # Cc   <control-0009>..<control-000D>
    *     0020          ; White_Space # Zs   SPACE
    *     0085          ; White_Space # Cc   <control-0085>
    *     00A0          ; White_Space # Zs   NO-BREAK SPACE
    *     1680          ; White_Space # Zs   OGHAM SPACE MARK
-   *     180E          ; White_Space # Zs   MONGOLIAN VOWEL SEPARATOR
    *     2000..200A    ; White_Space # Zs   EN QUAD..HAIR SPACE
    *     2028          ; White_Space # Zl   LINE SEPARATOR
    *     2029          ; White_Space # Zp   PARAGRAPH SEPARATOR
@@ -332,6 +362,10 @@ abstract class String implements Comparable<String>, Pattern {
    *     3000          ; White_Space # Zs   IDEOGRAPHIC SPACE
    *
    *     FEFF          ; BOM                ZERO WIDTH NO_BREAK SPACE
+   * ```
+   * Some later versions of Unicode do not include U+0085 as a whitespace
+   * character. Whether it is trimmed depends on the Unicode version
+   * used by the system.
    */
   String trim();
 
@@ -361,7 +395,7 @@ abstract class String implements Comparable<String>, Pattern {
   String operator *(int times);
 
   /**
-   * Pads this string on the left if it is shorther than [width].
+   * Pads this string on the left if it is shorter than [width].
    *
    * Return a new string that prepends [padding] onto this string
    * one time for each position the length is less than [width].
@@ -379,7 +413,7 @@ abstract class String implements Comparable<String>, Pattern {
   String padLeft(int width, [String padding = ' ']);
 
   /**
-   * Pads this string on the right if it is shorther than [width].
+   * Pads this string on the right if it is shorter than [width].
    *
    * Return a new string that appends [padding] after this string
    * one time for each position the length is less than [width].
@@ -414,13 +448,26 @@ abstract class String implements Comparable<String>, Pattern {
   bool contains(Pattern other, [int startIndex = 0]);
 
   /**
-   * Returns a new string in which  the first occurence of [from] in this string
+   * Returns a new string in which the first occurrence of [from] in this string
    * is replaced with [to], starting from [startIndex]:
    *
    *     '0.0001'.replaceFirst(new RegExp(r'0'), ''); // '.0001'
    *     '0.0001'.replaceFirst(new RegExp(r'0'), '7', 1); // '0.7001'
    */
   String replaceFirst(Pattern from, String to, [int startIndex = 0]);
+
+  /**
+   * Replace the first occurrence of [from] in this string.
+   *
+   * Returns a new string, which is this string
+   * except that the first match of [from], starting from [startIndex],
+   * is replaced by the result of calling [replace] with the match object.
+   *
+   * The optional [startIndex] is by default set to 0. If provided, it must be
+   * an integer in the range `[0 .. len]`, where `len` is this string's length.
+   */
+  String replaceFirstMapped(Pattern from, String replace(Match match),
+      [int startIndex = 0]);
 
   /**
    * Replaces all substrings that match [from] with [replace].
@@ -461,6 +508,19 @@ abstract class String implements Comparable<String>, Pattern {
    *     pigLatin('I have a secret now!'); // 'Iway avehay away ecretsay ownay!'
    */
   String replaceAllMapped(Pattern from, String replace(Match match));
+
+  /**
+   * Replaces the substring from [start] to [end] with [replacement].
+   *
+   * Returns a new string equivalent to:
+   *
+   *     this.substring(0, start) + replacement + this.substring(end)
+   *
+   * The [start] and [end] indices must specify a valid range of this string.
+   * That is `0 <= start <= end <= this.length`.
+   * If [end] is `null`, it defaults to [length].
+   */
+  String replaceRange(int start, int end, String replacement);
 
   /**
    * Splits the string at matches of [pattern] and returns a list of substrings.
@@ -529,8 +589,7 @@ abstract class String implements Comparable<String>, Pattern {
    *         onNonMatch: (n) => '*'); // *shoots*
    */
   String splitMapJoin(Pattern pattern,
-                      {String onMatch(Match match),
-                       String onNonMatch(String nonMatch)});
+      {String onMatch(Match match), String onNonMatch(String nonMatch)});
 
   /**
    * Returns an unmodifiable list of the UTF-16 code units of this string.
@@ -576,15 +635,15 @@ abstract class String implements Comparable<String>, Pattern {
 /**
  * The runes (integer Unicode code points) of a [String].
  */
-class Runes extends IterableBase<int> {
+class Runes extends Iterable<int> {
   final String string;
   Runes(this.string);
 
-  RuneIterator get iterator => new RuneIterator(string);
+  RuneIterator get iterator => RuneIterator(string);
 
   int get last {
     if (string.length == 0) {
-      throw new StateError('No elements.');
+      throw StateError('No elements.');
     }
     int length = string.length;
     int code = string.codeUnitAt(length - 1);
@@ -596,7 +655,6 @@ class Runes extends IterableBase<int> {
     }
     return code;
   }
-
 }
 
 // Is then code (a 16-bit unsigned integer) a UTF-16 lead surrogate.
@@ -630,7 +688,9 @@ class RuneIterator implements BidirectionalIterator<int> {
 
   /** Create an iterator positioned at the beginning of the string. */
   RuneIterator(String string)
-      : this.string = string, _position = 0, _nextPosition = 0;
+      : this.string = string,
+        _position = 0,
+        _nextPosition = 0;
 
   /**
    * Create an iterator positioned before the [index]th code unit of the string.
@@ -643,17 +703,20 @@ class RuneIterator implements BidirectionalIterator<int> {
    * The [index] position must not be in the middle of a surrogate pair.
    */
   RuneIterator.at(String string, int index)
-      : string = string, _position = index, _nextPosition = index {
+      : string = string,
+        _position = index,
+        _nextPosition = index {
     RangeError.checkValueInInterval(index, 0, string.length);
     _checkSplitSurrogate(index);
   }
 
   /** Throw an error if the index is in the middle of a surrogate pair. */
   void _checkSplitSurrogate(int index) {
-    if (index > 0 && index < string.length &&
+    if (index > 0 &&
+        index < string.length &&
         _isLeadSurrogate(string.codeUnitAt(index - 1)) &&
         _isTrailSurrogate(string.codeUnitAt(index))) {
-      throw new ArgumentError('Index inside surrogate pair: $index');
+      throw ArgumentError('Index inside surrogate pair: $index');
     }
   }
 

@@ -45,7 +45,7 @@ class Symbol implements core.Symbol {
    * Source of RegExp matching a declarable operator names.
    *
    * The operators that can be declared using `operator` declarations are
-   * also the only ones allowed as symbols. The name of the oeprators is
+   * also the only ones allowed as symbols. The name of the operators is
    * the same as the operator itself except for unary minus, where the name
    * is "unary-".
    */
@@ -95,8 +95,8 @@ class Symbol implements core.Symbol {
    * The empty symbol is handled before this regexp is used, and is not
    * accepted.
    */
-  static final RegExp symbolPattern = new RegExp(
-      '^(?:$operatorRE\$|$identifierRE(?:=?\$|[.](?!\$)))+?\$');
+  static final RegExp symbolPattern =
+      new RegExp('^(?:$operatorRE\$|$identifierRE(?:=?\$|[.](?!\$)))+?\$');
 
   external const Symbol(String name);
 
@@ -107,17 +107,13 @@ class Symbol implements core.Symbol {
   const Symbol.unvalidated(this._name);
 
   // This is called by dart2js.
-  Symbol.validated(String name)
-      : this._name = validatePublicSymbol(name);
+  Symbol.validated(String name) : this._name = validatePublicSymbol(name);
 
   bool operator ==(other) => other is Symbol && _name == other._name;
 
-  int get hashCode {
-    const arbitraryPrime = 664597;
-    return 0x1fffffff & (arbitraryPrime * _name.hashCode);
-  }
+  external int get hashCode;
 
-  toString() => 'Symbol("$_name")';
+  external toString();
 
   /// Platform-private accessor which cannot be called from user libraries.
   static String getName(Symbol symbol) => symbol._name;
@@ -130,8 +126,7 @@ class Symbol implements core.Symbol {
       // message.
       throw new ArgumentError('"$name" is a private identifier');
     }
-    throw new ArgumentError(
-        '"$name" is not a valid (qualified) symbol name');
+    throw new ArgumentError('"$name" is not a valid (qualified) symbol name');
   }
 
   /**
@@ -142,4 +137,6 @@ class Symbol implements core.Symbol {
   static bool isValidSymbol(String name) {
     return (name.isEmpty || symbolPattern.hasMatch(name));
   }
+
+  external static String computeUnmangledName(Symbol symbol);
 }

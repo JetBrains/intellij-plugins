@@ -10,7 +10,7 @@ part of dart.core;
  * Does not work on numbers, strings, booleans or null.
  *
  * An `Expando` does not hold on to the added property value after an object
- * becomes inacessible.
+ * becomes inaccessible.
  *
  * Since you can always create a new number that is identical to an existing
  * number, it means that an expando property on a number could never be
@@ -23,7 +23,6 @@ part of dart.core;
  * since they will stay alive forever.
  */
 class Expando<T> {
-
   /**
    * The name of the this [Expando] as passed to the constructor. If
    * no name was passed to the constructor, the name is [:null:].
@@ -60,5 +59,4 @@ class Expando<T> {
    * The object must not be a number, a string, a boolean or null.
    */
   external void operator []=(Object object, T value);
-
 }

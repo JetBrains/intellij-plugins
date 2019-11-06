@@ -4,16 +4,21 @@
 
 part of dart.collection;
 
-/**
- * An unmodifiable [List] view of another List.
- *
- * The source of the elements may be a [List] or any [Iterable] with
- * efficient [Iterable.length] and [Iterable.elementAt].
- */
+/// An unmodifiable [List] view of another List.
+///
+/// The source of the elements may be a [List] or any [Iterable] with
+/// efficient [Iterable.length] and [Iterable.elementAt].
 class UnmodifiableListView<E> extends UnmodifiableListBase<E> {
   final Iterable<E> _source;
-  /** Create an unmodifiable list backed by [source]. */
+
+  /// Creates an unmodifiable list backed by [source].
+  ///
+  /// The [source] of the elements may be a [List] or any [Iterable] with
+  /// efficient [Iterable.length] and [Iterable.elementAt].
   UnmodifiableListView(Iterable<E> source) : _source = source;
+
+  List<R> cast<R>() => UnmodifiableListView(_source.cast<R>());
   int get length => _source.length;
-  E operator[](int index) => _source.elementAt(index);
+
+  E operator [](int index) => _source.elementAt(index);
 }

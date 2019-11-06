@@ -6,8 +6,19 @@ part of dart.core;
 
 /// Opaque name used by mirrors, invocations and [Function.apply].
 abstract class Symbol {
+  /** The symbol corresponding to the name of the unary minus operator. */
+  static const Symbol unaryMinus = Symbol("unary-");
+
   /**
-   * Constructs a new Symbol.
+   * The empty symbol.
+   *
+   * The empty symbol is the name of libraries with no library declaration,
+   * and the base-name of the unnamed constructor.
+   */
+  static const Symbol empty = Symbol("");
+
+  /**
+   * Constructs a new [Symbol] representing the provided name.
    *
    * The name must be a valid public Dart member name,
    * public constructor name, or library name, optionally qualified.
@@ -23,16 +34,49 @@ abstract class Symbol {
    *   (one of "`+`", "`-`", "`*`", "`/`", "`%`", "`~/`", "`&`", "`|`",
    *   "`^`", "`~`", "`<<`", "`>>`", "`<`", "`<=`", "`>`", "`>=`", "`==`",
    *   "`[]`", "`[]=`", or "`unary-`"),
-   * * any of the above preceeded by any number of qualifiers,
+   * * any of the above preceded by any number of qualifiers,
    *   where a qualifier is a non-private identifier followed by '`.`',
    * * or the empty string (the default name of a library with no library
    *   name declaration).
    *
+   * Symbol instances created from the same [name] are equal,
+   * but not necessarily identical, but symbols created as compile-time
+   * constants are canonicalized, as all other constant object creations.
+   *
+   * ```dart
+   * assert(new Symbol("foo") == new Symbol("foo"));
+   * assert(identical(const Symbol("foo"), const Symbol("foo")));
+   * ```
+   *
+   * If [name] is a single identifier that does not start with an underscore,
+   * or it is a qualified identifier,
+   * or it is an operator name different from `unary-`,
+   * then the result of `const Symbol(name)` is the same instance that
+   * the symbol literal created by prefixing `#` to the content of [name]
+   * would evaluate to.
+   *
+   * ```dart
+   * assert(new Symbol("foo") == #foo);
+   * assert(new Symbol("[]=") == #[]=]);
+   * assert(new Symbol("foo.bar") == #foo.bar);
+   * assert(identical(const Symbol("foo"), #foo));
+   * assert(identical(const Symbol("[]="), #[]=]));
+   * assert(identical(const Symbol("foo.bar"), #foo.bar));
+   * ```
+   *
+   * This constructor cannot create a [Symbol] instance that is equal to
+   * a private symbol literal like `#_foo`.
+   * ```dart
+   * const Symbol("_foo") // Invalid
+   * ```
+   *
+   * The created instance overrides [Object.==].
+   *
    * The following text is non-normative:
    *
    * Creating non-const Symbol instances may result in larger output.  If
-   * possible, use [MirrorsUsed] in "dart:mirrors" to specify which names might
-   * be passed to this constructor.
+   * possible, use `MirrorsUsed` from "dart:mirrors" to specify which names
+   * might be passed to this constructor.
    */
   const factory Symbol(String name) = internal.Symbol;
 
@@ -49,5 +93,5 @@ abstract class Symbol {
    * Qualified member names, like `#foo.bar` are equal only if they have the
    * same identifiers before the same final member name.
    */
-  bool operator ==(Object other);
+  bool operator ==(other);
 }

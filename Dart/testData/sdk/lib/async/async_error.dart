@@ -4,41 +4,16 @@
 
 part of dart.async;
 
-_invokeErrorHandler(Function errorHandler,
-                    Object error, StackTrace stackTrace) {
-  if (errorHandler is ZoneBinaryCallback) {
-    return errorHandler(error, stackTrace);
+_invokeErrorHandler(
+    Function errorHandler, Object error, StackTrace stackTrace) {
+  if (errorHandler is ZoneBinaryCallback<dynamic, Null, Null>) {
+    // Dynamic invocation because we don't know the actual type of the
+    // first argument or the error object, but we should successfully call
+    // the handler if they match up.
+    // TODO(lrn): Should we? Why not the same below for the unary case?
+    return (errorHandler as dynamic)(error, stackTrace);
   } else {
-    return errorHandler(error);
-  }
-}
-
-Function _registerErrorHandler(Function errorHandler, Zone zone) {
-  if (errorHandler is ZoneBinaryCallback) {
-    return zone.registerBinaryCallback(errorHandler);
-  } else {
-    return zone.registerUnaryCallback(errorHandler);
-  }
-}
-
-class _UncaughtAsyncError extends AsyncError {
-  _UncaughtAsyncError(error, StackTrace stackTrace)
-      : super(error, _getBestStackTrace(error, stackTrace));
-
-  static StackTrace _getBestStackTrace(error, StackTrace stackTrace) {
-    if (stackTrace != null) return stackTrace;
-    if (error is Error) {
-      return error.stackTrace;
-    }
-    return null;
-  }
-
-  String toString() {
-    String result = "Uncaught Error: ${error}";
-
-    if (stackTrace != null) {
-      result += "\nStack Trace:\n$stackTrace";
-    }
-    return result;
+    ZoneUnaryCallback unaryErrorHandler = errorHandler;
+    return unaryErrorHandler(error);
   }
 }

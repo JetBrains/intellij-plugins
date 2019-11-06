@@ -11,65 +11,69 @@ part of dart.core;
  * duration may be "negative" if the difference is from a later time to an
  * earlier.
  *
+ * Durations are context independent. For example, a duration of 2 days is
+ * always 48 hours, even when it is added to a `DateTime` just when the
+ * time zone is about to do a daylight-savings switch. (See [DateTime.add]).
+ *
+ * Despite the same name, a `Duration` object does not implement "Durations"
+ * as specified by ISO 8601. In particular, a duration object does not keep
+ * track of the individually provided members (such as "days" or "hours"), but
+ * only uses these arguments to compute the length of the corresponding time
+ * interval.
+ *
  * To create a new Duration object, use this class's single constructor
  * giving the appropriate arguments:
- *
- *     Duration fastestMarathon = new Duration(hours:2, minutes:3, seconds:2);
- *
- * The Duration is the sum of all individual parts.
+ * ```dart
+ * Duration fastestMarathon = new Duration(hours:2, minutes:3, seconds:2);
+ * ```
+ * The [Duration] is the sum of all individual parts.
  * This means that individual parts can be larger than the next-bigger unit.
- * For example, [minutes] can be greater than 59.
- *
- *     assert(fastestMarathon.inMinutes == 123);
- *
+ * For example, [inMinutes] can be greater than 59.
+ * ```dart
+ * assert(fastestMarathon.inMinutes == 123);
+ * ```
  * All individual parts are allowed to be negative.
  *
  * Use one of the properties, such as [inDays],
  * to retrieve the integer value of the Duration in the specified time unit.
  * Note that the returned value is rounded down.
  * For example,
- *
- *     Duration aLongWeekend = new Duration(hours:88);
- *     assert(aLongWeekend.inDays == 3);
- *
+ * ```dart
+ * Duration aLongWeekend = new Duration(hours:88);
+ * assert(aLongWeekend.inDays == 3);
+ * ```
  * This class provides a collection of arithmetic
  * and comparison operators,
  * plus a set of constants useful for converting time units.
  *
  * See [DateTime] to represent a point in time.
  * See [Stopwatch] to measure time-spans.
- *
  */
 class Duration implements Comparable<Duration> {
-  static const int MICROSECONDS_PER_MILLISECOND = 1000;
-  static const int MILLISECONDS_PER_SECOND = 1000;
-  static const int SECONDS_PER_MINUTE = 60;
-  static const int MINUTES_PER_HOUR = 60;
-  static const int HOURS_PER_DAY = 24;
+  static const int microsecondsPerMillisecond = 1000;
+  static const int millisecondsPerSecond = 1000;
+  static const int secondsPerMinute = 60;
+  static const int minutesPerHour = 60;
+  static const int hoursPerDay = 24;
 
-  static const int MICROSECONDS_PER_SECOND =
-      MICROSECONDS_PER_MILLISECOND * MILLISECONDS_PER_SECOND;
-  static const int MICROSECONDS_PER_MINUTE =
-      MICROSECONDS_PER_SECOND * SECONDS_PER_MINUTE;
-  static const int MICROSECONDS_PER_HOUR =
-      MICROSECONDS_PER_MINUTE * MINUTES_PER_HOUR;
-  static const int MICROSECONDS_PER_DAY =
-      MICROSECONDS_PER_HOUR * HOURS_PER_DAY;
+  static const int microsecondsPerSecond =
+      microsecondsPerMillisecond * millisecondsPerSecond;
+  static const int microsecondsPerMinute =
+      microsecondsPerSecond * secondsPerMinute;
+  static const int microsecondsPerHour = microsecondsPerMinute * minutesPerHour;
+  static const int microsecondsPerDay = microsecondsPerHour * hoursPerDay;
 
+  static const int millisecondsPerMinute =
+      millisecondsPerSecond * secondsPerMinute;
+  static const int millisecondsPerHour = millisecondsPerMinute * minutesPerHour;
+  static const int millisecondsPerDay = millisecondsPerHour * hoursPerDay;
 
-  static const int MILLISECONDS_PER_MINUTE =
-      MILLISECONDS_PER_SECOND * SECONDS_PER_MINUTE;
-  static const int MILLISECONDS_PER_HOUR =
-      MILLISECONDS_PER_MINUTE * MINUTES_PER_HOUR;
-  static const int MILLISECONDS_PER_DAY =
-      MILLISECONDS_PER_HOUR * HOURS_PER_DAY;
+  static const int secondsPerHour = secondsPerMinute * minutesPerHour;
+  static const int secondsPerDay = secondsPerHour * hoursPerDay;
 
-  static const int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
-  static const int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
+  static const int minutesPerDay = minutesPerHour * hoursPerDay;
 
-  static const int MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;
-
-  static const Duration ZERO = const Duration(seconds: 0);
+  static const Duration zero = Duration(seconds: 0);
 
   /*
    * The value of this Duration object in microseconds.
@@ -86,18 +90,18 @@ class Duration implements Comparable<Duration> {
    * All individual parts are allowed to be negative.
    * All arguments are 0 by default.
    */
-  const Duration({int days: 0,
-                  int hours: 0,
-                  int minutes: 0,
-                  int seconds: 0,
-                  int milliseconds: 0,
-                  int microseconds: 0})
-      : this._microseconds(
-            days * MICROSECONDS_PER_DAY +
-            hours * MICROSECONDS_PER_HOUR +
-            minutes * MICROSECONDS_PER_MINUTE +
-            seconds * MICROSECONDS_PER_SECOND +
-            milliseconds * MICROSECONDS_PER_MILLISECOND +
+  const Duration(
+      {int days = 0,
+      int hours = 0,
+      int minutes = 0,
+      int seconds = 0,
+      int milliseconds = 0,
+      int microseconds = 0})
+      : this._microseconds(microsecondsPerDay * days +
+            microsecondsPerHour * hours +
+            microsecondsPerMinute * minutes +
+            microsecondsPerSecond * seconds +
+            microsecondsPerMillisecond * milliseconds +
             microseconds);
 
   // Fast path internal direct constructor to avoids the optional arguments and
@@ -109,7 +113,7 @@ class Duration implements Comparable<Duration> {
    * returns the sum as a new Duration object.
    */
   Duration operator +(Duration other) {
-    return new Duration._microseconds(_duration + other._duration);
+    return Duration._microseconds(_duration + other._duration);
   }
 
   /**
@@ -117,7 +121,7 @@ class Duration implements Comparable<Duration> {
    * returns the difference as a new Duration object.
    */
   Duration operator -(Duration other) {
-    return new Duration._microseconds(_duration - other._duration);
+    return Duration._microseconds(_duration - other._duration);
   }
 
   /**
@@ -128,7 +132,7 @@ class Duration implements Comparable<Duration> {
    * 53 bits, precision is lost because of double-precision arithmetic.
    */
   Duration operator *(num factor) {
-    return new Duration._microseconds((_duration * factor).round());
+    return Duration._microseconds((_duration * factor).round());
   }
 
   /**
@@ -140,8 +144,8 @@ class Duration implements Comparable<Duration> {
   Duration operator ~/(int quotient) {
     // By doing the check here instead of relying on "~/" below we get the
     // exception even with dart2js.
-    if (quotient == 0) throw new IntegerDivisionByZeroException();
-    return new Duration._microseconds(_duration ~/ quotient);
+    if (quotient == 0) throw IntegerDivisionByZeroException();
+    return Duration._microseconds(_duration ~/ quotient);
   }
 
   /**
@@ -171,35 +175,35 @@ class Duration implements Comparable<Duration> {
   /**
    * Returns the number of whole days spanned by this Duration.
    */
-  int get inDays => _duration ~/ Duration.MICROSECONDS_PER_DAY;
+  int get inDays => _duration ~/ Duration.microsecondsPerDay;
 
   /**
    * Returns the number of whole hours spanned by this Duration.
    *
    * The returned value can be greater than 23.
    */
-  int get inHours => _duration ~/ Duration.MICROSECONDS_PER_HOUR;
+  int get inHours => _duration ~/ Duration.microsecondsPerHour;
 
   /**
    * Returns the number of whole minutes spanned by this Duration.
    *
    * The returned value can be greater than 59.
    */
-  int get inMinutes => _duration ~/ Duration.MICROSECONDS_PER_MINUTE;
+  int get inMinutes => _duration ~/ Duration.microsecondsPerMinute;
 
   /**
    * Returns the number of whole seconds spanned by this Duration.
    *
    * The returned value can be greater than 59.
    */
-  int get inSeconds => _duration ~/ Duration.MICROSECONDS_PER_SECOND;
+  int get inSeconds => _duration ~/ Duration.microsecondsPerSecond;
 
   /**
    * Returns number of whole milliseconds spanned by this Duration.
    *
    * The returned value can be greater than 999.
    */
-  int get inMilliseconds => _duration ~/ Duration.MICROSECONDS_PER_MILLISECOND;
+  int get inMilliseconds => _duration ~/ Duration.microsecondsPerMillisecond;
 
   /**
    * Returns number of whole microseconds spanned by this Duration.
@@ -207,17 +211,15 @@ class Duration implements Comparable<Duration> {
   int get inMicroseconds => _duration;
 
   /**
-   * Returns `true` if this Duration is the same object as [other].
+   * Returns `true` if this [Duration] has the same value as [other].
    */
-  bool operator ==(other) {
-    if (other is !Duration) return false;
-    return _duration == other._duration;
-  }
+  bool operator ==(dynamic other) =>
+      other is Duration && _duration == other.inMicroseconds;
 
   int get hashCode => _duration.hashCode;
 
   /**
-   * Compares this Duration to [other], returning zero if the values are equal.
+   * Compares this [Duration] to [other], returning zero if the values are equal.
    *
    * Returns a negative integer if this `Duration` is shorter than
    * [other], or a positive integer if it is longer.
@@ -247,6 +249,7 @@ class Duration implements Comparable<Duration> {
       if (n >= 10) return "0000$n";
       return "00000$n";
     }
+
     String twoDigits(int n) {
       if (n >= 10) return "$n";
       return "0$n";
@@ -255,10 +258,10 @@ class Duration implements Comparable<Duration> {
     if (inMicroseconds < 0) {
       return "-${-this}";
     }
-    String twoDigitMinutes = twoDigits(inMinutes.remainder(MINUTES_PER_HOUR));
-    String twoDigitSeconds = twoDigits(inSeconds.remainder(SECONDS_PER_MINUTE));
+    String twoDigitMinutes = twoDigits(inMinutes.remainder(minutesPerHour));
+    String twoDigitSeconds = twoDigits(inSeconds.remainder(secondsPerMinute));
     String sixDigitUs =
-        sixDigits(inMicroseconds.remainder(MICROSECONDS_PER_SECOND));
+        sixDigits(inMicroseconds.remainder(microsecondsPerSecond));
     return "$inHours:$twoDigitMinutes:$twoDigitSeconds.$sixDigitUs";
   }
 
@@ -277,7 +280,7 @@ class Duration implements Comparable<Duration> {
    * The returned `Duration` has the same length as this one, but is always
    * positive.
    */
-  Duration abs() => new Duration._microseconds(_duration.abs());
+  Duration abs() => Duration._microseconds(_duration.abs());
 
   /**
    * Returns a new `Duration` representing this `Duration` negated.
@@ -285,5 +288,6 @@ class Duration implements Comparable<Duration> {
    * The returned `Duration` has the same length as this one, but will have the
    * opposite sign of this one.
    */
-  Duration operator -() => new Duration._microseconds(-_duration);
+  // Using subtraction helps dart2js avoid negative zeros.
+  Duration operator -() => Duration._microseconds(0 - _duration);
 }

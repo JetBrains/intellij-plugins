@@ -23,11 +23,11 @@ part of dart.core;
  * double.
  */
 abstract class double extends num {
-  static const double NAN = 0.0 / 0.0;
-  static const double INFINITY = 1.0 / 0.0;
-  static const double NEGATIVE_INFINITY = -INFINITY;
-  static const double MIN_POSITIVE = 5e-324;
-  static const double MAX_FINITE = 1.7976931348623157e+308;
+  static const double nan = 0.0 / 0.0;
+  static const double infinity = 1.0 / 0.0;
+  static const double negativeInfinity = -infinity;
+  static const double minPositive = 5e-324;
+  static const double maxFinite = 1.7976931348623157e+308;
 
   double remainder(num other);
 
@@ -178,17 +178,17 @@ abstract class double extends num {
    * optionally followed by a decimal point and optionally more digits. The
    * (optional) exponent part consists of the character "e" or "E", an optional
    * sign, and one or more digits.
+   * The [source] must not be `null`.
    *
    * Leading and trailing whitespace is ignored.
    *
-   * If the [source] is not a valid double literal, the [onError]
+   * If the [source] string is not a valid double literal, the [onError]
    * is called with the [source] as argument, and its return value is
    * used instead. If no `onError` is provided, a [FormatException]
    * is thrown instead.
    *
    * The [onError] function is only invoked if [source] is a [String] with an
-   * invalid format. It is not invoked if the [source] is invalid for some
-   * other reason, for example by being `null`.
+   * invalid format. It is not invoked if [source] is `null`.
    *
    * Examples of accepted strings:
    *
@@ -200,7 +200,19 @@ abstract class double extends num {
    *     "1234E+7"
    *     "+.12e-9"
    *     "-NaN"
+   *
+   * The [onError] parameter is deprecated and will be removed.
+   * Instead of `double.parse(string, (string) { ... })`,
+   * you should use `double.tryParse(string) ?? (...)`.
    */
   external static double parse(String source,
-                               [double onError(String source)]);
+      [@deprecated double onError(String source)]);
+
+  /**
+   * Parse [source] as an double literal and return its value.
+   *
+   * Like [parse] except that this function returns `null` for invalid inputs
+   * instead of throwing, and the [source] must still not be `null`.
+   */
+  external static double tryParse(String source);
 }

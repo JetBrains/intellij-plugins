@@ -7,6 +7,9 @@ part of dart.core;
 /**
  * An instant in time, such as July 20, 1969, 8:18pm GMT.
  *
+ * DateTimes can represent time values that are at a distance of at most
+ * 100,000,000 days from epoch (1970-01-01 UTC): -271821-04-20 to 275760-09-13.
+ *
  * Create a DateTime object by using one of the constructors
  * or by parsing a correctly formatted string,
  * which complies with a subset of ISO 8601.
@@ -14,9 +17,11 @@ part of dart.core;
  * as in a 24-hour clock.
  * For example:
  *
- *     DateTime now = new DateTime.now();
- *     DateTime berlinWallFell = new DateTime(1989, 11, 9);
- *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");  // 8:18pm
+ * ```
+ * var now = new DateTime.now();
+ * var berlinWallFell = new DateTime.utc(1989, 11, 9);
+ * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");  // 8:18pm
+ * ```
  *
  * A DateTime object is anchored either in the UTC time zone
  * or in the local time zone of the current computer
@@ -28,26 +33,32 @@ part of dart.core;
  * You can use properties to get
  * the individual units of a DateTime object.
  *
- *     assert(berlinWallFell.month == 11);
- *     assert(moonLanding.hour == 20);
+ * ```
+ * assert(berlinWallFell.month == 11);
+ * assert(moonLanding.hour == 20);
+ * ```
  *
  * For convenience and readability,
  * the DateTime class provides a constant for each day and month
- * name&mdash;for example, [AUGUST] and [FRIDAY].
- * You can use these constants to improve code readibility:
+ * name - for example, [august] and [friday].
+ * You can use these constants to improve code readability:
  *
- *     DateTime berlinWallFell = new DateTime(1989, DateTime.NOVEMBER, 9);
- *     assert(berlinWallFell.weekday == DateTime.THURSDAY);
+ * ```
+ * var berlinWallFell = new DateTime.utc(1989, DateTime.november, 9);
+ * assert(berlinWallFell.weekday == DateTime.thursday);
+ * ```
  *
  * Day and month values begin at 1, and the week starts on Monday.
- * That is, the constants [JANUARY] and [MONDAY] are both 1.
+ * That is, the constants [january] and [monday] are both 1.
  *
  * ## Working with UTC and local time
  *
  * A DateTime object is in the local time zone
  * unless explicitly created in the UTC time zone.
  *
- *     DateTime dDay = new DateTime.utc(1944, 6, 6);
+ * ```
+ * var dDay = new DateTime.utc(1944, 6, 6);
+ * ```
  *
  * Use [isUtc] to determine whether a DateTime object is based in UTC.
  * Use the methods [toLocal] and [toUtc]
@@ -64,23 +75,30 @@ part of dart.core;
  * such as [isAfter], [isBefore], and [isAtSameMomentAs],
  * for comparing DateTime objects.
  *
- *     assert(berlinWallFell.isAfter(moonLanding) == true);
- *     assert(berlinWallFell.isBefore(moonLanding) == false);
+ * ```
+ * assert(berlinWallFell.isAfter(moonLanding) == true);
+ * assert(berlinWallFell.isBefore(moonLanding) == false);
+ * ```
  *
  * ## Using DateTime with Duration
  *
  * Use the [add] and [subtract] methods with a [Duration] object
  * to create a new DateTime object based on another.
- * For example, to find the date that is sixty days after today, write:
+ * For example, to find the date that is sixty days (24 * 60 hours) after today,
+ * write:
  *
- *     DateTime today = new DateTime.now();
- *     DateTime sixtyDaysFromNow = today.add(new Duration(days: 60));
+ * ```
+ * var now = new DateTime.now();
+ * var sixtyDaysFromNow = now.add(new Duration(days: 60));
+ * ```
  *
  * To find out how much time is between two DateTime objects use
  * [difference], which returns a [Duration] object:
  *
- *     Duration difference = berlinWallFell.difference(moonLanding)
- *     assert(difference.inDays == 7416);
+ * ```
+ * var difference = berlinWallFell.difference(moonLanding);
+ * assert(difference.inDays == 7416);
+ * ```
  *
  * The difference between two dates in different time zones
  * is just the number of nanoseconds between the two points in time.
@@ -99,53 +117,51 @@ part of dart.core;
  *
  * The DateTime class does not provide internationalization.
  * To internationalize your code, use
- * the [intl](http://pub.dartlang.org/packages/intl) package.
+ * the [intl](https://pub.dartlang.org/packages/intl) package.
  *
  */
-class DateTime implements Comparable {
+class DateTime implements Comparable<DateTime> {
   // Weekday constants that are returned by [weekday] method:
-  static const int MONDAY = 1;
-  static const int TUESDAY = 2;
-  static const int WEDNESDAY = 3;
-  static const int THURSDAY = 4;
-  static const int FRIDAY = 5;
-  static const int SATURDAY = 6;
-  static const int SUNDAY = 7;
-  static const int DAYS_PER_WEEK = 7;
+  static const int monday = 1;
+  static const int tuesday = 2;
+  static const int wednesday = 3;
+  static const int thursday = 4;
+  static const int friday = 5;
+  static const int saturday = 6;
+  static const int sunday = 7;
+  static const int daysPerWeek = 7;
 
   // Month constants that are returned by the [month] getter.
-  static const int JANUARY = 1;
-  static const int FEBRUARY = 2;
-  static const int MARCH = 3;
-  static const int APRIL = 4;
-  static const int MAY = 5;
-  static const int JUNE = 6;
-  static const int JULY = 7;
-  static const int AUGUST = 8;
-  static const int SEPTEMBER = 9;
-  static const int OCTOBER = 10;
-  static const int NOVEMBER = 11;
-  static const int DECEMBER = 12;
-  static const int MONTHS_PER_YEAR = 12;
+  static const int january = 1;
+  static const int february = 2;
+  static const int march = 3;
+  static const int april = 4;
+  static const int may = 5;
+  static const int june = 6;
+  static const int july = 7;
+  static const int august = 8;
+  static const int september = 9;
+  static const int october = 10;
+  static const int november = 11;
+  static const int december = 12;
+  static const int monthsPerYear = 12;
 
   /**
-   * The number of milliseconds since
-   * the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+   * The value of this DateTime.
    *
-   * This value is independent of the time zone.
-   *
-   * This value is at most
-   * 8,640,000,000,000,000ms (100,000,000 days) from the Unix epoch.
-   * In other words: [:millisecondsSinceEpoch.abs() <= 8640000000000000:].
-   *
+   * The content of this field is implementation dependent. On JavaScript it is
+   * equal to [millisecondsSinceEpoch]. On the VM it is equal to
+   * [microsecondsSinceEpoch].
    */
-  final int millisecondsSinceEpoch;
+  final int _value;
 
   /**
    * True if this [DateTime] is set to UTC time.
    *
-   *     DateTime dDay = new DateTime.utc(1944, 6, 6);
-   *     assert(dDay.isUtc);
+   * ```
+   * var dDay = new DateTime.utc(1944, 6, 6);
+   * assert(dDay.isUtc);
+   * ```
    *
    */
   final bool isUtc;
@@ -154,48 +170,61 @@ class DateTime implements Comparable {
    * Constructs a [DateTime] instance specified in the local time zone.
    *
    * For example,
-   * to create a new DateTime object representing April 29, 2014, 6:04am:
+   * to create a new DateTime object representing the 7th of September 2017,
+   * 5:30pm
    *
-   *     DateTime annularEclipse = new DateTime(2014, DateTime.APRIL, 29, 6, 4);
+   * ```
+   * var dentistAppointment = new DateTime(2017, 9, 7, 17, 30);
+   * ```
    */
   DateTime(int year,
-           [int month = 1,
-            int day = 1,
-            int hour = 0,
-            int minute = 0,
-            int second = 0,
-            int millisecond = 0])
-      : this._internal(
-            year, month, day, hour, minute, second, millisecond, false);
+      [int month = 1,
+      int day = 1,
+      int hour = 0,
+      int minute = 0,
+      int second = 0,
+      int millisecond = 0,
+      int microsecond = 0])
+      : this._internal(year, month, day, hour, minute, second, millisecond,
+            microsecond, false);
 
   /**
    * Constructs a [DateTime] instance specified in the UTC time zone.
    *
-   *     DateTime dDay = new DateTime.utc(1944, DateTime.JUNE, 6);
+   * ```
+   * var moonLanding = new DateTime.utc(1969, 7, 20, 20, 18, 04);
+   * ```
+   *
+   * When dealing with dates or historic events prefer to use UTC DateTimes,
+   * since they are unaffected by daylight-saving changes and are unaffected
+   * by the local timezone.
    */
   DateTime.utc(int year,
-               [int month = 1,
-                int day = 1,
-                int hour = 0,
-                int minute = 0,
-                int second = 0,
-                int millisecond = 0])
-    : this._internal(
-          year, month, day, hour, minute, second, millisecond, true);
+      [int month = 1,
+      int day = 1,
+      int hour = 0,
+      int minute = 0,
+      int second = 0,
+      int millisecond = 0,
+      int microsecond = 0])
+      : this._internal(year, month, day, hour, minute, second, millisecond,
+            microsecond, true);
 
   /**
    * Constructs a [DateTime] instance with current date and time in the
    * local time zone.
    *
-   *     DateTime thisInstant = new DateTime.now();
-   *
+   * ```
+   * var thisInstant = new DateTime.now();
+   * ```
    */
   DateTime.now() : this._now();
 
   /**
    * Constructs a new [DateTime] instance based on [formattedString].
    *
-   * Throws a [FormatException] if the input cannot be parsed.
+   * The [formattedString] must not be `null`.
+   * Throws a [FormatException] if the input string cannot be parsed.
    *
    * The function parses a subset of ISO 8601
    * which includes the subset accepted by RFC 3339.
@@ -209,15 +238,17 @@ class DateTime implements Comparable {
    *   The time part is a two digit hour,
    *   then optionally a two digit minutes value,
    *   then optionally a two digit seconds value, and
-   *   then optionally a '.' followed by a one-to-six digit second fraction.
-   *   The minuts and seconds may be separated from the previous parts by a ':'.
-   *   Examples: "12", "12:30:24.124", "123010.50".
+   *   then optionally a '.' or ',' followed by a one-to-six digit second fraction.
+   *   The minutes and seconds may be separated from the previous parts by a
+   *   ':'.
+   *   Examples: "12", "12:30:24.124", "12:30:24,124", "123010.50".
    * * An optional time-zone offset part,
    *   possibly separated from the previous by a space.
    *   The time zone is either 'z' or 'Z', or it is a signed two digit hour
-   *   part and an optional two digit minute part.
-   *   The minutes may be separted from the hours by a ':'.
-   *   Examples: "Z", "-10", "01:30", "1130".
+   *   part and an optional two digit minute part. The sign must be either
+   *   "+" or "-", and can not be omitted.
+   *   The minutes may be separated from the hours by a ':'.
+   *   Examples: "Z", "-10", "+01:30", "+1130".
    *
    * This includes the output of both [toString] and [toIso8601String], which
    * will be parsed back into a `DateTime` object with the same time as the
@@ -231,6 +262,7 @@ class DateTime implements Comparable {
    *
    * * `"2012-02-27 13:27:00"`
    * * `"2012-02-27 13:27:00.123456z"`
+   * * `"2012-02-27 13:27:00,123456z"`
    * * `"20120227 13:27:00"`
    * * `"20120227T132700"`
    * * `"20120227"`
@@ -243,29 +275,7 @@ class DateTime implements Comparable {
   // TODO(lrn): restrict incorrect values like  2003-02-29T50:70:80.
   // Or not, that may be a breaking change.
   static DateTime parse(String formattedString) {
-    /*
-     * date ::= yeardate time_opt timezone_opt
-     * yeardate ::= year colon_opt month colon_opt day
-     * year ::= sign_opt digit{4,6}
-     * colon_opt :: <empty> | ':'
-     * sign ::= '+' | '-'
-     * sign_opt ::=  <empty> | sign
-     * month ::= digit{2}
-     * day ::= digit{2}
-     * time_opt ::= <empty> | (' ' | 'T') hour minutes_opt
-     * minutes_opt ::= <empty> | colon_opt digit{2} seconds_opt
-     * seconds_opt ::= <empty> | colon_opt digit{2} millis_opt
-     * millis_opt ::= <empty> | '.' digit{1,6}
-     * timezone_opt ::= <empty> | space_opt timezone
-     * space_opt :: ' ' | <empty>
-     * timezone ::= 'z' | 'Z' | sign digit{2} timezonemins_opt
-     * timezonemins_opt ::= <empty> | colon_opt digit{2}
-     */
-    final RegExp re = new RegExp(
-        r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)'  // The day part.
-        r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(.\d{1,6})?)?)?' // The time part
-        r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$'); // The timezone part
-
+    var re = _parseFormat;
     Match match = re.firstMatch(formattedString);
     if (match != null) {
       int parseIntOrZero(String matched) {
@@ -273,9 +283,22 @@ class DateTime implements Comparable {
         return int.parse(matched);
       }
 
-      double parseDoubleOrZero(String matched) {
-        if (matched == null) return 0.0;
-        return double.parse(matched);
+      // Parses fractional second digits of '.(\d{1,6})' into the combined
+      // microseconds.
+      int parseMilliAndMicroseconds(String matched) {
+        if (matched == null) return 0;
+        int length = matched.length;
+        assert(length >= 1);
+        assert(length <= 6);
+
+        int result = 0;
+        for (int i = 0; i < 6; i++) {
+          result *= 10;
+          if (i < matched.length) {
+            result += matched.codeUnitAt(i) ^ 0x30;
+          }
+        }
+        return result;
       }
 
       int years = int.parse(match[1]);
@@ -285,13 +308,14 @@ class DateTime implements Comparable {
       int minute = parseIntOrZero(match[5]);
       int second = parseIntOrZero(match[6]);
       bool addOneMillisecond = false;
-      int millisecond = (parseDoubleOrZero(match[7]) * 1000).round();
-      if (millisecond == 1000) {
-        addOneMillisecond = true;
-        millisecond = 999;
-      }
+      int milliAndMicroseconds = parseMilliAndMicroseconds(match[7]);
+      int millisecond =
+          milliAndMicroseconds ~/ Duration.microsecondsPerMillisecond;
+      int microsecond =
+          milliAndMicroseconds.remainder(Duration.microsecondsPerMillisecond);
       bool isUtc = false;
-      if (match[8] != null) {  // timezone part
+      if (match[8] != null) {
+        // timezone part
         isUtc = true;
         if (match[9] != null) {
           // timezone other than 'Z' and 'z'.
@@ -302,20 +326,33 @@ class DateTime implements Comparable {
           minute -= sign * minuteDifference;
         }
       }
-      int millisecondsSinceEpoch = _brokenDownDateToMillisecondsSinceEpoch(
-          years, month, day, hour, minute, second, millisecond, isUtc);
-      if (millisecondsSinceEpoch == null) {
-        throw new FormatException("Time out of range", formattedString);
+      int value = _brokenDownDateToValue(years, month, day, hour, minute,
+          second, millisecond, microsecond, isUtc);
+      if (value == null) {
+        throw FormatException("Time out of range", formattedString);
       }
-      if (addOneMillisecond) millisecondsSinceEpoch++;
-      return new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
-                                                     isUtc: isUtc);
+      return DateTime._withValue(value, isUtc: isUtc);
     } else {
-      throw new FormatException("Invalid date format", formattedString);
+      throw FormatException("Invalid date format", formattedString);
     }
   }
 
-  static const int _MAX_MILLISECONDS_SINCE_EPOCH = 8640000000000000;
+  /**
+   * Constructs a new [DateTime] instance based on [formattedString].
+   *
+   * Works like [parse] except that this function returns `null`
+   * where [parse] would throw a [FormatException].
+   */
+  static DateTime tryParse(String formattedString) {
+    // TODO: Optimize to avoid throwing.
+    try {
+      return parse(formattedString);
+    } on FormatException {
+      return null;
+    }
+  }
+
+  static const int _maxMillisecondsSinceEpoch = 8640000000000000;
 
   /**
    * Constructs a new [DateTime] instance
@@ -327,32 +364,55 @@ class DateTime implements Comparable {
    * 1970-01-01T00:00:00Z + [millisecondsSinceEpoch] ms in the given
    * time zone (local or UTC).
    */
-  DateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
-                                      {bool isUtc: false})
-      : this.millisecondsSinceEpoch = millisecondsSinceEpoch,
-        this.isUtc = isUtc {
-    if (millisecondsSinceEpoch.abs() > _MAX_MILLISECONDS_SINCE_EPOCH) {
-      throw new ArgumentError(millisecondsSinceEpoch);
+  external DateTime.fromMillisecondsSinceEpoch(int millisecondsSinceEpoch,
+      {bool isUtc = false});
+
+  /**
+   * Constructs a new [DateTime] instance
+   * with the given [microsecondsSinceEpoch].
+   *
+   * If [isUtc] is false then the date is in the local time zone.
+   *
+   * The constructed [DateTime] represents
+   * 1970-01-01T00:00:00Z + [microsecondsSinceEpoch] us in the given
+   * time zone (local or UTC).
+   */
+  external DateTime.fromMicrosecondsSinceEpoch(int microsecondsSinceEpoch,
+      {bool isUtc = false});
+
+  /**
+   * Constructs a new [DateTime] instance with the given value.
+   *
+   * If [isUtc] is false then the date is in the local time zone.
+   */
+  DateTime._withValue(this._value, {this.isUtc}) {
+    if (millisecondsSinceEpoch.abs() > _maxMillisecondsSinceEpoch ||
+        (millisecondsSinceEpoch.abs() == _maxMillisecondsSinceEpoch &&
+            microsecond != 0)) {
+      throw ArgumentError(
+          "DateTime is outside valid range: $millisecondsSinceEpoch");
     }
-    if (isUtc == null) throw new ArgumentError(isUtc);
+    if (isUtc == null) {
+      throw ArgumentError("'isUtc' flag may not be 'null'");
+    }
   }
 
   /**
    * Returns true if [other] is a [DateTime] at the same moment and in the
    * same time zone (UTC or local).
    *
-   *     DateTime dDayUtc   = new DateTime.utc(1944, DateTime.JUNE, 6);
-   *     DateTime dDayLocal = new DateTime(1944, DateTime.JUNE, 6);
+   * ```
+   * var dDayUtc = new DateTime.utc(1944, 6, 6);
+   * var dDayLocal = dDayUtc.toLocal();
    *
-   *     assert(dDayUtc.isAtSameMomentAs(dDayLocal) == false);
+   * // These two dates are at the same moment, but are in different zones.
+   * assert(dDayUtc != dDayLocal);
+   * ```
    *
-   * See [isAtSameMomentAs] for a comparison that adjusts for time zone.
+   * See [isAtSameMomentAs] for a comparison that compares moments in time
+   * independently of their zones.
    */
-  bool operator ==(other) {
-    if (!(other is DateTime)) return false;
-    return (millisecondsSinceEpoch == other.millisecondsSinceEpoch &&
-            isUtc == other.isUtc);
-  }
+  external bool operator ==(dynamic other);
 
   /**
    * Returns true if [this] occurs before [other].
@@ -360,15 +420,21 @@ class DateTime implements Comparable {
    * The comparison is independent
    * of whether the time is in UTC or in the local time zone.
    *
-   *     DateTime berlinWallFell = new DateTime(1989, 11, 9);
-   *     DateTime moonLanding    = DateTime.parse("1969-07-20 20:18:00");
+   * ```
+   * var now = new DateTime.now();
+   * var earlier = now.subtract(const Duration(seconds: 5));
+   * assert(earlier.isBefore(now));
+   * assert(!now.isBefore(now));
    *
-   *     assert(berlinWallFell.isBefore(moonLanding) == false);
+   * // This relation stays the same, even when changing timezones.
+   * assert(earlier.isBefore(now.toUtc()));
+   * assert(earlier.toUtc().isBefore(now));
    *
+   * assert(!now.toUtc().isBefore(now));
+   * assert(!now.isBefore(now.toUtc()));
+   * ```
    */
-  bool isBefore(DateTime other) {
-    return millisecondsSinceEpoch < other.millisecondsSinceEpoch;
-  }
+  external bool isBefore(DateTime other);
 
   /**
    * Returns true if [this] occurs after [other].
@@ -376,15 +442,21 @@ class DateTime implements Comparable {
    * The comparison is independent
    * of whether the time is in UTC or in the local time zone.
    *
-   *     DateTime berlinWallFell = new DateTime(1989, 11, 9);
-   *     DateTime moonLanding    = DateTime.parse("1969-07-20 20:18:00");
+   * ```
+   * var now = new DateTime.now();
+   * var later = now.add(const Duration(seconds: 5));
+   * assert(later.isAfter(now));
+   * assert(!now.isBefore(now));
    *
-   *     assert(berlinWallFell.isAfter(moonLanding) == true);
+   * // This relation stays the same, even when changing timezones.
+   * assert(later.isAfter(now.toUtc()));
+   * assert(later.toUtc().isAfter(now));
    *
+   * assert(!now.toUtc().isBefore(now));
+   * assert(!now.isBefore(now.toUtc()));
+   * ```
    */
-  bool isAfter(DateTime other) {
-    return millisecondsSinceEpoch > other.millisecondsSinceEpoch;
-  }
+  external bool isAfter(DateTime other);
 
   /**
    * Returns true if [this] occurs at the same moment as [other].
@@ -392,27 +464,33 @@ class DateTime implements Comparable {
    * The comparison is independent of whether the time is in UTC or in the local
    * time zone.
    *
-   *     DateTime berlinWallFell = new DateTime(1989, 11, 9);
-   *     DateTime moonLanding    = DateTime.parse("1969-07-20 20:18:00");
+   * ```
+   * var now = new DateTime.now();
+   * var later = now.add(const Duration(seconds: 5));
+   * assert(!later.isAtSameMomentAs(now));
+   * assert(now.isAtSameMomentAs(now));
    *
-   *     assert(berlinWallFell.isAtSameMomentAs(moonLanding) == false);
+   * // This relation stays the same, even when changing timezones.
+   * assert(!later.isAtSameMomentAs(now.toUtc()));
+   * assert(!later.toUtc().isAtSameMomentAs(now));
+   *
+   * assert(now.toUtc().isAtSameMomentAs(now));
+   * assert(now.isAtSameMomentAs(now.toUtc()));
+   * ```
    */
-  bool isAtSameMomentAs(DateTime other) {
-    return millisecondsSinceEpoch == other.millisecondsSinceEpoch;
-  }
+  external bool isAtSameMomentAs(DateTime other);
 
   /**
    * Compares this DateTime object to [other],
    * returning zero if the values are equal.
    *
-   * This function returns a negative integer
-   * if this DateTime is smaller (earlier) than [other],
-   * or a positive integer if it is greater (later).
+   * Returns a negative value if this DateTime [isBefore] [other]. It returns 0
+   * if it [isAtSameMomentAs] [other], and returns a positive value otherwise
+   * (when this [isAfter] [other]).
    */
-  int compareTo(DateTime other)
-      => millisecondsSinceEpoch.compareTo(other.millisecondsSinceEpoch);
+  external int compareTo(DateTime other);
 
-  int get hashCode => millisecondsSinceEpoch;
+  int get hashCode => (_value ^ (_value >> 30)) & 0x3FFFFFFF;
 
   /**
    * Returns this DateTime value in the local time zone.
@@ -420,13 +498,14 @@ class DateTime implements Comparable {
    * Returns [this] if it is already in the local time zone.
    * Otherwise this method is equivalent to:
    *
-   *     new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
-   *                                             isUtc: false)
+   * ```
+   * new DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch,
+   *                                         isUtc: false)
+   * ```
    */
   DateTime toLocal() {
     if (isUtc) {
-      return new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
-                                                     isUtc: false);
+      return DateTime._withValue(_value, isUtc: false);
     }
     return this;
   }
@@ -437,13 +516,14 @@ class DateTime implements Comparable {
    * Returns [this] if it is already in UTC.
    * Otherwise this method is equivalent to:
    *
-   *     new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
-   *                                             isUtc: true)
+   * ```
+   * new DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch,
+   *                                         isUtc: true)
+   * ```
    */
   DateTime toUtc() {
     if (isUtc) return this;
-    return new DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch,
-                                                   isUtc: true);
+    return DateTime._withValue(_value, isUtc: true);
   }
 
   static String _fourDigits(int n) {
@@ -480,7 +560,7 @@ class DateTime implements Comparable {
    * The returned string is constructed for the time zone of this instance.
    * The `toString()` method provides a simply formatted string.
    * It does not support internationalized strings.
-   * Use the [intl](http://pub.dartlang.org/packages/intl) package
+   * Use the [intl](https://pub.dartlang.org/packages/intl) package
    * at the pub shared packages repo.
    *
    * The resulting string can be parsed back using [parse].
@@ -493,18 +573,19 @@ class DateTime implements Comparable {
     String min = _twoDigits(minute);
     String sec = _twoDigits(second);
     String ms = _threeDigits(millisecond);
+    String us = microsecond == 0 ? "" : _threeDigits(microsecond);
     if (isUtc) {
-      return "$y-$m-$d $h:$min:$sec.${ms}Z";
+      return "$y-$m-$d $h:$min:$sec.$ms${us}Z";
     } else {
-      return "$y-$m-$d $h:$min:$sec.$ms";
+      return "$y-$m-$d $h:$min:$sec.$ms$us";
     }
   }
 
   /**
    * Returns an ISO-8601 full-precision extended format representation.
    *
-   * The format is `yyyy-MM-ddTHH:mm:ss.sssZ` for UTC time, and
-   * `yyyy-MM-ddTHH:mm:ss.sss` (no trailing "Z") for local/non-UTC time,
+   * The format is `yyyy-MM-ddTHH:mm:ss.mmmuuuZ` for UTC time, and
+   * `yyyy-MM-ddTHH:mm:ss.mmmuuu` (no trailing "Z") for local/non-UTC time,
    * where:
    *
    * * `yyyy` is a, possibly negative, four digit representation of the year,
@@ -514,85 +595,149 @@ class DateTime implements Comparable {
    * * `dd` is the day of the month in the range 01 to 31,
    * * `HH` are hours in the range 00 to 23,
    * * `mm` are minutes in the range 00 to 59,
-   * * `ss` are seconds in the range 00 to 59 (no leap seconds), and
-   * * `sss` are milliseconds in the range 000 to 999.
+   * * `ss` are seconds in the range 00 to 59 (no leap seconds),
+   * * `mmm` are milliseconds in the range 000 to 999, and
+   * * `uuu` are microseconds in the range 001 to 999. If [microsecond] equals
+   *   0, then this part is omitted.
    *
    * The resulting string can be parsed back using [parse].
    */
   String toIso8601String() {
-    String y = (year >= -9999 && year <= 9999) ? _fourDigits(year)
-                                               : _sixDigits(year);
+    String y =
+        (year >= -9999 && year <= 9999) ? _fourDigits(year) : _sixDigits(year);
     String m = _twoDigits(month);
     String d = _twoDigits(day);
     String h = _twoDigits(hour);
     String min = _twoDigits(minute);
     String sec = _twoDigits(second);
     String ms = _threeDigits(millisecond);
+    String us = microsecond == 0 ? "" : _threeDigits(microsecond);
     if (isUtc) {
-      return "$y-$m-${d}T$h:$min:$sec.${ms}Z";
+      return "$y-$m-${d}T$h:$min:$sec.$ms${us}Z";
     } else {
-      return "$y-$m-${d}T$h:$min:$sec.$ms";
+      return "$y-$m-${d}T$h:$min:$sec.$ms$us";
     }
   }
 
   /**
    * Returns a new [DateTime] instance with [duration] added to [this].
    *
-   *     DateTime today = new DateTime.now();
-   *     DateTime sixtyDaysFromNow = today.add(new Duration(days: 60));
+   * ```
+   * var today = new DateTime.now();
+   * var fiftyDaysFromNow = today.add(new Duration(days: 50));
+   * ```
+   *
+   * Notice that the duration being added is actually 50 * 24 * 60 * 60
+   * seconds. If the resulting `DateTime` has a different daylight saving offset
+   * than `this`, then the result won't have the same time-of-day as `this`, and
+   * may not even hit the calendar date 50 days later.
+   *
+   * Be careful when working with dates in local time.
    */
-  DateTime add(Duration duration) {
-    int ms = millisecondsSinceEpoch;
-    return new DateTime.fromMillisecondsSinceEpoch(
-        ms + duration.inMilliseconds, isUtc: isUtc);
-  }
+  external DateTime add(Duration duration);
 
   /**
    * Returns a new [DateTime] instance with [duration] subtracted from [this].
    *
-   *     DateTime today = new DateTime.now();
-   *     DateTime sixtyDaysAgo = today.subtract(new Duration(days: 60));
+   * ```
+   * DateTime today = new DateTime.now();
+   * DateTime fiftyDaysAgo = today.subtract(new Duration(days: 50));
+   * ```
+   *
+   * Notice that the duration being subtracted is actually 50 * 24 * 60 * 60
+   * seconds. If the resulting `DateTime` has a different daylight saving offset
+   * than `this`, then the result won't have the same time-of-day as `this`, and
+   * may not even hit the calendar date 50 days earlier.
+   *
+   * Be careful when working with dates in local time.
    */
-  DateTime subtract(Duration duration) {
-    int ms = millisecondsSinceEpoch;
-    return new DateTime.fromMillisecondsSinceEpoch(
-        ms - duration.inMilliseconds, isUtc: isUtc);
-  }
+  external DateTime subtract(Duration duration);
 
   /**
    * Returns a [Duration] with the difference between [this] and [other].
    *
-   *     DateTime berlinWallFell = new DateTime(1989, DateTime.NOVEMBER, 9);
-   *     DateTime dDay = new DateTime(1944, DateTime.JUNE, 6);
+   * ```
+   * var berlinWallFell = new DateTime.utc(1989, DateTime.november, 9);
+   * var dDay = new DateTime.utc(1944, DateTime.june, 6);
    *
-   *     Duration difference = berlinWallFell.difference(dDay);
-   *     assert(difference.inDays == 16592);
+   * Duration difference = berlinWallFell.difference(dDay);
+   * assert(difference.inDays == 16592);
+   * ```
+   *
+   * The difference is measured in seconds and fractions of seconds.
+   * The difference above counts the number of fractional seconds between
+   * midnight at the beginning of those dates.
+   * If the dates above had been in local time, not UTC, then the difference
+   * between two midnights may not be a multiple of 24 hours due to daylight
+   * saving differences.
+   *
+   * For example, in Australia, similar code using local time instead of UTC:
+   *
+   * ```
+   * var berlinWallFell = new DateTime(1989, DateTime.november, 9);
+   * var dDay = new DateTime(1944, DateTime.june, 6);
+   * Duration difference = berlinWallFell.difference(dDay);
+   * assert(difference.inDays == 16592);
+   * ```
+   * will fail because the difference is actually 16591 days and 23 hours, and
+   * [Duration.inDays] only returns the number of whole days.
    */
+  external Duration difference(DateTime other);
 
-  Duration difference(DateTime other) {
-    int ms = millisecondsSinceEpoch;
-    int otherMs = other.millisecondsSinceEpoch;
-    return new Duration(milliseconds: ms - otherMs);
-  }
+  external DateTime._internal(int year, int month, int day, int hour,
+      int minute, int second, int millisecond, int microsecond, bool isUtc);
 
-  external DateTime._internal(int year,
-                              int month,
-                              int day,
-                              int hour,
-                              int minute,
-                              int second,
-                              int millisecond,
-                              bool isUtc);
   external DateTime._now();
-  /// Returns the time as milliseconds since epoch, or null if the
-  /// values are out of range.
-  external static int _brokenDownDateToMillisecondsSinceEpoch(
-      int year, int month, int day, int hour, int minute, int second,
-      int millisecond, bool isUtc);
+
+  /// Returns the time as value (millisecond or microsecond since epoch), or
+  /// null if the values are out of range.
+  external static int _brokenDownDateToValue(
+      int year,
+      int month,
+      int day,
+      int hour,
+      int minute,
+      int second,
+      int millisecond,
+      int microsecond,
+      bool isUtc);
 
   /**
-   * The abbreviated time zone name&mdash;for example,
-   * [:"CET":] or [:"CEST":].
+   * The number of milliseconds since
+   * the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+   *
+   * This value is independent of the time zone.
+   *
+   * This value is at most
+   * 8,640,000,000,000,000ms (100,000,000 days) from the Unix epoch.
+   * In other words: `millisecondsSinceEpoch.abs() <= 8640000000000000`.
+   */
+  external int get millisecondsSinceEpoch;
+
+  /**
+   * The number of microseconds since
+   * the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+   *
+   * This value is independent of the time zone.
+   *
+   * This value is at most
+   * 8,640,000,000,000,000,000us (100,000,000 days) from the Unix epoch.
+   * In other words: `microsecondsSinceEpoch.abs() <= 8640000000000000000`.
+   *
+   * Note that this value does not fit into 53 bits (the size of a IEEE double).
+   * A JavaScript number is not able to hold this value.
+   */
+  external int get microsecondsSinceEpoch;
+
+  /**
+   * The time zone name.
+   *
+   * This value is provided by the operating system and may be an
+   * abbreviation or a full name.
+   *
+   * In the browser or on Unix-like systems commonly returns abbreviations,
+   * such as "CET" or "CEST". On Windows returns the full name, for example
+   * "Pacific Standard Time".
    */
   external String get timeZoneName;
 
@@ -611,70 +756,118 @@ class DateTime implements Comparable {
   /**
    * The year.
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.year == 1969);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.year == 1969);
+   * ```
    */
   external int get year;
 
   /**
    * The month [1..12].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.month == 7);
-   *     assert(moonLanding.month == DateTime.JULY);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.month == 7);
+   * assert(moonLanding.month == DateTime.july);
+   * ```
    */
   external int get month;
 
   /**
    * The day of the month [1..31].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.day == 20);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.day == 20);
+   * ```
    */
   external int get day;
 
   /**
    * The hour of the day, expressed as in a 24-hour clock [0..23].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.hour == 20);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.hour == 20);
+   * ```
    */
   external int get hour;
 
   /**
    * The minute [0...59].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.minute == 18);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.minute == 18);
+   * ```
    */
   external int get minute;
 
   /**
    * The second [0...59].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.second == 0);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.second == 4);
+   * ```
    */
   external int get second;
 
   /**
    * The millisecond [0...999].
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.millisecond == 0);
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.millisecond == 0);
+   * ```
    */
   external int get millisecond;
 
   /**
-   * The day of the week [MONDAY]..[SUNDAY].
+   * The microsecond [0...999].
+   *
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.microsecond == 0);
+   * ```
+   */
+  external int get microsecond;
+
+  /**
+   * The day of the week [monday]..[sunday].
    *
    * In accordance with ISO 8601
    * a week starts with Monday, which has the value 1.
    *
-   *     DateTime moonLanding = DateTime.parse("1969-07-20 20:18:00");
-   *     assert(moonLanding.weekday == 7);
-   *     assert(moonLanding.weekday == DateTime.SUNDAY);
-   *
+   * ```
+   * var moonLanding = DateTime.parse("1969-07-20 20:18:04Z");
+   * assert(moonLanding.weekday == 7);
+   * assert(moonLanding.weekday == DateTime.sunday);
+   * ```
    */
   external int get weekday;
+
+  /*
+   * date ::= yeardate time_opt timezone_opt
+   * yeardate ::= year colon_opt month colon_opt day
+   * year ::= sign_opt digit{4,6}
+   * colon_opt :: <empty> | ':'
+   * sign ::= '+' | '-'
+   * sign_opt ::=  <empty> | sign
+   * month ::= digit{2}
+   * day ::= digit{2}
+   * time_opt ::= <empty> | (' ' | 'T') hour minutes_opt
+   * minutes_opt ::= <empty> | colon_opt digit{2} seconds_opt
+   * seconds_opt ::= <empty> | colon_opt digit{2} millis_opt
+   * micros_opt ::= <empty> | ('.' | ',') digit{1,6}
+   * timezone_opt ::= <empty> | space_opt timezone
+   * space_opt :: ' ' | <empty>
+   * timezone ::= 'z' | 'Z' | sign digit{2} timezonemins_opt
+   * timezonemins_opt ::= <empty> | colon_opt digit{2}
+   */
+  static final RegExp _parseFormat = RegExp(
+      r'^([+-]?\d{4,6})-?(\d\d)-?(\d\d)' // Day part.
+      r'(?:[ T](\d\d)(?::?(\d\d)(?::?(\d\d)(?:[.,](\d{1,6}))?)?)?' // Time part.
+      r'( ?[zZ]| ?([-+])(\d\d)(?::?(\d\d))?)?)?$'); // Timezone part.
 }

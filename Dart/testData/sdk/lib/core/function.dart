@@ -22,20 +22,20 @@ abstract class Function {
    * if it expects different parameters.
    *
    * Example:
-   *       Map<Symbol, dynamic> namedArguments = new Map<Symbol, dynamic>();
-   *       namedArguments[const Symbol("f")] = 4;
-   *       namedArguments[const Symbol("g")] = 5;
-   *       Function.apply(foo, [1,2,3], namedArguments);
+   * ```
+   * Function.apply(foo, [1,2,3], {#f: 4, #g: 5});
+   * ```
    *
    * gives exactly the same result as
-   *       foo(1, 2, 3, f: 4, g: 5).
+   * ```
+   * foo(1, 2, 3, f: 4, g: 5).
+   * ```
    *
    * If [positionalArguments] is null, it's considered an empty list.
    * If [namedArguments] is omitted or null, it is considered an empty map.
    */
-  external static apply(Function function,
-                        List positionalArguments,
-                        [Map<Symbol, dynamic> namedArguments]);
+  external static apply(Function function, List positionalArguments,
+      [Map<Symbol, dynamic> namedArguments]);
 
   /**
    * Returns a hash code value that is compatible with `operator==`.
@@ -63,5 +63,5 @@ abstract class Function {
    * Classes implementing `Function` by having a `call` method should have their
    * own `operator==` and `hashCode` depending on the object.
    */
-  bool operator==(Object other);
+  bool operator ==(Object other);
 }
