@@ -8,6 +8,7 @@ import com.intellij.grazie.ide.ui.components.dsl.padding
 import com.intellij.grazie.ide.ui.components.dsl.panel
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.remote.GrazieRemote
+import com.intellij.ide.plugins.newui.VerticalLayout
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.options.ConfigurableUi
 import com.intellij.openapi.project.guessCurrentProject
@@ -16,7 +17,6 @@ import com.intellij.util.ui.JBUI
 import net.miginfocom.layout.AC
 import net.miginfocom.layout.CC
 import net.miginfocom.swing.MigLayout
-import org.jdesktop.swingx.VerticalLayout
 import javax.swing.JComponent
 
 class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
@@ -57,8 +57,7 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
       Lang.values().forEach {
         if (chosenEnabledLanguages.contains(it)) {
           enabledLanguages.add(it)
-        }
-        else {
+        } else {
           enabledLanguages.remove(it)
         }
       }
@@ -104,9 +103,9 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
         border = border(msg("grazie.ui.settings.languages.text"), false, JBUI.insetsBottom(10), false)
 
         add(languages.component,
-            CC().growX().maxHeight("").width("45%").minWidth("250px").minHeight("120px").maxHeight("120px").alignY("top"))
+          CC().growX().maxHeight("").width("45%").minWidth("250px").minHeight("120px").maxHeight("120px").alignY("top"))
 
-        panel(VerticalLayout(), CC().grow().width("55%").minWidth("250px").alignY("top")) {
+        panel(VerticalLayout(0), CC().grow().width("55%").minWidth("250px").alignY("top")) {
           border = padding(JBUI.insetsLeft(20))
           add(native.component)
           add(spellcheck.component)
