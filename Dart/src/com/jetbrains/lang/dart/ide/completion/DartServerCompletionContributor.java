@@ -62,7 +62,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC,
            or(psiElement().withLanguage(DartLanguage.INSTANCE),
               psiElement().inFile(psiFile().withLanguage(HTMLLanguage.INSTANCE)),
-              psiElement().inFile(psiFile().withName(".analysis_options"))),
+              psiElement().inFile(psiFile().withName(".analysis_options")),
+              psiElement().inFile(psiFile().withName("analysis_options.yaml"))
+           ),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters parameters,
