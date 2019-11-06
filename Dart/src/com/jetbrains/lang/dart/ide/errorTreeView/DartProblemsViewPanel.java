@@ -15,6 +15,7 @@ import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,9 +32,7 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import icons.DartIcons;
-import org.dartlang.analysis.server.protocol.AnalysisError;
-import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
-import org.dartlang.analysis.server.protocol.SourceChange;
+import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -138,13 +137,14 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
 
     addQuickFixActions(group, selectedProblem);
+    addDiagnosticMessageActions(group, selectedProblem);
     addDocumentationAction(group, selectedProblem);
 
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
   }
 
-  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable final DartProblem problem) {
     final VirtualFile selectedVFile = problem != null ? problem.getFile() : null;
     if (selectedVFile == null) return;
 
@@ -174,6 +174,36 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
           catch (DartSourceEditException ignored) {/**/}
         }
       });
+    }
+  }
+
+  private void addDiagnosticMessageActions(@NotNull final DefaultActionGroup group, @Nullable final DartProblem problem) {
+    final List<DiagnosticMessage> diagnosticMessages = problem != null ? problem.getDiagnosticMessages() : null;
+    if (diagnosticMessages == null || diagnosticMessages.isEmpty()) return;
+
+    group.addSeparator();
+    // Reference the icon for "Jump to Source", higher in this menu group, to indicate that the action will have the same behavior
+    final Icon jumpToSourceIcon = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE).getTemplatePresentation().getIcon();
+    for (DiagnosticMessage diagnosticMessage : diagnosticMessages) {
+      // Reference the message, trim, non-nullize, and remove a trailing period, if one exists
+      String message = StringUtil.notNullize(diagnosticMessage.getMessage());
+      message = StringUtil.trimEnd(StringUtil.trim(message), ".");
+
+      // Reference the Location, compute the VirtualFile
+      final Location location = diagnosticMessage.getLocation();
+      final String filePath = location == null ? null : FileUtil.toSystemIndependentName(location.getFile());
+      final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
+
+      // Create the action for this DiagnosticMessage
+      if (StringUtil.isNotEmpty(message) && vFile != null) {
+        group.add(new DumbAwareAction(message, null, jumpToSourceIcon) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            final int offset = DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, location.getOffset());
+            OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, vFile, offset));
+          }
+        });
+      }
     }
   }
 
