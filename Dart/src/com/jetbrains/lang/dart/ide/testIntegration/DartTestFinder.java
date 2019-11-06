@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.ide.testIntegration;
 
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -12,6 +13,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.testIntegration.TestFinder;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +68,9 @@ public class DartTestFinder implements TestFinder {
   private static String getTopLevelDirNameForDartFile(@NotNull Project project, @Nullable VirtualFile file) {
     if (file == null || !FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) return null;
 
-    VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, file);
+    VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                          ? DartBuildFileUtil.findPackageRootBuildFile(project, file)
+                          : PubspecYamlUtil.findPubspecYamlFile(project, file);
     if (pubspec == null) return null;
 
     String rootPathWithSlash = pubspec.getParent().getPath() + "/";
@@ -81,7 +85,9 @@ public class DartTestFinder implements TestFinder {
 
   @NotNull
   private static GlobalSearchScope getDirScope(@NotNull Project project, @NotNull VirtualFile contextFile, String... topLevelDirNames) {
-    VirtualFile pubspec = PubspecYamlUtil.findPubspecYamlFile(project, contextFile);
+    VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
+                          ? DartBuildFileUtil.findPackageRootBuildFile(project, contextFile)
+                          : PubspecYamlUtil.findPubspecYamlFile(project, contextFile);
     if (pubspec == null) return GlobalSearchScope.EMPTY_SCOPE;
 
     VirtualFile[] dirs = ContainerUtil.mapNotNull(topLevelDirNames, pubspec.getParent()::findChild, VirtualFile.EMPTY_ARRAY);
