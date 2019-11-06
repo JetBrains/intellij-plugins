@@ -21,6 +21,7 @@ import org.jetbrains.vuejs.lang.html.VueParserTest;
 import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderCompletionTest;
 import org.jetbrains.vuejs.libraries.vuex.VuexTestSuite;
 import org.jetbrains.vuejs.pug.PugTemplateTest;
+import org.jetbrains.vuejs.pug.VuePugFoldingTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -55,6 +56,7 @@ import org.junit.runners.Suite;
   VuexTestSuite.class,
   TemplateLoaderCompletionTest.class,
   PugTemplateTest.class,
+  VuePugFoldingTest.class,
   VueModuleImportTest.class,
   VueCopyPasteTest.class,
   VueTypeScriptHighlightingTest.class,
