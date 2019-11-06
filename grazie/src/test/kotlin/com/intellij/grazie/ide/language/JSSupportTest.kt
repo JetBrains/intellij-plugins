@@ -16,4 +16,8 @@ class JSSupportTest : GrazieTestBase() {
   fun `test grammar check in string literals`() {
     runHighlightTestForFile("ide/language/js/StringLiterals.js")
   }
+
+  fun `test grammar check in jsx`() {
+    runHighlightTestForFile("ide/language/js/Example.jsx")
+  }
 }

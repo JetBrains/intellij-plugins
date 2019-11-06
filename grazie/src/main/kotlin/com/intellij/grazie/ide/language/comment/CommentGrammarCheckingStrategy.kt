@@ -3,7 +3,7 @@ package com.intellij.grazie.ide.language.comment
 
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
-import com.intellij.grazie.utils.Text
+import com.intellij.grazie.grammar.strategy.indentIndexes
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 
@@ -12,5 +12,5 @@ class CommentGrammarCheckingStrategy : GrammarCheckingStrategy {
 
   override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
 
-  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = Text.indentIndexes(text, setOf(' ', '*', '/'))
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = indentIndexes(text, setOf(' ', '*', '/'))
 }

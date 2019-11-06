@@ -37,9 +37,9 @@ abstract class GrazieTestBase : BasePlatformTestCase() {
     }
   }
 
-  protected fun runHighlightTestForFile(file: String) {
+  protected open fun runHighlightTestForFile(file: String) {
     myFixture.configureByFile(file)
-    myFixture.checkHighlighting(true, false, false, true)
+    myFixture.checkHighlighting(true, false, false)
   }
 
   fun plain(vararg texts: String) = plain(texts.toList())
@@ -50,6 +50,6 @@ abstract class GrazieTestBase : BasePlatformTestCase() {
 
   companion object {
     private var isSettingsLoad = false
-    private val inspectionTools by lazy { arrayOf(GrazieInspection(), SpellCheckingInspection()) }
+    val inspectionTools by lazy { arrayOf(GrazieInspection(), SpellCheckingInspection()) }
   }
 }

@@ -47,6 +47,12 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
     LinkedSet(match.suggestedReplacements)
   )
 
+  val category: Category?
+    get() {
+      val category = info.rule.category.id.toString()
+      return Category.values().find { it.name == category }
+    }
+
   /**
    * A grammar typo category
    *

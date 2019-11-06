@@ -5,6 +5,11 @@ import com.intellij.grazie.GrazieTestBase
 
 
 class JavaSupportTest : GrazieTestBase() {
+  override fun runHighlightTestForFile(file: String) {
+    myFixture.configureByFile(file)
+    myFixture.checkHighlighting(true, false, false, true)
+  }
+
   fun `test spellcheck in constructs`() {
     runHighlightTestForFile("ide/language/java/Constructs.java")
   }

@@ -3,94 +3,94 @@ package com.intellij.grazie.grammar.ide
 
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehavior.ABSORB
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehavior.TEXT
+import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehavior.*
+import com.intellij.grazie.grammar.strategy.deleteRedundantSpace
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
-import com.intellij.grazie.utils.Text
+import com.intellij.grazie.utils.processElements
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiPlainText
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.search.PsiElementProcessor
 import java.util.*
 import kotlin.collections.ArrayList
 
 class GraziePsiElementProcessor<T : PsiElement>(private val root: PsiElement, private val strategy: GrammarCheckingStrategy) : PsiElementProcessor<T> {
+  companion object {
+    data class Result(val tokens: Collection<TokenInfo>, val shifts: List<ElementShift>, val text: StringBuilder)
+
+    fun processElements(root: PsiElement, strategy: GrammarCheckingStrategy): Result {
+      val processor = GraziePsiElementProcessor<PsiElement>(root, strategy)
+      processor.processElements(root)
+      return Result(processor.tokens, processor.shifts, processor.text)
+    }
+  }
+
+  data class ElementShift(val start: Int, val length: Int)
+
   data class TokenInfo(val range: IntRange,
                        val behavior: GrammarCheckingStrategy.ElementBehavior,
                        val ignoredGroup: RuleGroup,
-                       val ignoredCategories: Set<Typo.Category>)
+                       val ignoredCategories: Set<Typo.Category>) {
+    constructor(root: PsiElement, element: PsiElement, behavior: GrammarCheckingStrategy.ElementBehavior, ignoredGroup: RuleGroup, ignoredCategories: Set<Typo.Category>) :
+      this(IntRange(element.textOffset - root.textOffset, element.textOffset - root.textOffset + element.textLength - 1), behavior, ignoredGroup, ignoredCategories)
+  }
 
   private val tokens = Collections.synchronizedCollection(ArrayList<TokenInfo>())
-  private val shifts = ArrayList<Pair<Int, Int>>()
-  private var pointers = IdentityHashMap<PsiElement, TokenInfo>()
-  private val text = StringBuilder()
+  private val pointers = IdentityHashMap<PsiElement, TokenInfo>()
+  private val shifts = ArrayList<ElementShift>()
   private var lastNonTextTokenShiftIndex = -1
+  private val text = StringBuilder()
 
-  private val replaces = strategy.getReplaceCharRules(root)
-
-  // convert double spaces into one after removing absorb/stealth elements
-  private fun StringBuilder.deleteNotStealthySpace(position: Int): Boolean {
-    if (position in 1 until length) {
-      if (get(position - 1) == ' ' && (Text.isPunctuation(get(position)) || get(position) == ' ')) {
-        deleteCharAt(position - 1)
-        return true
+  private val replaces = @Suppress("deprecation") strategy.getReplaceCharRules(root)
+  private fun StringBuilder.appendElementText(element: PsiElement) {
+    if (replaces.isEmpty()) {
+      append(element.text)
+    } else {
+      element.text.forEach {
+        append(replaces.fold(it) { char, rule -> rule(this, char) })
       }
     }
+  }
 
-    return false
+  private fun GrammarCheckingStrategy.determineElementBehavior(element: PsiElement) = when {
+    element !== root && isMyContextRoot(element) -> ABSORB // absorbing nested context root
+    else -> getElementBehavior(root, element)
   }
 
   override fun execute(element: T): Boolean {
-    // prevent nested context roots
-    if (element !== root && strategy.isMyContextRoot(element)) {
-      tokens.add(TokenInfo(IntRange(element.textOffset - root.textOffset, element.textOffset - root.textOffset + element.textLength - 1), ABSORB, RuleGroup.EMPTY, emptySet()))
-      return false
-    }
+    val behavior = strategy.determineElementBehavior(element)
+    val group = strategy.getIgnoredRuleGroup(root, element) ?: pointers[element.parent]?.ignoredGroup ?: RuleGroup.EMPTY
+    val categories = strategy.getIgnoredTypoCategories(root, element) ?: pointers[element.parent]?.ignoredCategories ?: emptySet()
 
-    val behavior = strategy.getElementBehavior(root, element)
-    val group = strategy.getIgnoredRuleGroup(root, element) ?: (pointers[element.parent]?.ignoredGroup ?: RuleGroup.EMPTY)
-    val categories = strategy.getIgnoredTypoCategories(root, element) ?: (pointers[element.parent]?.ignoredCategories ?: emptySet())
-
-    val info = TokenInfo(IntRange(element.textOffset - root.textOffset, element.textOffset - root.textOffset + element.textLength - 1), behavior, group, categories)
+    val info = TokenInfo(root, element, behavior, group, categories)
     pointers[element] = info
 
-    if (behavior == TEXT) {
-      if (element is LeafPsiElement || element is PsiPlainText) {
+    when (behavior) {
+      TEXT -> if (element.node != null && element.node.getChildren(null).isEmpty()) {
         tokens.add(info)
 
         val position = text.length + 1
-
-        if (replaces.isEmpty()) {
-          text.append(element.text)
-        } else {
-          element.text.forEach {
-            text.append(replaces.fold(it) { acc, rule -> rule(text, acc) })
-          }
-        }
+        text.appendElementText(element)
 
         if (lastNonTextTokenShiftIndex != -1) {
-          if (text.deleteNotStealthySpace(position)) {
+          if (text.deleteRedundantSpace(position)) {
             val shift = shifts[lastNonTextTokenShiftIndex]
-            shifts[lastNonTextTokenShiftIndex] = shift.first - 1 to shift.second + 1
+            shifts[lastNonTextTokenShiftIndex] = ElementShift(shift.start - 1, shift.length + 1)
           }
 
           lastNonTextTokenShiftIndex = -1
         }
       }
-    } else {
-      tokens.add(info)
-      shifts.add(text.length to element.textLength)
 
-      if (lastNonTextTokenShiftIndex == -1) {
-        lastNonTextTokenShiftIndex = shifts.size - 1
+      ABSORB, STEALTH -> {
+        tokens.add(info)
+        shifts.add(ElementShift(text.length, element.textLength))
+
+        if (lastNonTextTokenShiftIndex == -1) {
+          lastNonTextTokenShiftIndex = shifts.size - 1
+        }
       }
     }
 
     // no need to process elements with ignored text
     return behavior == TEXT
   }
-
-  fun getResultedTokens(): Collection<TokenInfo> = tokens
-  fun getResultedShifts(): ArrayList<Pair<Int, Int>> = shifts
-  fun getResultedText() = text
 }

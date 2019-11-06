@@ -7,6 +7,7 @@ import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehav
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
 import com.intellij.grazie.grammar.strategy.impl.ReplaceNewLines
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.grazie.utils.LinkedSet
 import com.intellij.psi.PsiElement
 
 /**
@@ -19,11 +20,11 @@ interface GrammarCheckingStrategy {
   /**
    * Possible PsiElement behavior during grammar check
    *
-   * [TEXT] - element treated as plain text
+   * [TEXT] - element contains text
    * [STEALTH] - element's text is ignored
    * [ABSORB] - element's text is ignored, as well as the typos that contain this element
    *
-   * [ABSORB] behavior also prevents visiting children of these elements.
+   * [ABSORB] and [STEALTH] behavior also prevents visiting children of these elements.
    *
    * Examples:
    *  Text: This is a <bold>error</bold> sample.
@@ -67,14 +68,15 @@ interface GrammarCheckingStrategy {
   fun getElementBehavior(root: PsiElement, child: PsiElement) = TEXT
 
   /**
-   * Specify ranges, which will be removed from text before checking (like STEALTH behavior)
+   * Specify ranges, which will be removed from text before checking (like STEALTH behavior).
+   * You can use [indentIndexes] to hide the indentation of each line of text.
    *
    * @param root root element previously selected in [isMyContextRoot]
    * @param text extracted text from root element without [ABSORB] and [STEALTH] ones
    * in which you need to specify the ranges to remove from the grammar checking
-   * @return list of ranges in the [text] to be ignored
+   * @return set of ranges in the [text] to be ignored
    */
-  fun getStealthyRanges(root: PsiElement, text: CharSequence) = emptyList<IntRange>()
+  fun getStealthyRanges(root: PsiElement, text: CharSequence) = LinkedSet<IntRange>()
 
   /**
    * Determine if typo is will be shown to user. The final check before add typo to [ProblemsHolder].

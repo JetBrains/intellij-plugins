@@ -19,47 +19,6 @@ object Text {
 
     fun distance(str1: CharSequence?, str2: CharSequence?): Int = levenshtein.apply(str1, str2)
   }
-
-  fun quotesOffset(str: CharSequence): Int {
-    var index = 0
-    while (index < str.length / 2) {
-      if (str[index] != str[str.length - index - 1] || !isQuote(str[index])) {
-        return index
-      }
-      index++
-    }
-
-    return index
-  }
-
-  /**
-   * Finds indent indexes for each line (indent of specific [chars])
-   *
-   * @param str source text
-   * @param chars characters, which considered as indentation
-   * @return list of IntRanges for such indents
-   */
-  fun indentIndexes(str: CharSequence, chars: Set<Char>): List<IntRange> {
-    val result = ArrayList<IntRange>()
-    var save = -1
-    for ((index, char) in str.withIndex()) {
-      if ((isNewline(char) || (index == 0 && char in chars)) && save == -1) {
-        // for first line without \n
-        save = index + if (index == 0) 0 else 1
-      } else {
-        if (save != -1) {
-          if (char !in chars) {
-            if (index > save) result.add(IntRange(save, index - 1))
-            save = if (isNewline(char)) index + 1 else -1
-          }
-        }
-      }
-    }
-
-    if (save != -1) result.add(IntRange(save, str.length - 1))
-
-    return result
-  }
 }
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */

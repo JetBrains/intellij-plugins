@@ -33,21 +33,21 @@ fun PsiElement.isInjectedFragment(): Boolean {
   return isInjected
 }
 
-fun processElements(element: PsiElement?, processor: PsiElementProcessor<in PsiElement>) {
+fun PsiElementProcessor<in PsiElement>.processElements(element: PsiElement?) {
   element ?: return
 
   if (element is PsiCompiledElement || !element.isPhysical) {
-    if (!processor.execute(element)) return
+    if (!execute(element)) return
 
     for (child in element.children) {
-      processElements(child, processor)
+      processElements(child)
     }
 
   }
   else {
     element.accept(object : PsiRecursiveElementWalkingVisitor() {
       override fun visitElement(element: PsiElement) {
-        if (processor.execute(element)) {
+        if (execute(element)) {
           super.visitElement(element)
         }
       }
