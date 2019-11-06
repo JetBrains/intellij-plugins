@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
@@ -14,10 +14,12 @@ import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.DiagnosticMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 public class DartProblem {
 
@@ -49,6 +51,11 @@ public class DartProblem {
   @Nullable
   public String getUrl() {
     return myAnalysisError.getUrl();
+  }
+
+  @Nullable
+  public List<DiagnosticMessage> getDiagnosticMessages() {
+    return myAnalysisError.getContextMessages();
   }
 
   @NotNull
@@ -166,7 +173,7 @@ public class DartProblem {
   }
 
   @NotNull
-  public static String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
+  public static String generateTooltipText(@NotNull final String message, @Nullable final String correction, @Nullable final String url) {
     final StringBuilder tooltip = new StringBuilder("<html><p>").append(XmlStringUtil.escapeString(message)).append("</p>");
     if (StringUtil.isNotEmpty(correction)) {
       tooltip.append("<br/><p>").append(XmlStringUtil.escapeString(correction)).append("</p>");
