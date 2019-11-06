@@ -174,12 +174,12 @@ public class DartProblem {
 
   @NotNull
   public static String generateTooltipText(@NotNull final String message, @Nullable final String correction, @Nullable final String url) {
-    final StringBuilder tooltip = new StringBuilder("<html><p>").append(XmlStringUtil.escapeString(message)).append("</p>");
+    final StringBuilder tooltip = new StringBuilder("<html>").append(XmlStringUtil.escapeString(message));
     if (StringUtil.isNotEmpty(correction)) {
-      tooltip.append("<br/><p>").append(XmlStringUtil.escapeString(correction)).append("</p>");
+      tooltip.append("<br/><br/>").append(XmlStringUtil.escapeString(correction));
     }
     if (StringUtil.isNotEmpty(url)) {
-      tooltip.append("<a href='").append(url).append("'>Open documentation</a>");
+      tooltip.append("<br/><a href='").append(url).append("'>Open documentation</a>");
     }
     tooltip.append("</html>");
     return tooltip.toString();
