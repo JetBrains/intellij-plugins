@@ -4,6 +4,7 @@
 package training.commands
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
@@ -38,7 +39,7 @@ class TryCommand : Command(CommandType.TRY) {
         check.before()
         checkFuture = recorder.futureCheck { check.check() }
       } catch (e: Exception) {
-        e.printStackTrace()
+        LOG.error(e)
       }
 
     }
@@ -61,4 +62,7 @@ class TryCommand : Command(CommandType.TRY) {
     }
   }
 
+  companion object{
+    private val LOG = Logger.getInstance(TryCommand::class.java)
+  }
 }

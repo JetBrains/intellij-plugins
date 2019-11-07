@@ -3,6 +3,7 @@
  */
 package training.ui.views
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.components.labels.LinkLabel
@@ -153,7 +154,7 @@ class LearnPanel : JPanel() {
                                 val project = guessCurrentProject(this@LearnPanel)
                                 CourseManager.instance.openLesson(project, lesson)
                             } catch (e: Exception) {
-                                e.printStackTrace()
+                                LOG.warn(e)
                             }
 
                         }
@@ -163,7 +164,7 @@ class LearnPanel : JPanel() {
                             try {
                                 desktop.browse(URI(link))
                             } catch (e: Exception) {
-                                e.printStackTrace()
+                                LOG.warn(e)
                             }
                         }
                     }
@@ -186,7 +187,7 @@ class LearnPanel : JPanel() {
         try {
             lessonMessagePane.passPreviousMessages()
         } catch (e: BadLocationException) {
-            e.printStackTrace()
+            LOG.warn(e)
         }
     }
 
@@ -332,7 +333,7 @@ class LearnPanel : JPanel() {
                         val project = guessCurrentProject(this@LearnPanel)
                         CourseManager.instance.openLesson(project, currentLesson)
                     } catch (e1: Exception) {
-                        e1.printStackTrace()
+                        LOG.warn(e1)
                     }
                 }, null)
 
@@ -416,5 +417,9 @@ class LearnPanel : JPanel() {
             UISettings.instance.backgroundColor
         else
             UIUtil.getPanelBackground()
+    }
+
+    companion object{
+        private val LOG = Logger.getInstance(LearnPanel::class.java)
     }
 }
