@@ -201,7 +201,7 @@ class OpenLessonAction : AnAction() {
     } catch (noJavaModuleException: NoJavaModuleException) {
       showModuleProblemDialog(projectWhereToStartLesson)
     } catch (e: Exception) {
-      e.printStackTrace()
+      LOG.error(e)
     }
 
   }
@@ -259,7 +259,7 @@ class OpenLessonAction : AnAction() {
       try {
         UiManager.setModulesView()
       } catch (e: Exception) {
-        e.printStackTrace()
+        LOG.error(e)
       }
 
     }
@@ -350,7 +350,7 @@ class OpenLessonAction : AnAction() {
             val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
             lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
           } catch (e: IOException) {
-            e.printStackTrace()
+            LOG.error(e)
           }
 
         }
@@ -377,7 +377,7 @@ class OpenLessonAction : AnAction() {
     try {
       myLearnProject = NewLearnProjectUtil.createLearnProject(projectToClose, langSupport)
     } catch (e: IOException) {
-      e.printStackTrace()
+      LOG.error(e)
     }
     langSupport.applyToProjectAfterConfigure().invoke(myLearnProject!!)
 

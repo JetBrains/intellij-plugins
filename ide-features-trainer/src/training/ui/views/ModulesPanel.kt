@@ -7,6 +7,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.impl.ActionButton
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
@@ -127,7 +128,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
                     if (lesson == null) lesson = module.lessons[0]
                     CourseManager.instance.openLesson(project, lesson)
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    LOG.warn(e)
                 }
             }, null)
             moduleName.font = UISettings.instance.moduleNameFont
@@ -158,7 +159,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
                 val descriptionStr = module.description
                 descriptionPane.document.insertString(0, descriptionStr, REGULAR)
             } catch (e: BadLocationException) {
-                e.printStackTrace()
+                LOG.warn(e)
             }
 
             descriptionPane.alignmentX = Component.LEFT_ALIGNMENT
@@ -354,6 +355,8 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
         private val REGULAR = SimpleAttributeSet()
         private val PARAGRAPH_STYLE = SimpleAttributeSet()
+
+        private val LOG = Logger.getInstance(ModulesPanel::class.java)
     }
 
 }
