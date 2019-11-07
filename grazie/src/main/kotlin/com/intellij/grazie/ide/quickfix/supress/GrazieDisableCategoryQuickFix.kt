@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Iconable
 import org.languagetool.rules.Category
 import javax.swing.Icon
 
-class GrazieSuppressCategoryQuickFix(private val lang: Lang, private val category: Category) : LocalQuickFix, Iconable, LowPriorityAction {
+class GrazieDisableCategoryQuickFix(private val lang: Lang, private val category: Category) : LocalQuickFix, Iconable, LowPriorityAction {
   override fun getFamilyName(): String = msg("grazie.quickfix.suppress.category.family")
 
   override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel

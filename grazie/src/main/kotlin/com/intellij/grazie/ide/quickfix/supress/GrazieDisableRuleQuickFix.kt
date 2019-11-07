@@ -12,7 +12,7 @@ import com.intellij.openapi.util.Iconable
 import org.languagetool.rules.Rule
 import javax.swing.Icon
 
-class GrazieSuppressRuleQuickFix(private val rule: Rule) : LocalQuickFix, Iconable, PriorityAction {
+class GrazieDisableRuleQuickFix(private val rule: Rule) : LocalQuickFix, Iconable, PriorityAction {
   //Should have priority more than category suppress
   override fun getPriority() = PriorityAction.Priority.NORMAL
 
