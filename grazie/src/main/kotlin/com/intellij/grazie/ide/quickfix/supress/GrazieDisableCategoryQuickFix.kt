@@ -19,7 +19,7 @@ class GrazieDisableCategoryQuickFix(private val lang: Lang, private val category
 
   override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
 
-  override fun getName() = msg("grazie.quickfix.suppress.category.text", "'${category.name}'")
+  override fun getName() = msg("grazie.quickfix.suppress.category.text", category.name)
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     GrazieConfig.update { state ->

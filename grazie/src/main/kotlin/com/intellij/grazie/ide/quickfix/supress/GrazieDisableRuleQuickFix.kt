@@ -20,7 +20,7 @@ class GrazieDisableRuleQuickFix(private val rule: Rule) : LocalQuickFix, Iconabl
 
   override fun getIcon(flags: Int): Icon = AllIcons.Actions.Cancel
 
-  override fun getName() = msg("grazie.quickfix.suppress.rule.text", "'${rule.description}'")
+  override fun getName() = msg("grazie.quickfix.suppress.rule.text", rule.description)
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     GrazieConfig.update { state ->
