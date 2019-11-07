@@ -3,19 +3,21 @@
  */
 package training.project
 
+import com.intellij.openapi.diagnostic.Logger
 import org.apache.commons.lang.StringUtils
 import java.io.*
 import java.net.JarURLConnection
 import java.net.URL
 
 object FileUtils {
+  private val LOG = Logger.getInstance(FileUtils::class.java)
 
   private fun copyFile(toCopy: File, destFile: File): Boolean {
     try {
       return copyStream(FileInputStream(toCopy),
           FileOutputStream(destFile))
     } catch (e: FileNotFoundException) {
-      e.printStackTrace()
+      LOG.warn(e)
     }
     return false
   }
@@ -75,7 +77,7 @@ object FileUtils {
       else
         copyFilesRecursively(File(originUrl.path), destination)
     } catch (e: IOException) {
-      e.printStackTrace()
+      LOG.warn(e)
     }
     return false
   }
@@ -84,7 +86,7 @@ object FileUtils {
     try {
       return copyStream(inputStream, FileOutputStream(f))
     } catch (e: FileNotFoundException) {
-      e.printStackTrace()
+      LOG.warn(e)
     }
     return false
   }
@@ -101,7 +103,7 @@ object FileUtils {
       os.close()
       return true
     } catch (e: IOException) {
-      e.printStackTrace()
+      LOG.warn(e)
     }
     return false
   }

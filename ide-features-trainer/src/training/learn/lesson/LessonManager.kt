@@ -5,6 +5,7 @@ package training.learn.lesson
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
@@ -70,7 +71,7 @@ class LessonManager {
         try {
           CourseManager.instance.openLesson(project, lesson)
         } catch (e: Exception) {
-          e.printStackTrace()
+          LOG.error(e)
         }
       }
     } else {
@@ -82,7 +83,7 @@ class LessonManager {
           try {
             CourseManager.instance.openLesson(project, notPassedLesson ?: nextModule.lessons[0])
           } catch (e: Exception) {
-            e.printStackTrace()
+            LOG.error(e)
           }
         }
       }
@@ -111,7 +112,7 @@ class LessonManager {
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
         } catch (e: Exception) {
-          e.printStackTrace()
+          LOG.error(e)
         }
       }, notPassedLesson)
     } else {
@@ -132,7 +133,7 @@ class LessonManager {
           try {
             CourseManager.instance.openLesson(project, lessonFromNextModule)
           } catch (e: Exception) {
-            e.printStackTrace()
+            LOG.error(e)
           }
         }, lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name)
       }
@@ -148,6 +149,7 @@ class LessonManager {
         try {
           document.setText("")
         } catch (e: Exception) {
+          LOG.error(e)
           System.err.println("Unable to update text in editor!")
         }
 
@@ -185,7 +187,7 @@ class LessonManager {
       try {
         showCaretBlockedBalloon()
       } catch (e: InterruptedException) {
-        e.printStackTrace()
+        LOG.error(e)
       }
     })
     myLearnActions.add(blockCaretAction)
@@ -217,7 +219,7 @@ class LessonManager {
         try {
           showCaretBlockedBalloon()
         } catch (e: InterruptedException) {
-          e.printStackTrace()
+          LOG.error(e)
         }
       })
     }
@@ -238,5 +240,7 @@ class LessonManager {
 
     val instance: LessonManager
       get() = ServiceManager.getService(LessonManager::class.java)
+
+    private val LOG = Logger.getInstance(LessonManager::class.java)
   }
 }

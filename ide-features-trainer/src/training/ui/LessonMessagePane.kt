@@ -83,7 +83,7 @@ class LessonMessagePane : JTextPane() {
             lessonMessages.add(LessonMessage(text, start, end))
 
         } catch (e: BadLocationException) {
-            e.printStackTrace()
+            LOG.warn(e)
         }
 
     }
@@ -174,7 +174,7 @@ class LessonMessagePane : JTextPane() {
         try {
             paintMessages(g)
         } catch (e: BadLocationException) {
-            e.printStackTrace()
+            LOG.warn(e)
         }
 
         super.paintComponent(g)
@@ -194,7 +194,7 @@ class LessonMessagePane : JTextPane() {
                         LearnIcons.checkMarkGray.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
                     }
                 } catch (e: BadLocationException) {
-                    e.printStackTrace()
+                    LOG.warn(e)
                 }
 
             }

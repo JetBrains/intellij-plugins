@@ -153,14 +153,14 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
         try {
             initSouthPanel()
         } catch (e: BadLocationException) {
-            e.printStackTrace()
+            LOG.warn(e)
         }
 
         caption.text = LearnBundle.messageInPlace("learn.choose.language.caption", place)
         try {
             description.document.insertString(0, LearnBundle.messageInPlace("learn.choose.language.description", place), REGULAR)
         } catch (e: BadLocationException) {
-            e.printStackTrace()
+            LOG.warn(e)
         }
     }
 
