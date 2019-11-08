@@ -3,7 +3,12 @@
 <idea-plugin>
   <id>gherkin</id>
   <name>Gherkin</name>
-  <description>Provides support of Gherkin language</description>
+  <description><![CDATA[
+  Adds support for the <a href="https://cucumber.io/docs/gherkin/">Gherkin</a> language, which is used by the <a href="http://cukes.info/">Cucumber</a> testing tool.
+
+<ul><li>Provides coding assistance for step definitions</li></ul>
+  ]]>
+  </description>
   <depends>com.intellij.modules.xml</depends>
   <vendor>JetBrains</vendor>
 
