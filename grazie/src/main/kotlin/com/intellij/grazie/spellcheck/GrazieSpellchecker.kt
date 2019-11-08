@@ -1,31 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.spellcheck
 
-import com.intellij.codeInspection.ex.modifyAndCommitProjectProfile
 import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.grazie.utils.LinkedSet
 import com.intellij.grazie.utils.toLinkedSet
-import com.intellij.openapi.project.Project
 import com.intellij.spellchecker.engine.Transformation
-import com.intellij.spellchecker.inspections.SpellCheckingInspection
-import com.intellij.util.Consumer
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.Rule
 import org.slf4j.LoggerFactory
 
-object GrazieSpellchecker : GrazieStateLifecycle {
-  override fun init(state: GrazieConfig.State, project: Project) {
-    if (state.enabledSpellcheck) {
-      modifyAndCommitProjectProfile(project, Consumer {
-        it.getTools(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME, project).isEnabled = true
-        it.enableToolsByDefault(listOf(SpellCheckingInspection.SPELL_CHECKING_INSPECTION_TOOL_NAME), project)
-      })
-    }
-  }
-
+object GrazieSpellchecker {
   private const val MAX_SUGGESTIONS_COUNT = 3
 
   private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH

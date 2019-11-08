@@ -3,10 +3,7 @@ package com.intellij.grazie
 
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.components.State
-import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.util.xmlb.annotations.Property
 
@@ -14,7 +11,6 @@ import com.intellij.util.xmlb.annotations.Property
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                    @Property val nativeLanguage: Lang = enabledLanguages.first(),
-                   @Property val enabledSpellcheck: Boolean = false,
                    @Property val enabledCommitIntegration: Boolean = false,
                    @Property val userWords: Set<String> = HashSet(),
                    @Property val userDisabledRules: Set<String> = HashSet(),
@@ -24,10 +20,10 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
 
     val missedLanguages: Set<Lang>
       get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
-              (setOf(nativeLanguage).takeIf { nativeLanguage.jLanguage == null } ?: emptySet())
+        (setOf(nativeLanguage).takeIf { nativeLanguage.jLanguage == null } ?: emptySet())
 
     fun clone() = State(
-      enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage, enabledSpellcheck = enabledSpellcheck,
+      enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage,
       enabledCommitIntegration = enabledCommitIntegration, userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules),
       userEnabledRules = HashSet(userEnabledRules), lastSeenVersion = lastSeenVersion, availableLanguages = availableLanguages)
 
@@ -35,14 +31,12 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
 
     fun update(enabledLanguages: Set<Lang> = this.enabledLanguages,
                nativeLanguage: Lang = this.nativeLanguage,
-               enabledSpellcheck: Boolean = this.enabledSpellcheck,
                enabledCommitIntegration: Boolean = this.enabledCommitIntegration,
                userWords: Set<String> = this.userWords,
                userDisabledRules: Set<String> = this.userDisabledRules,
                userEnabledRules: Set<String> = this.userEnabledRules,
-               lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledSpellcheck,
-                                                                        enabledCommitIntegration, userWords, userDisabledRules,
-                                                                        userEnabledRules, lastSeenVersion,
+               lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledCommitIntegration,
+                                                                        userWords, userDisabledRules, userEnabledRules, lastSeenVersion,
                                                                         enabledLanguages.filter { it.jLanguage != null }.toSet())
   }
 

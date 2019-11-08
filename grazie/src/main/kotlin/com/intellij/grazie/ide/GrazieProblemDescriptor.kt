@@ -1,9 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptorBase
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.*
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
@@ -37,59 +35,54 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
     private fun Typo.toDescriptionTemplate(isOnTheFly: Boolean): String {
       if (ApplicationManager.getApplication().isUnitTestMode) return info.rule.id
       return html {
-        if (isSpellingTypo) {
-          +info.rule.toDescriptionSanitized()
-        }
-        else {
-          if (!location.errorText.isNullOrBlank() && fixes.none { it.isBlank() }) {
-            p {
-              style = "padding-bottom: 10px;"
-              +"${location.errorText} &rarr; ${fixes.take(3).joinToString(separator = "/")}"
-              if (!isOnTheFly) nbsp()
-            }
-          }
-
+        if (!location.errorText.isNullOrBlank() && fixes.isNotEmpty() && fixes.none { it.isBlank() }) {
           p {
-            info.incorrectExample?.let {
-              style = "padding-bottom: 8px;"
-            }
-
-            +info.rule.toDescriptionSanitized()
+            style = "padding-bottom: 10px;"
+            +"${location.errorText} &rarr; ${fixes.take(3).joinToString(separator = "/")}"
             if (!isOnTheFly) nbsp()
           }
+        }
 
-          table {
-            cellpading = "0"
-            cellspacing = "0"
+        p {
+          info.incorrectExample?.let {
+            style = "padding-bottom: 8px;"
+          }
 
-            info.incorrectExample?.let {
+          +info.rule.toDescriptionSanitized()
+          if (!isOnTheFly) nbsp()
+        }
+
+        table {
+          cellpading = "0"
+          cellspacing = "0"
+
+          info.incorrectExample?.let {
+            tr {
+              td {
+                valign = "top"
+                style = "padding-right: 5px; color: gray; vertical-align: top;"
+                +msg("grazie.ui.settings.rules.rule.incorrect")
+                if (!isOnTheFly) nbsp()
+              }
+              td {
+                style = "width: 100%;"
+                toIncorrectHtml(it)
+                if (!isOnTheFly) nbsp()
+              }
+            }
+
+            if (it.corrections.any { correction -> !correction.isNullOrBlank() }) {
               tr {
                 td {
                   valign = "top"
-                  style = "padding-right: 5px; color: gray; vertical-align: top;"
-                  +msg("grazie.ui.settings.rules.rule.incorrect")
+                  style = "padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
+                  +msg("grazie.ui.settings.rules.rule.correct")
                   if (!isOnTheFly) nbsp()
                 }
                 td {
-                  style = "width: 100%;"
-                  toIncorrectHtml(it)
+                  style = "padding-top: 5px; width: 100%;"
+                  toCorrectHtml(it)
                   if (!isOnTheFly) nbsp()
-                }
-              }
-
-              if (it.corrections.any { correction -> !correction.isNullOrBlank() }) {
-                tr {
-                  td {
-                    valign = "top"
-                    style = "padding-top: 5px; padding-right: 5px; color: gray; vertical-align: top;"
-                    +msg("grazie.ui.settings.rules.rule.correct")
-                    if (!isOnTheFly) nbsp()
-                  }
-                  td {
-                    style = "padding-top: 5px; width: 100%;"
-                    toCorrectHtml(it)
-                    if (!isOnTheFly) nbsp()
-                  }
                 }
               }
             }

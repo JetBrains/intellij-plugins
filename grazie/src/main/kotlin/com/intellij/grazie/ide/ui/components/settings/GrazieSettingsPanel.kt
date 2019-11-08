@@ -20,7 +20,6 @@ import net.miginfocom.swing.MigLayout
 import javax.swing.JComponent
 
 class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
-  private val spellcheck = GrazieSpellcheckComponent()
   private val vcs = GrazieCommitComponent()
   private val native = GrazieNativeLanguageComponent(::download)
   private val description = GrazieRuleDescriptionComponent()
@@ -28,7 +27,7 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
   private val languages = GrazieLanguagesComponent(::download, rules::addLang, rules::removeLang)
 
   private fun download(lang: Lang): Boolean {
-    val isSucceed = GrazieRemote.download(lang, guessCurrentProject(spellcheck.component))
+    val isSucceed = GrazieRemote.download(lang, guessCurrentProject(vcs.component))
     if (isSucceed) update()
     return isSucceed
   }
@@ -42,7 +41,6 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
   fun showOption(option: String?) = Runnable { rules.filter(option ?: "") }
 
   override fun isModified(settings: GrazieConfig) = rules.isModified
-    .or(settings.state.enabledSpellcheck != spellcheck.isSpellcheckEnabled)
     .or(settings.state.enabledCommitIntegration != vcs.isCommitIntegrationEnabled)
     .or(settings.state.nativeLanguage != native.language)
     .or(settings.state.enabledLanguages != languages.values)
@@ -79,7 +77,6 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
         userEnabledRules = userEnabledRules,
         userDisabledRules = userDisabledRules,
         nativeLanguage = native.language,
-        enabledSpellcheck = spellcheck.isSpellcheckEnabled,
         enabledCommitIntegration = vcs.isCommitIntegrationEnabled
       )
     }
@@ -89,7 +86,6 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
 
   override fun reset(settings: GrazieConfig) {
     native.language = settings.state.nativeLanguage
-    spellcheck.isSpellcheckEnabled = settings.state.enabledSpellcheck
     vcs.isCommitIntegrationEnabled = settings.state.enabledCommitIntegration
     languages.reset(settings.state.enabledLanguages.sortedWith(Comparator.comparing(Lang::displayName)))
     rules.reset()
@@ -108,7 +104,6 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
         panel(VerticalLayout(0), CC().grow().width("55%").minWidth("250px").alignY("top")) {
           border = padding(JBUI.insetsLeft(20))
           add(native.component)
-          add(spellcheck.component)
           add(vcs.component)
         }
 

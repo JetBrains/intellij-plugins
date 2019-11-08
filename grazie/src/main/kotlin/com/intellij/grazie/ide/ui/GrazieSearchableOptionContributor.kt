@@ -16,7 +16,6 @@ class GrazieSearchableOptionContributor : SearchableOptionContributor() {
 
   override fun processOptions(processor: SearchableOptionProcessor) {
     with(processor) {
-      addOptions(msg("grazie.ui.settings.spellcheck.enable.text"), msg("grazie.ui.settings.spellcheck.enable.text"))
       addOptions(msg("grazie.ui.settings.vcs.enable.text"), msg("grazie.ui.settings.vcs.enable.text"))
       addOptions(msg("grazie.ui.settings.rules.configuration.text"), msg("grazie.ui.settings.rules.configuration.text"))
       addOptions(msg("grazie.ui.settings.languages.native.text"), msg("grazie.ui.settings.languages.native.text"))

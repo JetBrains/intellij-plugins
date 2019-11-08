@@ -11,11 +11,3 @@ fun Typo.toSelectionRange(): TextRange {
     location.errorRange.endInclusive
   return TextRange(location.errorRange.start, end)
 }
-
-fun Typo.toAbsoluteSelectionRange(): TextRange {
-  val end = if (location.pointer?.element!!.textLength >= location.errorRange.endInclusive + 1)
-    location.errorRange.endInclusive + 1
-  else
-    location.errorRange.endInclusive
-  return location.element!!.textRange.cutOut(TextRange(location.errorRange.start, end))
-}
