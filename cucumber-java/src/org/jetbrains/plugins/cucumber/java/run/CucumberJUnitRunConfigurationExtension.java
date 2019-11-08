@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.junit.JUnitConfiguration;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,10 @@ public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExte
     scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
     String mainClassName = ((JUnitConfiguration)configuration).getPersistentData().MAIN_CLASS_NAME;
-    PsiClass mainClass = mainClassName != null ? JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope) : null;
+    PsiClass mainClass =  mainClassName != null 
+                          ? DumbService.getInstance(module.getProject())
+                            .computeWithAlternativeResolveEnabled(() -> JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope)) 
+                          : null;
     if (mainClass == null) {
       return;
     }
