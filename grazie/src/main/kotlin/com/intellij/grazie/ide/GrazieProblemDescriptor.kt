@@ -71,7 +71,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
               }
             }
 
-            if (it.corrections.any { correction -> !correction.isNullOrBlank() }) {
+            if (it.corrections.any { correction -> correction.isNullOrBlank().not() }) {
               tr {
                 td {
                   valign = "top"
