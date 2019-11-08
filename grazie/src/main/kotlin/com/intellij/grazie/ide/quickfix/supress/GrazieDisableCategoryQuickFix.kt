@@ -23,11 +23,7 @@ class GrazieDisableCategoryQuickFix(private val lang: Lang, private val category
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     GrazieConfig.update { state ->
-      val toDisable = with(LangTool.getTool(lang)) {
-        val activeRules = allActiveRules.toSet()
-
-        allRules.filter { it.category.id == category.id && it in activeRules }.distinctBy { it.id }
-      }
+      val toDisable = LangTool.getTool(lang).allActiveRules.filter { it.category.id == category.id }.distinctBy { it.id }
 
       state.update(
         userEnabledRules = state.userEnabledRules - toDisable.map { it.id },
