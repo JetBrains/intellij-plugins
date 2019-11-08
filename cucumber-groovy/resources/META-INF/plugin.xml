@@ -4,20 +4,8 @@
   <name>Cucumber for Groovy</name>
   <description>
       <![CDATA[
-      Enables <a href="http://cukes.info/">Cucumber</a> support with step definitions written in Groovy.
-        The following coding assistance features are available:
-        <ul>
-          <li>Error and syntax highlighting.</li>
-          <li>Indentation.</li>
-          <li>Intention actions.</li>
-          <li>Viewing code structure.</li>
-          <li>Navigation in the source code.</li>
-          <li>Integrated documentation.</li>
-          <li>Code completion.</li>
-          <li>Search for usages.</li>
-          <li>Commenting and uncommenting lines.</li>
-        </ul>
-      ]]>
+Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Groovy.
+ ]]>
    </description>
   <depends>gherkin</depends>
   <depends>org.intellij.groovy</depends>
