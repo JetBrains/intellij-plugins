@@ -15,11 +15,11 @@ public class DartBazelFileUtil {
     VirtualFile parent = file.getParent();
     while (parent != null) {
       final VirtualFile readonlyFolderVFile = parent.findChild(READONLY_FOLDER_NAME);
-      if (readonlyFolderVFile != null) {
+      if (readonlyFolderVFile != null && readonlyFolderVFile.isDirectory()) {
         return parent;
       }
       final VirtualFile workspaceFile = parent.findChild(WORKSPACE_FILE_NAME);
-      if (workspaceFile != null) {
+      if (workspaceFile != null && !workspaceFile.isDirectory()) {
         return parent;
       }
       parent = parent.getParent();
