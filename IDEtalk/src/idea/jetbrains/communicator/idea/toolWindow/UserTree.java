@@ -70,11 +70,6 @@ public class UserTree extends KirTree {
   }
 
   @Override
-  protected boolean isCustomUI() {
-    return true;
-  }
-
-  @Override
   public void addNotify() {
     super.addNotify();
     addMouseListener(myDragListener);
