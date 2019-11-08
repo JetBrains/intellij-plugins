@@ -13,7 +13,7 @@ import java.io.File
 class BuildProcessClasspathTest : BareTestFixtureTestCase() {
   @Test fun testBuildProcessClasspath() {
     val baseCp = ClasspathBootstrap.getBuildProcessApplicationClasspath()
-    val pluginsCp = BuildProcessClasspathManager().getBuildProcessPluginsClasspath(DefaultProjectFactory.getInstance().defaultProject)
+    val pluginsCp = BuildProcessClasspathManager(testRootDisposable).getBuildProcessPluginsClasspath(DefaultProjectFactory.getInstance().defaultProject)
     val libs = (baseCp.asSequence() + pluginsCp.asSequence()).map { LightJavaModule.moduleName(File(it).name) }.toSet()
     assertThat(libs).contains("intellij.osgi.jps", "biz.aQute.bndlib", "biz.aQute.repository", "biz.aQute.resolve", "plexus.utils")
   }
