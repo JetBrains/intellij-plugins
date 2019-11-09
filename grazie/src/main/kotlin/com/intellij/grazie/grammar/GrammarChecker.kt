@@ -28,10 +28,15 @@ object GrammarChecker {
       var deleted = 0
       primary@ for ((position, length) in iterator) {
         when {
-          position < range.start -> add(ShiftInText(position - stealthed, length, total + length))
-          position in range -> deleted += length         // shift inside range (combine in one)
+          position < range.start -> {
+            add(ShiftInText(position - stealthed, length, total + length))
+          }
+          position in range -> {
+            deleted += length
+          } // shift inside range (combine in one)
           else -> {
-            iterator.previous(); break@primary
+            iterator.previous()
+            break@primary
           } // shift after range - need a step back
         }
 
@@ -70,10 +75,6 @@ object GrammarChecker {
       -(index + 1) > 0 -> shifts[-(index + 1) - 1].totalDeleted
       else -> 0
     } + position
-  }
-
-  private fun IntRange.convertToRangeInRoot(shifts: List<ShiftInText>): IntRange {
-    return IntRange(findPositionInsideRoot(start, true, shifts), findPositionInsideRoot(endInclusive, false, shifts))
   }
 
   private fun findTextRangesToDelete(rangeInRoot: IntRange, rangeInText: IntRange, shifts: List<ShiftInText>) = ArrayList<IntRange>().apply {
@@ -115,4 +116,8 @@ object GrammarChecker {
         else -> typo.copy(location = typo.location.copy(errorRange = rangeInRoot, textRanges = textRangesToDelete, pointer = root.toPointer()))
       }
     }.toSet()
+
+  private fun IntRange.convertToRangeInRoot(shifts: List<ShiftInText>): IntRange {
+    return IntRange(findPositionInsideRoot(start, true, shifts), findPositionInsideRoot(endInclusive, false, shifts))
+  }
 }
