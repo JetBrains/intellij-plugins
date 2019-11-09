@@ -28,8 +28,6 @@
     <depends optional="true" config-file="xml.xml">com.intellij.modules.xml</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationInitializedListener implementation="com.intellij.grazie.ide.init.GrazieAppInit"/>
-
         <applicationService serviceImplementation="com.intellij.grazie.GrazieConfig"/>
 
         <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.notification.GrazieNotificationComponent"/>
