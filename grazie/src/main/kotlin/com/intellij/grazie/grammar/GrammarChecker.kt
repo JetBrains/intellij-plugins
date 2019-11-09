@@ -5,7 +5,7 @@ import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor
 import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor.ElementShift
 import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor.TokenInfo
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
-import com.intellij.grazie.grammar.strategy.trimLeadingQuotesAndSpaces
+import com.intellij.grazie.grammar.strategy.StrategyUtils
 import com.intellij.grazie.utils.length
 import com.intellij.grazie.utils.toPointer
 import com.intellij.psi.PsiElement
@@ -58,7 +58,7 @@ object GrammarChecker {
     if (tokens.isEmpty()) return emptySet()
 
     val textShifts = determineTextShifts(root, text, strategy, shifts)
-    val offset = text.trimLeadingQuotesAndSpaces()
+    val offset = StrategyUtils.trimLeadingQuotesAndSpaces(text)
 
     return check(root, text, textShifts, offset, tokens, strategy)
   }

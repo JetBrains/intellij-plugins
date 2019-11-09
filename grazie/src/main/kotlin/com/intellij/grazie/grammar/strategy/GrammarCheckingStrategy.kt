@@ -4,9 +4,7 @@ package com.intellij.grazie.grammar.strategy
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehavior.*
-import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
-import com.intellij.grazie.grammar.strategy.impl.ReplaceNewLines
-import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.grazie.grammar.strategy.impl.*
 import com.intellij.grazie.utils.LinkedSet
 import com.intellij.psi.PsiElement
 

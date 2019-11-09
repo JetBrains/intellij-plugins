@@ -2,10 +2,7 @@
 package com.intellij.grazie.ide.ui.components.settings
 
 import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.ide.ui.components.dsl.border
-import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.ide.ui.components.dsl.padding
-import com.intellij.grazie.ide.ui.components.dsl.panel
+import com.intellij.grazie.ide.ui.components.dsl.*
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.remote.GrazieRemote
 import com.intellij.ide.plugins.newui.VerticalLayout

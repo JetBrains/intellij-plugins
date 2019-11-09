@@ -2,14 +2,12 @@
 package com.intellij.grazie.ide.language.xml
 
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
+import com.intellij.grazie.grammar.strategy.StrategyUtils
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
-import com.intellij.grazie.grammar.strategy.indentIndexes
 import com.intellij.grazie.utils.isAtEnd
 import com.intellij.grazie.utils.isAtStart
 import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlText
-import com.intellij.psi.xml.XmlToken
-import com.intellij.psi.xml.XmlTokenType
+import com.intellij.psi.xml.*
 
 class XmlGrammarCheckingStrategy : GrammarCheckingStrategy {
   override fun isMyContextRoot(element: PsiElement) = element is XmlText ||
@@ -19,5 +17,5 @@ class XmlGrammarCheckingStrategy : GrammarCheckingStrategy {
 
   override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
 
-  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = indentIndexes(text, setOf(' '))
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = StrategyUtils.indentIndexes(text, setOf(' '))
 }

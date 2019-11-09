@@ -4,7 +4,7 @@ package com.intellij.grazie.grammar.ide
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehavior.*
-import com.intellij.grazie.grammar.strategy.deleteRedundantSpace
+import com.intellij.grazie.grammar.strategy.StrategyUtils
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
 import com.intellij.grazie.utils.processElements
 import com.intellij.psi.PsiElement
@@ -71,7 +71,7 @@ class GraziePsiElementProcessor<T : PsiElement>(private val root: PsiElement, pr
         text.appendElementText(element)
 
         if (lastNonTextTokenShiftIndex != -1) {
-          if (text.deleteRedundantSpace(position)) {
+          if (StrategyUtils.deleteRedundantSpace(text, position)) {
             val shift = shifts[lastNonTextTokenShiftIndex]
             shifts[lastNonTextTokenShiftIndex] = ElementShift(shift.start - 1, shift.length + 1)
           }

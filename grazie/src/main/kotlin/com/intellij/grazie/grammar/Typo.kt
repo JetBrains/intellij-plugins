@@ -2,14 +2,9 @@
 package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.Lang
-import com.intellij.grazie.utils.LinkedSet
-import com.intellij.grazie.utils.PsiPointer
-import com.intellij.grazie.utils.toIntRange
-import com.intellij.grazie.utils.withOffset
+import com.intellij.grazie.utils.*
 import com.intellij.psi.PsiElement
-import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.Rule
-import org.languagetool.rules.RuleMatch
+import org.languagetool.rules.*
 import org.slf4j.LoggerFactory
 
 data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<String> = LinkedSet()) {
