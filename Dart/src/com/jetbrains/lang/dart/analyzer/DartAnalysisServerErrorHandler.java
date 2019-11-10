@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-// TODO: deprecate the old classes
-
 /**
- * A class to log analysis server errors to the IntelliJ event log and present additional details
+ * A class to log Dart analysis server errors to the IntelliJ event log, and present additional details
  * to users on demand.
  */
 public class DartAnalysisServerErrorHandler {
