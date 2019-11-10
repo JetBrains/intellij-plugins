@@ -7,6 +7,8 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.command.undo.BasicUndoableAction
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import org.languagetool.rules.Rule
@@ -23,12 +25,28 @@ class GrazieDisableRuleQuickFix(private val rule: Rule) : LocalQuickFix, Iconabl
   override fun getName() = msg("grazie.quickfix.suppress.rule.text", rule.description)
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    GrazieConfig.update { state ->
-      state.update(
-        userEnabledRules = state.userEnabledRules - rule.id,
-        userDisabledRules = state.userDisabledRules + rule.id
-      )
+    val action = object : BasicUndoableAction(descriptor.psiElement?.containingFile?.virtualFile) {
+      override fun redo() {
+        GrazieConfig.update { state ->
+          state.update(
+            userEnabledRules = state.userEnabledRules - rule.id,
+            userDisabledRules = state.userDisabledRules + rule.id
+          )
+        }
+      }
+
+      override fun undo() {
+        GrazieConfig.update { state ->
+          state.update(
+            userEnabledRules = state.userEnabledRules + rule.id,
+            userDisabledRules = state.userDisabledRules - rule.id
+          )
+        }
+      }
     }
+
+    action.redo()
+    UndoManager.getInstance(project).undoableActionPerformed(action)
   }
 }
 

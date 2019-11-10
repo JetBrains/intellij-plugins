@@ -9,6 +9,8 @@ import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.command.undo.BasicUndoableAction
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
 import org.languagetool.rules.Category
@@ -22,14 +24,30 @@ class GrazieDisableCategoryQuickFix(private val lang: Lang, private val category
   override fun getName() = msg("grazie.quickfix.suppress.category.text", category.name)
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    GrazieConfig.update { state ->
-      val toDisable = LangTool.getTool(lang).allActiveRules.filter { it.category.id == category.id }.distinctBy { it.id }
+    val action = object : BasicUndoableAction(descriptor.psiElement?.containingFile?.virtualFile) {
+      private val toDisable = LangTool.getTool(lang).allActiveRules.filter { it.category.id == category.id }.distinctBy { it.id }
 
-      state.update(
-        userEnabledRules = state.userEnabledRules - toDisable.map { it.id },
-        userDisabledRules = state.userDisabledRules + toDisable.map { it.id }
-      )
+      override fun redo() {
+        GrazieConfig.update { state ->
+          state.update(
+            userEnabledRules = state.userEnabledRules - toDisable.map { it.id },
+            userDisabledRules = state.userDisabledRules + toDisable.map { it.id }
+          )
+        }
+      }
+
+      override fun undo() {
+        GrazieConfig.update { state ->
+          state.update(
+            userEnabledRules = state.userEnabledRules + toDisable.map { it.id },
+            userDisabledRules = state.userDisabledRules - toDisable.map { it.id }
+          )
+        }
+      }
     }
+
+    action.redo()
+    UndoManager.getInstance(project).undoableActionPerformed(action)
   }
 }
 
