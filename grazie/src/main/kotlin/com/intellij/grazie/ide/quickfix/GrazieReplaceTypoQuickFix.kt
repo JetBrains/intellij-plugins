@@ -16,7 +16,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Iconable
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import icons.SpellcheckerIcons
 import javax.swing.Icon
 import kotlin.math.min
@@ -36,7 +36,7 @@ class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconabl
       var editor: Editor = CommonDataKeys.EDITOR.getData(context) ?: return@onSuccess
       val element = typo.location.element!!
       if (InjectedLanguageManager.getInstance(project).getInjectionHost(element) != null && editor !is EditorWindow) {
-        editor = getInjectedEditorForInjectedFile(editor, element.containingFile)
+        editor = InjectedLanguageUtil.getInjectedEditorForInjectedFile(editor, element.containingFile)
       }
 
       val selectionRange = descriptor.textRangeInElement.shiftRight(element.textOffset)
