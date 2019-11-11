@@ -10,7 +10,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.javaee.tapestry" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
+    <orderEntry type="library" scope="TEST" name="easymock" level="project" />
+    <orderEntry type="library" scope="TEST" name="Objenesis" level="project" />
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
     <orderEntry type="library" scope="TEST" name="TestNG" level="project" />
