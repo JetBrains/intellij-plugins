@@ -53,7 +53,6 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
    * @param allowNonPublicClasses   flag to allow instantiation of non-public classes.
    * @param lifecycleStrategy       the component lifecycle strategy used by this adapter
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class.
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   public ConstructorInjectionComponentAdapter(final Object componentKey,
@@ -61,7 +60,7 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
                                               Parameter[] parameters,
                                               boolean allowNonPublicClasses,
                                               LifecycleStrategy lifecycleStrategy)
-    throws AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws AssignabilityRegistrationException {
     super(componentKey, componentImplementation, parameters, allowNonPublicClasses, lifecycleStrategy);
   }
 
@@ -73,14 +72,13 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
    * @param parameters              the parameters to use for the initialization
    * @param allowNonPublicClasses   flag to allow instantiation of non-public classes.
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class.
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   public ConstructorInjectionComponentAdapter(final Object componentKey,
                                               final Class componentImplementation,
                                               Parameter[] parameters,
                                               boolean allowNonPublicClasses)
-    throws AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws AssignabilityRegistrationException {
     super(componentKey, componentImplementation, parameters, allowNonPublicClasses);
   }
 
@@ -91,7 +89,6 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
    * @param componentImplementation the concrete implementation
    * @param parameters              the parameters to use for the initialization
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class.
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   public ConstructorInjectionComponentAdapter(Object componentKey, Class componentImplementation, Parameter[] parameters) {
@@ -104,19 +101,17 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
    * @param componentKey            the search key for this implementation
    * @param componentImplementation the concrete implementation
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class.
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   public ConstructorInjectionComponentAdapter(Object componentKey, Class componentImplementation)
-    throws AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws AssignabilityRegistrationException {
     this(componentKey, componentImplementation, null);
   }
 
   @Override
   protected Constructor getGreediestSatisfiableConstructor(PicoContainer container) throws
                                                                                     PicoIntrospectionException,
-                                                                                    AssignabilityRegistrationException,
-                                                                                    NotConcreteRegistrationException {
+                                                                                    AssignabilityRegistrationException {
     final Set conflicts = new HashSet();
     final Set unsatisfiableDependencyTypes = new HashSet();
     if (sortedMatchingConstructors == null) {
@@ -185,7 +180,7 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
 
   @Override
   public Object getComponentInstance(PicoContainer container)
-    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException {
     if (instantiationGuard == null) {
       instantiationGuard = new Guard() {
         @Override

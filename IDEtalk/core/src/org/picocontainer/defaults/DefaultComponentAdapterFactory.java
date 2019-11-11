@@ -27,12 +27,12 @@ public final class DefaultComponentAdapterFactory implements ComponentAdapterFac
 
   @Override
   public ComponentAdapter createComponentAdapter(Object componentKey, Class componentImplementation, Parameter[] parameters)
-    throws PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws PicoIntrospectionException, AssignabilityRegistrationException {
     return new CachingComponentAdapter(new ConstructorInjectionComponentAdapter(componentKey, componentImplementation, parameters, false, lifecycleStrategy));
   }
 
   public static ComponentAdapter createAdapter(Object componentKey, Class<?> componentImplementation, Parameter[] parameters)
-    throws PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws PicoIntrospectionException, AssignabilityRegistrationException {
     return new CachingComponentAdapter(new ConstructorInjectionComponentAdapter(componentKey, componentImplementation, parameters, false, new DefaultLifecycleStrategy()));
   }
 }

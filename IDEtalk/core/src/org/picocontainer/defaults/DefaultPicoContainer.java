@@ -153,7 +153,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   public ComponentAdapter registerComponent(ComponentAdapter componentAdapter) {
     Object componentKey = componentAdapter.getComponentKey();
     if (componentKeyToAdapterCache.containsKey(componentKey)) {
-      throw new DuplicateComponentKeyRegistrationException(componentKey);
+      throw new PicoRegistrationException("Key " + componentKey + " duplicated");
     }
     componentAdapters.add(componentAdapter);
     componentKeyToAdapterCache.put(componentKey, componentAdapter);

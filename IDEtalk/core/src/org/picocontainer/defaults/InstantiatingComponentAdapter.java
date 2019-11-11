@@ -9,10 +9,7 @@
  *****************************************************************************/
 package org.picocontainer.defaults;
 
-import org.picocontainer.ComponentAdapter;
-import org.picocontainer.Parameter;
-import org.picocontainer.PicoContainer;
-import org.picocontainer.PicoIntrospectionException;
+import org.picocontainer.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -46,10 +43,6 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
    */
   protected static abstract class Guard extends ThreadLocalCyclicDependencyGuard {
     protected PicoContainer guardedContainer;
-
-    protected void setArguments(PicoContainer container) {
-      this.guardedContainer = container;
-    }
   }
 
   /**
@@ -66,7 +59,6 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
    * @param allowNonPublicClasses   flag to allow instantiation of non-public classes
    * @param lifecycleStrategy       the lifecycle strategy used by this ComponentAdapter
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   protected InstantiatingComponentAdapter(Object componentKey,
@@ -96,7 +88,6 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
    * @param parameters              the parameters to use for the initialization
    * @param allowNonPublicClasses   flag to allow instantiation of non-public classes
    * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to
-   * @throws NotConcreteRegistrationException   if the implementation is not a concrete class
    * @throws NullPointerException               if one of the parameters is <code>null</code>
    */
   protected InstantiatingComponentAdapter(Object componentKey, Class componentImplementation,
@@ -104,11 +95,12 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
     this(componentKey, componentImplementation, parameters, allowNonPublicClasses, new DefaultLifecycleStrategy());
   }
 
-  private void checkConcrete() throws NotConcreteRegistrationException {
+  private void checkConcrete() {
     // Assert that the component class is concrete.
-    boolean isAbstract = (getComponentImplementation().getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT;
-    if (getComponentImplementation().isInterface() || isAbstract) {
-      throw new NotConcreteRegistrationException(getComponentImplementation());
+    Class<?> componentImplementation = getComponentImplementation();
+    boolean isAbstract = (componentImplementation.getModifiers() & Modifier.ABSTRACT) == Modifier.ABSTRACT;
+    if (componentImplementation.isInterface() || isAbstract) {
+      throw new PicoRegistrationException("Bad Access: '" + componentImplementation.getName() + "' is not instantiable");
     }
   }
 
@@ -163,12 +155,10 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
    * @throws UnsatisfiableDependenciesException
    * @throws AmbiguousComponentResolutionException
    * @throws AssignabilityRegistrationException
-   * @throws NotConcreteRegistrationException
    */
   protected abstract Constructor getGreediestSatisfiableConstructor(PicoContainer container) throws
                                                                                              PicoIntrospectionException,
                                                                                              UnsatisfiableDependenciesException,
                                                                                              AmbiguousComponentResolutionException,
-                                                                                             AssignabilityRegistrationException,
-                                                                                             NotConcreteRegistrationException;
+                                                                                             AssignabilityRegistrationException;
 }

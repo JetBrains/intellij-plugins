@@ -30,7 +30,6 @@ import org.picocontainer.*;
 public final class CachingComponentAdapter extends DecoratingComponentAdapter implements LifecycleManager {
   private final ObjectReference instanceReference;
   private boolean disposed;
-  private final boolean started;
   private final boolean delegateHasLifecylce;
 
   public CachingComponentAdapter(ComponentAdapter delegate) {
@@ -41,33 +40,19 @@ public final class CachingComponentAdapter extends DecoratingComponentAdapter im
     super(delegate);
     this.instanceReference = instanceReference;
     this.disposed = false;
-    this.started = false;
     this.delegateHasLifecylce = delegate instanceof LifecycleStrategy
                                 && ((LifecycleStrategy)delegate).hasLifecycle(delegate.getComponentImplementation());
   }
 
   @Override
   public Object getComponentInstance(PicoContainer container)
-    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException {
     Object instance = instanceReference.get();
     if (instance == null) {
       instance = super.getComponentInstance(container);
       instanceReference.set(instance);
     }
     return instance;
-  }
-
-  /**
-   * Flushes the cache.
-   * If the component instance is started is will stop and dispose it before
-   * flushing the cache.
-   */
-  public void flush() {
-    Object instance = instanceReference.get();
-    if (instance != null && delegateHasLifecylce && started) {
-      dispose(instance);
-    }
-    instanceReference.set(null);
   }
 
   /**

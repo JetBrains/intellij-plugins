@@ -38,11 +38,9 @@ public interface ComponentAdapterFactory {
    *                                            {@link PicoIntrospectionException}.
    * @throws AssignabilityRegistrationException if the creation of the component adapter results in a
    *                                            {@link AssignabilityRegistrationException}.
-   * @throws NotConcreteRegistrationException   if the creation of the component adapter results in a
-   *                                            {@link NotConcreteRegistrationException}.
    */
   ComponentAdapter createComponentAdapter(Object componentKey,
-                                          Class componentImplementation,
+                                          Class<?> componentImplementation,
                                           Parameter[] parameters)
-    throws PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException;
+    throws PicoIntrospectionException, AssignabilityRegistrationException;
 }

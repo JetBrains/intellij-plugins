@@ -53,12 +53,11 @@ public class BeanPropertyComponentAdapter extends DecoratingComponentAdapter {
    * @throws PicoInitializationException        {@inheritDoc}
    * @throws PicoIntrospectionException         {@inheritDoc}
    * @throws AssignabilityRegistrationException {@inheritDoc}
-   * @throws NotConcreteRegistrationException   {@inheritDoc}
    * @see #setProperties(Map)
    */
   @Override
   public Object getComponentInstance(PicoContainer container)
-    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws PicoInitializationException, PicoIntrospectionException, AssignabilityRegistrationException {
     final Object componentInstance = super.getComponentInstance(container);
     if (setters == null) {
       setters = getSetters(getComponentImplementation());

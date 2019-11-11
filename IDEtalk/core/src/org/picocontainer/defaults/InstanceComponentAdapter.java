@@ -33,12 +33,12 @@ public final class InstanceComponentAdapter extends AbstractComponentAdapter imp
   private final LifecycleStrategy lifecycleStrategy;
 
   public InstanceComponentAdapter(Object componentKey, Object componentInstance)
-    throws AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws AssignabilityRegistrationException {
     this(componentKey, componentInstance, new DefaultLifecycleStrategy());
   }
 
   public InstanceComponentAdapter(Object componentKey, Object componentInstance, LifecycleStrategy lifecycleStrategy)
-    throws AssignabilityRegistrationException, NotConcreteRegistrationException {
+    throws AssignabilityRegistrationException {
     super(componentKey, getInstanceClass(componentInstance));
     this.componentInstance = componentInstance;
     this.lifecycleStrategy = lifecycleStrategy;
