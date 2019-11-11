@@ -8,11 +8,11 @@ import com.intellij.grazie.jlanguage.broker.GrazieDynamicDataBroker
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.config.UserConfig
-import org.languagetool.rules.Rule
+import org.languagetool.rules.spelling.SpellingCheckRule
 
 object LangTool : GrazieStateLifecycle {
   private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
-  private val spellers: MutableMap<Lang, Rule?> = HashMap()
+  private val spellers: MutableMap<Lang, SpellingCheckRule?> = HashMap()
 
   private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
@@ -39,8 +39,8 @@ object LangTool : GrazieStateLifecycle {
     }
   }
 
-  fun getSpeller(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): Rule? = spellers.getOrPut(lang) {
-    getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule }
+  fun getSpeller(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): SpellingCheckRule? = spellers.getOrPut(lang) {
+    getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule } as SpellingCheckRule?
   }
 
   override fun init(state: GrazieConfig.State, project: Project) {

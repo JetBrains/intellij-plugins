@@ -8,7 +8,7 @@ import com.intellij.grazie.utils.LinkedSet
 import com.intellij.grazie.utils.toLinkedSet
 import com.intellij.spellchecker.engine.Transformation
 import org.languagetool.JLanguageTool
-import org.languagetool.rules.Rule
+import org.languagetool.rules.spelling.SpellingCheckRule
 import org.slf4j.LoggerFactory
 
 object GrazieSpellchecker {
@@ -19,7 +19,7 @@ object GrazieSpellchecker {
 
   private val transform = Transformation()
 
-  data class SpellerTool(val tool: JLanguageTool, val speller: Rule, val suggestLimit: Int) {
+  data class SpellerTool(val tool: JLanguageTool, val speller: SpellingCheckRule, val suggestLimit: Int) {
     fun isMyDomain(word: String): Boolean {
       val domain = Lang[tool.language]!!.unicodeBlock.blocks
 
@@ -36,9 +36,7 @@ object GrazieSpellchecker {
     }
 
     fun check(word: String): Boolean = synchronized(speller) {
-      val match = speller.match(tool.getRawAnalyzedSentence(word))
-      //If match array is empty then word is correct in that language
-      match.isEmpty() || match.flatMap { it.suggestedReplacements }.any { transform.transform(it) == word }
+      !speller.isMisspelled(word)
     }
 
     fun suggest(text: String): Set<String> = synchronized(speller) {
