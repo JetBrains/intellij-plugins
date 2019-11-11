@@ -7,7 +7,7 @@
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
        globalStyleSheets: [temp:///src/src/styles.css]
-       stylePreprocessorIncludeDirs: [temp:///src]
+       stylePreprocessorIncludeDirs: []
        karmaConfigFile: temp:///src/src/karma.conf.js
        protractorConfigFile: null
        tsLintConfigurations: [
@@ -26,7 +26,7 @@
        sourceDir: temp:///src/e2e
        indexHtml: null
        globalStyleSheets: []
-       stylePreprocessorIncludeDirs: [temp:///src]
+       stylePreprocessorIncludeDirs: []
        karmaConfigFile: null
        protractorConfigFile: temp:///src/e2e/protractor.conf.js
        tsLintConfigurations: [
@@ -45,7 +45,7 @@
        sourceDir: temp:///src/projects/test-ng-attr/src
        indexHtml: null
        globalStyleSheets: []
-       stylePreprocessorIncludeDirs: [temp:///src]
+       stylePreprocessorIncludeDirs: []
        karmaConfigFile: temp:///src/projects/test-ng-attr/karma.conf.js
        protractorConfigFile: null
        tsLintConfigurations: [
