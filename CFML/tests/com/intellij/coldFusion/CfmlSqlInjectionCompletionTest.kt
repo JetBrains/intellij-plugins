@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion
 
 import com.intellij.codeInsight.completion.CompletionType
@@ -5,8 +6,8 @@ import com.intellij.database.util.SqlDialects
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.ContainerUtil
 import java.util.*
@@ -61,7 +62,7 @@ class CfmlSqlInjectionCompletionTest : BasePlatformTestCase() {
                               count: Int,
                               contains: Boolean,
                               vararg variants: String) {
-    val dialect = SqlDialects.findDialectById("SQL92")
+    val dialect = SqlDialects.getInstance().findDialectById("SQL92")
     SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
     val file = myFixture.file
     if (file != null) FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
