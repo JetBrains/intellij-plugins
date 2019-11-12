@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -89,6 +89,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
                        rootUrl + "/dir2/.pub",
+                       rootUrl + "/dir2/.dart_tool",
                        rootUrl + "/dir2/build",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
@@ -102,10 +103,12 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
                        rootUrl + "/dir2/.pub",
+                       rootUrl + "/dir2/.dart_tool",
                        rootUrl + "/dir2/build",
                        rootUrl + "/dir2/someFolder",
                        rootUrl + "/dir2/lib/someFolder",
                        rootUrl + "/dir2/example/.pub",
+                       rootUrl + "/dir2/example/.dart_tool",
                        rootUrl + "/dir2/example/build"
     );
   }
