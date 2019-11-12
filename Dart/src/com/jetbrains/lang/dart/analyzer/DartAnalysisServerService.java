@@ -48,7 +48,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -59,7 +58,6 @@ import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixListener;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
-import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -115,9 +113,6 @@ public class DartAnalysisServerService implements Disposable {
   private static final long TESTS_TIMEOUT_COEFF = 10;
 
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
-  private static final String STACK_TRACE_MARKER = "#0";
-  private static final long MIN_DISRUPTION_TIME = 5000L; // 5 seconds minimum between error report balloons
-  private static final int MAX_DISRUPTIONS_PER_SESSION = 20; // Do not annoy the user too many times
 
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
@@ -152,6 +147,7 @@ public class DartAnalysisServerService implements Disposable {
   private volatile boolean myAnalysisInProgress;
   private volatile boolean myPubListInProgress;
   @NotNull private final Alarm myShowServerProgressAlarm;
+  @NotNull private final DartAnalysisServerErrorHandler myServerErrorHandler;
   @Nullable private ProgressIndicator myProgressIndicator;
   private final Object myProgressLock = new Object();
 
@@ -164,8 +160,6 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
   // errors hash is tracked to optimize error notification listener: do not handle equal notifications more than once
   @NotNull private final TObjectIntHashMap<String> myFilePathToErrorsHash = new TObjectIntHashMap<>();
-
-  @NotNull private final InteractiveErrorReporter myErrorReporter = new InteractiveErrorReporter();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
@@ -321,17 +315,24 @@ public class DartAnalysisServerService implements Disposable {
 
     @Override
     public void serverError(boolean isFatal, @Nullable String message, @Nullable String stackTrace) {
-      if (message == null) message = "<no error message>";
-      if (stackTrace == null) stackTrace = "<no stack trace>";
-      if (!isFatal && stackTrace.startsWith("#0      checkValidPackageUri (package:package_config/src/util.dart:72)")) {
+      if (message == null) {
+        message = "an issue occurred with the analysis server";
+      }
+      if (!isFatal &&
+          stackTrace != null &&
+          stackTrace.startsWith("#0      checkValidPackageUri (package:package_config/src/util.dart:72)")) {
         return;
       }
 
-      String errorMessage =
-        "Dart analysis server, SDK version " + mySdkVersion +
-        ", server version " + myServerVersion +
-        ", " + (isFatal ? "FATAL " : "") + "error: " + message + "\n" + stackTrace;
-      myErrorReporter.report(errorMessage);
+      String sdkVersion = mySdkVersion.isEmpty() ? null : mySdkVersion;
+      StringBuilder debugLog = new StringBuilder();
+      synchronized (myDebugLog) {
+        for (String s : myDebugLog) {
+          debugLog.append(s).append('\n');
+        }
+      }
+
+      myServerErrorHandler.handleError(message, stackTrace, isFatal, sdkVersion, debugLog.length() == 0 ? null : debugLog.toString());
     }
 
     @Override
@@ -516,6 +517,7 @@ public class DartAnalysisServerService implements Disposable {
     myServerData = new DartServerData(this);
     myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
     myShowServerProgressAlarm = new Alarm(project);
+    myServerErrorHandler = new DartAnalysisServerErrorHandler(project);
 
     DartClosingLabelManager.getInstance().addListener(this::handleClosingLabelPreferenceChanged, this);
   }
@@ -1958,7 +1960,7 @@ public class DartAnalysisServerService implements Disposable {
       //  FileUtil.toSystemDependentName(localDartSdkPath + "pkg/analysis_server/bin/server.dart");
 
       final DebugPrintStream debugStream = str -> {
-        str = str.substring(0, Math.min(str.length(), MAX_DEBUG_LOG_LINE_LENGTH));
+        str = StringUtil.first(str, MAX_DEBUG_LOG_LINE_LENGTH, true);
         synchronized (myDebugLog) {
           myDebugLog.add(str);
         }
@@ -2383,64 +2385,6 @@ public class DartAnalysisServerService implements Disposable {
       this.id = id;
       this.results = results;
       this.isLast = isLast;
-    }
-  }
-
-  /**
-   * Ask the user to report an error in the analysis server, subject to these constraints:
-   * - The same message is not reported twice in a row
-   * - The user is not interrupted too often
-   */
-  private class InteractiveErrorReporter {
-
-    @NotNull private final QueueProcessor<Runnable> myErrorReporter = QueueProcessor.createRunnableQueueProcessor();
-    private long myPreviousTime;
-    @NotNull private String myPreviousMessage = "";
-    private int myDisruptionCount = 0;
-
-    public void report(@NotNull String errorMessage) {
-      if (myDisruptionCount > MAX_DISRUPTIONS_PER_SESSION) return;
-      long timeStamp = System.currentTimeMillis();
-      if (timeStamp - myPreviousTime < MIN_DISRUPTION_TIME) {
-        if (messageDiffers(errorMessage)) {
-          LOG.warn(errorMessage);
-          if (myDisruptionCount > 0) {
-            myDisruptionCount++; // The red flashing icon is somewhat disruptive, but we only count if the user has already been queried.
-          }
-        }
-        return;
-      }
-      myPreviousTime = timeStamp;
-      if (messageDiffers(errorMessage)) {
-        String debugLog = debugLogContent();
-        myErrorReporter.add(() -> {
-          DartFeedbackBuilder builder = DartFeedbackBuilder.getFeedbackBuilder();
-          myDisruptionCount++;
-          builder.showNotification(DartBundle.message("dart.analysis.server.error"), myProject, errorMessage, debugLog);
-        });
-      }
-      myPreviousMessage = errorMessage;
-    }
-
-    private boolean messageDiffers(@NotNull String errorMessage) {
-      int prevIdx = myPreviousMessage.indexOf(STACK_TRACE_MARKER);
-      if (prevIdx < 0) return !errorMessage.equals(myPreviousMessage);
-      int errIdx = errorMessage.indexOf(STACK_TRACE_MARKER);
-      if (errIdx < 0) return !errorMessage.equals(myPreviousMessage);
-      // Compare Dart stack traces
-      return !errorMessage.substring(errIdx).equals(myPreviousMessage.substring(prevIdx));
-    }
-
-    private String debugLogContent() {
-      StringBuilder log = new StringBuilder();
-      log.append("```\n");
-      synchronized (myDebugLog) {
-        for (String s : myDebugLog) {
-          log.append(s).append('\n');
-        }
-      }
-      log.append("```\n");
-      return log.toString();
     }
   }
 
