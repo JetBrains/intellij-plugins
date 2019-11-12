@@ -36,10 +36,8 @@ import com.intellij.packageDependencies.DependenciesBuilder;
 import com.intellij.packageDependencies.DependencyVisitorFactory;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
@@ -82,14 +80,11 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
     }
 
     final List<ProblemDescriptor> problems = new SmartList<>();
-    DependenciesBuilder.analyzeFileDependencies(file, new DependenciesBuilder.DependencyProcessor() {
-      @Override
-      public void process(PsiElement place, PsiElement dependency) {
-        if (dependency instanceof PsiClass) {
-          Problem problem = checkAccessibility((PsiClass)dependency, facet);
-          if (problem != null) {
-            problems.add(manager.createProblemDescriptor(place, problem.message, isOnTheFly, problem.fixes, problem.type));
-          }
+    DependenciesBuilder.analyzeFileDependencies(file, (place, dependency) -> {
+      if (dependency instanceof PsiClass) {
+        Problem problem = checkAccessibility((PsiClass)dependency, facet);
+        if (problem != null) {
+          problems.add(manager.createProblemDescriptor(place, problem.message, isOnTheFly, problem.fixes, problem.type));
         }
       }
     }, DependencyVisitorFactory.VisitorOptions.SKIP_IMPORTS);
@@ -97,9 +92,9 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
   }
 
   private static class Problem {
-    public final ProblemHighlightType type;
-    public final String message;
-    public final LocalQuickFix[] fixes;
+    final ProblemHighlightType type;
+    final String message;
+    final LocalQuickFix[] fixes;
 
     private Problem(ProblemHighlightType type, String message, LocalQuickFix... fixes) {
       this.type = type;
@@ -107,11 +102,11 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
       this.fixes = fixes.length > 0 ? fixes : null;
     }
 
-    public static Problem weak(String message, LocalQuickFix... fixes) {
+    static Problem weak(String message, LocalQuickFix... fixes) {
       return new Problem(ProblemHighlightType.WEAK_WARNING, message, fixes);
     }
 
-    public static Problem error(String message, LocalQuickFix... fixes) {
+    static Problem error(String message, LocalQuickFix... fixes) {
       return new Problem(ProblemHighlightType.GENERIC_ERROR_OR_WARNING, message, fixes);
     }
   }
