@@ -23,13 +23,8 @@
   <resource-bundle>com.jetbrains.lang.dart.DartBundle</resource-bundle>
 
   <extensionPoints>
-    <extensionPoint name="feedbackBuilder" interface="com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder" />
     <extensionPoint name="completionExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionExtension" />
   </extensionPoints>
-
-  <extensions defaultExtensionNs="Dart">
-    <feedbackBuilder implementation="com.jetbrains.lang.dart.ide.errorTreeView.DefaultDartFeedbackBuilder" order="last"/>
-  </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
     <moveFileHandler implementation="com.jetbrains.lang.dart.ide.refactoring.moveFile.DartServerMoveDartFileHandler"/>
