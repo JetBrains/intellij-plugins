@@ -61,7 +61,7 @@ public class DartConsoleFolding extends ConsoleFolding {
     // but more frequently we get these 2 lines one by one
 
     if (lines.size() == 1 && lines.get(0).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
-      return " [Observatory: " + lines.get(0).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()) + "]";
+      return " [Debug service available at " + lines.get(0).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()) + "]";
     }
 
     if (lines.size() == 1 && lines.get(0).contains(TEST_RUNNER_MARKER)) {
@@ -122,7 +122,8 @@ public class DartConsoleFolding extends ConsoleFolding {
     }
 
     if (lines.size() == 2 && lines.get(1).startsWith(DartConsoleFilter.OBSERVATORY_LISTENING_ON)) {
-      b.append(" [Observatory: ").append(lines.get(1).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length())).append("]");
+      b.append(" [Debug service available at ").append(lines.get(1).substring(DartConsoleFilter.OBSERVATORY_LISTENING_ON.length()))
+        .append("]");
     }
 
     return b.toString();
