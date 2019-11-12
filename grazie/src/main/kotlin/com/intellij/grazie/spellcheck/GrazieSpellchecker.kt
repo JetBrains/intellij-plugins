@@ -36,7 +36,7 @@ object GrazieSpellchecker {
     }
 
     fun check(word: String): Boolean = synchronized(speller) {
-      !speller.isMisspelled(word)
+      !(speller.isMisspelled(word) && speller.isMisspelled(word.capitalize()))
     }
 
     fun suggest(text: String): Set<String> = synchronized(speller) {
