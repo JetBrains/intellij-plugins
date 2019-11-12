@@ -5,31 +5,43 @@
 part of dart.core;
 
 /**
- * An arbitrarily large integer.
+ * An integer number.
  *
- * **Note:** When compiling to JavaScript, integers are
- * implemented as JavaScript numbers. When compiling to JavaScript,
- * integers are therefore restricted to 53 significant bits because
- * all JavaScript numbers are double-precision floating point
- * values. The behavior of the operators and methods in the [int]
+ * The default implementation of `int` is 64-bit two's complement integers
+ * with operations that wrap to that range on overflow.
+ *
+ * **Note:** When compiling to JavaScript, integers are restricted to values
+ * that can be represented exactly by double-precision floating point values.
+ * The available integer values include all integers between -2^53 and 2^53,
+ * and some integers with larger magnitude. That includes some integers larger
+ * than 2^63.
+ * The behavior of the operators and methods in the [int]
  * class therefore sometimes differs between the Dart VM and Dart code
- * compiled to JavaScript.
+ * compiled to JavaScript. For example, the bitwise operators truncate their
+ * operands to 32-bit integers when compiled to JavaScript.
  *
- * It is a compile-time error for a class to attempt to extend or implement int.
+ * Classes cannot extend, implement, or mix in `int`.
  */
 abstract class int extends num {
   /**
    * Returns the integer value of the given environment declaration [name].
    *
    * The result is the same as would be returned by:
-   *
-   *     int.parse(const String.fromEnvironment(name, defaultValue: ""),
-   *               (_) => defaultValue)
-   *
+   * ```
+   * int.tryParse(const String.fromEnvironment(name, defaultValue: ""))
+   *     ?? defaultValue
+   * ```
    * Example:
-   *
-   *     const int.fromEnvironment("defaultPort", defaultValue: 80)
+   * ```
+   * const int.fromEnvironment("defaultPort", defaultValue: 80)
+   * ```
    */
+  // The .fromEnvironment() constructors are special in that we do not want
+  // users to call them using "new". We prohibit that by giving them bodies
+  // that throw, even though const constructors are not allowed to have bodies.
+  // Disable those static errors.
+  //ignore: const_constructor_with_body
+  //ignore: const_factory
   external const factory int.fromEnvironment(String name, {int defaultValue});
 
   /**
@@ -52,7 +64,7 @@ abstract class int extends num {
    * of `this` and [other]
    *
    * If both operands are non-negative, the result is non-negative,
-   * otherwise the result us negative.
+   * otherwise the result is negative.
    */
   int operator |(int other);
 
@@ -88,7 +100,7 @@ abstract class int extends num {
    * limit intermediate values by using the "and" operator with a suitable
    * mask.
    *
-   * It is an error of [shiftAmount] is negative.
+   * It is an error if [shiftAmount] is negative.
    */
   int operator <<(int shiftAmount);
 
@@ -99,9 +111,42 @@ abstract class int extends num {
    * significant bits, effectively doing an integer division by
    *`pow(2, shiftIndex)`.
    *
-   * It is an error of [shiftAmount] is negative.
+   * It is an error if [shiftAmount] is negative.
    */
   int operator >>(int shiftAmount);
+
+  /**
+   * Returns this integer to the power of [exponent] modulo [modulus].
+   *
+   * The [exponent] must be non-negative and [modulus] must be
+   * positive.
+   */
+  int modPow(int exponent, int modulus);
+
+  /**
+   * Returns the modular multiplicative inverse of this integer
+   * modulo [modulus].
+   *
+   * The [modulus] must be positive.
+   *
+   * It is an error if no modular inverse exists.
+   */
+  int modInverse(int modulus);
+
+  /**
+   * Returns the greatest common divisor of this integer and [other].
+   *
+   * If either number is non-zero, the result is the numerically greatest
+   * integer dividing both `this` and `other`.
+   *
+   * The greatest common divisor is independent of the order,
+   * so `x.gcd(y)` is  always the same as `y.gcd(x)`.
+   *
+   * For any integer `x`, `x.gcd(x)` is `x.abs()`.
+   *
+   * If both `this` and `other` is zero, the result is also zero.
+   */
+  int gcd(int other);
 
   /** Returns true if and only if this integer is even. */
   bool get isEven;
@@ -116,19 +161,20 @@ abstract class int extends num {
    * for non-negative (unsigned) values.  Negative values are complemented to
    * return the bit position of the first bit that differs from the sign bit.
    *
-   * To find the the number of bits needed to store the value as a signed value,
+   * To find the number of bits needed to store the value as a signed value,
    * add one, i.e. use `x.bitLength + 1`.
+   * ```
+   * x.bitLength == (-x-1).bitLength
    *
-   *      x.bitLength == (-x-1).bitLength
-   *
-   *      3.bitLength == 2;     // 00000011
-   *      2.bitLength == 2;     // 00000010
-   *      1.bitLength == 1;     // 00000001
-   *      0.bitLength == 0;     // 00000000
-   *      (-1).bitLength == 0;  // 11111111
-   *      (-2).bitLength == 1;  // 11111110
-   *      (-3).bitLength == 2;  // 11111101
-   *      (-4).bitLength == 2;  // 11111100
+   * 3.bitLength == 2;     // 00000011
+   * 2.bitLength == 2;     // 00000010
+   * 1.bitLength == 1;     // 00000001
+   * 0.bitLength == 0;     // 00000000
+   * (-1).bitLength == 0;  // 11111111
+   * (-2).bitLength == 1;  // 11111110
+   * (-3).bitLength == 2;  // 11111101
+   * (-4).bitLength == 2;  // 11111100
+   * ```
    */
   int get bitLength;
 
@@ -136,21 +182,22 @@ abstract class int extends num {
    * Returns the least significant [width] bits of this integer as a
    * non-negative number (i.e. unsigned representation).  The returned value has
    * zeros in all bit positions higher than [width].
-   *
-   *     (-1).toUnsigned(5) == 32   // 11111111  ->  00011111
-   *
+   * ```
+   * (-1).toUnsigned(5) == 31   // 11111111  ->  00011111
+   * ```
    * This operation can be used to simulate arithmetic from low level languages.
    * For example, to increment an 8 bit quantity:
-   *
-   *     q = (q + 1).toUnsigned(8);
-   *
+   * ```
+   * q = (q + 1).toUnsigned(8);
+   * ```
    * `q` will count from `0` up to `255` and then wrap around to `0`.
    *
    * If the input fits in [width] bits without truncation, the result is the
    * same as the input.  The minimum width needed to avoid truncation of `x` is
    * given by `x.bitLength`, i.e.
-   *
-   *     x == x.toUnsigned(x.bitLength);
+   * ```
+   * x == x.toUnsigned(x.bitLength);
+   * ```
    */
   int toUnsigned(int width);
 
@@ -160,24 +207,26 @@ abstract class int extends num {
    * to fit in [width] bits using an signed 2-s complement representation.  The
    * returned value has the same bit value in all positions higher than [width].
    *
-   *                                    V--sign bit-V
-   *     16.toSigned(5) == -16   //  00010000 -> 11110000
-   *     239.toSigned(5) == 15   //  11101111 -> 00001111
-   *                                    ^           ^
-   *
+   * ```
+   *                                V--sign bit-V
+   * 16.toSigned(5) == -16   //  00010000 -> 11110000
+   * 239.toSigned(5) == 15   //  11101111 -> 00001111
+   *                                ^           ^
+   * ```
    * This operation can be used to simulate arithmetic from low level languages.
    * For example, to increment an 8 bit signed quantity:
-   *
-   *     q = (q + 1).toSigned(8);
-   *
+   * ```
+   * q = (q + 1).toSigned(8);
+   * ```
    * `q` will count from `0` up to `127`, wrap to `-128` and count back up to
    * `127`.
    *
    * If the input value fits in [width] bits without truncation, the result is
    * the same as the input.  The minimum width needed to avoid truncation of `x`
    * is `x.bitLength + 1`, i.e.
-   *
-   *     x == x.toSigned(x.bitLength + 1);
+   * ```
+   * x == x.toSigned(x.bitLength + 1);
+   * ```
    */
   int toSigned(int width);
 
@@ -229,11 +278,11 @@ abstract class int extends num {
   double truncateToDouble();
 
   /**
-   * Returns a String-representation of this integer.
+   * Returns a string representation of this integer.
    *
    * The returned string is parsable by [parse].
-   * For any `int` [:i:], it is guaranteed that
-   * [:i == int.parse(i.toString()):].
+   * For any `int` `i`, it is guaranteed that
+   * `i == int.parse(i.toString())`.
    */
   String toString();
 
@@ -241,38 +290,66 @@ abstract class int extends num {
    * Converts [this] to a string representation in the given [radix].
    *
    * In the string representation, lower-case letters are used for digits above
-   * '9'.
+   * '9', with 'a' being 10 an 'z' being 35.
    *
    * The [radix] argument must be an integer in the range 2 to 36.
    */
   String toRadixString(int radix);
 
   /**
-   * Parse [source] as an integer literal and return its value.
-   *
-   * The [radix] must be in the range 2..36. The digits used are
-   * first the decimal digits 0..9, and then the letters 'a'..'z'.
-   * Accepts capital letters as well.
-   *
-   * If no [radix] is given then it defaults to 10, unless the string starts
-   * with "0x", "-0x" or "+0x", in which case the radix is set to 16 and the
-   * "0x" is ignored.
+   * Parse [source] as a, possibly signed, integer literal and return its value.
    *
    * The [source] must be a non-empty sequence of base-[radix] digits,
    * optionally prefixed with a minus or plus sign ('-' or '+').
+   * It must not be `null`.
    *
-   * It must always be the case for an int [:n:] and radix [:r:] that
-   * [:n == int.parse(n.toRadixString(r), radix: r):].
+   * The [radix] must be in the range 2..36. The digits used are
+   * first the decimal digits 0..9, and then the letters 'a'..'z' with
+   * values 10 through 35. Also accepts upper-case letters with the same
+   * values as the lower-case ones.
    *
-   * If the [source] is not a valid integer literal, optionally prefixed by a
-   * sign, the [onError] is called with the [source] as argument, and its return
-   * value is used instead. If no [onError] is provided, a [FormatException]
-   * is thrown.
+   * If no [radix] is given then it defaults to 10. In this case, the [source]
+   * digits may also start with `0x`, in which case the number is interpreted
+   * as a hexadecimal integer literal,
+   * When `int` is implemented by 64-bit signed integers,
+   * hexadecimal integer literals may represent values larger than
+   * 2<sup>63</sup>, in which case the value is parsed as if it is an
+   * *unsigned* number, and the resulting value is the corresponding
+   * signed integer value.
    *
-   * The [onError] function is only invoked if [source] is a [String]. It is
-   * not invoked if the [source] is, for example, `null`.
+   * For any int `n` and valid radix `r`, it is guaranteed that
+   * `n == int.parse(n.toRadixString(r), radix: r)`.
+   *
+   * If the [source] string does not contain a valid integer literal,
+   * optionally prefixed by a sign, a [FormatException] is thrown
+   * (unless the deprecated [onError] parameter is used, see below).
+   *
+   * Instead of throwing and immediately catching the [FormatException],
+   * instead use [tryParse] to handle a parsing error.
+   * Example:
+   * ```dart
+   * var value = int.tryParse(text);
+   * if (value == null) ... handle the problem
+   * ```
+   *
+   * The [onError] parameter is deprecated and will be removed.
+   * Instead of `int.parse(string, onError: (string) => ...)`,
+   * you should use `int.tryParse(string) ?? (...)`.
+   *
+   * When the source string is not valid and [onError] is provided,
+   * whenever a [FormatException] would be thrown,
+   * [onError] is instead called with [source] as argument,
+   * and the result of that call is returned by [parse].
    */
   external static int parse(String source,
-                            { int radix,
-                              int onError(String source) });
+      {int radix, @deprecated int onError(String source)});
+
+  /**
+   * Parse [source] as a, possibly signed, integer literal and return its value.
+   *
+   * Like [parse] except that this function returns `null` where a
+   * similar call to [parse] would throw a [FormatException],
+   * and the [source] must still not be `null`.
+   */
+  external static int tryParse(String source, {int radix});
 }

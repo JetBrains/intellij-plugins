@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.documentation;
 
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -71,9 +72,9 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
                  "external const factory int.fromEnvironment(String name, {int defaultValue});");
     doTestDocUrl("https://api.dartlang.org/stable/dart-math/cos.html",
                  "math/math.dart",
-                 "external double cos(num x);");
+                 "external double cos(num radians);");
     doTestDocUrl("https://api.dartlang.org/stable/dart-core/List/length.html",
                  "core/list.dart",
-                 "void set length(int newLength);");
+                 "set length(int newLength);");
   }
 }
