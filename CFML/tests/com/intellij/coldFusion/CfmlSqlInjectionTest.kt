@@ -113,7 +113,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
   private fun prepareWithDatabase() {
     prepare()
-    val dialect = SqlDialects.getInstance().findDialectById("SQL92")
+    val dialect = SqlDialects.findDialectById("SQL92")
     SqlDialectMappings.getInstance(project).setMapping(myFixture.file.virtualFile, dialect)
     val file: PsiFile = myFixture.file
     FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
