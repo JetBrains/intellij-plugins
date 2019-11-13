@@ -157,18 +157,26 @@
     <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceModuleIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2IvyPipeIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2IvyDirectiveIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2IvyModuleIndex"/>
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
     <pom.declarationSearcher implementation="org.angular2.codeInsight.refs.Angular2PomDeclarationSearcher"/>
     <renameInputValidator implementation="org.angular2.refactoring.Angular2RenameInputValidator"/>
     <elementDescriptionProvider
-        order="first"
-        implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
+      order="first"
+      implementation="org.angular2.refactoring.Angular2ElementDescriptionProvider"/>
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
     <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
+    <registryKey
+      description="Enables support for Ivy metadata in d.ts for Angular 9+ projects. Switches off support for JSON metadata files in Angular 9+ projects."
+      key="angular.enableIvyMetadataSupport"
+      defaultValue="false"
+      restartRequired="true"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
@@ -234,7 +242,7 @@
 
     <!-- Angular 2 Expression Language contributions -->
     <lang.syntaxHighlighter language="Angular2"
-                                   implementationClass="org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter"/>
+                            implementationClass="org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
@@ -277,7 +285,7 @@
     <dialectSpecificHandlersFactory language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
 
     <!-- Angular 2 Expression language contributions -->
-    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="10"/>
+    <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler" version="11"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
