@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
+import org.angular2.entities.ivy.Angular2IvyEntity;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.Angular2Bundle;
@@ -130,6 +131,9 @@ public class Angular2EntityUtils {
     }
     else if (element instanceof Angular2MetadataEntity) {
       sourceKind = "metadata";
+    }
+    else if (element instanceof Angular2IvyEntity) {
+      sourceKind = "ivy";
     }
     else {
       sourceKind = "unknown";

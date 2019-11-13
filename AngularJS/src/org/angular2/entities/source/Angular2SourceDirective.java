@@ -152,9 +152,9 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         }
       });
 
-    inputMap.keySet().forEach(
+    inputMap.values().forEach(
       input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));
-    outputMap.keySet().forEach(
+    outputMap.values().forEach(
       output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
     return pair(Collections.unmodifiableCollection(inputs.values()),
@@ -290,7 +290,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @NotNull
-  private static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
+  public static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
     Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {

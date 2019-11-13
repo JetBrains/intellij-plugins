@@ -22,7 +22,9 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.Angular2EntityObjectProvider;
 import org.angular2.entities.Angular2Module;
+import org.angular2.entities.ivy.Angular2IvyUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataObject;
@@ -205,6 +207,19 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       if (metadataModule != null) {
         processCacheDependency(metadataFunction);
         processCacheDependency(metadataModule);
+        // TODO Angular 9 d.ts metadata sometimes lacks ModuleType information, so we need to fallback to json metadata
+        if (Angular2IvyUtil.isIvyMetadataSupportEnabled()) {
+          TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
+          if (tsClass != null) {
+            Angular2Module ivyModule = Angular2EntityObjectProvider.MODULE_PROVIDER.ivy.get(tsClass);
+            if (ivyModule != null) {
+              processCacheDependency(tsClass);
+              //noinspection unchecked
+              processEntity((T)ivyModule);
+              return;
+            }
+          }
+        }
         //noinspection unchecked
         processEntity((T)metadataModule);
         return;
