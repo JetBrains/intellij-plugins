@@ -30,7 +30,7 @@ Prerequisites:
      - `git clone https://github.com/JetBrains/intellij-plugins`
      - `git clone https://github.com/JetBrains/intellij-community`
      
-   Run getPlugins.sh (getPlugins.bat on Win) from `intellij-community/`. If that fails because the
+   Run `getPlugins.sh` (`getPlugins.bat` on Win) from `intellij-community/`. If that fails because the
    repos have already been cloned you can just update both of them using `git pull`.
 
 2. Start IntelliJ IDEA Ultimate, on Welcome screen click Configure | Project Defaults | Project Structure | SDKs,
@@ -68,18 +68,24 @@ Prerequisites:
    visible after restarting.
 
 9. Enjoy! All tests should pass. All functionality (except debugging in browser) should work.
-   Zero mandatory local changes in intellij-plugins repository.
-   There should be 3 locally changed files in intellij-community repository, each having exactly one added line,
+   Zero mandatory local changes in `intellij-plugins` repository.
+   There should be 3 locally changed files in `intellij-community` repository, each having exactly one added line,
    just keep these files in a separate '~never commit' changelist and do not worry about them:
      - intellij-community/intellij.idea.community.main.iml (line `<orderEntry type="module" module-name="Dart-community" />`)
      - intellij-community/.idea/modules.xml (line `<module fileurl="file://$PROJECT_DIR$/../intellij-plugins/Dart/Dart-community.iml" ... />`)
      - intellij-community/.idea/vcs.xml (line `<mapping directory="$PROJECT_DIR$/../intellij-plugins" vcs="Git" />`)
+   
+   To run the `analysisServer` tests add `-Ddart.sdk=/absolute/path/to/dart-sdk` to the `VM options` field in the launch configuration.
+   Dart SDK versions can be downloaded from the [Dart SDK Archive](https://dart.dev/tools/sdk/archive).
 
-10. All contributed PRs should:
-     - be formatted with the Java formatter (Code -> Reformat Code)
-     - not introduce new warnings reported by the IDE
-     - not break any of the tests mentioned above
-     - if possible, additional tests for the change in functionality should be included
+### Contributing to the Dart Plugin
+
+All contributed PRs should:
+
+  - be formatted with the Java formatter (Code -> Reformat Code)
+  - not introduce new warnings reported by the IDE
+  - not break any of the tests mentioned above
+  - if possible, additional tests for the change in functionality should be included
 
 ### How to open the Dart Analysis Server with Observatory and Dart DevTools
 
