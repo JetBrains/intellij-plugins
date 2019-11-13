@@ -110,7 +110,7 @@ public class CucumberJavaIntegrationTest extends HeavyPlatformTestCase {
   }
 
   protected void doTest() throws ExecutionException, InterruptedException {
-    String mavenPath = System.getProperty("maven.tool.path");
+    String mavenPath = System.getProperty("maven.path");
     if (mavenPath == null) {
       mavenPath = "mvn";
     }
