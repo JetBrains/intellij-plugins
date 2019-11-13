@@ -4,7 +4,6 @@ package org.angular2.entities.source;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
@@ -51,7 +50,7 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
       .map(JSElementIndexingData::getImplicitElements)
       .nonNull()
       .flatCollection(Function.identity())
-      .filter(el -> myImplicitElement.getName().equals(el.getName())
+      .filter(el -> Objects.equals(myImplicitElement.getName(), el.getName())
                     && Objects.equals(myImplicitElement.getUserString(), el.getUserString()))
       .findFirst()
       .orElse(myImplicitElement);
@@ -88,10 +87,8 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   protected Collection<Object> getClassModificationDependencies() {
     return getCachedValue(() -> {
       Collection<Object> dependencies = new HashSet<>();
-      JSClass cls = PsiTreeUtil.getContextOfType(myDecorator, JSClass.class);
-      assert cls != null;
-      JSClassUtils.processClassesInHierarchy(cls, true, (aClass, typeSubstitutor, fromImplements) -> {
-        dependencies.add(aClass.getContainingFile());
+      JSClassUtils.processClassesInHierarchy(myClass, true, (aClass, typeSubstitutor, fromImplements) -> {
+        dependencies.add(aClass);
         return true;
       });
       return CachedValueProvider.Result.create(dependencies, dependencies);

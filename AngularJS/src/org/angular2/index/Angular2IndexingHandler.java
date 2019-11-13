@@ -14,13 +14,14 @@ import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
+import com.intellij.lang.javascript.psi.stubs.*;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -54,8 +55,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.notNull;
 import static java.util.Collections.emptyList;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.ivy.Angular2IvyUtil.*;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
@@ -189,26 +192,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return data;
   }
 
-  private static void addDirective(@NotNull TypeScriptClass directiveClass,
-                                   @NotNull Consumer<? super JSImplicitElement> processor,
-                                   @NonNls @Nullable String selector) {
-    final Set<String> indexNames;
-    if (selector == null) {
-      selector = "<null>";
-      indexNames = Collections.emptySet();
-    }
-    else {
-      indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector.trim());
-    }
-    JSImplicitElement directive = new JSImplicitElementImpl
-      .Builder(ObjectUtils.notNull(directiveClass.getName(), selector), directiveClass)
-      .setType(JSImplicitElement.Type.Class)
-      .setTypeString(DIRECTIVE_TYPE + StringUtil.join(indexNames, "/"))
-      .setUserString(ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
-      .toImplicitElement();
-    processor.consume(directive);
-  }
-
   @Override
   public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
     if (sink == null) {
@@ -237,6 +220,40 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return false;
   }
 
+  @Override
+  public void indexClassStub(@NotNull JSClassStub<?> jsClassStub, @NotNull IndexSink sink) {
+    if (jsClassStub instanceof TypeScriptClassStub) {
+      JSAttributeListStub attrs = ContainerUtil.findInstance(jsClassStub.getChildrenStubs(), JSAttributeListStub.class);
+      // Do not index abstract classes
+      if (attrs == null || attrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
+        return;
+      }
+      Pair<TypeScriptFieldStub, EntityDefKind> fieldDefPair =
+        findEntityDefFieldStubbed((TypeScriptClassStub)jsClassStub);
+      if (fieldDefPair != null) {
+        EntityDefKind entityDefKind = fieldDefPair.second;
+        if (entityDefKind == MODULE_DEF) {
+          sink.occurrence(Angular2IvyModuleIndex.KEY, NG_MODULE_INDEX_NAME);
+        }
+        else if (entityDefKind == PIPE_DEF) {
+          String name = PIPE_DEF.getName(fieldDefPair.first);
+          if (name != null) {
+            sink.occurrence(Angular2IvyPipeIndex.KEY, name);
+            sink.occurrence(AngularSymbolIndex.KEY, name);
+          }
+        }
+        else if (entityDefKind == DIRECTIVE_DEF || entityDefKind == COMPONENT_DEF) {
+          String selector = ((DirectiveDefKind)entityDefKind).getSelector(fieldDefPair.first);
+          if (selector != null) {
+            for (String indexName : Angular2EntityUtils.getDirectiveIndexNames(selector.trim())) {
+              sink.occurrence(Angular2IvyDirectiveIndex.KEY, indexName);
+            }
+          }
+        }
+      }
+    }
+  }
+
   private static void addComponentExternalFilesRefs(@NotNull ES6Decorator decorator,
                                                     @NotNull String namePrefix,
                                                     @NotNull Consumer<? super JSImplicitElement> processor,
@@ -254,6 +271,26 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         .setUserString(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING);
       processor.consume(elementBuilder.toImplicitElement());
     }
+  }
+
+  private static void addDirective(@NotNull TypeScriptClass directiveClass,
+                                   @NotNull Consumer<? super JSImplicitElement> processor,
+                                   @NonNls @Nullable String selector) {
+    final Set<String> indexNames;
+    if (selector == null) {
+      selector = "<null>";
+      indexNames = Collections.emptySet();
+    }
+    else {
+      indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector.trim());
+    }
+    JSImplicitElement directive = new JSImplicitElementImpl
+      .Builder(notNull(directiveClass.getName(), selector), directiveClass)
+      .setType(JSImplicitElement.Type.Class)
+      .setTypeString(DIRECTIVE_TYPE + StringUtil.join(indexNames, "/"))
+      .setUserString(ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
+      .toImplicitElement();
+    processor.consume(directive);
   }
 
   private static void addPipe(@NotNull TypeScriptClass pipeClass,
