@@ -24,6 +24,7 @@ import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.server.OpenDartObservatoryUrlAction;
+import com.jetbrains.lang.dart.pubServer.DartWebdev;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -91,6 +92,10 @@ public class DartWebdevRunningState extends CommandLineState {
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
+    if (!DartWebdev.INSTANCE.getActivated()) {
+      DartWebdev.INSTANCE.ensureWebdevActivated(getEnvironment().getProject());
+    }
+
     final GeneralCommandLine commandLine = createCommandLine();
 
     final OSProcessHandler processHandler = new ColoredProcessHandler(commandLine);
