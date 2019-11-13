@@ -8,6 +8,7 @@ import com.intellij.grazie.jlanguage.broker.GrazieDynamicDataBroker
 import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.config.UserConfig
+import org.languagetool.rules.UppercaseMatchFilter
 import org.languagetool.rules.spelling.SpellingCheckRule
 
 object LangTool : GrazieStateLifecycle {
@@ -29,6 +30,8 @@ object LangTool : GrazieStateLifecycle {
 
     return langs.getOrPut(lang) {
       JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
+        addMatchFilter(UppercaseMatchFilter())
+
         allRules.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
           disableRule(it.id)
         }
