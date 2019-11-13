@@ -17,6 +17,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -114,7 +115,11 @@ public class CucumberJavaIntegrationTest extends HeavyPlatformTestCase {
     if (mavenHomePath == null) {
       fail("missing system property 'maven.path'");
     }
-    runExternalCommand(mavenHomePath + "/bin/mvn", "package");
+    String mvnRelativePath = "/bin/mvn";
+    if (SystemInfo.isWindows) {
+      mvnRelativePath += ".cmd";
+    }
+    runExternalCommand(mavenHomePath + mvnRelativePath, "package");
 
     Project project = getProject();
     CucumberJavaRunConfigurationProducer cucumberJavaRunConfigurationProducer = new CucumberJavaFeatureRunConfigurationProducer();
