@@ -3,6 +3,8 @@ package org.angular2.codeInsight;
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
+import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
@@ -17,12 +19,14 @@ import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ArrayUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.ivy.Angular2IvyDirective;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveProperty;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
@@ -76,7 +80,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-37838
    */
-  public static void hackIonicComponentOutputs(@NotNull Angular2MetadataDirectiveBase directive, @NotNull Map<String, String> outputs) {
+  public static void hackIonicComponentOutputs(@NotNull Angular2Directive directive, @NotNull Map<String, String> outputs) {
     if (!isIonicDirective(directive)) {
       return;
     }
@@ -116,6 +120,15 @@ public class Angular2LibrariesHacks {
   }
 
   private static boolean isIonicDirective(Angular2Directive directive) {
+    if (directive instanceof Angular2IvyDirective) {
+      return directive.getName().startsWith("Ion") //NON-NLS
+             && Optional.ofNullable(directive.getTypeScriptClass())
+               .map(PsiUtilCore::getVirtualFile)
+               .map(vf -> PackageJsonUtil.findUpPackageJson(vf))
+               .map(NodeModuleUtil::inferNodeModulePackageName)
+               .map(name -> name.equals(IONIC_ANGULAR_PACKAGE))
+               .orElse(false);
+    }
     return Optional.ofNullable(tryCast(directive, Angular2MetadataDirectiveBase.class))
       .map(Angular2MetadataDirectiveBase::getNodeModule)
       .map(Angular2MetadataNodeModule::getName)
@@ -173,8 +186,8 @@ public class Angular2LibrariesHacks {
         && type.getTypeText().contains(NG_ITERABLE)
         && (queryListType = getQueryListType(clazz)) != null) {
       return JSCompositeTypeFactory.createUnionType(type.getSource(), type,
-                                                        new JSGenericTypeImpl(type.getSource(), queryListType,
-                                                           ((JSGenericTypeImpl)type).getArguments()));
+                                                    new JSGenericTypeImpl(type.getSource(), queryListType,
+                                                                          ((JSGenericTypeImpl)type).getArguments()));
     }
     return type;
   }
