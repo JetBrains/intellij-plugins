@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptLiteralType;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -21,6 +20,7 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS;
+import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
 import static org.angular2.entities.ivy.Angular2IvyUtil.DIRECTIVE_DEF;
 import static org.angular2.entities.source.Angular2SourceDirective.getConstructorParamsMatchNoCache;
 
@@ -90,12 +90,12 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
   protected Angular2Directive getMetadataDirective() {
     TypeScriptClass clazz = getTypeScriptClass();
     return CachedValuesManager.getCachedValue(clazz, () -> {
-        Angular2Directive metadataDirective = Angular2EntityObjectProvider.DIRECTIVE_PROVIDER.metadata.get(clazz);
-        if (metadataDirective != null) {
-          return CachedValueProvider.Result.create(metadataDirective, clazz, metadataDirective);
-        }
-        return CachedValueProvider.Result.create(null, clazz, VFS_STRUCTURE_MODIFICATIONS);
-      });
+      Angular2Directive metadataDirective = Angular2EntityObjectProvider.DIRECTIVE_PROVIDER.metadata.get(clazz);
+      if (metadataDirective != null) {
+        return CachedValueProvider.Result.create(metadataDirective, clazz, metadataDirective);
+      }
+      return CachedValueProvider.Result.create(null, clazz, VFS_STRUCTURE_MODIFICATIONS);
+    });
   }
 
   @NotNull
@@ -135,15 +135,14 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
       return true;
     });
 
-    TypeScriptTypeParser
-      .buildTypeFromClass(clazz, false)
-      .getProperties()
-      .forEach(prop -> {
-        if (prop.getMemberSource().getSingleElement() != null) {
-          processProperty(prop, inputMap, inputs);
-          processProperty(prop, outputMap, outputs);
-        }
-      });
+    clazz.getJSType().asRecordType().getProperties().forEach(prop -> {
+      if (prop.getMemberSource().getSingleElement() != null) {
+        processProperty(prop, inputMap, inputs);
+        processProperty(prop, outputMap, outputs);
+      }
+    });
+
+    hackIonicComponentOutputs(this, outputMap);
 
     inputMap.values().forEach(
       input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));

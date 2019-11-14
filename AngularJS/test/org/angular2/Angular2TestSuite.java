@@ -22,7 +22,8 @@ import org.angular2.lang.html.lexer.Angular2HtmlLexerSpecTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerTest;
 import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest;
-import org.angular2.metadata.MetadataTest;
+import org.angular2.metadata.IvyMetadataTest;
+import org.angular2.metadata.JsonMetadataTest;
 import org.angular2.navigation.FindUsagesTest;
 import org.angular2.navigation.GotoRelatedTest;
 import org.angular2.navigation.GotoSymbolTest;
@@ -75,7 +76,8 @@ import org.junit.runners.Suite;
   MoveTest.class,
   RenameTest.class,
   ComponentDeclarationNavigationTest.class,
-  MetadataTest.class,
+  JsonMetadataTest.class,
+  IvyMetadataTest.class,
   NgMaterialTest.class,
   AngularSvgTest.class,
   GotoSymbolTest.class,

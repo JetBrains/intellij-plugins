@@ -225,7 +225,7 @@ public class Angular2EntityObjectProvider<T extends Angular2Entity> {
       if (defKind == null) {
         return null;
       }
-      return get(field, defKind, tsClass);
+      return get(field, defKind);
     }
 
     @Nullable
@@ -234,7 +234,7 @@ public class Angular2EntityObjectProvider<T extends Angular2Entity> {
         return null;
       }
       Pair<TypeScriptField, EntityDefKind> entityDefField = findEntityDefField(tsClass);
-      return entityDefField == null ? null : get(entityDefField.first, entityDefField.second, tsClass);
+      return entityDefField == null ? null : get(entityDefField.first, entityDefField.second);
     }
 
     @Contract("null->false") //NON-NLS
@@ -244,10 +244,10 @@ public class Angular2EntityObjectProvider<T extends Angular2Entity> {
     }
 
     @Nullable
-    private T get(@NotNull TypeScriptField field, EntityDefKind defKind, @NotNull TypeScriptClass tsClass) {
+    private T get(@NotNull TypeScriptField field, EntityDefKind defKind) {
       return ArrayUtil.find(myDefs, defKind) < 0 ? null :
-             CachedValuesManager.getCachedValue(tsClass, () -> {
-               return create(myEntityConstructor.apply(field, defKind), tsClass, field);
+             CachedValuesManager.getCachedValue(field, () -> {
+               return create(myEntityConstructor.apply(field, defKind), field);
              });
     }
 
