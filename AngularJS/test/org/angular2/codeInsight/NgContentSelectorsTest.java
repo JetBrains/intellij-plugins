@@ -21,15 +21,30 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "ngContentSelectors";
   }
 
-  public void testHighlighting() {
+  public void testHighlightingSource() {
+    myFixture.configureByFiles("highlighting.html", "component.ts", "package.json");
+    doTestHighlighting();
+  }
+
+  public void testHighlightingIvy() {
+    AngularTestUtil.enableIvyMetadataSupport(this);
+    testHighlightingMetadata();
+  }
+
+  public void testHighlightingMetadata() {
+    myFixture.copyDirectoryToProject("node_modules", ".");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
+  }
+
+  private void doTestHighlighting() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 HtmlUnknownTagInspection.class,
                                 AngularUndefinedBindingInspection.class);
-    myFixture.configureByFiles("highlighting.html", "component.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
-  public void testResolution() {
+  public void testResolutionSource() {
     myFixture.configureByFiles("resolution.html", "component.ts", "package.json");
     for (Pair<String, String> test : Arrays.asList(
       pair("<fo<caret>o b>", "foo,[bar]"),
@@ -37,7 +52,7 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
       pair("<div b<caret>ar", "foo,[bar]"),
       pair("<bar f<caret>oo", "bar[foo]"),
       pair("<span g<caret>oo", ":not([goo])")
-      )) {
+    )) {
       try {
         assertEquals(test.second, resolveReference(test.first, myFixture).getParent().getText());
       }

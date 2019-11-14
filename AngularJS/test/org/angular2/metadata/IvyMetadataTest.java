@@ -4,6 +4,7 @@ package org.angular2.metadata;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
@@ -22,6 +23,27 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.enableIvyMetadataSupport(this);
   }
 
+  public void testInterModuleExtends() {
+    myFixture.copyDirectoryToProject("ng-zorro", ".");
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                AngularUndefinedBindingInspection.class);
+    myFixture.configureFromTempProjectFile("inter_module_props.html");
+    myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testMixedMetadataResolution() {
+    //Test component matching and indirect node module indexing
+    myFixture.copyDirectoryToProject("material", ".");
+    myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
+                                AngularUndefinedTagInspection.class);
+    myFixture.configureFromTempProjectFile("module.ts");
+    myFixture.checkHighlighting();
+    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
+    assertEquals("form-field.d.ts",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
+  }
+
+
   public void testIonicMetadataResolution() {
     myFixture.copyDirectoryToProject("@ionic", ".");
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
@@ -35,4 +57,14 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("proxies.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
+
+  public void testFunctionPropertyMetadata() {
+    myFixture.copyDirectoryToProject("function_property", ".");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureFromTempProjectFile("template.html");
+    myFixture.checkHighlighting();
+    assertEquals("my-lib.component.d.ts",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
+  }
+
 }
