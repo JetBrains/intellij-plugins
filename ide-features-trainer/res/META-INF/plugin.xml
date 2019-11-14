@@ -1,11 +1,11 @@
-<idea-plugin version="2">
-  <id>org.jetbrains.training</id>
-  <name>Training Concept</name>
-  <version>0.2</version>
-  <vendor email="sergey.karashevich@jetbrains.com" url="http://www.jetbrain.com">JetBrains</vendor>
+<idea-plugin>
+    <id>training</id>
+    <name>IDE Features Trainer</name>
+    <vendor email="sergey.karashevich@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <description><![CDATA[
-      This IntelliJ IDEA plugin helps use IDE productively.<br>
+    <description><![CDATA[
+
+        <p>Learn basic shortcuts and essential features interactively – right inside the IDE. No need to read long manuals or look for screencasts. Just install this plugin, open the IDE, and go to the Learn tool window to start training.</p>
     ]]></description>
     <application-components>
         <component>
@@ -13,42 +13,81 @@
         </component>
     </application-components>
 
-  <change-notes><![CDATA[
-      Menu items has been implemented.
-    ]]>
-  </change-notes>
+    <depends optional="true">com.intellij.testGuiFramework</depends>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="139"/>
+    <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
+    <depends optional="true" config-file="ruby-deps.xml">com.intellij.modules.ruby</depends>
+    <!--<depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>-->
+    <!--<depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>-->
+    <depends optional="true" config-file="go-deps.xml">org.jetbrains.plugins.go</depends>
+    <!--<depends optional="true" config-file="objc-deps.xml">com.intellij.modules.cidr.lang</depends>-->
+    <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
+    <!--<depends optional="true" config-file="webstorm-deps.xml">com.intellij.modules.webstorm</depends>-->
+    <!--<depends optional="true" config-file="phpstorm-deps.xml">com.jetbrains.php</depends>-->
+    <!--<depends optional="true" config-file="clion-deps.xml">com.intellij.modules.clion</depends>-->
+    <!--<depends optional="true" config-file="rider-deps.xml">com.intellij.modules.rider</depends>-->
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
+    <extensionPoints>
+        <extensionPoint name="TrainingLangExtension"
+                        beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="training.lang.LangSupport"/>
+        </extensionPoint>
+    </extensionPoints>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-  </extensions>
 
-  <application-components>
-    <!-- Add your application components here -->
-      <component>
-    <implementation-class>training.lesson.CourseManager</implementation-class>
-  </component>
-  </application-components>
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="193.2956.37"/>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
+    <extensions defaultExtensionNs="com.intellij">
 
-  <actions>
-    <!-- Add your actions here -->
-    <action id="courseManager" class="org.jetbrains.training.lesson.CourseManager" text="Courses"
-            description="Start learn lessons">
-      <add-to-group group-id="CodeMenu" anchor="first"/>
-    </action>
-  </actions>
+        <actionPromoter implementation="training.editor.actions.LearnActionPromoter"/>
+        <!-- groupId should be same to StatisticBase.GROUP_ID and version to StatisticBase.VERSION -->
+        <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="3"/>
+        <statistics.validation.customWhiteListRule
+                implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
+
+        <applicationService
+                serviceImplementation="training.learn.CourseManager"/>
+        <applicationService
+                serviceImplementation="training.statistic.ActivityManager"/>
+        <applicationService
+                serviceImplementation="training.learn.lesson.LessonManager"/>
+        <applicationService
+                serviceImplementation="training.lang.LangManager"/>
+        <applicationService
+                serviceImplementation="training.ui.UISettings"/>
+        <applicationService
+                serviceImplementation="training.learn.lesson.LessonStateBase"/>
+        <applicationService
+                serviceImplementation="training.statistic.StatisticBase"/>
+        <toolWindow id="Learn" anchor="left" factoryClass="training.ui.LearnToolWindowFactory"
+                    conditionClass="training.ui.LearnCondition"/>
+
+    </extensions>
+
+    <application-components>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>training.components.LearnProjectComponent</implementation-class>
+        </component>
+    </project-components>
+
+    <actions>
+        <action id="Learn.WelcomeScreen.StartLearn" class="training.actions.StartLearnAction" icon="/img/chevron.png">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
+        </action>
+
+        <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">
+            <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
+            <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
+            <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
+        </action>
+        <action id="learn.open.lesson" text="Open Lesson" class="training.actions.OpenLessonAction"/>
+        <!--TODO: REMOVE THIS ACTION BEFORE RELEASE-->
+        <action id="learn.open.chooseLang" text="Choose Lang" class="training.actions.ShowChooseLangPanelAction"/>
+    </actions>
 
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="ide.features.trainer.mode"
