@@ -1,0 +1,56 @@
+<ion-header <warning descr="Attribute foo is not allowed here">foo</warning>="12" <weak_warning descr="Property bar is not provided by any applicable directives nor by ion-header element">[bar]</weak_warning>="boo">
+<ion-toolbar>
+  <ion-title>
+    Tab One
+  </ion-title>
+</ion-toolbar>
+</ion-header>
+
+<<warning descr="Unknown html tag foo">foo</warning>></<warning descr="Unknown html tag foo">foo</warning>>
+
+<ion-toggle (ionChange)="$event"></ion-toggle>
+<ion-toggle <weak_warning descr="Event ionChange2 is not emitted by any applicable directives nor by ion-toggle element">(ionChange2)</weak_warning>="$event"></ion-toggle>
+
+<ion-content>
+  <ion-card class="welcome-card">
+
+    <ion-img src="/assets/shapes.svg"></ion-img>
+    <ion-card-header>
+      <ion-card-subtitle>Get Started</ion-card-subtitle>
+      <ion-card-title>Welcome to Ionic</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
+    </ion-card-content>
+  </ion-card>
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label>Resources</ion-label>
+    </ion-list-header>
+    <ion-item href="https://beta.ionicframework.com/docs/">
+      <ion-icon slot="start" color="medium" name="book"></ion-icon>
+      <ion-label>Ionic Documentation</ion-label>
+    </ion-item>
+    <ion-item href="https://beta.ionicframework.com/docs/building/scaffolding">
+      <ion-icon slot="start" color="medium" name="build"></ion-icon>
+      <ion-label>Scaffold Out Your App</ion-label>
+    </ion-item>
+    <ion-item href="https://beta.ionicframework.com/docs/layout/structure">
+      <ion-icon slot="start" color="medium" name="grid"></ion-icon>
+      <ion-label>Change Your App Layout</ion-label>
+    </ion-item>
+    <ion-item href="https://beta.ionicframework.com/docs/theming/basics">
+      <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
+      <ion-label>Theme Your App</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-col offset-lg="12" offsetLg [offsetLg]="12" <warning descr="Attribute bar is not allowed here">bar</warning>="12">
+
+</ion-col>
+
+<ion-datetime [monthNames]="" month-names="" monthNames="" [dayShortNames]="" day-short-names="" dayShortNames="" <warning descr="Attribute foo is not allowed here">foo</warning>="saad">
+
+</ion-datetime>
+

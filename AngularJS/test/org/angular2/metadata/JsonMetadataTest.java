@@ -30,11 +30,11 @@ import java.io.File;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
 
-public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
+public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass());
+    return AngularTestUtil.getBaseTestDataPath(getClass()) +"/json";
   }
 
   public void testMetadataJsonFileTypeBinary() {

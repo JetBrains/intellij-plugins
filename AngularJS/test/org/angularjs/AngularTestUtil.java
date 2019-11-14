@@ -39,6 +39,10 @@ public class AngularTestUtil {
     }
   }
 
+  public static void enableIvyMetadataSupport(UsefulTestCase testCase) {
+    Registry.get("angular.enableIvyMetadataSupport").setValue(true, testCase.getTestRootDisposable());
+  }
+
   public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
     Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
@@ -88,10 +92,10 @@ public class AngularTestUtil {
       if (results.size() > 1) {
         throw new AssertionError("Reference resolves to more than one element at '" + signature + "': "
                                  + results);
-      } else if (results.size() == 1) {
+      }
+      else if (results.size() == 1) {
         resolve = results.get(0).getElement();
       }
-
     }
     TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;
