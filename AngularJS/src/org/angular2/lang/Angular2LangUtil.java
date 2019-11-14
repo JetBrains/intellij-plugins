@@ -3,7 +3,10 @@ package org.angular2.lang;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
+import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -16,10 +19,10 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.testFramework.LightVirtualFileBase;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Angular2LangUtil {
@@ -27,7 +30,8 @@ public class Angular2LangUtil {
   @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
   @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";
 
-  @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
+  @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_CACHE_KEY = new Key<>("angular2.isContext.cache");
+  @NonNls private static final Key<Boolean> ANGULAR2_PREV_CONTEXT_KEY = new Key<>("angular2.isContext.prev");
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
     if (!context.isValid()) {
@@ -59,7 +63,7 @@ public class Angular2LangUtil {
     if (psiDir == null) {
       return false;
     }
-    return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> {
+    boolean currentState = CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_CACHE_KEY, () -> {
       Set<Object> dependencies = new HashSet<>();
       for (Angular2ContextProvider provider : Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
         CachedValueProvider.Result<Boolean> result = provider.isAngular2Context(psiDir);
@@ -70,6 +74,8 @@ public class Angular2LangUtil {
       }
       return new CachedValueProvider.Result<>(false, dependencies.toArray());
     });
+    checkContextChange(psiDir, currentState);
+    return currentState;
   }
 
   private static boolean isAngular2Context(@NotNull Project project) {
@@ -77,5 +83,19 @@ public class Angular2LangUtil {
       return isAngular2Context(project, project.getBaseDir());
     }
     return false;
+  }
+
+  private static void checkContextChange(@NotNull PsiDirectory psiDir, boolean currentState) {
+    Boolean prevState = psiDir.getUserData(ANGULAR2_PREV_CONTEXT_KEY);
+    if (prevState != null && prevState != currentState) {
+      Project project = psiDir.getProject();
+      ApplicationManager.getApplication().invokeLater(() -> WriteAction.run(() -> {
+        if (project.isInitialized()) {
+          ProjectRootManagerEx.getInstanceEx(project)
+            .makeRootsChange(EmptyRunnable.getInstance(), false, true);
+        }
+      }));
+    }
+    psiDir.putUserData(ANGULAR2_PREV_CONTEXT_KEY, currentState);
   }
 }

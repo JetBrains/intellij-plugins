@@ -20,9 +20,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDocumentManager;
@@ -30,8 +28,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.UIUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.Angular2ContextProvider;
+import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
@@ -240,9 +240,9 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
     Disposer.dispose(disposable);
 
-    // TODO consider firing this when a change in Angular context state is detected
-    WriteAction.runAndWait(() -> ProjectRootManagerEx.getInstanceEx(getProject())
-      .makeRootsChange(EmptyRunnable.getInstance(), false, true));
+    // Force reload of roots
+    Angular2LangUtil.isAngular2Context(myFixture.getFile());
+    UIUtil.dispatchAllInvocationEvents();
 
     int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
     assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
