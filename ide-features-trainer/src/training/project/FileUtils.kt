@@ -23,7 +23,7 @@ object FileUtils {
   }
 
   private fun copyFilesRecursively(toCopy: File, destDir: File): Boolean {
-    assert(destDir.isDirectory)
+    assert(ensureDirectoryExists(destDir) && destDir.isDirectory)
 
     if (!toCopy.isDirectory) {
       return copyFile(toCopy, File(destDir, toCopy.name))
