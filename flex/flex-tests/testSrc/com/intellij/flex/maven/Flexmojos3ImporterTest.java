@@ -21,6 +21,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.idea.maven.model.*;
 import org.jetbrains.idea.maven.project.MavenEmbeddersManager;
 import org.jetbrains.idea.maven.project.MavenProject;
+import org.jetbrains.idea.maven.project.MavenProjectResolver;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
 import org.jetbrains.idea.maven.server.MavenServerExecutionResult;
@@ -759,7 +760,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
 
     importProject();
 
-    MavenProjectsTree.EmbedderTask task = new MavenProjectsTree.EmbedderTask() {
+    MavenProjectResolver.EmbedderTask task = new MavenProjectResolver.EmbedderTask() {
       @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
@@ -793,8 +794,8 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
 
     MavenProject appProject = myProjectsTree.findProject(new MavenId(TEST_GROUP_ID, "ttApp", TEST_VERSION));
     assertNotNull(appProject);
-    myProjectsTree.executeWithEmbedder(appProject, myProjectsManager.getEmbeddersManager(), MavenEmbeddersManager.FOR_POST_PROCESSING,
-                                       NULL_MAVEN_CONSOLE, EMPTY_MAVEN_PROCESS, task);
+    myProjectResolver.executeWithEmbedder(appProject, myProjectsManager.getEmbeddersManager(), MavenEmbeddersManager.FOR_POST_PROCESSING,
+                                          NULL_MAVEN_CONSOLE, EMPTY_MAVEN_PROCESS, task);
 
     List<MavenArtifact> appSubProjectDeps = appProject.getDependencies();
     assertTransitiveDeps(TEST_GROUP_ID, TEST_VERSION, appSubProjectDeps);
