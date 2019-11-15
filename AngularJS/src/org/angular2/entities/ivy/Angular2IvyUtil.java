@@ -4,7 +4,6 @@ package org.angular2.entities.ivy;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.*;
@@ -19,7 +18,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.util.SmartList;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,7 @@ import java.util.function.Function;
 
 import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.processUpPackageJsonFilesInAllScope;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2IvyUtil {
@@ -168,16 +166,10 @@ public class Angular2IvyUtil {
   @Nullable
   private static JSTypeDeclaration getDefFieldArgumentPsi(@NotNull TypeScriptField field, int index, @NotNull String typeName) {
     TypeScriptSingleType type = PsiTreeUtil.getChildOfType(field, TypeScriptSingleType.class);
-    if (type != null) {
-      JSReferenceExpression referenceExpression = PsiTreeUtil.getChildOfType(type, JSReferenceExpression.class);
-      if (referenceExpression != null && typeName.equals(referenceExpression.getReferenceName())) {
-        TypeScriptTypeArgumentList typeArguments = PsiTreeUtil.getChildOfType(type, TypeScriptTypeArgumentList.class);
-        if (typeArguments != null) {
-          JSTypeDeclaration[] declarations = typeArguments.getTypeArguments();
-          if (index < declarations.length) {
-            return declarations[index];
-          }
-        }
+    if (type != null && notNull(type.getQualifiedTypeName(), "").endsWith(typeName)) {
+      JSTypeDeclaration[] declarations = type.getTypeArguments();
+      if (index < declarations.length) {
+        return declarations[index];
       }
     }
     return null;
@@ -193,13 +185,10 @@ public class Angular2IvyUtil {
     if (tuple == null) {
       return Collections.emptyList();
     }
-    List<R> result = new SmartList<>();
-    for (TypeScriptType child : tuple.getElements()) {
-      Optional.ofNullable(tryCast(child, itemsClass))
-        .map(itemMapper)
-        .ifPresent(result::add);
-    }
-    return result;
+    return StreamEx.of(tuple.getElements())
+      .select(itemsClass)
+      .map(itemMapper)
+      .toList();
   }
 
   @NotNull

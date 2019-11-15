@@ -229,7 +229,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @NotNull
   private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
-    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+    final TypeScriptFunction[] constructors = myClass.getConstructors();
     return constructors.length == 1
            ? processCtorParameters(constructors[0])
            : Arrays.stream(constructors)
@@ -286,7 +286,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @NotNull
   private Pair<Boolean, Boolean> getConstructorParamsMatch() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
-      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
+      getConstructorParamsMatchNoCache(myClass), getClassModificationDependencies()));
   }
 
   @NotNull

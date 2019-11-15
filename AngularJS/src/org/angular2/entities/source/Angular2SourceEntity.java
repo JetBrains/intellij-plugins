@@ -6,34 +6,22 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
-import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.Function;
 
-public abstract class Angular2SourceEntity extends UserDataHolderBase implements Angular2Entity {
+public abstract class Angular2SourceEntity extends Angular2SourceEntityBase {
 
   private final ES6Decorator myDecorator;
   private final JSImplicitElement myImplicitElement;
-  private final TypeScriptClass myClass;
 
   public Angular2SourceEntity(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
-    this.myDecorator = decorator;
+    super(Objects.requireNonNull(PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class)));
+    myDecorator = decorator;
     myImplicitElement = implicitElement;
-    myClass = PsiTreeUtil.getContextOfType(myDecorator, TypeScriptClass.class);
-    assert myClass != null;
   }
 
   @NotNull
@@ -60,39 +48,6 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   @Override
   public ES6Decorator getDecorator() {
     return myDecorator;
-  }
-
-  @NotNull
-  @Override
-  public TypeScriptClass getTypeScriptClass() {
-    return myClass;
-  }
-
-  @NotNull
-  @Override
-  public String getName() {
-    return StringUtil.notNullize(myClass.getName(), Angular2Bundle.message("angular.description.unnamed"));
-  }
-
-  @Override
-  public String toString() {
-    return Angular2EntityUtils.toString(this);
-  }
-
-  protected <T> T getCachedValue(@NotNull CachedValueProvider<T> provider) {
-    return CachedValuesManager.getManager(myDecorator.getProject()).getCachedValue(this, provider);
-  }
-
-  @NotNull
-  protected Collection<Object> getClassModificationDependencies() {
-    return getCachedValue(() -> {
-      Collection<Object> dependencies = new HashSet<>();
-      JSClassUtils.processClassesInHierarchy(myClass, true, (aClass, typeSubstitutor, fromImplements) -> {
-        dependencies.add(aClass);
-        return true;
-      });
-      return CachedValueProvider.Result.create(dependencies, dependencies);
-    });
   }
 
   @Override

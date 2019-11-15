@@ -223,7 +223,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public void indexClassStub(@NotNull JSClassStub<?> jsClassStub, @NotNull IndexSink sink) {
     if (jsClassStub instanceof TypeScriptClassStub) {
-      JSAttributeListStub attrs = ContainerUtil.findInstance(jsClassStub.getChildrenStubs(), JSAttributeListStub.class);
+      JSAttributeListStub attrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
       // Do not index abstract classes
       if (attrs == null || attrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
         return;

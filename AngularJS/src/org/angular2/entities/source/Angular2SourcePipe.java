@@ -30,7 +30,7 @@ public class Angular2SourcePipe extends Angular2SourceDeclaration implements Ang
   @Override
   public Collection<? extends TypeScriptFunction> getTransformMethods() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
-      Angular2EntityUtils.getPipeTransformMethods(getTypeScriptClass()), getClassModificationDependencies())
+      Angular2EntityUtils.getPipeTransformMethods(myClass), getClassModificationDependencies())
     );
   }
 }
