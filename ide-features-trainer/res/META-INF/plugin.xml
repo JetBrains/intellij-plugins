@@ -75,7 +75,7 @@
     </project-components>
 
     <actions>
-        <action id="Learn.WelcomeScreen.StartLearn" class="training.actions.StartLearnAction" icon="/img/chevron.png">
+        <action id="Learn.WelcomeScreen.StartLearn" class="training.actions.StartLearnAction" icon="/img/featureTrainer.svg">
             <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
         </action>
 
