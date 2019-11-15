@@ -108,10 +108,7 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
     if (context.getParameterOwner() == null) {
       context.setParameterOwner(place);
     }
-    else if (context.getParameterOwner() != findElementForParameterInfo(place)) {
-      context.removeHint();
-      return;
-    }
+
     final Object[] objects = context.getObjectsToView();
 
     for (int i = 0; i < objects.length; i++) {
