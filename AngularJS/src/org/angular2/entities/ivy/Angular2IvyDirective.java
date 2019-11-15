@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptLiteralType;
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -88,7 +89,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
   }
 
   protected Angular2Directive getMetadataDirective() {
-    TypeScriptClass clazz = getTypeScriptClass();
+    TypeScriptClass clazz = myClass;
     return CachedValuesManager.getCachedValue(clazz, () -> {
       Angular2Directive metadataDirective = Angular2EntityObjectProvider.DIRECTIVE_PROVIDER.metadata.get(clazz);
       if (metadataDirective != null) {
@@ -101,7 +102,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
   @NotNull
   private Pair<Boolean, Boolean> getConstructorParamsMatch() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
-      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
+      getConstructorParamsMatchNoCache(myClass), getClassModificationDependencies()));
   }
 
   @NotNull
@@ -120,7 +121,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
     Map<String, String> inputMap = new LinkedHashMap<>();
     Map<String, String> outputMap = new LinkedHashMap<>();
 
-    TypeScriptClass clazz = getTypeScriptClass();
+    TypeScriptClass clazz = myClass;
 
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {
@@ -135,12 +136,15 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
       return true;
     });
 
-    clazz.getJSType().asRecordType().getProperties().forEach(prop -> {
-      if (prop.getMemberSource().getSingleElement() != null) {
-        processProperty(prop, inputMap, inputs);
-        processProperty(prop, outputMap, outputs);
-      }
-    });
+    TypeScriptTypeParser
+      .buildTypeFromClass(clazz, false)
+      .getProperties()
+      .forEach(prop -> {
+        if (prop.getMemberSource().getSingleElement() != null) {
+          processProperty(prop, inputMap, inputs);
+          processProperty(prop, outputMap, outputs);
+        }
+      });
 
     hackIonicComponentOutputs(this, outputMap);
 
