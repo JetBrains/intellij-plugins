@@ -28,8 +28,6 @@ public class DartDocUtil {
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
   private static final String NBSP = "&nbsp;";
-  private static final String GREATER_THAN = "&gt;";
-  private static final String LESS_THAN = "&lt;";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {

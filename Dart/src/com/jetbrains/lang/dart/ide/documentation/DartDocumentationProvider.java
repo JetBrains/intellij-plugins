@@ -177,7 +177,11 @@ public class DartDocumentationProvider implements DocumentationProvider {
   @Nullable
   private static HoverInformation getSingleHover(final PsiElement element) {
     if (element != null) {
-      final PsiFile psiFile = element.getContainingFile();
+      @Nullable final PsiFile psiFile = element.getContainingFile();
+      // PsiElement.getContainingFile() can return null if the PSI element is a directory or package.
+      if (psiFile == null) {
+        return null;
+      }
       final int offset = element.getTextOffset();
       return getSingleHover(psiFile, offset);
     }
