@@ -20,6 +20,7 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
 import static org.angular2.entities.source.Angular2SourceDirective.getConstructorParamsMatchNoCache;
 
@@ -86,7 +87,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
   protected Angular2Directive getMetadataDirective() {
     TypeScriptClass clazz = myClass;
     return CachedValuesManager.getCachedValue(clazz, () -> {
-      Angular2Directive metadataDirective = Angular2EntityObjectProvider.DIRECTIVE_PROVIDER.metadata.get(clazz);
+      Angular2Directive metadataDirective = tryCast(Angular2EntitiesProvider.getMetadataEntity(clazz), Angular2Directive.class);
       if (metadataDirective != null) {
         return CachedValueProvider.Result.create(metadataDirective, clazz, metadataDirective);
       }
