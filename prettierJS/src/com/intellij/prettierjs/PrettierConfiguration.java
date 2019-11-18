@@ -47,7 +47,7 @@ public final class PrettierConfiguration implements JSNpmLinterState {
       public void after(@NotNull List<? extends VFileEvent> events) {
         for (VFileEvent event : events) {
           if (PackageJsonUtil.isPackageJsonFile(event.getFile())) {
-            threadPoolExecutor.submit(() -> ReadAction.run(PrettierConfiguration.this::detectLocalPackage));
+            threadPoolExecutor.execute(() -> ReadAction.run(PrettierConfiguration.this::detectLocalPackage));
           }
         }
       }
