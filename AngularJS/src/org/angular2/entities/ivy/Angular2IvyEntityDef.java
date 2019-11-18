@@ -11,10 +11,6 @@ import com.intellij.lang.typescript.TypeScriptStubElementTypes;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
-import org.angular2.entities.Angular2Pipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +23,10 @@ import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 @SuppressWarnings("unused")
-public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
+public abstract class Angular2IvyEntityDef {
 
   @Nullable
-  public static Angular2IvyEntityDef<?> get(@NotNull TypeScriptClass typeScriptClass) {
+  public static Angular2IvyEntityDef get(@NotNull TypeScriptClass typeScriptClass) {
     if (!isSuitableClass(typeScriptClass)) {
       return null;
     }
@@ -43,12 +39,12 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
   }
 
   @Nullable
-  public static Angular2IvyEntityDef<?> get(@NotNull TypeScriptClassStub stub) {
+  public static Angular2IvyEntityDef get(@NotNull TypeScriptClassStub stub) {
     return getEntityDefStubbed(stub);
   }
 
   @Nullable
-  public static Angular2IvyEntityDef<?> get(@NotNull TypeScriptField field) {
+  public static Angular2IvyEntityDef get(@NotNull TypeScriptField field) {
     JSAttributeList attrs = field.getAttributeList();
     if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
       return null;
@@ -60,7 +56,7 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
     return createEntityDef(field.getName(), field);
   }
 
-  public static class Module extends Angular2IvyEntityDef<Angular2Module> {
+  public static class Module extends Angular2IvyEntityDef {
     private Module(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     @NotNull
@@ -81,6 +77,11 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
       return processTupleArgument(index, TypeScriptTypeofType.class, Function.identity());
     }
 
+    @Override
+    public Angular2IvyModule createEntity() {
+      return new Angular2IvyModule(this);
+    }
+
     @NotNull
     @Override
     protected String getDefTypeName() {
@@ -88,8 +89,13 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
     }
   }
 
-  public static class Directive extends Angular2IvyEntityDef<Angular2Directive> {
+  public static class Directive extends Angular2IvyEntityDef {
     private Directive(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+
+    @Override
+    public Angular2IvyDirective createEntity() {
+      return new Angular2IvyDirective(this);
+    }
 
     @Nullable
     public String getSelector() {
@@ -133,6 +139,11 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
   public static class Component extends Directive {
     private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
+    @Override
+    public Angular2IvyDirective createEntity() {
+      return new Angular2IvyComponent(this);
+    }
+
     @NotNull
     @Override
     protected String getDefTypeName() {
@@ -140,9 +151,14 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
     }
   }
 
-  public static class Pipe extends Angular2IvyEntityDef<Angular2Pipe> {
+  public static class Pipe extends Angular2IvyEntityDef {
 
     private Pipe(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+
+    @Override
+    public Angular2IvyPipe createEntity() {
+      return new Angular2IvyPipe(this);
+    }
 
     @Nullable
     public String getName() {
@@ -179,12 +195,14 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
     return (TypeScriptField)myFieldOrStub;
   }
 
+  public abstract Angular2IvyEntity<?> createEntity();
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Angular2IvyEntityDef<?> entity = (Angular2IvyEntityDef<?>)o;
-    return getField().equals(entity.getField());
+    Angular2IvyEntityDef entityDef = (Angular2IvyEntityDef)o;
+    return getField().equals(entityDef.getField());
   }
 
   @Override
@@ -256,7 +274,7 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
   }
 
   @Nullable
-  private static Angular2IvyEntityDef<?> getEntityDefStubbed(@NotNull TypeScriptClassStub jsClassStub) {
+  private static Angular2IvyEntityDef getEntityDefStubbed(@NotNull TypeScriptClassStub jsClassStub) {
     JSAttributeListStub clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
     // Do not index abstract classes
     if (clsAttrs == null || clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
@@ -274,7 +292,7 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
       if (!(fieldStub instanceof TypeScriptFieldStub)) {
         continue;
       }
-      Angular2IvyEntityDef<?> entityDefKind = createEntityDef(fieldStub.getName(), fieldStub);
+      Angular2IvyEntityDef entityDefKind = createEntityDef(fieldStub.getName(), fieldStub);
       if (entityDefKind != null) {
         return entityDefKind;
       }
@@ -283,12 +301,12 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
   }
 
   @Nullable
-  private static Angular2IvyEntityDef<?> findEntityDefFieldPsi(@NotNull TypeScriptClass jsClass) {
+  private static Angular2IvyEntityDef findEntityDefFieldPsi(@NotNull TypeScriptClass jsClass) {
     for (JSField field : jsClass.getFields()) {
       if (!(field instanceof TypeScriptField)) {
         continue;
       }
-      Angular2IvyEntityDef<?> entityDefKind = get((TypeScriptField)field);
+      Angular2IvyEntityDef entityDefKind = get((TypeScriptField)field);
       if (entityDefKind != null) {
         return entityDefKind;
       }
@@ -297,7 +315,7 @@ public abstract class Angular2IvyEntityDef<Entity extends Angular2Entity> {
   }
 
   @Nullable
-  private static Angular2IvyEntityDef<?> createEntityDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
+  private static Angular2IvyEntityDef createEntityDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
     if (fieldName == null) {
       return null;
     }
