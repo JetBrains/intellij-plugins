@@ -14,14 +14,15 @@ import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.stubs.*;
+import com.intellij.lang.javascript.psi.stubs.JSClassStub;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
+import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -41,6 +42,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.entities.ivy.Angular2IvyEntityDef;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -58,7 +60,6 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static java.util.Collections.emptyList;
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.entities.ivy.Angular2IvyUtil.*;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
@@ -223,27 +224,20 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public void indexClassStub(@NotNull JSClassStub<?> jsClassStub, @NotNull IndexSink sink) {
     if (jsClassStub instanceof TypeScriptClassStub) {
-      JSAttributeListStub attrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
-      // Do not index abstract classes
-      if (attrs == null || attrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
-        return;
-      }
-      Pair<TypeScriptFieldStub, EntityDefKind> fieldDefPair =
-        findEntityDefFieldStubbed((TypeScriptClassStub)jsClassStub);
-      if (fieldDefPair != null) {
-        EntityDefKind entityDefKind = fieldDefPair.second;
-        if (entityDefKind == MODULE_DEF) {
+      Angular2IvyEntityDef<?> entityDef = Angular2IvyEntityDef.get((TypeScriptClassStub)jsClassStub);
+      if (entityDef != null) {
+        if (entityDef instanceof Angular2IvyEntityDef.Module) {
           sink.occurrence(Angular2IvyModuleIndex.KEY, NG_MODULE_INDEX_NAME);
         }
-        else if (entityDefKind == PIPE_DEF) {
-          String name = PIPE_DEF.getName(fieldDefPair.first);
+        else if (entityDef instanceof Angular2IvyEntityDef.Pipe) {
+          String name = ((Angular2IvyEntityDef.Pipe)entityDef).getName();
           if (name != null) {
             sink.occurrence(Angular2IvyPipeIndex.KEY, name);
             sink.occurrence(AngularSymbolIndex.KEY, name);
           }
         }
-        else if (entityDefKind == DIRECTIVE_DEF || entityDefKind == COMPONENT_DEF) {
-          String selector = ((DirectiveDefKind)entityDefKind).getSelector(fieldDefPair.first);
+        else if (entityDef instanceof Angular2IvyEntityDef.Directive) {
+          String selector = ((Angular2IvyEntityDef.Directive)entityDef).getSelector();
           if (selector != null) {
             for (String indexName : Angular2EntityUtils.getDirectiveIndexNames(selector.trim())) {
               sink.occurrence(Angular2IvyDirectiveIndex.KEY, indexName);
