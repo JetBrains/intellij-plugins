@@ -18,10 +18,10 @@ package com.jetbrains.lang.dart.ide.refactoring;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.GetRefactoringConsumer;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -202,9 +202,7 @@ public abstract class ServerRefactoring {
     // wait for completion
     if (indicator != null) {
       while (true) {
-        if (indicator.isCanceled()) {
-          throw new ProcessCanceledException();
-        }
+        ProgressIndicatorUtils.checkCancelledEvenWithPCEDisabled(indicator);
         boolean done = Uninterruptibles.awaitUninterruptibly(latch, 10, TimeUnit.MILLISECONDS);
         if (done) {
           return;
