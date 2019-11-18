@@ -51,7 +51,7 @@ public abstract class AngularModuleConfigurationInspection extends LocalInspecti
 
   @NotNull
   public static ValidationResults<ProblemType> getValidationResults(@NotNull ES6Decorator decorator) {
-    return isAngularDecorator(decorator, MODULE_DEC)
+    return isAngularEntityDecorator(decorator, MODULE_DEC)
            ? CachedValuesManager.getCachedValue(decorator,
                                                 () -> CachedValueProvider.Result.create(
                                                   validate(decorator),

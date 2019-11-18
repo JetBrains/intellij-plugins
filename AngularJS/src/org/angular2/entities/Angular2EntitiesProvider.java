@@ -223,16 +223,13 @@ public class Angular2EntitiesProvider {
       element = element.getContext();
     }
     if (element instanceof TypeScriptClass) {
-      ES6Decorator decorator = findDecorator((TypeScriptClass)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC);
-      if (decorator != null) {
-        element = decorator;
-      }
-      else {
+      element = findDecorator((TypeScriptClass)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC);
+      if (element == null) {
         return null;
       }
     }
     else if (!(element instanceof ES6Decorator)
-             || !isAngularDecorator((ES6Decorator)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC)) {
+             || !isAngularEntityDecorator((ES6Decorator)element, PIPE_DEC, COMPONENT_DEC, MODULE_DEC, DIRECTIVE_DEC)) {
       return null;
     }
     ES6Decorator dec = (ES6Decorator)element;

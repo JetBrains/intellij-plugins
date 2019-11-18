@@ -36,7 +36,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
 
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if (isAngularDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, PIPE_DEC)
+        if (isAngularEntityDecorator(decorator, COMPONENT_DEC, DIRECTIVE_DEC, PIPE_DEC)
             && !TestFinderHelper.isTest(decorator)) {
           Angular2Declaration declaration = tryCast(Angular2EntitiesProvider.getEntity(decorator),
                                                     Angular2Declaration.class);
