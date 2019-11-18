@@ -11,7 +11,6 @@ import com.intellij.lang.typescript.TypeScriptStubElementTypes;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import one.util.streamex.StreamEx;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -268,7 +267,6 @@ public abstract class Angular2IvyEntityDef {
     return result;
   }
 
-  @Contract("null->false") //NON-NLS
   private static boolean isSuitableClass(@NotNull TypeScriptClass tsClass) {
     return !Objects.requireNonNull(tsClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.ABSTRACT);
   }

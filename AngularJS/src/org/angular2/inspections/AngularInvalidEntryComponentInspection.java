@@ -23,7 +23,7 @@ public class AngularInvalidEntryComponentInspection extends LocalInspectionTool 
     return new JSElementVisitor() {
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if (isAngularDecorator(decorator, MODULE_DEC, COMPONENT_DEC)) {
+        if (isAngularEntityDecorator(decorator, MODULE_DEC, COMPONENT_DEC)) {
           ValidationResults<ProblemType> results = new ValidationResults<>();
           new EntryComponentsValidator().validate(decorator, results);
           if (MODULE_DEC.equals(decorator.getDecoratorName())) {
