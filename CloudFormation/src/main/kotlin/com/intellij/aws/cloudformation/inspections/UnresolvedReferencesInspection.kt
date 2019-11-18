@@ -37,6 +37,8 @@ abstract class UnresolvedReferencesInspection : LocalInspectionTool() {
           unresolvedReferenceMessage(reference), ProblemHighlightType.LIKE_UNKNOWN_SYMBOL, isOnTheFly)
     }.toTypedArray()
   }
+
+  override fun getStaticDescription(): String? = ""
 }
 
 class JsonUnresolvedReferencesInspection: UnresolvedReferencesInspection()
