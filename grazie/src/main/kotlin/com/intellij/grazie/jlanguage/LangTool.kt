@@ -32,12 +32,12 @@ object LangTool : GrazieStateLifecycle {
       JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
         addMatchFilter(UppercaseMatchFilter())
 
+        state.userDisabledRules.forEach { id -> disableRule(id) }
+        state.userEnabledRules.forEach { id -> enableRule(id) }
+
         allRules.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
           disableRule(it.id)
         }
-
-        state.userDisabledRules.forEach { id -> disableRule(id) }
-        state.userEnabledRules.forEach { id -> enableRule(id) }
       }
     }
   }
