@@ -11,6 +11,8 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
+import com.intellij.xml.util.HtmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +60,12 @@ public class Angular2NonHtmlWrappedDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, @Nullable XmlTag context) {
-    return mergeWithAngularDescriptorIfPossible(myDelegate.getAttributeDescriptor(attributeName, context), attributeName, context);
+    XmlAttributeDescriptor descriptor = mergeWithAngularDescriptorIfPossible(myDelegate.getAttributeDescriptor(attributeName, context),
+                                                                             attributeName, context);
+    if (descriptor == null && attributeName.startsWith(HtmlUtil.HTML5_DATA_ATTR_PREFIX)) {
+      return new AnyXmlAttributeDescriptor(attributeName);
+    }
+    return descriptor;
   }
 
   @Nullable

@@ -1055,4 +1055,10 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "cx]", "cy]", "visibility]", "text-rendering]");
   }
 
+  public void testCustomDataAttributes() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("data-attributes.html", "object.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }
