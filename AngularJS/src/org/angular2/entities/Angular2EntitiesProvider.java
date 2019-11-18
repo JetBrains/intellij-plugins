@@ -147,6 +147,7 @@ public class Angular2EntitiesProvider {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2IvyDirectiveIndex.KEY, project))
         .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
         .nonNull()
         .distinct()
@@ -357,7 +358,6 @@ public class Angular2EntitiesProvider {
                                                                     @NotNull StubIndexKey<String, TypeScriptClass> key,
                                                                     @NotNull Class<T> entityClass,
                                                                     @NotNull Consumer<T> consumer) {
-
     if (isIvyMetadataSupportEnabled()) {
       StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass.class, el -> {
         if (el.isValid()) {
