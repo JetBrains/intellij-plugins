@@ -148,7 +148,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
-    if (buildConfiguration.getSdk().isMacCatalyst()) {
+    if (isMacCatalyst(buildConfiguration)) {
       return;
     }
 
@@ -164,7 +164,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                            @NotNull ExecutionEnvironment environment,
                                            @NotNull BuildConfiguration buildConfiguration,
                                            @NotNull File mainExecutable) throws ExecutionException {
-    if (buildConfiguration.getSdk().isMacCatalyst()) {
+    if (isMacCatalyst(buildConfiguration)) {
       return;
     }
 
@@ -182,6 +182,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
+  }
+
+  private static boolean isMacCatalyst(@NotNull BuildConfiguration buildConfiguration) {
+    return buildConfiguration.getSdk().isMacCatalyst();
   }
 
   @Nullable
