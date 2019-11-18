@@ -7,20 +7,14 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.ivy.Angular2IvyComponent;
-import org.angular2.entities.ivy.Angular2IvyDirective;
-import org.angular2.entities.ivy.Angular2IvyModule;
-import org.angular2.entities.ivy.Angular2IvyPipe;
+import org.angular2.entities.ivy.*;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceComponent;
 import org.angular2.entities.source.Angular2SourceDirective;
@@ -28,7 +22,6 @@ import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.entities.source.Angular2SourcePipe;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.index.Angular2MetadataEntityClassNameIndex;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +29,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.entities.ivy.Angular2IvyUtil.*;
+import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
+import static org.angular2.entities.ivy.Angular2IvyUtil.isIvyMetadataSupportEnabled;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
 public class Angular2EntityObjectProvider<T extends Angular2Entity> {
@@ -53,32 +50,33 @@ public class Angular2EntityObjectProvider<T extends Angular2Entity> {
       DIRECTIVE_DEC, COMPONENT_DEC),
     new MetadataEntityGetter<>(Angular2Directive.class),
     new IvyEntityGetter<>(
-      (field, entityDef) -> entityDef == COMPONENT_DEF ? new Angular2IvyComponent(field)
-                                                       : new Angular2IvyDirective(field),
-      COMPONENT_DEF, DIRECTIVE_DEF
+      entityDef -> entityDef instanceof Angular2IvyEntityDef.Component
+                   ? new Angular2IvyComponent((Angular2IvyEntityDef.Component)entityDef)
+                   : new Angular2IvyDirective(entityDef),
+      Angular2IvyEntityDef.Directive.class
     )
   );
 
   public static final Angular2EntityObjectProvider<Angular2Module> MODULE_PROVIDER = new Angular2EntityObjectProvider<>(
     new SourceEntityGetter<>(Angular2IndexingHandler::isModule, Angular2SourceModule::new, MODULE_DEC),
     new MetadataEntityGetter<>(Angular2Module.class),
-    new IvyEntityGetter<>((field, entityDef) -> new Angular2IvyModule(field), MODULE_DEF)
+    new IvyEntityGetter<>(Angular2IvyModule::new, Angular2IvyEntityDef.Module.class)
   );
 
   public static final Angular2EntityObjectProvider<Angular2Pipe> PIPE_PROVIDER = new Angular2EntityObjectProvider<>(
     new SourceEntityGetter<>(
       Angular2IndexingHandler::isPipe, Angular2SourcePipe::new, PIPE_DEC),
     new MetadataEntityGetter<>(Angular2Pipe.class),
-    new IvyEntityGetter<>((field, entityDef) -> new Angular2IvyPipe(field), PIPE_DEF)
+    new IvyEntityGetter<>(Angular2IvyPipe::new, Angular2IvyEntityDef.Pipe.class)
   );
 
   @NotNull public final SourceEntityGetter<T> source;
   @NotNull public final MetadataEntityGetter<T> metadata;
-  @NotNull public final IvyEntityGetter<T> ivy;
+  @NotNull public final IvyEntityGetter<T, ?> ivy;
 
   private Angular2EntityObjectProvider(@NotNull SourceEntityGetter<T> source,
                                        @NotNull MetadataEntityGetter<T> metadata,
-                                       @NotNull IvyEntityGetter<T> ivy) {
+                                       @NotNull IvyEntityGetter<T, ?> ivy) {
     this.source = source;
     this.metadata = metadata;
     this.ivy = ivy;
@@ -200,60 +198,38 @@ public class Angular2EntityObjectProvider<T extends Angular2Entity> {
     }
   }
 
-  public static class IvyEntityGetter<T extends Angular2Entity> {
+  public static class IvyEntityGetter<T extends Angular2Entity,
+    Def extends Angular2IvyEntityDef<T>> {
 
-    private final EntityDefKind[] myDefs;
-    private final BiFunction<? super TypeScriptField, ? super EntityDefKind, ? extends T> myEntityConstructor;
+    private final Class<Def> myDefClass;
+    private final Function<Def, ? extends T> myEntityConstructor;
 
-    IvyEntityGetter(@NotNull BiFunction<? super TypeScriptField, ? super EntityDefKind, ? extends T> constructor,
-                    EntityDefKind... entityDefKinds) {
+    IvyEntityGetter(@NotNull Function<Def, ? extends T> constructor,
+                    @NotNull Class<Def> defClass) {
       myEntityConstructor = constructor;
-      myDefs = entityDefKinds;
+      myDefClass = defClass;
     }
 
     @Nullable
-    public T get(@Nullable TypeScriptField field) {
-      TypeScriptClass tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass.class);
-      if (!isSuitableClass(tsClass)) {
-        return null;
-      }
-      JSAttributeList attrs = field.getAttributeList();
-      if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
-        return null;
-      }
-      EntityDefKind defKind = getDefForFieldName(field.getName());
-      if (defKind == null) {
-        return null;
-      }
-      return get(field, defKind);
+    public T get(@NotNull TypeScriptField field) {
+      return doIfNotNull(tryCast(Angular2IvyEntityDef.get(field), myDefClass), this::get);
     }
 
     @Nullable
-    public T get(@Nullable TypeScriptClass tsClass) {
-      if (!isSuitableClass(tsClass)) {
-        return null;
-      }
-      Pair<TypeScriptField, EntityDefKind> entityDefField = findEntityDefField(tsClass);
-      return entityDefField == null ? null : get(entityDefField.first, entityDefField.second);
-    }
-
-    @Contract("null->false") //NON-NLS
-    private static boolean isSuitableClass(@Nullable TypeScriptClass tsClass) {
-      return tsClass != null
-             && !Objects.requireNonNull(tsClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.ABSTRACT);
+    public T get(@NotNull TypeScriptClass tsClass) {
+      return doIfNotNull(tryCast(Angular2IvyEntityDef.get(tsClass), myDefClass), this::get);
     }
 
     @Nullable
-    private T get(@NotNull TypeScriptField field, EntityDefKind defKind) {
-      return ArrayUtil.find(myDefs, defKind) < 0 ? null :
-             CachedValuesManager.getCachedValue(field, () -> {
-               return create(myEntityConstructor.apply(field, defKind), field);
-             });
+    private T get(@NotNull Def entityDef) {
+      return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
+        return create(myEntityConstructor.apply(entityDef), entityDef.getField());
+      });
     }
 
     @Override
     public String toString() {
-      return Arrays.toString(myDefs) + " - " + super.toString();
+      return myDefClass.getSimpleName() + " - " + super.toString();
     }
   }
 }

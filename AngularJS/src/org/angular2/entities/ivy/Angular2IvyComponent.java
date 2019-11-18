@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.psi.PsiFile;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2DirectiveSelector;
@@ -13,17 +12,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.entities.ivy.Angular2IvyUtil.COMPONENT_DEF;
 
 public class Angular2IvyComponent extends Angular2IvyDirective implements Angular2Component {
 
-  public Angular2IvyComponent(@NotNull TypeScriptField defField) {
-    super(defField);
-  }
-
-  @Override
-  protected Angular2IvyUtil.DirectiveDefKind getDefKind() {
-    return COMPONENT_DEF;
+  public Angular2IvyComponent(@NotNull Angular2IvyEntityDef.Component entityDef) {
+    super(entityDef);
   }
 
   @Nullable

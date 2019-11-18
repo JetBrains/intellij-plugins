@@ -3,7 +3,6 @@ package org.angular2.entities.ivy;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptLiteralType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
@@ -22,37 +21,33 @@ import java.util.*;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
-import static org.angular2.entities.ivy.Angular2IvyUtil.DIRECTIVE_DEF;
 import static org.angular2.entities.source.Angular2SourceDirective.getConstructorParamsMatchNoCache;
 
-public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angular2Directive {
+public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEntityDef.Directive> implements Angular2Directive {
 
-  public Angular2IvyDirective(@NotNull TypeScriptField defField) {
-    super(defField);
-  }
-
-  protected Angular2IvyUtil.DirectiveDefKind getDefKind() {
-    return DIRECTIVE_DEF;
+  public Angular2IvyDirective(@NotNull Angular2IvyEntityDef.Directive entityDef) {
+    super(entityDef);
   }
 
   @NotNull
   @Override
   public Angular2DirectiveSelector getSelector() {
-    return CachedValuesManager.getCachedValue(myDefField, () -> {
-      TypeScriptLiteralType element = getDefKind().getSelectorElement(myDefField);
+    Angular2IvyEntityDef.Directive entityDef = myEntityDef;
+    return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
+      TypeScriptLiteralType element = entityDef.getSelectorElement();
       if (element != null) {
         return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
           element, element.getInnerText(), p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), element);
       }
       return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
-        myDefField, null, null), myDefField);
+        entityDef.getField(), null, null), entityDef.getField());
     });
   }
 
   @NotNull
   @Override
   public List<String> getExportAsList() {
-    return getDefKind().getExportAsList(myDefField);
+    return myEntityDef.getExportAsList();
   }
 
   @NotNull
@@ -125,12 +120,12 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration implements Angu
 
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {
-        Pair<TypeScriptField, Angular2IvyUtil.EntityDefKind> defField = Angular2IvyUtil.findEntityDefField(aClass);
-        if (defField != null && (defField.second instanceof Angular2IvyUtil.DirectiveDefKind)) {
-          inputMap.putAll(((Angular2IvyUtil.DirectiveDefKind)defField.second)
-                            .readPropertyMappings(defField.first, Angular2DecoratorUtil.INPUTS_PROP));
-          outputMap.putAll(((Angular2IvyUtil.DirectiveDefKind)defField.second)
-                             .readPropertyMappings(defField.first, Angular2DecoratorUtil.OUTPUTS_PROP));
+        Angular2IvyEntityDef entityDef = Angular2IvyEntityDef.get((TypeScriptClass)aClass);
+        if (entityDef instanceof Angular2IvyEntityDef.Directive) {
+          inputMap.putAll(((Angular2IvyEntityDef.Directive)entityDef)
+                            .readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP));
+          outputMap.putAll(((Angular2IvyEntityDef.Directive)entityDef)
+                             .readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP));
         }
       }
       return true;

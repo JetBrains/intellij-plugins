@@ -12,13 +12,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class Angular2IvyEntity extends Angular2SourceEntityBase {
+public abstract class Angular2IvyEntity<T extends Angular2IvyEntityDef> extends Angular2SourceEntityBase {
 
-  protected final TypeScriptField myDefField;
+  protected final T myEntityDef;
 
-  protected Angular2IvyEntity(@NotNull TypeScriptField defField) {
-    super(Objects.requireNonNull(PsiTreeUtil.getContextOfType(defField, TypeScriptClass.class)));
-    myDefField = defField;
+  protected Angular2IvyEntity(@NotNull T entityDef) {
+    super(Objects.requireNonNull(PsiTreeUtil.getContextOfType(entityDef.getField(), TypeScriptClass.class)));
+    myEntityDef = entityDef;
+  }
+
+  protected TypeScriptField getField() {
+    return myEntityDef.getField();
   }
 
   @Nullable
@@ -30,26 +34,26 @@ public abstract class Angular2IvyEntity extends Angular2SourceEntityBase {
   @NotNull
   @Override
   public PsiElement getNavigableElement() {
-    return myDefField;
+    return getField();
   }
 
   @NotNull
   @Override
   public PsiElement getSourceElement() {
-    return myDefField;
+    return getField();
   }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Angular2IvyEntity entity = (Angular2IvyEntity)o;
-    return myDefField.equals(entity.myDefField) &&
+    Angular2IvyEntity<?> entity = (Angular2IvyEntity<?>)o;
+    return getField().equals(entity.getField()) &&
            myClass.equals(entity.myClass);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(myDefField, myClass);
+    return Objects.hash(getField(), myClass);
   }
 }
