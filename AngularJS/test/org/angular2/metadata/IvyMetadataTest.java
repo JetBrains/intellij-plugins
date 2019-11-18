@@ -3,6 +3,7 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection;
@@ -65,6 +66,14 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     assertEquals("my-lib.component.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
+  }
+
+  public void testPriority() {
+    myFixture.copyDirectoryToProject("priority", ".");
+    myFixture.configureFromTempProjectFile("template.html");
+    myFixture.completeBasic();
+    assertEquals(ContainerUtil.newArrayList("comp-ivy-bar","comp-ivy-foo", "comp-meta-bar"),
+                 ContainerUtil.sorted(myFixture.getLookupElementStrings()));
   }
 
 }
