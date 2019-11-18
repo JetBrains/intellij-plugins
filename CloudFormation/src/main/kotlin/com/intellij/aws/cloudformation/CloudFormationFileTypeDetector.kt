@@ -38,4 +38,8 @@ class CloudFormationFileTypeDetector: FileTypeRegistry.FileTypeDetector {
     // All whitespaces
     return false
   }
+
+  override fun getDetectedFileTypes(): Collection<FileType> = detectedFileTypes
+
+  private val detectedFileTypes = listOf(JsonCloudFormationFileType.INSTANCE, YamlCloudFormationFileType.INSTANCE)
 }
