@@ -84,7 +84,9 @@ public class DartServerRootsHandler {
 
     if (isPackageScopedAnalysis) {
       final VirtualFile currentFile = DartProblemsView.getInstance(myProject).getCurrentFile();
-      if (currentFile == null || ProjectFileIndex.getInstance(myProject).isInLibraryClasses(currentFile)) {
+      if (currentFile == null ||
+          ProjectFileIndex.getInstance(myProject).isInLibraryClasses(currentFile) ||
+          !currentFile.isInLocalFileSystem()) {
         return; // keep server roots as is until another file is open
       }
 
