@@ -1,0 +1,42 @@
+MainModule: Angular2SourceModule
+  imports:
+    Module1: Angular2MetadataModule
+      imports:
+      declarations:
+        Component1: Angular2MetadataComponent
+      exports:
+      all-exported-declarations:
+      scope:
+        Component1: Angular2MetadataComponent
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+    Module2: Angular2MetadataModule
+      imports:
+      declarations:
+        Component2: Angular2MetadataComponent
+      exports:
+      all-exported-declarations:
+      scope:
+        Component2: Angular2MetadataComponent
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+    Module3: Angular2MetadataModule
+      imports:
+      declarations:
+        Component3: Angular2MetadataComponent
+      exports:
+      all-exported-declarations:
+      scope:
+        Component3: Angular2MetadataComponent
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+  exports:
+  all-exported-declarations:
+  scope:
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true
