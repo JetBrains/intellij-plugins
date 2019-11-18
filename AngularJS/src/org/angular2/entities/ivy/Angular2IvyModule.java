@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Set;
 
 import static com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements;
-import static org.angular2.entities.ivy.Angular2IvyUtil.MODULE_DEF;
+import static com.intellij.util.ObjectUtils.tryCast;
 
-public class Angular2IvyModule extends Angular2IvyEntity implements Angular2Module {
+public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvyEntityDef.Module> implements Angular2Module {
 
   private final Angular2ModuleResolver<TypeScriptField> myModuleResolver = new Angular2ModuleResolver<>(
-    () -> myDefField, Angular2IvyModule::collectSymbols);
+    () -> getField(), Angular2IvyModule::collectSymbols);
 
 
-  public Angular2IvyModule(@NotNull TypeScriptField defField) {
-    super(defField);
+  public Angular2IvyModule(@NotNull Angular2IvyEntityDef.Module entityDef) {
+    super(entityDef);
   }
 
   @Override
@@ -77,7 +77,8 @@ public class Angular2IvyModule extends Angular2IvyEntity implements Angular2Modu
   private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
                                                                                            @NotNull String propertyName,
                                                                                            @NotNull Class<T> symbolClazz) {
-    List<TypeScriptTypeofType> types = MODULE_DEF.getTypesList(fieldDef, propertyName);
+    Angular2IvyEntityDef.Module moduleDef = tryCast(Angular2IvyEntityDef.get(fieldDef), Angular2IvyEntityDef.Module.class);
+    List<TypeScriptTypeofType> types = moduleDef == null? Collections.emptyList() : moduleDef.getTypesList(propertyName);
     if (types.isEmpty()) {
       return ResolvedEntitiesList.createResult(Collections.emptySet(), true, fieldDef);
     }
