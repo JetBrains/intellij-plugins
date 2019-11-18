@@ -22,9 +22,9 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2EntityObjectProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.ivy.Angular2IvyUtil;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.entities.metadata.psi.Angular2MetadataObject;
@@ -202,7 +202,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
     if (lookingForModule) {
-      Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
+      Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
       Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
       if (metadataModule != null) {
         processCacheDependency(metadataFunction);
@@ -211,7 +211,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
         if (Angular2IvyUtil.isIvyMetadataSupportEnabled()) {
           TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
           if (tsClass != null) {
-            Angular2Module ivyModule = Angular2EntityObjectProvider.MODULE_PROVIDER.ivy.get(tsClass);
+            Angular2Module ivyModule = tryCast(Angular2EntitiesProvider.getIvyEntity(tsClass), Angular2Module.class);
             if (ivyModule != null) {
               processCacheDependency(tsClass);
               //noinspection unchecked
@@ -278,7 +278,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
   private static JSType evaluateModuleWithProvidersType(JSRecordType.PropertySignature ngModuleSignature, JSTypeSource functionTypeSource) {
     JSType result = ngModuleSignature.getJSType();
     List<JSType> args;
-    JSFunctionBaseImpl function;
+    JSFunctionBaseImpl<?> function;
 
     if (result instanceof JSGenericTypeImpl
         && (args = ((JSGenericTypeImpl)result).getArguments()).size() == 1
@@ -289,7 +289,6 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       JSType evaluatedReturnType = CachedValuesManager.getCachedValue(function, () -> {
         final JSFunctionCachedData cachedData = new JSFunctionCachedData();
         final List<JSFunction> nestedFuns = new SmartList<>();
-        final List<JSType> evaluatedReturnTypes = new SmartList<>();
         final JSFunctionNodesVisitor cachedDataEvaluator =
           new TypeScriptFunctionCachingVisitor(function,
                                                cachedData, nestedFuns);
