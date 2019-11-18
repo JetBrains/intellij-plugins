@@ -148,6 +148,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
+    if (buildConfiguration.getSdk().isMacCatalyst()) {
+      return;
+    }
+
     actions.add(new RefreshRevealAction(configuration,
             environment,
             processHandler,
@@ -160,6 +164,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                            @NotNull ExecutionEnvironment environment,
                                            @NotNull BuildConfiguration buildConfiguration,
                                            @NotNull File mainExecutable) throws ExecutionException {
+    if (buildConfiguration.getSdk().isMacCatalyst()) {
+      return;
+    }
+
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return;
 
