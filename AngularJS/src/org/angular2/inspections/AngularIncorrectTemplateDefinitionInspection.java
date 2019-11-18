@@ -28,7 +28,7 @@ public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectio
 
       @Override
       public void visitES6Decorator(ES6Decorator decorator) {
-        if (isAngularDecorator(decorator, COMPONENT_DEC)) {
+        if (isAngularEntityDecorator(decorator, COMPONENT_DEC)) {
           JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
           if (initializer == null) {
             return;

@@ -30,8 +30,7 @@ import java.util.Set;
 import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
 import static com.intellij.util.ArrayUtil.contains;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2DecoratorUtil {
@@ -73,7 +72,7 @@ public class Angular2DecoratorUtil {
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
              && doIfNotNull(getContextOfType(parent, ES6Decorator.class),
-                            decorator -> isAngularDecorator(decorator, decoratorNames)) == Boolean.TRUE;
+                            decorator -> isAngularEntityDecorator(decorator, decoratorNames)) == Boolean.TRUE;
     }
     return false;
   }
@@ -86,7 +85,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (isAngularDecorator(decorator, names)) {
+      if (isAngularEntityDecorator(decorator, names)) {
         return decorator;
       }
     }
@@ -101,7 +100,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (isAngularDecorator(decorator, name)) {
+      if (isAngularEntityDecorator(decorator, name)) {
         return decorator;
       }
     }
@@ -184,10 +183,12 @@ public class Angular2DecoratorUtil {
                        expr -> expr.findProperty(name));
   }
 
-  public static boolean isAngularDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
+  public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
     String decoratorName = decorator.getDecoratorName();
     return decoratorName != null
            && contains(decoratorName, names)
+           && doIfCast(decorator.getContext(), JSAttributeList.class,
+                 attrList -> attrList.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) != Boolean.TRUE
            && Angular2LangUtil.isAngular2Context(decorator)
            && hasAngularImport(decoratorName, decorator.getContainingFile());
   }

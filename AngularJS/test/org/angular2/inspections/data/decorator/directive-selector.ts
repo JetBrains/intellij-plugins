@@ -59,3 +59,8 @@ export class MyDirective {
 export class MyDirective {
 
 }
+
+@Directive()
+export abstract class MyDirective {
+
+}
