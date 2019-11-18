@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 object GrazieRemote {
   private fun isLibExists(lib: String) = GrazieDynamic.dynamicFolder.resolve(lib).exists() || GraziePlugin.libFolder.resolve(lib).exists()
 
-  fun isAvailableLocally(lang: Lang) = isLibExists(lang.remote.fileName)
+  fun isAvailableLocally(lang: Lang) = lang.isEnglish() || isLibExists(lang.remote.fileName)
 
   fun allAvailableLocally() = Lang.values().filter { isAvailableLocally(it) }
 
