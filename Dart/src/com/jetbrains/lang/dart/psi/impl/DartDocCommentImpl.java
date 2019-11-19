@@ -22,6 +22,7 @@ public class DartDocCommentImpl extends ASTWrapperPsiElement implements DartDocC
     return null; // todo
   }
 
+  @NotNull
   @Override
   public IElementType getTokenType() {
     return getNode().getElementType();
