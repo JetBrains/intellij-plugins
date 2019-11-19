@@ -75,7 +75,7 @@ object FileUtils {
       return if (urlConnection is JarURLConnection)
         copyJarResourcesRecursively(destination, urlConnection)
       else
-        copyFilesRecursively(File(originUrl.path), destination)
+        copyFilesRecursively(File(originUrl.path), destination.parentFile)
     } catch (e: IOException) {
       LOG.warn(e)
     }
