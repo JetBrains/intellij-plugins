@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.documentation;
 
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -55,6 +56,14 @@ public class DartDocumentationProviderTest extends DartCodeInsightFixtureTestCas
 
   public void testEnumRef() {
     doTestQuickNavigateInfo("E <b>E1</b>", "enum E { <caret>E1 } var e = E.E1;");
+  }
+
+  public void testPsiDirectoryRef() {
+    final PsiFile psiFile = myFixture.addFileToProject("test.dart", "/// test docs\nvoid() main() {}");
+    final PsiDirectory psiDirectory = psiFile.getContainingDirectory();
+
+    String generatedDocs = myProvider.generateDoc(psiDirectory, null);
+    assertNull("expected no docs for directory", generatedDocs);
   }
 
   public void testDocUrls() {
