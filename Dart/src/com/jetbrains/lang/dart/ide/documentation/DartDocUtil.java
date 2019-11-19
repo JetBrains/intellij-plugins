@@ -28,8 +28,8 @@ public class DartDocUtil {
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
   private static final String NBSP = "&nbsp;";
-  private static final String GREATER_THAN = "&gt;";
-  private static final String LESS_THAN = "&lt;";
+  private static final String GT = "&gt;";
+  private static final String LT = "&lt;";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
@@ -368,9 +368,9 @@ public class DartDocUtil {
       final DartTypeList typeList = typeArguments.getTypeList();
       final List<DartType> children = typeList.getTypeList();
       if (!children.isEmpty()) {
-        builder.append("&lt;");
+        builder.append(LT);
         appendDartTypeList(builder, children);
-        builder.append("&gt;");
+        builder.append(GT);
       }
     }
   }
@@ -419,14 +419,14 @@ public class DartDocUtil {
     if (typeParameters != null) {
       final List<DartTypeParameter> parameters = typeParameters.getTypeParameterList();
       if (!parameters.isEmpty()) {
-        builder.append("&lt;");
+        builder.append(LT);
         for (Iterator<DartTypeParameter> iter = parameters.iterator(); iter.hasNext(); ) {
           builder.append(iter.next().getText());
           if (iter.hasNext()) {
             builder.append(", ");
           }
         }
-        builder.append("&gt;");
+        builder.append(GT);
       }
     }
   }
