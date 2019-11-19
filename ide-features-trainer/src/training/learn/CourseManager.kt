@@ -33,8 +33,6 @@ class CourseManager internal constructor() {
   val modules: List<Module>
     get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
 
-  var showGotMessage = true
-
   init {
     initXmlModules()
   }
