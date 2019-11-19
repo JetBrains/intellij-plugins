@@ -15,7 +15,6 @@ import training.learn.CourseManager
 import training.learn.lesson.LessonManager
 import training.util.BlockingExecutor
 
-
 /**
  *  Use next gradle task to invoke test:
  *  gradle -Dtest.single=SelectLessonTest clean test -Didea.gui.test.alternativeIdePath="<path_to_installed_IDE>"
@@ -59,7 +58,6 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
   }
 
   private fun openLearnProject() {
-    CourseManager.instance.showGotMessage = false
     welcomeFrame {
       LangManager.getInstance().loadState(LangManager.State("ruby"))
       actionLink("Learn IntelliJ IDEA").click()
