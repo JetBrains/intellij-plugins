@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.lang.javascript.psi.JSTypeOwner;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.util.Pair;
@@ -86,6 +87,12 @@ public class PipesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("ngIfAs.ts", "async_pipe.d.ts", "Observable.d.ts");
     myFixture.completeBasic();
     myFixture.checkResultByFile("ngIfAs.after.ts");
+  }
+
+  public void testAsyncNgIfAsObjType() {
+    configureWithMetadataFiles(myFixture, "common");
+    myFixture.configureByFiles("ngIfAsObj.ts", "async_pipe.d.ts", "Observable.d.ts");
+    assertEquals("{foo: Person}", ((JSTypeOwner)myFixture.getElementAtCaret()).getJSType().getResolvedTypeText());
   }
 
   public void testContextAware() {
