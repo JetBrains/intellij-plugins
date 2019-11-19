@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 
 public class HbBundle {
 
+  @NotNull
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
     return CommonBundle.message(getBundle(), key, params);
   }
