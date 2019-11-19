@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.findUsages.JSDialectSpecificReadWriteAccessD
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
@@ -62,5 +63,11 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   @Override
   public JSTypeEvaluationHelper getTypeEvaluationHelper() {
     return Angular2TypeEvaluationHelper.INSTANCE;
+  }
+
+  @NotNull
+  @Override
+  public JSTypeHelper getTypeHelper() {
+    return TypeScriptTypeHelper.getInstance();
   }
 }
