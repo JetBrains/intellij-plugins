@@ -77,8 +77,8 @@ internal class AngularProjectImpl(override val name: String,
 
   override val stylePreprocessorIncludeDirs
     get() = ngProject.targets?.build?.options?.stylePreprocessorOptions?.includePaths
-              ?.mapNotNull { angularCliFolder.findFileByRelativePath(it) }
-            ?: emptyList()
+              ?.mapNotNull { angularCliFolder.findFileByRelativePath(it) }?.plus(angularCliFolder)
+            ?: listOf(angularCliFolder)
 
   override val karmaConfigFile get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
 
