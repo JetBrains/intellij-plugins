@@ -773,8 +773,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     sdksModel.addListener(listener);
     Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
 
-    mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
-                              FlexBundle.message("set.up.sdk.title"));
+    mySdkCombo.showNoneSdkItem();
     mySdkCombo.setEditButton(myEditButton, myProject, (NullableComputable<Sdk>)() -> mySdkCombo.getSelectedJdk());
 
     mySdkLabel.setLabelFor(mySdkCombo);
@@ -966,7 +965,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     JdkComboBox.NoneJdkComboBoxItem noneSdkItem = new JdkComboBox.NoneJdkComboBoxItem();
     myFreeze = true;
     try {
-      mySdkCombo.reloadModel(noneSdkItem, myProject);
+      mySdkCombo.reloadModel();
     }
     finally {
       myFreeze = false;
@@ -1289,7 +1288,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     myFreeze = true;
     try {
-      mySdkCombo.reloadModel(new JdkComboBox.NoneJdkComboBoxItem(), myProject);
+      mySdkCombo.reloadModel();
 
       if (sdkEntry != null) {
         final Sdk sdk = mySkdsModel.findSdk(sdkEntry.getName());
@@ -1482,7 +1481,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     Condition<Sdk> sdkCondition =
       JdkComboBox.getSdkFilter(sdkTypeFilter);
 
-    mySdkCombo = new JdkComboBox(mySkdsModel, sdkTypeFilter, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), false);
+    mySdkCombo = new JdkComboBox(myProject, mySkdsModel, sdkTypeFilter, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), null);
   }
 
   private void initPopupActions() {
