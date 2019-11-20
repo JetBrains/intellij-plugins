@@ -976,7 +976,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       mySdkCombo.setSelectedItem(noneSdkItem);
     }
     else {
-      String selectedSdkName = selectedItem.getSdkName();
+      String selectedSdkName = selectedItem != null ? selectedItem.getSdkName() : null;
       if (selectedSdkName != null) {
         Sdk sdk = mySkdsModel.findSdk(selectedSdkName);
         if (sdk != null) {
@@ -991,7 +991,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
 
-    if (mySdkCombo.getSelectedJdk() != selectedItem.getJdk()) {
+    if (selectedItem != null && mySdkCombo.getSelectedJdk() != selectedItem.getJdk()) {
       updateOnSelectedSdkChange();
     }
     mySdkChangeDispatcher.getMulticaster().stateChanged(new ChangeEvent(this));
