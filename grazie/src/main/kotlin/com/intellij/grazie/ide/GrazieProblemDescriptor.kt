@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie.ide
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptorBase
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
@@ -48,7 +50,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
             style = "padding-bottom: 8px;"
           }
 
-          +info.rule.toDescriptionSanitized()
+          +info.message
           if (!isOnTheFly) nbsp()
         }
 

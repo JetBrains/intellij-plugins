@@ -2,9 +2,14 @@
 package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.Lang
-import com.intellij.grazie.utils.*
+import com.intellij.grazie.utils.LinkedSet
+import com.intellij.grazie.utils.PsiPointer
+import com.intellij.grazie.utils.toIntRange
+import com.intellij.grazie.utils.withOffset
 import com.intellij.psi.PsiElement
-import org.languagetool.rules.*
+import org.languagetool.rules.IncorrectExample
+import org.languagetool.rules.Rule
+import org.languagetool.rules.RuleMatch
 import org.slf4j.LoggerFactory
 
 data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<String> = LinkedSet()) {
@@ -28,7 +33,7 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
     fun withOffset(offset: Int) = copy(errorRange = IntRange(errorRange.start + offset, errorRange.endInclusive + offset))
   }
 
-  data class Info(val lang: Lang, val rule: Rule, val shortMessage: String) {
+  data class Info(val lang: Lang, val rule: Rule, val shortMessage: String, val message: String) {
     val incorrectExample: IncorrectExample? by lazy {
       val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }.takeIf { it.isNotEmpty() }
       (withCorrections ?: rule.incorrectExamples).minBy { it.example.length }
@@ -38,7 +43,7 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
   /** Constructor for LangTool, applies fixes to RuleMatch (Main constructor doesn't apply fixes) */
   constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
     Location(match.toIntRange(offset), IntRange(match.patternStartPos, match.patternEndPos - 1).withOffset(offset)),
-    Info(lang, match.rule, match.shortMessage),
+    Info(lang, match.rule, match.shortMessage, match.message),
     LinkedSet(match.suggestedReplacements)
   )
 
