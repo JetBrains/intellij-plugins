@@ -39,324 +39,347 @@ import javax.swing.text.StyleConstants
 
 class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
-    private val modulesPanel: JPanel = JPanel()
-    private val module2linklabel = BidirectionalMap<Module, LinkLabel<Any>>()
+  private val modulesPanel: JPanel = JPanel()
+  private val module2linklabel = BidirectionalMap<Module, LinkLabel<Any>>()
 
-    init {
-        layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        isFocusable = false
-        isOpaque = true
-        background = background
+  init {
+    layout = BoxLayout(this, BoxLayout.Y_AXIS)
+    isFocusable = false
+    isOpaque = true
+    background = background
 
-        //Obligatory block
-        setupFontStyles()
-        initMainPanel()
-        add(createSettingsButtonPanel())
-        add(modulesPanel)
-        add(Box.createVerticalGlue())
+    //Obligatory block
+    setupFontStyles()
+    initMainPanel()
+    add(createSettingsButtonPanel())
+    add(modulesPanel)
+    add(Box.createVerticalGlue())
 
-        //set LearnPanel UI
-        preferredSize = Dimension(UISettings.instance.width, 100)
-        border = UISettings.instance.emptyBorderWithNoEastHalfNorth
+    //set LearnPanel UI
+    preferredSize = Dimension(UISettings.instance.width, 100)
+    border = UISettings.instance.emptyBorderWithNoEastHalfNorth
 
-        revalidate()
-        repaint()
+    revalidate()
+    repaint()
+  }
+
+  private fun setupFontStyles() {
+    StyleConstants.setFontFamily(REGULAR, UISettings.instance.fontFace)
+    StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
+    StyleConstants.setForeground(REGULAR, UISettings.instance.descriptionColor)
+
+    StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f)
+    StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0f)
+    StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 0.0f)
+    StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f)
+    StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f)
+  }
+
+  private fun initMainPanel() {
+    modulesPanel.apply {
+      name = "modulesPanel"
+      layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
+      border = UISettings.instance.eastBorder
+      isOpaque = false
+      isFocusable = false
+    }
+    initModulesPanel()
+  }
+
+  private fun initModulesPanel() {
+    val modules = CourseManager.instance.modules
+    if (DataLoader.liveMode) {
+      CourseManager.instance.clearModules()
+      CourseManager.instance.initXmlModules()
+      module2linklabel.clear()
     }
 
-    private fun setupFontStyles() {
-        StyleConstants.setFontFamily(REGULAR, UISettings.instance.fontFace)
-        StyleConstants.setFontSize(REGULAR, UISettings.instance.fontSize)
-        StyleConstants.setForeground(REGULAR, UISettings.instance.descriptionColor)
-
-        StyleConstants.setLeftIndent(PARAGRAPH_STYLE, 0.0f)
-        StyleConstants.setRightIndent(PARAGRAPH_STYLE, 0f)
-        StyleConstants.setSpaceAbove(PARAGRAPH_STYLE, 0.0f)
-        StyleConstants.setSpaceBelow(PARAGRAPH_STYLE, 0.0f)
-        StyleConstants.setLineSpacing(PARAGRAPH_STYLE, 0.0f)
+    if (featureTrainerMode.doesShowResetButton) {
+      addResetButton()
     }
 
-    private fun initMainPanel() {
-        modulesPanel.apply {
-            name = "modulesPanel"
-            layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
-            border = UISettings.instance.eastBorder
-            isOpaque = false
-            isFocusable = false
-        }
-        initModulesPanel()
+    if (featureTrainerMode == TrainingMode.DEVELOPMENT) {
+      addDevelopmentTools()
     }
 
-    private fun initModulesPanel() {
-        val modules = CourseManager.instance.modules
-        if(DataLoader.liveMode) {
-            CourseManager.instance.clearModules()
-            CourseManager.instance.initXmlModules()
-            module2linklabel.clear()
-        }
+    for (module in modules) {
+      if (module.lessons.isEmpty()) continue
+      val moduleName = createModuleNameLinkLabel(module)
+      val moduleHeader = createModuleHeader(module, moduleName).apply { border = UISettings.instance.checkmarkShiftBorder }
 
-        if (featureTrainerMode.doesShowResetButton) {
-            addResetButton()
-        }
+      val descriptionPane = createDescriptionPane(module)
+      descriptionPane.border = UISettings.instance.checkmarkShiftBorder
+      descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName))
 
-        if (featureTrainerMode == TrainingMode.DEVELOPMENT) {
-            addDevelopmentTools()
-        }
+      modulesPanel.add(moduleHeader)
+      modulesPanel.add(Box.createVerticalStrut(UISettings.instance.headerGap))
+      modulesPanel.add(descriptionPane)
+      modulesPanel.add(Box.createVerticalStrut(UISettings.instance.moduleGap))
+    }
+    modulesPanel.add(Box.createVerticalGlue())
+  }
 
-        for (module in modules) {
-            if (module.lessons.isEmpty()) continue
-            val moduleHeader = JPanel().apply {
-                name = "moduleHeader"
-                isFocusable = false
-                alignmentX = Component.LEFT_ALIGNMENT
-                border = UISettings.instance.checkmarkShiftBorder
-                isOpaque = false
-                layout = BoxLayout(this, BoxLayout.X_AXIS)
+  private fun createModuleNameLinkLabel(module: Module): LinkLabel<*> {
+    val moduleName = LinkLabel<Any>(module.name, null)
+    moduleName.name = "moduleName"
+    module2linklabel[module] = moduleName
+    moduleName.setListener({ _, _ ->
+                             val project = guessCurrentProject(modulesPanel)
+                             val dumbService = DumbService.getInstance(project)
+                             if (dumbService.isDumb) {
+                               val balloon = createBalloon(LearnBundle.message("indexing.message"))
+                               balloon.showInCenterOf(module2linklabel[module])
+                               return@setListener
+                             }
+                             try {
+                               var lesson = module.giveNotPassedLesson()
+                               if (lesson == null) lesson = module.lessons[0]
+                               CourseManager.instance.openLesson(project, lesson)
+                             }
+                             catch (e: Exception) {
+                               LOG.warn(e)
+                             }
+                           }, null)
+    moduleName.font = UISettings.instance.moduleNameFont
+    moduleName.alignmentY = Component.BOTTOM_ALIGNMENT
+    moduleName.alignmentX = Component.LEFT_ALIGNMENT
+    return moduleName
+  }
+
+  private fun createSettingsButtonPanel(): JPanel {
+    val settingsAction = createAnAction(AllIcons.General.Settings) { UiManager.setLanguageChooserView() }
+    val settingsButton = ActionButton(settingsAction,
+                                      Presentation("Settings").apply {
+                                        icon = AllIcons.Nodes.Editorconfig
+                                        isEnabled = true
+                                      },
+                                      "learn.tool.window.module", NAVBAR_MINIMUM_BUTTON_SIZE)
+      .apply {
+        minimumSize = NAVBAR_MINIMUM_BUTTON_SIZE
+        preferredSize = NAVBAR_MINIMUM_BUTTON_SIZE
+        maximumSize = NAVBAR_MINIMUM_BUTTON_SIZE
+        alignmentX = Component.RIGHT_ALIGNMENT
+        isOpaque = false
+        isEnabled = true
+      }
+
+    return JPanel().apply {
+      name = "settingsButtonPanel"
+      isFocusable = false
+      alignmentX = Component.LEFT_ALIGNMENT
+      border = UISettings.instance.smallEastBorder
+      isOpaque = false
+      layout = BoxLayout(this, BoxLayout.X_AXIS)
+      add(Box.createHorizontalGlue())
+      add(settingsButton)
+    }
+  }
+
+  private fun addDevelopmentTools() {
+    modulesPanel.add(JCheckBox().apply {
+      addItemListener { e -> TaskContext.inTestMode = e.stateChange == 1 }
+      isFocusable = true
+      isVisible = true
+      isSelected = true
+      isEnabled = true
+      isOpaque = false
+      model.isSelected = false
+      text = "Run in test mode"
+    })
+
+    modulesPanel.add(JButton().apply {
+      action = object : AbstractAction() {
+        override fun actionPerformed(actionEvent: ActionEvent) {
+          learnToolWindow.changeLanguage()
+        }
+      }
+      margin = JBUI.emptyInsets()
+      isFocusable = true
+      isVisible = true
+      isSelected = true
+      isEnabled = true
+      isOpaque = false
+      text = "Change language"
+    })
+  }
+
+  private fun addResetButton() {
+    val modules = CourseManager.instance.modules
+    modulesPanel.add(JButton().apply {
+      action = object : AbstractAction() {
+        override fun actionPerformed(actionEvent: ActionEvent) {
+          LessonStateManager.resetPassedStatus()
+          modules.forEach { module ->
+            module.lessons.forEach { lesson ->
+              lesson.passed = false
             }
-            val moduleName = LinkLabel<Any>(module.name, null)
-            moduleName.name = "moduleName"
-            module2linklabel[module] = moduleName
-            moduleName.setListener({ _, _ ->
-                val project = guessCurrentProject(modulesPanel)
-                val dumbService = DumbService.getInstance(project)
-                if (dumbService.isDumb) {
-                    val balloon = createBalloon(LearnBundle.message("indexing.message"))
-                    balloon.showInCenterOf(module2linklabel[module])
-                    return@setListener
-                }
-                try {
-                    var lesson = module.giveNotPassedLesson()
-                    if (lesson == null) lesson = module.lessons[0]
-                    CourseManager.instance.openLesson(project, lesson)
-                } catch (e: Exception) {
-                    LOG.warn(e)
-                }
-            }, null)
-            moduleName.font = UISettings.instance.moduleNameFont
-            moduleName.alignmentY = Component.BOTTOM_ALIGNMENT
-            moduleName.alignmentX = Component.LEFT_ALIGNMENT
-            val progressStr = calcProgress(module)
-            val progressLabel: JBLabel
-            progressLabel = if (progressStr != null) {
-                JBLabel(progressStr)
-            } else {
-                JBLabel()
-            }
-            progressLabel.border = EmptyBorder(0, 5, 0, 5)
-            progressLabel.name = "progressLabel"
-            progressLabel.font = UISettings.instance.italicFont
-            progressLabel.foreground = JBColor.BLACK
-            progressLabel.alignmentY = Component.BOTTOM_ALIGNMENT
-            moduleHeader.add(moduleName)
-            moduleHeader.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
-            moduleHeader.add(progressLabel)
-
-            val descriptionPane = MyJTextPane(UISettings.instance.width)
-            descriptionPane.name = "descriptionPane"
-            descriptionPane.isEditable = false
-            descriptionPane.isOpaque = false
-            descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true)
-            try {
-                val descriptionStr = module.description
-                descriptionPane.document.insertString(0, descriptionStr, REGULAR)
-            } catch (e: BadLocationException) {
-                LOG.warn(e)
-            }
-
-            descriptionPane.alignmentX = Component.LEFT_ALIGNMENT
-            descriptionPane.margin = JBUI.emptyInsets()
-            descriptionPane.border = UISettings.instance.checkmarkShiftBorder
-            descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName))
-
-            modulesPanel.add(moduleHeader)
-            modulesPanel.add(Box.createVerticalStrut(UISettings.instance.headerGap))
-            modulesPanel.add(descriptionPane)
-            modulesPanel.add(Box.createVerticalStrut(UISettings.instance.moduleGap))
+          }
+          val project = guessCurrentProject(modulesPanel)
+          val firstLesson = modules.first().lessons.first()
+          CourseManager.instance.openLesson(project, firstLesson)
+          UiManager.setLessonView()
         }
-        modulesPanel.add(Box.createVerticalGlue())
+      }
+      margin = JBUI.emptyInsets()
+      isFocusable = true
+      isVisible = true
+      isSelected = true
+      isEnabled = true
+      isOpaque = false
+      text = "Start from the Beginning"
+    })
+  }
+
+  private fun delegateToLinkLabel(descriptionPane: ModuleDescriptionPane, moduleName: LinkLabel<*>): MouseListener {
+    return object : MouseListener {
+      override fun mouseClicked(e: MouseEvent) {
+        moduleName.doClick()
+      }
+
+      override fun mousePressed(e: MouseEvent) {
+        moduleName.doClick()
+      }
+
+      override fun mouseReleased(e: MouseEvent) {
+
+      }
+
+      override fun mouseEntered(e: MouseEvent) {
+        moduleName.entered(e)
+        descriptionPane.cursor = Cursor.getPredefinedCursor(12)
+      }
+
+      override fun mouseExited(e: MouseEvent) {
+        moduleName.exited(e)
+        descriptionPane.cursor = Cursor.getDefaultCursor()
+      }
     }
+  }
 
-    private fun createSettingsButtonPanel(): JPanel {
-        val settingsAction = createAnAction(AllIcons.General.Settings) { UiManager.setLanguageChooserView() }
-        val settingsButton = ActionButton(settingsAction,
-            Presentation("Settings").apply {
-                icon = AllIcons.Nodes.Editorconfig
-                isEnabled = true
-            },
-            "learn.tool.window.module", NAVBAR_MINIMUM_BUTTON_SIZE)
-            .apply {
-                minimumSize = NAVBAR_MINIMUM_BUTTON_SIZE
-                preferredSize = NAVBAR_MINIMUM_BUTTON_SIZE
-                maximumSize = NAVBAR_MINIMUM_BUTTON_SIZE
-                alignmentX = Component.RIGHT_ALIGNMENT
-                isOpaque = false
-                isEnabled = true
-            }
+  fun updateMainPanel() {
+    modulesPanel.removeAll()
+    initModulesPanel()
+  }
 
-        return JPanel().apply {
-            name = "settingsButtonPanel"
-            isFocusable = false
-            alignmentX = Component.LEFT_ALIGNMENT
-            border = UISettings.instance.smallEastBorder
-            isOpaque = false
-            layout = BoxLayout(this, BoxLayout.X_AXIS)
-            add(Box.createHorizontalGlue())
-            add(settingsButton)
-        }
-    }
+  override fun getPreferredSize(): Dimension {
+    return Dimension(modulesPanel.minimumSize.getWidth().toInt() + (UISettings.instance.westInset + UISettings.instance.westInset),
+                     modulesPanel.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
+  }
 
-    private fun addDevelopmentTools() {
-        modulesPanel.add(JCheckBox().apply {
-            addItemListener { e -> TaskContext.inTestMode = e.stateChange == 1 }
-            isFocusable = true
-            isVisible = true
-            isSelected = true
-            isEnabled = true
-            isOpaque = false
-            model.isSelected = false
-            text = "Run in test mode"
-        })
+  override fun paintComponent(g: Graphics) {
+    super.paintComponent(g)
+    paintModuleCheckmarks(g)
+  }
 
-      modulesPanel.add(JButton().apply {
-        action = object : AbstractAction() {
-          override fun actionPerformed(actionEvent: ActionEvent) {
-            learnToolWindow.changeLanguage()
+  private fun paintModuleCheckmarks(g: Graphics) {
+    if (module2linklabel.isNotEmpty()) {
+      for ((module, linkLabel) in module2linklabel.entries) {
+        if (module.giveNotPassedLesson() == null) {
+          val point = linkLabel.locationOnScreen
+          val basePoint = this.locationOnScreen
+          val y = point.y + 1 - basePoint.y
+          if (!SystemInfo.isMac) {
+            LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 4)
+          }
+          else {
+            LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 2)
           }
         }
-        margin = JBUI.emptyInsets()
-        isFocusable = true
-        isVisible = true
-        isSelected = true
-        isEnabled = true
-        isOpaque = false
-        text = "Change language"
-      })
+      }
     }
+  }
 
-    private fun addResetButton() {
-        val modules = CourseManager.instance.modules
-        modulesPanel.add(JButton().apply {
-            action = object : AbstractAction() {
-                override fun actionPerformed(actionEvent: ActionEvent) {
-                    LessonStateManager.resetPassedStatus()
-                    modules.forEach { module ->
-                        module.lessons.forEach { lesson ->
-                            lesson.passed = false
-                        }
-                    }
-                    val project = guessCurrentProject(modulesPanel)
-                    val firstLesson = modules.first().lessons.first()
-                    CourseManager.instance.openLesson(project, firstLesson)
-                    UiManager.setLessonView()
-                }
-            }
-            margin = JBUI.emptyInsets()
-            isFocusable = true
-            isVisible = true
-            isSelected = true
-            isEnabled = true
-            isOpaque = false
-            text = "Start from the Beginning"
-        })
-    }
+  override fun getBackground(): Color {
+    return if (!UIUtil.isUnderDarcula())
+      UISettings.instance.backgroundColor
+    else
+      UIUtil.getPanelBackground()
+  }
 
-    private fun delegateToLinkLabel(descriptionPane: MyJTextPane, moduleName: LinkLabel<*>): MouseListener {
-        return object : MouseListener {
-            override fun mouseClicked(e: MouseEvent) {
-                moduleName.doClick()
-            }
+  companion object {
 
-            override fun mousePressed(e: MouseEvent) {
-                moduleName.doClick()
-            }
+    private val REGULAR = SimpleAttributeSet()
+    private val PARAGRAPH_STYLE = SimpleAttributeSet()
 
-            override fun mouseReleased(e: MouseEvent) {
-
-            }
-
-            override fun mouseEntered(e: MouseEvent) {
-                moduleName.entered(e)
-                descriptionPane.cursor = Cursor.getPredefinedCursor(12)
-            }
-
-            override fun mouseExited(e: MouseEvent) {
-                moduleName.exited(e)
-                descriptionPane.cursor = Cursor.getDefaultCursor()
-            }
-        }
-    }
-
-    fun updateMainPanel() {
-        modulesPanel.removeAll()
-        initModulesPanel()
-    }
+    private val LOG = Logger.getInstance(ModulesPanel::class.java)
 
     private fun calcProgress(module: Module): String? {
-        val total = module.lessons.size
-        var done = 0
-        for (lesson in module.lessons) {
-            if (lesson.passed) done++
-        }
-        return if (done != 0) {
-            if (done == total)
-                ""
-            else
-                "$done of $total done"
-        } else {
-            null
-        }
-    }
-
-    private inner class MyJTextPane internal constructor(private val widthOfText: Int) : JTextPane() {
-
-        override fun getPreferredSize(): Dimension {
-            return Dimension(widthOfText, super.getPreferredSize().height)
-        }
-
-        override fun getMaximumSize(): Dimension {
-            return preferredSize
-        }
-    }
-
-    override fun getPreferredSize(): Dimension {
-        return Dimension(modulesPanel.minimumSize.getWidth().toInt() + (UISettings.instance.westInset + UISettings.instance.westInset),
-                modulesPanel.minimumSize.getHeight().toInt() + (UISettings.instance.northInset + UISettings.instance.southInset))
-    }
-
-    override fun paintComponent(g: Graphics) {
-        super.paintComponent(g)
-        paintModuleCheckmarks(g)
-    }
-
-    private fun paintModuleCheckmarks(g: Graphics) {
-        if (module2linklabel.isNotEmpty()) {
-            for ((module, linkLabel) in module2linklabel.entries) {
-                if (module.giveNotPassedLesson() == null) {
-                    val point = linkLabel.locationOnScreen
-                    val basePoint = this.locationOnScreen
-                    val y = point.y + 1 - basePoint.y
-                    if (!SystemInfo.isMac) {
-                        LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 4)
-                    } else {
-                        LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 2)
-                    }
-                }
-            }
-        }
-    }
-
-    override fun getBackground(): Color {
-        return if (!UIUtil.isUnderDarcula())
-            UISettings.instance.backgroundColor
+      val total = module.lessons.size
+      var done = 0
+      for (lesson in module.lessons) {
+        if (lesson.passed) done++
+      }
+      return if (done != 0) {
+        if (done == total)
+          ""
         else
-            UIUtil.getPanelBackground()
+          "$done of $total done"
+      }
+      else {
+        null
+      }
     }
 
-    companion object {
+    fun createModuleHeader(module: Module, moduleName: JComponent): JPanel {
+      val moduleHeader = JPanel().apply {
+        name = "moduleHeader"
+        isFocusable = false
+        alignmentX = Component.LEFT_ALIGNMENT
+        border = EmptyBorder(0,0,0,0)
+        isOpaque = false
+        layout = BoxLayout(this, BoxLayout.X_AXIS)
+      }
 
-        private val REGULAR = SimpleAttributeSet()
-        private val PARAGRAPH_STYLE = SimpleAttributeSet()
-
-        private val LOG = Logger.getInstance(ModulesPanel::class.java)
+      val progressStr = calcProgress(module)
+      val progressLabel: JBLabel
+      progressLabel = if (progressStr != null) {
+        JBLabel(progressStr)
+      }
+      else {
+        JBLabel()
+      }
+      progressLabel.border = EmptyBorder(0, 5, 0, 5)
+      progressLabel.name = "progressLabel"
+      progressLabel.font = UISettings.instance.italicFont
+      progressLabel.foreground = JBColor.BLACK
+      progressLabel.alignmentY = Component.BOTTOM_ALIGNMENT
+      moduleHeader.add(moduleName)
+      moduleHeader.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
+      moduleHeader.add(progressLabel)
+      return moduleHeader
     }
+
+    fun createDescriptionPane(module: Module): ModuleDescriptionPane {
+      val descriptionPane = ModuleDescriptionPane(UISettings.instance.width)
+      descriptionPane.name = "descriptionPane"
+      descriptionPane.isEditable = false
+      descriptionPane.isOpaque = false
+      descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true)
+      try {
+        val descriptionStr = module.description
+        descriptionPane.document.insertString(0, descriptionStr, REGULAR)
+      }
+      catch (e: BadLocationException) {
+        LOG.warn(e)
+      }
+
+      descriptionPane.alignmentX = Component.LEFT_ALIGNMENT
+      descriptionPane.margin = JBUI.emptyInsets()
+      return descriptionPane
+    }
+  }
+
 
 }
+
+class ModuleDescriptionPane internal constructor(private val widthOfText: Int) : JTextPane() {
+
+  override fun getPreferredSize(): Dimension {
+    return Dimension(widthOfText, super.getPreferredSize().height)
+  }
+
+  override fun getMaximumSize(): Dimension {
+    return preferredSize
+  }
+}
+

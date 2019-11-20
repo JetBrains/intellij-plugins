@@ -45,7 +45,10 @@
         <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="3"/>
         <statistics.validation.customWhiteListRule
                 implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
-
+        <applicationService serviceInterface="com.intellij.ide.RecentProjectsManager"
+                            serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectsManager"
+                            overrides="true" preload="notHeadless"/>
+        <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
         <applicationService
                 serviceImplementation="training.learn.CourseManager"/>
         <applicationService
