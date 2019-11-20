@@ -22,7 +22,6 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
-import org.angular2.codeInsight.tags.Angular2NonHtmlWrappedDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -341,10 +340,6 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NotNull
   public static XmlAttributeDescriptor[] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
     XmlElementDescriptor descriptor = tag.getDescriptor();
-    if (descriptor instanceof Angular2NonHtmlWrappedDescriptor) {
-      return ObjectUtils.notNull(((Angular2NonHtmlWrappedDescriptor)descriptor).getDefaultAttributeDescriptors(tag),
-                                 XmlAttributeDescriptor.EMPTY);
-    }
     if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
       descriptor = ObjectUtils.tryCast(HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag), HtmlElementDescriptorImpl.class);
       if (descriptor == null) {
