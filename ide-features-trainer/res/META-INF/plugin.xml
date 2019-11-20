@@ -84,7 +84,6 @@
             <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
             <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X"/>
         </action>
-        <action id="learn.open.lesson" text="Open Lesson" class="training.actions.OpenLessonAction"/>
         <!--TODO: REMOVE THIS ACTION BEFORE RELEASE-->
         <action id="learn.open.chooseLang" text="Choose Lang" class="training.actions.ShowChooseLangPanelAction"/>
     </actions>
