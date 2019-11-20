@@ -5,12 +5,9 @@ import kotlinx.html.FlowOrPhrasingContent
 import kotlinx.html.strong
 import org.languagetool.rules.ExampleSentence
 import org.languagetool.rules.IncorrectExample
-import org.languagetool.rules.Rule
 
 val ExampleSentence.text: CharSequence
   get() = example
-
-fun Rule.toDescriptionSanitized() = this.description.replace("**", "")
 
 private fun FlowOrPhrasingContent.toHtml(example: IncorrectExample, mistakeHandler: FlowOrPhrasingContent.(String) -> Unit) {
   Regex("(.*?)<marker>(.*?)</marker>|(.*)").findAll(example.example).forEach {

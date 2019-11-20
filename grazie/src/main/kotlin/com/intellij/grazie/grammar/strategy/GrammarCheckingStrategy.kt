@@ -67,7 +67,7 @@ interface GrammarCheckingStrategy {
 
   /**
    * Specify ranges, which will be removed from text before checking (like STEALTH behavior).
-   * You can use [indentIndexes] to hide the indentation of each line of text.
+   * You can use [StrategyUtils.indentIndexes] to hide the indentation of each line of text.
    *
    * @param root root element previously selected in [isMyContextRoot]
    * @param text extracted text from root element without [ABSORB] and [STEALTH] ones

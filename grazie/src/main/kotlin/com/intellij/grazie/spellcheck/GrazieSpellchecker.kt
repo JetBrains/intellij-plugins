@@ -6,7 +6,6 @@ import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.grazie.utils.LinkedSet
 import com.intellij.grazie.utils.toLinkedSet
-import com.intellij.spellchecker.engine.Transformation
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.spelling.SpellingCheckRule
 import org.slf4j.LoggerFactory
@@ -16,8 +15,6 @@ object GrazieSpellchecker {
 
   private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
   private val logger = LoggerFactory.getLogger(GrazieSpellchecker::class.java)
-
-  private val transform = Transformation()
 
   data class SpellerTool(val tool: JLanguageTool, val speller: SpellingCheckRule, val suggestLimit: Int) {
     fun isMyDomain(word: String): Boolean {

@@ -21,6 +21,7 @@ object ReplaceNewLines : ReplaceCharRule() {
 /**
  * Rule for replacing slashes with whitespaces
  */
+@Suppress("unused")
 object ReplaceSlashes : ReplaceCharRule() {
   override fun replace(prefix: CharSequence, current: Char) = if (current == '/') ' ' else current
 }
@@ -28,6 +29,7 @@ object ReplaceSlashes : ReplaceCharRule() {
 /**
  * Rule for replacing asterisks with whitespaces
  */
+@Suppress("unused")
 object ReplaceAsterisk : ReplaceCharRule() {
   override fun replace(prefix: CharSequence, current: Char) = if (current == '*') ' ' else current
 }
