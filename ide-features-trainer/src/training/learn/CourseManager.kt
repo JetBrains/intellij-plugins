@@ -1,10 +1,6 @@
-/*
- * Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
- */
 package training.learn
 
 import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
@@ -50,7 +46,7 @@ class CourseManager internal constructor() {
           if (element.name == XmlModuleConstants.MODULE_TYPE_ATTR) {
             val moduleFilename = element.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
             val module = XmlModule.initModule(moduleFilename, primaryLanguage)
-                ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+                         ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
             allModules.add(module)
           }
           else throw IllegalArgumentException("Unknown attribute name " + element.name)
@@ -70,15 +66,15 @@ class CourseManager internal constructor() {
    */
   @Synchronized
   fun openLesson(projectWhereToOpen: Project, lesson: Lesson?) {
-    val action = ActionManager.getInstance().getAction("learn.open.lesson")
+    if (lesson == null) return //todo: remove null lessons
     val focusOwner = IdeFocusManager.getInstance(projectWhereToOpen).focusOwner
     val parent = DataManager.getInstance().getDataContext(focusOwner)
     val data = mutableMapOf<String, Any?>()
-    data[OpenLessonAction.LESSON_DATA_KEY.name] = lesson
+    val openLessonAction = OpenLessonAction(lesson)
     data[OpenLessonAction.PROJECT_WHERE_TO_OPEN_DATA_KEY.name] = projectWhereToOpen
     val context = SimpleDataContext.getSimpleContext(data, parent)
-    val event = AnActionEvent.createFromAnAction(action, null, "", context)
-    ActionUtil.performActionDumbAware(action, event)
+    val event = AnActionEvent.createFromAnAction(openLessonAction, null, "", context)
+    ActionUtil.performActionDumbAware(openLessonAction, event)
   }
 
   /**
@@ -96,8 +92,8 @@ class CourseManager internal constructor() {
 
   fun findLesson(lessonName: String): Lesson? {
     return modules
-        .flatMap { it.lessons }
-        .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
+      .flatMap { it.lessons }
+      .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
   }
 
   /**
@@ -110,8 +106,8 @@ class CourseManager internal constructor() {
     if (size == 1) return null
     return lessons.firstOrNull {
       lessons.indexOf(it) > lessons.indexOf(currentLesson) &&
-          lessons.indexOf(it) < lessons.size && !it.passed }
-        ?.let { lessons[lessons.indexOf(it)] }
+      lessons.indexOf(it) < lessons.size && !it.passed }
+      ?.let { lessons[lessons.indexOf(it)] }
   }
 
   fun giveNextModule(currentLesson: Lesson): Module? {
@@ -136,9 +132,9 @@ class CourseManager internal constructor() {
 
   fun calcPassedLessonsForLanguage(langSupport: LangSupport): Int {
     return filterByLanguage(langSupport.primaryLanguage)
-        .flatMap { m -> m.lessons }
-        .filter { it.passed }
-        .size
+      .flatMap { m -> m.lessons }
+      .filter { it.passed }
+      .size
   }
 
   private fun filterByLanguage(language: String): List<Module> {
