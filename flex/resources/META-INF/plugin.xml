@@ -99,7 +99,7 @@
 
     <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider" order="first"/>
     <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
-    <css.dialect implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>
+    <css.dialect id="FlexCSSDialect" order="before JavaFxCSSDialect" implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>
     <projectConfigurable instance="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable" id="flex.compiler"
                          displayName="ActionScript &amp; Flex Compiler" parentId="project.propCompiler"/>
 
