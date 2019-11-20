@@ -54,20 +54,19 @@ import java.util.concurrent.ExecutionException
 /**
  * @author Sergey Karashevich
  */
-class OpenLessonAction : AnAction() {
+class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    val lesson = e.getData(LESSON_DATA_KEY)
     val whereToStartLessonProject = e.getData(PROJECT_WHERE_TO_OPEN_DATA_KEY)
     val project = e.project
 
-    if (lesson != null && project != null && whereToStartLessonProject != null) {
+    if (project != null && whereToStartLessonProject != null) {
       LOG.debug("${project.name}: Action performed -> openLesson(${lesson.name})")
       openLesson(whereToStartLessonProject, lesson)
     } else {
       //in case of starting from Welcome Screen
       // Or user activated `Open Lesson` action manually.
-      LOG.debug("${project?.name}: Action performed -> openLearnToolWindowAndShowModules(${lesson?.name}))")
+      LOG.debug("${project?.name}: Action performed -> openLearnToolWindowAndShowModules(${lesson.name}))")
       openLearnProjectFromWelcomeScreen(project)
     }
   }
@@ -132,11 +131,11 @@ class OpenLessonAction : AnAction() {
 
       LOG.debug("${projectWhereToStartLesson.name}: VirtualFile for lesson has been created/found")
       val currentProject =
-          if (lesson.module.moduleType != ModuleType.SCRATCH) CourseManager.instance.learnProject!!.also {
-            // close all tabs in the currently opened learning project
-            ProjectUtils.closeAllEditorsInProject(it)
-          }
-          else projectWhereToStartLesson
+        if (lesson.module.moduleType != ModuleType.SCRATCH) CourseManager.instance.learnProject!!.also {
+          // close all tabs in the currently opened learning project
+          ProjectUtils.closeAllEditorsInProject(it)
+        }
+        else projectWhereToStartLesson
 
       if (lesson.module.moduleType != ModuleType.SCRATCH || CourseManager.instance.learnProject == projectWhereToStartLesson) {
         // do not change view environment for scratch lessons in user project
@@ -219,10 +218,10 @@ class OpenLessonAction : AnAction() {
       val windowManager = ToolWindowManager.getInstance(project)
       val declaredFields = ToolWindowId::class.java.declaredFields
       for (field in declaredFields) {
-          if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
-            val id = field.get(null) as String
-            windowManager.getToolWindow(id)?.hide(null)
-          }
+        if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
+          val id = field.get(null) as String
+          windowManager.getToolWindow(id)?.hide(null)
+        }
       }
     }
   }
@@ -239,15 +238,17 @@ class OpenLessonAction : AnAction() {
       lesson.addLessonListener(statLessonListener)
   }
 
-  private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?) {
+  private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?, lessonToOpen: Lesson? = null) {
     val project = initLearnProject(projectToClose)!!
     if (project.isOpen) {
       showModules(project)
+      if (lessonToOpen != null) openLessonWhenLearnProjectStart(lessonToOpen, project)
       return
     }
     StartupManager.getInstance(project).registerPostStartupActivity {
       hideOtherViews(project)
       showModules(project)
+      if (lessonToOpen != null) openLessonWhenLearnProjectStart(lessonToOpen, project)
     }
   }
 
