@@ -38,10 +38,10 @@ class ExampleClassWithTypos:
     <warning descr="PLURAL_VERB_AFTER_THIS">This guy have</warning> no useful logic; it's just a documentation example.
 
     Args:
-        name (str): the <warning descr="COMMA_WHICH">name which</warning> group
+        name (str): the name which group
 
     Attributes:
-        name (str): the <warning descr="COMMA_WHICH">name which</warning> group
+        name (str): the name which group
 
     """
 
