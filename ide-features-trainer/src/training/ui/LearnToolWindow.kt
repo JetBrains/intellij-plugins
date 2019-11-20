@@ -44,7 +44,7 @@ class LearnToolWindow internal constructor(private val project: Project) : Simpl
     UiManager.learnPanelPerProject[project] = myLearnPanel
   }
 
-  //do not call on modulesPanel view view or learnPanel view
+  //do not call on modulesPanel view or learnPanel view
   fun reinitViews() {
     reinitViewsInternal()
   }
