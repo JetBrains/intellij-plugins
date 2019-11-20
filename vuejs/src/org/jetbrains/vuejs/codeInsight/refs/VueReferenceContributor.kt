@@ -28,7 +28,6 @@ class VueReferenceContributor : PsiReferenceContributor() {
     registrar.registerReferenceProvider(DEPRECATED_SLOT_NAME_ATTR_PATTERN, DEPRECATED_SLOT_REF_PROVIDER)
     registrar.registerReferenceProvider(createSrcAttrValuePattern(STYLE_TAG_NAME), STYLE_REF_PROVIDER)
     registrar.registerReferenceProvider(createSrcAttrValuePattern(TEMPLATE_TAG_NAME), BASIC_REF_PROVIDER)
-    registrar.registerReferenceProvider(createSrcAttrValuePattern(SCRIPT_TAG_NAME), BASIC_REF_PROVIDER)
   }
 
   companion object {
