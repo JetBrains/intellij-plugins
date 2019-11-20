@@ -18,6 +18,7 @@ import com.intellij.openapi.util.AtomicNullableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -29,6 +30,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
+import com.intellij.xml.impl.XmlEnumerationDescriptor;
 import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
@@ -135,6 +137,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   private final Angular2AttributeNameParser.AttributeInfo myInfo;
   private final boolean myImplied;
   private final AtomicNullableLazyValue<JSType> myJSType = AtomicNullableLazyValue.createValue(this::buildJSType);
+  private final XmlAttributeDescriptor myOverriddenHtmlDescriptor;
 
   protected Angular2AttributeDescriptor(@NotNull XmlTag xmlTag,
                                         @NotNull String attributeName,
@@ -172,6 +175,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     myInfo = info;
     myPriority = priority;
     myImplied = implied;
+    myOverriddenHtmlDescriptor = info.type == REGULAR ? findInstance(sources, XmlAttributeDescriptor.class)
+                                                      : null;
   }
 
   public Angular2AttributeDescriptor merge(@Nullable XmlAttributeDescriptor other) {
@@ -197,6 +202,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         : "Cannot merge attributes with different names: " + myAttributeName + " != " + other.getName();
       Set<Object> elements = new HashSet<>(myResolver.getSources());
       elements.addAll(other.getDeclarations());
+      elements.add(other);
       return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, elements, true);
     }
   }
@@ -210,33 +216,93 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public void init(PsiElement element) {}
 
   @Override
+  public String validateValue(XmlElement context, String value) {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.validateValue(context, value);
+    }
+    return super.validateValue(context, value);
+  }
+
+  @Override
   public boolean isRequired() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.isRequired();
+    }
     return false;
   }
 
   @Override
   public boolean hasIdType() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.hasIdType();
+    }
     return "id".equals(myAttributeName);
   }
 
   @Override
   public boolean hasIdRefType() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.hasIdRefType();
+    }
     return false;
   }
 
   @Override
   public boolean isEnumerated() {
-    return getEnumeratedValues().length > 0;
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.isEnumerated();
+    }
+    String[] values = getEnumeratedValues();
+    return values != null && values.length > 0;
   }
 
   @Override
   public boolean isFixed() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.isFixed();
+    }
     return false;
   }
 
   @Override
   public String getDefaultValue() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.getDefaultValue();
+    }
     return null;
+  }
+
+  @Override
+  public boolean isList() {
+    if (myOverriddenHtmlDescriptor instanceof XmlEnumerationDescriptor) {
+      return ((XmlEnumerationDescriptor<?>)myOverriddenHtmlDescriptor).isList();
+    }
+    return super.isList();
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public PsiReference[] getValueReferences(XmlElement element, @NotNull String text) {
+    if (myOverriddenHtmlDescriptor instanceof XmlEnumerationDescriptor) {
+      return ((XmlEnumerationDescriptor<XmlElement>)myOverriddenHtmlDescriptor).getValueReferences(element, text);
+    }
+    return super.getValueReferences(element, text);
+  }
+
+  @Override
+  public boolean isEnumerated(XmlElement context) {
+    if (myOverriddenHtmlDescriptor instanceof XmlEnumerationDescriptor) {
+      return ((XmlEnumerationDescriptor<?>)myOverriddenHtmlDescriptor).isEnumerated(context);
+    }
+    return super.isEnumerated(context);
+  }
+
+  @Override
+  public String[] getValuesForCompletion() {
+    if (myOverriddenHtmlDescriptor instanceof XmlEnumerationDescriptor) {
+      return ((XmlEnumerationDescriptor<?>)myOverriddenHtmlDescriptor).getValuesForCompletion();
+    }
+    return super.getValuesForCompletion();
   }
 
   @NotNull
@@ -249,8 +315,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Override
-  @NotNull
+  @Nullable
   public String[] getEnumeratedValues() {
+    if (myOverriddenHtmlDescriptor != null) {
+      return myOverriddenHtmlDescriptor.getEnumeratedValues();
+    }
     JSType type;
     if (myInfo.type == REGULAR && (type = getJSType()) != null) {
       List<String> values = new ArrayList<>();
@@ -269,6 +338,14 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       }
     }
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
+  }
+
+  @Override
+  public PsiElement getValueDeclaration(XmlElement attributeValue, String value) {
+    if (myOverriddenHtmlDescriptor instanceof XmlEnumerationDescriptor<?>) {
+      return ((XmlEnumerationDescriptor<?>)myOverriddenHtmlDescriptor).getValueDeclaration(attributeValue, value);
+    }
+    return super.getValueDeclaration(attributeValue, value);
   }
 
   @Override

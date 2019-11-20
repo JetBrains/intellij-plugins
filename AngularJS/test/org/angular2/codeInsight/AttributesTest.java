@@ -576,7 +576,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            "(myOutput)",
                            "[mySimpleBindingInput]", "mySimpleBindingInput",
                            "myPlain",
-                           "myInOut","[myInOut]", "[(myInOut)]",
+                           "myInOut", "[myInOut]", "[(myInOut)]",
                            "fake", "[fake]", "[(fake)]",
                            "(fakeChange)");
     assertDoesntContain(myFixture.getLookupElementStrings(),
@@ -1061,4 +1061,12 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testInputTypeCompletion() {
+    configureWithMetadataFiles(myFixture, "forms");
+    myFixture.configureByText("input-type.html", "<input type=\"<caret>\"");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(),
+                           "button", "checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month",
+                           "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week");
+  }
 }
