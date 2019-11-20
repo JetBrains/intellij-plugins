@@ -6,6 +6,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.rules.ComparableCategory
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.icons.AllIcons
@@ -25,7 +26,9 @@ class GrazieDisableCategoryQuickFix(private val lang: Lang, private val category
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     val action = object : BasicUndoableAction(descriptor.psiElement?.containingFile?.virtualFile) {
-      private val toDisable = LangTool.getTool(lang).allActiveRules.filter { it.category.id == category.id }.distinctBy { it.id }
+      private val toDisable = LangTool.getTool(lang).allActiveRules.filter {
+        ComparableCategory(it.category) == ComparableCategory(category)
+      }.distinctBy { it.id }
 
       override fun redo() {
         GrazieConfig.update { state ->

@@ -26,7 +26,7 @@ class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconabl
   override fun getFamilyName() = msg("grazie.quickfix.replace.typo.family")
 
   override fun getName() = msg("grazie.quickfix.replace.typo.text", (typo.info.shortMessage.trimToNull()
-    ?: typo.info.rule.category.name).toLowerCase())
+    ?: typo.info.rule.category.name))
 
   override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
