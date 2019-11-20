@@ -11,7 +11,7 @@ object LearnIcons {
   private fun load(path: String): Icon = IconLoader.getIcon(path, LearnIcons::class.java)
 
   val checkMarkGray = load("/img/checkmark.png")
-  val chevronIcon = load("/img/featureTrainer.svg")
-  val chevronToolWindowIcon = load("/img/featureTrainerToolWindow.svg")
+  val featureTrainerIcon = load("/img/featureTrainer.svg")
+  val featureTrainerToolWindowIcon = load("/img/featureTrainerToolWindow.svg")
 
 }
