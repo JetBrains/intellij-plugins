@@ -67,7 +67,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       //in case of starting from Welcome Screen
       // Or user activated `Open Lesson` action manually.
       LOG.debug("${project?.name}: Action performed -> openLearnToolWindowAndShowModules(${lesson.name}))")
-      openLearnProjectFromWelcomeScreen(project)
+      openLearnProjectFromWelcomeScreen(project, lesson)
     }
   }
 
