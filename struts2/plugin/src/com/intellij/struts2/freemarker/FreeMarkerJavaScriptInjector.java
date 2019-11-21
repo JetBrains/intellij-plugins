@@ -40,23 +40,23 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author Yann C&eacute;bron
  */
 public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
-
-  private static final PsiElementPattern.Capture<FtlStringLiteral> JS_ELEMENT_PATTERN =
-    psiElement(FtlStringLiteral.class)
-      .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib JS Attributes") {
-        @Override
-        public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
-          final String name = ftlNameValuePair.getName();
-          return name != null &&
-                 (name.startsWith("on") || name.startsWith("doubleOn")) &&
-                 !name.endsWith("Topics");
-        }
-      }))
-      .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
-
+  private static class Holder {
+    private static final PsiElementPattern.Capture<FtlStringLiteral> JS_ELEMENT_PATTERN =
+      psiElement(FtlStringLiteral.class)
+        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib JS Attributes") {
+          @Override
+          public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
+            final String name = ftlNameValuePair.getName();
+            return name != null &&
+                   (name.startsWith("on") || name.startsWith("doubleOn")) &&
+                   !name.endsWith("Topics");
+          }
+        }))
+        .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
+  }
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
-    if (JS_ELEMENT_PATTERN.accepts(host)) {
+    if (Holder.JS_ELEMENT_PATTERN.accepts(host)) {
       registrar.startInjecting(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
         .addPlace(null, null, (PsiLanguageInjectionHost) host,
                   TextRange.from(1, host.getTextLength() - 2))

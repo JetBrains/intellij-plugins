@@ -41,13 +41,13 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author Yann C&eacute;bron
  */
 public class FreeMarkerOgnlInjector implements MultiHostInjector {
-
-  private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_ELEMENT_PATTERN =
+  private static class Holder {
+    private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_ELEMENT_PATTERN =
       createPattern(s -> s.contains(OgnlLanguage.EXPRESSION_PREFIX));
 
-  private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_LIST_ELEMENT_PATTERN =
+    private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_LIST_ELEMENT_PATTERN =
       createPattern(s -> s.startsWith("{"));
-
+  }
   private static PsiElementPattern.Capture<FtlStringLiteral> createPattern(final Condition<String> valueTextCondition) {
     return psiElement(FtlStringLiteral.class)
         .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 OGNL") {
@@ -64,12 +64,12 @@ public class FreeMarkerOgnlInjector implements MultiHostInjector {
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
-    if (OGNL_ELEMENT_PATTERN.accepts(context)) {
+    if (Holder.OGNL_ELEMENT_PATTERN.accepts(context)) {
       OgnlLanguageInjector.injectOccurrences(registrar, (PsiLanguageInjectionHost) context);
       return;
     }
 
-    if (OGNL_LIST_ELEMENT_PATTERN.accepts(context)) {
+    if (Holder.OGNL_LIST_ELEMENT_PATTERN.accepts(context)) {
       OgnlLanguageInjector.injectElementWithPrefixSuffix(registrar, (PsiLanguageInjectionHost) context);
     }
   }

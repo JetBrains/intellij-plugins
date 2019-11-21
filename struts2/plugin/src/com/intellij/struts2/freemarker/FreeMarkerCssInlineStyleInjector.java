@@ -42,21 +42,21 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author Yann C&eacute;bron
  */
 public class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
-
-  private static final PsiElementPattern.Capture<FtlStringLiteral> CSS_ELEMENT_PATTERN =
-    psiElement(FtlStringLiteral.class)
-      .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib CSS Attributes") {
-        @Override
-        public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
-          final String name = ftlNameValuePair.getName();
-          return name != null && Arrays.binarySearch(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES, name) > -1;
-        }
-      }))
-      .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
-
+  private static class Holder {
+    private static final PsiElementPattern.Capture<FtlStringLiteral> CSS_ELEMENT_PATTERN =
+      psiElement(FtlStringLiteral.class)
+        .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib CSS Attributes") {
+          @Override
+          public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
+            final String name = ftlNameValuePair.getName();
+            return name != null && Arrays.binarySearch(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES, name) > -1;
+          }
+        }))
+        .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
+  }
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar, @NotNull final PsiElement psiElement) {
-    if (CSS_ELEMENT_PATTERN.accepts(psiElement)) {
+    if (Holder.CSS_ELEMENT_PATTERN.accepts(psiElement)) {
       final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
       multiHostRegistrar.startInjecting(CssFileType.INSTANCE.getLanguage())
         .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) psiElement, range)
