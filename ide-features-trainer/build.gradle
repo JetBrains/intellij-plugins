@@ -69,11 +69,6 @@ sourceSets {
         java.srcDir 'testsData'
     }
 }
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
 
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
