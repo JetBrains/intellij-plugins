@@ -3,9 +3,7 @@ package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.LangDetector
 import com.intellij.grazie.jlanguage.LangTool
-import com.intellij.grazie.utils.LinkedSet
-import com.intellij.grazie.utils.buildSet
-import com.intellij.grazie.utils.splitWithRanges
+import com.intellij.grazie.utils.*
 import com.intellij.openapi.progress.ProgressManager
 import org.slf4j.LoggerFactory
 
@@ -26,9 +24,8 @@ object GrammarEngine {
 
     return if (str.length < maxChars) {
       getTyposSmall(str, offset)
-    }
-    else {
-      val head = seps.first()
+    } else {
+      val head = seps.firstOrNull() ?: return emptySet()
       val tail = seps.drop(1)
 
       buildSet {
@@ -55,8 +52,7 @@ object GrammarEngine {
         .filterNotNull()
         .map { Typo(it, lang, offset) }
         .toCollection(LinkedSet())
-    }
-    catch (e: Throwable) {
+    } catch (e: Throwable) {
       logger.warn("Got exception during check for typos by LanguageTool", e)
       LinkedSet()
     }
