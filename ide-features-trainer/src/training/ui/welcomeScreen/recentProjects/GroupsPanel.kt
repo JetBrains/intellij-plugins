@@ -26,6 +26,7 @@ import com.intellij.util.ui.StartupUiUtil
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.accessibility.AccessibleContextUtil
 import training.actions.ModuleActionGroup
+import training.ui.views.ModulesPanel
 import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 import java.awt.*
 import java.util.*
@@ -258,25 +259,46 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
               name.text = renderableAction.name
               path.text = renderableAction.description ?: ""
 
+              if (value is ModuleActionGroup) {
+                val scaledSize: Float = JBUIScale.scaleFontSize(11f) * 1f
+                path.font = path.font.deriveFont(scaledSize)
+              }
+
+              val nameComponent: JComponent = if (value is ModuleActionGroup) {
+                if (!value.module.hasNotPassedLesson()) name.foreground = path.foreground
+                ModulesPanel.createModuleHeader(value.module, name,
+                                                if (isSelected) fore else UIManager.getColor("Label.disabledForeground"))
+              }
+              else {
+                name
+              }
+
               if (!renderableAction.isValid) {
                 path.foreground = ColorUtil.mix(path.foreground, JBColor.red, .5)
               }
               if (renderableAction.description.isNullOrEmpty()) {
-                p.add(name, BorderLayout.CENTER)
+                p.add(nameComponent, BorderLayout.CENTER)
               }
               else {
-                p.add(name, BorderLayout.NORTH)
+                p.add(nameComponent, BorderLayout.NORTH)
                 p.add(path, BorderLayout.SOUTH)
               }
 
-              p.border = JBUI.Borders.emptyRight(30)
+              if (value is ModuleActionGroup)
+                p.border = JBUI.Borders.emptyRight(5)
+              else
+                p.border = JBUI.Borders.emptyRight(30)
 
               var icon = renderableAction.icon
               if (icon == null) icon = EmptyIcon.ICON_16
 
               val projectIcon = object : JLabel("", icon, SwingConstants.LEFT) {
                 override fun paintComponent(g: Graphics) {
-                  getIcon().paintIcon(this, g, 0, (height - getIcon().iconHeight) / 2)
+                  val y = if (value is ModuleActionGroup)
+                    0
+                    else
+                    (height - getIcon().iconHeight) / 2
+                  getIcon().paintIcon(this, g, 0, y)
                 }
               }
               projectIcon.border = JBUI.Borders.emptyRight(8)
@@ -291,9 +313,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
           }
 
           override fun getPreferredSize(): Dimension {
-            val defaultHeight = JBUIScale.scale(44)
-            val height = if (value is RenderableAction && value.description.isNullOrEmpty()) defaultHeight * 2 / 3 else defaultHeight
-            return Dimension(super.getPreferredSize().width, height)
+            return Dimension(super.getPreferredSize().width, JBUIScale.scale(44))
           }
         }
       }

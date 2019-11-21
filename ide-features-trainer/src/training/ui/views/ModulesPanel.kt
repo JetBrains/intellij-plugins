@@ -105,7 +105,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
     for (module in modules) {
       if (module.lessons.isEmpty()) continue
       val moduleName = createModuleNameLinkLabel(module)
-      val moduleHeader = createModuleHeader(module, moduleName).apply { border = UISettings.instance.checkmarkShiftBorder }
+      val moduleHeader = createModuleHeader(module, moduleName, JBColor.BLACK).apply { border = UISettings.instance.checkmarkShiftBorder }
 
       val descriptionPane = createDescriptionPane(module)
       descriptionPane.border = UISettings.instance.checkmarkShiftBorder
@@ -320,7 +320,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       }
     }
 
-    fun createModuleHeader(module: Module, moduleName: JComponent): JPanel {
+    fun createModuleHeader(module: Module, moduleName: JComponent, foregroundColor: Color): JPanel {
       val moduleHeader = JPanel().apply {
         name = "moduleHeader"
         isFocusable = false
@@ -341,8 +341,10 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       progressLabel.border = EmptyBorder(0, 5, 0, 5)
       progressLabel.name = "progressLabel"
       progressLabel.font = UISettings.instance.italicFont
-      progressLabel.foreground = JBColor.BLACK
+      progressLabel.foreground = foregroundColor
       progressLabel.alignmentY = Component.BOTTOM_ALIGNMENT
+      moduleName.alignmentY = Component.BOTTOM_ALIGNMENT
+      moduleName.alignmentX = Component.LEFT_ALIGNMENT
       moduleHeader.add(moduleName)
       moduleHeader.add(UISettings.rigidGap(UISettings::progressGap, isVertical = false))
       moduleHeader.add(progressLabel)
