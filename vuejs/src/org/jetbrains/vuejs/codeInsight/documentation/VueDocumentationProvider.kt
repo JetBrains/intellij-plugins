@@ -36,8 +36,8 @@ class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvide
     }
   }
 
-  override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
-    return getVueDocumentedItem(contextElement, editor.caretModel.offset)
+  override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?, targetOffset: Int): PsiElement? {
+    return getVueDocumentedItem(contextElement, targetOffset)
       ?.let { PsiWrappedVueDocumentedItem(it.first, it.second) }
   }
 

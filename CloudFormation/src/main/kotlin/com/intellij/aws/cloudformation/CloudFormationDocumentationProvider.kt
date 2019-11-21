@@ -25,7 +25,7 @@ class CloudFormationDocumentationProvider : AbstractDocumentationProvider() {
     return null
   }
 
-  override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?): PsiElement? {
+  override fun getCustomDocumentationElement(editor: Editor, file: PsiFile, contextElement: PsiElement?, targetOffset: Int): PsiElement? {
     return getDocElement(contextElement)
   }
 

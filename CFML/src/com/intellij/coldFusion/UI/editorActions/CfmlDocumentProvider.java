@@ -41,14 +41,15 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
   @Override
   public PsiElement getCustomDocumentationElement(@NotNull Editor editor,
                                                   @NotNull PsiFile file,
-                                                  @Nullable PsiElement contextElement) {
+                                                  @Nullable PsiElement contextElement,
+                                                  int targetOffset) {
     if (contextElement == null) return null;
     if (contextElement.getParent() instanceof CfmlTagImpl) return contextElement.getParent();
     if (contextElement.getParent() instanceof CfmlAttributeImpl) {
       return contextElement.getParent();
     }
     else {
-      return super.getCustomDocumentationElement(editor, file, contextElement);
+      return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset);
     }
   }
 }
