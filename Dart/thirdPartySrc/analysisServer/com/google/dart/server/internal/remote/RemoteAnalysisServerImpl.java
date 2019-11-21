@@ -313,8 +313,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   @Override
   public void completion_registerLibraryPaths(List<LibraryPathSet> paths) {
-    String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateCompletionRegisterLibraryPaths(id, paths));
+    // this call is now deprecated in the Analysis Server, a future syncs with the protocol will remove this method
   }
 
   @Override
