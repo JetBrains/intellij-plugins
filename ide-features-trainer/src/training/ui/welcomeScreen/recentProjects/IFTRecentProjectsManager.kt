@@ -6,29 +6,26 @@ import com.intellij.openapi.actionSystem.AnAction
 import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 import java.util.HashSet
 
-class IFTRecentProjectsManager: RecentDirectoryProjectsManager() {
+class IFTRecentProjectsManager : RecentDirectoryProjectsManager() {
 
     override fun getRecentProjectsActions(forMainMenu: Boolean, useGroups: Boolean): Array<AnAction?> {
         return if (!useGroups)
             super.getRecentProjectsActions(forMainMenu, false)
         else {
-            arrayOf(
-                *GroupManager.projectsGroup.getActions(),
-                *GroupManager.tutorialsGroup.getActions()
-            )
+          GroupManager.instance.registeredGroups.flatMap { it.getActions().toList() }.toTypedArray()
         }
     }
 
-    fun getOriginalRecentProjectsActions(): Array<AnAction?> {
-        return super.getRecentProjectsActions(forMainMenu = false, useGroups = true)
-    }
+  fun getOriginalRecentProjectsActions(): Array<AnAction?> {
+    return super.getRecentProjectsActions(forMainMenu = false, useGroups = true)
+  }
 
-    override fun getRecentProjectsActions(forMainMenu: Boolean): Array<AnAction?> {
-        return getRecentProjectsActions(forMainMenu, false)
-    }
+  override fun getRecentProjectsActions(forMainMenu: Boolean): Array<AnAction?> {
+    return getRecentProjectsActions(forMainMenu, false)
+  }
 
-    val projectsWithLongPaths: HashSet<ReopenProjectAction> by lazy {
-        HashSet<ReopenProjectAction>(0)
-    }
+  val projectsWithLongPaths: HashSet<ReopenProjectAction> by lazy {
+    HashSet<ReopenProjectAction>(0)
+  }
 
 }

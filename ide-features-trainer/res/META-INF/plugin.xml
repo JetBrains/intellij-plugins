@@ -60,6 +60,8 @@
         <applicationService
                 serviceImplementation="training.lang.LangManager"/>
         <applicationService
+          serviceImplementation="training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager"/>
+        <applicationService
                 serviceImplementation="training.ui.UISettings"/>
         <applicationService
                 serviceImplementation="training.learn.lesson.LessonStateBase"/>

@@ -8,11 +8,11 @@ import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 class DefaultProjectsActionGroup : CommonActionGroup("Projects", emptyList()) {
 
   override fun getActions(): Array<AnAction?> {
-    if (!isExpanded) return arrayOf(this)
     val elements = (RecentProjectsManager.getInstance() as IFTRecentProjectsManager).getOriginalRecentProjectsActions()
     if (elements.isNullOrEmpty()) {
       return emptyArray()
     }
+    if (!isExpanded) return arrayOf(this)
     return arrayOf(this, *elements)
   }
 }
