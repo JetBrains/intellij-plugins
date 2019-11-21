@@ -16,7 +16,7 @@ object GrammarEngine {
   private const val maxChars = 10_000
   private const val minChars = 2
 
-  private val separators = listOf('?', '!', '.', ';', ',', ' ', '\t')
+  private val separators = listOf('?', '!', '.', ';', ',', '\n', ' ', '\t')
 
   private const val minNumberOfWords = 3
 
