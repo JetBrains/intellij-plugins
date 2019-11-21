@@ -30,25 +30,26 @@ import java.util.Collections;
 public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
 
   private static final String FILES_VAR_NAME = "files";
+  private static class Holder {
+    private static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
+      PlatformPatterns.psiElement(JSLiteralExpression.class)
+        .and(new FilterPattern(new ElementFilter() {
+          @Override
+          public boolean isAcceptable(Object element, PsiElement context) {
+            PsiFile psiFile = context.getContainingFile();
+            return KarmaUtil.isKarmaConfigFile(psiFile.getName(), false);
+          }
 
-  public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
-    PlatformPatterns.psiElement(JSLiteralExpression.class)
-    .and(new FilterPattern(new ElementFilter() {
-      @Override
-      public boolean isAcceptable(Object element, PsiElement context) {
-        PsiFile psiFile = context.getContainingFile();
-        return KarmaUtil.isKarmaConfigFile(psiFile.getName(), false);
-      }
-
-      @Override
-      public boolean isClassAcceptable(Class hintClass) {
-        return true;
-      }
-    }));
+          @Override
+          public boolean isClassAcceptable(Class hintClass) {
+            return true;
+          }
+        }));
+  }
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-    registrar.registerReferenceProvider(STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE, new PsiReferenceProvider() {
+    registrar.registerReferenceProvider(Holder.STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE, new PsiReferenceProvider() {
       @NotNull
       @Override
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull ProcessingContext processingContext) {

@@ -39,13 +39,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TapestryReferenceContributor extends PsiReferenceContributor {
-
-  private static final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<XmlElement>("tapestryFileCondition") {
-    @Override
-    public boolean accepts(@NotNull XmlElement element, final ProcessingContext context) {
-      return element.getContainingFile() instanceof TmlFile;
-    }
-  };
+  private static class Holder {
+    private static final PatternCondition<XmlElement> tapestryFileCondition = new PatternCondition<XmlElement>("tapestryFileCondition") {
+      @Override
+      public boolean accepts(@NotNull XmlElement element, final ProcessingContext context) {
+        return element.getContainingFile() instanceof TmlFile;
+      }
+    };
+  }
   private static final Key<XmlTag> TAG_KEY = Key.create("TAG_KEY");
 
   @Override
@@ -59,7 +60,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   private static void registerLinkHrefReference(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(
-      XmlPatterns.xmlAttributeValue("href").inside(XmlPatterns.xmlTag().withName("link")).with(tapestryFileCondition),
+      XmlPatterns.xmlAttributeValue("href").inside(XmlPatterns.xmlTag().withName("link")).with(Holder.tapestryFileCondition),
       new PsiReferenceProvider() {
         @Override
         @NotNull
@@ -71,7 +72,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   private static void registerTypeAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
-      XmlPatterns.xmlAttributeValue("type").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
+      XmlPatterns.xmlAttributeValue("type").withNamespace(tapestryTemplateNamespaces).with(Holder.tapestryFileCondition),
       new PsiReferenceProvider() {
         @Override
         @NotNull
@@ -82,7 +83,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       });
 
     registrar.registerReferenceProvider(
-      XmlPatterns.xmlAttributeValue("alt").with(tapestryFileCondition),
+      XmlPatterns.xmlAttributeValue("alt").with(Holder.tapestryFileCondition),
       new PsiReferenceProvider() {
         @Override
         @NotNull
@@ -103,7 +104,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   private static void registerIdAttrValueReferenceProvider(PsiReferenceRegistrar registrar, String[] tapestryTemplateNamespaces) {
     registrar.registerReferenceProvider(
-        XmlPatterns.xmlAttributeValue("id").withNamespace(tapestryTemplateNamespaces).with(tapestryFileCondition),
+        XmlPatterns.xmlAttributeValue("id").withNamespace(tapestryTemplateNamespaces).with(Holder.tapestryFileCondition),
         new PsiReferenceProvider() {
           @Override
           @NotNull
