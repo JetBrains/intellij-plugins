@@ -28,17 +28,16 @@ fun String.splitWithRanges(vararg separators: Char, consumer: (IntRange, String)
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
 fun String.splitWithRanges(separators: List<Char>, consumer: (IntRange, String) -> Unit) {
   val word = StringBuilder()
-  val offset = 0
   for ((index, char) in this@splitWithRanges.withIndex()) {
     word.append(char)
     if (char in separators) {
-      consumer(IntRange(index - word.length, index).withOffset(offset), word.toString())
+      consumer(IntRange(index - (word.length - 1), index), word.toString())
       word.clear()
       continue
     }
   }
   if (word.isNotEmpty()) {
-    consumer(IntRange(this@splitWithRanges.length - word.length, this@splitWithRanges.length - 1).withOffset(offset), word.toString())
+    consumer(IntRange(this@splitWithRanges.length - (word.length - 1), this@splitWithRanges.length - 1), word.toString())
   }
 }
 
