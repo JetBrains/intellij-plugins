@@ -1,6 +1,8 @@
 
 import com.intellij.aws.cloudformation.tests.TestUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.Urls
+import com.intellij.util.io.HttpRequests
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.jsoup.Jsoup
@@ -12,14 +14,18 @@ import java.nio.file.attribute.BasicFileAttributes
 
 object OfficialExamplesSaver {
   fun save() {
-    val url = URL("https://s3.amazonaws.com/cloudformation-templates-us-east-1/")
+    val url = Urls.newFromEncoded("https://s3.amazonaws.com/cloudformation-templates-us-east-1")
 
-    val doc = Jsoup.parse(url, 2000)
+    val docText = HttpRequests.request(url).connect {
+      it.readString()
+    }
+
+    val doc = Jsoup.parse(docText)
     for (key in doc.getElementsByTag("Key")) {
       val name = key.text()
       val size = Integer.parseInt(key.parent().getElementsByTag("Size").first().text())
 
-      val fileUrl = URL(url, name.replace(" ", "%20"))
+      val fileUrl = url.resolve(name.replace(" ", "%20"))
 
       val localName = StringUtil.trimEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template"
       val localFile = File(TestUtil.getTestDataFile("officialExamples/src"), localName)
@@ -29,7 +35,7 @@ object OfficialExamplesSaver {
       }
 
       println("Downloading $fileUrl")
-      FileUtils.copyURLToFile(fileUrl, localFile)
+      FileUtils.copyURLToFile(URL(fileUrl.toExternalForm()), localFile)
     }
   }
 
