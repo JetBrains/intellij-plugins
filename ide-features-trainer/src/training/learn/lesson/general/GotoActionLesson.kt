@@ -37,7 +37,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         "Let's say you want to read about the IDE, type <strong>about</strong> and press Enter."
       }
       task {
-        text("Return to the editor.")
+        text("Hit ${action("EditorEscape")} to return to the editor.")
         stateCheck { focusOwner is EditorComponentImpl }
         test {
           ideFrame {
