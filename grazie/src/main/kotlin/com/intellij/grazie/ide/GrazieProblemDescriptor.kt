@@ -37,14 +37,6 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
     private fun Typo.toDescriptionTemplate(isOnTheFly: Boolean): String {
       if (ApplicationManager.getApplication().isUnitTestMode) return info.rule.id
       return html {
-        if (!location.errorText.isNullOrBlank() && fixes.isNotEmpty() && fixes.none { it.isBlank() }) {
-          p {
-            style = "padding-bottom: 10px;"
-            +"${location.errorText} &rarr; ${fixes.take(3).joinToString(separator = "/")}"
-            if (!isOnTheFly) nbsp()
-          }
-        }
-
         p {
           info.incorrectExample?.let {
             style = "padding-bottom: 8px;"
