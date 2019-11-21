@@ -22,27 +22,22 @@ object Text {
 }
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
-fun String.splitWithRanges(vararg separators: Char, insideOf: IntRange? = null, consumer: (IntRange, String) -> Unit) = splitWithRanges(
-  separators.toList(), insideOf, consumer = consumer)
+fun String.splitWithRanges(vararg separators: Char, consumer: (IntRange, String) -> Unit) = splitWithRanges(
+  separators.toList(), consumer = consumer)
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
-fun String.splitWithRanges(separators: List<Char>, insideOf: IntRange? = null, ignoreBlank: Boolean = true,
-                           consumer: (IntRange, String) -> Unit) {
+fun String.splitWithRanges(separators: List<Char>, consumer: (IntRange, String) -> Unit) {
   val word = StringBuilder()
-  val offset = insideOf?.start ?: 0
+  val offset = 0
   for ((index, char) in this@splitWithRanges.withIndex()) {
+    word.append(char)
     if (char in separators) {
-      if (ignoreBlank && word.isBlank()) {
-        word.clear()
-        continue
-      }
       consumer(IntRange(index - word.length, index).withOffset(offset), word.toString())
       word.clear()
       continue
     }
-    word.append(char)
   }
-  if (!ignoreBlank || word.isNotBlank()) {
+  if (word.isNotEmpty()) {
     consumer(IntRange(this@splitWithRanges.length - word.length, this@splitWithRanges.length - 1).withOffset(offset), word.toString())
   }
 }
