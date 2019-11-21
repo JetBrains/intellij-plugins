@@ -17,10 +17,10 @@ class LessonStateBase : PersistentStateComponent<LessonStateBase> {
   override fun getState(): LessonStateBase = this
 
   override fun loadState(persistedState: LessonStateBase) {
-    this.map.putAll(persistedState.map)
+    map = persistedState.map
   }
 
-  val map: MutableMap<String, LessonState> = mutableMapOf()
+  var map: MutableMap<String, LessonState> = mutableMapOf()
 
   companion object {
     internal val instance: LessonStateBase by lazy {
