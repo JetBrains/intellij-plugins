@@ -44,10 +44,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.SmartList;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -2173,32 +2171,10 @@ public class DartAnalysisServerService implements Disposable {
   public void waitForAnalysisToComplete_TESTS_ONLY(@NotNull final VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
 
-    final AnalysisServer server = myServer;
-    if (server == null) {
-      return;
-    }
-
-    final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final CountDownLatch latch = new CountDownLatch(1);
-    server.analysis_getErrors(filePath, new GetErrorsConsumer() {
-      @Override
-      public void computedErrors(AnalysisError[] errors) {
-        latch.countDown();
-      }
-
-      @Override
-      public void onError(RequestError requestError) {
-        latch.countDown();
-        LOG.error(requestError.getMessage());
-      }
-    });
-
-    final long timeout = ANALYSIS_IN_TESTS_TIMEOUT / TESTS_TIMEOUT_COEFF;
-
-    awaitForLatchCheckingCanceled(server, latch, timeout);
-
-    if (latch.getCount() > 0) {
-      logTookTooLongMessage("analysis_getErrors", timeout, filePath);
+    long startTime = System.currentTimeMillis();
+    while (isServerProcessActive() && !myServerData.hasAllData_TESTS_ONLY(file)) {
+      if (System.currentTimeMillis() > startTime + ANALYSIS_IN_TESTS_TIMEOUT) return;
+      TimeoutUtil.sleep(100);
     }
   }
 

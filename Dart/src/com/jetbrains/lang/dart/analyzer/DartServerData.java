@@ -291,6 +291,16 @@ public class DartServerData {
     return myAvailableSuggestionSetMap.get(id);
   }
 
+  boolean hasAllData_TESTS_ONLY(@NotNull VirtualFile file) {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    return myHighlightData.get(file.getPath()) != null &&
+           myNavigationData.get(file.getPath()) != null &&
+           myOverrideData.get(file.getPath()) != null &&
+           myImplementedClassData.get(file.getPath()) != null &&
+           myImplementedMemberData.get(file.getPath()) != null &&
+           myOutlineData.get(file.getPath()) != null;
+  }
+
   @Nullable
   Map<String, Map<String, Set<String>>> getExistingImports(@Nullable String filePathSD) {
     if (filePathSD == null) return null;
