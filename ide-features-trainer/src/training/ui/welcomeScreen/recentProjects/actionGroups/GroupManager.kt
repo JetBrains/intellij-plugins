@@ -19,8 +19,8 @@ class GroupManager : PersistentStateComponent<GroupManager> {
   var expandedByName: MutableMap<String, Boolean> = mutableMapOf()
 
   val registeredGroups: List<CommonActionGroup> = listOf(
-    DefaultProjectsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded },
-    TutorialsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded }
+    TutorialsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded },
+    DefaultProjectsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded }
   )
 
   override fun getState(): GroupManager {
