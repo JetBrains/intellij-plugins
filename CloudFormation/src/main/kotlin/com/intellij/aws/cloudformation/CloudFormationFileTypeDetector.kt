@@ -23,23 +23,21 @@ class CloudFormationFileTypeDetector: FileTypeRegistry.FileTypeDetector {
     return null
   }
 
-  private fun isYaml(chars: CharSequence): Boolean =
-    chars.contains(CloudFormationSection.FormatVersion.id) ||
-    chars.contains(CloudFormationConstants.awsServerless20161031TransformName)
+  companion object {
+    fun isYaml(chars: CharSequence): Boolean =
+        chars.contains(CloudFormationSection.FormatVersion.id) ||
+            chars.contains(CloudFormationConstants.awsServerless20161031TransformName)
 
-  private fun isJson(chars: CharSequence): Boolean {
-    if (!chars.contains(CloudFormationSection.FormatVersion.id)) return false
+    fun isJson(chars: CharSequence): Boolean {
+      if (!chars.contains(CloudFormationSection.FormatVersion.id)) return false
 
-    for (c in chars) {
-      if (c == '{') return true
-      if (!c.isWhitespace()) return false
+      for (c in chars) {
+        if (c == '{') return true
+        if (!c.isWhitespace()) return false
+      }
+
+      // All whitespaces
+      return false
     }
-
-    // All whitespaces
-    return false
   }
-
-  override fun getDetectedFileTypes(): Collection<FileType> = detectedFileTypes
-
-  private val detectedFileTypes = listOf(JsonCloudFormationFileType.INSTANCE, YamlCloudFormationFileType.INSTANCE)
 }

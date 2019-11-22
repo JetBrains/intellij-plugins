@@ -1,26 +1,28 @@
 package com.intellij.aws.cloudformation.tests
 
+import com.intellij.aws.cloudformation.CloudFormationPsiUtils
 import com.intellij.aws.cloudformation.references.CloudFormationReferenceBase
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
-import com.intellij.testFramework.JavaResolveTestCase
+import com.intellij.testFramework.LightPlatformTestCase
 import org.junit.Assert
 import java.io.File
-import java.util.*
+import java.util.ArrayList
 
-abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : JavaResolveTestCase() {
-  protected val NotResolved = Object()
+abstract class ResolveTestsBase protected constructor(private val myReferenceClass: Class<*>) : LightPlatformTestCase() {
 
   protected fun assertEntityResolve(testName: String, vararg entityNames: Any) {
-    val targetFile = File(myProject.basePath, testName)
-    FileUtil.copy(File(testDataPath, testName), targetFile)
+    val targetFile = File(getProject().basePath, testName)
+    FileUtil.copy(File(testDataRoot, testName), targetFile)
 
     val vFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(targetFile)!!
 
@@ -35,17 +37,19 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
         break
       }
 
-      fileText = fileText.substring(0, offset) + fileText.substring(offset + JavaResolveTestCase.MARKER.length)
+      fileText = fileText.substring(0, offset) + fileText.substring(offset + MARKER.length)
       offsets.add(offset)
     }
 
     Assert.assertTrue("Test input must contain one or more " + MARKER + "markers", offsets.size > 0)
     Assert.assertEquals("Number of assertions and markers differs", entityNames.size.toLong(), offsets.size.toLong())
 
-    myFile = createFile(myModule, fileName, fileText)
+    val fileType = FileTypeManager.getInstance().getFileTypeByFile(vFile)
+    val myFile = PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, fileType, fileText)
     Assert.assertFalse(
         "File " + myFile.name + " contains error(s)",
         ErrorUtil.containsError(myFile))
+    Assert.assertTrue(CloudFormationPsiUtils.isCloudFormationFile(myFile))
 
     for (i in offsets.indices) {
       val rawRef = myFile.findReferenceAt(offsets[i]) ?: throw AssertionError("Reference not found at marker #${i + 1}")
@@ -108,5 +112,12 @@ abstract class ResolveTestsBase protected constructor(private val myReferenceCla
         myResult.add(reference)
       }
     }
+  }
+
+  protected abstract val testDataRoot: File
+
+  companion object {
+    val MARKER = "<ref>"
+    val NotResolved = Object()
   }
 }

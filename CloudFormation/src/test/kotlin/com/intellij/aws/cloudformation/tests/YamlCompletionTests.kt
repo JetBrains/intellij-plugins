@@ -4,10 +4,12 @@ import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.CloudFormationMetadataProvider
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.builders.ModuleFixtureBuilder
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.ModuleFixture
 import java.util.Arrays
 
-class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
+class YamlCompletionTests : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   val predefinedAndECSCluster = (CloudFormationMetadataProvider.METADATA.predefinedParameters + "ECSCluster").toTypedArray()
   private fun Array<String>.withQuotes(quote: String): Array<String> = this.map { "$quote$it$quote" }.toTypedArray()
 
@@ -55,7 +57,8 @@ class YamlCompletionTests : LightJavaCodeInsightFixtureTestCase() {
     UsefulTestCase.assertSameElements(strings, Arrays.asList(*expectedElements))
   }
 
-  override fun getTestDataPath(): String {
-    return TestUtil.getTestDataPath("completion/yaml")
+  override fun setUp() {
+    super.setUp()
+    myFixture.testDataPath = TestUtil.getTestDataPath("completion/yaml")
   }
 }

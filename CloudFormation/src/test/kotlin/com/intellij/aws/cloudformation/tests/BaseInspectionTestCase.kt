@@ -9,13 +9,15 @@ import com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspe
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.json.psi.JsonFile
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
+import com.intellij.testFramework.builders.ModuleFixtureBuilder
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.ModuleFixture
 import org.jetbrains.yaml.psi.YAMLFile
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-abstract class BaseInspectionTestCase(val folder: String) : LightJavaCodeInsightFixtureTestCase() {
+abstract class BaseInspectionTestCase(private val folder: String) : CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>>() {
   private fun getTestResultContent(psiFile: PsiFile): String {
     val filePath = psiFile.virtualFile.path
     println("Working on $filePath")
@@ -46,7 +48,7 @@ abstract class BaseInspectionTestCase(val folder: String) : LightJavaCodeInsight
 
   @Test
   fun testAll() {
-    val testsPath = File(testDataPath)
+    val testsPath = File(myFixture.testDataPath)
     Assert.assertTrue("Is not a directory: $testsPath", testsPath.isDirectory)
 
     val list = (testsPath.listFiles() ?: emptyArray())
@@ -62,15 +64,14 @@ abstract class BaseInspectionTestCase(val folder: String) : LightJavaCodeInsight
 
     allPsiFiles.forEach { psiFile ->
       val actualContent = getTestResultContent(psiFile)
-      val expectFile = File(testDataPath, "${File(psiFile.virtualFile.path).nameWithoutExtension}.expected")
+      val expectFile = File(myFixture.testDataPath, "${File(psiFile.virtualFile.path).nameWithoutExtension}.expected")
 
       TestUtil.checkContent(expectFile, actualContent)
     }
   }
 
-  override fun getTestDataPath(): String {
-    val path = File(TestUtil.getTestDataPath(folder)).absoluteFile
-    Assert.assertTrue("$path is not a directory", path.isDirectory)
-    return path.path
+  override fun setUp() {
+    super.setUp()
+    myFixture.testDataPath = TestUtil.getTestDataPath(folder)
   }
 }
