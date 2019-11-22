@@ -33,11 +33,10 @@ fun String.splitWithRanges(separators: List<Char>, consumer: (IntRange, String) 
     if (char in separators) {
       consumer(IntRange(index - (word.length - 1), index), word.toString())
       word.clear()
-      continue
     }
   }
   if (word.isNotEmpty()) {
-    consumer(IntRange(this@splitWithRanges.length - (word.length - 1), this@splitWithRanges.length - 1), word.toString())
+    consumer(IntRange(this@splitWithRanges.length - word.length, this@splitWithRanges.length - 1), word.toString())
   }
 }
 
