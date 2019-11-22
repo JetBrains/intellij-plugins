@@ -16,7 +16,7 @@ class GoMethodLikeFunctionCompletionLesson(module: Module) : GoLesson("Method-Li
   val sample = parseLessonSample("""package main
 
 func main() {
-	"hello world".<caret>
+	"/hello/world".<caret>
 }
 """)
 
@@ -34,7 +34,7 @@ func main() {
         val manager = PsiDocumentManager.getInstance(project)
         val file = manager.getPsiFile(editor.document) as? GoFile ?: return@trigger false
         val block = file.functions.find { it.name == "main" }?.block ?: return@trigger false
-        block.statementList.any { it.text == """path.Split("hello world")""" }
+        block.statementList.any { it.text == """path.Split("/hello/world")""" }
       }
     }
   }
