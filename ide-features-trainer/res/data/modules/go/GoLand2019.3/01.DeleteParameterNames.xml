@@ -24,8 +24,8 @@ func (greeter gophersGreeter) greet(how string, who string) {
 ]]></CopyText>
     </MouseBlock>
     <MoveCaret position="19:37"/>
-    <Text>Here we can talk about renaming parameters to <code>_</code> and removing their names.</Text>
-    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">If parameters are needed for a method to implement an interface, it's unsafe to remove them. Press <action>ShowIntentionActions</action> to see a list of possible options.</Try>
+    <Text>GoLand highlights only the names of unused parameters if their types are used for implementing a method specification. In this case, you can either rename this parameter to <code>_</code> or remove its name.</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">If parameters are needed for a method to implement an interface, it is unsafe to remove them. Press <action>ShowIntentionActions</action> to see a list of possible options.</Try>
     <Try check="training.check.go.GoCheckDeleteParameterNames">Select <strong>Delete parameter names</strong> and press <action>EditorEnter</action>.</Try>
     <Win/>
 </xml>
