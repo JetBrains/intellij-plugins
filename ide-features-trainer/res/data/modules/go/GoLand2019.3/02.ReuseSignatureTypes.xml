@@ -1,0 +1,23 @@
+<xml type="Scenario" name="Reuse signature types" id="Goland2019.3.ReuseSignatureTypes" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import "fmt"
+
+func main() {
+	greet("Hello", "gophers")
+}
+
+func greet(how string, who string) {
+	fmt.Printf("%s %s!", how, who)
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="9:12"/>
+    <Text>We can tell that GoLand got two new intention actions that allow to reuse/expand signature types.</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is at the first parameter of the <code>greeter</code> method. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try check="training.check.go.GoCheckReuseSignatureTypes">Select <strong>Reuse signature types</strong> and press <action>EditorEnter</action>. Notice how the signature types got combined.</Try>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">Now press <action>ShowIntentionActions</action> again.</Try>
+    <Try check="training.check.go.GoCheckExpandSignatureTypes">Select <strong>Expand signature types</strong> and press <action>EditorEnter</action>. The signature returned to its initial state.</Try>
+    <Win/>
+</xml>
