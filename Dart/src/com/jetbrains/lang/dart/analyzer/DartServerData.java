@@ -342,40 +342,20 @@ public class DartServerData {
   }
 
   void onFlushedResults(@NotNull final List<String> filePaths) {
-    if (!myErrorData.isEmpty()) {
-      for (String path : filePaths) {
-        myErrorData.remove(path);
-      }
-    }
-    if (!myHighlightData.isEmpty()) {
-      for (String path : filePaths) {
-        myHighlightData.remove(path);
-      }
-    }
-    if (!myNavigationData.isEmpty()) {
-      for (String path : filePaths) {
-        myNavigationData.remove(path);
-      }
-    }
-    if (!myOverrideData.isEmpty()) {
-      for (String path : filePaths) {
-        myOverrideData.remove(path);
-      }
-    }
-    if (!myImplementedClassData.isEmpty()) {
-      for (String path : filePaths) {
-        myImplementedClassData.remove(path);
-      }
-    }
-    if (!myImplementedMemberData.isEmpty()) {
-      for (String path : filePaths) {
-        myImplementedMemberData.remove(path);
-      }
-    }
-    if (!myOutlineData.isEmpty()) {
-      for (String path : filePaths) {
-        myOutlineData.remove(path);
-      }
+    removeAllFromMap(myErrorData, filePaths);
+    removeAllFromMap(myHighlightData, filePaths);
+    removeAllFromMap(myNavigationData, filePaths);
+    removeAllFromMap(myOverrideData, filePaths);
+    removeAllFromMap(myImplementedClassData, filePaths);
+    removeAllFromMap(myImplementedMemberData, filePaths);
+    removeAllFromMap(myOutlineData, filePaths);
+  }
+
+  private static <T> void removeAllFromMap(@NotNull Map<T, ?> map, @NotNull List<T> keys) {
+    if (map.isEmpty()) return;
+
+    for (T key : keys) {
+      map.remove(key);
     }
   }
 
