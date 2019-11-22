@@ -14,6 +14,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -75,7 +76,11 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
-      JSLocationResolver.Companion.getInstance().dropCache(myRunConfiguration);
+      JSLocationResolver locationResolver = ServiceManager.getService(JSLocationResolver.class);
+      if (locationResolver != null) {
+        // dependency is optional
+        locationResolver.dropCache(myRunConfiguration);
+      }
       registry.startServer(
         serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
