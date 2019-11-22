@@ -52,7 +52,7 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
           .map(literal -> tryCast(literal.getParent(), JSArgumentList.class))
           .map(list -> tryCast(list.getParent(), JSCallExpression.class))
           .map(call -> tryCast(call.getParent(), ES6Decorator.class))
-          .map(decorator -> isAngularEntityDecorator(decorator, VIEW_CHILD_DEC))
+          .map(decorator -> isAngularEntityDecorator(decorator, VIEW_CHILD_DEC, VIEW_CHILDREN_DEC))
           .orElse(false);
       }
 

@@ -534,6 +534,14 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("#area", el.getParent().getParent().getText());
   }
 
+  public void testViewChildrenReferenceNavigation() {
+    PsiReference reference = myFixture.getReferenceAtCaretPosition("viewChildrenReference.ts", "package.json");
+    assertNotNull(reference);
+    PsiElement el = reference.resolve();
+    assertNotNull(el);
+    assertEquals("#area", el.getParent().getParent().getText());
+  }
+
   public void testViewChildReferenceCodeCompletion() {
     assertEquals(asList("area", "area2", "area3"),
                  myFixture.getCompletionVariants("viewChildReference.ts", "package.json"));
@@ -552,6 +560,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testViewChildReferenceCodeCompletionHTML() {
     assertEquals(asList("area", "area2"),
                  myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json"));
+  }
+
+  public void testViewChildrenReferenceCodeCompletionHTML() {
+    assertEquals(asList("area2", "area3"),
+                 myFixture.getCompletionVariants("viewChildrenReferenceHTML.ts", "viewChildrenReferenceHTML.html", "package.json"));
   }
 
   public void testI18NAttr() {
