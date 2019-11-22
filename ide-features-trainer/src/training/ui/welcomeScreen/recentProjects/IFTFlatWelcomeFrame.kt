@@ -2,6 +2,7 @@ package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WelcomeScreen
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
@@ -26,7 +27,8 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
         }
 
     init {
-        replaceRecentProjectsPanel()
+        if (Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree"))
+            replaceRecentProjectsPanel()
     }
 
     private fun replaceRecentProjectsPanel() {

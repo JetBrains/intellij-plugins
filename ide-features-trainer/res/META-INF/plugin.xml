@@ -68,6 +68,12 @@
         <toolWindow id="Learn" anchor="left" factoryClass="training.ui.LearnToolWindowFactory"
                     conditionClass="training.ui.LearnCondition"/>
 
+        <registryKey key="ideFeaturesTrainer.welcomeScreen.showLearnAction" defaultValue="true"
+                     description="When this option is enabled, welcome screen contains additional action link Learn IDE."/>
+
+        <registryKey key="ideFeaturesTrainer.welcomeScreen.tutorialsTree" defaultValue="false"
+                     description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list."/>
+
     </extensions>
 
     <application-components>
@@ -80,10 +86,6 @@
     </project-components>
 
     <actions>
-        <action id="Learn.WelcomeScreen.StartLearn" class="training.actions.StartLearnAction" icon="/img/featureTrainer.svg">
-            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
-        </action>
-
         <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">
             <keyboard-shortcut first-keystroke="alt shift RIGHT" keymap="$default"/>
             <keyboard-shortcut first-keystroke="control shift RIGHT" keymap="Mac OS X 10.5+"/>
