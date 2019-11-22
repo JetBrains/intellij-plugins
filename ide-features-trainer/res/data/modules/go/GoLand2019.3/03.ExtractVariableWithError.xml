@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Extract variable with error" id="Goland2019.3.ExtractVariableWithError" lang="go">
+<xml type="Scenario" name="Better names for error variables" id="Goland2019.3.ExtractVariableWithError" lang="go">
     <MouseBlock>
         <CopyText><![CDATA[package main
 
@@ -19,6 +19,6 @@ func greet(how string, who string) error {
     <MoveCaret position="8:5"/>
     <Text>When processing errors, GoLand suggests you the most popular variants for the error variables. For example, <code>err</code> or <code>ctx</code>.</Text>
     <Try action="IntroduceVariable" trigger="IntroduceVariable">See that the caret is at the <code>greeter</code> call. Press <action>IntroduceVariable</action> to extract a variable.</Try>
-    <Try check="training.check.go.GoCheckExtractVariableWithError">Choose the whole call in the list and press <action>EditorEnter</action>. Notice that GoLand suggested <code>err</code> that is the most common name for the error.</Try>
+    <Try check="training.check.go.GoCheckExtractVariableWithError">Choose the whole call in the list and press <action>EditorEnter</action>. Notice that GoLand suggested the <code>err</code> name for the variable as it is the most common name for the error.</Try>
     <Win/>
 </xml>
