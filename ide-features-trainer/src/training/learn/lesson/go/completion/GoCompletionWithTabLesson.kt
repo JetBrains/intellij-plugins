@@ -9,7 +9,7 @@ import training.learn.interfaces.Module
 import training.learn.lesson.general.CompletionWithTabLesson
 import training.learn.lesson.kimpl.parseLessonSample
 
-class GoCompletionWithTabLesson(module: Module) : CompletionWithTabLesson(module, GoLangSupport.lang, "Errorf") {
+class GoCompletionWithTabLesson(module: Module) : CompletionWithTabLesson(module, GoLangSupport.lang, "Println") {
 
   @Language("go")
   override val sample = parseLessonSample("""package main
