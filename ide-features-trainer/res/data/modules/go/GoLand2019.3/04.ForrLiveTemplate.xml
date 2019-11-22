@@ -1,0 +1,19 @@
+<xml type="Scenario" name="forr live template" id="Goland2019.3.ForrLiveTemplate" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+func main() {
+	filter([]string{})
+}
+
+func filter(lines []string) {
+	lines.
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="8:11"/>
+    <Text>GoLand got better names for for/forr live templates.</Text>
+    <Try action="EditorChooseLookupItem" trigger="EditorChooseLookupItem">Type <code>forr</code> and select the <code>forr</code> postfix template from the completion list.</Try>
+    <Try action="EditorEscape" trigger="EditorEscape">Take a look that GoLand suggests <code>i</code> for index and <code>line</code> for value. Press <action>EditorEscape</action> to finish this lesson.</Try>
+    <Win/>
+</xml>

@@ -1,0 +1,24 @@
+<xml type="Scenario" name="Extract variable with error" id="Goland2019.3.ExtractVariableWithError" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	greet("Hello", "gophers")
+}
+
+func greet(how string, who string) error {
+	_, err := fmt.Printf("%s %s!", how, who)
+	return err
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="8:5"/>
+    <Text>This block is on how GoLand got better at suggesting names e.g. <code>err</code> or <code>ctx</code>.</Text>
+    <Try action="IntroduceVariable" trigger="IntroduceVariable">See that the caret is at the <code>greeter</code> call. Press <action>IntroduceVariable</action> to extract a variable.</Try>
+    <Try check="training.check.go.GoCheckExtractVariableWithError">Choose the whole call in the list and press <action>EditorEnter</action>. Notice that GoLand suggested the most common name <code>err</code>.</Try>
+    <Win/>
+</xml>

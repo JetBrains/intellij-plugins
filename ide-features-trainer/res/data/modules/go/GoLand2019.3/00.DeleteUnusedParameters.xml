@@ -1,0 +1,27 @@
+<xml type="Scenario" name="Delete unused parameters" id="Goland2019.3.DeleteUnusedParameters" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import "fmt"
+
+func main() {
+	greeter := gophersGreeter{"Hello", "gophers"}
+	greeter.greet("Hello", "gophers")
+}
+
+type gophersGreeter struct {
+	how string
+	who string
+}
+
+func (greeter gophersGreeter) greet(how string, who string) {
+	fmt.Printf("%s %s!", greeter.how, greeter.who)
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="15:37"/>
+    <Text>Here we tell how cool it is to remove all parameters at once.</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See the <code>greet</code> method in the editor. The caret is at the first parameter. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try check="training.check.go.GoCheckDeleteUnusedParameters">Select <strong>Delete all unused parameters</strong> and press <action>EditorEnter</action>. Notice that a usage gets updated accordingly.</Try>
+    <Win/>
+</xml>
