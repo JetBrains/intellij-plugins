@@ -53,7 +53,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       actionTask("GotoAction") {
         "${action(it)} can also be used to change the settings, invoke it again now."
       }
-      task("line num") {
+      task("show line") {
         text("Type <strong>$it</strong> and toggle the <strong>Show line number</strong> option.")
         stateCheck { checkWordInSearch(it) }
         test {
