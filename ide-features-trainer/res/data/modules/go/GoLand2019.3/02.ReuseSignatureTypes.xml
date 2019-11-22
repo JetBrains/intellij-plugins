@@ -14,8 +14,8 @@ func greet(how string, who string) {
 ]]></CopyText>
     </MouseBlock>
     <MoveCaret position="9:12"/>
-    <Text>If you have multiple parameters of a single type in the method signature, you can use either a short type specification for these parameters (<code>a, b, c int</code>) or have a separate type specification for each parameter (<code>a int, b int, c int</code>).</Text>
-    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is at the first parameter of the <code>greeter</code> method. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Text>If you have multiple parameters of a single type in the function or method signature, you can use either a short type specification for these parameters (<code>a, b, c int</code>) or have a separate type specification for each parameter (<code>a int, b int, c int</code>).</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is at the first parameter of the <code>greet</code> method. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
     <Try check="training.check.go.GoCheckReuseSignatureTypes">Select <strong>Reuse signature types</strong> and press <action>EditorEnter</action>. Notice how the signature types got combined.</Try>
     <Try action="ShowIntentionActions" trigger="ShowIntentionActions">Now press <action>ShowIntentionActions</action> again.</Try>
     <Try check="training.check.go.GoCheckExpandSignatureTypes">Select <strong>Expand signature types</strong> and press <action>EditorEnter</action>. The signature returned to its initial state.</Try>
