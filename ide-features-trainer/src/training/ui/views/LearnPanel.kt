@@ -10,6 +10,7 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
@@ -224,14 +225,15 @@ class LearnPanel : JPanel() {
         buttonAction.putValue(Action.NAME, "Next")
         buttonAction.isEnabled = true
         button.action = buttonAction
+        val keyStroke = getNextLessonKeyStrokeText()
         if (notPassedLesson != null) {
             if (text != null) {
-                button.text = text
+                button.text = "$text ($keyStroke)"
             } else {
-                button.text = LearnBundle.message("learn.ui.button.next.lesson") + ": " + notPassedLesson.name
+                button.text = "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
             }
         } else {
-            button.text = LearnBundle.message("learn.ui.button.next.lesson")
+            button.text = LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
         }
         button.isSelected = true
         rootPane?.defaultButton = button
@@ -247,17 +249,21 @@ class LearnPanel : JPanel() {
 
         buttonAction.isEnabled = true
         button.action = buttonAction
+        val keyStroke = getNextLessonKeyStrokeText()
         if (text == null || text.isEmpty()) {
-            button.text = LearnBundle.message("learn.ui.button.skip")
+            button.text = "${LearnBundle.message("learn.ui.button.skip")} ($keyStroke)"
             button.updateUI()
         } else {
-            button.text = LearnBundle.message("learn.ui.button.skip.module") + " " + text
+            button.text = "${LearnBundle.message("learn.ui.button.skip.module")}: $text ($keyStroke)"
             button.updateUI()
         }
         button.isVisible = false
         button.isSelected = true
         button.isVisible = visible
     }
+
+    private fun getNextLessonKeyStrokeText() =
+            KeymapUtil.getKeyStrokeText(KeymapUtil.getShortcutByActionId("learn.next.lesson"))
 
     fun hideNextButton() {
         button.isVisible = false
