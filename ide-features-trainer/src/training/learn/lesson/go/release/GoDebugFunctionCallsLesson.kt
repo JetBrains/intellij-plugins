@@ -55,7 +55,7 @@ func Factorial(n int, withBreak bool) int {
       }
       task("DebugClass") {
         text("Run the debugging session by pressing ${action(it)}." +
-                if (SystemInfo.isMac) " Keep in mind that a system might ask for a password to start the debug server." else "")
+                if (SystemInfo.isMac) " Keep in mind that your operating system might ask you for a password to start the debug server." else "")
         trigger("DebugClass")
         hitBreakpoint()
       }
