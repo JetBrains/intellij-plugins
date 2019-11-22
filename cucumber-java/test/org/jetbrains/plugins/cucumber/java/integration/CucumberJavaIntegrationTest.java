@@ -128,7 +128,7 @@ public class CucumberJavaIntegrationTest extends HeavyPlatformTestCase {
     CucumberJavaRunConfigurationProducer cucumberJavaRunConfigurationProducer = new CucumberJavaFeatureRunConfigurationProducer();
     PsiElement element = PlatformTestUtil.findElementBySignature("my feature", "src/test/resources/test.feature", project);
     RunConfiguration runConfiguration = PlatformTestUtil.getRunConfiguration(element, cucumberJavaRunConfigurationProducer);
-    RunContentDescriptor runContentDescriptor = PlatformTestUtil.executeConfiguration(runConfiguration);
+    RunContentDescriptor runContentDescriptor = PlatformTestUtil.executeConfiguration(runConfiguration).getContentToReuse();
 
     SMTRunnerTestTreeView smtRunnerTestTreeView = UITestUtil.getTreeOfTests(runContentDescriptor);
     assertTreeEqual(smtRunnerTestTreeView, EXPECTED_TREE_OF_TESTS);
