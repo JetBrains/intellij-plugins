@@ -89,6 +89,8 @@ public class Angular2AttributeNameParser {
     }
     else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
       return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
+    } else if (name.startsWith("i18n-")) {
+      return new AttributeInfo(name.substring(5), false, Angular2AttributeType.I18N);
     }
     return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);
   }

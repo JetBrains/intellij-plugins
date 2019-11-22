@@ -17,7 +17,8 @@ public enum Angular2AttributeType {
   PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
   EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),
   TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null),
-  NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null);
+  NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null),
+  I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "" ,null);
 
   private final IElementType myElementType;
   private final String myPrefix;
