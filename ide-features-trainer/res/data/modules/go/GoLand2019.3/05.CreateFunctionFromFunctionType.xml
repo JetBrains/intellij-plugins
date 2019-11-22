@@ -1,0 +1,18 @@
+<xml type="Scenario" name="Create function from function type" id="Goland2019.3.CreateFunctionFromFunctionType" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import "net/http"
+
+func main() {
+	http.HandleFunc("/", handler)
+}
+]]></CopyText>
+    </MouseBlock>
+    <MoveCaret position="6:26"/>
+    <Text>We can say that before GoLand was able to create a function or a method from a call. Now, it can also do it from a function type.</Text>
+    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is located under the <code>handler</code> identifier that is used as a function reference. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try check="training.check.go.GoCheckCreateFunction">Select <strong>Create function 'handler'</strong> and press <action>EditorEnter</action>.</Try>
+    <Try action="EditorEscape" trigger="EditorEscape">You can now adjust the parameters to your needs. Press <action>EditorEscape</action> to finish this lesson.</Try>
+    <Win/>
+</xml>
