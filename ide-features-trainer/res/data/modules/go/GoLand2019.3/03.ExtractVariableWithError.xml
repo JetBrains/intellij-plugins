@@ -17,8 +17,8 @@ func greet(how string, who string) error {
 ]]></CopyText>
     </MouseBlock>
     <MoveCaret position="8:5"/>
-    <Text>GoLand now suggests you the most popular variants for error (<code>err</code>) and context (<code>ctx</code>) variables.</Text>
-    <Try action="IntroduceVariable" trigger="IntroduceVariable">See that the caret is at the <code>greeter</code> call. Press <action>IntroduceVariable</action> to extract a variable.</Try>
+    <Text>GoLand now suggests you the most popular name variants for error (<code>err</code>) and context (<code>ctx</code>) variables.</Text>
+    <Try action="IntroduceVariable" trigger="IntroduceVariable">See that the caret is at the <code>greet</code> call. Press <action>IntroduceVariable</action> to extract a variable.</Try>
     <Try check="training.check.go.GoCheckExtractVariableWithError">Choose the whole call in the list and press <action>EditorEnter</action>. Notice that GoLand suggested the <code>err</code> name for the variable as it is the most common name for the error.</Try>
     <Win/>
 </xml>
