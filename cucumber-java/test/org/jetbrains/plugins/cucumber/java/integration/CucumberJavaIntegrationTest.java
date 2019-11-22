@@ -17,6 +17,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -110,7 +111,18 @@ public class CucumberJavaIntegrationTest extends HeavyPlatformTestCase {
   }
 
   protected void doTest() throws ExecutionException, InterruptedException {
-    runExternalCommand("mvn", "package");
+    String mavenHomePath = System.getenv("maven.path");
+    if (mavenHomePath == null) {
+      mavenHomePath  = "mvn";
+    } else {
+      mavenHomePath += "/bin/mvn";
+    }
+
+    String suffix = "";
+    if (SystemInfo.isWindows) {
+      suffix += ".cmd";
+    }
+    runExternalCommand(mavenHomePath + suffix, "package");
 
     Project project = getProject();
     CucumberJavaRunConfigurationProducer cucumberJavaRunConfigurationProducer = new CucumberJavaFeatureRunConfigurationProducer();
