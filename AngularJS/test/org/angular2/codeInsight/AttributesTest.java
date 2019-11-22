@@ -1076,4 +1076,24 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            "button", "checkbox", "color", "date", "datetime-local", "email", "file", "hidden", "image", "month",
                            "number", "password", "radio", "range", "reset", "search", "submit", "tel", "text", "time", "url", "week");
   }
+
+  public void testI18nCompletion() {
+    myFixture.configureByFile("package.json");
+    myFixture.configureByText("i18n.html", "<div foo='12' <caret>");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "i18n-");
+    myFixture.type("i1-\n");
+    assertEquals(singletonList("foo"), myFixture.getLookupElementStrings());
+    myFixture.type("\n ");
+    myFixture.completeBasic();
+    assertDoesntContain(myFixture.getLookupElementStrings(), "i18n-");
+    assertContainsElements(myFixture.getLookupElementStrings(), "i18n");
+  }
+
+  public void testI18nResolve() {
+    myFixture.configureByFile("package.json");
+    myFixture.configureByText("i18n.html", "<div foo='12' i18n-f<caret>oo>");
+    assertEquals("foo='12'", myFixture.getElementAtCaret().getText());
+  }
+
 }

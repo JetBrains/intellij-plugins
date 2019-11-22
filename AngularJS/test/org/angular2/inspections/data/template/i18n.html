@@ -1,0 +1,10 @@
+<div foo
+     a:boo
+     [boo]="1"
+     i18n-foo
+     i18n
+     <warning descr="Attribute name i18n- should be followed by a name of a sibling attribute">i18n-</warning>
+     i18n-<warning descr="Sibling attribute boo does not exist.">boo</warning>
+     i18n-a:boo
+     i18n-<warning descr="Sibling attribute b:boo does not exist.">b:boo</warning>
+></div>

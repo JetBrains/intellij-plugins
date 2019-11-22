@@ -52,6 +52,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
   @NonNls public static final String NG_NON_BINDABLE_ATTR = "ngNonBindable";
+  @NonNls public static final String I18N_ATTR = "i18n";
 
   private static final ThreadLocal<Boolean> gettingDescriptors = new ThreadLocal<>();
 
@@ -89,7 +90,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NonNls private static final List<String> CUSTOM_NG_ATTRS =
-    ContainerUtil.immutableList("i18n", NG_NON_BINDABLE_ATTR, "ngProjectAs");
+    ContainerUtil.immutableList(I18N_ATTR, NG_NON_BINDABLE_ATTR, "ngProjectAs");
   @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 

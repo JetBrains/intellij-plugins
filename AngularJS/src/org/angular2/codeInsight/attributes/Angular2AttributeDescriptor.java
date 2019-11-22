@@ -495,7 +495,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private boolean shouldCompleteValue() {
     JSType type;
-    return myInfo.type != REGULAR
+    return (myInfo.type != REGULAR && myInfo.type != I18N)
            || ((type = getJSType()) != null && !(type instanceof JSBooleanType));
   }
 
