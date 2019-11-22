@@ -2,7 +2,11 @@ package com.intellij.aws.cloudformation.tests
 
 import com.intellij.aws.cloudformation.CloudFormationPsiUtils
 import com.intellij.json.psi.JsonFile
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.fileTypes.PlainTextFileType
+import com.intellij.openapi.rd.attach
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
@@ -46,6 +50,31 @@ class CloudFormationFileTypeDetectionTest: LightPlatformCodeInsightTestCase() {
         "Resources": ["XXX"]
       }
     """.trimIndent()) { file -> Assert.assertTrue("File: $file instead of Json", file is JsonFile) }
+
+  fun `test plain text template file with format version and json format`() {
+    mapTemplateExtensionToPlainText()
+    assertCloudFormationFile("my2.template", """
+      {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Resources": ["XXX"]
+      }
+    """.trimIndent()) { file -> Assert.assertTrue("File: $file instead of Json", file is JsonFile) }
+  }
+
+  fun `test plain template file with format version and yaml format`() {
+    mapTemplateExtensionToPlainText()
+    assertCloudFormationFile("my2.template", """
+      Parameters:
+      AWSTemplateFormatVersion: '2010-09-09'
+    """.trimIndent()) { file -> Assert.assertTrue("File: $file instead of Yaml", file is YAMLFile) }
+  }
+
+  private fun mapTemplateExtensionToPlainText() {
+    WriteAction.runAndWait<Exception> { FileTypeManager.getInstance().associateExtension(PlainTextFileType.INSTANCE, "template") }
+    testRootDisposable.attach {
+      WriteAction.runAndWait<Exception> { FileTypeManager.getInstance().removeAssociatedExtension(PlainTextFileType.INSTANCE, "template") }
+    }
+  }
 
   private fun assertNotCloudFormationFile(fileName: String, fileText: String, check: (PsiFile) -> Unit = {}) {
     val document = configureFromFileText(fileName, fileText)
