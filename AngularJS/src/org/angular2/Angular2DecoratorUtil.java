@@ -17,7 +17,6 @@ import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NonNls;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.Set;
 
 import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
@@ -43,6 +41,7 @@ public class Angular2DecoratorUtil {
   @NonNls public static final String OUTPUT_DEC = "Output";
   @NonNls public static final String ATTRIBUTE_DEC = "Attribute";
   @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
+  @NonNls public static final String VIEW_CHILDREN_DEC = "ViewChildren";
   @NonNls public static final String VIEW_DEC = "View";
 
   @NonNls public static final String NAME_PROP = "name";
@@ -60,9 +59,6 @@ public class Angular2DecoratorUtil {
   @NonNls public static final String TEMPLATE_PROP = "template";
   @NonNls public static final String STYLE_URLS_PROP = "styleUrls";
   @NonNls public static final String STYLES_PROP = "styles";
-
-  private static final Set<String> ANGULAR_RESOLVED_DECS = ContainerUtil.newHashSet(DIRECTIVE_DEC, COMPONENT_DEC, PIPE_DEC, MODULE_DEC,
-                                                                                    VIEW_CHILD_DEC, VIEW_DEC);
 
   public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
