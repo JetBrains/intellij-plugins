@@ -108,7 +108,6 @@ public class RequestUtilities {
   private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS = "completion.getSuggestionDetails";
   private static final String METHOD_COMPLETION_GET_SUGGESTIONS = "completion.getSuggestions";
   private static final String METHOD_COMPLETION_SET_SUBSCRIPTIONS = "completion.setSubscriptions";
-  private static final String METHOD_COMPLETION_REGISTER_LIBRARY_PATHS = "completion.registerLibraryPaths";
 
   // Search domain
   private static final String METHOD_SEARCH_FIND_ELEMENT_REFERENCES = "search.findElementReferences";
@@ -423,26 +422,6 @@ public class RequestUtilities {
     JsonObject params = new JsonObject();
     params.add("options", buildJsonElement(options));
     return buildJsonObjectRequest(idValue, METHOD_ANALYSIS_UPDATE_OPTIONS, params);
-  }
-
-  /**
-   * Generate and return a {@value #METHOD_COMPLETION_REGISTER_LIBRARY_PATHS} request.
-   * <p>
-   * <pre>
-   * request: {
-   *   "id": string",
-   *   "method": "completion.registerLibraryPaths",
-   *   "params": {
-   *     "paths": List&lt;LibraryPathSet&gt;
-   *   }
-   * }
-   * </pre>
-   * </p>
-   */
-  public static JsonObject generateCompletionRegisterLibraryPaths(String idValue, List<LibraryPathSet> paths) {
-    JsonObject params = new JsonObject();
-    params.add("paths", buildJsonElement(paths));
-    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_REGISTER_LIBRARY_PATHS, params);
   }
 
   /**

@@ -2431,17 +2431,6 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * Express interest in particular libraries to be included in code completion suggestions.
-   */
-  @SuppressWarnings("unused") // for Flutter plugin
-  public void registerLibraryPaths(List<LibraryPathSet> paths) {
-    final AnalysisServer server = myServer;
-    if (server != null) {
-      server.completion_registerLibraryPaths(paths);
-    }
-  }
-
-  /**
    * Subscribe for verbose analysis server `server.log` notifications.
    */
   @SuppressWarnings("unused") // for Flutter plugin
