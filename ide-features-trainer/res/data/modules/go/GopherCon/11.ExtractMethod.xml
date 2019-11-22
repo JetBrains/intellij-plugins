@@ -16,6 +16,6 @@ func main() {
 }
 ]]></CopyText>
     <MoveCaret position="14:38" />
-    <Try trigger="ExtractMethod">Extract Function/Method allows you to encapsulate a code into a new function or method with customizable parameters and return type. Let's extract some lines of code into a new method. Press <action>ExtractMethod</action>.</Try>
+    <Try trigger="ExtractMethod">Extract Function/Method allows you to encapsulate a code into a new function or a method with customizable parameters and return type. Let's extract some lines of code into a new function. Press <action>ExtractMethod</action>.</Try>
     <Win/>
 </xml>
