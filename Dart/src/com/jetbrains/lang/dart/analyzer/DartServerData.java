@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -289,6 +289,16 @@ public class DartServerData {
   @Nullable
   AvailableSuggestionSet getAvailableSuggestionSet(int id) {
     return myAvailableSuggestionSetMap.get(id);
+  }
+
+  boolean hasAllData_TESTS_ONLY(@NotNull VirtualFile file) {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    return myHighlightData.get(file.getPath()) != null &&
+           myNavigationData.get(file.getPath()) != null &&
+           myOverrideData.get(file.getPath()) != null &&
+           myImplementedClassData.get(file.getPath()) != null &&
+           myImplementedMemberData.get(file.getPath()) != null &&
+           myOutlineData.get(file.getPath()) != null;
   }
 
   @Nullable
