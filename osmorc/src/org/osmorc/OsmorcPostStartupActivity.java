@@ -54,8 +54,6 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    if (project.isDefault()) return;
-
     MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       @Override
