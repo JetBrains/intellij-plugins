@@ -57,7 +57,7 @@
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="com.intellij.grazie.grammar.strategy" beanClass="com.intellij.lang.LanguageExtensionPoint">
+        <extensionPoint qualifiedName="com.intellij.grazie.grammar.strategy" beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
             <with attribute="implementationClass" implements="com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy"/>
         </extensionPoint>
     </extensionPoints>
