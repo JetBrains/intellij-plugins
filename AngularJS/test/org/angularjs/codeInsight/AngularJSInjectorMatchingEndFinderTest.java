@@ -24,7 +24,7 @@ public class AngularJSInjectorMatchingEndFinderTest extends TestCase {
   }
 
   private static void defaultTest(String text, String check) {
-    final int startIdx = text.indexOf("{{", 0);
+    final int startIdx = text.indexOf("{{");
     int afterStart = startIdx < 0 ? -1 : (startIdx + "{{".length());
     final int end = InjectorMatchingEndFinder.findMatchingEnd("{{", "}}", text, afterStart);
     Assert.assertTrue(afterStart > 0);

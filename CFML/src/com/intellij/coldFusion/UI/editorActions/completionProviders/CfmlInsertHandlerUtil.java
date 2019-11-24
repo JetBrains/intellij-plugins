@@ -26,8 +26,7 @@ public class CfmlInsertHandlerUtil {
   public static boolean isStringAtCaret(Editor editor, String string) {
     final int startOffset = editor.getCaretModel().getOffset();
     final String fileText = editor.getDocument().getText();
-    if (fileText.length() < startOffset + string.length()) return false;
-    return fileText.substring(startOffset, startOffset + string.length()).equals(string);
+    return fileText.startsWith(string, startOffset);
   }
 
   public static void insertStringAtCaret(Editor editor, String string) {

@@ -41,8 +41,7 @@ public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
       // so do a bit of sanity checking on its length and whether or not it's got the requisite open/close
       // tags before we allow folding
       if (commentText.length() > 6
-          && commentText.substring(0, 3).equals("{{!")
-          && commentText.substring(commentText.length() - 2).equals("}}")) {
+          && commentText.startsWith("{{!") && commentText.endsWith("}}")) {
         TextRange range = new TextRange(commentNode.getTextRange().getStartOffset() + 3, commentNode.getTextRange().getEndOffset() - 2);
         descriptors.add(new FoldingDescriptor(commentNode, range));
       }
