@@ -1,9 +1,9 @@
 package com.intellij.grazie.grammar
 
-import com.intellij.grazie.GrazieTestBase
 import com.intellij.grazie.jlanguage.LangUnicodeBlock
+import com.intellij.testFramework.UsefulTestCase
 
-class UnicodeBlocksTest : GrazieTestBase() {
+class UnicodeBlocksTest : UsefulTestCase() {
   private fun check(sentence: String, domain: Set<Character.UnicodeBlock>): Boolean {
     var offset = 0
     while (offset < sentence.length) {
