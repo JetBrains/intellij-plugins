@@ -9,7 +9,7 @@ import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 class TutorialsActionGroup : CommonActionGroup("Tutorials", emptyList()) {
 
   init {
-    isExpanded = false
+    isExpanded = true
   }
 
   private val moduleActionGroups by lazy {
