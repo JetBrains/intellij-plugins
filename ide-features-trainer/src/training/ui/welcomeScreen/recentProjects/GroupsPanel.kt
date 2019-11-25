@@ -263,15 +263,9 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
                 val scaledSize: Float = JBUIScale.scaleFontSize(11f) * 1f
                 path.font = path.font.deriveFont(scaledSize)
               }
-
-              val nameComponent: JComponent = if (value is ModuleActionGroup) {
+              if (value is ModuleActionGroup)
                 if (!value.module.hasNotPassedLesson()) name.foreground = path.foreground
-                ModulesPanel.createModuleHeader(value.module, name,
-                                                if (isSelected) fore else UIManager.getColor("Label.disabledForeground"))
-              }
-              else {
-                name
-              }
+              val nameComponent: JComponent = name
 
               if (!renderableAction.isValid) {
                 path.foreground = ColorUtil.mix(path.foreground, JBColor.red, .5)
