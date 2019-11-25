@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.util.ui.EmptyIcon
 import training.learn.interfaces.Module
+import training.statistic.StatisticBase
 import training.ui.LearnIcons
 import training.ui.welcomeScreen.recentProjects.RenderableAction
 import javax.swing.Icon
@@ -31,8 +32,8 @@ class ModuleActionGroup(val module: Module): DefaultActionGroup(module.name, mod
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        //todo: add fus collection here
         val lessonToOpen = module.giveNotPassedLesson() ?: module.lessons.first()
+        StatisticBase.instance.onStartModuleAction(module, lessonToOpen)
         val openLessonAction = OpenLessonAction(lessonToOpen)
         ActionUtil.performActionDumbAware(openLessonAction, e)
     }
