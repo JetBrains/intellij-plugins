@@ -19,8 +19,8 @@ class GroupManager : PersistentStateComponent<GroupManager> {
   var expandedByName: MutableMap<String, Boolean> = mutableMapOf()
 
   val registeredGroups: List<CommonActionGroup> = listOf(
-    TutorialsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded },
-    DefaultProjectsActionGroup().apply { val expanded = expandedByName[name] ?: true; isExpanded = expanded }
+    TutorialsActionGroup().apply { val expanded = expandedByName[name] ?: isExpanded; isExpanded = expanded },
+    DefaultProjectsActionGroup().apply { val expanded = expandedByName[name] ?: isExpanded; isExpanded = expanded }
   )
 
   override fun getState(): GroupManager {
@@ -31,7 +31,7 @@ class GroupManager : PersistentStateComponent<GroupManager> {
   override fun loadState(state: GroupManager) {
     synchronized(stateLock) {
       expandedByName = state.expandedByName
-      registeredGroups.forEach { val expanded = state.expandedByName[it.name] ?: true; it.apply { isExpanded = expanded } }
+      registeredGroups.forEach { val expanded = state.expandedByName[it.name] ?: it.isExpanded; it.apply { isExpanded = expanded } }
     }
   }
 

@@ -8,6 +8,10 @@ import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 
 class TutorialsActionGroup : CommonActionGroup("Tutorials", emptyList()) {
 
+  init {
+    isExpanded = false
+  }
+
   private val moduleActionGroups by lazy {
     CourseManager.instance.modules.map { ModuleActionGroup(it) }.toTypedArray()
   }
