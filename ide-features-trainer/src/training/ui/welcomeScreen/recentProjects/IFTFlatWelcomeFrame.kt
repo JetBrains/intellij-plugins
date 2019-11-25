@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WelcomeScreen
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.accessibility.AccessibleContextAccessor
 import javax.swing.JPanel
@@ -32,9 +33,11 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
     }
 
     private fun replaceRecentProjectsPanel() {
+        getRootPane().preferredSize = JBUI.size(MAX_DEFAULT_WIDTH, height)
         val groupsPanel = GroupsPanel(ApplicationManager.getApplication()).customizeActions()
         val recentProjectPanel = UIUtil.uiChildren(originalRecentProjectsPanel).first()
         originalRecentProjectsPanel?.remove(recentProjectPanel)
         originalRecentProjectsPanel?.add(groupsPanel)
+        repaint()
     }
 }
