@@ -29,7 +29,6 @@ import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
-import com.intellij.lang.javascript.validation.DuplicatesCheckUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemReporter;
 import com.intellij.lang.javascript.validation.TypedJSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.*;
@@ -734,7 +733,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           }
         }
         else if (parent instanceof JSNamespaceDeclaration) {
-          DuplicatesCheckUtil.checkDuplicates((JSNamespaceDeclaration)parent, myProblemReporter);
+          checkDuplicates((JSNamespaceDeclaration)parent);
         }
 
         if (parent instanceof JSClass) {
@@ -776,7 +775,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     if (!jsClass.isInterface()) {
       checkIfExtendsFinalOrMultipleClasses(jsClass);
     }
-    DuplicatesCheckUtil.checkDuplicates(jsClass, myProblemReporter);
+    checkDuplicates(jsClass);
   }
 
   private void checkIfExtendsFinalOrMultipleClasses(final JSClass jsClass) {
