@@ -7,7 +7,8 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.wm.impl.welcomeScreen.RecentProjectsWelcomeScreenActionBase
 
 abstract class CommonActionGroup(val name: String, val children: List<AnAction>) : DefaultActionGroup(name, children), DumbAware {
-    var isExpanded = false
+
+    var isExpanded = true
 
     override fun actionPerformed(e: AnActionEvent) {
         object : RecentProjectsWelcomeScreenActionBase() {
