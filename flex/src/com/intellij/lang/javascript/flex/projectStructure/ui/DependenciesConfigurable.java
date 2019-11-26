@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -23,7 +24,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -170,7 +170,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private JComboBox<LinkageType> myFrameworkLinkageCombo;
   private JLabel myWarning;
   private JPanel myTablePanel;
-  private JButton myNewButton;
   private JButton myEditButton;
   private JLabel mySdkLabel;
   private final EditableTreeTable<MyTableItem> myTable;
@@ -451,9 +450,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     private final Project project;
 
     SharedLibraryItem(@NotNull String libraryName,
-                             @NotNull String libraryLevel,
-                             @Nullable Library liveLibrary,
-                             @NotNull Project project) {
+                      @NotNull String libraryLevel,
+                      @Nullable Library liveLibrary,
+                      @NotNull Project project) {
       this.libraryName = libraryName;
       this.libraryLevel = libraryLevel;
       this.liveLibrary = liveLibrary;
@@ -529,7 +528,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       ModifiableSharedLibraryEntry libraryEntry = (ModifiableSharedLibraryEntry)entry;
       Library liveLibrary = findLiveLibrary();
       if (liveLibrary != null) {
-        if (!liveLibrary.getName().equals(libraryEntry.getLibraryName())) return true;
+        if (!libraryEntry.getLibraryName().equals(liveLibrary.getName())) return true;
         if (!liveLibrary.getTable().getTableLevel().equals(libraryEntry.getLibraryLevel())) return true;
       }
       else {
@@ -942,7 +941,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       for (Module module : modules) {
         for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
           FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
-          if (flexBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
+          if (flexBCConfigurable.isParentFor(this)) {
             resetTable(myDependencies.getSdkEntry(), true);
           }
         }
@@ -1148,34 +1147,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private void moveSelection(int delta) {
-    // TODO check the case when SDK item is expanded!
-    int[] selectedRows = myTable.getSelectedRows();
-    Arrays.sort(selectedRows);
-    DefaultMutableTreeNode root = myTable.getRoot();
-
-    if (delta < 0) {
-      for (int row : selectedRows) {
-        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
-        root.remove(row);
-        root.insert(child, row + delta);
-      }
-    }
-    else {
-      for (int i = selectedRows.length - 1; i >= 0; i--) {
-        int row = selectedRows[i];
-        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
-        root.remove(row);
-        root.insert(child, row + delta);
-      }
-    }
-    myTable.refresh();
-    myTable.clearSelection();
-    for (int selectedRow : selectedRows) {
-      myTable.getSelectionModel().addSelectionInterval(selectedRow + delta, selectedRow + delta);
-    }
-  }
-
   @Override
   @Nls
   public String getDisplayName() {
@@ -1209,7 +1180,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   public boolean isModified() {
     final JdkComboBox.JdkComboBoxItem selectedItem = mySdkCombo.getSelectedItem();
-    String currentSdkName = selectedItem.getSdkName();
+    String currentSdkName = selectedItem == null ? null : selectedItem.getSdkName();
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
     if (currentSdkName != null) {
       if (sdkEntry == null) {
@@ -1244,7 +1215,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null) {
       myDependencies.setTargetPlayer((String)targetPlayer);
