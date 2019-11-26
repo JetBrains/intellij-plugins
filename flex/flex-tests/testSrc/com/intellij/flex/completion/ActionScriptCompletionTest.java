@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -1298,5 +1298,13 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public void testObjectVariants() {
     final LookupElement[] elements = defaultTest();
     checkWeHaveInCompletion(elements, "hasOwnProperty", "length", "isPrototypeOf", "toString");
+  }
+
+  public void testRestartOnTypingIfOverflow() {
+    LookupElement[] lookupElements = defaultTest();
+    checkNoCompletion(lookupElements, "Array"); // there are so many local classes that there's no place for Array within the limit
+    myFixture.type('r');
+    lookupElements = myFixture.getLookupElements();
+    checkWeHaveInCompletion(lookupElements, "Array");
   }
 }
