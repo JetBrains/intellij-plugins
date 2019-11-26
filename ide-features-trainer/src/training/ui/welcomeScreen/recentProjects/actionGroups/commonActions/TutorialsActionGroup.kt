@@ -16,15 +16,15 @@ class TutorialsActionGroup : CommonActionGroup("Tutorials", emptyList()) {
     CourseManager.instance.modules.map { ModuleActionGroup(it) }.toTypedArray()
   }
 
-  override fun getActions(): Array<AnAction?> {
-    val result: ArrayList<AnAction?> = arrayListOf()
+  override fun getActions(): Array<AnAction> {
+    val result: ArrayList<AnAction> = arrayListOf()
     result.add(this)
     if (!isExpanded) return result.toTypedArray()
-    if (LangManager.getInstance().isLangUndefined()) LangManager.getInstance().updateLangSupport(
-      LangManager.getInstance().supportedLanguagesExtensions.first().instance)
-    moduleActionGroups.forEach {
-      result.add(it)
+    if (LangManager.getInstance().isLangUndefined()) {
+      val langSupport = LangManager.getInstance().supportedLanguagesExtensions.first().instance
+      LangManager.getInstance().updateLangSupport(langSupport)
     }
+    moduleActionGroups.forEach { result.add(it) }
     return result.toTypedArray()
   }
 

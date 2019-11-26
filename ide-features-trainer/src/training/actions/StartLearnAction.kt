@@ -62,13 +62,11 @@ class StartLearnAction : AnAction(
   }
 
   private fun findLessonToLearn(): Lesson {
-    val langSupport: LangSupport? = LangManager.getInstance().getLangSupport()
-    if (langSupport == null) {
-      throw IllegalStateException("Language for studying hasn't been chosen yet.")
-    }
+    val langSupport: LangSupport = LangManager.getInstance().getLangSupport() ?:
+                                   throw IllegalStateException("Language for studying hasn't been chosen yet.")
     val modules = CourseManager.instance.getModulesByLanguage(langSupport)
     //let's take first lesson, which was not passed or open the first one
-    return modules.flatMap { it.lessons }.firstOrNull { !it.passed } ?: modules.first().lessons.first()
+    return modules.firstOrNull { it.hasNotPassedLesson() }?.giveNotPassedLesson() ?: modules.first().lessons.first()
   }
 
 }

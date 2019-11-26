@@ -36,7 +36,8 @@ class LearnProjectComponent private constructor(private val project: Project) : 
     val toolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
     if (toolWindow == null) {
       val anchor = LangManager.getInstance().getLangSupport()?.getToolWindowAnchor() ?: ToolWindowAnchor.LEFT
-      val createdToolWindow = toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, anchor, project, true)
+      val createdToolWindow = toolWindowManager
+        .registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, anchor, project, true)
       createdToolWindow.icon = LearnIcons.featureTrainerToolWindowIcon
     }
   }

@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataKey
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.fileEditor.TextEditor
@@ -238,17 +238,17 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       lesson.addLessonListener(statLessonListener)
   }
 
-  private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?, lessonToOpen: Lesson? = null) {
+  private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?, lessonToOpen: Lesson) {
     val project = initLearnProject(projectToClose)!!
     if (project.isOpen) {
       showModules(project)
-      if (lessonToOpen != null) openLessonWhenLearnProjectStart(lessonToOpen, project)
+      openLessonWhenLearnProjectStart(lessonToOpen, project)
       return
     }
     StartupManager.getInstance(project).registerPostStartupActivity {
       hideOtherViews(project)
       showModules(project)
-      if (lessonToOpen != null) openLessonWhenLearnProjectStart(lessonToOpen, project)
+      openLessonWhenLearnProjectStart(lessonToOpen, project)
     }
   }
 
@@ -395,9 +395,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
   }
 
   companion object {
-    val LESSON_DATA_KEY = DataKey.create<Lesson>("LESSON_DATA_KEY")
     val PROJECT_WHERE_TO_OPEN_DATA_KEY = DataKey.create<Project>("PROJECT_WHERE_TO_OPEN_DATA_KEY")
-
-    private val LOG = Logger.getInstance(OpenLessonAction::class.java)
+    private val LOG = logger<OpenLessonAction>()
   }
 }

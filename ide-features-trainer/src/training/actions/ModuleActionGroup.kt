@@ -12,24 +12,14 @@ import training.ui.welcomeScreen.recentProjects.RenderableAction
 import javax.swing.Icon
 
 class ModuleActionGroup(val module: Module): DefaultActionGroup(module.name, module.lessons.map { OpenLessonAction(it) }), RenderableAction {
-    override var isValid: Boolean
-        get() = true
-        set(value) {}
+    override var isValid: Boolean = true
     var isExpanded = false
-    override val action: AnAction
-        get() = this
-
-    override val name: String
-        get() = module.name
-    override val description: String?
-        get() = module.description
-    override val icon: Icon?
-        get() = if (!module.hasNotPassedLesson()) LearnIcons.checkMarkGray else null
-    override val emptyIcon: Icon
-        get() = EmptyIcon.ICON_0
-    override fun isPopup(): Boolean {
-        return isExpanded
-    }
+    override val action: AnAction = this
+    override val name: String = module.name
+    override val description: String? = module.description
+    override val icon: Icon? = if (!module.hasNotPassedLesson()) LearnIcons.checkMarkGray else null
+    override val emptyIcon: Icon = EmptyIcon.ICON_0
+    override fun isPopup(): Boolean = isExpanded
 
     override fun actionPerformed(e: AnActionEvent) {
         val lessonToOpen = module.giveNotPassedLesson() ?: module.lessons.first()
