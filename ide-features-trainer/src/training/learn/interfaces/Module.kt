@@ -24,4 +24,22 @@ interface Module {
   fun giveNotPassedAndNotOpenedLesson(): Lesson?
 
   fun hasNotPassedLesson(): Boolean
+
+  fun calcProgress(): String? {
+    val total = lessons.size
+    var done = 0
+    for (lesson in lessons) {
+      if (lesson.passed) done++
+    }
+    return if (done != 0) {
+      if (done == total)
+        ""
+      else
+        "$done of $total done"
+    }
+    else {
+      null
+    }
+  }
+
 }
