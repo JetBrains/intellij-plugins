@@ -5,13 +5,13 @@ package training.ui.views
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import training.actions.StartLearnAction
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.BundlePlace
@@ -104,12 +104,10 @@ class LanguageChoosePanel(opaque: Boolean = true, private val addButton: Boolean
             override fun actionPerformed(e: ActionEvent?) {
                 val activeLangSupport = getActiveLangSupport()
                 LangManager.getInstance().updateLangSupport(activeLangSupport)
-
-                val action = ActionManager.getInstance().getAction("learn.open.lesson")
                 val context = DataContext.EMPTY_CONTEXT
-                val event = AnActionEvent.createFromAnAction(action, null, "LearnToolWindow.ChooseLanguageView", context)
-
-                ActionUtil.performActionDumbAware(action, event)
+                val startLearnAction = StartLearnAction()
+                val event = AnActionEvent.createFromAnAction(startLearnAction, null, "LearnToolWindow.ChooseLanguageView", context)
+                ActionUtil.performActionDumbAware(startLearnAction, event)
             }
         }
         return button
