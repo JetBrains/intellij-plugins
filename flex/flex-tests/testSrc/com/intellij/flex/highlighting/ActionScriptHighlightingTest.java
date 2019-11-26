@@ -29,8 +29,8 @@ import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBu
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
-import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspection.JSUnusedAssignmentInspection;
+import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.actionscript.JSImplicitlyInternalDeclarationInspection;
@@ -1904,6 +1904,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + BASE_PATH, "ImplementingMarkerFromSwc.swc", null, null);
     Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     assertInaccessible(infos, JSBundle.message("javascript.create.method.intention.name", "bar"));
+  }
+
+  public void testCreateMethodForClassInPackage() throws Exception {
+    Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
+    findAndInvokeActionWithExpectedCheck("Create method 'baz'", "as", infos);
   }
 
   public void testInternalClassFromFileLocal() throws Exception {
