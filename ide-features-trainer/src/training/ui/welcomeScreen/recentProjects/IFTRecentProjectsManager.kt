@@ -20,10 +20,6 @@ class IFTRecentProjectsManager : RecentDirectoryProjectsManager() {
     }
   }
 
-  override fun getRecentProjectsActions(forMainMenu: Boolean): Array<AnAction?> {
-    return getRecentProjectsActions(forMainMenu, false)
-  }
-
   fun getOriginalRecentProjectsActions(): Array<AnAction> {
     return super.getRecentProjectsActions(forMainMenu = false, useGroups = true).filterNotNull().toTypedArray()
   }
