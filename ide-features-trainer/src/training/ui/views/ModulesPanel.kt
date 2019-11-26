@@ -303,23 +303,6 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
     private val LOG = Logger.getInstance(ModulesPanel::class.java)
 
-    private fun calcProgress(module: Module): String? {
-      val total = module.lessons.size
-      var done = 0
-      for (lesson in module.lessons) {
-        if (lesson.passed) done++
-      }
-      return if (done != 0) {
-        if (done == total)
-          ""
-        else
-          "$done of $total done"
-      }
-      else {
-        null
-      }
-    }
-
     fun createModuleHeader(module: Module, moduleName: JComponent, foregroundColor: Color): JPanel {
       val moduleHeader = JPanel().apply {
         name = "moduleHeader"
@@ -330,7 +313,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
         layout = BoxLayout(this, BoxLayout.X_AXIS)
       }
 
-      val progressStr = calcProgress(module)
+      val progressStr = module.calcProgress()
       val progressLabel: JBLabel
       progressLabel = if (progressStr != null) {
         JBLabel(progressStr)

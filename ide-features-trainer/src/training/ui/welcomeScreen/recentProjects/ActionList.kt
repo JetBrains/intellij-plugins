@@ -77,7 +77,13 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
         }
       }
       if (elem is ModuleActionGroup) {
-        return elem.description ?: ""
+        val progress = elem.module.calcProgress()
+        val description = elem.description ?: ""
+        return if (progress.isNullOrEmpty()) {
+           description
+        } else {
+          "[${progress}] $description"
+        }
       }
     }
     return super.getToolTipText(event) ?: ""
