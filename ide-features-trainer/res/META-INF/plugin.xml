@@ -70,11 +70,8 @@
         <toolWindow id="Learn" anchor="left" factoryClass="training.ui.LearnToolWindowFactory"
                     conditionClass="training.ui.LearnCondition"/>
 
-        <registryKey key="ideFeaturesTrainer.welcomeScreen.showLearnAction" defaultValue="true"
-                     description="When this option is enabled, welcome screen contains additional action link Learn IDE."/>
-
         <registryKey key="ideFeaturesTrainer.welcomeScreen.tutorialsTree" defaultValue="false"
-                     description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list."/>
+                     description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
 
     </extensions>
 
