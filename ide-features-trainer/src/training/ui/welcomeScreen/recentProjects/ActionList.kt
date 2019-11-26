@@ -30,7 +30,7 @@ import javax.swing.Icon
 import javax.swing.ListSelectionModel
 
 class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsPanel) : JBList<AnAction?>(*listData) {
-  private var myMousePoint: Point? = null
+  private var mousePoint: Point? = null
 
   init {
     setExpandableItemsEnabled(false)
@@ -53,14 +53,13 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
 
   override fun paint(g: Graphics) {
     super.paint(g)
-    if (myMousePoint != null) {
-      val index = locationToIndex(myMousePoint)
-      if (index != -1) {
-        if (model.getElementAt(index) is ProjectGroupActionGroup || model.getElementAt(index) is ReopenProjectAction) {
-          val iconRect = getCloseIconRect(index)
-          val icon = toSize(if (iconRect.contains(myMousePoint)) AllIcons.Welcome.Project.Remove_hover else AllIcons.Welcome.Project.Remove)
-          icon.paintIcon(this, g, iconRect.x, iconRect.y)
-        }
+    val lastMousePoint = mousePoint ?: return
+    val index = locationToIndex(lastMousePoint)
+    if (index != -1) {
+      if (model.getElementAt(index) is ProjectGroupActionGroup || model.getElementAt(index) is ReopenProjectAction) {
+        val iconRect = getCloseIconRect(index)
+        val icon = toSize(if (iconRect.contains(lastMousePoint)) AllIcons.Welcome.Project.Remove_hover else AllIcons.Welcome.Project.Remove)
+        icon.paintIcon(this, g, iconRect.x, iconRect.y)
       }
     }
   }
@@ -72,7 +71,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
       if (elem is ReopenProjectAction) {
         val path = elem.projectPath
         val valid: Boolean = groupsPanel.validatePath(path)
-        if (!valid || (RecentProjectsManager.getInstance() as IFTRecentProjectsManager).projectsWithLongPaths.contains(elem)) {
+        if (!valid || IFTRecentProjectsManager.manager.projectsWithLongPaths.contains(elem)) {
           val suffix = if (valid) "" else " (unavailable)"
           return PathUtil.toSystemDependentName(path) + suffix
         }
@@ -90,15 +89,15 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
 
   internal inner class MouseHandler : MouseAdapter() {
     override fun mouseEntered(e: MouseEvent) {
-      myMousePoint = e.point
+      mousePoint = e.point
     }
 
     override fun mouseExited(e: MouseEvent) {
-      myMousePoint = null
+      mousePoint = null
     }
 
     override fun mouseMoved(e: MouseEvent) {
-      myMousePoint = e.point
+      mousePoint = e.point
     }
 
     override fun mouseReleased(e: MouseEvent) {

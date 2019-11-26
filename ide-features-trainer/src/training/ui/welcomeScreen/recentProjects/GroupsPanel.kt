@@ -232,7 +232,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
                     get() {
                       val realPath = PathUtil.toSystemDependentName(value.projectPath)
                       if (realPath != path.text) {
-                        (RecentProjectsManager.getInstance() as IFTRecentProjectsManager).projectsWithLongPaths.add(value)
+                        IFTRecentProjectsManager.manager.projectsWithLongPaths.add(value)
                       }
                       return getTitle2Text((value as ReopenProjectAction?)!!, path, JBUIScale.scale(i))
                     }

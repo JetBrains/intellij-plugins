@@ -26,7 +26,7 @@ abstract class CommonActionGroup(val name: String, val children: List<AnAction>)
         }.actionPerformed(e)
     }
 
-    abstract fun getActions(): Array<AnAction?>
+    abstract fun getActions(): Array<AnAction>
 
     override fun isPopup(): Boolean {
         return !isExpanded

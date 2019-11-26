@@ -1,6 +1,7 @@
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.ide.RecentDirectoryProjectsManager
+import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.util.registry.Registry
@@ -19,16 +20,21 @@ class IFTRecentProjectsManager : RecentDirectoryProjectsManager() {
     }
   }
 
-  fun getOriginalRecentProjectsActions(): Array<AnAction?> {
-    return super.getRecentProjectsActions(forMainMenu = false, useGroups = true)
-  }
-
   override fun getRecentProjectsActions(forMainMenu: Boolean): Array<AnAction?> {
     return getRecentProjectsActions(forMainMenu, false)
   }
 
+  fun getOriginalRecentProjectsActions(): Array<AnAction> {
+    return super.getRecentProjectsActions(forMainMenu = false, useGroups = true).filterNotNull().toTypedArray()
+  }
+
   val projectsWithLongPaths: HashSet<ReopenProjectAction> by lazy {
     HashSet<ReopenProjectAction>(0)
+  }
+
+  companion object {
+    val manager: IFTRecentProjectsManager
+      get() = RecentProjectsManager.getInstance() as IFTRecentProjectsManager
   }
 
 }
