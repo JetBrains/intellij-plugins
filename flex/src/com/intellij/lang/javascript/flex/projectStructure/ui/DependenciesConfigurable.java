@@ -773,7 +773,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
 
     mySdkCombo.showNoneSdkItem();
-    mySdkCombo.setEditButton(myEditButton, myProject, (NullableComputable<Sdk>)() -> mySdkCombo.getSelectedJdk());
+    mySdkCombo.setEditButton(myEditButton, myProject, () -> mySdkCombo.getSelectedJdk());
 
     mySdkLabel.setLabelFor(mySdkCombo);
 
