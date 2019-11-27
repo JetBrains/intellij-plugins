@@ -32,11 +32,11 @@ import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
-
-  public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
-    .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
-                       (project, key) -> /* no support for custom delimiters*/ null);
-
+  static class Holder {
+    static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
+      .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
+                         (project, key) -> /* no support for custom delimiters*/ null);
+  }
   @NotNull
   @Override
   public List<Class<? extends PsiElement>> elementsToInjectIn() {
@@ -97,7 +97,7 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    final Pair<String, String> braces = BRACES_FACTORY.fun(context);
+    final Pair<String, String> braces = Holder.BRACES_FACTORY.fun(context);
     if (braces == null) return;
     JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
                                                       braces.first, braces.second, INTERPOLATION);

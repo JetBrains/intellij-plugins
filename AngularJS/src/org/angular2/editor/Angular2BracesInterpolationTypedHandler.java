@@ -18,7 +18,7 @@ public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegat
   private final JSInjectionBracesUtil.InterpolationBracesCompleter myBracesCompleter;
 
   public Angular2BracesInterpolationTypedHandler() {
-    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.BRACES_FACTORY) {
+    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.Holder.BRACES_FACTORY) {
       @Override
       protected boolean checkTypingContext(@NotNull Editor editor, @NotNull PsiFile file) {
         PsiElement atCaret = getContextElement(editor, file);
