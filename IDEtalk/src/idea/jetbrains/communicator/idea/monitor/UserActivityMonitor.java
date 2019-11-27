@@ -3,7 +3,6 @@ package jetbrains.communicator.idea.monitor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.BaseComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.ProjectUtil;
 import jetbrains.communicator.core.IDEtalkOptions;
@@ -23,7 +22,7 @@ import java.awt.event.AWTEventListener;
  *
  * @see Transport#setOwnPresence(UserPresence)
  */
-public final class UserActivityMonitor implements Disposable, Runnable, BaseComponent {
+public final class UserActivityMonitor implements Disposable, Runnable {
   private static final Logger LOG = Logger.getInstance(UserActivityMonitor.class);
 
   private static final int REFRESH_INTERVAL = 60 * 1000;
@@ -33,12 +32,12 @@ public final class UserActivityMonitor implements Disposable, Runnable, BaseComp
   private final Object myMonitor = new Object();
   private long myLastActionTimestamp;
   private volatile boolean myStop;
-  private int myRefreshInterval = REFRESH_INTERVAL;
   private volatile boolean myThreadDisposed = true;
 
-  @Override
-  public void initComponent() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
+  UserActivityMonitor() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return;
+    }
 
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
       activity();
@@ -58,7 +57,7 @@ public final class UserActivityMonitor implements Disposable, Runnable, BaseComp
     activity();
 
     ProjectUtil.runWhenProjectOpened(project -> {
-      Thread t = new Thread(this, getComponentName() + " thread");
+      Thread t = new Thread(this, getClass().getSimpleName() + " thread");
       t.setDaemon(true);
       t.start();
     });
@@ -81,18 +80,11 @@ public final class UserActivityMonitor implements Disposable, Runnable, BaseComp
 
   void activity() {
     synchronized (myMonitor) {
-      if (System.currentTimeMillis() - myLastActionTimestamp > myRefreshInterval) {
+      if (System.currentTimeMillis() - myLastActionTimestamp > REFRESH_INTERVAL) {
         myLastActionTimestamp = System.currentTimeMillis();
         myMonitor.notifyAll();
       }
       myLastActionTimestamp = System.currentTimeMillis();
-    }
-  }
-
-
-  void setRefreshInterval(int refreshInterval) {
-    synchronized(myMonitor) {
-      myRefreshInterval = refreshInterval;
     }
   }
 
@@ -111,7 +103,7 @@ public final class UserActivityMonitor implements Disposable, Runnable, BaseComp
         }
 
         synchronized (myMonitor) {
-          myMonitor.wait(myRefreshInterval);
+          myMonitor.wait(REFRESH_INTERVAL);
         }
       }
     }
