@@ -10,10 +10,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.junit4.JUnitNodeNamesManager.JUNIT_NODE_NAMES_MANAGER_ARGUMENT;
-import static com.intellij.junit4.JUnitNodeNamesManager.TEXT_NODE_NAMES_MANAGER_NAME;
+import static com.intellij.junit4.JUnitTestTreeNodeManager.JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT;
 
 public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExtension {
   private static final String CUCUMBER_JUNIT_RUNNER_CLASS_MARKER = "Cucumber.class";
@@ -50,7 +50,8 @@ public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExte
     for (PsiNameValuePair parameter : annotationParameters) {
       PsiAnnotationMemberValue value = parameter.getValue();
       if (value != null && value.getText().equalsIgnoreCase(CUCUMBER_JUNIT_RUNNER_CLASS_MARKER)) {
-        params.getVMParametersList().add("-D" + JUNIT_NODE_NAMES_MANAGER_ARGUMENT + "=" + TEXT_NODE_NAMES_MANAGER_NAME);
+        params.getClassPath().add(PathUtil.getJarPathForClass(CucumberTestTreeNodeManager.class));
+        params.getVMParametersList().add("-D" + JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT + "=" + CucumberTestTreeNodeManager.class.getName());
         return;
       }
     }

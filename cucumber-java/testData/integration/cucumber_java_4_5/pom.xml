@@ -4,7 +4,7 @@
                     http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sample</groupId>
-    <artifactId>cucumber-java-sample</artifactId>
+    <artifactId>test-project-sample</artifactId>
     <version>1.0</version>
 
     <properties>
