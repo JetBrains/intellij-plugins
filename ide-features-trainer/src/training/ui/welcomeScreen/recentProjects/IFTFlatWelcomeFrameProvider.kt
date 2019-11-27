@@ -11,8 +11,9 @@ import training.actions.StartLearnAction
 class IFTFlatWelcomeFrameProvider : WelcomeFrameProvider {
   override fun createFrame(): IdeFrame {
     if (!Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")) {
-      val groupQuickStart = ActionManager.getInstance().getAction("WelcomeScreen.QuickStart")
-      (groupQuickStart as DefaultActionGroup).addAction(StartLearnAction(), Constraints.LAST, ActionManager.getInstance())
+      val actionLinksGroup = ActionManager.getInstance().getAction("WelcomeScreen.QuickStart") as DefaultActionGroup
+      if (actionLinksGroup.getChildren(null).any { it is StartLearnAction }.not())
+        actionLinksGroup.addAction(StartLearnAction(), Constraints.LAST, ActionManager.getInstance())
     }
     return IFTFlatWelcomeFrame()
   }
