@@ -12,6 +12,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.extensions.ExtensionPointName
 import training.learn.CourseManager
 import training.ui.LearnToolWindowFactory
+import training.ui.welcomeScreen.recentProjects.showCustomWelcomeScreen
 import training.util.findLanguageByID
 import training.util.trainerPluginConfigName
 
@@ -60,8 +61,14 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   override fun getState() = myState
 
   fun getLanguageDisplayName(): String {
-    val languageName = myState.languageName ?: return "default"
-    return (findLanguageByID(languageName) ?: return "default").displayName
+    // For some reason, sate doesn't appear in this component when this method is accessed for the first time.
+    // Ideally, we should investigate why it happens but we don't have time now due to the release.
+    // So, as now GoLand is the only user of the tree we can assume that if it's enabled then the language is Go.
+    // It will probably change as soon as we get other languages that are supported by GoLand like JS or Python.
+    // That's why we need to get rid of this hack ASAP.
+    val default = if (showCustomWelcomeScreen) "go" else "default" // TODO get rid of it ASAP
+    val languageName = myState.languageName ?: return default
+    return (findLanguageByID(languageName) ?: return default).displayName
   }
 
   /** Primary Language Id -> Number of Lessons */
