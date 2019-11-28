@@ -44,4 +44,4 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
 }
 
 internal val showCustomWelcomeScreen
-    get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree") && !SystemInfo.isWindows
+    get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")
