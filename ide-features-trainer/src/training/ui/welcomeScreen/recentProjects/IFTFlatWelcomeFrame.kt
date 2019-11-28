@@ -2,6 +2,7 @@ package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WelcomeScreen
@@ -28,7 +29,7 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
         }
 
     init {
-        if (Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree"))
+        if (showCustomWelcomeScreen)
             replaceRecentProjectsPanel()
     }
 
@@ -41,3 +42,6 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
         repaint()
     }
 }
+
+internal val showCustomWelcomeScreen
+    get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree") && !SystemInfo.isWindows
