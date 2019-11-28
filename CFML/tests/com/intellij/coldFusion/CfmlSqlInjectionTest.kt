@@ -142,13 +142,18 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   TestCase.assertNotNull(manager)
 
   manager.addDataSource(dataSource)
-  Disposer.register(testRootDisposable, Disposable { manager.removeDataSource(dataSource) })
-  dbPsiFacade.flushUpdates()
-  UIUtil.dispatchAllInvocationEvents()
+  Disposer.register(testRootDisposable, Disposable {
+    manager.removeDataSource(dataSource)
+    UIUtil.dispatchAllInvocationEvents()
+    dbPsiFacade.flushUpdates()
+    UIUtil.dispatchAllInvocationEvents()
+  })
   val dataSourceElement = dbPsiFacade.dataSources.first { it.delegate == dataSource }
   TestCase.assertNotNull(dataSourceElement)
 
   DbUIUtil.invokeOnPooledThreadSync(dataSource::waitComputed)
+  UIUtil.dispatchAllInvocationEvents()
+  dbPsiFacade.flushUpdates()
   UIUtil.dispatchAllInvocationEvents()
 
   val files = dataSource.files
