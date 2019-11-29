@@ -13,11 +13,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.ConcurrentMultiMap
+import java.lang.ref.WeakReference
 
 object Notification {
   private enum class Group { UPDATE, LANGUAGES }
 
-  private val shownNotifications = ConcurrentMultiMap<Group, Notification>()
+  private val shownNotifications = ConcurrentMultiMap<Group, WeakReference<Notification>>()
 
   private val NOTIFICATION_GROUP_INSTALL = NotificationGroup(msg("grazie.install.group"),
                                                              NotificationDisplayType.STICKY_BALLOON, true)
@@ -35,20 +36,15 @@ object Notification {
         ShowSettingsUtil.getInstance().showSettingsDialog(project, msg("grazie.name"))
         notification.expire()
       }
-    }).apply {
-      whenExpired { shownNotifications.remove(Group.UPDATE)?.forEach { it.expire() } }
-      shownNotifications.putValue(Group.UPDATE, this)
-    }
+    })
+    .expireAll(Group.UPDATE)
     .notify(project)
 
   fun showUpdateMessage(project: Project) = NOTIFICATION_GROUP_UPDATE
     .createNotification(
       msg("grazie.update.title", GraziePlugin.version), msg("grazie.update.body"),
       NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
-    .apply {
-      whenExpired { shownNotifications.remove(Group.UPDATE)?.forEach { it.expire() } }
-      shownNotifications.putValue(Group.UPDATE, this)
-    }
+    .expireAll(Group.UPDATE)
     .notify(project)
 
   fun showLanguagesMessage(project: Project) {
@@ -73,10 +69,13 @@ object Notification {
           notification.expire()
         }
       })
-      .apply {
-        whenExpired { shownNotifications.remove(Group.LANGUAGES)?.forEach { it.expire() } }
-        shownNotifications.putValue(Group.LANGUAGES, this)
-      }
+      .expireAll(Group.LANGUAGES)
       .notify(project)
+  }
+
+  private fun Notification.expireAll(group: Group): Notification {
+    whenExpired { shownNotifications.remove(group)?.forEach { it.get()?.expire() } }
+    shownNotifications.putValue(group, WeakReference(this))
+    return this
   }
 }
