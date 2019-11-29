@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
@@ -62,11 +61,10 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
     MultiMap<Angular2Module, Integer> distancesToDirectives = new MultiMap<>();
     StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE))
-      .map(declaration ->
+      .flatMap(declaration ->
              StreamEx.of(scope.getPublicModulesExporting(declaration))
                .distinct()
                .map(module -> pair(module, distanceCalculator.get(module, declaration))))
-      .flatMap(Function.identity())
       .forEach(pair -> distancesToDirectives.putValue(pair.first, pair.second));
 
     Map<Angular2Module, Double> averageDistances = new HashMap<>();
