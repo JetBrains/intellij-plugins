@@ -4,7 +4,6 @@
     <vendor email="sergey.karashevich@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
 
     <description><![CDATA[
-
         <p>Learn basic shortcuts and essential features interactively — right inside the IDE. No need to read long manuals or look for screencasts. Just install this plugin, open the IDE, and go to the Learn tool window to start training.</p>
 
         <p>Found a bug or have a feature to suggest? Welcome to the tracker: <a href="https://youtrack.jetbrains.com/newIssue?project=IFT&description=**Description%3A**%20_Write%20description%20here_%0A%0A**Plugin%20version%3A**%20_Write%20plugin%20version%20here_">https://youtrack.jetbrains.com/issues/IFT</a></p>
@@ -24,7 +23,7 @@
     <depends optional="true" config-file="go-deps.xml">org.jetbrains.plugins.go</depends>
     <!--<depends optional="true" config-file="objc-deps.xml">com.intellij.modules.cidr.lang</depends>-->
     <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
-    <!--<depends optional="true" config-file="webstorm-deps.xml">com.intellij.modules.webstorm</depends>-->
+    <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
     <!--<depends optional="true" config-file="phpstorm-deps.xml">com.jetbrains.php</depends>-->
     <!--<depends optional="true" config-file="clion-deps.xml">com.intellij.modules.clion</depends>-->
     <!--<depends optional="true" config-file="rider-deps.xml">com.intellij.modules.rider</depends>-->

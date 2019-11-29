@@ -25,6 +25,7 @@ import com.intellij.psi.PsiDocumentManager
 import training.check.Check
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
 import java.util.concurrent.CompletableFuture
 
 class ActionsRecorder(private val project: Project,
@@ -226,7 +227,9 @@ class ActionsRecorder(private val project: Project,
 
   private fun addKeyEventListener(onKeyEvent: () -> Unit) {
     val myEventDispatcher: IdeEventQueue.EventDispatcher = IdeEventQueue.EventDispatcher { e ->
-      if (e is KeyEvent) onKeyEvent()
+      if (e is KeyEvent ||
+          (e as? MouseEvent)?.id == MouseEvent.MOUSE_RELEASED ||
+          (e as? MouseEvent)?.id == MouseEvent.MOUSE_CLICKED) onKeyEvent()
       false
     }
     eventDispatchers.add(myEventDispatcher)

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
+    <language lang="javascript">
+        <module name="modules/javascript/EditorBasics.xml"/>
+        <module name="modules/javascript/WebStormDebugger.xml"/>
+    </language>
     <language lang="java">
         <module name="modules/java/EditorBasics.xml"/>
         <module name="modules/java/Completions.xml"/>

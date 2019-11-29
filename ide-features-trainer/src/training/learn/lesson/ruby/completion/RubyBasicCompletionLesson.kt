@@ -3,7 +3,6 @@
  */
 package training.learn.lesson.ruby.completion
 
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
@@ -15,6 +14,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.ClassModuleSymbol
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
+import training.learn.lesson.javascript.textBeforeCaret
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
@@ -71,7 +71,7 @@ end
         text("To activate Basic Completion explicitly, press ${action(it)}. " +
             "Select <code>meow</code> and press <action>EditorEnter</action>.")
         trigger(it)
-        trigger("EditorChooseLookupItem") { textBeforeCaret(editor, "meow") }
+        trigger("EditorChooseLookupItem") { textBeforeCaret("meow") }
         test {
           actions(it)
           ideFrame {
@@ -91,15 +91,6 @@ end
 
     return catSymbol is ClassModuleSymbol &&
       catSymbol.getSuperClassSymbol(null)?.name == "Animal"
-  }
-
-  private fun textBeforeCaret(editor: Editor, text: String) : Boolean {
-    val offset = editor.caretModel.offset
-    if (offset < text.length) {
-      return false
-    }
-    val subSequence = editor.document.charsSequence.subSequence(offset - text.length, offset)
-    return subSequence.toString() == text
   }
 
   override val existedFile = RubyLangSupport.sandboxFile

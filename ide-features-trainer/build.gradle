@@ -45,6 +45,8 @@ intellij {
             'Pythonid:193.5233.57',
             'org.jetbrains.plugins.ruby:193.5233.57',
             'com.intellij.testGuiFramework:0.9.44.1@nightly',
+            "JavaScriptLanguage",
+            "HtmlTools",
             'java',
             'org.jetbrains.plugins.go:193.5233.48.65'
     ]

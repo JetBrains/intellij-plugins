@@ -45,7 +45,7 @@ object ProjectUtils {
         it.println(featureTrainerVersion)
       }
     }
-    val toSelect = findFileByIoFile(dest, false) ?: throw Exception("Copied Learn project folder is null")
+    val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
     return doImportOrOpenProject(toSelect)
   }
 
