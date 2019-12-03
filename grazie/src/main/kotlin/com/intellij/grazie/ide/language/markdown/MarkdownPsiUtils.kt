@@ -7,11 +7,10 @@ import com.intellij.grazie.utils.parents
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes
 
 @Suppress("MemberVisibilityCanBePrivate")
 object MarkdownPsiUtils {
-  private val headerTypes = setOf(MarkdownElementTypes.ATX_1, MarkdownElementTypes.ATX_2, MarkdownElementTypes.ATX_3,
-                                  MarkdownElementTypes.ATX_4, MarkdownElementTypes.ATX_5, MarkdownElementTypes.ATX_6)
   private val linkTypes = setOf(
     MarkdownElementTypes.LINK_DEFINITION, MarkdownElementTypes.LINK_LABEL, MarkdownElementTypes.LINK_DESTINATION,
     MarkdownElementTypes.LINK_TITLE, MarkdownElementTypes.LINK_TEXT, MarkdownElementTypes.LINK_COMMENT,
@@ -21,10 +20,12 @@ object MarkdownPsiUtils {
   private val inlineTypes = linkTypes + codeTypes
 
   fun isParagraph(element: PsiElement) = element.node?.hasType(MarkdownElementTypes.PARAGRAPH) ?: false
-  fun isHeader(element: PsiElement) = element.node?.hasType(headerTypes) ?: false
+  fun isHeaderContent(element: PsiElement) = element.node?.hasType(MarkdownTokenTypes.ATX_CONTENT, MarkdownTokenTypes.SETEXT_CONTENT)
+    ?: false
+
   fun isInline(element: PsiElement) = element.node?.hasType(inlineTypes) ?: false
   fun isOuterListItem(element: PsiElement) = element.node?.hasType(MarkdownElementTypes.LIST_ITEM) ?: false
-                                             && element.node?.noParentOfTypes(TokenSet.create(MarkdownElementTypes.LIST_ITEM)) ?: false
+    && element.node?.noParentOfTypes(TokenSet.create(MarkdownElementTypes.LIST_ITEM)) ?: false
 
   fun isInOuterListItem(element: PsiElement) = element.parents().any { isOuterListItem(it) }
 }

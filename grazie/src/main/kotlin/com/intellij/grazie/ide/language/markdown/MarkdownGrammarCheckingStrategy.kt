@@ -6,13 +6,12 @@ import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy
 import com.intellij.psi.PsiElement
 
 class MarkdownGrammarCheckingStrategy : GrammarCheckingStrategy {
-  override fun isMyContextRoot(element: PsiElement) = MarkdownPsiUtils.isHeader(element) || MarkdownPsiUtils.isParagraph(element)
+  override fun isMyContextRoot(element: PsiElement) = MarkdownPsiUtils.isHeaderContent(element) || MarkdownPsiUtils.isParagraph(element)
 
-  override fun getElementBehavior(root: PsiElement, child: PsiElement) =
-    if (MarkdownPsiUtils.isInline(child))
-      GrammarCheckingStrategy.ElementBehavior.ABSORB
-    else
-      GrammarCheckingStrategy.ElementBehavior.TEXT
+  override fun getElementBehavior(root: PsiElement, child: PsiElement) = when {
+    MarkdownPsiUtils.isInline(child) -> GrammarCheckingStrategy.ElementBehavior.ABSORB
+    else -> GrammarCheckingStrategy.ElementBehavior.TEXT
+  }
 
   override fun getIgnoredTypoCategories(root: PsiElement, child: PsiElement) = setOf(Typo.Category.CASING).takeIf { MarkdownPsiUtils.isInOuterListItem(child) }
 }
