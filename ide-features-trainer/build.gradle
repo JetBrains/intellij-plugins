@@ -39,10 +39,10 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-193.5233-EAP-CANDIDATE-SNAPSHOT'
+    version 'IU-193.5233.102'
 
     plugins = [
-            'Pythonid:193.5233.57',
+            'Pythonid:193.5233.102',
             'org.jetbrains.plugins.ruby:193.5233.57',
             'com.intellij.testGuiFramework:0.9.44.1@nightly',
             "JavaScriptLanguage",
