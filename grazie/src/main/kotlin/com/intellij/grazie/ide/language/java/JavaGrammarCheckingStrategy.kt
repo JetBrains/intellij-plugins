@@ -3,7 +3,9 @@ package com.intellij.grazie.ide.language.java
 
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.grammar.strategy.BaseGrammarCheckingStrategy
+import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
+import com.intellij.psi.*
 import com.intellij.psi.JavaDocTokenType.*
 import com.intellij.psi.JavaTokenType
 import com.intellij.psi.PsiElement
@@ -19,14 +21,18 @@ class JavaGrammarCheckingStrategy : BaseGrammarCheckingStrategy {
   private fun isCommentData(token: PsiElement) = token is LeafPsiElement && token.elementType == DOC_COMMENT_DATA
 
   override fun isMyContextRoot(element: PsiElement) = element is PsiDocComment
-                || element is PsiLiteralExpressionImpl && element.literalElementType == JavaTokenType.STRING_LITERAL
+    || element is PsiLiteralExpressionImpl && element.literalElementType in setOf(JavaTokenType.STRING_LITERAL, JavaTokenType.TEXT_BLOCK_LITERAL)
 
   override fun isAbsorb(element: PsiElement) = isTag(element) && (!isCommentData(element) || isCodeTag(element))
 
   override fun isStealth(element: PsiElement) = element is LeafPsiElement
-                && element.elementType in listOf(DOC_COMMENT_START, DOC_COMMENT_LEADING_ASTERISKS, DOC_COMMENT_END)
+    && element.elementType in listOf(DOC_COMMENT_START, DOC_COMMENT_LEADING_ASTERISKS, DOC_COMMENT_END)
 
   override fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement) = RuleGroup.LITERALS.takeIf { root is PsiLiteralExpression }
 
   override fun getIgnoredTypoCategories(root: PsiElement, child: PsiElement) = setOf(Typo.Category.CASING).takeIf { isTag(child) }
+
+  override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
+
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = Text.indentIndexes(text, setOf(' '))
 }
