@@ -28,7 +28,7 @@ func main() {
     </MouseBlock>
     <MoveCaret position="16:9"/>
     <Text>With the <control>Extract method</control> refactoring, you can take a code fragment, move it to a separate method and replace the old code with a call to the new method. If the code exits in the return statement, it is extracted as is. Read more about the <control>Extract method</control> refactoring in the <a href = "https://www.jetbrains.com/help/go/extract-method.html#extract-a-method" target = "_blank">Extract a function or a method</a> article.</Text>
-    <Try action="ExtractMethod" trigger="ExtractMethod">See that the caret is before the <code>if</code> clause that you can extract. Press <action>ExtractMethod</action>.</Try>
-    <Try action="NextTemplateVariable" trigger="NextTemplateVariable">Type <code>handler</code> and press <action>EditorEnter</action> to finish this lesson.</Try>
+    <Try trigger="ExtractMethod">See that the caret is before the <code>if</code> clause that you can extract. Press <action>ExtractMethod</action>.</Try>
+    <Try trigger="NextTemplateVariable">Type <code>handler</code> and press <action>EditorEnter</action> to finish this lesson.</Try>
     <Win/>
 </xml>

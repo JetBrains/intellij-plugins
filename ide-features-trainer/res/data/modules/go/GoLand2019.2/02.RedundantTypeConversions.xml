@@ -15,7 +15,7 @@ func getData() []byte {
     </MouseBlock>
     <MoveCaret position="6:42"/>
     <Text>The <control>Redundant type conversions</control> inspection warns you about redundant type conversions that can be omitted (for example, when you convert a string literal to a string). Read more about the inspection in <a href = "https://www.jetbrains.com/help/go/code-inspection.html#redundant-type-conversions" target = "_blank">Redundant type conversions</a>.</Text>
-    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See the <code>main</code> function in the editor. The caret is on the <code>[]byte</code> type casting from <code>[]byte(getData())</code>. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try trigger="ShowIntentionActions">See the <code>main</code> function in the editor. The caret is on the <code>[]byte</code> type casting from <code>[]byte(getData())</code>. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
     <Try check="training.check.go.GoCheckDeleteConversion">Select <strong>Delete conversion</strong> and press <action>EditorEnter</action>.</Try>
     <Win/>
 </xml>

@@ -25,8 +25,8 @@ class Duplicate: UIViewController {
 }]]></CopyText>
     </MouseBlock>
     <MoveCaret position="15:22"/>
-    <Try action="EditorDuplicate" trigger="EditorDuplicate">Duplicate any line with <action>EditorDuplicate</action>.</Try>
+    <Try trigger="EditorDuplicate">Duplicate any line with <action>EditorDuplicate</action>.</Try>
     <SetSelection start-position="14:1" end-position="18:1" />
-    <Try action="EditorDuplicate" trigger="EditorDuplicate">You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with <action>EditorDuplicate</action>.</Try>
+    <Try trigger="EditorDuplicate">You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with <action>EditorDuplicate</action>.</Try>
     <Win/>
 </xml>

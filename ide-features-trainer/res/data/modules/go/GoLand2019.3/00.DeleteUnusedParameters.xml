@@ -21,7 +21,7 @@ func (greeter gophersGreeter) greet(how string, who string) {
     </MouseBlock>
     <MoveCaret position="15:37"/>
     <Text>GoLand can detect parameters in the signature that are not used in the body of a method or a function. As far as they are not used, you can delete them by using the <strong>Delete all unused parameters</strong> quick-fix.</Text>
-    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See the <code>greet</code> method in the editor. The caret is at the first parameter. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try trigger="ShowIntentionActions">See the <code>greet</code> method in the editor. The caret is at the first parameter. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
     <Try check="training.check.go.GoCheckDeleteUnusedParameters">Select <strong>Delete all unused parameters</strong> and press <action>EditorEnter</action>. Notice that a usage gets updated accordingly.</Try>
     <Win/>
 </xml>

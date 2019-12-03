@@ -11,7 +11,7 @@ func main() {
     </MouseBlock>
     <MoveCaret position="6:26"/>
     <Text>GoLand can create functions and methods from a call. Now, if you are missing a function or a method, you can also create them from their type.</Text>
-    <Try action="ShowIntentionActions" trigger="ShowIntentionActions">See that the caret is located under the <code>handler</code> identifier that is used as a function reference. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
+    <Try trigger="ShowIntentionActions">See that the caret is located under the <code>handler</code> identifier that is used as a function reference. Press <action>ShowIntentionActions</action> to invoke intention actions.</Try>
     <Try check="training.check.go.GoCheckCreateFunction">Select <strong>Create function 'handler'</strong> and press <action>EditorEnter</action>. After that, you can now adjust the parameters to your needs.</Try>
     <Win/>
 </xml>

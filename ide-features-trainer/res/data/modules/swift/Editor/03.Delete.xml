@@ -25,7 +25,7 @@ class Delete: UIViewController {
 }]]></CopyText>
     </MouseBlock>
     <MoveCaret position="12:9"/>
-    <Try action="EditorDeleteLine" trigger="EditorDeleteLine">Delete the current line with <action>EditorDeleteLine</action>.</Try>
-    <Try action="$Undo" trigger="$Undo">To restore the deleted line, press <action>$Undo</action>.</Try>
+    <Try trigger="EditorDeleteLine">Delete the current line with <action>EditorDeleteLine</action>.</Try>
+    <Try trigger="$Undo">To restore the deleted line, press <action>$Undo</action>.</Try>
     <Win/>
 </xml>
