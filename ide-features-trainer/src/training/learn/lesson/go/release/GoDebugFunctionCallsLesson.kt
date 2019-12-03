@@ -4,6 +4,7 @@ import com.goide.sdk.GoSdkService
 import com.goide.sdk.GoSdkVersion
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.xdebugger.XDebugProcess
@@ -16,7 +17,6 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 import java.util.concurrent.CompletableFuture
-import javax.swing.JButton
 import javax.swing.text.JTextComponent
 
 class GoDebugFunctionCallsLesson(module: Module) : KLesson("Debug function calls", module, "go") {
@@ -49,7 +49,7 @@ func Factorial(n int, withBreak bool) int {
       task("ToggleLineBreakpoint") {
         caret(6, 5)
         text("In the debug mode, you can pass different values to a function and see what the function returns. Read more about the Evaluate expression feature in <a href=\"https://www.jetbrains.com/help/go/debugging-code.html#evaluate_expression_procedure\">GoLand documentation</a>.\n" +
-                (if (debuggerSupportsFunctionCalls()) "" else "<control>Note</control>: for this feature, you need to install Go 1.11 or later.\n") + 
+                (if (debuggerSupportsFunctionCalls()) "" else "<control>Note</control>: for this feature, you need to install Go 1.11 or later.\n") +
                 "To start debugging, you need to create a breakpoint. Press ${action(it)} to toggle a breakpoint.")
         trigger("ToggleLineBreakpoint")
       }
@@ -82,16 +82,12 @@ func Factorial(n int, withBreak bool) int {
         stateCheck { checkWordInTextField(it) }
       }
       task("Evaluate") {
-        text("Click <strong>Evaluate</strong>.")
-        stateCheck {
-          checkButtonIsPressed(it)
-        }
+        text("Click <strong>Evaluate</strong> or hit ${action("EditorEnter")}.")
+        evaluateExpression()
       }
       task("Close") {
         text("Close the dialog by clicking the <strong>Close</strong> button.")
-        stateCheck {
-          checkButtonIsPressed(it)
-        }
+        stateCheck { focusOwner is EditorComponentImpl }
       }
       task("Stop") {
         text("Press ${action(it)} to stop debugging and finish the lesson.")
@@ -104,9 +100,6 @@ func Factorial(n int, withBreak bool) int {
 
   private fun TaskContext.checkWordInTextField(expected: String): Boolean =
           (focusOwner as? JTextComponent)?.text?.replace(" ", "")?.toLowerCase() == expected.toLowerCase().replace(" ", "")
-
-  private fun TaskContext.checkButtonIsPressed(expected: String): Boolean =
-          (focusOwner as? JButton)?.text?.toLowerCase() == expected.toLowerCase()
 
   private fun TaskContext.hitBreakpoint() {
     val future: CompletableFuture<Boolean> = CompletableFuture()
@@ -124,6 +117,20 @@ func Factorial(n int, withBreak bool) int {
           }
         })
         Disposer.dispose(disposable)
+      }
+    })
+    steps.add(future)
+  }
+
+  private fun TaskContext.evaluateExpression() {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    XDebuggerManager.getInstance(project).currentSession!!.addSessionListener(object : XDebugSessionListener {
+      override fun settingsChanged() {
+        ApplicationManager.getApplication().invokeLater {
+          if (!future.isDone && !future.isCancelled) {
+            future.complete(true)
+          }
+        }
       }
     })
     steps.add(future)
