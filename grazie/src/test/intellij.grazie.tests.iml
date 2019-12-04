@@ -12,8 +12,8 @@
     <orderEntry type="library" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" />
     <orderEntry type="module-library" scope="TEST">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.7" type="repository">
-        <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.7">
+      <library name="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.8" type="repository">
+        <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-ru:4.7.8">
           <exclude>
             <dependency maven-id="com.carrotsearch:hppc" />
             <dependency maven-id="com.google.guava:guava" />
@@ -39,15 +39,15 @@
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-ru/4.7.7/grazi-language-tool-ru-4.7.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-ru/4.7.8/grazi-language-tool-ru-4.7.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.7" type="repository">
-        <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.7">
+      <library name="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.8" type="repository">
+        <properties maven-id="tanvd.grazi.languagetool:grazi-language-tool-de:4.7.8">
           <exclude>
             <dependency maven-id="com.carrotsearch:hppc" />
             <dependency maven-id="com.google.errorprone:error_prone_annotations" />
@@ -62,7 +62,6 @@
             <dependency maven-id="org.jetbrains:annotations" />
             <dependency maven-id="org.slf4j:slf4j-api" />
             <dependency maven-id="tanvd.grazi.languagetool:grazi-language-tool" />
-            <dependency maven-id="tanvd.grazi.languagetool:hunspell-native-libs" />
             <dependency maven-id="tech.units:indriya" />
             <dependency maven-id="org.carrot2:morfologik-speller" />
             <dependency maven-id="org.carrot2:morfologik-stemming" />
@@ -74,7 +73,8 @@
           </exclude>
         </properties>
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-de/4.7.7/grazi-language-tool-de-4.7.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-de/4.7.8/grazi-language-tool-de-4.7.8.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/hunspell-native-libs/4.7.8/hunspell-native-libs-4.7.8.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/de/danielnaber/german-pos-dict/1.1/german-pos-dict-1.1.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/edu/washington/cs/knowitall/openregex/1.1.1/openregex-1.1.1.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/de/danielnaber/jwordsplitter/4.4/jwordsplitter-4.4.jar!/" />

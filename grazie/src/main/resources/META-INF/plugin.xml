@@ -28,8 +28,6 @@
     <depends optional="true" config-file="xml.xml">com.intellij.modules.xml</depends>
     <depends optional="true" config-file="yaml.xml">org.jetbrains.plugins.yaml</depends>
 
-    <idea-version since-build="193.4386" until-build="193.*"/>
-
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.intellij.grazie.GrazieConfig"/>
 

@@ -24,7 +24,7 @@ Of <warning descr="MISSING_COMMA_AFTER_INTRODUCTORY_PHRASE">course it</warning> 
 
 Once more we have an inline <warning descr="COMMA_BEFORE_AND">fragment and</warning> it is `a` friend.
 
-And we've got error in injected code!
+<warning descr="And">And</warning> we've got error in injected code!
 ```kotlin
 val b = "It is friend."
 ```

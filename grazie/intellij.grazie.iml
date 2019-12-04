@@ -51,6 +51,7 @@
     <orderEntry type="module" module-name="intellij.javascript" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
     <orderEntry type="module" module-name="intellij.markdown" />
+    <orderEntry type="module" module-name="intellij.yaml" />
     <orderEntry type="module" module-name="intellij.platform.ide" />
     <orderEntry type="library" name="swingx" level="project" />
     <orderEntry type="module-library">
@@ -69,26 +70,26 @@
     <orderEntry type="library" scope="RUNTIME" name="Guava" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="jetbrains-annotations" level="project" />
     <orderEntry type="module-library">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.7" type="repository">
-        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.7" />
+      <library name="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.8" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool-en:4.7.8" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.7/grazi-language-tool-en-4.7.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.8/grazi-language-tool-en-4.7.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.7/grazi-language-tool-en-4.7.7-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.8/grazi-language-tool-en-4.7.8-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="tanvd.grazi.languagetool:grazi-language-tool:4.7.7" type="repository">
-        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool:4.7.7" />
+      <library name="tanvd.grazi.languagetool:grazi-language-tool:4.7.8" type="repository">
+        <properties include-transitive-deps="false" maven-id="tanvd.grazi.languagetool:grazi-language-tool:4.7.8" />
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.7/grazi-language-tool-4.7.7.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.8/grazi-language-tool-4.7.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.7/grazi-language-tool-4.7.7-sources.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.8/grazi-language-tool-4.7.8-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

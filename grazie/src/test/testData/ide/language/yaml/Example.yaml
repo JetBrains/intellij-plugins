@@ -12,7 +12,7 @@ items:
     quantity:  4
 
   - part_no:   E1628
-    'it are error here':   It <warning descr="IT_VBZ">are</warning> error here
+    'it <warning descr="IT_VBZ">are</warning> error here':   It <warning descr="IT_VBZ">are</warning> error here
     size:      8
     price:     133.7
     quantity:

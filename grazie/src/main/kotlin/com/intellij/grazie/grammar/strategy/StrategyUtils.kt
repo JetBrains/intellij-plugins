@@ -1,5 +1,6 @@
 package com.intellij.grazie.grammar.strategy
 
+import com.intellij.grazie.grammar.strategy.impl.ReplaceNewLines
 import com.intellij.grazie.utils.LinkedSet
 import com.intellij.grazie.utils.Text
 
@@ -41,6 +42,8 @@ object StrategyUtils {
 
   /**
    * Finds indent indexes for each line (indent of specific [chars])
+   * NOTE: If you use this method in [GrammarCheckingStrategy.getStealthyRanges],
+   * make sure that [GrammarCheckingStrategy.getReplaceCharRules] doesn't contain a [ReplaceNewLines] rule!
    *
    * @param str source text
    * @param chars characters, which considered as indentation
