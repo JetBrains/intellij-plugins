@@ -54,7 +54,7 @@ public abstract class HbActionHandlerTest extends BasePlatformTestCase {
   protected void doEnterTest(@NotNull String before, @NotNull String expected) {
     final EditorActionHandler enterActionHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
     doExecuteActionTest(before, expected,
-                        () -> enterActionHandler.execute(myFixture.getEditor(), ((EditorEx)myFixture.getEditor()).getDataContext()));
+                        () -> enterActionHandler.execute(myFixture.getEditor(), null, ((EditorEx)myFixture.getEditor()).getDataContext()));
   }
 
   /**

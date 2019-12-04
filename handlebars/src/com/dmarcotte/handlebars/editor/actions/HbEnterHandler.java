@@ -40,7 +40,7 @@ public class HbEnterHandler extends EnterHandlerDelegateAdapter {
      */
     if (file instanceof HbPsiFile
         && isBetweenHbTags(editor, file, caretOffset.get())) {
-      originalHandler.execute(editor, dataContext);
+      originalHandler.execute(editor, editor.getCaretModel().getCurrentCaret(), dataContext);
       return Result.Default;
     }
     return Result.Continue;
