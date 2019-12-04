@@ -4,11 +4,6 @@ package com.intellij.grazie.ide.language
 import com.intellij.grazie.GrazieTestBase
 
 class JSONSupportTest : GrazieTestBase() {
-  //override fun setUp() {
-  //  super.setUp()
-  //  VfsRootAccess.allowRootAccess(testRootDisposable, JSONSupportTest::class.java.getResource("/jsonSchemas").path)
-  //}
-
   fun `test grammar check in file`() {
     runHighlightTestForFile("ide/language/json/Example.json")
   }
