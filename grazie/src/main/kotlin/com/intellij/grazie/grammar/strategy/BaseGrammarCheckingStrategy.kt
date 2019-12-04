@@ -5,9 +5,18 @@ import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy.ElementBehav
 import com.intellij.psi.PsiElement
 
 interface BaseGrammarCheckingStrategy : GrammarCheckingStrategy {
+
+  /**
+   * See [GrammarCheckingStrategy.ElementBehavior.ABSORB]
+   */
   fun isAbsorb(element: PsiElement) = false
+
+  /**
+   * See [GrammarCheckingStrategy.ElementBehavior.STEALTH]
+   */
   fun isStealth(element: PsiElement) = false
 
+  @JvmDefault
   override fun getElementBehavior(root: PsiElement, child: PsiElement) = when {
     isAbsorb(child) -> ABSORB
     isStealth(child) -> STEALTH
