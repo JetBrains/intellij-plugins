@@ -24,6 +24,7 @@ import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -150,7 +151,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     PsiDirectory material = myFixture.getPsiManager().findDirectory(materialDir);
     material.acceptChildren(new PsiElementVisitor() {
       @Override
-      public void visitFile(PsiFile file) {
+      public void visitFile(@NotNull PsiFile file) {
         if (file.getName().endsWith(".metadata.json")) {
           String relativeFile = FileUtil.getRelativePath(pathPrefix, file.getVirtualFile().getPath(), '/');
           assert file instanceof MetadataFileImpl : relativeFile;
@@ -160,7 +161,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
       }
 
       @Override
-      public void visitDirectory(PsiDirectory dir) {
+      public void visitDirectory(@NotNull PsiDirectory dir) {
         String relativeFile = FileUtil.getRelativePath(
           pathPrefix, dir.getVirtualFile().getPath(), '/');
         if (!"typings".equals(relativeFile)) {

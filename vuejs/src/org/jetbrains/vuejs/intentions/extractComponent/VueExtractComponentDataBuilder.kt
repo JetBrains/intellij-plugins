@@ -272,7 +272,7 @@ export default {
     if (components != null && components.isNotEmpty()) {
       val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
-        override fun visitElement(element: PsiElement?) {
+        override fun visitElement(element: PsiElement) {
           if (element is XmlTag) {
             names.remove(toAsset(element.name).capitalize())
           }

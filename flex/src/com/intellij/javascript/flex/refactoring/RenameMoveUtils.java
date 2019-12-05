@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.*;
@@ -116,7 +117,7 @@ public class RenameMoveUtils {
     final PsiFile realFile = getRealFile(file);
     file.acceptChildren(new PsiRecursiveElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (hasReferencesToOldPackage.get().booleanValue()) return;
         for(PsiReference el:element.getReferences()) {
           if (el instanceof PsiPolyVariantReference) {
@@ -171,7 +172,7 @@ public class RenameMoveUtils {
 
     xmlFile.acceptChildren(new XmlRecursiveElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (hasReferencesToOldPackage.get().booleanValue()) return;
 
         if (element instanceof PsiLanguageInjectionHost) {

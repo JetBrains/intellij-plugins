@@ -60,7 +60,7 @@ public class KarmaBasePathFinder {
       }
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
         if (basePathRef.isNull()) {
           element.acceptChildren(this);

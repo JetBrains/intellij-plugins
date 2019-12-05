@@ -259,7 +259,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
 
     @Override
-    public void visitElement(PsiElement element) {
+    public void visitElement(@NotNull PsiElement element) {
       super.visitElement(element);
       if (element instanceof XmlText || element instanceof XmlAttributeValue) {
         final XmlTag parentTag = PsiTreeUtil.getParentOfType(element, XmlTag.class); // actually we need just any tag here

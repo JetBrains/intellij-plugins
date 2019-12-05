@@ -72,7 +72,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
       }
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element.getLanguage() instanceof XMLLanguage) {
           super.visitElement(element);
         }

@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveVisitor;
+import org.jetbrains.annotations.NotNull;
 
 public class CfmlRecursiveElementVisitor extends PsiElementVisitor implements PsiRecursiveVisitor {
 
@@ -19,7 +20,7 @@ public class CfmlRecursiveElementVisitor extends PsiElementVisitor implements Ps
   }
 
   @Override
-  public void visitElement(final PsiElement element) {
+  public void visitElement(@NotNull final PsiElement element) {
     element.acceptChildren(this);
   }
 
@@ -36,7 +37,7 @@ public class CfmlRecursiveElementVisitor extends PsiElementVisitor implements Ps
   }
 
   @Override
-  public void visitFile(PsiFile file) {
+  public void visitFile(@NotNull PsiFile file) {
     if (file instanceof CfmlFile) {
       file.acceptChildren(this);
     }

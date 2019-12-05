@@ -30,8 +30,8 @@ class GrazieInspection : LocalInspectionTool() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     return object : PsiElementVisitor() {
-      override fun visitElement(element: PsiElement?) {
-        if (element == null || element.isInjectedFragment()) return
+      override fun visitElement(element: PsiElement) {
+        if (element.isInjectedFragment()) return
 
         val typos = HashSet<Typo>()
         for (strategy in LanguageGrammarChecking.allForLanguageOrAny(element.language).filter { it.isMyContextRoot(element) }) {

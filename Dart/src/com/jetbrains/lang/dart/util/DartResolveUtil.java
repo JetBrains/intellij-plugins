@@ -58,7 +58,7 @@ public class DartResolveUtil {
     final List<PsiElement> result = new ArrayList<>();
     xmlFile.acceptChildren(new XmlRecursiveElementWalkingVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof DartEmbeddedContent) {
           result.add(element);
           return;
@@ -906,7 +906,7 @@ public class DartResolveUtil {
     final StringBuilder result = new StringBuilder();
     element.accept(new PsiRecursiveElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof LeafPsiElement && DartTokenTypesSets.OPERATORS.contains(((LeafPsiElement)element).getElementType())) {
           result.append(element.getText());
         }

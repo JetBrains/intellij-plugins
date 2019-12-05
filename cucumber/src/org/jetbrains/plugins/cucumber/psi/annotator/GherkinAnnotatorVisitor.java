@@ -44,7 +44,7 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
   }
 
   @Override
-  public void visitElement(final PsiElement element) {
+  public void visitElement(@NotNull final PsiElement element) {
     ProgressManager.checkCanceled();
     super.visitElement(element);
 

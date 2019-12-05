@@ -391,7 +391,7 @@ public class CfmlPsiUtil {
         }
 
         @Override
-        public void visitElement(PsiElement element) {
+        public void visitElement(@NotNull PsiElement element) {
           if (element != lastParent && element instanceof CfmlAssignmentExpression) {
             visitCfmlAssignmentExpression((CfmlAssignmentExpression)element);
           }

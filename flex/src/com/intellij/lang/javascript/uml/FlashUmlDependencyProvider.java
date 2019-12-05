@@ -139,7 +139,7 @@ public class FlashUmlDependencyProvider {
       }
 
       @Override
-      public void visitElement(final PsiElement element) {
+      public void visitElement(@NotNull final PsiElement element) {
         super.visitElement(element);
         element.acceptChildren(this);
       }
@@ -206,7 +206,7 @@ public class FlashUmlDependencyProvider {
                   private boolean myInClassReference; // to prevent extra references resolve
 
                   @Override
-                  public void visitElement(final PsiElement element) {
+                  public void visitElement(@NotNull final PsiElement element) {
                     super.visitElement(element);
                     element.acceptChildren(this);
                   }
@@ -242,7 +242,7 @@ public class FlashUmlDependencyProvider {
         }
 
         @Override
-        public void visitElement(final PsiElement element) {
+        public void visitElement(@NotNull final PsiElement element) {
           super.visitElement(element);
           element.acceptChildren(this);
         }

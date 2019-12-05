@@ -486,12 +486,12 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     private final StringBuilder myResult = new StringBuilder();
 
     @Override
-    public void visitWhiteSpace(PsiWhiteSpace space) {
+    public void visitWhiteSpace(@NotNull PsiWhiteSpace space) {
       myResult.append(space.getText().replace('\n', ' '));
     }
 
     @Override
-    public void visitElement(PsiElement element) {
+    public void visitElement(@NotNull PsiElement element) {
       if (element.getChildren().length == 0) {
         myResult.append(element.getText());
       }

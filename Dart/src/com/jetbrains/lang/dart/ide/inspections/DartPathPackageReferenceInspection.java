@@ -77,7 +77,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(final PsiElement element) {
+      public void visitElement(@NotNull final PsiElement element) {
         ProgressIndicatorProvider.checkCanceled();
 
         if (!(element instanceof YAMLKeyValue) ||

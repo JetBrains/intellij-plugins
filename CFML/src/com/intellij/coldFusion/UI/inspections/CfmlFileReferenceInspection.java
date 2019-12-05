@@ -25,7 +25,7 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
     return new PsiElementVisitor() {
       @Override
-      public void visitElement(final PsiElement element) {
+      public void visitElement(@NotNull final PsiElement element) {
         CfmlTag tagParent = PsiTreeUtil.getParentOfType((element), CfmlTag.class);
         if ((element.getNode().getElementType() == CfmlTokenTypes.STRING_TEXT)) {
           if ((tagParent == null ||

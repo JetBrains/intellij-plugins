@@ -83,7 +83,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
     file.accept(new PsiRecursiveElementVisitor() {
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (element instanceof XmlTag) {
           XmlTag tag = (XmlTag)element;
           if (tag.getAttributeValue("id") != null && MxmlJSClass.canBeReferencedById(tag)) {
