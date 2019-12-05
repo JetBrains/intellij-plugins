@@ -72,7 +72,8 @@ class VueComponentsCalculation {
 
       val context = createLocalResolveContext(element)
       var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
-      resolved = (resolved as? JSVariable)?.initializerOrStub ?: resolved
+      // JSIndexedPropertyAccessExpression is not stubbed, so we need to get full AST here
+      resolved = (resolved as? JSVariable)?.initializer ?: resolved
       var indexedAccessUsed = indexData.groupRegistration
       if (resolved is JSIndexedPropertyAccessExpression) {
         indexedAccessUsed = true
