@@ -17,8 +17,8 @@
   <depends>com.intellij.properties</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
   <depends optional="true" config-file="flex-maven-support.xml">org.jetbrains.idea.maven</depends>
-  <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
-  <depends optional="true" config-file="ant-support.xml">AntSupport</depends>
+  <depends optional="true" config-file="flex-uml-support.xml">com.intellij.diagram</depends>
+  <depends optional="true" config-file="flex-ant-support.xml">AntSupport</depends>
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
