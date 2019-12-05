@@ -22,7 +22,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
@@ -99,9 +98,7 @@ class VueInjector : MultiHostInjector {
         && !context.value.isBlank()
         && parent is XmlAttribute
         && parent.parent != null
-        && ((parent.descriptor as? VueAttributeDescriptor)?.getInfo()
-            ?: VueAttributeNameParser.parse(parent.name, parent.parent))
-          .injectJS) {
+        && VueAttributeNameParser.parse(parent.name, parent.parent).injectJS) {
       if (parent.language !== VueLanguage.INSTANCE) {
         val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
         if (embedded != null) {
