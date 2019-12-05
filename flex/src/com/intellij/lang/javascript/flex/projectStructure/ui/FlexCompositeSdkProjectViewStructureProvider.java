@@ -94,6 +94,12 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return mySdk.getName();
     }
 
+    @Nullable
+    @Override
+    public String getJdkTypeName() {
+      return mySdk.getSdkType().getName();
+    }
+
     @NotNull
     @Override
     public VirtualFile[] getRootFiles(@NotNull final OrderRootType type) {
