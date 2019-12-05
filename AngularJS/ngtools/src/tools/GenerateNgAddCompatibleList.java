@@ -17,10 +17,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.intellij.idea.IdeaTestApplication;
-import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryServiceImpl;
+import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.impl.ApplicationImpl;
@@ -28,6 +27,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
+import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -204,7 +204,7 @@ public class GenerateNgAddCompatibleList {
       System.setProperty(PathManager.PROPERTY_PLUGINS_PATH, tmpPath.toString() + "/plugins");
       System.setProperty(PathManager.PROPERTY_SYSTEM_PATH, tmpPath.toString() + "/system");
       System.setProperty(PathManager.PROPERTY_CONFIG_PATH, tmpPath.toString() + "/config");
-      IdeaTestApplication.getInstance();
+      TestApplicationManager.getInstance();
     }
     catch (Throwable t) {
       //ignore
