@@ -71,7 +71,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
       if (elem is ReopenProjectAction) {
         val path = elem.projectPath
         val valid: Boolean = groupsPanel.validatePath(path)
-        if (!valid || IFTRecentProjectsManager.manager.projectsWithLongPaths.contains(elem)) {
+        if (!valid || IFTRecentProjectListActionProvider.instance.projectsWithLongPaths.contains(elem)) {
           val suffix = if (valid) "" else " (unavailable)"
           return PathUtil.toSystemDependentName(path) + suffix
         }
