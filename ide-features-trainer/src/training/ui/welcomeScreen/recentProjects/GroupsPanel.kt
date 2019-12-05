@@ -26,7 +26,6 @@ import com.intellij.util.ui.StartupUiUtil
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.accessibility.AccessibleContextUtil
 import training.actions.ModuleActionGroup
-import training.ui.views.ModulesPanel
 import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 import java.awt.*
 import java.util.*
@@ -232,7 +231,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
                     get() {
                       val realPath = PathUtil.toSystemDependentName(value.projectPath)
                       if (realPath != path.text) {
-                        IFTRecentProjectsManager.manager.projectsWithLongPaths.add(value)
+                        IFTRecentProjectListActionProvider.instance.projectsWithLongPaths.add(value)
                       }
                       return getTitle2Text((value as ReopenProjectAction?)!!, path, JBUIScale.scale(i))
                     }
