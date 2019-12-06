@@ -3,9 +3,12 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyIndexedAccessType
+import com.intellij.lang.javascript.psi.types.evaluable.JSReferenceType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -66,30 +69,30 @@ class VueComponentsCalculation {
 
     private fun findObjectLiteralOfGlobalRegistration(element: JSImplicitElement):
       Pair<JSObjectLiteralExpression, Boolean>? {
-      if (element.parent !is JSCallExpression) return null
+      if (element.context !is JSCallExpression) return null
       val indexData = getVueIndexData(element)
       val reference = indexData.descriptorRef ?: return null
 
       val context = createLocalResolveContext(element)
       var resolved: PsiElement? = JSStubBasedPsiTreeUtil.resolveLocally(reference, context) ?: return null
-      // JSIndexedPropertyAccessExpression is not stubbed, so we need to get full AST here
-      resolved = (resolved as? JSVariable)?.initializer ?: resolved
+
       var indexedAccessUsed = indexData.groupRegistration
-      if (resolved is JSIndexedPropertyAccessExpression) {
-        indexedAccessUsed = true
-        resolved = (resolved as? JSIndexedPropertyAccessExpression)?.qualifier
-      }
-      if (resolved == null) return null
 
-      if (resolved is JSReferenceExpression) {
-        val variants = resolved.multiResolve(false)
-        val literal = getObjectLiteralFromResolve(variants.mapNotNull { if (it.isValidResult) it.element else null }.toList())
-        if (literal != null) return Pair(literal, indexedAccessUsed)
+      resolved = (resolved as? JSVariable)?.jsType?.castSafelyTo<JSApplyIndexedAccessType>()
+                   ?.qualifierType?.castSafelyTo<JSReferenceType>()
+                   ?.let {
+                     indexedAccessUsed = true
+                     JSStubBasedPsiTreeUtil.resolveLocally(it.referencedName, resolved!!) ?: return null
+                   }
+                 ?: resolved
+      if (resolved !is JSVariable) {
+        resolved = VueComponents.meaningfulExpression(resolved)
       }
-      resolved = VueComponents.literalFor(resolved)
-
-      val obj = resolved ?: return null
-      return Pair(obj, indexedAccessUsed)
+      if (resolved is JSVariable) {
+        resolved = resolved.initializerOrStub
+      }
+      return VueComponents.literalFor(resolved)
+        ?.let { Pair(it, indexedAccessUsed) }
     }
 
     private class SingleGlobalRegistration(val realName: String, val alias: String, val element: PsiElement)
