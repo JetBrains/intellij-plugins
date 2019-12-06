@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.documentation.DocumentationProvider
-import com.intellij.lang.documentation.DocumentationProviderEx
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
@@ -24,7 +23,7 @@ import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 import org.jetbrains.vuejs.model.VueDirective
 
-class VueDocumentationProvider : DocumentationProviderEx(), DocumentationProvider {
+class VueDocumentationProvider : DocumentationProvider {
 
   override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
     return null
