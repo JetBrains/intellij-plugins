@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
-  kotlin("jvm") version "1.3.50"
+  kotlin("jvm") version "1.3.61"
   id("org.jetbrains.intellij") version "0.4.10"
 }
 
@@ -13,7 +13,7 @@ repositories {
 }
 
 intellij {
-  version = "2019.1"
+  version = "2019.2"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
 }
