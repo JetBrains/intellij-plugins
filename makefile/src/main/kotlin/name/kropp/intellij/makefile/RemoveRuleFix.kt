@@ -1,11 +1,11 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.codeInsight.intention.impl.BaseIntentionAction
-import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
-import name.kropp.intellij.makefile.psi.MakefileRule
+import com.intellij.codeInsight.intention.impl.*
+import com.intellij.openapi.command.*
+import com.intellij.openapi.editor.*
+import com.intellij.openapi.project.*
+import com.intellij.psi.*
+import name.kropp.intellij.makefile.psi.*
 
 class RemoveRuleFix(private val rule: MakefileRule) : BaseIntentionAction() {
   override fun getText() = "Remove Empty Rule"
@@ -14,10 +14,8 @@ class RemoveRuleFix(private val rule: MakefileRule) : BaseIntentionAction() {
   override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 
   override fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-    object : WriteCommandAction.Simple<Any>(project, psiFile) {
-      override fun run() {
-        rule.delete()
-      }
-    }.execute()
+    WriteCommandAction.runWriteCommandAction(project) {
+      rule.delete()
+    }
   }
 }
