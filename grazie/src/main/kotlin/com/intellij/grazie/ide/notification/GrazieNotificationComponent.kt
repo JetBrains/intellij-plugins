@@ -3,11 +3,10 @@ package com.intellij.grazie.ide.notification
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.GraziePlugin
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-open class GrazieNotificationComponent : StartupActivity, DumbAware {
+open class GrazieNotificationComponent : StartupActivity.Background {
   override fun runActivity(project: Project) {
     GrazieConfig.update {
       when {

@@ -3,11 +3,10 @@ package com.intellij.grazie.ide.init
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-open class GrazieProjectInit : StartupActivity, DumbAware {
+open class GrazieProjectInit : StartupActivity.Background {
   override fun runActivity(project: Project) {
     GrazieStateLifecycle.publisher.init(GrazieConfig.get(), project)
   }
