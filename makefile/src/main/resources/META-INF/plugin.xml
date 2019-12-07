@@ -1,23 +1,23 @@
 <idea-plugin>
   <id>name.kropp.intellij.makefile</id>
   <name>Makefile support</name>
-  <version>1.6</version>
+  <version>SNAPSHOT</version>
   <vendor email="victor.kropp@gmail.com" url="https://victor.kropp.name/projects/makefile/">Victor Kropp</vendor>
 
   <description><![CDATA[
-Support for UNIX Makefiles
+Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-Bugfixes
+Regular maintenance, bugfix, and performance update.
 ]]></change-notes>
 
-  <idea-version since-build="183.0"/>
+  <idea-version since-build="192.0"/>
 
   <depends>com.intellij.modules.lang</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="name.kropp.intellij.makefile.MakefileFileTypeFactory"/>
+    <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNames="Makefile" fileNamesCaseInsensitive="GNUmakefile" patterns="Makefile.*"/>
     <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSyntaxHighlighterFactory"/>
     <lang.foldingBuilder language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFoldingBuilder"/>

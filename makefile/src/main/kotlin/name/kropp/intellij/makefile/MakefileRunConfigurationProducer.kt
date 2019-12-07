@@ -1,14 +1,14 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.RunConfigurationProducer
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.PsiElement
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import java.io.File
+import com.intellij.execution.actions.*
+import com.intellij.execution.configurations.*
+import com.intellij.openapi.util.*
+import com.intellij.psi.*
+import name.kropp.intellij.makefile.psi.*
+import java.io.*
 
-class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunConfiguration>(MakefileRunConfigurationType()) {
-  public override fun setupConfigurationFromContext(configuration : MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>?): Boolean {
+class MakefileRunConfigurationProducer : LazyRunConfigurationProducer<MakefileRunConfiguration>() {
+  override fun setupConfigurationFromContext(configuration: MakefileRunConfiguration, context: ConfigurationContext, sourceElement: Ref<PsiElement>): Boolean {
     if (context.psiLocation?.containingFile !is MakefileFile) {
       return false
     }
@@ -40,4 +40,6 @@ class MakefileRunConfigurationProducer : RunConfigurationProducer<MakefileRunCon
     }
     return null
   }
+
+  override fun getConfigurationFactory(): ConfigurationFactory = MakefileRunConfigurationFactory(MakefileRunConfigurationType())
 }
