@@ -1,18 +1,16 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.execution.Executor
-import com.intellij.execution.configuration.EnvironmentVariablesData
+import com.intellij.execution.*
+import com.intellij.execution.configuration.*
 import com.intellij.execution.configurations.*
-import com.intellij.execution.process.ColoredProcessHandler
-import com.intellij.execution.process.ProcessHandler
-import com.intellij.execution.process.ProcessTerminatedListener
-import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.openapi.application.PathMacros
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.project.Project
-import com.intellij.util.getOrCreate
-import org.jdom.Element
-import java.io.File
+import com.intellij.execution.process.*
+import com.intellij.execution.runners.*
+import com.intellij.openapi.application.*
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.*
+import com.intellij.util.*
+import org.jdom.*
+import java.io.*
 
 class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase<RunProfileState>(project, factory, name) {
   var filename = ""
@@ -67,7 +65,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
           params.addParametersString(target)
         }
         val workDirectory = if (workingDirectory.isNotEmpty()) resolveMacros(workingDirectory) else File(filename).parent
-        val cmd = GeneralCommandLine()
+        val cmd = PtyCommandLine()
             .withExePath(makePath)
             .withWorkDirectory(workDirectory)
             .withEnvironment(environmentVariables.envs)

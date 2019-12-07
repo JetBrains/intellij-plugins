@@ -1,16 +1,12 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider
+import com.intellij.psi.codeStyle.*
 
 class MakefileCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
-  override fun getDefaultCommonSettings() = CommonCodeStyleSettings(MakefileLanguage).apply {
-    initIndentOptions().apply {
-      INDENT_SIZE = 4
-      USE_TAB_CHARACTER = true
-    }
+  override fun customizeDefaults(commonSettings: CommonCodeStyleSettings, indentOptions: CommonCodeStyleSettings.IndentOptions) {
+    indentOptions.TAB_SIZE = 4
+    indentOptions.USE_TAB_CHARACTER = true
   }
-
 
   override fun getCodeSample(settingsType: SettingsType): String {
     return """# Simple Makefile

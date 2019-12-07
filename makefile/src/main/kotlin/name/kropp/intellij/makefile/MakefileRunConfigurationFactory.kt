@@ -7,7 +7,6 @@ import java.io.*
 
 class MakefileRunConfigurationFactory(runConfigurationType: MakefileRunConfigurationType) : ConfigurationFactory(runConfigurationType) {
   override fun createTemplateConfiguration(project: Project) = MakefileRunConfiguration(project, this, "name")
-  override fun isConfigurationSingletonByDefault() = true
 
   fun createConfigurationFromTarget(target: MakefileTarget): MakefileRunConfiguration? {
     val configuration = MakefileRunConfiguration(target.project, this, target.name ?: "")
