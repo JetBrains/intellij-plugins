@@ -9,6 +9,9 @@ import java.io.File
 internal object GraziePlugin {
   const val id = "tanvd.grazi"
 
+  const val languageToolVersion = "4.7.8"
+  const val languageToolURL = "https://resources.jetbrains.com/grazie/model/language-tool"
+
   private val descriptor: IdeaPluginDescriptor
     get() = PluginManagerCore.getPlugin(PluginId.getId(id))!!
 

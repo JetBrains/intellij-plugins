@@ -2,7 +2,7 @@
 package com.intellij.grazie.remote
 
 import com.intellij.grazie.GrazieDynamic
-import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.GraziePlugin
 import java.io.File
 
 enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String, val shortCode: String) {
@@ -23,7 +23,7 @@ enum class RemoteLangDescriptor(val langsClasses: List<String>, val size: String
   SPANISH(listOf("Spanish"), "2 MB", "es"),
   UKRAINIAN(listOf("Ukrainian"), "6 MB", "uk");
 
-  val fileName: String by lazy { "$shortCode-${msg("grazie.languagetool.version")}.jar" }
+  val fileName: String by lazy { "$shortCode-${GraziePlugin.languageToolVersion}.jar" }
   val file: File by lazy { GrazieDynamic.dynamicFolder.resolve(fileName) }
-  val url: String by lazy { "${msg("grazie.languagetool.model.url")}/${msg("grazie.languagetool.version")}/$fileName" }
+  val url: String by lazy { "${GraziePlugin.languageToolURL}/${GraziePlugin.languageToolVersion}/$fileName" }
 }
