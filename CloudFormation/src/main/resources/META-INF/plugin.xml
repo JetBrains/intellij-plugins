@@ -29,15 +29,6 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.yaml</depends>
 
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.aws.cloudformation.CloudFormationUpdateComponent</implementation-class>
-    </component>
-  </application-components>
-
-  <project-components>
-  </project-components>
-
   <actions>
     <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
@@ -91,5 +82,7 @@
     <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
 
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
+
+    <fileTypeStatisticProvider implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeStatisticProvider"/>
   </extensions>
 </idea-plugin>
