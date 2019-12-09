@@ -110,8 +110,18 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "ng-content-selector.html");
   }
 
-  public void testI18N() {
-    doTest(AngularInvalidI18nAttributeInspection.class,
+  public void testI18n1() {
+    doTest(1, "i18n<caret>-\n", "Rename attribute to 'i18n-bar'", AngularInvalidI18nAttributeInspection.class,
+           "i18n.html");
+  }
+
+  public void testI18n2() {
+    doTest(2, "i18n-<caret>boo", "Create 'boo' attribute", AngularInvalidI18nAttributeInspection.class,
+           "i18n.html");
+  }
+
+  public void testI18n3() {
+    doTest(3, "i18n-<caret>b:boo", "Rename attribute to 'i18n-c:boo'", AngularInvalidI18nAttributeInspection.class,
            "i18n.html");
   }
 
