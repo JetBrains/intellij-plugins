@@ -8,30 +8,30 @@ import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.vcs.commit.message.BaseCommitMessageInspection
 import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 
 class GrazieCommitInspection : BaseCommitMessageInspection() {
-  companion object : GrazieStateLifecycle {
+  companion object : GrazieStateLifecycle, StartupActivity.Background {
     private val grazie: LocalInspectionTool by lazy { GrazieInspection() }
 
-    override fun init(state: GrazieConfig.State, project: Project) {
+    override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
+      if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
+      ProjectManager.getInstance().openProjects.forEach(this::runActivity)
+    }
+
+    override fun runActivity(project: Project) {
       with(CommitMessageInspectionProfile.getInstance(project)) {
-        if (state.enabledCommitIntegration) {
+        if (GrazieConfig.get().enabledCommitIntegration) {
           addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), emptyMap())
           setToolEnabled("GrazieCommit", true, project)
-        }
-        else {
+        } else {
           if (getToolsOrNull("GrazieCommit", project) != null) setToolEnabled("GrazieCommit", false, project)
           //TODO-tanvd how to remove tool?
         }
       }
-    }
-
-    override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State, project: Project) {
-      if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
-
-      init(newState, project)
     }
   }
 

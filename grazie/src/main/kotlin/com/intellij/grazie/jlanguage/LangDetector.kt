@@ -4,7 +4,6 @@ package com.intellij.grazie.jlanguage
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.openapi.project.Project
 import tanvd.grazi.langdetect.detector.LanguageDetector
 import tanvd.grazi.langdetect.detector.LanguageDetectorBuilder
 import tanvd.grazi.langdetect.ngram.NgramExtractor
@@ -14,13 +13,20 @@ object LangDetector : GrazieStateLifecycle {
   private const val charsForLangDetection = 1_000
   private lateinit var languages: Set<Lang>
   private var detector: LanguageDetector? = null
+    get() {
+      if (field == null) {
+        init(GrazieConfig.get())
+      }
+
+      return field
+    }
 
   fun getLang(text: String) = detector?.getProbabilities(text.take(charsForLangDetection))
     ?.maxBy { it.probability }
     ?.let { detectedLanguage -> languages.find { it.shortCode == detectedLanguage.locale.language } }
     .also { GrazieFUCounterCollector.languageDetected(it) }
 
-  override fun init(state: GrazieConfig.State, project: Project) {
+  override fun init(state: GrazieConfig.State) {
     languages = state.availableLanguages
     val profiles = LanguageProfileReader().read(languages.filter { it.shortCode != "zh" }.map { it.shortCode } + "zh-CN").toSet()
 
@@ -32,9 +38,7 @@ object LangDetector : GrazieStateLifecycle {
       .build()
   }
 
-  override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State, project: Project) {
-    if (prevState.availableLanguages != newState.availableLanguages) {
-      init(newState, project)
-    }
+  override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
+    if (prevState.availableLanguages != newState.availableLanguages) init(newState)
   }
 }

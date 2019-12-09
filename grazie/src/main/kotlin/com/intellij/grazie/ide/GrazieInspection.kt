@@ -10,21 +10,16 @@ import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.language.LanguageGrammarChecking
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.utils.isInjectedFragment
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 
 class GrazieInspection : LocalInspectionTool() {
   companion object : GrazieStateLifecycle {
-    override fun init(state: GrazieConfig.State, project: Project) {
+    override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
       ProjectManager.getInstance().openProjects.forEach {
         DaemonCodeAnalyzer.getInstance(it).restart()
       }
-    }
-
-    override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State, project: Project) {
-      if (prevState != newState) init(newState, project)
     }
   }
 

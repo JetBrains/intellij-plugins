@@ -3,12 +3,12 @@ package com.intellij.grazie.ide.init
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.application.PreloadingActivity
+import com.intellij.openapi.progress.ProgressIndicator
 
-open class GrazieProjectInit : StartupActivity.Background {
-  override fun runActivity(project: Project) {
-    GrazieStateLifecycle.publisher.init(GrazieConfig.get(), project)
+open class GrazieIDEInit : PreloadingActivity() {
+  override fun preload(indicator: ProgressIndicator) {
+    GrazieStateLifecycle.publisher.init(GrazieConfig.get())
   }
 }
 

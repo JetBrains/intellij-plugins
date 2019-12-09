@@ -32,7 +32,7 @@
         <applicationService serviceImplementation="com.intellij.grazie.GrazieConfig"/>
 
         <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.notification.GrazieNotificationComponent"/>
-        <backgroundPostStartupActivity implementation="com.intellij.grazie.ide.init.GrazieProjectInit"/>
+        <preloadingActivity implementation="com.intellij.grazie.ide.init.GrazieIDEInit"/>
 
         <localInspection groupName="Grazie" enabledByDefault="true" displayName="Grazie proofreading inspection"
                          shortName="GrazieInspection" implementationClass="com.intellij.grazie.ide.GrazieInspection" level="TYPO"/>

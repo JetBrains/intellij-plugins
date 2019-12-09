@@ -8,7 +8,6 @@ import com.intellij.grazie.ide.GrazieInspection
 import com.intellij.grazie.jlanguage.LangDetector
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.project.Project
 import com.intellij.util.messages.Topic
 
 interface GrazieStateLifecycle {
@@ -25,8 +24,8 @@ interface GrazieStateLifecycle {
   }
 
   /** Initialize Grazie with passed state */
-  fun init(state: GrazieConfig.State, project: Project) {}
+  fun init(state: GrazieConfig.State) {}
 
-  /** Update state of object */
-  fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State, project: Project) {}
+  /** Update Grazie state */
+  fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {}
 }

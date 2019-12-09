@@ -3,8 +3,10 @@ package com.intellij.grazie
 
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
-import com.intellij.openapi.components.*
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.annotations.Property
 
 @State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
@@ -64,7 +66,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
     myState = state
 
     if (prevState != myState) {
-      ProjectManager.getInstance().openProjects.forEach { GrazieStateLifecycle.publisher.update(prevState, myState, it) }
+      GrazieStateLifecycle.publisher.update(prevState, myState)
     }
   }
 }

@@ -5,15 +5,15 @@ import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.broker.GrazieDynamicClassBroker
 import com.intellij.grazie.jlanguage.broker.GrazieDynamicDataBroker
-import com.intellij.openapi.project.Project
 import org.languagetool.JLanguageTool
 import org.languagetool.config.UserConfig
 import org.languagetool.rules.UppercaseMatchFilter
 import org.languagetool.rules.spelling.SpellingCheckRule
+import java.util.concurrent.ConcurrentHashMap
 
 object LangTool : GrazieStateLifecycle {
-  private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
-  private val spellers: MutableMap<Lang, SpellingCheckRule?> = HashMap()
+  private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
+  private val spellers: MutableMap<Lang, SpellingCheckRule?> = ConcurrentHashMap()
 
   private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
@@ -35,7 +35,9 @@ object LangTool : GrazieStateLifecycle {
         state.userDisabledRules.forEach { id -> disableRule(id) }
         state.userEnabledRules.forEach { id -> enableRule(id) }
 
-        allRules.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
+        allRules.distinctBy { it.id }.onEach { rule ->
+          rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
+        }.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
           disableRule(it.id)
         }
       }
@@ -46,20 +48,17 @@ object LangTool : GrazieStateLifecycle {
     getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule } as SpellingCheckRule?
   }
 
-  override fun init(state: GrazieConfig.State, project: Project) {
-    for (lang in state.availableLanguages) {
-      getTool(lang, state).allRules.distinctBy { it.id }.forEach { rule ->
-        rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
-      }
-    }
+  override fun init(state: GrazieConfig.State) {
+    // Creating LanguageTool for each language
+    state.enabledLanguages.forEach { getTool(it, state) }
   }
 
-  override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State, project: Project) {
+  override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
     langs.clear()
     spellers.clear()
     rulesToLanguages.clear()
 
-    init(newState, project)
+    init(newState)
   }
 
   fun getRuleLanguages(ruleId: String) = rulesToLanguages[ruleId]
