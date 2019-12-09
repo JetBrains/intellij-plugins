@@ -67,13 +67,13 @@ class GrammarCheckerTests : GrazieTestBase() {
 
   @Test
   fun `test pretty formatted text with few typos`() {
-    val text = listOf("English text.  Hello.    World,, tot    he.  \n  ", "     This   is the     next Javadoc string.   \n",
+    val text = listOf("English text.  Hello. World,, tot he.  \n  ", "     This is the next Javadoc string.   \n",
                       "    This are my friend.    ")
     val tokens = plain(text)
     val fixes = GrammarChecker.check(tokens, PlainTextWithoutSpacesGrammarCheckingStrategy()).toList()
     Assert.assertEquals(3, fixes.size)
-    fixes[0].assertTypoIs(IntRange(30, 31), listOf(","), text[0])
-    fixes[1].assertTypoIs(IntRange(33, 41), listOf("to the"), text[0])
+    fixes[0].assertTypoIs(IntRange(27, 28), listOf(","), text[0])
+    fixes[1].assertTypoIs(IntRange(30, 35), listOf("to the"), text[0])
     fixes[2].assertTypoIs(IntRange(4, 11), listOf("This is"), text[2])
   }
 }

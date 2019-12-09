@@ -2,9 +2,15 @@
 package com.intellij.grazie.ide.language
 
 import com.intellij.grazie.GrazieTestBase
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 
 class MarkdownSupportTest : GrazieTestBase() {
+  override fun setUp() {
+    super.setUp()
+    (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
+  }
+
   fun `test grammar check in file`() {
     runHighlightTestForFile("ide/language/markdown/Example.md")
   }

@@ -2,38 +2,32 @@
 package com.intellij.grazie
 
 import com.intellij.grazie.ide.GrazieInspection
-import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.utils.filterFor
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPlainText
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 abstract class GrazieTestBase : BasePlatformTestCase() {
+  companion object {
+    val inspectionTools by lazy { arrayOf(GrazieInspection(), SpellCheckingInspection()) }
+    val enabledLanguages = setOf(Lang.AMERICAN_ENGLISH, Lang.GERMANY_GERMAN, Lang.RUSSIAN)
+  }
+
   override fun getBasePath() = "contrib/grazie/src/test/testData"
 
   override fun setUp() {
     super.setUp()
     myFixture.enableInspections(*inspectionTools)
-    // Markdown changed PSI during highlighting
-    (myFixture as? CodeInsightTestFixtureImpl)?.canChangeDocumentDuringHighlighting(true)
 
-    if (!isSettingsLoad) {
-      isSettingsLoad = true
+    if (GrazieConfig.get().enabledLanguages != enabledLanguages) {
       GrazieConfig.update { state ->
-        // remove dialects
-        state.update(enabledLanguages = Lang.values().filter {
-          it !in listOf(Lang.CANADIAN_ENGLISH, Lang.BRITISH_ENGLISH,
-                        Lang.AUSTRIAN_GERMAN, Lang.PORTUGAL_PORTUGUESE)
-        }.toSet())
+        state.update(enabledLanguages = enabledLanguages)
       }
 
-      while (ApplicationManager.getApplication().messageBus.hasUndeliveredEvents(GrazieStateLifecycle.topic)) {
-        Thread.sleep(100)
-      }
+      PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
     }
   }
 
@@ -46,10 +40,5 @@ abstract class GrazieTestBase : BasePlatformTestCase() {
 
   fun plain(texts: List<String>): Collection<PsiElement> {
     return texts.flatMap { myFixture.configureByText("${it.hashCode()}.txt", it).filterFor<PsiPlainText>() }
-  }
-
-  companion object {
-    private var isSettingsLoad = false
-    val inspectionTools by lazy { arrayOf(GrazieInspection(), SpellCheckingInspection()) }
   }
 }

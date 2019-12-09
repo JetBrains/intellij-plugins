@@ -9,11 +9,7 @@ class UnicodeBlocksTest : UsefulTestCase() {
     while (offset < sentence.length) {
       val codepoint = Character.codePointAt(sentence, offset)
 
-      if (sentence[offset] !in setOf(' ', '.', ',') && Character.UnicodeBlock.of(codepoint) !in domain) {
-        println(Character.UnicodeBlock.of(codepoint))
-        println(sentence[offset])
-        return false
-      }
+      if (sentence[offset] !in setOf(' ', '.', ',') && Character.UnicodeBlock.of(codepoint) !in domain) return false
 
       offset += Character.charCount(codepoint)
     }
