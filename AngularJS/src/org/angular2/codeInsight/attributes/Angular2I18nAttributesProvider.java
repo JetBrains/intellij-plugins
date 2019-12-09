@@ -39,7 +39,7 @@ public class Angular2I18nAttributesProvider implements Angular2AttributesProvide
         tag.getAttributes(), attr -> {
           AttributeInfo info = Angular2AttributeNameParser.parse(attr.getName(), tag);
           if (isI18nCandidate(info)) {
-            return new Angular2I18nAttributeDescriptor(tag, info.name, attr);
+            return new Angular2I18nAttributeDescriptor(tag, attr.getName(), attr);
           }
           return null;
         }));
@@ -51,7 +51,7 @@ public class Angular2I18nAttributesProvider implements Angular2AttributesProvide
         AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), tag);
         if (isI18nCandidate(info)
             && !info.name.equals(attributeName + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED)) {
-          candidates.add(info.name);
+          candidates.add(attribute.getName());
         }
         else if (info.type == I18N) {
           provided.add(info.name);
@@ -64,7 +64,7 @@ public class Angular2I18nAttributesProvider implements Angular2AttributesProvide
     }
   }
 
-  private static boolean isI18nCandidate(@NotNull AttributeInfo info) {
+  public static boolean isI18nCandidate(@NotNull AttributeInfo info) {
     return info.type == REGULAR && !info.name.equals(I18N_ATTR);
   }
 

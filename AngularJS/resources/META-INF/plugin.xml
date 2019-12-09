@@ -214,7 +214,7 @@
                      displayName="Undefined binding" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidI18nAttributeInspection"
-                     displayName="Invalid I18N attribute" groupName="Angular" enabledByDefault="true"
+                     displayName="Invalid i18n attribute" groupName="Angular" enabledByDefault="true"
                      level="WARNING"/>
     <localInspection implementationClass="org.angular2.inspections.AngularAmbiguousComponentTagInspection"
                      displayName="Ambiguous component tag" groupName="Angular" enabledByDefault="true"
