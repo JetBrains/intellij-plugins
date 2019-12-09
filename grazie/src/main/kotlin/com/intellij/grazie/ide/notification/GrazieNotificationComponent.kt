@@ -9,9 +9,11 @@ import com.intellij.openapi.startup.StartupActivity
 open class GrazieNotificationComponent : StartupActivity.Background {
   override fun runActivity(project: Project) {
     GrazieConfig.update {
-      when {
-        it.lastSeenVersion == null -> Notification.showInstallationMessage(project)
-        GraziePlugin.version != it.lastSeenVersion -> Notification.showUpdateMessage(project)
+      if (!GraziePlugin.isBundled) {
+        when {
+          it.lastSeenVersion == null -> Notification.showInstallationMessage(project)
+          GraziePlugin.version != it.lastSeenVersion -> Notification.showUpdateMessage(project)
+        }
       }
 
       if (it.hasMissedLanguages()) Notification.showLanguagesMessage(project)
