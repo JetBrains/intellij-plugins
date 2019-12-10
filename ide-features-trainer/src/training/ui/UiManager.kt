@@ -22,9 +22,11 @@ object UiManager {
   fun updateToolWindow(project: Project) {
     val windowManager = ToolWindowManager.getInstance(project)
     val learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW
-    windowManager.getToolWindow(learnToolWindow).contentManager.removeAllContents(false)
+    val toolWindow = windowManager.getToolWindow(learnToolWindow)
+            ?: throw IllegalStateException("$learnToolWindow tool window isn't registered")
+    toolWindow.contentManager.removeAllContents(false)
     val factory = LearnToolWindowFactory()
-    factory.createToolWindowContent(project, windowManager.getToolWindow(learnToolWindow))
+    factory.createToolWindowContent(project, toolWindow)
     LOG.debug("updateToolWindow")
   }
 
