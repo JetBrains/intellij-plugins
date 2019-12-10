@@ -13,9 +13,9 @@ public class DartStyleStrictTest extends DartStyleTest {
   /**
    * The set of tests that are known to fail only in strict mode.
    */
-  private static final Set<String> KNOWN_TO_FAIL_STRICT = new THashSet<>();
+  private final Set<String> KNOWN_TO_FAIL_STRICT = new THashSet<>();
 
-  static {
+  {
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:13  adjacent string lines all split together;");
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:32  conditions, same operator");
     KNOWN_TO_FAIL_STRICT.add("splitting/expressions.stmt:40  conditions, different operators");
