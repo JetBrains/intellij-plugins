@@ -21,13 +21,6 @@ public class CucumberExamplesColonInspection extends GherkinInspection {
     return true;
   }
 
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return CucumberBundle.message("inspection.missed.colon.example.name");
-  }
-
   @NotNull
   @Override
   public String getShortName() {

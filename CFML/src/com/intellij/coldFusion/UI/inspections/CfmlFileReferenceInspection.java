@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.quickFix.CreateFileFix;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlTag;
@@ -16,7 +15,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlFileReferenceInspection extends LocalInspectionTool {
@@ -66,13 +64,6 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
         }
       }
     };
-  }
-
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CfmlBundle.message("cfml.file.references.inspection");
   }
 }
 

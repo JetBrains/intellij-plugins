@@ -57,13 +57,6 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
     return DartBundle.message("inspections.group.name");
   }
 
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return DartBundle.message("path.package.reference.inspection.name");
-  }
-
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {

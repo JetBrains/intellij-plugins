@@ -47,13 +47,6 @@ public class GherkinBrokenTableInspection extends GherkinInspection {
     }
   }
 
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return CucumberBundle.message("inspection.gherkin.table.is.broken.name");
-  }
-
   @NotNull
   @Override
   public String getShortName() {

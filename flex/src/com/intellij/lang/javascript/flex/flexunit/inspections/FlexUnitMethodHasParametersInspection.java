@@ -8,17 +8,9 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodHasParametersInspection extends FlexUnitMethodInspectionBase {
-
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testmethodhasparameters.displayname");
-  }
 
   @Override
   @NotNull

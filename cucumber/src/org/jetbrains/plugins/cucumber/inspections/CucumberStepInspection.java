@@ -25,13 +25,6 @@ public class CucumberStepInspection extends GherkinInspection {
   }
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CucumberBundle.message("cucumber.inspection.undefined.step.name");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "CucumberUndefinedStep";

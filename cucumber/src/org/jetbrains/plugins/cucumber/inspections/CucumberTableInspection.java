@@ -23,13 +23,6 @@ public class CucumberTableInspection extends GherkinInspection {
     return true;
   }
 
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return CucumberBundle.message("unused.or.missing.columns.in.cucumber.tables");
-  }
-
   @NotNull
   @Override
   public String getShortName() {

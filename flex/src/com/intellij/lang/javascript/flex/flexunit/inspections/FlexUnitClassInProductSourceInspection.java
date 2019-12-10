@@ -12,17 +12,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.RefactoringActionHandlerFactory;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspectionBase {
-
-  @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testclassinproductsource.displayname");
-  }
 
   @Override
   @NotNull

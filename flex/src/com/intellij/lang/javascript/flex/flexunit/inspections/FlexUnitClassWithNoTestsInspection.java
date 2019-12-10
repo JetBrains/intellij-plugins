@@ -13,13 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class FlexUnitClassWithNoTestsInspection extends FlexUnitClassInspectionBase {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return FlexBundle.message("flexunit.inspection.testclasswithnotests.displayname");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitClassWithNoTestsInspection";

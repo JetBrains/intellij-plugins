@@ -12,13 +12,6 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 public class CucumberJavaStepDefClassInDefaultPackageInspection extends AbstractBaseJavaLocalInspectionTool {
 
   @Override
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return CucumberJavaBundle.message("cucumber.java.inspections.step.def.class.in.default.package.title");
-  }
-
-  @Override
   @NotNull
   public String getShortName() {
     return "CucumberJavaStepDefClassInDefaultPackage";

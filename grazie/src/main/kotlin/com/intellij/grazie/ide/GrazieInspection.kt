@@ -47,5 +47,4 @@ class GrazieInspection : LocalInspectionTool() {
     }
   }
 
-  override fun getDisplayName() = "Grazie proofreading inspection"
 }
