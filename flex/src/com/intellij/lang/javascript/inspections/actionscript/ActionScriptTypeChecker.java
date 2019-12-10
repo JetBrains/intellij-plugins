@@ -227,7 +227,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   @Override
   public void checkTypesInForIn(@NotNull JSForInStatement node) {
     if (!node.isForEach()) {
-      final JSVarStatement statement = node.getDeclarationStatement();
+      final JSVarStatement statement = node.getVarDeclaration();
 
       if (statement != null) {
         final PsiFile containingFile = node.getContainingFile();
