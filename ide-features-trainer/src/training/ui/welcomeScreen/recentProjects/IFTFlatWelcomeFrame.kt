@@ -2,7 +2,6 @@ package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WelcomeScreen
@@ -11,6 +10,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.accessibility.AccessibleContextAccessor
+import java.awt.BorderLayout
 import javax.swing.JPanel
 
 class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, AccessibleContextAccessor {
@@ -37,10 +37,15 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, Accessible
         getRootPane().preferredSize = JBUI.size(MAX_DEFAULT_WIDTH, height)
         val groupsPanel = GroupsPanel(ApplicationManager.getApplication()).customizeActions()
         val recentProjectPanel = UIUtil.uiChildren(originalRecentProjectsPanel).first()
-        originalRecentProjectsPanel?.remove(recentProjectPanel)
-        originalRecentProjectsPanel?.add(groupsPanel)
+        if (recentProjectPanel == null) {
+            originalWelcomeScreen.add(groupsPanel.wrap(), BorderLayout.WEST)
+        } else {
+            originalRecentProjectsPanel?.remove(recentProjectPanel)
+            originalRecentProjectsPanel?.add(groupsPanel)
+        }
         repaint()
     }
+
 }
 
 internal val showCustomWelcomeScreen

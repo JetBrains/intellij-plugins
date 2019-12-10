@@ -1,5 +1,6 @@
 package training.ui.welcomeScreen.recentProjects
 
+import com.intellij.ide.ProjectGroupActionGroup
 import com.intellij.ide.RecentProjectListActionProvider
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.AnAction
@@ -7,11 +8,14 @@ import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 
 class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
 
-  override fun getActions(addClearListItem: Boolean, useGroups: Boolean): List<AnAction> =
-    when {
-      !showCustomWelcomeScreen -> super.getActions(addClearListItem, useGroups)
-      !useGroups -> super.getActions(addClearListItem, false)
-      else -> GroupManager.instance.registeredGroups.flatMap { it.getActions().toList() }
+  fun getIFTActions(includeProjects: Boolean = true): List<AnAction> =
+    if (includeProjects) {
+      GroupManager.instance.registeredGroups
+        .flatMap { it.getActions().toList() }
+    } else {
+      GroupManager.instance.registeredGroups
+        .flatMap { it.getActions().toList() }
+        .filter { it !is ReopenProjectAction && it !is ProjectGroupActionGroup }
     }
 
   fun getOriginalRecentProjectsActions(): Array<AnAction> = super.getActions(false, true).toTypedArray()

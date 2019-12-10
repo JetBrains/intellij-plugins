@@ -7,6 +7,7 @@ import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.UniqueNameBuilder
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.openapi.wm.impl.welcomeScreen.NewRecentProjectPanel
@@ -16,10 +17,13 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.ListUtil
 import com.intellij.ui.PopupHandler
 import com.intellij.ui.components.JBList
+import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.ui.scale.JBUIScale
+import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.IconUtil
 import com.intellij.util.PathUtil
+import com.intellij.util.SystemProperties
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.StartupUiUtil
@@ -27,18 +31,20 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.accessibility.AccessibleContextUtil
 import training.actions.ModuleActionGroup
 import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
+import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
+import training.ui.welcomeScreen.recentProjects.actionGroups.commonActions.DefaultProjectsActionGroup
 import java.awt.*
 import java.util.*
 import javax.swing.*
+import javax.swing.event.ListDataEvent
+import javax.swing.event.ListDataListener
 
 class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
 
   override fun createList(recentProjectActions: Array<out AnAction>?, size: Dimension?): JBList<*> {
-    return _createList(arrayOf(*recentProjectActions!!), size)
-  }
-
-  private fun _createList(recentProjectActions: Array<out AnAction>, size: Dimension?): JBList<*> {
-    val list = ActionList(recentProjectActions, this)
+    val list = ActionList(IFTRecentProjectListActionProvider.instance.getIFTActions().toTypedArray(), this)
+    //restore non-project actions after RecentProjectsWelcomeScreenActionBase#rebuildRecentProjectDataModel
+    list.model.addListDataListener(RestorableListListener())
 
     list.background = FlatWelcomeFrame.getProjectsBackground()
     list.addMouseListener(object : PopupHandler() {
@@ -66,6 +72,27 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
     return super.isPathValid(string)
   }
 
+  fun wrap(): JComponent {
+    val list = UIUtil.findComponentOfType(this, JList::class.java) ?: return this
+    val scroll = JBScrollPane(list,
+                              ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
+    scroll.border = null
+    return ListWithFilter.wrap(list, scroll) { element: Any ->
+      if (element is ReopenProjectAction) {
+        val home = SystemProperties.getUserHome()
+        var path = element.projectPath
+        if (FileUtil.startsWith(path, home)) {
+          path = path.substring(home.length)
+        }
+        return@wrap element.projectName + " " + path
+      }
+      else if (element is ProjectGroupActionGroup) {
+        return@wrap element.group.name
+      }
+      element.toString()
+    }.apply { preferredSize = JBUI.size(300, FlatWelcomeFrame.DEFAULT_HEIGHT) }
+  }
 
   private fun replaceRemoveRecentProjectsAction() {
     removeRecentProjectAction?.unregisterCustomShortcutSet(myList) ?: return
@@ -312,5 +339,32 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
       }
     }
   }
+
+  @Suppress("UNCHECKED_CAST")
+  internal inner class RestorableListListener: ListDataListener {
+    override fun contentsChanged(e: ListDataEvent?) { }
+
+    override fun intervalAdded(e: ListDataEvent?) {
+      if (e?.index0 == null || e.source == null) return
+      if (e.index0 == e.index1) {
+        val model = e.source as DefaultListModel<AnAction>
+        val action = model.get(e.index1)
+        if (action is ProjectGroupActionGroup || action is ReopenProjectAction ) {
+          if (GroupManager.instance.registeredGroups.filterIsInstance<DefaultProjectsActionGroup>().first().isExpanded.not()) {
+            model.remove(e.index0)
+          }
+        }
+      }
+    }
+
+    override fun intervalRemoved(e: ListDataEvent?) {
+      if (e != null && ((e.source as DefaultListModel<AnAction>).size == 0)) {
+        val model = e.source as DefaultListModel<AnAction>
+        val nonProjectActions = IFTRecentProjectListActionProvider.instance.getIFTActions(false)
+        nonProjectActions.forEach { model.addElement(it) }
+      }
+    }
+  }
+
 
 }
