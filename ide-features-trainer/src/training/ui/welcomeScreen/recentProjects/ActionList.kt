@@ -1,10 +1,7 @@
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.DataManager
-import com.intellij.ide.ProjectGroupActionGroup
-import com.intellij.ide.RecentProjectsManager
-import com.intellij.ide.ReopenProjectAction
+import com.intellij.ide.*
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -154,21 +151,18 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
     })
   }
 
-
   private fun removeRecentProjectElement(element: Any?) {
     val manager = RecentProjectsManager.getInstance()
     if (element is ReopenProjectAction) {
       manager.removePath(element.projectPath)
     }
-    else if (element is ProjectGroupActionGroup) {
-      val group = element.group
-      for (path in group.projects) {
+    else if (element is ProjectGroup) {
+      for (path in element.projects) {
         manager.removePath(path)
       }
-      manager.removeGroup(group)
+      manager.removeGroup(element)
     }
   }
-
 
   private fun toSize(icon: Icon): Icon {
     return IconUtil.toSize(icon,
