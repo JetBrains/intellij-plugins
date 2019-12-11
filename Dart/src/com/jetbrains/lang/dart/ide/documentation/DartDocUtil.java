@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -70,10 +70,11 @@ public class DartDocUtil {
   }
 
   private static String formatSignature(@NotNull final String signature) {
-    final int offsetToOpenParen = signature.indexOf('(');
+    // Match the first open paren, "(", but ignore a starting "(new)" or "(const)" patterns.
+    final int offsetToOpenParen = signature.indexOf('(', 1);
 
     // If this signature doesn't have a '(', return
-    if (offsetToOpenParen <= 0) {
+    if (offsetToOpenParen < 0) {
       return StringUtil.escapeXmlEntities(signature);
     }
 
