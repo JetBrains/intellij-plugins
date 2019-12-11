@@ -91,8 +91,60 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "class <caret>A{}");
   }
 
-  public void testConstructorSig() {
-    doTest("<code><b>test.dart</b><br>Z Z()<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { <caret>Z(); }");
+  public void testConstructorSig1() {
+    // unnamed constructor at declaration
+    doTest("<code><b>test.dart</b><br>A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+           "<p>constructor comment</p>",
+
+           "class A { /** constructor comment */ A<caret>(int one, int two); }");
+  }
+
+  public void testConstructorSig2() {
+    // named constructor at declaration
+    doTest(
+      "<code><b>test.dart</b><br>A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name<caret>(int one, int two); }");
+  }
+
+  public void testConstructorSig3() {
+    // unnamed constructor at instantiation
+    doTest("<code><b>test.dart</b><br>A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+           "<p>constructor comment</p>",
+
+           "class A { /** constructor comment */ A(int one, int two);}" +
+           "void m() { var a = new A<caret>(1,2); }");
+  }
+
+  public void testConstructorSig4() {
+    // named constructor at instantiation
+    doTest(
+      "<code><b>test.dart</b><br>A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name(int one, int two); }" +
+      "void m() { var a = new A.name<caret>(1,2); }");
+  }
+
+  public void testConstructorSig5() {
+    // unnamed constructor at instantiation, implicit new
+    doTest(
+      "<code><b>test.dart</b><br>(new) A A(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A(int one, int two); }" +
+      "void m() { var a = A<caret>(1,2); }");
+  }
+
+  public void testConstructorSig6() {
+    // named constructor at instantiation, implicit new
+    doTest(
+      "<code><b>test.dart</b><br>(new) A A.name(int one,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int two)<br><br><b>Containing class:</b> A<br><br></code>\n" +
+      "<p>constructor comment</p>",
+
+      "class A { /** constructor comment */ A.name(int one, int two); }" +
+      "void m() { var a = A.name<caret>(1,2); }");
   }
 
   public void testEnumSig() {

@@ -70,10 +70,11 @@ public class DartDocUtil {
   }
 
   private static String formatSignature(@NotNull final String signature) {
-    final int offsetToOpenParen = signature.indexOf('(');
+    // Match the first open paren, "(", but ignore a starting "(new)" or "(const)" patterns.
+    final int offsetToOpenParen = signature.indexOf('(', 1);
 
     // If this signature doesn't have a '(', return
-    if (offsetToOpenParen <= 0) {
+    if (offsetToOpenParen < 0) {
       return StringUtil.escapeXmlEntities(signature);
     }
 
