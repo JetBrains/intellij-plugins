@@ -7,6 +7,7 @@ import com.intellij.grazie.ide.GrazieCommitInspection
 import com.intellij.grazie.ide.GrazieInspection
 import com.intellij.grazie.jlanguage.LangDetector
 import com.intellij.grazie.jlanguage.LangTool
+import com.intellij.grazie.spellcheck.GrazieSpellchecker
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.messages.Topic
 
@@ -18,6 +19,7 @@ interface GrazieStateLifecycle {
     init {
       topic.subscribe(ApplicationManager.getApplication(), LangTool)
       topic.subscribe(ApplicationManager.getApplication(), LangDetector)
+      topic.subscribe(ApplicationManager.getApplication(), GrazieSpellchecker)
       topic.subscribe(ApplicationManager.getApplication(), GrazieCommitInspection)
       topic.subscribe(ApplicationManager.getApplication(), GrazieInspection)
     }

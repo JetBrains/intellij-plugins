@@ -12,10 +12,16 @@ import tanvd.grazi.langdetect.profiles.LanguageProfileReader
 object LangDetector : GrazieStateLifecycle {
   private const val charsForLangDetection = 1_000
   private lateinit var languages: Set<Lang>
+
+  @Volatile
   private var detector: LanguageDetector? = null
     get() {
       if (field == null) {
-        init(GrazieConfig.get())
+        synchronized(this) {
+          if (field == null) {
+            init(GrazieConfig.get())
+          }
+        }
       }
 
       return field

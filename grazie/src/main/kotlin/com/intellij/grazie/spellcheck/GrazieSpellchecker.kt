@@ -2,6 +2,7 @@
 package com.intellij.grazie.spellcheck
 
 import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.jlanguage.LangTool
 import com.intellij.grazie.utils.LinkedSet
@@ -10,7 +11,7 @@ import org.languagetool.JLanguageTool
 import org.languagetool.rules.spelling.SpellingCheckRule
 import org.slf4j.LoggerFactory
 
-object GrazieSpellchecker {
+object GrazieSpellchecker : GrazieStateLifecycle {
   private const val MAX_SUGGESTIONS_COUNT = 3
 
   private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
@@ -41,11 +42,36 @@ object GrazieSpellchecker {
     }
   }
 
-  private val checkers: LinkedSet<SpellerTool>
-    get() = GrazieConfig.get().availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
+  @Volatile
+  private var checkers: LinkedSet<SpellerTool> = LinkedSet()
+    get() {
+      if (field.isEmpty()) {
+        synchronized(this) {
+          if (field.isEmpty()) {
+            field = LinkedSet<SpellerTool>().apply {
+              val tool = LangTool.getTool(BASE_SPELLCHECKER_LANGUAGE)
+              val rule = LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE)
+              require(rule != null) { "Base spellchecker must contain spelling rule" }
+              add(SpellerTool(tool, rule, MAX_SUGGESTIONS_COUNT))
+            }
+          }
+        }
+      }
+
+      return field
+    }
+
+  override fun init(state: GrazieConfig.State) {
+    checkers = state.availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
+      val tool = LangTool.getTool(lang, state)
       val rule = LangTool.getSpeller(lang)
-      rule?.let { SpellerTool(LangTool.getTool(lang), rule, MAX_SUGGESTIONS_COUNT) }
+      rule?.let { SpellerTool(tool, rule, MAX_SUGGESTIONS_COUNT) }
     }.toLinkedSet()
+  }
+
+  override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
+    init(newState)
+  }
 
   fun isCorrect(word: String) = checkers.filter { it.isMyDomain(word) }.let {
     if (it.isEmpty()) true else it.any { speller ->

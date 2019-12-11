@@ -28,7 +28,7 @@ object LangTool : GrazieStateLifecycle {
   fun getTool(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): JLanguageTool {
     require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 
-    return langs.getOrPut(lang) {
+    return langs.computeIfAbsent(lang) {
       JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
         addMatchFilter(UppercaseMatchFilter())
 
@@ -39,14 +39,13 @@ object LangTool : GrazieStateLifecycle {
           rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
         }.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
           disableRule(it.id)
+          spellers[lang] = it as SpellingCheckRule
         }
       }
     }
   }
 
-  fun getSpeller(lang: Lang, state: GrazieConfig.State = GrazieConfig.get()): SpellingCheckRule? = spellers.getOrPut(lang) {
-    getTool(lang, state).allRules.find { it.isDictionaryBasedSpellingRule } as SpellingCheckRule?
-  }
+  fun getSpeller(lang: Lang): SpellingCheckRule? = spellers[lang]
 
   override fun init(state: GrazieConfig.State) {
     // Creating LanguageTool for each language
