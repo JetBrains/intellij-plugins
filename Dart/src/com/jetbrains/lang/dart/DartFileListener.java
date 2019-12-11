@@ -53,9 +53,7 @@ public class DartFileListener implements VirtualFileListener {
     if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
       fileChanged(myProject, event.getFile());
 
-      if (event.getFile().isInLocalFileSystem() &&
-          (DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getOldValue().toString()) ||
-           DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getFileName()))) {
+      if (event.getFile().isInLocalFileSystem()) {
         updateVisibleFilesIfNeeded();
       }
     }

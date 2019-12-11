@@ -44,16 +44,17 @@ public class DartAnnotator implements Annotator {
   private static final Key<Boolean> DART_SERVER_DATA_HANDLED = Key.create("DART_SERVER_DATA_HANDLED");
 
   private static final Map<String, String> HIGHLIGHTING_TYPE_MAP = new THashMap<>();
+  private static final Map<String, String> NON_DART_HIGHLIGHTING_ADDITIONS = new THashMap<>();
 
   static {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.ANNOTATION, DartSyntaxHighlighterColors.DART_ANNOTATION);
     // handled by DartAnnotator without server
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.BUILT_IN, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CLASS, DartSyntaxHighlighterColors.DART_CLASS);
     // handled by DartSyntaxHighlighter
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_BLOCK, DartSyntaxHighlighterColors.DART_BLOCK_COMMENT);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_DOC_COMMENT);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_LINE_COMMENT);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.COMMENT_BLOCK, DartSyntaxHighlighterColors.DART_BLOCK_COMMENT);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.COMMENT_DOCUMENTATION, DartSyntaxHighlighterColors.DART_DOC_COMMENT);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.COMMENT_END_OF_LINE, DartSyntaxHighlighterColors.DART_LINE_COMMENT);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.CONSTRUCTOR, DartSyntaxHighlighterColors.DART_CONSTRUCTOR);
     // No need in special highlighting of the whole region. Individual child regions are highlighted.
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.DIRECTIVE, DartSyntaxHighlighterColors.);
@@ -88,19 +89,19 @@ public class DartAnnotator implements Annotator {
                               DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INSTANCE_SETTER_REFERENCE, DartSyntaxHighlighterColors.DART_INSTANCE_SETTER_REFERENCE);
     // handled by DartAnnotator without server
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.INVALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_INVALID_STRING_ESCAPE);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.INVALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_INVALID_STRING_ESCAPE);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.KEYWORD, DartSyntaxHighlighterColors.DART_KEYWORD);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LABEL, DartSyntaxHighlighterColors.DART_LABEL);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LIBRARY_NAME, DartSyntaxHighlighterColors.DART_LIBRARY_NAME);
     // handled by DartSyntaxHighlighter
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_BOOLEAN, DartSyntaxHighlighterColors.DART_KEYWORD);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_DOUBLE, DartSyntaxHighlighterColors.DART_NUMBER);
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_INTEGER, DartSyntaxHighlighterColors.DART_NUMBER);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.LITERAL_BOOLEAN, DartSyntaxHighlighterColors.DART_KEYWORD);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.LITERAL_DOUBLE, DartSyntaxHighlighterColors.DART_NUMBER);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.LITERAL_INTEGER, DartSyntaxHighlighterColors.DART_NUMBER);
     // No need in special highlighting of the whole map/list literal.
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_LIST, DartSyntaxHighlighterColors.);
     //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_MAP, DartSyntaxHighlighterColors.);
     // handled by DartSyntaxHighlighter
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LITERAL_STRING, DartSyntaxHighlighterColors.DART_STRING);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.LITERAL_STRING, DartSyntaxHighlighterColors.DART_STRING);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_DECLARATION, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_DECLARATION);
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.LOCAL_FUNCTION_REFERENCE, DartSyntaxHighlighterColors.DART_LOCAL_FUNCTION_REFERENCE);
     // HighlightRegionType.LOCAL_VARIABLE - Only for version 1 of highlight.
@@ -139,7 +140,7 @@ public class DartAnnotator implements Annotator {
     HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.UNRESOLVED_INSTANCE_MEMBER_REFERENCE,
                               DartSyntaxHighlighterColors.DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE);
     // handled by DartAnnotator without server
-    //HIGHLIGHTING_TYPE_MAP.put(HighlightRegionType.VALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_VALID_STRING_ESCAPE);
+    NON_DART_HIGHLIGHTING_ADDITIONS.put(HighlightRegionType.VALID_STRING_ESCAPE, DartSyntaxHighlighterColors.DART_VALID_STRING_ESCAPE);
   }
 
   @Contract("_, null -> false")
@@ -151,6 +152,12 @@ public class DartAnnotator implements Annotator {
 
     // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
     return DartAnalysisServerService.getInstance(project).isInIncludedRoots(file);
+  }
+
+  private static boolean isCustomAnalyzerFile(@Nullable final VirtualFile file) {
+    if (file == null) return false;
+
+    return !DartAnalysisServerService.isFileNameRespectedByAnalysisServerWithoutPlugins(file.getName());
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
@@ -241,8 +248,13 @@ public class DartAnnotator implements Annotator {
       }
     }
 
+    final boolean isCustom = isCustomAnalyzerFile(file);
     for (DartServerData.DartHighlightRegion region : das.getHighlight(file)) {
-      final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
+      String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
+      if (isCustom && attributeKey == null) {
+        attributeKey = NON_DART_HIGHLIGHTING_ADDITIONS.get(region.getType());
+      }
+
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
         holder.createInfoAnnotation(textRange, null).setTextAttributes(TextAttributesKey.find(attributeKey));
