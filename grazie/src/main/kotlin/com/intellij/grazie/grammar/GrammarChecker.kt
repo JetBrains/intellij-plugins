@@ -24,20 +24,20 @@ object GrammarChecker {
     var stealthed = 0 // count of newly removed characters from text after getResultedShifts()
     var total = 0     // total deleted chars from text
     val iterator = shifts.listIterator()
+
+    // Iterate over ignored ranges determined by PsiElement behaviour and
+    // ranges determined by strategy.getStealthyRanges, which working with text
+    // while combining intersecting ranges
     for (range in strategy.determineStealthyRanges(root, text)) {
       var deleted = 0
-      primary@ for ((position, length) in iterator) {
-        when {
-          position < range.start -> {
-            add(ShiftInText(position - stealthed, length, total + length))
-          }
-          position in range -> {
-            deleted += length
-          } // shift inside range (combine in one)
-          else -> {
-            iterator.previous()
-            break@primary
-          } // shift after range - need a step back
+      for ((position, length) in iterator) {
+        if (position < range.start) {   // shift before range (remains the same, just add)
+          add(ShiftInText(position - stealthed, length, total + length))
+        } else if (position in range) { // shift inside range (combine in one)
+          deleted += length
+        } else {                        // shift after range - need a step back
+          iterator.previous()
+          break
         }
 
         total += length
