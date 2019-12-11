@@ -2,6 +2,7 @@
 package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.LangUnicodeBlock
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
 
 class UnicodeBlocksTest : UsefulTestCase() {
@@ -10,7 +11,8 @@ class UnicodeBlocksTest : UsefulTestCase() {
     while (offset < sentence.length) {
       val codepoint = Character.codePointAt(sentence, offset)
 
-      if (sentence[offset] !in setOf(' ', '.', ',') && Character.UnicodeBlock.of(codepoint) !in domain) return false
+
+      if (!StringUtil.containsChar(" .,", sentence[offset]) && Character.UnicodeBlock.of(codepoint) !in domain) return false
 
       offset += Character.charCount(codepoint)
     }

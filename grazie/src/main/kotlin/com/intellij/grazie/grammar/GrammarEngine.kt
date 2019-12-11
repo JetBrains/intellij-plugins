@@ -52,11 +52,11 @@ object GrammarEngine {
     }
   }
 
-  private fun getTyposSmall(str: String, offset: Int = 0): LinkedSet<Typo> {
+  private fun getTyposSmall(str: String, offset: Int = 0): Set<Typo> {
     ProgressManager.checkCanceled()
-    if (str.length < minChars) return LinkedSet()
+    if (str.length < minChars) return emptySet()
 
-    val lang = LangDetector.getLang(str) ?: return LinkedSet()
+    val lang = LangDetector.getLang(str) ?: return emptySet()
 
     return try {
       LangTool.getTool(lang).check(str)
@@ -67,7 +67,7 @@ object GrammarEngine {
         .toCollection(LinkedSet())
     } catch (e: Throwable) {
       logger.warn("Got exception during check for typos by LanguageTool", e)
-      LinkedSet()
+      emptySet()
     }
   }
 }
