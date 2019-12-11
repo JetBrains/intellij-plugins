@@ -49,7 +49,7 @@ object LangTool : GrazieStateLifecycle {
 
   override fun init(state: GrazieConfig.State) {
     // Creating LanguageTool for each language
-    state.enabledLanguages.forEach { getTool(it, state) }
+    state.availableLanguages.forEach { getTool(it, state) }
   }
 
   override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
