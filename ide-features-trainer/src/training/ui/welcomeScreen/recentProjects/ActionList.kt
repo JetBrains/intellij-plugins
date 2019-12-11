@@ -15,6 +15,7 @@ import com.intellij.ui.scale.JBUIScale
 import com.intellij.util.IconUtil
 import com.intellij.util.PathUtil
 import training.actions.ModuleActionGroup
+import training.ui.welcomeScreen.recentProjects.actionGroups.CommonActionGroup
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Point
@@ -141,7 +142,7 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
     actionMap.put(ListActions.Left.ID, object : AbstractAction() {
       override fun actionPerformed(e: ActionEvent) {
         val selected = this@ActionList.selectedValue
-        val groupAction = if (selected is DefaultActionGroup) selected else return
+        val groupAction = (if (selected is ProjectGroupActionGroup || selected is CommonActionGroup) selected else return) as DefaultActionGroup
         if (!groupAction.isPopup) {
           val listContext = DataManager.getInstance().getDataContext(this@ActionList)
           val event = AnActionEvent.createFromAnAction(groupAction, null, "WelcomeFrame.ActionList", listContext)
