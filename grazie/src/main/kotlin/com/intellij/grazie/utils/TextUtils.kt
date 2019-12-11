@@ -3,16 +3,20 @@ package com.intellij.grazie.utils
 
 import org.apache.commons.text.similarity.LevenshteinDistance
 
-@Suppress("MemberVisibilityCanBePrivate")
 object Text {
-  private val newLineCharRegex = Regex("\\n")
-  private val punctuationRegex = Regex("\\p{Punct}\\p{IsPunctuation}]")
+  fun isNewline(char: Char) = char == '\n'
 
-  fun isNewline(char: Char) = newLineCharRegex.matches(char)
+  private val PUNCTUATIONS: Set<Byte> = setOf(Character.START_PUNCTUATION, Character.END_PUNCTUATION,
+                                              Character.OTHER_PUNCTUATION, Character.CONNECTOR_PUNCTUATION,
+                                              Character.DASH_PUNCTUATION, Character.INITIAL_QUOTE_PUNCTUATION,
+                                              Character.FINAL_QUOTE_PUNCTUATION)
 
-  fun isPunctuation(char: Char) = punctuationRegex.matches(char)
+  fun isPunctuation(char: Char) = when (Character.getType(char).toByte()) {
+    in PUNCTUATIONS -> true
+    else -> false
+  }
 
-  fun isQuote(char: Char) = char in setOf('\'', '\"')
+  fun isQuote(char: Char) = char == '\'' || char == '\"'
 
   object Levenshtein {
     private val levenshtein = LevenshteinDistance()
