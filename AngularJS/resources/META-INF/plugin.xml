@@ -280,7 +280,7 @@
 
   <extensions defaultExtensionNs="JavaScript">
     <intentionAndInspectionFilter language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSInspectionFilter"/>
-    <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler"/>
+    <frameworkIndexingHandler implementation="org.angularjs.index.AngularJSIndexingHandler" version="65"/>
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <analysisHandlersFactory language="AngularJS" implementationClass="org.angularjs.inspections.AngularJSAnalysisHandlersFactory"/>
 

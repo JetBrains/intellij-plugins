@@ -671,11 +671,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return false;
   }
 
-  @Override
-  public int getVersion() {
-    return AngularIndexUtil.BASE_VERSION;
-  }
-
   private static boolean calculateRepeatParameterType(JSTypeEvaluator evaluator, AngularJSRepeatExpression resolveParent) {
     return JSPsiImplUtils.calculateTypeOfVariableForIteratedExpression(evaluator, findReferenceExpression(resolveParent), resolveParent);
   }
