@@ -3,8 +3,10 @@ package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.LangDetector
 import com.intellij.grazie.jlanguage.LangTool
-import com.intellij.grazie.utils.*
+import com.intellij.grazie.utils.LinkedSet
+import com.intellij.grazie.utils.splitWithRanges
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.text.StringUtil
 import org.slf4j.LoggerFactory
 
 object GrammarEngine {
@@ -14,33 +16,44 @@ object GrammarEngine {
   private const val maxChars = 10_000
   private const val minChars = 2
 
-  private val separators = listOf('?', '!', '.', ';', ',', '\n', ' ', '\t')
-
   private const val minNumberOfWords = 3
 
-  fun getTypos(str: String, seps: List<Char> = separators.filter { it in str }, offset: Int = 0): Set<Typo> {
-    // FIXME \\s is not useful for chinese/japanese.
-    if (str.isBlank() || str.length > tooBigChars || str.split(Regex("\\s+")).size < minNumberOfWords) return emptySet()
+  private fun isGrammarCheckUseless(str: String): Boolean {
+    return str.isBlank() || str.length > tooBigChars
+           || StringUtil.getWordIndicesIn(str).size < minNumberOfWords // FIXME getWordIndicesIn is not useful for chinese/japanese.
+  }
 
-    return if (str.length < maxChars) {
-      getTyposSmall(str, offset)
-    } else {
-      val head = seps.firstOrNull() ?: return emptySet()
-      val tail = seps.drop(1)
+  private fun String.collectSentencesForGrammarCheck(consumer: (IntRange, String) -> Unit) {
+    splitWithRanges('?', '!', '.', ';') { range, sentence ->
+      ProgressManager.checkCanceled()
+      if (!isGrammarCheckUseless(sentence)) consumer(range, sentence)
+    }
+  }
 
-      buildSet {
-        str.splitWithRanges(head) { range, sentence ->
-          addAll(getTypos(sentence, tail).map {
-            Typo(it.location.withOffset(range.start + offset), it.info, it.fixes)
-          })
+  private fun String.collectSentencePartsForGrammarCheck(consumer: (IntRange, String) -> Unit) {
+    splitWithRanges('\n', ',') { range, part ->
+      if (!isGrammarCheckUseless(part) && part.length < maxChars) consumer(range, part)
+    }
+  }
 
-          ProgressManager.checkCanceled()
+  fun getTypos(text: String, offset: Int = 0): Set<Typo> {
+    if (isGrammarCheckUseless(text)) return emptySet()
+
+    if (text.length < maxChars) return getTyposSmall(text, offset)
+
+    return LinkedSet<Typo>().apply {
+      text.collectSentencesForGrammarCheck { rangeInText, sentence ->
+        if (sentence.length < maxChars) {
+          addAll(getTyposSmall(sentence, rangeInText.start + offset))
+        } else sentence.collectSentencePartsForGrammarCheck { rangeInSentence, part ->
+          addAll(getTyposSmall(part, rangeInText.start + rangeInSentence.start + offset))
         }
       }
     }
   }
 
   private fun getTyposSmall(str: String, offset: Int = 0): LinkedSet<Typo> {
+    ProgressManager.checkCanceled()
     if (str.length < minChars) return LinkedSet()
 
     val lang = LangDetector.getLang(str) ?: return LinkedSet()
