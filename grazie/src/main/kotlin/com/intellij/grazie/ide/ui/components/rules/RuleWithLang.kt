@@ -30,10 +30,7 @@ data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, va
   }
 }
 
-/**
- * FIXME inside LanguageTool
- * Very bad solution to compare categories (used in rules tree UI and [GrazieDisableCategoryQuickFix])
- */
+// IDEA-228902 need to be replaced with Enum inside LanguageTool
 data class ComparableCategory(val category: Category) : Comparable<ComparableCategory> {
   val name: String = category.name
 

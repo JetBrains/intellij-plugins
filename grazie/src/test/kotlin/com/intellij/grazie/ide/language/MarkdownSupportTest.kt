@@ -2,12 +2,15 @@
 package com.intellij.grazie.ide.language
 
 import com.intellij.grazie.GrazieTestBase
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 
 
 class MarkdownSupportTest : GrazieTestBase() {
   override fun setUp() {
     super.setUp()
+    StringUtil.getWordsIn("Sdf")
+    // IDEA-228789 markdown change PSI/document/model during highlighting
     (myFixture as CodeInsightTestFixtureImpl).canChangeDocumentDuringHighlighting(true)
   }
 
