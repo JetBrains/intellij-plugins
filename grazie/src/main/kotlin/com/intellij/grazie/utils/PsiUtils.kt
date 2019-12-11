@@ -3,6 +3,7 @@ package com.intellij.grazie.utils
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiElementProcessor
@@ -34,6 +35,8 @@ fun PsiElement.isInjectedFragment(): Boolean {
 }
 
 fun PsiElementProcessor<in PsiElement>.processElements(element: PsiElement?) {
+  ProgressManager.checkCanceled()
+
   element ?: return
 
   if (element is PsiCompiledElement || !element.isPhysical) {
@@ -43,8 +46,7 @@ fun PsiElementProcessor<in PsiElement>.processElements(element: PsiElement?) {
       processElements(child)
     }
 
-  }
-  else {
+  } else {
     element.accept(object : PsiRecursiveElementWalkingVisitor() {
       override fun visitElement(element: PsiElement) {
         if (execute(element)) {
