@@ -53,6 +53,9 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
         if (index != -1 && Arrays.binarySearch(list.selectedIndices, index) < 0) {
           list.selectedIndex = index
         }
+        val elementUnderPopup = list.model.getElementAt(index)
+        //do not show context menu for non-project related actions on welcome screen (IFT-15)
+        if (elementUnderPopup !is ReopenProjectAction && elementUnderPopup !is ProjectGroupActionGroup) return
         val group = ActionManager.getInstance().getAction("WelcomeScreenRecentProjectActionGroup") as ActionGroup?
         if (group != null) {
           ActionManager.getInstance().createActionPopupMenu(ActionPlaces.WELCOME_SCREEN, group).component.show(comp, x, y)
