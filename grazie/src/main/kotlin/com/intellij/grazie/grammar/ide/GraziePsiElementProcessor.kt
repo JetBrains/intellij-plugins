@@ -39,7 +39,7 @@ class GraziePsiElementProcessor<T : PsiElement>(private val root: PsiElement, pr
   private var lastNonTextTokenShiftIndex = -1
   private val text = StringBuilder()
 
-  private val replaces = @Suppress("deprecation") strategy.getReplaceCharRules(root)
+  private val replaces = strategy.getReplaceCharRules(root)
   private fun StringBuilder.appendElementText(element: PsiElement) {
     if (replaces.isEmpty()) {
       append(element.text)

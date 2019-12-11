@@ -58,7 +58,6 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
    *
    * All typos have categories that can be found in the Grazie plugin UI tree in settings/preferences.
    */
-  @Suppress("unused")
   enum class Category {
     /** General categories  */
 
