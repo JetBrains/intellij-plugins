@@ -34,11 +34,14 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.angular2.attributesProvider"
-                    interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
+                    interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="org.angular2.contextProvider"
-                    interface="org.angular2.lang.Angular2ContextProvider"/>
+                    interface="org.angular2.lang.Angular2ContextProvider"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
-                    interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"/>
+                    interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -119,6 +122,7 @@
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
+    <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
                      displayName="Angular CLI add dependency"
@@ -225,7 +229,7 @@
                      level="ERROR"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
-    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="after default"/>
+    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
     <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
