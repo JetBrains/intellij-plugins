@@ -54,7 +54,7 @@
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
     <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first" id="AngularJS"/>
 
-    <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
+    <defaultLiveTemplates file="liveTemplates/AngularJS"/>
 
     <typedHandler implementation="org.angularjs.editor.AngularJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
@@ -177,6 +177,7 @@
       key="angular.enableIvyMetadataSupport"
       defaultValue="false"
       restartRequired="true"/>
+    <defaultLiveTemplates file="liveTemplates/Angular2"/>
 
     <!-- Angular 2 HTML template contributions -->
     <fileType name="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFileType" fieldName="INSTANCE"
