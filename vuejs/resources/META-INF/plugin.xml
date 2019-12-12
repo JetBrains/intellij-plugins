@@ -39,11 +39,14 @@ Vue components defined using separate .html, .js, and .css files are not support
 
   <extensionPoints>
     <extensionPoint qualifiedName="com.intellij.vuejs.templateScopesProvider"
-                    interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"/>
+                    interface="org.jetbrains.vuejs.codeInsight.template.VueTemplateScopesProvider"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="com.intellij.vuejs.contextProvider"
-                    interface="org.jetbrains.vuejs.context.VueContextProvider"/>
+                    interface="org.jetbrains.vuejs.context.VueContextProvider"
+                    dynamic="true"/>
     <extensionPoint qualifiedName="com.intellij.vuejs.containerInfoProvider"
-                    interface="org.jetbrains.vuejs.model.source.VueContainerInfoProvider"/>
+                    interface="org.jetbrains.vuejs.model.source.VueContainerInfoProvider"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -85,7 +88,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
 
     <directoryProjectGenerator
-        implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
+      implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
 
     <localInspection language="Vue" groupName="Vue" displayName="Data function" shortName="VueDataFunction"
@@ -127,7 +130,7 @@ Vue components defined using separate .html, .js, and .css files are not support
 
     <xml.fileNSInfoProvider implementation="org.jetbrains.vuejs.lang.html.VueNSInfoProvider"/>
     <highlightingPassFactory
-        implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
+      implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
     <lang.formatter language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.VueFormattingModelBuilder"/>
     <lang.syntaxHighlighterFactory language="VueJS"
                                    implementationClass="org.jetbrains.vuejs.lang.expr.highlighting.VueJSHighlighterFactory"/>
@@ -139,16 +142,16 @@ Vue components defined using separate .html, .js, and .css files are not support
                                     implementationClass="org.jetbrains.vuejs.editor.VueJSInlayParameterHintsProvider"/>
 
     <vuejs.templateScopesProvider
-        implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
-        id="standardSymbols"
-        order="before templateElements"/>
+      implementation="org.jetbrains.vuejs.codeInsight.template.VueStandardSymbolsScopesProvider"
+      id="standardSymbols"
+      order="before templateElements"/>
     <vuejs.templateScopesProvider
-        implementation="org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider"
-        id="templateElements"/>
+      implementation="org.jetbrains.vuejs.codeInsight.template.VueTemplateElementsScopeProvider"
+      id="templateElements"/>
     <vuejs.templateScopesProvider
-        implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
-        id="containerScope"
-        order="after templateElements"/>
+      implementation="org.jetbrains.vuejs.codeInsight.template.VueContainerScopeProvider"
+      id="containerScope"
+      order="after templateElements"/>
 
     <vuejs.contextProvider implementation="org.jetbrains.vuejs.context.VuePackageJsonContextProvider"
                            id="package.json"/>
