@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -256,9 +257,9 @@ public class ActionScriptReferenceExpressionResolver
       }
     }
 
+    final Module moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement(jsReferenceExpression);
     for (JSConditionalCompilationDefinitionsProvider provider : JSConditionalCompilationDefinitionsProvider.EP_NAME.getExtensions()) {
-      if (provider.containsConstant(ModuleUtilCore.findModuleForPsiElement(jsReferenceExpression), namespace,
-                                    constantName)) {
+      if (provider.containsConstant(moduleForPsiElement, namespace, constantName)) {
         return new ResolveResult[]{new JSResolveResult(jsReferenceExpression)};
       }
     }
