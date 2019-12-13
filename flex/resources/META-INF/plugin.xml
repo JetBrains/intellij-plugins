@@ -122,7 +122,8 @@
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptStatementContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
+    <defaultLiveTemplates file="liveTemplates/actionscript_iterations.xml"/>
+    <defaultLiveTemplates file="liveTemplates/actionscript_miscellaneous.xml"/>
     <liveTemplateOptionalProcessor implementation="com.intellij.lang.javascript.JSShortenFQNamesProcessor"/>
     <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
     <lang.refactoringSupport language="JavaScript"

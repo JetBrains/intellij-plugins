@@ -79,7 +79,8 @@
 
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
+    <defaultLiveTemplates file="liveTemplates/cloudformation_json.xml"/>
+    <defaultLiveTemplates file="liveTemplates/cloudformation_yaml.xml"/>
 
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
 

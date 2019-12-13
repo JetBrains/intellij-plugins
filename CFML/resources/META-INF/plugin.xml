@@ -96,7 +96,7 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
     <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>
 
     <liveTemplateContext implementation="com.intellij.coldFusion.CfmlTemplateContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.coldFusion.CfmlDefaultLiveTemplateProvider"/>
+    <defaultLiveTemplates file="liveTemplates/cfml_default.xml"/>
     <spellchecker.support language="CFML" implementationClass="com.intellij.coldFusion.model.CfmlSpellcheckingStrategy"/>
     <lang.surroundDescriptor language="CFML"
                              implementationClass="com.intellij.coldFusion.UI.editorActions.surroundWith.CfmlVariableSurroundDescriptor"/>
