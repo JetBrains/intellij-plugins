@@ -14,7 +14,7 @@
  */
 package com.intellij.struts2;
 
-import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.PropertyKey;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsBundle extends AbstractBundle {
+public class StrutsBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
     return ourInstance.getMessage(key, params);

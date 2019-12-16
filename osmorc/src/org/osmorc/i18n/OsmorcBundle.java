@@ -25,6 +25,7 @@
 package org.osmorc.i18n;
 
 import com.intellij.AbstractBundle;
+import com.intellij.DynamicBundle;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.PropertyKey;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
-public class OsmorcBundle extends AbstractBundle {
+public class OsmorcBundle extends DynamicBundle {
   private static final String PATH_TO_BUNDLE = "messages.OsmorcBundle";
   private static final AbstractBundle INSTANCE = new OsmorcBundle();
 
