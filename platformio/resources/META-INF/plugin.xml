@@ -1,0 +1,33 @@
+<idea-plugin>
+  <id>intellij.clion.embedded.platformio</id>
+  <name>PlatformIO for CLion</name>
+  <vendor>JetBrains</vendor>
+
+  <description>PlatformIO.org plugin for CLion integration</description>
+
+  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.clion.cmake</depends>
+  <depends>com.intellij.clion.embedded</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType order="last" id="platformio"
+                       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType"/>
+    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE"
+              implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
+    <stepsBeforeRunProvider
+      implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
+  </extensions>
+  <actions>
+    <group id="platformio-group" text="PlatformIO"
+           class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
+    </group>
+  </actions>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState</implementation-class>
+    </component>
+  </project-components>
+
+</idea-plugin>
