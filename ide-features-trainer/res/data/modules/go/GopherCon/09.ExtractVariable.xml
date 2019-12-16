@@ -16,10 +16,8 @@ func main() {
 	fmt.Printf("hello %s", subj.name)
 }
 ]]></CopyText>
-<CaretBlock>
     <MoveCaret position="14:23" />
     <Try triggers="IntroduceVariable;NextTemplateVariable">Press <action>IntroduceVariable</action> to extract a variable, choose a string expression, enter a new name, and hit <action>EditorEnter</action> to finish refactoring.</Try>
     <Win/>
-</CaretBlock>
 </MouseBlock>
 </xml>
