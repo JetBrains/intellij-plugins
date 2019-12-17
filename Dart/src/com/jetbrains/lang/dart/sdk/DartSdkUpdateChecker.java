@@ -23,8 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DartSdkUpdateChecker {
-
+public final class DartSdkUpdateChecker {
   public static final String SDK_STABLE_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-stable";
   private static final String SDK_DEV_DOWNLOAD_URL = "https://www.dartlang.org/redirects/sdk-download-dev";
 
@@ -35,7 +34,7 @@ public class DartSdkUpdateChecker {
   private static final String DART_LAST_SDK_CHECK_KEY = "DART_LAST_SDK_CHECK_KEY";
   private static final long CHECK_INTERVAL = TimeUnit.DAYS.toMillis(1);
 
-  private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-\\+\\.]*)");
+  private static final Pattern SEMANTIC_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+\\.\\d+)([0-9A-Za-z\\-+.]*)");
 
   public static void mayBeCheckForSdkUpdate(@NotNull final Project project) {
     if (Registry.is("dart.projects.without.pubspec", false)) return;
@@ -138,7 +137,7 @@ public class DartSdkUpdateChecker {
     final String title = DartBundle.message("dart.sdk.update.title");
     final String message = DartBundle.message("new.dart.sdk.available.for.download..notification", availableSdkVersion, currentSdkVersion);
 
-    UpdateChecker.NOTIFICATIONS.createNotification(title, message, NotificationType.INFORMATION, (notification, event) -> {
+    UpdateChecker.getNotificationGroup().createNotification(title, message, NotificationType.INFORMATION, (notification, event) -> {
       notification.expire();
       if ("download".equals(event.getDescription())) {
         BrowserUtil.browse(downloadUrl);
