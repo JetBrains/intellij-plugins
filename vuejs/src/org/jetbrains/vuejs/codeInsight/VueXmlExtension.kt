@@ -66,8 +66,7 @@ class VueXmlExtension : HtmlXmlExtension() {
     } != null
   }
 
-  override fun isCollapsibleTag(tag: XmlTag?): Boolean =
-    tag != null && isVueComponentTemplateContext(tag)
+  override fun isCollapsibleTag(tag: XmlTag?): Boolean = false
 
   override fun isSelfClosingTagAllowed(tag: XmlTag): Boolean =
     isVueComponentTemplateContext(tag)
