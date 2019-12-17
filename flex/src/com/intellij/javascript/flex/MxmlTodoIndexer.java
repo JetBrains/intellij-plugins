@@ -27,8 +27,7 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                        protected void process(JSFile file) {
                                                                          VirtualFile injectedFile = file.getViewProvider().getVirtualFile();
                                                                          final DataIndexer<TodoIndexEntry, Integer, FileContent> indexer =
-                                                                           PlatformIdTableBuilding
-                                                                             .getTodoIndexer(file.getFileType(), injectedFile);
+                                                                           PlatformIdTableBuilding.getTodoIndexer(file.getFileType());
                                                                          if (indexer != null) {
                                                                            Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
                                                                              new FileContentImpl(injectedFile, file.getText(), -1));
