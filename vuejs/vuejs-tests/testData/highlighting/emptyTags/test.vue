@@ -2,7 +2,7 @@
   <div/>
   <div></div>
   <span/>
-  <warning descr="XML tag has empty body"><span></span></warning>
+  <span></span>
   <comp/>
-  <warning descr="XML tag has empty body"><comp></comp></warning>
+  <comp></comp>
 </template>
