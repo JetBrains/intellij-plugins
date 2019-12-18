@@ -17,6 +17,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -40,6 +41,7 @@ import java.util.function.Consumer;
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
+  private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
@@ -146,6 +148,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
     // Attach SM formatter's folder/jar for Cucumber v3/v4
     String cucumberCoreVersion = getCucumberCoreVersion();
+    LOG.info("detected cucumber-java version: " + cucumberCoreVersion);
     for (int i = 5; i >= 3; i--) {
       if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
         if (cucumberJvmFormatterClassPath.endsWith(".jar")) {

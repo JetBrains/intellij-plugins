@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -34,6 +35,8 @@ public class CucumberJavaVersionUtil {
   public static final String CUCUMBER_CORE_VERSION_1_0 = "1";
 
   private static final List<Pair<String, String>> VERSION_CLASS_MARKERS = new ArrayList<>();
+
+  private final static Logger LOG = Logger.getInstance(CucumberJavaVersionUtil.class);
 
   static {
     VERSION_CLASS_MARKERS.add(Pair.create("io.cucumber.plugin.event.EventHandler", CUCUMBER_CORE_VERSION_5));
@@ -82,9 +85,14 @@ public class CucumberJavaVersionUtil {
     JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
     for (Pair<String, String> marker : VERSION_CLASS_MARKERS) {
       if (facade.findClass(marker.first, scope) != null) {
+        LOG.info("Cucumber-core version detected by class: " + marker.first + ", version: " + marker.second);
         return marker.second;
       }
     }
-    return VERSION_CLASS_MARKERS.get(VERSION_CLASS_MARKERS.size() - 1).second;
+
+    String theLatestVersion = VERSION_CLASS_MARKERS.get(VERSION_CLASS_MARKERS.size() - 1).second;
+    LOG.warn("Can't detect cucumber-core version by marker class, assume the latest version: " + theLatestVersion);
+
+    return theLatestVersion;
   }
 }
