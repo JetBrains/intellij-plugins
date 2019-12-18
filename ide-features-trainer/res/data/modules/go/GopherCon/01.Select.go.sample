@@ -1,7 +1,0 @@
-package main
-
-import "fmt"
-
-func main() {
-	<caret>fmt.Printf("hello world")
-}

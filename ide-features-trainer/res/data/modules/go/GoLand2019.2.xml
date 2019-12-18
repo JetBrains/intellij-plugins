@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module name="Features of GoLand 2019.2" lessonsPath="GoLand2019.2/" version="0.1" id="release2019.2" fileType="SCRATCH"
-        description="New features of GoLand 2019.2 (July 2019).">
-    <lesson filename="00.ExtractMethodRefactoringWithReturns.xml" lang="go"/>
-    <lesson filename="01.FillStructFields.xml" lang="go"/>
-    <lesson filename="02.RedundantTypeConversions.xml" lang="go"/>
-    <lesson-kt implementationClass="training.learn.lesson.go.release.GoDebugFunctionCallsLesson"/>
-    <lesson-kt implementationClass="training.learn.lesson.go.release.GoPostfixTemplates"/>
-</module>
