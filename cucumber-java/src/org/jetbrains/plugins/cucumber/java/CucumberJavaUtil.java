@@ -18,10 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.ClassUtil;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.*;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Query;
@@ -37,9 +34,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
-import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
+import static com.intellij.psi.util.PsiTreeUtil.*;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.CUCUMBER_CORE_VERSION_1_1;
@@ -330,47 +327,97 @@ public class CucumberJavaUtil {
 
     PsiClass parameterTypeClass = ClassUtil.findPsiClass(PsiManager.getInstance(module.getProject()), PARAMETER_TYPE_CLASS);
     if (parameterTypeClass != null) {
-      for (PsiMethod constructor: parameterTypeClass.getConstructors()) {
-        JavaFindUsagesHelper.processElementUsages(constructor, options, processor);
+      for (PsiMethod method: parameterTypeClass.getMethods()) {
+        if (method.getModifierList().hasModifierProperty(PsiModifier.PUBLIC) &&
+            method.getModifierList().hasModifierProperty(PsiModifier.STATIC) || method.isConstructor()) {
+          JavaFindUsagesHelper.processElementUsages(method, options, processor);
+        }
       }
     }
 
-    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(module.getProject());
     Map<String, String> values = new HashMap<>();
     Map<String, SmartPsiElementPointer<PsiElement>> declarations = new HashMap<>();
     for (UsageInfo ui: processor.getResults()) {
       PsiElement element = ui.getElement();
-      if (element != null && element.getParent() instanceof PsiNewExpression) {
+      if (element == null) {
+        continue;
+      }
+      if (element.getParent() instanceof PsiNewExpression) {
         PsiNewExpression newExpression = (PsiNewExpression)element.getParent();
-        PsiExpressionList arguments = newExpression.getArgumentList();
-        if (arguments != null) {
-          PsiExpression[] expressions = arguments.getExpressions();
-          if (expressions.length > 1) {
-            PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(module.getProject()).getConstantEvaluationHelper();
+        processParameterTypeFromConstructor(values, declarations, newExpression);
+      }
+      if (element.getParent() instanceof PsiMethodCallExpression ) {
+        PsiMethodCallExpression call = (PsiMethodCallExpression)element.getParent();
 
-            Object constantValue = evaluationHelper.computeConstantExpression(expressions[0], false);
-            if (constantValue == null) {
-              continue;
-            }
-            String name = constantValue.toString();
-
-            constantValue = evaluationHelper.computeConstantExpression(expressions[1], false);
-            if (constantValue == null) {
-              continue;
-            }
-            String value = constantValue.toString();
-            values.put(name, value);
-
-            SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(expressions[0]);
-            declarations.put(name, smartPointer);
-          }
-        }
+        processParameterTypeMethodDeclaration(values, declarations, call);
       }
     }
 
     values.putAll(STANDARD_PARAMETER_TYPES);
     values.putAll(JAVA_PARAMETER_TYPES);
     return new MapParameterTypeManager(values, declarations);
+  }
+
+  private static void processParameterTypeMethodDeclaration(@NotNull Map<String, String> values,
+                                                            @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
+                                                            @NotNull PsiMethodCallExpression call) {
+    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(call.getProject());
+
+    if (!call.getMethodExpression().getQualifiedName().equals("ParameterType.fromEnum")) {
+      return;
+    }
+    PsiExpression[] arguments = call.getArgumentList().getExpressions();
+    if (arguments.length <= 0) {
+      return;
+    }
+    PsiExpression enumClass = arguments[0];
+    if (!(enumClass instanceof PsiClassObjectAccessExpression)) {
+      return;
+    }
+    PsiClassObjectAccessExpression objectAccessExpression = (PsiClassObjectAccessExpression)enumClass;
+    PsiClass psiClass = PsiUtil.resolveClassInClassTypeOnly(objectAccessExpression.getOperand().getType());
+
+    if (psiClass == null || !psiClass.isEnum()) {
+      return;
+    }
+    String regex = Arrays.stream(psiClass.getFields()).map(f -> f.getName()).collect(Collectors.joining("|"));
+
+    values.put(psiClass.getName(), regex);
+
+    SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(psiClass);
+    declarations.put(psiClass.getName(), smartPointer);
+  }
+
+  private static void processParameterTypeFromConstructor(@NotNull Map<String, String> values,
+                                                          @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
+                                                          @NotNull PsiNewExpression newExpression) {
+    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(newExpression.getProject());
+
+    PsiExpressionList arguments = newExpression.getArgumentList();
+    if (arguments == null) {
+      return;
+    }
+      PsiExpression[] expressions = arguments.getExpressions();
+      if (expressions.length == 0) {
+        return;
+      }
+      PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(newExpression.getProject()).getConstantEvaluationHelper();
+
+      Object constantValue = evaluationHelper.computeConstantExpression(expressions[0], false);
+      if (constantValue == null) {
+        return;
+      }
+      String name = constantValue.toString();
+
+      constantValue = evaluationHelper.computeConstantExpression(expressions[1], false);
+      if (constantValue == null) {
+        return;
+      }
+      String value = constantValue.toString();
+      values.put(name, value);
+
+      SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(expressions[0]);
+      declarations.put(name, smartPointer);
   }
 
   /**

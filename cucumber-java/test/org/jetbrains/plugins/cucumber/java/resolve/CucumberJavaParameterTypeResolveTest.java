@@ -24,9 +24,15 @@ public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolv
                 reference instanceof CucumberJavaParameterTypeReference);
   }
 
+  public void testResolveEnumParameterType() {
+    init("stepResolve_ParameterType", "ParameterTypeSteps.java");
+
+    checkReference("{MyEnu<caret>m}", "MyEnum");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumberJava8ProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber4_5ProjectDescriptor();
   }
 
   @Nullable

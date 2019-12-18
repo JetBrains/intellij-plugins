@@ -14,4 +14,8 @@ public class ShoppingStepdefs implements En {
   @Given("my step definition")
   public void my_step_definition() {
   }
+
+  @Given("smth with {MyEnum}")
+  public void smthWithMyEnum(MyEnum myEnum) {
+  }
 }
