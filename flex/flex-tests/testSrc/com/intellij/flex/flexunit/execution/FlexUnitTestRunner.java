@@ -31,7 +31,7 @@ final class FlexUnitTestRunner extends FlexRunner {
       }
     };
 
-    ExecutionManager.getInstance(project).compileAndRun(startRunnable, environment, state, null);
+    ExecutionManager.getInstance(project).compileAndRun(startRunnable, environment, null);
     return null;
   }
 }
