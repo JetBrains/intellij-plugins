@@ -123,7 +123,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
       @NotNull
       @Override
-      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+      public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner<?> runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
         myConsoleFilters.forEach((filter) -> console.addMessageFilter(filter));
