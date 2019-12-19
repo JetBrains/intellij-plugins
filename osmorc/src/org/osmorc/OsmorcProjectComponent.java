@@ -24,40 +24,17 @@
  */
 package org.osmorc;
 
-import aQute.bnd.build.Workspace;
-import com.intellij.ProjectTopics;
-import com.intellij.execution.RunManager;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.*;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.ModuleListener;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
-import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.util.Function;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.run.OsgiConfigurationType;
-import org.osmorc.run.OsgiRunConfiguration;
-import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.settings.FrameworkDefinitionListener;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.event.HyperlinkEvent;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -73,21 +50,16 @@ public final class OsmorcProjectComponent {
   private final MergingUpdateQueue myQueue;
   private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
 
+  public static OsmorcProjectComponent getInstance(Project project) {
+    return ServiceManager.getService(project, OsmorcProjectComponent.class);
+  }
+
   public OsmorcProjectComponent(@NotNull Project project) {
     myProject = project;
     myQueue = new MergingUpdateQueue(OsmorcProjectComponent.class.getName(), 500, true, MergingUpdateQueue.ANY_COMPONENT, myProject);
-
-    MessageBusConnection connection = myProject.getMessageBus().connect();
-    connection.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
-    connection.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
-
-    Workspace workspace = BndProjectImporter.findWorkspace(myProject);
-    if (workspace != null) {
-      connection.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener());
-    }
   }
 
-  private void scheduleImportNotification() {
+  public void scheduleImportNotification() {
     myQueue.queue(new Update("reimport") {
       @Override
       public void run() {
@@ -118,67 +90,5 @@ public final class OsmorcProjectComponent {
           .notify(myProject);
       }
     });
-  }
-
-
-  private class MyFrameworkDefinitionListener implements FrameworkDefinitionListener {
-    @Override
-    public void definitionsChanged(@NotNull List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> changes) {
-      OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
-      for (Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition> pair : changes) {
-        if (pair.first == null) continue;
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(configurationType)) {
-          OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration)runConfiguration;
-          if (pair.first.equals(osgiRunConfiguration.getInstanceToUse())) {
-            osgiRunConfiguration.setInstanceToUse(pair.second);
-          }
-        }
-      }
-    }
-  }
-
-  private class MyModuleRenameHandler implements ModuleListener {
-    @Override
-    public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
-      final List<Pair<SelectedBundle, String>> pairs = new SmartList<>();
-      OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
-      for (Module module : modules) {
-        String oldName = oldNameProvider.fun(module);
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(configurationType)) {
-          for (SelectedBundle bundle : ((OsgiRunConfiguration)runConfiguration).getBundlesToDeploy()) {
-            if (bundle.isModule() && bundle.getName().equals(oldName)) {
-              pairs.add(Pair.create(bundle, module.getName()));
-              break;
-            }
-          }
-        }
-      }
-
-      if (!pairs.isEmpty()) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          for (Pair<SelectedBundle, String> pair : pairs) {
-            pair.first.setName(pair.second);
-          }
-        });
-      }
-    }
-  }
-
-  private class MyVfsListener implements BulkFileListener {
-    @Override
-    public void after(@NotNull List<? extends VFileEvent> events) {
-      for (VFileEvent event : events) {
-        if (event instanceof VFileContentChangeEvent) {
-          VirtualFile file = event.getFile();
-          if (file != null) {
-            String name = file.getName();
-            if (BndProjectImporter.BND_FILE.equals(name) || BndProjectImporter.BUILD_FILE.equals(name)) {
-              scheduleImportNotification();
-              break;
-            }
-          }
-        }
-      }
-    }
   }
 }

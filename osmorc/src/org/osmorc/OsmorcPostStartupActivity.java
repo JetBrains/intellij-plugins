@@ -24,6 +24,7 @@
  */
 package org.osmorc;
 
+import aQute.bnd.build.Workspace;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
@@ -33,10 +34,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
 import org.osmorc.facet.OsmorcFacetType;
 import org.osmorc.impl.AdditionalJARContentsWatcherManager;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -75,5 +84,34 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
         }
       }
     });
+
+    Workspace workspace = BndProjectImporter.findWorkspace(project);
+    if (workspace != null) {
+      connection.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener(project));
+    }
+  }
+
+  private static class MyVfsListener implements BulkFileListener {
+    private final Project myProject;
+
+    private MyVfsListener(Project project) {
+      myProject = project;
+    }
+
+    @Override
+    public void after(@NotNull List<? extends VFileEvent> events) {
+      for (VFileEvent event : events) {
+        if (event instanceof VFileContentChangeEvent) {
+          VirtualFile file = event.getFile();
+          if (file != null) {
+            String name = file.getName();
+            if (BndProjectImporter.BND_FILE.equals(name) || BndProjectImporter.BUILD_FILE.equals(name)) {
+              OsmorcProjectComponent.getInstance(myProject).scheduleImportNotification();
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 }

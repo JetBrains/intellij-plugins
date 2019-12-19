@@ -49,12 +49,6 @@
   <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="osgi-maven-support.xml">org.jetbrains.idea.maven</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
   <extensionPoints>
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
     <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
@@ -130,6 +124,8 @@
       <configurable id="reference.settings.project.osgi.library.bundling" displayName="Library Bundling"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
+
+    <projectService serviceImplementation="org.osmorc.OsmorcProjectComponent"/>
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">
@@ -140,6 +136,11 @@
 
     <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
   </extensions>
+
+  <projectListeners>
+    <listener class="org.osmorc.run.OsmorcModuleRenameHandler" topic="com.intellij.openapi.project.ModuleListener"/>
+    <listener class="org.osmorc.run.OsmorcFrameworkDefinitionListener" topic="org.osmorc.settings.FrameworkDefinitionListener"/>
+  </projectListeners>
 
   <actions>
     <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reimport Projects"
