@@ -39,16 +39,16 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-193.5233.102'
+    version 'IU-193.5662.53'
 
     plugins = [
-            'Pythonid:193.5233.102',
-            'org.jetbrains.plugins.ruby:193.5233.57',
+            'Pythonid:193.5662.53',
+            'org.jetbrains.plugins.ruby:193.5662.46',
             'com.intellij.testGuiFramework:0.9.44.1@nightly',
             "JavaScriptLanguage",
             "HtmlTools",
             'java',
-            'org.jetbrains.plugins.go:193.5233.48.65'
+            'org.jetbrains.plugins.go:193.5662.1.85'
     ]
     if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
         alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")
