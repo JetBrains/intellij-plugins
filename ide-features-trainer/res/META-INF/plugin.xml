@@ -29,6 +29,8 @@
                         beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="training.lang.LangSupport"/>
         </extensionPoint>
+
+        <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules" />
     </extensionPoints>
 
 

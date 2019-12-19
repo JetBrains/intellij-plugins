@@ -4,10 +4,6 @@
 package training.util
 
 object XmlModuleConstants {
-  const val MODULE_ALLMODULE_FILENAME = "modules.xml"
-  const val MODULE_TYPE_ATTR = "module"
-  const val LANGUAGE_NODE_ATTR = "language"
-  const val LANGUAGE_NAME_ATTR = "lang"
   const val MODULE_NAME_ATTR = "name"
   const val MODULE_ID_ATTR = "id"
   const val MODULE_XML_LESSON_ELEMENT = "lesson"

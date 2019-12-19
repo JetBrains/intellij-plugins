@@ -4,5 +4,13 @@
 <idea-plugin>
     <extensions defaultExtensionNs="training">
         <TrainingLangExtension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
+
+        <TrainingModules language="java">
+            <module xmlPath="modules/java/EditorBasics.xml"/>
+            <module xmlPath="modules/java/Completions.xml"/>
+            <module xmlPath="modules/java/Refactorings.xml"/>
+            <module xmlPath="modules/java/CodeAssistance.xml"/>
+            <module xmlPath="modules/java/Navigation.xml"/>
+        </TrainingModules>
     </extensions>
 </idea-plugin>

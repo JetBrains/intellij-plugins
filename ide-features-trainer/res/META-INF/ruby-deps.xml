@@ -4,5 +4,12 @@
 <idea-plugin>
     <extensions defaultExtensionNs="training">
         <TrainingLangExtension language="ruby" implementationClass="training.lang.RubyLangSupport"/>
+
+        <TrainingModules language="ruby">
+            <module xmlPath="modules/ruby/EditorBasics.xml"/>
+            <module xmlPath="modules/ruby/Navigation.xml"/>
+            <module xmlPath="modules/ruby/Completions.xml"/>
+            <module xmlPath="modules/ruby/Refactorings.xml"/>
+        </TrainingModules>
     </extensions>
 </idea-plugin>

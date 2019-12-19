@@ -20,7 +20,6 @@ import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoJavaModuleException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
-import training.util.XmlModuleConstants
 
 class CourseManager internal constructor() {
 
@@ -41,21 +40,15 @@ class CourseManager internal constructor() {
   }
 
   fun initXmlModules() {
-    val modulesRoot = XmlModule.getRootFromPath(XmlModuleConstants.MODULE_ALLMODULE_FILENAME)
-    for (language in modulesRoot.children) {
-      if (language.name == XmlModuleConstants.LANGUAGE_NODE_ATTR) {
-        val primaryLanguage = language.getAttribute(XmlModuleConstants.LANGUAGE_NAME_ATTR).value
-        for (element in language.children) {
-          if (element.name == XmlModuleConstants.MODULE_TYPE_ATTR) {
-            val moduleFilename = element.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
-            val module = XmlModule.initModule(moduleFilename, primaryLanguage)
-                         ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-            allModules.add(module)
-          }
-          else throw IllegalArgumentException("Unknown attribute name " + element.name)
-        }
+    val trainingModules = TrainingModules.EP_NAME.extensions
+    for (modules in trainingModules) {
+      val primaryLanguage = modules.language
+      for (module in modules.children) {
+        val moduleFilename = module.xmlPath
+        val module = XmlModule.initModule(moduleFilename, primaryLanguage)
+             ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+        allModules.add(module)
       }
-      else throw IllegalArgumentException("Unknown attribute name " + language.name)
     }
   }
 

@@ -3,5 +3,10 @@
 <idea-plugin>
     <extensions defaultExtensionNs="training">
         <TrainingLangExtension language="JavaScript" implementationClass="training.lang.JavaScriptLangSupport"/>
+
+        <TrainingModules language="javascript">
+            <module xmlPath="modules/javascript/EditorBasics.xml"/>
+            <module xmlPath="modules/javascript/WebStormDebugger.xml"/>
+        </TrainingModules>
     </extensions>
 </idea-plugin>
