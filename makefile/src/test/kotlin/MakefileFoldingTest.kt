@@ -1,6 +1,6 @@
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.*
 
-class MakefileFoldingTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileFoldingTest : BasePlatformTestCase() {
   fun testRule() = doTest()
   fun testVariable() = doTest()
   fun testDefine() = doTest()

@@ -7,6 +7,7 @@ import name.kropp.intellij.makefile.psi.MakefileTarget
 import name.kropp.intellij.makefile.psi.impl.MakefileTargetImpl
 
 object MakefileTargetStubElementType : IStubElementType<MakefileTargetStubElement, MakefileTarget>("TARGET", MakefileLanguage) {
+  @Suppress("UNUSED_PARAMETER")
   @JvmStatic
   fun getInstance(debugName: String) = MakefileTargetStubElementType
 

@@ -1,6 +1,6 @@
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.*
 
-class MakefileCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileCompletionTest : BasePlatformTestCase() {
   fun testSimple() = doTest("b", "c", "d", "${getTestName(true)}.mk")
   fun testTargets() = doTest("a", "${getTestName(true)}.mk")
 

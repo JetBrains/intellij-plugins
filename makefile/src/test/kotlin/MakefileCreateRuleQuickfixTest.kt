@@ -1,6 +1,6 @@
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.*
 
-class MakefileCreateRuleQuickfixTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {
   fun testSimple() = doTest()
   fun testMiddle() = doTest()
 

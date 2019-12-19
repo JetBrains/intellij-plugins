@@ -1,6 +1,6 @@
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.*
 
-class MakefileRemoveRuleQuickfixTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileRemoveRuleQuickfixTest : BasePlatformTestCase() {
   fun testSingle() = doTest()
   fun testTwo() = doTest()
 

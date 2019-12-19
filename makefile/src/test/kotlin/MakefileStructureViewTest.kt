@@ -1,7 +1,7 @@
 import com.intellij.testFramework.*
 import com.intellij.testFramework.fixtures.*
 
-class MakefileStructureViewTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileStructureViewTest : BasePlatformTestCase() {
   fun testSimple() {
     val filename = "${getTestName(true)}.mk"
     myFixture.configureByFile("$testDataPath/$basePath/$filename")

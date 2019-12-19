@@ -1,6 +1,6 @@
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.*
 
-class MakefileHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileHighlightingTest : BasePlatformTestCase() {
   fun testUnresolved() = doTest()
   fun testRedundant() = doTest(true)
   fun testTargetspecificvars() = doTest()

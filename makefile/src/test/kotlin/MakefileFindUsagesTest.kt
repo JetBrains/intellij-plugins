@@ -1,12 +1,12 @@
-import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.find.FindManager
-import com.intellij.find.impl.FindManagerImpl
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.hamcrest.collection.IsCollectionWithSize.hasSize
-import org.hamcrest.core.IsNull.nullValue
-import org.junit.Assert.assertThat
+import com.intellij.codeInsight.*
+import com.intellij.find.*
+import com.intellij.find.impl.*
+import com.intellij.testFramework.fixtures.*
+import org.hamcrest.collection.IsCollectionWithSize.*
+import org.hamcrest.core.IsNull.*
+import org.junit.Assert.*
 
-class MakefileFindUsagesTest : LightPlatformCodeInsightFixtureTestCase() {
+class MakefileFindUsagesTest : BasePlatformTestCase() {
   fun testSimple() {
     val usages = myFixture.testFindUsages("$testDataPath/$basePath/${getTestName(true)}.mk")
 
