@@ -1,11 +1,9 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
-import com.intellij.ProjectTopics;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,17 +16,10 @@ public class CodeContextHolder {
   private final Map<String, Map<Module, CodeContext>> myNSToCodeContextMap = new THashMap<>();
   static final CodeContext EMPTY = new CodeContext(null, null);
 
-  public CodeContextHolder(Project project) {
-    project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      @Override
-      public void rootsChanged(@NotNull final ModuleRootEvent event) {
-        synchronized (CodeContextHolder.this) {
-          myNSToCodeContextMap.clear();
-          myStandardContexts.clear();
-          myModulesWithSdkComponentsHandled.clear();
-        }
-      }
-    });
+  synchronized void clear() {
+    myNSToCodeContextMap.clear();
+    myStandardContexts.clear();
+    myModulesWithSdkComponentsHandled.clear();
   }
 
   @Nullable
@@ -55,7 +46,7 @@ public class CodeContextHolder {
   }
 
   public static CodeContextHolder getInstance(@NotNull Project project) {
-    return project.getComponent(CodeContextHolder.class);
+    return ServiceManager.getService(project, CodeContextHolder.class);
   }
 
   @Nullable

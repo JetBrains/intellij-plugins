@@ -265,6 +265,8 @@
 
     <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
+
+    <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -286,12 +288,13 @@
     <extensionPoint name="breakpoint.type.provider" interface="com.intellij.lang.javascript.flex.debug.FlexBreakpointsHandler$BreakpointTypeProvider"/>
   </extensionPoints>
 
+  <projectListeners>
+    <listener class="com.intellij.javascript.flex.mxml.schema.CodeContextRootsChangedListener" topic="com.intellij.openapi.roots.ModuleRootListener"/>
+  </projectListeners>
+
   <project-components>
     <component>
       <implementation-class>com.intellij.lang.javascript.flex.build.FlexCompilerHandler</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.intellij.javascript.flex.mxml.schema.CodeContextHolder</implementation-class>
     </component>
   </project-components>
 
