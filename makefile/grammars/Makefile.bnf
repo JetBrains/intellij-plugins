@@ -53,13 +53,13 @@ private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe {methods=[getTargets]}
 recipe ::= (command|conditional|empty_command)* {methods=[isEmpty]}
-command ::= '\t'* multiline
+command ::= '\t'* multiline {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileCommandElementImpl"}
 private multiline ::= (line (split line?)* | (split line?)+)
 empty_command ::= '\t'+
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
-target ::= identifier|variable_usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.psi.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
+target ::= identifier|variable_usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
 
 target_pattern ::= identifier
 

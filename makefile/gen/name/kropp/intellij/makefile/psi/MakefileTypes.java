@@ -4,8 +4,8 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
-import name.kropp.intellij.makefile.psi.impl.*;
 import name.kropp.intellij.makefile.stub.MakefileTargetStubElementType;
+import name.kropp.intellij.makefile.psi.impl.*;
 
 public interface MakefileTypes {
 

@@ -21,4 +21,7 @@ object MakefileElementFactory {
 
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
+
+  fun createCommand(project: Project, text: String) =
+      createRule(project, "target:\n\t$text").firstChild.nextSibling as MakefileCommand
 }

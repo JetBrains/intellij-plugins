@@ -8,12 +8,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import name.kropp.intellij.makefile.psi.*;
 
-public class MakefileCommandImpl extends ASTWrapperPsiElement implements MakefileCommand {
+public class MakefileCommandImpl extends MakefileCommandElementImpl implements MakefileCommand {
 
-  public MakefileCommandImpl(@NotNull ASTNode node) {
+  public MakefileCommandImpl(ASTNode node) {
     super(node);
   }
 

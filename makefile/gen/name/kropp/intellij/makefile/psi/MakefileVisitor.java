@@ -4,6 +4,7 @@ package name.kropp.intellij.makefile.psi;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.navigation.NavigationItem;
 
 public class MakefileVisitor extends PsiElementVisitor {
@@ -13,7 +14,7 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitCommand(@NotNull MakefileCommand o) {
-    visitPsiElement(o);
+    visitPsiLanguageInjectionHost(o);
   }
 
   public void visitComment(@NotNull MakefileComment o) {
@@ -135,6 +136,10 @@ public class MakefileVisitor extends PsiElementVisitor {
 
   public void visitNamedElement(@NotNull MakefileNamedElement o) {
     visitPsiElement(o);
+  }
+
+  public void visitPsiLanguageInjectionHost(@NotNull PsiLanguageInjectionHost o) {
+    visitElement(o);
   }
 
   public void visitPsiElement(@NotNull PsiElement o) {
