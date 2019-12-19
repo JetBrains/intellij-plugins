@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.platform.ProjectGeneratorPeer;
 import com.intellij.ui.TextAccessor;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
@@ -161,10 +162,9 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       .orElseGet(() -> super.validateProjectPath(path));
   }
 
-  @SuppressWarnings("deprecation")
   @NotNull
   @Override
-  public GeneratorPeer<Settings> createPeer() {
+  public ProjectGeneratorPeer<Settings> createPeer() {
     return new AngularCLIProjectGeneratorPeer();
   }
 

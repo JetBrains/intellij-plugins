@@ -18,6 +18,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.ProjectGeneratorPeer
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.PathUtil
 import icons.VuejsIcons
@@ -50,7 +51,7 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     return VuejsIcons.Vue
   }
 
-  override fun createPeer(): GeneratorPeer<Settings> {
+  override fun createPeer(): ProjectGeneratorPeer<Settings> {
     val defaultSetupCheckbox = JBCheckBox(VueBundle.message("vue.project.generator.use.default.project.setup"),
                                           DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED)
     return object : NpmPackageGeneratorPeer() {
