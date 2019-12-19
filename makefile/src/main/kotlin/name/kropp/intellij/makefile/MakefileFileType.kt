@@ -15,9 +15,3 @@ object MakefileFileType : LanguageFileType(MakefileLanguage) {
   override fun getDescription() = "GNU Makefile"
   override fun getDefaultExtension() = "mk"
 }
-
-object MakefileFileTypeFactory : FileTypeFactory() {
-  override fun createFileTypes(consumer: FileTypeConsumer) {
-    consumer.consume(MakefileFileType, ExactFileNameMatcher("Makefile"), ExtensionFileNameMatcher("mk"), ExactFileNameMatcher("makefile"), ExactFileNameMatcher("GNUmakefile"), FileNameMatcherFactory.getInstance().createMatcher("Makefile.*"))
-  }
-}
