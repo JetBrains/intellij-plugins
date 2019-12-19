@@ -181,7 +181,7 @@ public class DartDocUtil {
     builder.append("</code>\n");
     if (docText != null) {
       final MarkdownProcessor processor = new MarkdownProcessor();
-      final String markdownProcessorOutput = processor.markdown(docText.trim());
+      final String markdownProcessorOutput = processor.markdown(docText);
       List<String> lines = Arrays.asList(StringUtil.splitByLines(markdownProcessorOutput));
       MarkdownUtil.replaceCodeBlock(lines);
       MarkdownUtil.removeImages(lines);
