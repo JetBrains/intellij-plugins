@@ -6,6 +6,7 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,7 @@ final class FlexUnitTestRunner extends FlexRunner {
 
       RunContentDescriptor descriptor = doExecute(state, environment);
       if (descriptor != null) {
-        ExecutionManager.getInstance(project).getContentManager().showRunContent(environment.getExecutor(), descriptor);
+        RunContentManager.getInstance(project).showRunContent(environment.getExecutor(), descriptor);
         ProcessHandler processHandler = descriptor.getProcessHandler();
         if (processHandler != null) {
           processHandler.startNotify();
