@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2019 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,8 +97,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
   public String getName(final Object o) {
 
     if (o instanceof Result) {
-      final String resultName = ((Result) o).getName().getStringValue();
-      return resultName != null ? resultName : Result.DEFAULT_NAME;
+      return ((Result) o).getNameOrDefault();
     }
 
     if (o instanceof StrutsRoot) {

@@ -250,12 +250,6 @@
 
   </extensions>
 
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.struts2.StrutsApplicationComponent</implementation-class>
-    </component>
-  </application-components>
-
   <actions>
     <action id="Struts2.Create.StrutsXml"
             class="com.intellij.struts2.actions.create.CreateStrutsXmlAction"
