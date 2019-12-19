@@ -25,10 +25,10 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           "doc3</p>\n" +
-           "<p>   doc4</p>\n" +
-           "<pre><code>    code\n" +
-           "</code></pre>",
+           " doc3\n" +
+           "   doc4</p>\n" +
+           "\n" +
+           "<pre><code>    code</code></pre>",
 
            "/** 1 */\n" +
            "/**\n" +
@@ -47,10 +47,10 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   public void testClassMultilineDoc2() {
     doTest("<code><b>test.dart</b><br>abstract class A<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
            "doc2\n" +
-           "doc3\n" +
+           " doc3\n" +
            "doc4\n" +
            "doc5\n" +
-           "doc6</p>",
+           " doc6</p>",
 
            "@deprecated\n" +
            "/**\n" +
@@ -165,15 +165,13 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionDoc2() {
-    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n" +
-           "<ul>\n" +
-           "<li>this</li>\n" +
-           "<li>that</li>\n" +
-           "</ul>", "/** Good for:\n\n" +
-                    " * * this\n" +
-                    " * * that\n" +
-                    "*/\n" +
-                    "\nvoid <caret>foo(int x) { }");
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n\n" +
+           "<ul><li>this</li>\n" +
+           "<li>that</li></ul>", "/** Good for:\n\n" +
+                                 " * * this\n" +
+                                 " * * that\n" +
+                                 "*/\n" +
+                                 "\nvoid <caret>foo(int x) { }");
   }
 
   public void testFunctionSig1() {
@@ -276,10 +274,10 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br>dynamic foo()<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           "doc3</p>\n" +
-           "<p>   doc4</p>\n" +
-           "<pre><code>    code\n" +
-           "</code></pre>",
+           " doc3\n" +
+           "   doc4</p>\n" +
+           "\n" +
+           "<pre><code>    code</code></pre>",
 
            "class A{\n" +
            "/** 1 */\n" +
@@ -332,11 +330,13 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig2() {
-    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br><b>Containing class:</b> Foo<br><br></code>", "class <caret>Foo<T,Z>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br><b>Containing class:</b> Foo<br><br></code>",
+           "class <caret>Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() {
-    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br><b>Containing class:</b> Foo<br><br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br><b>Containing class:</b> Foo<br><br></code>",
+           "class <caret>Foo implements Bar { }<br/>class Bar { }");
   }
 
   public void testParamClassSig4() {

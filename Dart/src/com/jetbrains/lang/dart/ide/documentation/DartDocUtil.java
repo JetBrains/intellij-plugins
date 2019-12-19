@@ -180,14 +180,14 @@ public class DartDocUtil {
     builder.append("<br>");
     builder.append("</code>\n");
     if (docText != null) {
-      final MarkdownProcessor processor = new MarkdownProcessor();
-      final String markdownProcessorOutput = processor.markdown(docText);
-      List<String> lines = Arrays.asList(StringUtil.splitByLines(markdownProcessorOutput));
+      List<String> lines = StringUtil.split(docText, "\n");
       MarkdownUtil.replaceCodeBlock(lines);
       MarkdownUtil.removeImages(lines);
       MarkdownUtil.replaceHeaders(lines);
       MarkdownUtil.generateLists(lines);
-      builder.append(StringUtil.join(lines, "\n"));
+
+      MarkdownProcessor processor = new MarkdownProcessor();
+      builder.append(processor.markdown(StringUtil.join(lines, "\n")));
     }
     // done
     return builder.toString().trim();
