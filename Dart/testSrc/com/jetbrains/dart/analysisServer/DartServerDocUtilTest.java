@@ -17,18 +17,16 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testAbstractClassSig() {
-    doTest("<code><b>test.dart</b><br>abstract class Foo extends Bar<br><br></code>",
+    doTest("<code><b>test.dart</b><br>abstract class Foo extends Bar<br><br><b>Containing class:</b> Foo<br><br></code>",
            "abstract class <caret>Foo extends Bar { }\nclass Bar { }");
   }
 
   public void testClassMultilineDoc1() {
-    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           " doc3</p>\n" +
-           "\n" +
+           "doc3</p>\n" +
            "<p>   doc4</p>\n" +
-           "\n" +
            "<pre><code>    code\n" +
            "</code></pre>",
 
@@ -47,12 +45,12 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc2() {
-    doTest("<code><b>test.dart</b><br>abstract class A<br><br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>abstract class A<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
            "doc2\n" +
-           " doc3\n" +
+           "doc3\n" +
            "doc4\n" +
            "doc5\n" +
-           " doc6</p>",
+           "doc6</p>",
 
            "@deprecated\n" +
            "/**\n" +
@@ -67,7 +65,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs1() {
-    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
            "doc2</p>",
 
            "// not doc \n" +
@@ -79,7 +77,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testClassSingleLineDocs2() {
-    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
            "doc2</p>",
 
            "@deprecated" +
@@ -148,7 +146,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testEnumSig() {
-    doTest("<code><b>test.dart</b><br>enum Foo<br><br></code>", "enum <caret>Foo { BAR }");
+    doTest("<code><b>test.dart</b><br>enum Foo<br><br><b>Containing class:</b> Foo<br><br></code>", "enum <caret>Foo { BAR }");
   }
 
   public void testFieldSig1() {
@@ -168,7 +166,6 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
 
   public void testFunctionDoc2() {
     doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n" +
-           "\n" +
            "<ul>\n" +
            "<li>this</li>\n" +
            "<li>that</li>\n" +
@@ -263,26 +260,24 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testImplementsSig1() {
-    doTest("<code><b>test.dart</b><br>abstract class Foo implements Bar<br><br></code>",
+    doTest("<code><b>test.dart</b><br>abstract class Foo implements Bar<br><br><b>Containing class:</b> Foo<br><br></code>",
            "abstract class <caret>Foo implements Bar<T> { }\nclass Bar { }");
   }
 
   public void testLibraryClassDoc() {
-    doTest("<code><b>test.dart</b><br>class A<br><br></code>", "library c.b.a;\nclass <caret>A {}");
+    doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>", "library c.b.a;\nclass <caret>A {}");
   }
 
   public void testMetaClassSig1() {
-    doTest("<code><b>test.dart</b><br>class A<br><br></code>", " @deprecated class <caret>A {}");
+    doTest("<code><b>test.dart</b><br>class A<br><br><b>Containing class:</b> A<br><br></code>", " @deprecated class <caret>A {}");
   }
 
   public void testMethodMultilineDoc() {
     doTest("<code><b>test.dart</b><br>dynamic foo()<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           " doc3</p>\n" +
-           "\n" +
+           "doc3</p>\n" +
            "<p>   doc4</p>\n" +
-           "\n" +
            "<pre><code>    code\n" +
            "</code></pre>",
 
@@ -319,12 +314,12 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testMixinSig1() {
-    doTest("<code><b>test.dart</b><br>class Foo2 extends Bar1 with Baz1, Baz2<br><br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo2 extends Bar1 with Baz1, Baz2<br><br><b>Containing class:</b> Foo2<br><br></code>",
            "class Bar1 {} class Baz1{} class Baz2 {} class <caret>Foo2 = Bar1<E> with Baz1<K>, Baz2");
   }
 
   public void testMixinSig2() {
-    doTest("<code><b>test.dart</b><br>class X extends Y with Z<br><br></code>",
+    doTest("<code><b>test.dart</b><br>class X extends Y with Z<br><br><b>Containing class:</b> X<br><br></code>",
            "class Y {} class Z {} class <caret>X extends Y with Z { }");
   }
 
@@ -333,24 +328,24 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testParamClassSig() {
-    doTest("<code><b>test.dart</b><br>class Foo&lt;T&gt;<br><br></code>", "class <caret>Foo<T>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T&gt;<br><br><b>Containing class:</b> Foo<br><br></code>", "class <caret>Foo<T>{ }");
   }
 
   public void testParamClassSig2() {
-    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br></code>", "class <caret>Foo<T,Z>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br><b>Containing class:</b> Foo<br><br></code>", "class <caret>Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() {
-    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br><b>Containing class:</b> Foo<br><br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
   }
 
   public void testParamClassSig4() {
-    doTest("<code><b>test.dart</b><br>class Foo implements Bar, Baz<br><br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar, Baz<br><br><b>Containing class:</b> Foo<br><br></code>",
            "class <caret>Foo implements Bar, Baz { }<br/>class Bar { }<br/>class Baz { }");
   }
 
   public void testParamClassSig5() {
-    doTest("<code><b>test.dart</b><br>class Foo&lt;A, B&gt; extends Bar&lt;A, B&gt;<br><br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo&lt;A, B&gt; extends Bar&lt;A, B&gt;<br><br><b>Containing class:</b> Foo<br><br></code>",
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 

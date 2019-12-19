@@ -225,7 +225,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testFunctionDoc2() {
     doTest("<code><b>test.dart</b><br><b>foo</b>(int x) " + RIGHT_ARROW + " void<br><br></code>\n" +
-           "<p>Good for:</p>\n\n" +
+           "<p> Good for:</p>\n" +
            "<ul>\n" +
            "<li>this</li>\n" +
            "<li>that</li>\n" +
@@ -238,12 +238,10 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testClassMultilineDoc1() {
-    doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n<p>     doc1\n" +
            "doc2\n" +
-           " doc3</p>\n" +
-           "\n" +
+           "doc3</p>\n" +
            "<p>   doc4</p>\n" +
-           "\n" +
            "<pre><code>    code\n" +
            "</code></pre>",
 
@@ -264,10 +262,10 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testClassMultilineDoc2() {
     doTest("<code><b>test.dart</b><br>abstract class <b>A</b><br><br></code>\n<p>doc1\n" +
            "doc2\n" +
-           " doc3\n" +
+           "doc3\n" +
            "doc4\n" +
            "doc5\n" +
-           " doc6</p>",
+           "doc6</p>",
 
            "@deprecated\n" +
            "/**\n" +
@@ -283,8 +281,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testClassSingleLineDocs1() {
     doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<p>doc1 <br />\n" +
-           "doc2</p>",
+           "<p>  doc1 <br />\n" +
+           "doc2   </p>",
 
            "// not doc \n" +
            "///   doc1  \n" +
@@ -296,8 +294,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testClassSingleLineDocs2() {
     doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<p>doc1 <br />\n" +
-           "doc2</p>",
+           "<p>  doc1 <br />\n" +
+           "doc2   </p>",
 
            "@deprecated" +
            "// not doc \n" +
@@ -310,12 +308,10 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMethodMultilineDoc() {
     doTest(
-      "<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
+      "<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n<p>     doc1\n" +
       "doc2\n" +
-      " doc3</p>\n" +
-      "\n" +
+      "doc3</p>\n" +
       "<p>   doc4</p>\n" +
-      "\n" +
       "<pre><code>    code\n" +
       "</code></pre>",
 
@@ -337,8 +333,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testMethodSingleLineDocs() {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br>" +
-           "<b>Containing class:</b> A<br><br></code>\n<p>doc1  </p>\n" +
-           "\n" +
+           "<b>Containing class:</b> A<br><br></code>\n<p>  doc1  </p>\n" +
            "<pre><code>    doc2\n" +
            "</code></pre>",
 
