@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript.fixes;
 
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -29,11 +28,8 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
     }
 
     final PsiElement place = getPlaceForNamedElementProblem(jsClass);
-    Annotation annotation = myProblemReporter.registerGenericError(place, JSBundle
-      .message("javascript.validation.message.missed.super.constructor.call"));
-    if (annotation != null) {
-      annotation.registerFix(new ActionScriptAddConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
-    }
+    myProblemReporter.registerGenericError(place, JSBundle
+      .message("javascript.validation.message.missed.super.constructor.call"), new ActionScriptAddConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
   }
 
   @Override

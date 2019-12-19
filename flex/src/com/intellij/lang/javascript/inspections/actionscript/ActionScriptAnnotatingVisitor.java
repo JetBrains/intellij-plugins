@@ -1010,14 +1010,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       String s = StringUtil.toLowerCase(modifiers[0].getElementType().toString());
       final String type = s.substring(s.indexOf(':') + 1, s.indexOf('_'));
       for (ASTNode a : modifiers) {
-        final Annotation errorAnnotation = JSAnnotatorProblemReporter.createErrorAnnotation(a.getPsi(),
-                                                                                            JSBundle.message(
-                                                                                              "javascript.validation.message.attribute.was.specified.multiple.times",
-                                                                                              type),
-                                                                                            ProblemHighlightType.ERROR,
-                                                                                            myHolder
-        );
-        errorAnnotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a.getPsi()));
+        Annotation annotation = myHolder.createErrorAnnotation(a.getPsi().getTextRange(), JSBundle.message(
+                                                                                                  "javascript.validation.message.attribute.was.specified.multiple.times",
+                                                                                                  type));
+        annotation.setHighlightType(ProblemHighlightType.ERROR);
+        annotation.registerFix(new RemoveASTNodeFix(ourModifierFixIds[i], a.getPsi()));
       }
     }
   }
@@ -1068,12 +1065,9 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         // ok
       }
       else {
-        JSAnnotatorProblemReporter.createErrorAnnotation(
-          initializer,
-          JSBundle.message("javascript.namespace.initializer.should.be.string.or.another.namespace.reference"),
-          ProblemHighlightType.ERROR,
-          myHolder
-        );
+        Annotation annotation = myHolder.createErrorAnnotation(initializer.getTextRange(), JSBundle
+          .message("javascript.namespace.initializer.should.be.string.or.another.namespace.reference"));
+        annotation.setHighlightType(ProblemHighlightType.ERROR);
       }
     }
   }
