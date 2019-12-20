@@ -836,13 +836,10 @@ public class DartAnalysisServerService implements Disposable {
    */
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
-    if (file != null && file.isInLocalFileSystem()) {
-      return isFileNameRespectedByAnalysisServer(file.getName());
-    }
-    return false;
+    return file != null && file.isInLocalFileSystem();
   }
 
-  public static boolean isFileNameRespectedByAnalysisServer(@NotNull String _fileName) {
+  public static boolean isFileNameRespectedByAnalysisServerWithoutPlugins(@NotNull String _fileName) {
     // see https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/src/generated/engine.dart (class AnalysisEngine)
     // and AbstractAnalysisServer.analyzableFilePatterns
     String fileName = _fileName.toLowerCase(Locale.US);

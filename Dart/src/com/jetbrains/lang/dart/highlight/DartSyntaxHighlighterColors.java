@@ -8,9 +8,9 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
 public class DartSyntaxHighlighterColors {
-  public static final String DART_ERROR = "DART_ERROR";
-  public static final String DART_WARNING = "DART_WARNING";
-  public static final String DART_HINT = "DART_HINT";
+  private static final String DART_ERROR = "DART_ERROR";
+  private static final String DART_WARNING = "DART_WARNING";
+  private static final String DART_HINT = "DART_HINT";
 
   public static final String DART_ANNOTATION = "DART_ANNOTATION";
   public static final String DART_CLASS = "DART_CLASS";
@@ -68,14 +68,14 @@ public class DartSyntaxHighlighterColors {
   public static final String DART_TYPE_PARAMETER = "DART_TYPE_PARAMETER";
   public static final String DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE = "DART_UNRESOLVED_INSTANCE_MEMBER_REFERENCE";
 
-  private static final String DART_BLOCK_COMMENT = "DART_BLOCK_COMMENT";
-  private static final String DART_DOC_COMMENT = "DART_DOC_COMMENT";
-  private static final String DART_LINE_COMMENT = "DART_LINE_COMMENT";
+  public static final String DART_BLOCK_COMMENT = "DART_BLOCK_COMMENT";
+  public static final String DART_DOC_COMMENT = "DART_DOC_COMMENT";
+  public static final String DART_LINE_COMMENT = "DART_LINE_COMMENT";
 
-  private static final String DART_NUMBER = "DART_NUMBER";
-  private static final String DART_STRING = "DART_STRING";
-  private static final String DART_VALID_STRING_ESCAPE = "DART_VALID_STRING_ESCAPE";
-  private static final String DART_INVALID_STRING_ESCAPE = "DART_INVALID_STRING_ESCAPE";
+  public static final String DART_NUMBER = "DART_NUMBER";
+  public static final String DART_STRING = "DART_STRING";
+  public static final String DART_VALID_STRING_ESCAPE = "DART_VALID_STRING_ESCAPE";
+  public static final String DART_INVALID_STRING_ESCAPE = "DART_INVALID_STRING_ESCAPE";
   private static final String DART_OPERATION_SIGN = "DART_OPERATION_SIGN";
   private static final String DART_PARENTH = "DART_PARENTH";
   private static final String DART_BRACKETS = "DART_BRACKETS";
