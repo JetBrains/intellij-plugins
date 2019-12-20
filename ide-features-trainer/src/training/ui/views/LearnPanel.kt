@@ -8,6 +8,7 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import icons.FeaturesTrainerIcons
 import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -383,10 +384,10 @@ class LearnPanel : JPanel() {
         if (lesson.passed) {
           val point = jLabel.location
           if (!SystemInfo.isMac) {
-            LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 1)
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, point.x, point.y + 1)
           }
           else {
-            LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 2)
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, point.x, point.y + 2)
           }
         }
       }

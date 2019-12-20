@@ -7,18 +7,18 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.ui.DialogWrapper
+import icons.FeaturesTrainerIcons
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
-import training.ui.LearnIcons
 import training.ui.views.LanguageChoosePanel
 import javax.swing.JComponent
 
 class StartLearnAction : AnAction(
   LearnBundle.message("learn.WelcomeScreen.StartLearn.text", ApplicationNamesInfo.getInstance().fullProductName),
-  LearnBundle.message("learn.WelcomeScreen.StartLearn.description"), LearnIcons.featureTrainerIcon) {
+  LearnBundle.message("learn.WelcomeScreen.StartLearn.description"), FeaturesTrainerIcons.FeatureTrainer) {
 
   override fun actionPerformed(e: AnActionEvent) {
     if (LangManager.getInstance().isLangUndefined()) {

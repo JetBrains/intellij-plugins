@@ -15,12 +15,12 @@ import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import icons.FeaturesTrainerIcons
 import training.commands.kotlin.TaskContext
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonStateManager
-import training.ui.LearnIcons
 import training.ui.LearnToolWindow
 import training.ui.UISettings
 import training.ui.UiManager
@@ -277,10 +277,10 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
           val basePoint = this.locationOnScreen
           val y = point.y + 1 - basePoint.y
           if (!SystemInfo.isMac) {
-            LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 4)
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, UISettings.instance.westInset, y + 4)
           }
           else {
-            LearnIcons.checkMarkGray.paintIcon(this, g, UISettings.instance.westInset, y + 2)
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, UISettings.instance.westInset, y + 2)
           }
         }
       }

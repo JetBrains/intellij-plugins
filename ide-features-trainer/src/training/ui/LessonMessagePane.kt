@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
+import icons.FeaturesTrainerIcons
 import java.awt.Font
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -190,10 +191,10 @@ class LessonMessagePane : JTextPane() {
         try {
           val rectangle = modelToView(startOffset)
           if (SystemInfo.isMac) {
-            LearnIcons.checkMarkGray.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
           else {
-            LearnIcons.checkMarkGray.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
+            FeaturesTrainerIcons.Checkmark.paintIcon(this, g, rectangle.x - UISettings.instance.checkIndent, rectangle.y + JBUI.scale(1))
           }
         }
         catch (e: BadLocationException) {

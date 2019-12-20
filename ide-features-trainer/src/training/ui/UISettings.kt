@@ -5,6 +5,7 @@ import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.JBUI
+import icons.FeaturesTrainerIcons
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Font
@@ -25,7 +26,7 @@ class UISettings {
   val westInset: Int by lazy { JBUI.scale(13) }
   val southInset: Int by lazy { JBUI.scale(32) }
   val eastInset: Int by lazy { JBUI.scale(32) }
-  val checkWidth: Int by lazy { LearnIcons.checkMarkGray.iconWidth }
+  val checkWidth: Int by lazy { FeaturesTrainerIcons.Checkmark.iconWidth }
   val checkRightIndent: Int by lazy { 5 }
 
   //GAPS

@@ -6,9 +6,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.util.ui.EmptyIcon
+import icons.FeaturesTrainerIcons
 import training.learn.interfaces.Module
 import training.statistic.StatisticBase
-import training.ui.LearnIcons
 import training.ui.welcomeScreen.recentProjects.RenderableAction
 import javax.swing.Icon
 
@@ -19,7 +19,7 @@ class ModuleActionGroup(val module: Module) : DefaultActionGroup(module.name, mo
   override val action: AnAction = this
   override val name: String = module.name
   override val description: String? = module.description
-  override val icon: Icon? = if (!module.hasNotPassedLesson()) LearnIcons.checkMarkGray else null
+  override val icon: Icon? = if (!module.hasNotPassedLesson()) FeaturesTrainerIcons.Checkmark else null
   override val emptyIcon: Icon = EmptyIcon.ICON_0
   override fun isPopup(): Boolean = isExpanded
 
