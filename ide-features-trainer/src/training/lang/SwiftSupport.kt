@@ -26,7 +26,10 @@ class SwiftSupport : AbstractLangSupport() {
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
     return ProjectUtils.importOrOpenProject(
-      "/learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift", "LearnProject")
+      "/learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift",
+      "LearnProject",
+      javaClass.classLoader
+    )
   }
 
   override fun getToolWindowAnchor(): ToolWindowAnchor {

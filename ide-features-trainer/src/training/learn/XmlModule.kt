@@ -27,7 +27,8 @@ import java.net.URISyntaxException
 class XmlModule(override val name: String,
                 moduleXmlPath: String,
                 private val root: Element,
-                override val primaryLanguage: String?) : Module {
+                override val primaryLanguage: String?,
+                override val classLoader: ClassLoader) : Module {
 
   override val description: String?
 
@@ -60,7 +61,7 @@ class XmlModule(override val name: String,
     //path where module.xml is located and containing lesson dir
     val find = Regex("/[^/]*.xml").find(moduleXmlPath) ?: throw BadLessonException("Unable to parse a modules xml from '$moduleXmlPath'")
     val modulePath = moduleXmlPath.substring(0, find.range.first) + "/"
-    initLessons(modulePath)
+    initLessons(modulePath, classLoader)
   }
 
   override fun toString(): String {
@@ -79,7 +80,7 @@ class XmlModule(override val name: String,
     return lessons.any { !it.passed }
   }
 
-  private fun initLessons(modulePath: String) {
+  private fun initLessons(modulePath: String, classLoader: ClassLoader) {
     val lessonPathAttribute = root.getAttribute(XmlModuleConstants.MODULE_LESSONS_PATH_ATTR)
 
     //retrieve list of xml files inside lessonsPath directory
@@ -91,20 +92,20 @@ class XmlModule(override val name: String,
         continue // do not show unfinished lessons in release
       }
       when (lessonElement.name) {
-        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let { addXmlLesson(lessonElement, it) }
+        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let { addXmlLesson(lessonElement, it, classLoader) }
                                                         ?: LOG.error(
                                                           "Need to specify ${XmlModuleConstants.MODULE_LESSONS_PATH_ATTR} in module attributes")
-        XmlModuleConstants.MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
+        XmlModuleConstants.MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath, classLoader)
         else -> LOG.error("Unknown element ${lessonElement.name} in  XmlModule file")
       }
     }
   }
 
-  private fun addXmlLesson(lessonElement: Element, lessonsPath: String) {
+  private fun addXmlLesson(lessonElement: Element, lessonsPath: String, classLoader: ClassLoader) {
     val lessonFilename = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_FILENAME_ATTR)
     val lessonPath = lessonsPath + lessonFilename
     try {
-      val scenario = Scenario(lessonPath)
+      val scenario = Scenario(lessonPath, classLoader)
       val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
       lessons.add(lesson)
     }
@@ -118,7 +119,7 @@ class XmlModule(override val name: String,
     }
   }
 
-  private fun addKtLesson(lessonElement: Element, lessonsPath: String?) {
+  private fun addKtLesson(lessonElement: Element, lessonsPath: String?, classLoader: ClassLoader) {
     val lessonImplementation = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR)
     val lessonSampleName = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_SAMPLE_ATTR)
 
@@ -129,15 +130,15 @@ class XmlModule(override val name: String,
         return
       }
       val lessonLanguage = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_LANGUAGE_ATTR)
-      val lessonConstructor = Class.forName(lessonImplementation)
+      val lessonConstructor = Class.forName(lessonImplementation, true, classLoader)
         .getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
 
-      val content = getResourceAsStream(lessonsPath + lessonSampleName).readBytes().toString(Charsets.UTF_8)
+      val content = getResourceAsStream(lessonsPath + lessonSampleName, classLoader).readBytes().toString(Charsets.UTF_8)
       val sample = parseLessonSample(content)
       lesson = lessonConstructor.newInstance(this, lessonLanguage, sample)
     }
     else {
-      val lessonConstructor = Class.forName(lessonImplementation).getDeclaredConstructor(Module::class.java)
+      val lessonConstructor = Class.forName(lessonImplementation, true, classLoader).getDeclaredConstructor(Module::class.java)
       lesson = lessonConstructor.newInstance(this)
     }
     if (lesson !is KLesson) {
@@ -169,21 +170,20 @@ class XmlModule(override val name: String,
   companion object {
 
     @Throws(BadModuleException::class, BadLessonException::class, JDOMException::class, IOException::class, URISyntaxException::class)
-    fun initModule(modulePath: String, primaryLanguage: String?): XmlModule? {
+    fun initModule(modulePath: String, primaryLanguage: String?, classLoader: ClassLoader): XmlModule? {
       //load xml with lessons
 
       //Check DOM with XmlModule
-      val root = getRootFromPath(modulePath)
+      val root = getRootFromPath(modulePath, classLoader)
       if (root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR) == null) return null
       val name = root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
 
-      return XmlModule(name, modulePath, root, primaryLanguage)
-
+      return XmlModule(name, modulePath, root, primaryLanguage, classLoader)
     }
 
     @Throws(JDOMException::class, IOException::class)
-    fun getRootFromPath(pathToFile: String): Element {
-      return DataLoader.getXmlRootElement(pathToFile)
+    fun getRootFromPath(pathToFile: String, classLoader: ClassLoader): Element {
+      return DataLoader.getXmlRootElement(pathToFile, classLoader)
     }
 
     private fun getSdkTypeFromString(string: String?): ModuleSdkType? {

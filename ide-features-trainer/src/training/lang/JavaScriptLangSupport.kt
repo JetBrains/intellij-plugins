@@ -27,7 +27,11 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   override fun checkSdk(sdk: Sdk?, project: Project) {}
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/javascript/LearnJavaScriptProject", "LearnJavaScriptProject")
+    return ProjectUtils.importOrOpenProject(
+      "/learnProjects/javascript/LearnJavaScriptProject",
+      "LearnJavaScriptProject",
+      javaClass.classLoader
+    )
   }
 
   override fun getToolWindowAnchor(): ToolWindowAnchor {

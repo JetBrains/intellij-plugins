@@ -31,7 +31,7 @@ class TryCommand : Command(CommandType.TRY) {
     if (element.getAttribute("check") != null) {
       val checkClassString = element.getAttribute("check")!!.value
       try {
-        val myCheck = Class.forName(checkClassString)
+        val myCheck = Class.forName(checkClassString, true, executionList.lesson.classLoader)
         check = myCheck.newInstance() as Check
         check.set(executionList.project, editor)
         check.before()

@@ -12,6 +12,9 @@ interface Lesson {
 
   var module: Module
 
+  val classLoader: ClassLoader
+    get() = module.classLoader
+
   var passed: Boolean
 
   var isOpen: Boolean

@@ -4,9 +4,9 @@ package training.learn.lesson
 import org.jdom.Element
 import training.util.DataLoader
 
-class Scenario(private val path: String) {
+class Scenario(private val path: String, classLoader: ClassLoader) {
 
-  val root: Element = DataLoader.getXmlRootElement(path)
+  val root: Element = DataLoader.getXmlRootElement(path, classLoader)
 
   val lang: String
     get() {

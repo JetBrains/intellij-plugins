@@ -77,8 +77,8 @@ class RubyLangSupport : AbstractLangSupport() {
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { project ->
     val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
     val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
-    FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(RubyLangSupport::class.java.getResourceAsStream(
-      "/learnProjects/ruby/gems/bundler-2.0.1.gem")))
+    val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
+    FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(bundler))
 
     val sdk = ProjectRootManager.getInstance(project).projectSdk!!
     val module = project.module
@@ -94,7 +94,7 @@ class RubyLangSupport : AbstractLangSupport() {
   }
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/ruby/$rubyProjectName", projectName)
+    return ProjectUtils.importOrOpenProject("/learnProjects/ruby/$rubyProjectName", projectName, javaClass.classLoader)
   }
 
   override fun setProjectListeners(project: Project) {

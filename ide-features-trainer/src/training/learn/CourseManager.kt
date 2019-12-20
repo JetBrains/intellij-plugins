@@ -41,9 +41,10 @@ class CourseManager internal constructor() {
     val trainingModules = TrainingModules.EP_NAME.extensions
     for (modules in trainingModules) {
       val primaryLanguage = modules.language
+      val classLoader = modules.loaderForClass
       for (module in modules.children) {
         val moduleFilename = module.xmlPath
-        val module = XmlModule.initModule(moduleFilename, primaryLanguage)
+        val module = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
                      ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
         allModules.add(module)
       }

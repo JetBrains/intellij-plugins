@@ -3,6 +3,9 @@ package training.learn.interfaces
 
 interface Module {
 
+  val classLoader: ClassLoader
+    get() = javaClass.classLoader
+
   val lessons: List<Lesson>
 
   val sanitizedName: String

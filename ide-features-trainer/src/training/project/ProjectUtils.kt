@@ -30,14 +30,14 @@ object ProjectUtils {
    * @projectName = "SimpleProject"
    *
    */
-  fun importOrOpenProject(projectPath: String, projectName: String): Project? {
+  fun importOrOpenProject(projectPath: String, projectName: String, classLoader: ClassLoader): Project? {
     val dest = File(ideProjectsBasePath, projectName)
 
     if (!isSameVersion(dest)) {
       if (dest.exists()) {
         dest.deleteRecursively()
       }
-      val inputUrl: URL = javaClass.getResource(projectPath)
+      val inputUrl: URL = classLoader.getResource(projectPath)!!
       FileUtils.copyResourcesRecursively(inputUrl, dest)
       PrintWriter(versionFile(dest), "UTF-8").use {
         it.println(featureTrainerVersion)

@@ -101,7 +101,7 @@ class JavaLangSupport : AbstractLangSupport() {
   private fun isCompatibleJdk(projectJdk: Sdk, type: SdkType?) = (type == null || projectJdk.sdkType === type)
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/java/LearnProject", "LearnProject")
+    return ProjectUtils.importOrOpenProject("/learnProjects/java/LearnProject", "LearnProject", javaClass.classLoader)
   }
 
   companion object {
