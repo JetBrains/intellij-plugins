@@ -170,10 +170,10 @@ public class DartConsoleFolding extends ConsoleFolding {
   private static String foldWebdevCommand(@NotNull final String line) {
     // /<path-to-sdk>/bin/pub global run webdev daemon web:53322 --launch-app=web/index.html
     // folded to
-    // webdev serve web:53322 --launch-app=web/index.html
+    // webdev serve web:53322 --launch-app=web/index.html --debug
     int index = line.indexOf(WEBDEV_RUNNER_MARKER);
     if (index >= 0) {
-      return "webdev serve " + line.substring(index + WEBDEV_RUNNER_MARKER.length());
+      return "webdev serve " + line.substring(index + WEBDEV_RUNNER_MARKER.length()) + " --debug";
     }
     return line;
   }
