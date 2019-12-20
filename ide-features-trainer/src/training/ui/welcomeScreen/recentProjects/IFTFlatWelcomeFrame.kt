@@ -1,36 +1,28 @@
 package training.ui.welcomeScreen.recentProjects
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.wm.IdeFrame
 import com.intellij.openapi.wm.WelcomeScreen
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import com.intellij.util.ui.accessibility.AccessibleContextAccessor
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
-class IFTFlatWelcomeFrame : FlatWelcomeFrame(), IdeFrame, Disposable, AccessibleContextAccessor {
+class IFTFlatWelcomeFrame : FlatWelcomeFrame() {
 
     private val originalWelcomeScreen: JPanel
-        get() {
-            return UIUtil.findComponentsOfType(component, JPanel::class.java).first { it is WelcomeScreen }
-        }
+        get() = UIUtil.findComponentsOfType(component, JPanel::class.java).first { it is WelcomeScreen }
     private val originalCenterWelcomeScreen: NonOpaquePanel
-        get() {
-            return UIUtil.uiChildren(originalWelcomeScreen).filterIsInstance(NonOpaquePanel::class.java).first()
-        }
+        get() = UIUtil.uiChildren(originalWelcomeScreen).filterIsInstance(NonOpaquePanel::class.java).first()
     private val originalRecentProjectsPanel: JPanel?
-        get() {
-            return UIUtil.uiChildren(originalWelcomeScreen).filterNot { it == originalCenterWelcomeScreen }.firstOrNull() as JPanel?
-        }
+        get() = UIUtil.uiChildren(originalWelcomeScreen).filterNot { it == originalCenterWelcomeScreen }.firstOrNull() as JPanel?
 
     init {
-        if (showCustomWelcomeScreen)
+        if (showCustomWelcomeScreen) {
             replaceRecentProjectsPanel()
+        }
     }
 
     private fun replaceRecentProjectsPanel() {

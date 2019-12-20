@@ -11,8 +11,9 @@ class IFTFlatWelcomeFrameProvider : WelcomeFrameProvider {
   override fun createFrame(): IdeFrame {
     if (!showCustomWelcomeScreen) {
       val actionLinksGroup = ActionManager.getInstance().getAction("WelcomeScreen.QuickStart") as DefaultActionGroup
-      if (actionLinksGroup.getChildren(null).any { it is StartLearnAction }.not())
+      if (actionLinksGroup.getChildren(null).none { it is StartLearnAction }) {
         actionLinksGroup.addAction(StartLearnAction(), Constraints.LAST, ActionManager.getInstance())
+      }
     }
     return IFTFlatWelcomeFrame()
   }
