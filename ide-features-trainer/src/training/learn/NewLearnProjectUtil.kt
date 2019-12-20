@@ -45,8 +45,6 @@ object NewLearnProjectUtil {
     FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
 
   fun showDialogOpenLearnProject(project: Project): Boolean {
-    val dialog = LearnProjectWarningDialog(project)
-    dialog.show()
-    return dialog.isOK
+    return LearnProjectWarningDialog(project).showAndGet()
   }
 }
