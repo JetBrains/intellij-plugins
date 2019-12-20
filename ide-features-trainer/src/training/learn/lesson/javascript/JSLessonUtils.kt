@@ -22,7 +22,7 @@ fun TaskContext.textBeforeOffset(offset: Int, text: String): Boolean {
 
 fun TaskContext.textAfterOffset(offset: Int, text: String): Boolean {
   val charsSequence = editor.document.charsSequence
-  if (offset + text.length > charsSequence.length) return false;
+  if (offset + text.length > charsSequence.length) return false
   val subSequence = charsSequence.subSequence(offset, offset + text.length)
   return subSequence.toString() == text
 }

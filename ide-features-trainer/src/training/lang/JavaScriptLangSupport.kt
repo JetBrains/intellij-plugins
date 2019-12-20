@@ -14,7 +14,7 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   }
 
   override val primaryLanguage: String
-    get() = lang;
+    get() = lang
 
 
   override fun importLearnProject(): Project? {
