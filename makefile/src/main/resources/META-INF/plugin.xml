@@ -25,6 +25,7 @@ Regular maintenance, bugfix, and performance update.
     <lang.psiStructureViewFactory language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileStructureViewFactory"/>
     <lang.commenter language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCommenter"/>
     <lang.findUsagesProvider language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFindUsagesProvider"/>
+    <lang.braceMatcher language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileBraceMatcherProvider" />
     <gotoSymbolContributor implementation="name.kropp.intellij.makefile.MakefileChooseByNameContributor"/>
     <colorSettingsPage implementation="name.kropp.intellij.makefile.MakefileColorSettingsPage"/>
     <completion.contributor language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileCompletionContributor"/>
