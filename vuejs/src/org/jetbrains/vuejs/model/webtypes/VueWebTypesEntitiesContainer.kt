@@ -45,7 +45,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
       when (webTypes.contributions?.html?.descriptionMarkup) {
         Html.DescriptionMarkup.HTML -> { doc -> doc }
         Html.DescriptionMarkup.MARKDOWN -> { doc -> JSMarkdownUtil.toHtml(doc, false) }
-        else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc) }
+        else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc).replace(Regex("\n|\r\n"), "<br>") }
       }
     val psiPackageJson = PsiManager.getInstance(project).findFile(packageJson)
     val sourceSymbolResolver = WebTypesSourceSymbolResolver(psiPackageJson!!, webTypes.name ?: "unknown")
