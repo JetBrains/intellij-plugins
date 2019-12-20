@@ -38,6 +38,7 @@ Regular maintenance, bugfix, and performance update.
     <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefilePrerequisiteManipulator"
                              forClass="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl"/>
     <documentationProvider implementation="name.kropp.intellij.makefile.MakefileDocumentationProvider"/>
+    <multiHostInjector implementation="name.kropp.intellij.makefile.MakefileShellLanguageInjector"/>
 
     <stubElementTypeHolder class="name.kropp.intellij.makefile.psi.MakefileTypes" />
     <stubIndex implementation="name.kropp.intellij.makefile.MakefileTargetIndex" />
