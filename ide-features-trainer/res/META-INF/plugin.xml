@@ -50,6 +50,7 @@
                             serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"
                             overrides="true"/>
         <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
+        <actionConfigurationCustomizer implementation="training.ui.welcomeScreen.recentProjects.IFTWelcomeScreenActionCustomizer"/>
         <applicationService
                 serviceImplementation="training.learn.CourseManager"/>
         <applicationService
