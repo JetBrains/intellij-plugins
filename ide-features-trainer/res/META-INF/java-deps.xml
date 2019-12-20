@@ -6,11 +6,11 @@
         <TrainingLangExtension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
 
         <TrainingModules language="java">
-            <module xmlPath="modules/java/EditorBasics.xml"/>
-            <module xmlPath="modules/java/Completions.xml"/>
-            <module xmlPath="modules/java/Refactorings.xml"/>
-            <module xmlPath="modules/java/CodeAssistance.xml"/>
-            <module xmlPath="modules/java/Navigation.xml"/>
+            <module path="modules/java/EditorBasics.xml"/>
+            <module path="modules/java/Completions.xml"/>
+            <module path="modules/java/Refactorings.xml"/>
+            <module path="modules/java/CodeAssistance.xml"/>
+            <module path="modules/java/Navigation.xml"/>
         </TrainingModules>
     </extensions>
 </idea-plugin>

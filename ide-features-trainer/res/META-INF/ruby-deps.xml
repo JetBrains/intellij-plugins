@@ -6,10 +6,10 @@
         <TrainingLangExtension language="ruby" implementationClass="training.lang.RubyLangSupport"/>
 
         <TrainingModules language="ruby">
-            <module xmlPath="modules/ruby/EditorBasics.xml"/>
-            <module xmlPath="modules/ruby/Navigation.xml"/>
-            <module xmlPath="modules/ruby/Completions.xml"/>
-            <module xmlPath="modules/ruby/Refactorings.xml"/>
+            <module path="modules/ruby/EditorBasics.xml"/>
+            <module path="modules/ruby/Navigation.xml"/>
+            <module path="modules/ruby/Completions.xml"/>
+            <module path="modules/ruby/Refactorings.xml"/>
         </TrainingModules>
     </extensions>
 </idea-plugin>

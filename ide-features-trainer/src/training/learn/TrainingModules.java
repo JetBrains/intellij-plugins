@@ -14,7 +14,7 @@ public class TrainingModules extends AbstractExtensionPointBean {
   @Attribute("language")
   public String language;
 
-  @Attribute("xmlPath")
+  @Attribute("path")
   public String xmlPath;
 
   @Property(surroundWithTag = false)

@@ -6,11 +6,11 @@
         <TrainingLangExtension language="Swift" implementationClass="training.lang.SwiftSupport"/>
 
         <TrainingModules language="swift">
-            <module xmlPath="modules/swift/Editor.xml"/>
-            <module xmlPath="modules/swift/Navigation.xml"/>
-            <module xmlPath="modules/swift/Refactorings.xml"/>
-            <module xmlPath="modules/swift/Code Generation.xml"/>
-            <module xmlPath="modules/swift/RunDebugTest.xml"/>
+            <module path="modules/swift/Editor.xml"/>
+            <module path="modules/swift/Navigation.xml"/>
+            <module path="modules/swift/Refactorings.xml"/>
+            <module path="modules/swift/Code Generation.xml"/>
+            <module path="modules/swift/RunDebugTest.xml"/>
         </TrainingModules>
     </extensions>
 </idea-plugin>
