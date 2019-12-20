@@ -11,8 +11,8 @@
 <div *ngIf="true; extra: 12; super: 12"></div>
 <ng-template [ngIf]="true" [ngIfExtra]="12" [ngIfSuper]="12"></ng-template>
 
-<div *ngIf="true; extra: <warning descr="Type 12 is not assignable to type string & number">12</warning>; super: <warning descr="Type \"ee\" is not assignable to type string & number">'ee'</warning>"></div>
-<ng-template [ngIf]="true" [ngIfExtra]="<warning descr="Type 12 is not assignable to type string & number">12</warning>" [ngIfSuper]="<warning descr="Type \"ee\" is not assignable to type string & number">'ee'</warning>"></ng-template>
+<div *ngIf="true; extra: <warning descr="Type 12 is not assignable to type number & string">12</warning>; super: <warning descr="Type \"ee\" is not assignable to type number & string">'ee'</warning>"></div>
+<ng-template [ngIf]="true" [ngIfExtra]="<warning descr="Type 12 is not assignable to type number & string">12</warning>" [ngIfSuper]="<warning descr="Type \"ee\" is not assignable to type number & string">'ee'</warning>"></ng-template>
 
 <div *ngIf="true; then <warning descr="Type string is not assignable to type TemplateRef<NgIfContext> | null">myThen</warning>; else myElse"></div>
 
