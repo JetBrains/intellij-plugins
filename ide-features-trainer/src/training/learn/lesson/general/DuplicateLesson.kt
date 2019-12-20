@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class DuplicateLesson(module: Module, lang: String, private val sample: LessonSample) :
-    KLesson("Duplicate", module, lang) {
+  KLesson("Duplicate", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

@@ -36,7 +36,8 @@ class TaskTestContext(val task: TaskContext) {
 
   fun ideFrame(action: IdeFrameFixture.() -> Unit) {
     with(guiTestCase) {
-      ideFrame { // Note: It is not recursive call here. It is GuiTestCase#ideFrame
+      ideFrame {
+        // Note: It is not recursive call here. It is GuiTestCase#ideFrame
         action()
       }
     }

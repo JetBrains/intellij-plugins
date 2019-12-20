@@ -19,7 +19,8 @@ object NewLearnProjectUtil {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
 
     val newProject: Project =
-        langSupport.createProject(langSupport.defaultProjectName, projectToClose) ?: error("Could not create project for " + langSupport.primaryLanguage)
+      langSupport.createProject(langSupport.defaultProjectName, projectToClose)
+      ?: error("Could not create project for " + langSupport.primaryLanguage)
 
     try {
       val sdkForProject = langSupport.getSdkForProject(newProject)
@@ -43,7 +44,7 @@ object NewLearnProjectUtil {
   }
 
   fun projectFilePath(langSupport: LangSupport): @SystemDependent String =
-      FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
+    FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
 
   fun showDialogOpenLearnProject(project: Project): Boolean {
     val dialog = LearnProjectWarningDialog(project)

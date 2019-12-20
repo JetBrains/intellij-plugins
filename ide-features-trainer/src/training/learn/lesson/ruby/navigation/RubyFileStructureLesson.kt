@@ -26,7 +26,7 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
 
       actionTask("FileStructurePopup") {
         "A large source file can be difficult to read and navigate, sometimes you only need an overview of the file." +
-            "Use ${action(it)} to see the file structure."
+        "Use ${action(it)} to see the file structure."
       }
       task("ch") {
         val listener = StructureLessonListener(it)
@@ -96,9 +96,11 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
             complete?.complete(true)
           }
         }
-      } catch (e: NoSuchFieldException) {
+      }
+      catch (e: NoSuchFieldException) {
         exceptionCase(e)
-      } catch (e: SecurityException) {
+      }
+      catch (e: SecurityException) {
         exceptionCase(e)
       }
     }

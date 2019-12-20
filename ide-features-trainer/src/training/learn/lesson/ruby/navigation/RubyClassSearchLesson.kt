@@ -27,7 +27,7 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
       }
       task("datebe") {
         text("You can search for a class by part of its name. Type <code>be</code> (the search string will be <code>$it</code>) " +
-            "to see classes that contain the words <strong>date</strong> and <strong>be</strong>.")
+             "to see classes that contain the words <strong>date</strong> and <strong>be</strong>.")
         stateCheck { checkWordInSearch(it) }
         test { type("be") }
       }
@@ -38,7 +38,7 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
       }
       task {
         text("Suppose you are looking for ${code("DateAndTimeBehavior")}." +
-            "Choose it and then press <strong>Enter</strong> to navigate.")
+             "Choose it and then press <strong>Enter</strong> to navigate.")
         stateCheck {
           FileEditorManager.getInstance(project).selectedEditor?.file?.name.equals("date_and_time_behavior.rb")
         }
@@ -50,7 +50,7 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
     }
 
   private fun TaskContext.checkWordInSearch(expected: String): Boolean =
-      (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
+    (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
 
   override val existedFile: String
     get() = "lib/active_support.rb"

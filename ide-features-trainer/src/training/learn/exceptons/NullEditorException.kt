@@ -3,4 +3,4 @@
  */
 package training.learn.exceptons
 
-class NullEditorException(message: String): Exception(message)
+class NullEditorException(message: String) : Exception(message)

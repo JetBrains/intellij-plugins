@@ -45,7 +45,7 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
-      lateinit var replace : Future<String>
+      lateinit var replace: Future<String>
       task("RenameElement") {
         text("Press ${action(it)} to rename the attribute accessor <code>teams</code> (e.g., to <code>teams_number</code>).")
         replace = stateRequired {
@@ -66,7 +66,7 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
       task("Do Refactor") {
         val result = template.replace("<name>", replace.get()).replace("<caret>", "")
         text("In order to be confident about the refactoring, RubyMine lets you preview it before confirming." +
-            "Click <strong>$it</strong> to complete the refactoring.")
+             "Click <strong>$it</strong> to complete the refactoring.")
         stateCheck { editor.document.text == result }
         test {
           ideFrame {

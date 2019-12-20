@@ -52,7 +52,7 @@ class ActionsRecorder(private val project: Project,
     // We could not unregister a listener (it will be done in dispose)
     // So the simple solution is to use a proxy
 
-    busConnection.subscribe(AnActionListener.TOPIC, object : AnActionListener{
+    busConnection.subscribe(AnActionListener.TOPIC, object : AnActionListener {
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         actionListeners.forEach { it.beforeActionPerformed(action, dataContext, event) }
       }
@@ -101,7 +101,9 @@ class ActionsRecorder(private val project: Project,
         editorListener?.fileOpened(source, file)
       }
 
-      override fun fileOpenedSync(source: FileEditorManager, file: VirtualFile, editors: Pair<Array<FileEditor>, Array<FileEditorProvider>>) {
+      override fun fileOpenedSync(source: FileEditorManager,
+                                  file: VirtualFile,
+                                  editors: Pair<Array<FileEditor>, Array<FileEditorProvider>>) {
         editorListener?.fileOpenedSync(source, file, editors)
       }
 
@@ -134,7 +136,7 @@ class ActionsRecorder(private val project: Project,
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val actionListener = object : AnActionListener {
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        val caughtActionId : String? = ActionManager.getInstance().getId(action)
+        val caughtActionId: String? = ActionManager.getInstance().getId(action)
         if (actionId == caughtActionId) {
           check.before()
         }
@@ -155,7 +157,7 @@ class ActionsRecorder(private val project: Project,
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
 
-      private fun checkComplete() : Boolean {
+      private fun checkComplete(): Boolean {
         val complete = check.check()
         if (complete) {
           future.complete(true)
@@ -283,6 +285,5 @@ class ActionsRecorder(private val project: Project,
     editorListener = null
   }
 
-  private fun getActionId(action: AnAction): String =
-      ActionManager.getInstance().getId(action) ?: action.javaClass.name
+  private fun getActionId(action: AnAction): String = ActionManager.getInstance().getId(action) ?: action.javaClass.name
 }

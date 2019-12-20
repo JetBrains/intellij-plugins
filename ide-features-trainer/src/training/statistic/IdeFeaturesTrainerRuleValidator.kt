@@ -15,8 +15,8 @@ class IdeFeaturesTrainerRuleValidator : CustomWhiteListRule() {
 
   override fun doValidate(data: String, context: EventContext): ValidationResultType {
     return if (CourseManager.instance.modules
-            .flatMap { it.lessons }
-            .firstOrNull { it.id == data } != null)
+        .flatMap { it.lessons }
+        .firstOrNull { it.id == data } != null)
       ValidationResultType.ACCEPTED
     else
       ValidationResultType.REJECTED

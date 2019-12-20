@@ -78,8 +78,9 @@ class ActionList(listData: Array<out AnAction>, private val groupsPanel: GroupsP
         val progress = elem.module.calcProgress()
         val description = elem.description ?: ""
         return if (progress.isNullOrEmpty()) {
-           description
-        } else {
+          description
+        }
+        else {
           "[${progress}] $description"
         }
       }

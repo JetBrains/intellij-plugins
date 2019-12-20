@@ -1,33 +1,33 @@
 import org.gradle.process.internal.ExecException
 
 plugins {
-    id 'org.jetbrains.intellij' version '0.4.9'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.50'
-    id 'de.undercouch.download' version '3.4.3'
+  id 'org.jetbrains.intellij' version '0.4.9'
+  id 'org.jetbrains.kotlin.jvm' version '1.3.50'
+  id 'de.undercouch.download' version '3.4.3'
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
+  mavenLocal()
+  mavenCentral()
+  jcenter()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 def getGitHash = { ->
-    try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-list', '--count', 'HEAD'
-            standardOutput = stdout
-        }
-        return stdout.toString().trim()
+  try {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'rev-list', '--count', 'HEAD'
+      standardOutput = stdout
     }
-    catch( ExecException ignored) {
-        return 'unknown'
-    }
+    return stdout.toString().trim()
+  }
+  catch (ExecException ignored) {
+    return 'unknown'
+  }
 }
 
 group 'org.jetbrains'
@@ -39,77 +39,77 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-193.5662.53'
+  version 'IU-193.5662.53'
 
-    plugins = [
-            'Pythonid:193.5662.53',
-            'org.jetbrains.plugins.ruby:193.5662.46',
-            'com.intellij.testGuiFramework:0.9.44.1@nightly',
-            "JavaScriptLanguage",
-            "HtmlTools",
-            'java',
-            'org.jetbrains.plugins.go:193.5662.1.85'
-    ]
-    if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
-        alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")
-    }
-    updateSinceUntilBuild false
+  plugins = [
+    'Pythonid:193.5662.53',
+    'org.jetbrains.plugins.ruby:193.5662.46',
+    'com.intellij.testGuiFramework:0.9.44.1@nightly',
+    "JavaScriptLanguage",
+    "HtmlTools",
+    'java',
+    'org.jetbrains.plugins.go:193.5662.1.85'
+  ]
+  if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
+    alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")
+  }
+  updateSinceUntilBuild false
 }
 
 patchPluginXml {
-    sinceBuild ideVersion
+  sinceBuild ideVersion
 }
 
 sourceSets {
-    main {
-        java.srcDir 'src'
-        kotlin.srcDir 'src'
-        resources.srcDir 'res'
-    }
-    test {
-        java.srcDir 'testSrc'
-        java.srcDir 'testsData'
-    }
+  main {
+    java.srcDir 'src'
+    kotlin.srcDir 'src'
+    resources.srcDir 'res'
+  }
+  test {
+    java.srcDir 'testSrc'
+    java.srcDir 'testsData'
+  }
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+  kotlinOptions.jvmTarget = "1.8"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+  kotlinOptions.jvmTarget = "1.8"
 }
 
 task testsJar(type: Jar, dependsOn: classes) {
-    classifier = 'tests'
-    from sourceSets.test.output
-    exclude 'testData/*'
+  classifier = 'tests'
+  from sourceSets.test.output
+  exclude 'testData/*'
 }
 
 prepareSandbox {
-    from(testsJar) {
-        into "training/lib"
-    }
+  from(testsJar) {
+    into "training/lib"
+  }
 }
 
 prepareTestingSandbox {
-    from(testsJar) {
-        into "training/lib"
-    }
+  from(testsJar) {
+    into "training/lib"
+  }
 }
 
 runIde {
-    if (System.getProperty("idea.gui.tests.gradle.runner").equals("true")) {
-        systemProperties System.properties.findAll {
-            (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb")
-        }
-        /* Need to split the space-delimited value in the exec.args */
-        print systemProperties
-        args System.getProperty("exec.args", "").split(",")
+  if (System.getProperty("idea.gui.tests.gradle.runner").equals("true")) {
+    systemProperties System.properties.findAll {
+      (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb")
     }
+    /* Need to split the space-delimited value in the exec.args */
+    print systemProperties
+    args System.getProperty("exec.args", "").split(",")
+  }
 }
 
 test {
-    def sysProps = System.properties.findAll { (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb") }
-    sysProps.put("idea.gui.tests.gradle.runner", true) //Use Gradle Launcher to run GUI tests
-    systemProperties sysProps
+  def sysProps = System.properties.findAll { (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb") }
+  sysProps.put("idea.gui.tests.gradle.runner", true) //Use Gradle Launcher to run GUI tests
+  systemProperties sysProps
 }

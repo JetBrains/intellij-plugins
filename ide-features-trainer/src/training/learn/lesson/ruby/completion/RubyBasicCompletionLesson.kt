@@ -52,11 +52,11 @@ end
       prepareSample(sample1)
       task {
         text("By default, the IDE completes your code instantly. Start typing <code>An</code> right where " +
-            "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
-            "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
+             "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
+             "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
         trigger("EditorChooseLookupItem",
-            { editor.document.text },
-            { before, now -> checkHierarchy(project) && now != before })
+                { editor.document.text },
+                { before, now -> checkHierarchy(project) && now != before })
         test {
           ideFrame {
             typeText("An")
@@ -69,7 +69,7 @@ end
       prepareSample(sample2)
       task("CodeCompletion") {
         text("To activate Basic Completion explicitly, press ${action(it)}. " +
-            "Select <code>meow</code> and press <action>EditorEnter</action>.")
+             "Select <code>meow</code> and press <action>EditorEnter</action>.")
         trigger(it)
         trigger("EditorChooseLookupItem") { textBeforeCaret("meow") }
         test {
@@ -84,13 +84,12 @@ end
 
   private fun checkHierarchy(project: Project): Boolean {
     val catSymbol = SymbolUtil.findConstantByFQN(
-        project,
-        Types.MODULE_OR_CLASS_OR_CONSTANT,
-        FQN.of("Cat"),
-        null)
+      project,
+      Types.MODULE_OR_CLASS_OR_CONSTANT,
+      FQN.of("Cat"),
+      null)
 
-    return catSymbol is ClassModuleSymbol &&
-      catSymbol.getSuperClassSymbol(null)?.name == "Animal"
+    return catSymbol is ClassModuleSymbol && catSymbol.getSuperClassSymbol(null)?.name == "Animal"
   }
 
   override val existedFile = RubyLangSupport.sandboxFile

@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <idea-plugin>
-    <extensions defaultExtensionNs="training">
-        <TrainingLangExtension language="Swift" implementationClass="training.lang.SwiftSupport"/>
+  <extensions defaultExtensionNs="training">
+    <TrainingLangExtension language="Swift" implementationClass="training.lang.SwiftSupport"/>
 
-        <TrainingModules language="swift">
-            <module path="modules/swift/Editor.xml"/>
-            <module path="modules/swift/Navigation.xml"/>
-            <module path="modules/swift/Refactorings.xml"/>
-            <module path="modules/swift/Code Generation.xml"/>
-            <module path="modules/swift/RunDebugTest.xml"/>
-        </TrainingModules>
-    </extensions>
+    <TrainingModules language="swift">
+      <module path="modules/swift/Editor.xml"/>
+      <module path="modules/swift/Navigation.xml"/>
+      <module path="modules/swift/Refactorings.xml"/>
+      <module path="modules/swift/Code Generation.xml"/>
+      <module path="modules/swift/RunDebugTest.xml"/>
+    </TrainingModules>
+  </extensions>
 </idea-plugin>

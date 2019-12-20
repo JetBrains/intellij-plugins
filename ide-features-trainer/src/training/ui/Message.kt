@@ -25,9 +25,9 @@ class Message(val text: String, val type: MessageType) {
 
   override fun toString(): String {
     return "Message{" +
-            "messageText='" + text + '\''.toString() +
-            ", messageType=" + type +
-            '}'
+           "messageText='" + text + '\''.toString() +
+           ", messageType=" + type +
+           '}'
   }
 
   companion object {
@@ -39,7 +39,8 @@ class Message(val text: String, val type: MessageType) {
       element.content.forEach(Consumer { content: Content ->
         if (content is Text) {
           list.add(Message(content.getValue(), MessageType.TEXT_REGULAR))
-        } else if (content is Element) {
+        }
+        else if (content is Element) {
           val outputter = XMLOutputter()
           var type = MessageType.TEXT_REGULAR
           var text: String = outputter.outputString(content.content)
@@ -59,8 +60,10 @@ class Message(val text: String, val type: MessageType) {
               val shortcutByActionId = getShortcutByActionId(text)
               text = if (shortcutByActionId != null) {
                 getKeyStrokeText(shortcutByActionId)
-              } else {
-                getKeyStrokeText(getShortcutByActionId("GotoAction")) + " → " + ActionManager.getInstance().getAction(text).templatePresentation.text
+              }
+              else {
+                getKeyStrokeText(getShortcutByActionId("GotoAction")) + " → " +
+                ActionManager.getInstance().getAction(text).templatePresentation.text
               }
             }
             "ide" -> {

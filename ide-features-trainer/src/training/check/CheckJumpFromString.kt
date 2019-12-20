@@ -17,7 +17,7 @@ class CheckJumpFromString : Check {
   }
 
   override fun before() {}
-  
+
   override fun check(): Boolean {
     val caretModel = editor.caretModel
     val document = editor.document

@@ -55,8 +55,8 @@ class JavaLangSupport : AbstractLangSupport() {
     val jdkList = getJdkList()
     if (jdkList.isNotEmpty()) {
       jdkList
-          .filter { JavaSdk.getInstance().getVersion(it) != null && JavaSdk.getInstance().getVersion(it)!!.isAtLeast(JavaSdkVersion.JDK_1_6) }
-          .forEach { return it }
+        .filter { JavaSdk.getInstance().getVersion(it) != null && JavaSdk.getInstance().getVersion(it)!!.isAtLeast(JavaSdkVersion.JDK_1_6) }
+        .forEach { return it }
     }
 
     //if no predefined jdks -> add bundled jdk to available list and return it
@@ -88,7 +88,8 @@ class JavaLangSupport : AbstractLangSupport() {
       if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) {
         throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
       }
-    } else {
+    }
+    else {
       throw NoSdkException()
     }
   }

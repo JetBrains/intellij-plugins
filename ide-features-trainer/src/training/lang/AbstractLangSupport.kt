@@ -16,48 +16,49 @@ import training.learn.exceptons.NoSdkException
 import java.io.File
 
 abstract class AbstractLangSupport : LangSupport {
-    override val defaultProjectName: String
-        get() = "LearnProject"
+  override val defaultProjectName: String
+    get() = "LearnProject"
 
-    override fun getProjectFilePath(projectName: String): String {
-        return ProjectUtil.getBaseDir() + File.separator + projectName
+  override fun getProjectFilePath(projectName: String): String {
+    return ProjectUtil.getBaseDir() + File.separator + projectName
+  }
+
+  override fun getToolWindowAnchor(): ToolWindowAnchor {
+    return ToolWindowAnchor.LEFT
+  }
+
+  override fun getSdkForProject(project: Project): Sdk? {
+    try {
+      // Use no SDK if it's a valid for this language
+      checkSdk(null, project)
+      return null
+    }
+    catch (e: Throwable) {
     }
 
-    override fun getToolWindowAnchor(): ToolWindowAnchor {
-        return ToolWindowAnchor.LEFT
-    }
-
-    override fun getSdkForProject(project: Project): Sdk? {
+    return ApplicationManager.getApplication().runReadAction(ThrowableComputable<Sdk, NoSdkException> {
+      val sdkOrNull = ProjectJdkTable.getInstance().allJdks.find {
         try {
-            // Use no SDK if it's a valid for this language
-            checkSdk(null, project)
-            return null
+          checkSdk(it, project)
+          true
         }
         catch (e: Throwable) {
+          false
         }
-        
-        return ApplicationManager.getApplication().runReadAction(ThrowableComputable<Sdk, NoSdkException> {
-            val sdkOrNull = ProjectJdkTable.getInstance().allJdks.find {
-                try {
-                    checkSdk(it, project)
-                    true
-                } catch (e: Throwable) {
-                    false
-                }
-            }
-            sdkOrNull ?: throw NoSdkException()
-        })
-    }
+      }
+      sdkOrNull ?: throw NoSdkException()
+    })
+  }
 
-    override fun applyProjectSdk(sdk: Sdk, project: Project) {
-        CommandProcessor.getInstance().executeCommand(project, {
-            ApplicationManager.getApplication().runWriteAction {
+  override fun applyProjectSdk(sdk: Sdk, project: Project) {
+    CommandProcessor.getInstance().executeCommand(project, {
+      ApplicationManager.getApplication().runWriteAction {
 
-                val rootManager = ProjectRootManagerEx.getInstanceEx(project)
-                rootManager.projectSdk = sdk
-            }
-        }, null, null)
-    }
+        val rootManager = ProjectRootManagerEx.getInstanceEx(project)
+        rootManager.projectSdk = sdk
+      }
+    }, null, null)
+  }
 
-    override fun toString(): String = primaryLanguage
+  override fun toString(): String = primaryLanguage
 }

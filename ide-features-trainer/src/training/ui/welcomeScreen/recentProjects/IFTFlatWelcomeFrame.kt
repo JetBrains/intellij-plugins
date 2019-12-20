@@ -12,33 +12,34 @@ import javax.swing.JPanel
 
 class IFTFlatWelcomeFrame : FlatWelcomeFrame() {
 
-    private val originalWelcomeScreen: JPanel
-        get() = UIUtil.findComponentsOfType(component, JPanel::class.java).first { it is WelcomeScreen }
-    private val originalCenterWelcomeScreen: NonOpaquePanel
-        get() = UIUtil.uiChildren(originalWelcomeScreen).filterIsInstance(NonOpaquePanel::class.java).first()
-    private val originalRecentProjectsPanel: JPanel?
-        get() = UIUtil.uiChildren(originalWelcomeScreen).filterNot { it == originalCenterWelcomeScreen }.firstOrNull() as JPanel?
+  private val originalWelcomeScreen: JPanel
+    get() = UIUtil.findComponentsOfType(component, JPanel::class.java).first { it is WelcomeScreen }
+  private val originalCenterWelcomeScreen: NonOpaquePanel
+    get() = UIUtil.uiChildren(originalWelcomeScreen).filterIsInstance(NonOpaquePanel::class.java).first()
+  private val originalRecentProjectsPanel: JPanel?
+    get() = UIUtil.uiChildren(originalWelcomeScreen).filterNot { it == originalCenterWelcomeScreen }.firstOrNull() as JPanel?
 
-    init {
-        if (showCustomWelcomeScreen) {
-            replaceRecentProjectsPanel()
-        }
+  init {
+    if (showCustomWelcomeScreen) {
+      replaceRecentProjectsPanel()
     }
+  }
 
-    private fun replaceRecentProjectsPanel() {
-        getRootPane().preferredSize = JBUI.size(MAX_DEFAULT_WIDTH, height)
-        val groupsPanel = GroupsPanel(ApplicationManager.getApplication()).customizeActions()
-        val recentProjectPanel = UIUtil.uiChildren(originalRecentProjectsPanel).first()
-        if (recentProjectPanel == null) {
-            originalWelcomeScreen.add(groupsPanel.wrap(), BorderLayout.WEST)
-        } else {
-            originalRecentProjectsPanel?.remove(recentProjectPanel)
-            originalRecentProjectsPanel?.add(groupsPanel)
-        }
-        repaint()
+  private fun replaceRecentProjectsPanel() {
+    getRootPane().preferredSize = JBUI.size(MAX_DEFAULT_WIDTH, height)
+    val groupsPanel = GroupsPanel(ApplicationManager.getApplication()).customizeActions()
+    val recentProjectPanel = UIUtil.uiChildren(originalRecentProjectsPanel).first()
+    if (recentProjectPanel == null) {
+      originalWelcomeScreen.add(groupsPanel.wrap(), BorderLayout.WEST)
     }
+    else {
+      originalRecentProjectsPanel?.remove(recentProjectPanel)
+      originalRecentProjectsPanel?.add(groupsPanel)
+    }
+    repaint()
+  }
 
 }
 
 internal val showCustomWelcomeScreen
-    get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")
+  get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")

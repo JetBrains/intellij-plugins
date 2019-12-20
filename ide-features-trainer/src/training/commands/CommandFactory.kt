@@ -12,7 +12,8 @@ object CommandFactory {
     element ?: return NoCommand()
 
     val tagName = element.name ?: return NoCommand()
-    val commandType: Command.CommandType = Command.CommandType.values().firstOrNull { tagName.toUpperCase() == it.toString().toUpperCase() } ?: return NoCommand()
+    val commandType: Command.CommandType = Command.CommandType.values().firstOrNull { tagName.toUpperCase() == it.toString().toUpperCase() }
+                                           ?: return NoCommand()
 
     when (commandType) {
       Command.CommandType.TEXT -> return TextCommand()

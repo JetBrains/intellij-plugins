@@ -9,7 +9,7 @@ import training.learn.lesson.general.CompletionWithTabLesson
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyCompletionWithTabLesson(module: Module) :
-    CompletionWithTabLesson(module, "ruby", "goodbye") {
+  CompletionWithTabLesson(module, "ruby", "goodbye") {
 
   override val sample = parseLessonSample("""class DemoClass
   def hello

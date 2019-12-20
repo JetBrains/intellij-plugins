@@ -21,7 +21,7 @@ import training.learn.exceptons.NoSdkException
  * @author Sergey Karashevich
  */
 class PythonLangSupport : AbstractLangSupport() {
-  
+
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
@@ -36,7 +36,7 @@ class PythonLangSupport : AbstractLangSupport() {
 
   override fun getSdkForProject(project: Project): Sdk {
     //find registered python SDKs
-    var pySdk: Sdk? = ProjectJdkTable.getInstance().allJdks.find { sdk -> sdk.sdkType is PythonSdkType && isNoOlderThan27(sdk)}
+    var pySdk: Sdk? = ProjectJdkTable.getInstance().allJdks.find { sdk -> sdk.sdkType is PythonSdkType && isNoOlderThan27(sdk) }
 
     //register first detected SDK
     if (pySdk == null) {
@@ -67,10 +67,11 @@ class PythonLangSupport : AbstractLangSupport() {
     val sdkHomes = mutableListOf<String>()
     sdkHomes.addAll(VirtualEnvSdkFlavor.INSTANCE.suggestHomePaths(null))
     PythonSdkFlavor.getApplicableFlavors()
-        .filter { it !is VirtualEnvSdkFlavor }
-        .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
+      .filter { it !is VirtualEnvSdkFlavor }
+      .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
     sdkHomes.sort()
-    return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks).mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
+    return SdkConfigurationUtil.filterExistingPaths(PythonSdkType.getInstance(), sdkHomes, model.sdks)
+      .mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
   }
 
   private fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)

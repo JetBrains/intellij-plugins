@@ -12,15 +12,15 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 abstract class SingleLineCommentLesson(module: Module, lang: String) :
-    KLesson("Comment Line", module, lang) {
+  KLesson("Comment Line", module, lang) {
 
-  abstract val commentElementType : IElementType
+  abstract val commentElementType: IElementType
   abstract val sample: LessonSample
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      fun countCommentedLines() : Int =
-          calculateComments(PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
+      fun countCommentedLines(): Int =
+        calculateComments(PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
 
       prepareSample(sample)
 
@@ -29,12 +29,12 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
       }
       task("CommentByLineComment") {
         text("Uncomment the commented line with the same shortcut, ${action(it)}.")
-        trigger(it, {countCommentedLines()}, { _, now -> now == 0 } )
+        trigger(it, { countCommentedLines() }, { _, now -> now == 0 })
         test { actions("EditorUp", it) }
       }
       task("CommentByLineComment") {
         text("Select several lines and then comment them with ${action(it)}.")
-        trigger(it, {countCommentedLines()}, { before, now -> now >= before + 2 } )
+        trigger(it, { countCommentedLines() }, { before, now -> now >= before + 2 })
         test { actions("EditorDownWithSelection", "EditorDownWithSelection", it) }
       }
     }

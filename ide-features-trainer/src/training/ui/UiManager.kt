@@ -23,7 +23,7 @@ object UiManager {
     val windowManager = ToolWindowManager.getInstance(project)
     val learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW
     val toolWindow = windowManager.getToolWindow(learnToolWindow)
-            ?: throw IllegalStateException("$learnToolWindow tool window isn't registered")
+                     ?: throw IllegalStateException("$learnToolWindow tool window isn't registered")
     toolWindow.contentManager.removeAllContents(false)
     val factory = LearnToolWindowFactory()
     factory.createToolWindowContent(project, toolWindow)
@@ -32,41 +32,41 @@ object UiManager {
 
   fun setLanguageChooserView() {
     LearnToolWindowFactory.learnWindowPerProject.keys
-        .forEach {
-          if (it.isOpen) {
-            setLanguageViewPerProject(it)
-          }
+      .forEach {
+        if (it.isOpen) {
+          setLanguageViewPerProject(it)
         }
+      }
     LOG.debug("setLangView")
   }
 
   fun setLessonView() {
     LearnToolWindowFactory.learnWindowPerProject.keys
-        .forEach {
-          if (it.isOpen) {
-            setLessonViewPerProject(it)
-          }
+      .forEach {
+        if (it.isOpen) {
+          setLessonViewPerProject(it)
         }
+      }
     LOG.debug("setLessonView")
   }
 
   fun setModulesView() {
     LearnToolWindowFactory.learnWindowPerProject.keys
-        .forEach {
-          if (it.isOpen) {
-            setModulesViewPerProject(it)
-          }
+      .forEach {
+        if (it.isOpen) {
+          setModulesViewPerProject(it)
         }
+      }
     LOG.debug("setModulesView")
   }
 
   fun updateToolWindowScrollPane() {
     LearnToolWindowFactory.learnWindowPerProject.keys
-        .forEach {
-          if (it.isOpen) {
-            updateToolWindowScrollPanePerProject(it)
-          }
+      .forEach {
+        if (it.isOpen) {
+          updateToolWindowScrollPanePerProject(it)
         }
+      }
     LOG.debug("updateToolWindowScrollPane")
   }
 

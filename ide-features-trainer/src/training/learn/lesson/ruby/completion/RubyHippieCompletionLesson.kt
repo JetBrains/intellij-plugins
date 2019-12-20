@@ -44,7 +44,7 @@ end
     }
 
   private fun calculateResult(insert: String) =
-      StringBuffer(sample.text).insert(sample.startOffset, insert).toString()
+    StringBuffer(sample.text).insert(sample.startOffset, insert).toString()
 
   override val existedFile = RubyLangSupport.sandboxFile
 }

@@ -16,10 +16,12 @@ import java.util.concurrent.ExecutionException
 
 class NextLessonListener(val project: Project) : LessonListenerAdapter() {
 
-  @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class, LessonIsOpenedException::class)
+  @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class,
+          BadModuleException::class, LessonIsOpenedException::class)
   override fun lessonNext(lesson: Lesson) {
     if (lesson.module.hasNotPassedLesson()) {
-      val nextLesson = lesson.module.giveNotPassedAndNotOpenedLesson() ?: throw BadLessonException("Unable to obtain not passed and not opened lessons")
+      val nextLesson = lesson.module.giveNotPassedAndNotOpenedLesson()
+                       ?: throw BadLessonException("Unable to obtain not passed and not opened lessons")
       CourseManager.instance.openLesson(project, nextLesson)
     }
   }

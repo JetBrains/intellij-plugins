@@ -21,11 +21,12 @@ object DataLoader {
 
   fun getResourceAsStream(pathFromData: String): InputStream {
     val fullPath =
-        LIVE_DATA_PATH + DATA_PATH + pathFromData
+      LIVE_DATA_PATH + DATA_PATH + pathFromData
     return if (liveMode) {
       FileInputStream(fullPath)
-    } else this.javaClass.getResourceAsStream(fullPath)
-        ?: throw Exception("File with \"$pathFromData\" doesn't exist")
+    }
+    else this.javaClass.getResourceAsStream(fullPath)
+         ?: throw Exception("File with \"$pathFromData\" doesn't exist")
   }
 
   private fun getXmlDocument(pathFromData: String): Document {

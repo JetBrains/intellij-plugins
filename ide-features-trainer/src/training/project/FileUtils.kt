@@ -14,9 +14,9 @@ object FileUtils {
 
   private fun copyFile(toCopy: File, destFile: File): Boolean {
     try {
-      return copyStream(FileInputStream(toCopy),
-          FileOutputStream(destFile))
-    } catch (e: FileNotFoundException) {
+      return copyStream(FileInputStream(toCopy), FileOutputStream(destFile))
+    }
+    catch (e: FileNotFoundException) {
       LOG.warn(e)
     }
     return false
@@ -27,7 +27,8 @@ object FileUtils {
 
     if (!toCopy.isDirectory) {
       return copyFile(toCopy, File(destDir, toCopy.name))
-    } else {
+    }
+    else {
       val newDestDir = File(destDir, toCopy.name)
       if (!newDestDir.exists() && !newDestDir.mkdir()) {
         return false
@@ -59,7 +60,8 @@ object FileUtils {
             return false
           }
           entryInputStream.close()
-        } else {
+        }
+        else {
           if (!ensureDirectoryExists(f)) {
             throw IOException("Could not create directory: " + f.absolutePath)
           }
@@ -76,7 +78,8 @@ object FileUtils {
         copyJarResourcesRecursively(destination, urlConnection)
       else
         copyFilesRecursively(File(originUrl.path), destination.parentFile)
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.warn(e)
     }
     return false
@@ -85,7 +88,8 @@ object FileUtils {
   private fun copyStream(inputStream: InputStream, f: File): Boolean {
     try {
       return copyStream(inputStream, FileOutputStream(f))
-    } catch (e: FileNotFoundException) {
+    }
+    catch (e: FileNotFoundException) {
       LOG.warn(e)
     }
     return false
@@ -102,7 +106,8 @@ object FileUtils {
       inputStream.close()
       os.close()
       return true
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       LOG.warn(e)
     }
     return false

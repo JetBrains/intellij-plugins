@@ -40,7 +40,7 @@ class RubyExtractVariableLesson(module: Module) : KLesson("Extract Variable", mo
 
       task {
         text("This code block contains 3 occurrences of the selected expression. " +
-            "Choose the second item in the list to replace both of them.")
+             "Choose the second item in the list to replace both of them.")
 
         stateCheck {
           editor.document.text.split("i + 1").size == 2
@@ -55,7 +55,7 @@ class RubyExtractVariableLesson(module: Module) : KLesson("Extract Variable", mo
 
       actionTask("NextTemplateVariable") {
         "Choose a name for the new variable or leave it as it is. " +
-            "Press <strong>Enter</strong> to complete the refactoring."
+        "Press <strong>Enter</strong> to complete the refactoring."
       }
     }
 

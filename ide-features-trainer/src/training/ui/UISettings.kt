@@ -103,6 +103,6 @@ class UISettings {
   }
 
   private fun Int.ifZero(nonZeroValue: Int): Int =
-      if (this == 0) nonZeroValue else this
+    if (this == 0) nonZeroValue else this
 }
 

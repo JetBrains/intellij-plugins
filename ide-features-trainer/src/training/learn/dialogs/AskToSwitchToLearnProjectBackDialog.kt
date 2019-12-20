@@ -11,7 +11,8 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.*
 
-class AskToSwitchToLearnProjectBackDialog(private val learnProject: Project, currentProject: Project) : DialogWrapper(currentProject, true) {
+class AskToSwitchToLearnProjectBackDialog(private val learnProject: Project, currentProject: Project)
+  : DialogWrapper(currentProject, true) {
 
   init {
     title = LearnBundle.message("dialog.askToSwitchToLearnProject.title")

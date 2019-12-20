@@ -39,13 +39,13 @@ class RubyLangSupport : AbstractLangSupport() {
     if (project.name != rubyProjectName) return
 
     if (sdk == null) {
-        throw NoSdkException()
+      throw NoSdkException()
     }
     if (sdk.sdkType !is RubySdkType) {
       throw InvalidSdkException("Selected SDK should be Ruby SDK")
     }
     val rubyVersion = RubyVersionUtil.getShortVersion(
-            sdk.versionString ?: throw InvalidSdkException("SDK should have a version"))
+      sdk.versionString ?: throw InvalidSdkException("SDK should have a version"))
     if (VersionComparatorUtil.compare(rubyVersion, "2.3.0") < 0) {
       throw InvalidSdkException("Ruby version should be at least 2.3")
     }
@@ -54,7 +54,8 @@ class RubyLangSupport : AbstractLangSupport() {
   override fun getSdkForProject(project: Project): Sdk? {
     return try {
       super.getSdkForProject(project)
-    } catch (e: NoSdkException) {
+    }
+    catch (e: NoSdkException) {
       SdkRefresher.refreshAll()
       super.getSdkForProject(project)
     }
@@ -69,7 +70,7 @@ class RubyLangSupport : AbstractLangSupport() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  override val defaultProjectName:String
+  override val defaultProjectName: String
     get() = rubyProjectName
 
   override val primaryLanguage: String
@@ -79,19 +80,19 @@ class RubyLangSupport : AbstractLangSupport() {
     val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
     val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
     FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(RubyLangSupport::class.java.getResourceAsStream(
-            "/learnProjects/ruby/gems/bundler-2.0.1.gem")))
+      "/learnProjects/ruby/gems/bundler-2.0.1.gem")))
 
     val sdk = ProjectRootManager.getInstance(project).projectSdk!!
     val module = project.module
 
     GemInstallUtil.installGemsRequirements(sdk,
-            module,
-            listOf(GemDependency.any(bundlerGem.absolutePath)),
-            false, false, false, false, true, null, mutableMapOf())
+                                           module,
+                                           listOf(GemDependency.any(bundlerGem.absolutePath)),
+                                           false, false, false, false, true, null, mutableMapOf())
 
     GemRunner.bundle(module, sdk, "install", null, null, null,
-            "--local",
-            false)
+                     "--local",
+                     false)
   }
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {

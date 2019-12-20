@@ -40,7 +40,7 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
       }
       task("Push Members Down") {
         text("Some refactorings are seldom used and have no shortcut, but you can find them here. " +
-            "Choose <strong>$it...</strong> now and complete the refactoring on <code>meow()</code>.")
+             "Choose <strong>$it...</strong> now and complete the refactoring on <code>meow()</code>.")
         trigger("MemberPushDown") { checkMethodMoved(project) }
         test {
           ideFrame {
@@ -57,16 +57,16 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
 
   private fun checkMethodMoved(project: Project): Boolean {
     val derived = SymbolUtil.findConstantByFQN(
-        project,
-        Types.MODULE_OR_CLASS_OR_CONSTANT,
-        FQN.of("Cat"),
-        null) ?: return false
+      project,
+      Types.MODULE_OR_CLASS_OR_CONSTANT,
+      FQN.of("Cat"),
+      null) ?: return false
 
     val barInDerived = SymbolUtil.findMethod(
-        derived,
-        "meow",
-        Types.METHODS,
-        null)
+      derived,
+      "meow",
+      Types.METHODS,
+      null)
 
     return barInDerived?.parentSymbol?.name == "Cat"
   }

@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 class SelectLesson(module: Module, lang: String, private val sample: LessonSample) :
-    KLesson("Select", module, lang) {
+  KLesson("Select", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

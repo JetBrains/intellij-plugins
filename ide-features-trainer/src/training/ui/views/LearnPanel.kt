@@ -28,404 +28,416 @@ import javax.swing.text.BadLocationException
  */
 class LearnPanel : JPanel() {
 
-    private val boxLayout: BoxLayout = BoxLayout(this, BoxLayout.Y_AXIS)
+  private val boxLayout: BoxLayout = BoxLayout(this, BoxLayout.Y_AXIS)
 
-    //XmlLesson panel items
-    private val lessonPanel = JPanel()
-    private val moduleNameLabel = JLabel()
-    private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
+  //XmlLesson panel items
+  private val lessonPanel = JPanel()
+  private val moduleNameLabel = JLabel()
+  private val allTopicsLabel: LinkLabel<Any> = LinkLabel(LearnBundle.message("learn.ui.alltopics"), null)
 
-    private val lessonNameLabel = JLabel() //Name of the current lesson
-    private val lessonMessagePane = LessonMessagePane()
-    private val buttonPanel = JPanel()
-    private val button = JButton(LearnBundle.message("learn.ui.button.skip"))
+  private val lessonNameLabel = JLabel() //Name of the current lesson
+  private val lessonMessagePane = LessonMessagePane()
+  private val buttonPanel = JPanel()
+  private val button = JButton(LearnBundle.message("learn.ui.button.skip"))
 
-    //XmlModule panel stuff
-    val modulePanel = ModulePanel()
+  //XmlModule panel stuff
+  val modulePanel = ModulePanel()
 
-    //modulePanel UI
-    private val lessonPanelBoxLayout = BoxLayout(lessonPanel, BoxLayout.Y_AXIS)
+  //modulePanel UI
+  private val lessonPanelBoxLayout = BoxLayout(lessonPanel, BoxLayout.Y_AXIS)
 
-    init {
-        layout = boxLayout
-        isFocusable = false
+  init {
+    layout = boxLayout
+    isFocusable = false
 
-        //Obligatory block
-        initLessonPanel()
-        initModulePanel()
+    //Obligatory block
+    initLessonPanel()
+    initModulePanel()
 
-        isOpaque = true
-        background = background
+    isOpaque = true
+    background = background
 
-        lessonPanel.alignmentX = Component.LEFT_ALIGNMENT
-        add(lessonPanel)
-        modulePanel.alignmentX = Component.LEFT_ALIGNMENT
+    lessonPanel.alignmentX = Component.LEFT_ALIGNMENT
+    add(lessonPanel)
+    modulePanel.alignmentX = Component.LEFT_ALIGNMENT
 
-        add(modulePanel)
+    add(modulePanel)
 
-        //set LearnPanel UI
-        preferredSize = Dimension(UISettings.instance.width, 100)
-        border = UISettings.instance.emptyBorder
-    }
+    //set LearnPanel UI
+    preferredSize = Dimension(UISettings.instance.width, 100)
+    border = UISettings.instance.emptyBorder
+  }
 
-    private fun initLessonPanel() {
-        lessonPanel.name = "lessonPanel"
-        lessonPanel.layout = lessonPanelBoxLayout
-        lessonPanel.isFocusable = false
-        lessonPanel.isOpaque = false
+  private fun initLessonPanel() {
+    lessonPanel.name = "lessonPanel"
+    lessonPanel.layout = lessonPanelBoxLayout
+    lessonPanel.isFocusable = false
+    lessonPanel.isOpaque = false
 
-        moduleNameLabel.name = "moduleNameLabel"
-        moduleNameLabel.font = UISettings.instance.moduleNameFont
-        moduleNameLabel.isFocusable = false
-        moduleNameLabel.border = UISettings.instance.checkmarkShiftBorder
+    moduleNameLabel.name = "moduleNameLabel"
+    moduleNameLabel.font = UISettings.instance.moduleNameFont
+    moduleNameLabel.isFocusable = false
+    moduleNameLabel.border = UISettings.instance.checkmarkShiftBorder
 
-        allTopicsLabel.name = "allTopicsLabel"
-        allTopicsLabel.setListener({ _, _ -> UiManager.setModulesView() }, null)
+    allTopicsLabel.name = "allTopicsLabel"
+    allTopicsLabel.setListener({ _, _ -> UiManager.setModulesView() }, null)
 
-        lessonNameLabel.name = "lessonNameLabel"
-        lessonNameLabel.border = UISettings.instance.checkmarkShiftBorder
-        lessonNameLabel.font = UISettings.instance.lessonHeaderFont
-        lessonNameLabel.alignmentX = Component.LEFT_ALIGNMENT
-        lessonNameLabel.isFocusable = false
+    lessonNameLabel.name = "lessonNameLabel"
+    lessonNameLabel.border = UISettings.instance.checkmarkShiftBorder
+    lessonNameLabel.font = UISettings.instance.lessonHeaderFont
+    lessonNameLabel.alignmentX = Component.LEFT_ALIGNMENT
+    lessonNameLabel.isFocusable = false
 
-        lessonMessagePane.name = "lessonMessagePane"
-        lessonMessagePane.isFocusable = false
-        lessonMessagePane.isOpaque = false
-        lessonMessagePane.alignmentX = Component.LEFT_ALIGNMENT
-        lessonMessagePane.margin = JBUI.emptyInsets()
-        lessonMessagePane.border = EmptyBorder(0, 0, 0, 0)
-        lessonMessagePane.maximumSize = Dimension(UISettings.instance.width, 10000)
+    lessonMessagePane.name = "lessonMessagePane"
+    lessonMessagePane.isFocusable = false
+    lessonMessagePane.isOpaque = false
+    lessonMessagePane.alignmentX = Component.LEFT_ALIGNMENT
+    lessonMessagePane.margin = JBUI.emptyInsets()
+    lessonMessagePane.border = EmptyBorder(0, 0, 0, 0)
+    lessonMessagePane.maximumSize = Dimension(UISettings.instance.width, 10000)
 
-        //Set Next Button UI
-        button.margin = JBUI.emptyInsets()
-        button.isFocusable = false
-        button.isVisible = true
-        button.isEnabled = true
-        button.isOpaque = false
+    //Set Next Button UI
+    button.margin = JBUI.emptyInsets()
+    button.isFocusable = false
+    button.isVisible = true
+    button.isEnabled = true
+    button.isOpaque = false
 
-        buttonPanel.name = "buttonPanel"
-        buttonPanel.border = UISettings.instance.checkmarkShiftBorder
-        buttonPanel.isOpaque = false
-        buttonPanel.isFocusable = false
-        buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.X_AXIS)
-        buttonPanel.alignmentX = Component.LEFT_ALIGNMENT
-        buttonPanel.add(button)
+    buttonPanel.name = "buttonPanel"
+    buttonPanel.border = UISettings.instance.checkmarkShiftBorder
+    buttonPanel.isOpaque = false
+    buttonPanel.isFocusable = false
+    buttonPanel.layout = BoxLayout(buttonPanel, BoxLayout.X_AXIS)
+    buttonPanel.alignmentX = Component.LEFT_ALIGNMENT
+    buttonPanel.add(button)
 
-        //shift right for checkmark
-        lessonPanel.add(moduleNameLabel)
-        lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
-        lessonPanel.add(lessonNameLabel)
-        lessonPanel.add(lessonMessagePane)
-        lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
-        lessonPanel.add(Box.createVerticalGlue())
-        lessonPanel.add(buttonPanel)
-        lessonPanel.add(Box.createVerticalStrut(UISettings.instance.afterButtonGap))
-    }
+    //shift right for checkmark
+    lessonPanel.add(moduleNameLabel)
+    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.lessonNameGap))
+    lessonPanel.add(lessonNameLabel)
+    lessonPanel.add(lessonMessagePane)
+    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.beforeButtonGap))
+    lessonPanel.add(Box.createVerticalGlue())
+    lessonPanel.add(buttonPanel)
+    lessonPanel.add(Box.createVerticalStrut(UISettings.instance.afterButtonGap))
+  }
 
-    fun setLessonName(lessonName: String) {
-        lessonNameLabel.text = lessonName
-        lessonNameLabel.foreground = UISettings.instance.defaultTextColor
-        lessonNameLabel.isFocusable = false
-        this.revalidate()
-        this.repaint()
-    }
+  fun setLessonName(lessonName: String) {
+    lessonNameLabel.text = lessonName
+    lessonNameLabel.foreground = UISettings.instance.defaultTextColor
+    lessonNameLabel.isFocusable = false
+    this.revalidate()
+    this.repaint()
+  }
 
-    fun setModuleName(moduleName: String) {
-        moduleNameLabel.text = moduleName
-        moduleNameLabel.foreground = UISettings.instance.defaultTextColor
-        moduleNameLabel.isFocusable = false
-        this.revalidate()
-        this.repaint()
-    }
+  fun setModuleName(moduleName: String) {
+    moduleNameLabel.text = moduleName
+    moduleNameLabel.foreground = UISettings.instance.defaultTextColor
+    moduleNameLabel.isFocusable = false
+    this.revalidate()
+    this.repaint()
+  }
 
-    fun addMessage(text: String) {
-        lessonMessagePane.addMessage(text)
-    }
+  fun addMessage(text: String) {
+    lessonMessagePane.addMessage(text)
+  }
 
-    fun addMessages(messages: Array<Message>) {
-        for (message in messages) {
-            if (message.type == Message.MessageType.LINK) {
-                //add link handler
-                message.runnable = Runnable {
-                    val link = message.link
-                    if (link == null || link.isEmpty()) {
-                        val lesson = CourseManager.instance.findLesson(message.text)
-                        if (lesson != null) {
-                            try {
-                                val project = guessCurrentProject(this@LearnPanel)
-                                CourseManager.instance.openLesson(project, lesson)
-                            } catch (e: Exception) {
-                                LOG.warn(e)
-                            }
+  fun addMessages(messages: Array<Message>) {
+    for (message in messages) {
+      if (message.type == Message.MessageType.LINK) {
+        //add link handler
+        message.runnable = Runnable {
+          val link = message.link
+          if (link == null || link.isEmpty()) {
+            val lesson = CourseManager.instance.findLesson(message.text)
+            if (lesson != null) {
+              try {
+                val project = guessCurrentProject(this@LearnPanel)
+                CourseManager.instance.openLesson(project, lesson)
+              }
+              catch (e: Exception) {
+                LOG.warn(e)
+              }
 
-                        }
-                    } else {
-                        val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
-                        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-                            try {
-                                desktop.browse(URI(link))
-                            } catch (e: Exception) {
-                                LOG.warn(e)
-                            }
-                        }
-                    }
-                }
             }
-        }
-
-        lessonMessagePane.addMessage(messages)
-        //invoke #getPreferredSize explicitly to update actual size of LessonMessagePane
-        lessonMessagePane.preferredSize
-
-        //Pack lesson panel
-        lessonPanel.repaint()
-        //run to update LessonMessagePane.getMinimumSize and LessonMessagePane.getPreferredSize
-        lessonPanelBoxLayout.invalidateLayout(lessonPanel)
-        lessonPanelBoxLayout.layoutContainer(lessonPanel)
-    }
-
-    fun setPreviousMessagesPassed() {
-        try {
-            lessonMessagePane.passPreviousMessages()
-        } catch (e: BadLocationException) {
-            LOG.warn(e)
-        }
-    }
-
-    fun setLessonPassed() {
-        setButtonToNext()
-        this.repaint()
-    }
-
-    private fun setButtonToNext() {
-        button.isVisible = true
-        lessonPanel.revalidate()
-        lessonPanel.repaint()
-    }
-
-    fun clearLessonPanel() {
-        lessonNameLabel.icon = null
-        lessonMessagePane.clear()
-        //remove links from lessonMessagePane
-        val mouseListeners = lessonMessagePane.mouseListeners
-        for (mouseListener in mouseListeners) {
-            lessonMessagePane.removeMouseListener(mouseListener)
-        }
-        revalidate()
-        repaint()
-    }
-
-    @JvmOverloads
-    fun setButtonNextAction(runnable: Runnable, notPassedLesson: Lesson?, text: String? = null) {
-        val buttonAction = object : AbstractAction() {
-            override fun actionPerformed(actionEvent: ActionEvent) {
-                runnable.run()
+          }
+          else {
+            val desktop = if (Desktop.isDesktopSupported()) Desktop.getDesktop() else null
+            if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+              try {
+                desktop.browse(URI(link))
+              }
+              catch (e: Exception) {
+                LOG.warn(e)
+              }
             }
+          }
         }
-        buttonAction.putValue(Action.NAME, "Next")
-        buttonAction.isEnabled = true
-        button.action = buttonAction
-        val keyStroke = getNextLessonKeyStrokeText()
-        if (notPassedLesson != null) {
-            if (text != null) {
-                button.text = "$text ($keyStroke)"
-            } else {
-                button.text = "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
-            }
-        } else {
-            button.text = LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
+      }
+    }
+
+    lessonMessagePane.addMessage(messages)
+    //invoke #getPreferredSize explicitly to update actual size of LessonMessagePane
+    lessonMessagePane.preferredSize
+
+    //Pack lesson panel
+    lessonPanel.repaint()
+    //run to update LessonMessagePane.getMinimumSize and LessonMessagePane.getPreferredSize
+    lessonPanelBoxLayout.invalidateLayout(lessonPanel)
+    lessonPanelBoxLayout.layoutContainer(lessonPanel)
+  }
+
+  fun setPreviousMessagesPassed() {
+    try {
+      lessonMessagePane.passPreviousMessages()
+    }
+    catch (e: BadLocationException) {
+      LOG.warn(e)
+    }
+  }
+
+  fun setLessonPassed() {
+    setButtonToNext()
+    this.repaint()
+  }
+
+  private fun setButtonToNext() {
+    button.isVisible = true
+    lessonPanel.revalidate()
+    lessonPanel.repaint()
+  }
+
+  fun clearLessonPanel() {
+    lessonNameLabel.icon = null
+    lessonMessagePane.clear()
+    //remove links from lessonMessagePane
+    val mouseListeners = lessonMessagePane.mouseListeners
+    for (mouseListener in mouseListeners) {
+      lessonMessagePane.removeMouseListener(mouseListener)
+    }
+    revalidate()
+    repaint()
+  }
+
+  @JvmOverloads
+  fun setButtonNextAction(runnable: Runnable, notPassedLesson: Lesson?, text: String? = null) {
+    val buttonAction = object : AbstractAction() {
+      override fun actionPerformed(actionEvent: ActionEvent) {
+        runnable.run()
+      }
+    }
+    buttonAction.putValue(Action.NAME, "Next")
+    buttonAction.isEnabled = true
+    button.action = buttonAction
+    val keyStroke = getNextLessonKeyStrokeText()
+    if (notPassedLesson != null) {
+      if (text != null) {
+        button.text = "$text ($keyStroke)"
+      }
+      else {
+        button.text = "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
+      }
+    }
+    else {
+      button.text = LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
+    }
+    button.isSelected = true
+    rootPane?.defaultButton = button
+  }
+
+  fun setButtonSkipActionAndText(runnable: Runnable?, text: String?, visible: Boolean) {
+    rootPane?.defaultButton = null
+    val buttonAction = object : AbstractAction() {
+      override fun actionPerformed(actionEvent: ActionEvent) {
+        runnable?.run()
+      }
+    }
+
+    buttonAction.isEnabled = true
+    button.action = buttonAction
+    val keyStroke = getNextLessonKeyStrokeText()
+    if (text == null || text.isEmpty()) {
+      button.text = "${LearnBundle.message("learn.ui.button.skip")} ($keyStroke)"
+      button.updateUI()
+    }
+    else {
+      button.text = "${LearnBundle.message("learn.ui.button.skip.module")}: $text ($keyStroke)"
+      button.updateUI()
+    }
+    button.isVisible = false
+    button.isSelected = true
+    button.isVisible = visible
+  }
+
+  private fun getNextLessonKeyStrokeText() =
+    KeymapUtil.getKeyStrokeText(KeymapUtil.getShortcutByActionId("learn.next.lesson"))
+
+  fun hideNextButton() {
+    button.isVisible = false
+  }
+
+  private fun initModulePanel() {
+    modulePanel.name = LearnPanel::modulePanel.name
+    modulePanel.layout = BoxLayout(modulePanel, BoxLayout.Y_AXIS)
+    modulePanel.isFocusable = false
+    modulePanel.isOpaque = false
+
+    //define separator
+    modulePanel.border = MatteBorder(1, 0, 0, 0, UISettings.instance.separatorColor)
+  }
+
+  fun clear() {
+    clearLessonPanel()
+    //clearModulePanel
+    modulePanel.removeAll()
+  }
+
+  fun updateButtonUi() {
+    button.updateUI()
+  }
+
+  inner class ModulePanel : JPanel() {
+    private val lessonLabelMap = BidirectionalMap<Lesson, MyLinkLabel>()
+    private val moduleNamePanel = JPanel() //contains moduleNameLabel and allTopicsLabel
+
+    fun init(lesson: Lesson) {
+      val module = lesson.module
+      val myLessons = module.lessons
+
+      //create ModuleLessons region
+      val moduleLessons = JLabel()
+      moduleLessons.name = "moduleLessons"
+
+      moduleNamePanel.name = "moduleNamePanel"
+      moduleNamePanel.border = EmptyBorder(UISettings.instance.lessonGap, UISettings.instance.checkIndent, 0, 0)
+      moduleNamePanel.isOpaque = false
+      moduleNamePanel.isFocusable = false
+      moduleNamePanel.layout = BoxLayout(moduleNamePanel, BoxLayout.X_AXIS)
+      moduleNamePanel.alignmentX = Component.LEFT_ALIGNMENT
+      moduleNamePanel.removeAll()
+      moduleNamePanel.add(moduleLessons)
+      moduleNamePanel.add(Box.createHorizontalStrut(20))
+      moduleNamePanel.add(Box.createHorizontalGlue())
+      moduleNamePanel.add(allTopicsLabel)
+
+      moduleLessons.text = lesson.module.name
+      moduleLessons.font = UISettings.instance.boldFont
+      moduleLessons.isFocusable = false
+
+      add(UISettings.rigidGap(UISettings::moduleNameSeparatorGap))
+      add(moduleNamePanel)
+      add(UISettings.rigidGap(UISettings::moduleNameLessonsGap))
+
+      buildLessonLabels(lesson, myLessons)
+      maximumSize = Dimension(UISettings.instance.width, modulePanel.preferredSize.height)
+    }
+
+    private fun buildLessonLabels(lesson: Lesson, myLessons: List<Lesson>) {
+      lessonLabelMap.clear()
+      for (currentLesson in myLessons) {
+        val lessonName = currentLesson.name
+
+        val lessonLinkLabel = MyLinkLabel(lessonName)
+        lessonLinkLabel.horizontalTextPosition = SwingConstants.LEFT
+        lessonLinkLabel.border = EmptyBorder(0, UISettings.instance.checkIndent, UISettings.instance.lessonGap, 0)
+        lessonLinkLabel.isFocusable = false
+        lessonLinkLabel.setListener({ _, _ ->
+                                      try {
+                                        val project = guessCurrentProject(this@LearnPanel)
+                                        CourseManager.instance.openLesson(project, currentLesson)
+                                      }
+                                      catch (e1: Exception) {
+                                        LOG.warn(e1)
+                                      }
+                                    }, null)
+
+        if (lesson == currentLesson) {
+          //selected lesson
+          lessonLinkLabel.setTextColor(UISettings.instance.lessonActiveColor)
         }
-        button.isSelected = true
-        rootPane?.defaultButton = button
-    }
-
-    fun setButtonSkipActionAndText(runnable: Runnable?, text: String?, visible: Boolean) {
-        rootPane?.defaultButton = null
-        val buttonAction = object : AbstractAction() {
-            override fun actionPerformed(actionEvent: ActionEvent) {
-                runnable?.run()
-            }
+        else {
+          lessonLinkLabel.resetTextColor()
         }
+        lessonLinkLabel.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+        lessonLabelMap[currentLesson] = lessonLinkLabel
+        add(lessonLinkLabel)
+      }
+    }
 
-        buttonAction.isEnabled = true
-        button.action = buttonAction
-        val keyStroke = getNextLessonKeyStrokeText()
-        if (text == null || text.isEmpty()) {
-            button.text = "${LearnBundle.message("learn.ui.button.skip")} ($keyStroke)"
-            button.updateUI()
-        } else {
-            button.text = "${LearnBundle.message("learn.ui.button.skip.module")}: $text ($keyStroke)"
-            button.updateUI()
+    fun updateLessons(lesson: Lesson) {
+      for ((curLesson, lessonLabel) in lessonLabelMap.entries) {
+        if (lesson == curLesson) {
+          lessonLabel.setTextColor(UISettings.instance.lessonActiveColor)
         }
-        button.isVisible = false
-        button.isSelected = true
-        button.isVisible = visible
-    }
-
-    private fun getNextLessonKeyStrokeText() =
-            KeymapUtil.getKeyStrokeText(KeymapUtil.getShortcutByActionId("learn.next.lesson"))
-
-    fun hideNextButton() {
-        button.isVisible = false
-    }
-
-    private fun initModulePanel() {
-        modulePanel.name = LearnPanel::modulePanel.name
-        modulePanel.layout = BoxLayout(modulePanel, BoxLayout.Y_AXIS)
-        modulePanel.isFocusable = false
-        modulePanel.isOpaque = false
-
-        //define separator
-        modulePanel.border = MatteBorder(1, 0, 0, 0, UISettings.instance.separatorColor)
-    }
-
-    fun clear() {
-        clearLessonPanel()
-        //clearModulePanel
-        modulePanel.removeAll()
-    }
-
-    fun updateButtonUi() {
-        button.updateUI()
-    }
-
-    inner class ModulePanel : JPanel() {
-        private val lessonLabelMap = BidirectionalMap<Lesson, MyLinkLabel>()
-        private val moduleNamePanel = JPanel() //contains moduleNameLabel and allTopicsLabel
-
-        fun init(lesson: Lesson) {
-            val module = lesson.module
-            val myLessons = module.lessons
-
-            //create ModuleLessons region
-            val moduleLessons = JLabel()
-            moduleLessons.name = "moduleLessons"
-
-            moduleNamePanel.name = "moduleNamePanel"
-            moduleNamePanel.border = EmptyBorder(UISettings.instance.lessonGap, UISettings.instance.checkIndent, 0, 0)
-            moduleNamePanel.isOpaque = false
-            moduleNamePanel.isFocusable = false
-            moduleNamePanel.layout = BoxLayout(moduleNamePanel, BoxLayout.X_AXIS)
-            moduleNamePanel.alignmentX = Component.LEFT_ALIGNMENT
-            moduleNamePanel.removeAll()
-            moduleNamePanel.add(moduleLessons)
-            moduleNamePanel.add(Box.createHorizontalStrut(20))
-            moduleNamePanel.add(Box.createHorizontalGlue())
-            moduleNamePanel.add(allTopicsLabel)
-
-            moduleLessons.text = lesson.module.name
-            moduleLessons.font = UISettings.instance.boldFont
-            moduleLessons.isFocusable = false
-
-            add(UISettings.rigidGap(UISettings::moduleNameSeparatorGap))
-            add(moduleNamePanel)
-            add(UISettings.rigidGap(UISettings::moduleNameLessonsGap))
-
-            buildLessonLabels(lesson, myLessons)
-            maximumSize = Dimension(UISettings.instance.width, modulePanel.preferredSize.height)
+        else {
+          lessonLabel.resetTextColor()
         }
-
-        private fun buildLessonLabels(lesson: Lesson, myLessons: List<Lesson>) {
-            lessonLabelMap.clear()
-            for (currentLesson in myLessons) {
-                val lessonName = currentLesson.name
-
-                val lessonLinkLabel = MyLinkLabel(lessonName)
-                lessonLinkLabel.horizontalTextPosition = SwingConstants.LEFT
-                lessonLinkLabel.border = EmptyBorder(0, UISettings.instance.checkIndent, UISettings.instance.lessonGap, 0)
-                lessonLinkLabel.isFocusable = false
-                lessonLinkLabel.setListener({ _, _ ->
-                    try {
-                        val project = guessCurrentProject(this@LearnPanel)
-                        CourseManager.instance.openLesson(project, currentLesson)
-                    } catch (e1: Exception) {
-                        LOG.warn(e1)
-                    }
-                }, null)
-
-                if (lesson == currentLesson) {
-                    //selected lesson
-                    lessonLinkLabel.setTextColor(UISettings.instance.lessonActiveColor)
-                } else {
-                    lessonLinkLabel.resetTextColor()
-                }
-                lessonLinkLabel.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-                lessonLabelMap[currentLesson] = lessonLinkLabel
-                add(lessonLinkLabel)
-            }
-        }
-
-        fun updateLessons(lesson: Lesson) {
-            for ((curLesson, lessonLabel) in lessonLabelMap.entries) {
-                if (lesson == curLesson) {
-                    lessonLabel.setTextColor(UISettings.instance.lessonActiveColor)
-                } else {
-                    lessonLabel.resetTextColor()
-                }
-            }
-        }
-
-        override fun paintComponent(g: Graphics) {
-            super.paintComponent(g)
-            paintModuleCheckmarks(g)
-        }
-
-        private fun paintModuleCheckmarks(g: Graphics) {
-            for ((lesson, jLabel) in lessonLabelMap.entries) {
-                if (lesson.passed) {
-                    val point = jLabel.location
-                    if (!SystemInfo.isMac) {
-                        LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 1)
-                    } else {
-                        LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 2)
-                    }
-                }
-            }
-        }
-
-
-        internal inner class MyLinkLabel(text: String) : LinkLabel<Any>(text, null) {
-
-            private var userTextColor: Color? = null
-
-            override fun getTextColor(): Color {
-                return userTextColor ?: super.getTextColor()
-            }
-
-            fun setTextColor(color: Color) {
-                userTextColor = color
-            }
-
-            fun resetTextColor() {
-                userTextColor = null
-            }
-        }
+      }
     }
 
-    fun clickButton() {
-        if (button.isEnabled && button.isVisible) button.doClick()
+    override fun paintComponent(g: Graphics) {
+      super.paintComponent(g)
+      paintModuleCheckmarks(g)
     }
 
-    override fun getPreferredSize(): Dimension {
-        if (lessonPanel.minimumSize == null) return Dimension(10, 10)
-        return if (modulePanel.minimumSize == null) Dimension(10, 10) else Dimension(
-                lessonPanel.minimumSize.getWidth().toInt() +
-                        UISettings.instance.westInset +
-                        UISettings.instance.eastInset,
-                lessonPanel.minimumSize.getHeight().toInt() +
-                        modulePanel.minimumSize.getHeight().toInt() +
-                        UISettings.instance.northInset +
-                        UISettings.instance.southInset)
+    private fun paintModuleCheckmarks(g: Graphics) {
+      for ((lesson, jLabel) in lessonLabelMap.entries) {
+        if (lesson.passed) {
+          val point = jLabel.location
+          if (!SystemInfo.isMac) {
+            LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 1)
+          }
+          else {
+            LearnIcons.checkMarkGray.paintIcon(this, g, point.x, point.y + 2)
+          }
+        }
+      }
     }
 
-    override fun getBackground(): Color {
-        return if (!UIUtil.isUnderDarcula())
-            UISettings.instance.backgroundColor
-        else
-            UIUtil.getPanelBackground()
-    }
 
-    companion object{
-        private val LOG = Logger.getInstance(LearnPanel::class.java)
+    internal inner class MyLinkLabel(text: String) : LinkLabel<Any>(text, null) {
+
+      private var userTextColor: Color? = null
+
+      override fun getTextColor(): Color {
+        return userTextColor ?: super.getTextColor()
+      }
+
+      fun setTextColor(color: Color) {
+        userTextColor = color
+      }
+
+      fun resetTextColor() {
+        userTextColor = null
+      }
     }
+  }
+
+  fun clickButton() {
+    if (button.isEnabled && button.isVisible) button.doClick()
+  }
+
+  override fun getPreferredSize(): Dimension {
+    if (lessonPanel.minimumSize == null) return Dimension(10, 10)
+    return if (modulePanel.minimumSize == null) Dimension(10, 10)
+    else Dimension(
+      lessonPanel.minimumSize.getWidth().toInt() +
+      UISettings.instance.westInset +
+      UISettings.instance.eastInset,
+      lessonPanel.minimumSize.getHeight().toInt() +
+      modulePanel.minimumSize.getHeight().toInt() +
+      UISettings.instance.northInset +
+      UISettings.instance.southInset)
+  }
+
+  override fun getBackground(): Color {
+    return if (!UIUtil.isUnderDarcula())
+      UISettings.instance.backgroundColor
+    else
+      UIUtil.getPanelBackground()
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(LearnPanel::class.java)
+  }
 }

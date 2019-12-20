@@ -9,7 +9,7 @@ import training.learn.lesson.general.CompletionWithTabLesson
 import training.learn.lesson.kimpl.parseLessonSample
 
 class JavaCompletionWithTabLesson(module: Module) :
-    CompletionWithTabLesson(module, JavaLangSupport.lang, "DO_NOTHING_ON_CLOSE") {
+  CompletionWithTabLesson(module, JavaLangSupport.lang, "DO_NOTHING_ON_CLOSE") {
   override val sample = parseLessonSample("""import javax.swing.*;
 
 class FrameDemo {

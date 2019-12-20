@@ -22,7 +22,6 @@ import training.statistic.FeatureUsageStatisticConsts.PASSED
 import training.statistic.FeatureUsageStatisticConsts.PROGRESS_PERCENTAGE
 import training.statistic.FeatureUsageStatisticConsts.START
 import training.statistic.FeatureUsageStatisticConsts.START_MODULE_ACTION
-import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("PropertyName")
@@ -70,7 +69,8 @@ class StatisticBase {
     val expandedCollapsed = if (state) GROUP_EXPANDED else GROUP_COLLAPSED
     val whiteListedGroupName = try {
       GroupNames.valueOf(groupName.toUpperCase())
-    } catch (e: IllegalArgumentException) {
+    }
+    catch (e: IllegalArgumentException) {
       LOG.warn("Unable to parse group name for collision/expanding event.")
       return
     }

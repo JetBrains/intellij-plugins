@@ -20,7 +20,7 @@ class MoveLessonLestTest : UsefulTestCase() {
            puts "world"
         end
         --------
-      """.trimIndent(),"""
+      """.trimIndent(), """
         --------
         def world
            puts "world"
@@ -32,6 +32,7 @@ class MoveLessonLestTest : UsefulTestCase() {
       """.trimIndent())
     }
   }
+
   fun testOnlyOneMoved() {
     assertFalse {
       checkSwapMoreThan2Lines("""
@@ -43,7 +44,7 @@ class MoveLessonLestTest : UsefulTestCase() {
            puts "world"
         end
         --------
-      """.trimIndent(),"""
+      """.trimIndent(), """
         --------
         def hello
            puts "hello"

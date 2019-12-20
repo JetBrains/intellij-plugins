@@ -8,8 +8,7 @@ import com.intellij.openapi.command.WriteCommandAction
 class TypeTextCommand : Command(CommandType.TYPETEXT) {
 
   override fun execute(executionList: ExecutionList) {
-    executeWithPollOnEdt(executionList) {
-      element ->
+    executeWithPollOnEdt(executionList) { element ->
 
       val textToType = if (element.content.isEmpty()) "" else element.content[0].value
       val startOffset = executionList.editor.caretModel.offset

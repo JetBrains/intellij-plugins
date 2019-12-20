@@ -42,11 +42,11 @@ class RubyExtractMethodLesson(module: Module) : KLesson("Extract Method", module
 
       task("ExtractMethod") {
         text("Press ${action(it)} to extract the selected code block into a method.")
-        trigger(it, { editor.document.text }) { before, now->
+        trigger(it, { editor.document.text }) { before, now ->
           if (before != now) {
             // a little bit hacky way to print additional message between refactoring modal dialogs
             text("Cocktail Sort has 2 swap places. Click <strong>Yes</strong> to extract both of them and " +
-                "then confirm the decision.")
+                 "then confirm the decision.")
             true
           }
           else {

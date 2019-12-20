@@ -11,16 +11,16 @@ import training.ui.views.LanguageChoosePanel
 /**
  * @author Sergey Karashevich
  */
-class ShowChooseLangPanelAction: AnAction() {
+class ShowChooseLangPanelAction : AnAction() {
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val myLanguageChoosePanel = LanguageChoosePanel()
-        val project = e.project ?: return
-        val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
-        val scrollPane = myLearnToolWindow.scrollPane
-        scrollPane.setViewportView(myLanguageChoosePanel)
-        scrollPane.revalidate()
-        scrollPane.repaint()
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    val myLanguageChoosePanel = LanguageChoosePanel()
+    val project = e.project ?: return
+    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return
+    val scrollPane = myLearnToolWindow.scrollPane
+    scrollPane.setViewportView(myLanguageChoosePanel)
+    scrollPane.revalidate()
+    scrollPane.repaint()
+  }
 
 }

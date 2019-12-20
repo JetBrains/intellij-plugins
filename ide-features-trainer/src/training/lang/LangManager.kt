@@ -22,7 +22,8 @@ import training.util.trainerPluginConfigName
 @State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
-  var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
+  var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(
+    LangSupport.EP_NAME).extensions.toList()
   private var myState = State(null)
 
   private var myLangSupport: LangSupport? = null
@@ -44,8 +45,9 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   //do not call this if LearnToolWindow with modules or learn views due to reinitViews
   fun updateLangSupport(langSupport: LangSupport) {
     myLangSupport = langSupport
-    myState.languageName  = supportedLanguagesExtensions.find { it.instance == langSupport }?.language ?: throw Exception("Unable to get language.")
-    LearnToolWindowFactory.learnWindowPerProject.values.forEach{ it.reinitViews() }
+    myState.languageName = supportedLanguagesExtensions.find { it.instance == langSupport }?.language
+                           ?: throw Exception("Unable to get language.")
+    LearnToolWindowFactory.learnWindowPerProject.values.forEach { it.reinitViews() }
   }
 
   fun getLangSupport(): LangSupport? {
@@ -85,7 +87,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   // Note: languageName - it is language Id actually
   // Default map is a map for the last published version (191.6183.6) before this field added
   data class State(var languageName: String? = null, var languageToLessonsNumberMap: Map<String, Int> = mapOf(
-      "swift" to 26,
-      "java" to 25,
-      "ruby" to 14))
+    "swift" to 26,
+    "java" to 25,
+    "ruby" to 14))
 }

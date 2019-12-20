@@ -65,24 +65,25 @@ object KeymapUtil {
         for (modifier in modifiersString.getModifiers())
           result.append(modifier)
         result.toString()
-      } else {
+      }
+      else {
         modifiersString
       }
-    } else {
+    }
+    else {
       return if (modifiersString.contains("+")) {
         for (modifier in modifiersString.getModifiers())
           result.append(modifier).append(" + ")
         result.toString().replaceSpacesWithNonBreakSpace()
-      } else {
+      }
+      else {
         ("$modifiersString + ").replaceSpacesWithNonBreakSpace()
       }
     }
   }
 
-  private fun String.getModifiers(): Array<String>
-          = this.split("[ +]".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+  private fun String.getModifiers(): Array<String> = this.split("[ +]".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
-  private fun String.replaceSpacesWithNonBreakSpace(): String
-          = this.replace(" ", "\u00A0")
+  private fun String.replaceSpacesWithNonBreakSpace(): String = this.replace(" ", "\u00A0")
 
 }

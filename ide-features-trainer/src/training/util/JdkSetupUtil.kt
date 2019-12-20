@@ -26,8 +26,8 @@ object JdkSetupUtil {
 
   private const val STANDARD_JDK_LOCATION_ON_MAC_OS_X = "/Library/Java/JavaVirtualMachines/"
   private val STANDARD_JVM_LOCATIONS_ON_LINUX = arrayOf(
-          "/usr/lib/jvm/",  // Ubuntu
-          "/usr/java/"     // Fedora
+    "/usr/lib/jvm/",  // Ubuntu
+    "/usr/java/"     // Fedora
   )
   private const val STANDARD_JVM_X64_LOCATIONS_ON_WINDOWS = "Program Files/Java"
   private const val STANDARD_JVM_X86_LOCATIONS_ON_WINDOWS = "Program Files (x86)/Java"
@@ -55,7 +55,8 @@ object JdkSetupUtil {
         for (root in File.listRoots()) {
           if (SystemInfo.is32Bit) {
             jdkBundleList.addBundlesFromLocation(File(root, STANDARD_JVM_X86_LOCATIONS_ON_WINDOWS).absolutePath, JDK8_VERSION, null)
-          } else {
+          }
+          else {
             jdkBundleList.addBundlesFromLocation(File(root, STANDARD_JVM_X64_LOCATIONS_ON_WINDOWS).absolutePath, JDK8_VERSION, null)
           }
         }

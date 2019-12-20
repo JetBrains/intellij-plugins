@@ -30,13 +30,14 @@ object PerformActionUtil {
     }
     return if (keyStroke != null) {
       KeyEvent(JOptionPane.getRootFrame(),
-              KeyEvent.KEY_PRESSED,
-              System.currentTimeMillis(),
-              keyStroke.modifiers,
-              keyStroke.keyCode,
-              keyStroke.keyChar,
-              KeyEvent.KEY_LOCATION_STANDARD)
-    } else {
+               KeyEvent.KEY_PRESSED,
+               System.currentTimeMillis(),
+               keyStroke.modifiers,
+               keyStroke.keyCode,
+               keyStroke.keyChar,
+               KeyEvent.KEY_LOCATION_STANDARD)
+    }
+    else {
       MouseEvent(JOptionPane.getRootFrame(), MouseEvent.MOUSE_PRESSED, 0, 0, 0, 0, 1, false, MouseEvent.BUTTON1)
     }
   }

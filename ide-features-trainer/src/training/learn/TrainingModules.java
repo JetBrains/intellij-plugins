@@ -20,5 +20,4 @@ public class TrainingModules extends AbstractExtensionPointBean {
   @Property(surroundWithTag = false)
   @XCollection
   public TrainingModules[] children;
-
 }

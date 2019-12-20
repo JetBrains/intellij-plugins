@@ -25,7 +25,8 @@ class LearnToolWindow internal constructor(private val project: Project) : Simpl
     reinitViewsInternal()
     scrollPane = if (LangManager.getInstance().isLangUndefined()) {
       JBScrollPane(LanguageChoosePanel())
-    } else {
+    }
+    else {
       JBScrollPane(modulesPanel)
     }
     setContent(scrollPane)

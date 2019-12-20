@@ -11,20 +11,21 @@ import training.ui.LearnIcons
 import training.ui.welcomeScreen.recentProjects.RenderableAction
 import javax.swing.Icon
 
-class ModuleActionGroup(val module: Module): DefaultActionGroup(module.name, module.lessons.map { OpenLessonAction(it) }), RenderableAction {
-    override var isValid: Boolean = true
-    var isExpanded = false
-    override val action: AnAction = this
-    override val name: String = module.name
-    override val description: String? = module.description
-    override val icon: Icon? = if (!module.hasNotPassedLesson()) LearnIcons.checkMarkGray else null
-    override val emptyIcon: Icon = EmptyIcon.ICON_0
-    override fun isPopup(): Boolean = isExpanded
+class ModuleActionGroup(val module: Module) : DefaultActionGroup(module.name, module.lessons.map { OpenLessonAction(it) }),
+                                              RenderableAction {
+  override var isValid: Boolean = true
+  var isExpanded = false
+  override val action: AnAction = this
+  override val name: String = module.name
+  override val description: String? = module.description
+  override val icon: Icon? = if (!module.hasNotPassedLesson()) LearnIcons.checkMarkGray else null
+  override val emptyIcon: Icon = EmptyIcon.ICON_0
+  override fun isPopup(): Boolean = isExpanded
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val lessonToOpen = module.giveNotPassedLesson() ?: module.lessons.first()
-        StatisticBase.instance.onStartModuleAction(module, lessonToOpen)
-        val openLessonAction = OpenLessonAction(lessonToOpen)
-        ActionUtil.performActionDumbAware(openLessonAction, e)
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    val lessonToOpen = module.giveNotPassedLesson() ?: module.lessons.first()
+    StatisticBase.instance.onStartModuleAction(module, lessonToOpen)
+    val openLessonAction = OpenLessonAction(lessonToOpen)
+    ActionUtil.performActionDumbAware(openLessonAction, e)
+  }
 }

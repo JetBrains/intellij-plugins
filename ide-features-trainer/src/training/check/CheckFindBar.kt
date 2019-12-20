@@ -16,7 +16,7 @@ class CheckFindBar : Check {
   }
 
   override fun before() {}
-  
+
   override fun check(): Boolean {
     return editor.headerComponent == null
   }

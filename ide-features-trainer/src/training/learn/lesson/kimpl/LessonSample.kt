@@ -10,8 +10,8 @@ data class LessonSample(val text: String,
 // Current implementation can be generalized much better
 fun parseLessonSample(text: String): LessonSample {
   return trySelectionSample(text)
-      ?: tryCaretSample(text)
-      ?: LessonSample(text)
+         ?: tryCaretSample(text)
+         ?: LessonSample(text)
 }
 
 fun trySelectionSample(text: String): LessonSample? {
@@ -21,7 +21,7 @@ fun trySelectionSample(text: String): LessonSample? {
   val endSelection = withoutSelect.indexOf("</select>")
 
   return LessonSample(withoutSelect.replace("</select>", ""),
-      startOffset = endSelection, selection = Pair(startSelection ,endSelection))
+                      startOffset = endSelection, selection = Pair(startSelection, endSelection))
 }
 
 fun tryCaretSample(text: String): LessonSample? {

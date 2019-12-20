@@ -3,4 +3,4 @@
  */
 package training.learn.exceptons
 
-class EditorNoListenersException(message: String): Exception(message)
+class EditorNoListenersException(message: String) : Exception(message)

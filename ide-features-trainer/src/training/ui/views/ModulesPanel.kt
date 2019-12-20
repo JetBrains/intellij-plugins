@@ -308,7 +308,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
         name = "moduleHeader"
         isFocusable = false
         alignmentX = Component.LEFT_ALIGNMENT
-        border = EmptyBorder(0,0,0,0)
+        border = EmptyBorder(0, 0, 0, 0)
         isOpaque = false
         layout = BoxLayout(this, BoxLayout.X_AXIS)
       }

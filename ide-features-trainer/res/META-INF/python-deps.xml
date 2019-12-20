@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <idea-plugin>
-
-    <extensions defaultExtensionNs="training">
-        <TrainingLangExtension language="Python" implementationClass="training.lang.PythonLangSupport"/>
-        <TrainingModules language="python">
-            <module name="modules/python/EditorBasics.xml"/>
-        </TrainingModules>
-    </extensions>
-
+  <extensions defaultExtensionNs="training">
+    <TrainingLangExtension language="Python" implementationClass="training.lang.PythonLangSupport"/>
+    <TrainingModules language="python">
+      <module name="modules/python/EditorBasics.xml"/>
+    </TrainingModules>
+  </extensions>
 </idea-plugin>

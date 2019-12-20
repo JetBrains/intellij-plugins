@@ -29,7 +29,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private var currentRecorder: ActionsRecorder? = null
 
   fun waitBeforeContinue(delayMillis: Int) {
-    if(isUnderTaskProcessing) {
+    if (isUnderTaskProcessing) {
       throw IllegalStateException("Delay should be specified between tasks!")
     }
 
@@ -40,7 +40,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   fun task(taskContent: TaskContext.() -> Unit) {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    if(isUnderTaskProcessing) {
+    if (isUnderTaskProcessing) {
       throw IllegalStateException("Nested tasks are not permitted!")
     }
 

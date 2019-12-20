@@ -9,7 +9,7 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
 abstract class CompletionWithTabLesson(module: Module, lang: String, private val proposal: String) :
-    KLesson("Completion with Tab", module, lang) {
+  KLesson("Completion with Tab", module, lang) {
 
   abstract val sample: LessonSample
 
@@ -21,7 +21,7 @@ abstract class CompletionWithTabLesson(module: Module, lang: String, private val
 
       actionTask("EditorChooseLookupItemReplace") {
         "Choose <code>$proposal</code>, for example, and press ${action("EditorTab")}. " +
-          "This overwrites the word at the caret rather than simply inserting it."
+        "This overwrites the word at the caret rather than simply inserting it."
       }
     }
 }

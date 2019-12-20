@@ -31,7 +31,7 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
 
       task("GotoDeclaration") {
         text("Now the caret is on the attribute accessor declaration. " +
-            "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
+             "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
         trigger(it, { state() }, fun(before: MyInfo?, now: MyInfo?): Boolean {
           if (before == null || now == null) {
             return false
@@ -39,8 +39,8 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
 
           val navigationElement = before.target.navigationElement
           return navigationElement == now.target.navigationElement &&
-              isInsidePsi(navigationElement, before.position) &&
-              !isInsidePsi(navigationElement, now.position)
+                 isInsidePsi(navigationElement, before.position) &&
+                 !isInsidePsi(navigationElement, now.position)
         })
         test {
           actions(it)
@@ -56,9 +56,9 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
 
       actionTask("PinToolwindowTab") {
         "From the <strong>Find view</strong> you can navigate to both usages and declarations. " +
-            "The next search will override these results in the <strong>Find view</strong> window. " +
-            "To prevent it, pin the results by right clicking the tab title, <strong>Usages of</strong>," +
-            "and selecting <strong>Pin tab</strong>."
+        "The next search will override these results in the <strong>Find view</strong> window. " +
+        "To prevent it, pin the results by right clicking the tab title, <strong>Usages of</strong>," +
+        "and selecting <strong>Pin tab</strong>."
       }
 
       actionTask("HideActiveWindow") {
@@ -83,7 +83,7 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
     return MyInfo(target, position)
   }
 
-  private fun isInsidePsi(psi: PsiElement, position: MyPosition) : Boolean {
+  private fun isInsidePsi(psi: PsiElement, position: MyPosition): Boolean {
     return psi.containingFile == position.file && psi.textRange.contains(position.offset)
   }
 

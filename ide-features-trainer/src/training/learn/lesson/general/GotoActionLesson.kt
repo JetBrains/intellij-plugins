@@ -18,7 +18,7 @@ import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JPanel
 
 class GotoActionLesson(module: Module, lang: String, private val sample: LessonSample) :
-    KLesson("Actions", module, lang) {
+  KLesson("Actions", module, lang) {
 
   companion object {
     private const val FIND_ACTION_WORKAROUND: String = "https://intellij-support.jetbrains.com/hc/en-us/articles/360005137400-Cmd-Shift-A-hotkey-opens-Terminal-with-apropos-search-instead-of-the-Find-Action-dialog"
@@ -83,10 +83,10 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       task {
         text("Awesome! Click the button below to start the next lesson, or use ${action("learn.next.lesson")}.")
       }
-  }
+    }
 
   private fun isLineNumbersShown() = EditorSettingsExternalizable.getInstance().isLineNumbersShown
 
   private fun TaskContext.checkWordInSearch(expected: String): Boolean =
-          (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true 
+    (focusOwner as? ExtendableTextField)?.text?.toLowerCase()?.contains(expected.toLowerCase()) == true
 }

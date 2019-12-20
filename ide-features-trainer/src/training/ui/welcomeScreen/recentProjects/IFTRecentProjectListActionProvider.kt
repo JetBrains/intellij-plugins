@@ -12,7 +12,8 @@ class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
     if (includeProjects) {
       GroupManager.instance.registeredGroups
         .flatMap { it.getActions().toList() }
-    } else {
+    }
+    else {
       GroupManager.instance.registeredGroups
         .flatMap { it.getActions().toList() }
         .filter { it !is ReopenProjectAction && it !is ProjectGroupActionGroup }

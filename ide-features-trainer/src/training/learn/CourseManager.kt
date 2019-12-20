@@ -46,7 +46,7 @@ class CourseManager internal constructor() {
       for (module in modules.children) {
         val moduleFilename = module.xmlPath
         val module = XmlModule.initModule(moduleFilename, primaryLanguage)
-             ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+                     ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
         allModules.add(module)
       }
     }
@@ -102,7 +102,8 @@ class CourseManager internal constructor() {
     if (size == 1) return null
     return lessons.firstOrNull {
       lessons.indexOf(it) > lessons.indexOf(currentLesson) &&
-      lessons.indexOf(it) < lessons.size && !it.passed }
+      lessons.indexOf(it) < lessons.size && !it.passed
+    }
       ?.let { lessons[lessons.indexOf(it)] }
   }
 

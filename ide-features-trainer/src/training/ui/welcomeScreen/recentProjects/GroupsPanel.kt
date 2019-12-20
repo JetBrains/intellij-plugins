@@ -319,7 +319,7 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
                 override fun paintComponent(g: Graphics) {
                   val y = if (value is ModuleActionGroup)
                     0
-                    else
+                  else
                     (height - getIcon().iconHeight) / 2
                   getIcon().paintIcon(this, g, 0, y)
                 }
@@ -344,15 +344,15 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
   }
 
   @Suppress("UNCHECKED_CAST")
-  internal inner class RestorableListListener: ListDataListener {
-    override fun contentsChanged(e: ListDataEvent?) { }
+  internal inner class RestorableListListener : ListDataListener {
+    override fun contentsChanged(e: ListDataEvent?) {}
 
     override fun intervalAdded(e: ListDataEvent?) {
       if (e?.index0 == null || e.source == null) return
       if (e.index0 == e.index1) {
         val model = e.source as DefaultListModel<AnAction>
         val action = model.get(e.index1)
-        if (action is ProjectGroupActionGroup || action is ReopenProjectAction ) {
+        if (action is ProjectGroupActionGroup || action is ReopenProjectAction) {
           if (GroupManager.instance.registeredGroups.filterIsInstance<DefaultProjectsActionGroup>().first().isExpanded.not()) {
             model.remove(e.index0)
           }

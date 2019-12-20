@@ -29,7 +29,7 @@ import java.net.URISyntaxException
 class XmlModule(override val name: String,
                 moduleXmlPath: String,
                 private val root: Element,
-                override val primaryLanguage: String?): Module {
+                override val primaryLanguage: String?) : Module {
 
   override val description: String?
 
@@ -93,8 +93,9 @@ class XmlModule(override val name: String,
         continue // do not show unfinished lessons in release
       }
       when (lessonElement.name) {
-        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let {addXmlLesson(lessonElement, it) }
-            ?: LOG.error("Need to specify ${XmlModuleConstants.MODULE_LESSONS_PATH_ATTR} in module attributes")
+        XmlModuleConstants.MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let { addXmlLesson(lessonElement, it) }
+                                                        ?: LOG.error(
+                                                          "Need to specify ${XmlModuleConstants.MODULE_LESSONS_PATH_ATTR} in module attributes")
         XmlModuleConstants.MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
         else -> LOG.error("Unknown element ${lessonElement.name} in  XmlModule file")
       }
@@ -108,10 +109,12 @@ class XmlModule(override val name: String,
       val scenario = Scenario(lessonPath)
       val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
       lessons.add(lesson)
-    } catch (e: JDOMException) {
+    }
+    catch (e: JDOMException) {
       //XmlLesson file is corrupted
       LOG.error(BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e"))
-    } catch (e: IOException) {
+    }
+    catch (e: IOException) {
       //XmlLesson file cannot be read
       LOG.error(BadLessonException("Probably lesson file cannot be read: $lessonPath"))
     }
@@ -121,27 +124,27 @@ class XmlModule(override val name: String,
     val lessonImplementation = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR)
     val lessonSampleName = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_SAMPLE_ATTR)
 
-    val lesson : Any
+    val lesson: Any
     if (lessonSampleName != null) {
       if (lessonsPath == null) {
         LOG.error("Lesson $lessonImplementation requires sample $lessonSampleName but lessons path des not specified")
         return
       }
       val lessonLanguage = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_LANGUAGE_ATTR)
-      val lessonConstructor = Class.forName(lessonImplementation).
-          getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
+      val lessonConstructor = Class.forName(lessonImplementation)
+        .getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
 
       val content = getResourceAsStream(lessonsPath + lessonSampleName).readBytes().toString(Charsets.UTF_8)
       val sample = parseLessonSample(content)
       lesson = lessonConstructor.newInstance(this, lessonLanguage, sample)
     }
     else {
-      val lessonConstructor = Class.forName(lessonImplementation).
-          getDeclaredConstructor(Module::class.java)
+      val lessonConstructor = Class.forName(lessonImplementation).getDeclaredConstructor(Module::class.java)
       lesson = lessonConstructor.newInstance(this)
     }
     if (lesson !is KLesson) {
-      LOG.error("Class $lessonImplementation specified in ${XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR} attribute should refer to existed Kotlin class")
+      LOG.error("Class $lessonImplementation specified in ${XmlModuleConstants.MODULE_LESSON_IMPLEMENTATION_ATTR} " +
+                "attribute should refer to existed Kotlin class")
       return
     }
     lessons.add(lesson)

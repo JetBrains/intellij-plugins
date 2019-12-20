@@ -15,7 +15,8 @@ object MigrationManager {
 
   fun processLegacyStates(service: LessonStateBase) {
     migrateAgents.forEach {
-      LOG.info("Adding lesson states from previous version (${it.VERSION}) of trainingPlugin / IDE Features Trainer from xml file: ${it.XML_FILE_NAME}")
+      LOG.info("Adding lesson states from previous version (${it.VERSION}) of trainingPlugin " +
+               "/ IDE Features Trainer from xml file: ${it.XML_FILE_NAME}")
       service.map.putAll(it.extractLessonStateMap())
     }
   }

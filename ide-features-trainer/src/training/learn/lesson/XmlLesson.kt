@@ -16,7 +16,7 @@ import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 
-data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module): Lesson {
+data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module) : Lesson {
 
   override val lessonListeners: MutableList<LessonListener> = mutableListOf()
   override var passed: Boolean = false
@@ -31,7 +31,8 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
     passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
   }
 
-  @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
+  @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class,
+          IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
   fun open(projectWhereToOpenLesson: Project) {
     CourseManager.instance.openLesson(projectWhereToOpenLesson, this)
   }

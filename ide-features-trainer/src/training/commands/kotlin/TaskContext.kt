@@ -22,7 +22,7 @@ import java.util.concurrent.Future
 
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
                   private val recorder: ActionsRecorder) {
-  val steps : MutableList<CompletableFuture<Boolean>> = mutableListOf()
+  val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
   val testActions: MutableList<Runnable> = mutableListOf()
 
@@ -41,7 +41,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   }
 
   /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
-  fun triggerStart(actionId: String, checkState: () -> Boolean = {true}) {
+  fun triggerStart(actionId: String, checkState: () -> Boolean = { true }) {
     steps.add(recorder.futureActionOnStart(actionId, checkState))
   }
 
@@ -81,7 +81,8 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
       if (state != null) {
         result.complete(state)
         true
-      } else {
+      }
+      else {
         false
       }
     }
@@ -92,7 +93,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   val focusOwner: Component?
     get() = IdeFocusManager.getInstance(project).focusOwner
 
-  private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
+  private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean): Check {
     return object : Check {
       var state: T? = null
 
@@ -132,6 +133,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   }
 
   companion object {
-    @Volatile var inTestMode : Boolean = false
+    @Volatile
+    var inTestMode: Boolean = false
   }
 }

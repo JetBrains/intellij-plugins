@@ -32,7 +32,10 @@ class CheckParameterInfo : Check {
     }
     if (myMethodCall == null) return false
     val literals: Collection<PsiLiteralExpression> = PsiTreeUtil.findChildrenOfType(myMethodCall, PsiLiteralExpression::class.java)
-    if (literals.size != 2) return false else {
+    if (literals.size != 2) {
+      return false
+    }
+    else {
       if (literals.toTypedArray()[0].value is Int && literals.toTypedArray()[1].value is Int) {
         val width = literals.toTypedArray()[0].value as Int?
         val height = literals.toTypedArray()[1].value as Int?

@@ -38,7 +38,8 @@ class TryCommand : Command(CommandType.TRY) {
         check.set(executionList.project, editor)
         check.before()
         checkFuture = recorder.futureCheck { check.check() }
-      } catch (e: Exception) {
+      }
+      catch (e: Exception) {
         LOG.error(e)
       }
 
@@ -62,7 +63,7 @@ class TryCommand : Command(CommandType.TRY) {
     }
   }
 
-  companion object{
+  companion object {
     private val LOG = Logger.getInstance(TryCommand::class.java)
   }
 }

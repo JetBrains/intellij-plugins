@@ -21,12 +21,13 @@ import java.util.concurrent.Executors
 import javax.swing.Icon
 
 fun createNamedSingleThreadExecutor(name: String): ExecutorService =
-    Executors.newSingleThreadExecutor(ThreadFactoryBuilder().setNameFormat(name).build())
+  Executors.newSingleThreadExecutor(ThreadFactoryBuilder().setNameFormat(name).build())
 
 fun findLanguageByID(id: String): Language? {
   val effectiveId = if (id.toLowerCase() == "cpp") {
     "ObjectiveC"
-  } else {
+  }
+  else {
     id
   }
   return Language.findLanguageByID(effectiveId)
@@ -37,16 +38,17 @@ fun editorPointForBalloon(myEditor: Editor): Point {
   val position = myEditor.offsetToVisualPosition(offset)
   return myEditor.visualPositionToXY(position)
 }
+
 fun createBalloon(text: String): Balloon = createBalloon(text, 3000)
 fun createBalloon(text: String, delay: Long): Balloon =
-    JBPopupFactory.getInstance()
-        .createHtmlTextBalloonBuilder(text, null, UIUtil.getToolTipBackground(), null)
-        .setHideOnClickOutside(true)
-        .setCloseButtonEnabled(true)
-        .setHideOnKeyOutside(true)
-        .setAnimationCycle(0)
-        .setFadeoutTime(delay)
-        .createBalloon()
+  JBPopupFactory.getInstance()
+    .createHtmlTextBalloonBuilder(text, null, UIUtil.getToolTipBackground(), null)
+    .setHideOnClickOutside(true)
+    .setCloseButtonEnabled(true)
+    .setHideOnKeyOutside(true)
+    .setAnimationCycle(0)
+    .setFadeoutTime(delay)
+    .createBalloon()
 
 val featureTrainerMode: TrainingMode
   get() =
@@ -58,7 +60,7 @@ val featureTrainerMode: TrainingMode
       else -> TrainingMode.NORMAL
     }
 
-const val trainerPluginConfigName : String = "ide-features-trainer.xml"
+const val trainerPluginConfigName: String = "ide-features-trainer.xml"
 
 val featureTrainerVersion: String by lazy {
   val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
@@ -70,8 +72,10 @@ val isFeatureTrainerSnapshot: Boolean by lazy {
 }
 
 fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
-  return object: AnAction(icon) {
+  return object : AnAction(icon) {
     override fun isDumbAware() = true
-    override fun actionPerformed(e: AnActionEvent) { action(e) }
+    override fun actionPerformed(e: AnActionEvent) {
+      action(e)
+    }
   }
 }

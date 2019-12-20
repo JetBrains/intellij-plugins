@@ -10,7 +10,7 @@ import com.intellij.openapi.components.Storage
 import training.util.trainerPluginConfigName
 
 @State(name = "ActivityManager", storages = [Storage(value = trainerPluginConfigName)])
-class ActivityManager: PersistentStateComponent<ActivityManager> {
+class ActivityManager : PersistentStateComponent<ActivityManager> {
 
   private var lastActivityTime: Long? = null
 

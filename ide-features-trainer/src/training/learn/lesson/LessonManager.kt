@@ -34,17 +34,17 @@ class LessonManager {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
   }
 
-  internal fun initDslLesson(editor: Editor, cLesson : Lesson, lessonExecutor: LessonExecutor) {
+  internal fun initDslLesson(editor: Editor, cLesson: Lesson, lessonExecutor: LessonExecutor) {
     initLesson(editor, cLesson)
     currentLessonExecutor = lessonExecutor
   }
 
   @Throws(Exception::class)
-  internal fun initLesson(editor: Editor, cLesson : Lesson) {
+  internal fun initLesson(editor: Editor, cLesson: Lesson) {
     currentLessonExecutor?.stopLesson()
 
     clearAllListeners()
-   //remove mouse blocks and action recorders from last editor
+    //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
     UiManager.setLessonNameOnLearnPanels(cLesson.name)
     val module = cLesson.module
@@ -70,11 +70,13 @@ class LessonManager {
       runnable = Runnable {
         try {
           CourseManager.instance.openLesson(project, lesson)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
           LOG.error(e)
         }
       }
-    } else {
+    }
+    else {
       val nextModule = CourseManager.instance.giveNextModule(cLesson)
       if (nextModule != null) {
         buttonText = nextModule.name
@@ -82,7 +84,8 @@ class LessonManager {
           val notPassedLesson = nextModule.giveNotPassedLesson()
           try {
             CourseManager.instance.openLesson(project, notPassedLesson ?: nextModule.lessons[0])
-          } catch (e: Exception) {
+          }
+          catch (e: Exception) {
             LOG.error(e)
           }
         }
@@ -111,11 +114,13 @@ class LessonManager {
       UiManager.setButtonNextActionOnLearnPanels(Runnable {
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
           LOG.error(e)
         }
       }, notPassedLesson)
-    } else {
+    }
+    else {
       val module = CourseManager.instance.giveNextModule(cLesson)
       if (module == null) {
         clearLessonPanel()
@@ -123,16 +128,18 @@ class LessonManager {
         UiManager.setLessonNameOnLearnPanels(LearnBundle.message("learn.ui.course.completed.caption"))
         UiManager.addMessageToLearnPanels(LearnBundle.message("learn.ui.course.completed.description"))
         UiManager.hideNextButtonOnLearnPanels()
-      } else {
+      }
+      else {
         var lesson = module.giveNotPassedLesson()
         if (lesson == null) lesson = module.lessons[0]
 
         val lessonFromNextModule = lesson
         val nextModule = lessonFromNextModule.module
-        UiManager.setButtonNextActionOnLearnPanels(Runnable{
+        UiManager.setButtonNextActionOnLearnPanels(Runnable {
           try {
             CourseManager.instance.openLesson(project, lessonFromNextModule)
-          } catch (e: Exception) {
+          }
+          catch (e: Exception) {
             LOG.error(e)
           }
         }, lesson, LearnBundle.message("learn.ui.button.next.module") + " " + nextModule.name)
@@ -148,7 +155,8 @@ class LessonManager {
         val document = editor.document
         try {
           document.setText("")
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
           LOG.error(e)
           System.err.println("Unable to update text in editor!")
         }
@@ -186,7 +194,8 @@ class LessonManager {
     blockCaretAction.addActionHandler(Runnable {
       try {
         showCaretBlockedBalloon()
-      } catch (e: InterruptedException) {
+      }
+      catch (e: InterruptedException) {
         LOG.error(e)
       }
     })
@@ -199,8 +208,7 @@ class LessonManager {
 
   @Throws(InterruptedException::class)
   private fun showCaretBlockedBalloon() {
-    val balloon = createBalloon(LearnBundle
-        .message("learn.ui.balloon.blockCaret.message"))
+    val balloon = createBalloon(LearnBundle.message("learn.ui.balloon.blockCaret.message"))
     balloon.show(RelativePoint(lastEditor?.contentComponent!!, editorPointForBalloon(lastEditor!!)), Balloon.Position.above)
   }
 
@@ -218,7 +226,8 @@ class LessonManager {
       grabMouseActions(Runnable {
         try {
           showCaretBlockedBalloon()
-        } catch (e: InterruptedException) {
+        }
+        catch (e: InterruptedException) {
           LOG.error(e)
         }
       })

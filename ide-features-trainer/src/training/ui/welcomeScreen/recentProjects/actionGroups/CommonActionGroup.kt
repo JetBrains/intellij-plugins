@@ -9,30 +9,30 @@ import training.statistic.StatisticBase
 
 abstract class CommonActionGroup(val name: String, val children: List<AnAction>) : DefaultActionGroup(name, children), DumbAware {
 
-    var isExpanded = true
+  var isExpanded = true
 
-    override fun actionPerformed(e: AnActionEvent) {
-        object : RecentProjectsWelcomeScreenActionBase() {
-            override fun actionPerformed(e: AnActionEvent) {
-                isExpanded = !isExpanded
-                val list = getList(e)
-                if (list != null) {
-                    val index = list.selectedIndex
-                    rebuildRecentProjectsList(e)
-                    list.selectedIndex = index
-                }
-                StatisticBase.instance.onGroupStateChanged(name, isExpanded)
-            }
-        }.actionPerformed(e)
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    object : RecentProjectsWelcomeScreenActionBase() {
+      override fun actionPerformed(e: AnActionEvent) {
+        isExpanded = !isExpanded
+        val list = getList(e)
+        if (list != null) {
+          val index = list.selectedIndex
+          rebuildRecentProjectsList(e)
+          list.selectedIndex = index
+        }
+        StatisticBase.instance.onGroupStateChanged(name, isExpanded)
+      }
+    }.actionPerformed(e)
+  }
 
-    abstract fun getActions(): Array<AnAction>
+  abstract fun getActions(): Array<AnAction>
 
-    override fun isPopup(): Boolean {
-        return !isExpanded
-    }
+  override fun isPopup(): Boolean {
+    return !isExpanded
+  }
 
-    override fun toString(): String {
-        return name
-    }
+  override fun toString(): String {
+    return name
+  }
 }

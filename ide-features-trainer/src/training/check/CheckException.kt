@@ -18,7 +18,7 @@ class CheckException : Check {
   }
 
   override fun before() {}
-  
+
   override fun check(): Boolean {
     val document = editor.document
     val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
