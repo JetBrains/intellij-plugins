@@ -15,43 +15,25 @@
  */
 package com.intellij.coldFusion;
 
-import com.intellij.CommonBundle;
-import com.intellij.reference.SoftReference;
+import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.lang.ref.Reference;
-import java.util.ResourceBundle;
+public class CfmlBundle extends DynamicBundle {
+  @NonNls private static final String BUNDLE = "messages.CfmlBundle";
+  private static final CfmlBundle INSTANCE = new CfmlBundle();
 
-/**
- * Created by Lera Nikolaenko
- */
-public class CfmlBundle {
+  private CfmlBundle() { super(BUNDLE); }
 
-  public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, @NotNull Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
-  }
-
-  private static Reference<ResourceBundle> ourBundle;
-  @NonNls
-  protected static final String PATH_TO_BUNDLE = "messages.CfmlBundle";
-
-  private CfmlBundle() {
-  }
-
-  private static ResourceBundle getBundle() {
-    ResourceBundle bundle = SoftReference.dereference(ourBundle);
-    if (bundle == null) {
-      bundle = ResourceBundle.getBundle(PATH_TO_BUNDLE);
-      ourBundle = new SoftReference<>(bundle);
-    }
-    return bundle;
+  @NotNull
+  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
+    return INSTANCE.getMessage(key, params);
   }
 
   // TextAttributeKey names must be globally unique.
   // However those in CfmlBundle are not. So mangle them.
-  public static String cfmlizeMessage(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key) {
+  public static String cfmlizeMessage(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key) {
     return "Cfml" + message(key);
   }
 }
