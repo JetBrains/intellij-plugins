@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class PrettierBundle extends DynamicBundle {
-  @NonNls public static final String BUNDLE = "PrettierBundle";
+  @NonNls public static final String BUNDLE = "messages.PrettierBundle";
   private static final PrettierBundle INSTANCE = new PrettierBundle();
 
   private PrettierBundle() { super(BUNDLE); }
