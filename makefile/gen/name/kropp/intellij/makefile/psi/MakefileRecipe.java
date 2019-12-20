@@ -1,11 +1,12 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import org.jetbrains.annotations.NotNull;
 
-public interface MakefileRecipe extends PsiElement {
+import java.util.List;
+
+public interface MakefileRecipe extends PsiLanguageInjectionHost {
 
   @NotNull
   List<MakefileCommand> getCommandList();

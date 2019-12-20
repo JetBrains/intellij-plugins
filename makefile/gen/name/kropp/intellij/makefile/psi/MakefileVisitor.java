@@ -1,11 +1,10 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.navigation.NavigationItem;
+import org.jetbrains.annotations.NotNull;
 
 public class MakefileVisitor extends PsiElementVisitor {
 
@@ -14,7 +13,7 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitCommand(@NotNull MakefileCommand o) {
-    visitPsiLanguageInjectionHost(o);
+    visitPsiElement(o);
   }
 
   public void visitComment(@NotNull MakefileComment o) {
@@ -90,7 +89,7 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitRecipe(@NotNull MakefileRecipe o) {
-    visitPsiElement(o);
+    visitPsiLanguageInjectionHost(o);
   }
 
   public void visitRule(@NotNull MakefileRule o) {

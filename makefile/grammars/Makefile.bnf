@@ -52,8 +52,8 @@ private any ::= (conditional|rule|command|variable-assignment|directive|function
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe {methods=[getTargets]}
-recipe ::= (command|conditional|empty_command)* {methods=[isEmpty]}
-command ::= '\t'* multiline {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileCommandElementImpl"}
+recipe ::= (command|conditional|empty_command)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
+command ::= '\t'* multiline
 private multiline ::= (line (split line?)* | (split line?)+)
 empty_command ::= '\t'+
 

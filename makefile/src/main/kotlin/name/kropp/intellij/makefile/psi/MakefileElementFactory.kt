@@ -1,10 +1,8 @@
 package name.kropp.intellij.makefile.psi
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiWhiteSpace
-import name.kropp.intellij.makefile.MakefileFile
-import name.kropp.intellij.makefile.MakefileFileType
+import com.intellij.openapi.project.*
+import com.intellij.psi.*
+import name.kropp.intellij.makefile.*
 
 object MakefileElementFactory {
   fun createFile(project: Project, text: String) =
@@ -22,6 +20,6 @@ object MakefileElementFactory {
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
 
-  fun createCommand(project: Project, text: String) =
-      createRule(project, "target:\n\t$text").firstChild.nextSibling as MakefileCommand
+  fun createRecipe(project: Project, text: String) =
+      createRule(project, "target:\n\t$text").firstChild.nextSibling as MakefileRecipe
 }
