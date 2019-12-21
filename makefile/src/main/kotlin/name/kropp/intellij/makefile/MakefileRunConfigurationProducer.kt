@@ -2,6 +2,7 @@ package name.kropp.intellij.makefile
 
 import com.intellij.execution.actions.*
 import com.intellij.execution.configurations.*
+import com.intellij.openapi.components.*
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
 import name.kropp.intellij.makefile.psi.*
@@ -12,20 +13,23 @@ class MakefileRunConfigurationProducer : LazyRunConfigurationProducer<MakefileRu
     if (context.psiLocation?.containingFile !is MakefileFile) {
       return false
     }
-    configuration.filename = context.location?.virtualFile?.path ?: ""
+    val macroManager = PathMacroManager.getInstance(context.project)
+    val path = context.location?.virtualFile?.path
+    configuration.filename = macroManager.collapsePath(path) ?: ""
     configuration.target = findTarget(context)?.name ?: ""
 
-    if (!configuration.target.isNullOrEmpty()) {
+    if (configuration.target.isNotEmpty()) {
       configuration.name = configuration.target
     } else {
-      configuration.name = File(configuration.filename).name
+      configuration.name = File(path).name
     }
 
     return true
   }
 
   override fun isConfigurationFromContext(configuration: MakefileRunConfiguration, context: ConfigurationContext): Boolean {
-    return configuration.filename == context.location?.virtualFile?.path &&
+    val macroManager = PathMacroManager.getInstance(context.project)
+    return macroManager.expandPath(configuration.filename) == context.location?.virtualFile?.path &&
            configuration.target == findTarget(context)?.name
   }
 
