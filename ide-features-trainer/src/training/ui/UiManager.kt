@@ -3,7 +3,6 @@ package training.ui
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.ToolWindowManager
 import training.learn.interfaces.Lesson
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LanguageChoosePanelPlace
@@ -11,22 +10,10 @@ import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 
 object UiManager {
-
   val learnPanelPerProject = mutableMapOf<Project, LearnPanel>()
   val modulesPanelPerProject = mutableMapOf<Project, ModulesPanel>()
 
   private val LOG = Logger.getInstance(this.javaClass)
-
-  fun updateToolWindow(project: Project) {
-    val windowManager = ToolWindowManager.getInstance(project)
-    val learnToolWindow = LearnToolWindowFactory.LEARN_TOOL_WINDOW
-    val toolWindow = windowManager.getToolWindow(learnToolWindow)
-                     ?: throw IllegalStateException("$learnToolWindow tool window isn't registered")
-    toolWindow.contentManager.removeAllContents(false)
-    val factory = LearnToolWindowFactory()
-    factory.createToolWindowContent(project, toolWindow)
-    LOG.debug("updateToolWindow")
-  }
 
   fun setLanguageChooserView() {
     LearnToolWindowFactory.learnWindowPerProject.keys

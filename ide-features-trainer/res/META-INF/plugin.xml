@@ -47,8 +47,6 @@
     <applicationService
       serviceImplementation="training.statistic.ActivityManager"/>
     <applicationService
-      serviceImplementation="training.learn.lesson.LessonManager"/>
-    <applicationService
       serviceImplementation="training.lang.LangManager"/>
     <applicationService
       serviceImplementation="training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager"/>
@@ -65,12 +63,6 @@
                  description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
 
   </extensions>
-
-  <project-components>
-    <component>
-      <implementation-class>training.components.LearnProjectComponent</implementation-class>
-    </component>
-  </project-components>
 
   <actions>
     <action id="learn.next.lesson" class="training.actions.NextLessonAction" text="Next Lesson">

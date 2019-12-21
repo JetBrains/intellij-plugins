@@ -5,14 +5,14 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.components.JBScrollPane
 import training.lang.LangManager
 import training.ui.views.LanguageChoosePanel
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 
-class LearnToolWindow internal constructor(private val project: Project) : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
-
+class LearnToolWindow internal constructor(private val project: Project, parentDisposable: Disposable) : SimpleToolWindowPanel(true, true), DataProvider {
   //TODO: remove public modificator set ScrollPane before release
   var scrollPane: JBScrollPane
     private set
@@ -28,6 +28,11 @@ class LearnToolWindow internal constructor(private val project: Project) : Simpl
       JBScrollPane(modulesPanel)
     }
     setContent(scrollPane)
+
+    Disposer.register(parentDisposable, Disposable {
+      UiManager.learnPanelPerProject.remove(project)
+      UiManager.modulesPanelPerProject.remove(project)
+    })
   }
 
   fun changeLanguage() {
@@ -47,11 +52,5 @@ class LearnToolWindow internal constructor(private val project: Project) : Simpl
   fun reinitViews() {
     reinitViewsInternal()
   }
-
-  override fun dispose() {
-    UiManager.learnPanelPerProject.remove(project)
-    UiManager.modulesPanelPerProject.remove(project)
-  }
-
 }
 

@@ -4,9 +4,9 @@ package training.lang
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.service
 import com.intellij.openapi.extensions.ExtensionPointName
 import training.learn.CourseManager
 import training.ui.LearnToolWindowFactory
@@ -35,7 +35,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   }
 
   companion object {
-    fun getInstance(): LangManager = ServiceManager.getService(LangManager::class.java)
+    fun getInstance() = service<LangManager>()
   }
 
   fun isLangUndefined() = (myLangSupport == null)

@@ -2,10 +2,14 @@
 package training.learn.lesson
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
+import com.intellij.openapi.components.serviceIfCreated
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
@@ -25,11 +29,24 @@ import training.util.editorPointForBalloon
 import java.util.*
 import java.util.concurrent.Executor
 
+@Service
 class LessonManager {
   private var currentLessonExecutor: LessonExecutor? = null
 
   val testActionsExecutor: Executor by lazy {
     externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
+  }
+
+  init {
+    ApplicationManager.getApplication().messageBus.connect().subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
+      override fun projectOpened(project: Project) {
+        super.projectOpened(project)
+      }
+
+      override fun projectClosed(project: Project) {
+        serviceIfCreated<LessonManager>()?.clearAllListeners()
+      }
+    })
   }
 
   internal fun initDslLesson(editor: Editor, cLesson: Lesson, lessonExecutor: LessonExecutor) {
@@ -210,7 +227,7 @@ class LessonManager {
     balloon.show(RelativePoint(lastEditor?.contentComponent!!, editorPointForBalloon(lastEditor!!)), Balloon.Position.above)
   }
 
-  fun clearAllListeners() {
+  private fun clearAllListeners() {
     lastEditor?.let {
       mouseListenerHolder?.restoreMouseActions(it)
       removeActionsRecorders()
@@ -246,8 +263,8 @@ class LessonManager {
     private var mouseListenerHolder: MouseListenerHolder? = null
 
     val instance: LessonManager
-      get() = ServiceManager.getService(LessonManager::class.java)
+      get() = service()
 
-    private val LOG = Logger.getInstance(LessonManager::class.java)
+    private val LOG = logger<LessonManager>()
   }
 }

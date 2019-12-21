@@ -9,7 +9,6 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.ThrowableComputable
-import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.NoSdkException
 import java.io.File
 
@@ -19,10 +18,6 @@ abstract class AbstractLangSupport : LangSupport {
 
   override fun getProjectFilePath(projectName: String): String {
     return ProjectUtil.getBaseDir() + File.separator + projectName
-  }
-
-  override fun getToolWindowAnchor(): ToolWindowAnchor {
-    return ToolWindowAnchor.LEFT
   }
 
   override fun getSdkForProject(project: Project): Sdk? {

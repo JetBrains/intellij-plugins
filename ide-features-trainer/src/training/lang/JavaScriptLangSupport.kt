@@ -3,7 +3,6 @@ package training.lang
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.wm.ToolWindowAnchor
 import training.project.ProjectUtils
 
 class JavaScriptLangSupport : AbstractLangSupport() {
@@ -33,9 +32,4 @@ class JavaScriptLangSupport : AbstractLangSupport() {
       javaClass.classLoader
     )
   }
-
-  override fun getToolWindowAnchor(): ToolWindowAnchor {
-    return ToolWindowAnchor.LEFT
-  }
-
 }

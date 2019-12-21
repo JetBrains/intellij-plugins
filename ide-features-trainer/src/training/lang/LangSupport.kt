@@ -48,7 +48,8 @@ interface LangSupport {
   fun checkSdk(sdk: Sdk?, project: Project)
 
   fun getProjectFilePath(projectName: String): String
-  fun getToolWindowAnchor(): ToolWindowAnchor
+
+  fun getToolWindowAnchor(): ToolWindowAnchor = ToolWindowAnchor.LEFT
 
   //let's replace with importOrOpenLearnProject()
   fun importLearnProject(): Project?
