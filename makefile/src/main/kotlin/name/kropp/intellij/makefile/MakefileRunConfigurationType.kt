@@ -1,8 +1,8 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.execution.configurations.ConfigurationType
+import com.intellij.execution.configurations.*
 
-class MakefileRunConfigurationType : ConfigurationType {
+object MakefileRunConfigurationType : ConfigurationType {
   override fun getDisplayName() = "Makefile"
   override fun getIcon() = MakefileIcon
   override fun getConfigurationTypeDescription() = "Makefile Target"

@@ -41,5 +41,5 @@ class MakefileRunConfigurationProducer : LazyRunConfigurationProducer<MakefileRu
     return null
   }
 
-  override fun getConfigurationFactory(): ConfigurationFactory = MakefileRunConfigurationFactory(MakefileRunConfigurationType())
+  override fun getConfigurationFactory(): ConfigurationFactory = MakefileRunConfigurationFactory(MakefileRunConfigurationType)
 }

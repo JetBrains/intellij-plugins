@@ -23,7 +23,7 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
 
       val context = ConfigurationContext.getFromContext(dataContext)
 
-      val producer = MakefileRunConfigurationFactory(MakefileRunConfigurationType())
+      val producer = MakefileRunConfigurationFactory(MakefileRunConfigurationType)
       val configuration = RunnerAndConfigurationSettingsImpl(runManager, producer.createConfigurationFromTarget(target)
           ?: return)
 
