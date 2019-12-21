@@ -5,7 +5,6 @@ import com.intellij.execution.configuration.*
 import com.intellij.execution.configurations.*
 import com.intellij.execution.process.*
 import com.intellij.execution.runners.*
-import com.intellij.openapi.application.*
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.*
 import com.intellij.util.*
@@ -60,11 +59,13 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
       override fun startProcess(): ProcessHandler {
         val params = ParametersList()
         params.addParametersString(arguments)
-        params.addAll("-f", filename)
+        val macroManager = PathMacroManager.getInstance(project)
+        val path = macroManager.expandPath(filename)
+        params.addAll("-f", path)
         if (!target.isEmpty()) {
           params.addParametersString(target)
         }
-        val workDirectory = if (workingDirectory.isNotEmpty()) resolveMacros(workingDirectory) else File(filename).parent
+        val workDirectory = if (workingDirectory.isNotEmpty()) macroManager.expandPath(workingDirectory) else File(path).parent
         val cmd = PtyCommandLine()
             .withExePath(makePath)
             .withWorkDirectory(workDirectory)
@@ -76,14 +77,5 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         return processHandler
       }
     }
-  }
-
-  private fun resolveMacros(str: String): String {
-    val macrosRegex = Regex("""\$([^\\$]*)\$""")
-    val match = macrosRegex.matchEntire(str)
-    if (match != null) {
-      return PathMacros.getInstance().getValue(match.groupValues[1]) ?: return str
-    }
-    return str
   }
 }
