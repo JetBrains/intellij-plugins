@@ -18,8 +18,9 @@ class MakefileShellLanguageInjector : MultiHostInjector {
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     if (SHELL_LANGUAGE != null && context is MakefileRecipe) {
-      val rangesToInject =context.children.filterIsInstance<MakefileCommand>().map {
-        TextRange.create(it.textRangeInParent.startOffset + 1, min(it.textRangeInParent.endOffset + 1, context.textLength))
+      val rangesToInject = context.children.filterIsInstance<MakefileCommand>().map {
+        val tabs = it.text.takeWhile { c -> c == '\t' }.count()
+        TextRange.create(it.textRangeInParent.startOffset + tabs, min(it.textRangeInParent.endOffset + 1, context.textLength))
       }
       if (rangesToInject.any()) {
         registrar.startInjecting(SHELL_LANGUAGE)
