@@ -28,6 +28,7 @@ SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)
 DOCCOMMENT="##"[^\r\n]*
 COMMENT="#"[^\r\n]*
+MULTILINECOMMENT="#"[^\r\n\\]*("\\"\r?\n[^\r\n\\]*)+
 ERROR="$(error"
 WARNING="$(warning"
 INFO="$(info"
@@ -51,6 +52,7 @@ CONDITION_CHARACTER=[^#\r\n]
 %%
 
 {DOCCOMMENT}           { return DOC_COMMENT; }
+{MULTILINECOMMENT}     { return COMMENT; }
 {COMMENT}              { return COMMENT; }
 ^{MACRO}               { return MACRO; }
 
