@@ -14,6 +14,7 @@
 package org.jetbrains.vuejs.lang
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.EditorHintFixture
 import com.intellij.util.ui.UIUtil
@@ -31,7 +32,13 @@ class VueParameterInfoTest : BasePlatformTestCase() {
                                        "</script>")
     val hintFixture = EditorHintFixture(testRootDisposable)
     myFixture.performEditorAction(IdeActions.ACTION_EDITOR_SHOW_PARAMETER_INFO)
-    UIUtil.dispatchAllInvocationEvents()
+
+    // effective there is a chain of 3 nonBlockingRead actions
+    for (i in 0..2) {
+      UIUtil.dispatchAllInvocationEvents()
+      NonBlockingReadActionImpl.waitForAsyncTaskCompletion()
+    }
+
     assertEquals("<html><b>s: String</b>, b: boolean</html>", hintFixture.currentHintText)
   }
 }
