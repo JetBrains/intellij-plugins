@@ -12,7 +12,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('hello')
-      PsiWhiteSpace(' ')
-      PsiComment(DOC_COMMENT)('## doc comment')
+    PsiWhiteSpace(' ')
+    PsiComment(DOC_COMMENT)('## doc comment')
     MakefileRecipeImpl(RECIPE)
       <empty list>

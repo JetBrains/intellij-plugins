@@ -300,14 +300,15 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier
+  // identifier|'include'
   public static boolean directory(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directory")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<directory>", IDENTIFIER, KEYWORD_INCLUDE)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, DIRECTORY, "<directory>");
     r = consumeToken(b, IDENTIFIER);
-    exit_section_(b, m, DIRECTORY, r);
+    if (!r) r = consumeToken(b, KEYWORD_INCLUDE);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -400,53 +401,102 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('$(error'|'$(warning'|'$(info'|'$(shell'|'$(wildcard'|'$(pathsubst') function-param* ')'
+  // '$(' function-name function-param* ')' EOL?
   public static boolean function(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FUNCTION, "<function>");
-    r = function_0(b, l + 1);
-    r = r && function_1(b, l + 1);
-    r = r && consumeToken(b, FUNCTION_END);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '$(error'|'$(warning'|'$(info'|'$(shell'|'$(wildcard'|'$(pathsubst'
-  private static boolean function_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, FUNCTION_ERROR);
-    if (!r) r = consumeToken(b, FUNCTION_WARNING);
-    if (!r) r = consumeToken(b, FUNCTION_INFO);
-    if (!r) r = consumeToken(b, FUNCTION_SHELL);
-    if (!r) r = consumeToken(b, FUNCTION_WILDCARD);
-    if (!r) r = consumeToken(b, FUNCTION_PATHSUBST);
-    exit_section_(b, m, null, r);
-    return r;
+    if (!nextTokenIs(b, FUNCTION_START)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION, null);
+    r = consumeToken(b, FUNCTION_START);
+    r = r && function_name(b, l + 1);
+    p = r; // pin = 2
+    r = r && report_error_(b, function_2(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, FUNCTION_END)) && r;
+    r = p && function_4(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // function-param*
-  private static boolean function_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_1")) return false;
+  private static boolean function_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_2")) return false;
     while (true) {
       int c = current_position_(b);
       if (!function_param(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "function_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "function_2", c)) break;
     }
     return true;
   }
 
+  // EOL?
+  private static boolean function_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_4")) return false;
+    consumeToken(b, EOL);
+    return true;
+  }
+
   /* ********************************************************** */
-  // function-param-text|variable_usage
+  // 'error'|'warning'|'info'|'shell'|'subst'|'pathsubst'|'strip'|'findstring'|
+  //                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
+  //                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
+  //                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile'
+  public static boolean function_name(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_name")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION_NAME, "<function name>");
+    r = consumeToken(b, "error");
+    if (!r) r = consumeToken(b, "warning");
+    if (!r) r = consumeToken(b, "info");
+    if (!r) r = consumeToken(b, "shell");
+    if (!r) r = consumeToken(b, "subst");
+    if (!r) r = consumeToken(b, "pathsubst");
+    if (!r) r = consumeToken(b, "strip");
+    if (!r) r = consumeToken(b, "findstring");
+    if (!r) r = consumeToken(b, "filter");
+    if (!r) r = consumeToken(b, "filter-out");
+    if (!r) r = consumeToken(b, "sort");
+    if (!r) r = consumeToken(b, "word");
+    if (!r) r = consumeToken(b, "wordlist");
+    if (!r) r = consumeToken(b, "words");
+    if (!r) r = consumeToken(b, "firstword");
+    if (!r) r = consumeToken(b, "lastword");
+    if (!r) r = consumeToken(b, "dir");
+    if (!r) r = consumeToken(b, "notdir");
+    if (!r) r = consumeToken(b, "suffix");
+    if (!r) r = consumeToken(b, "basename");
+    if (!r) r = consumeToken(b, "addsuffix");
+    if (!r) r = consumeToken(b, "addprefix");
+    if (!r) r = consumeToken(b, "join");
+    if (!r) r = consumeToken(b, "wildcard");
+    if (!r) r = consumeToken(b, "realpath");
+    if (!r) r = consumeToken(b, "abspath");
+    if (!r) r = consumeToken(b, "if");
+    if (!r) r = consumeToken(b, "or");
+    if (!r) r = consumeToken(b, "and");
+    if (!r) r = consumeToken(b, "foreach");
+    if (!r) r = consumeToken(b, "file");
+    if (!r) r = consumeToken(b, "call");
+    if (!r) r = consumeToken(b, "value");
+    if (!r) r = consumeToken(b, "eval");
+    if (!r) r = consumeToken(b, "origin");
+    if (!r) r = consumeToken(b, "flavor");
+    if (!r) r = consumeToken(b, "guile");
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // function-param-text|variable_usage|identifier|':'|function-name|function
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
-    if (!nextTokenIs(b, "", FUNCTION_PARAM_TEXT, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, FUNCTION_PARAM_TEXT);
     if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    if (!r) r = consumeToken(b, IDENTIFIER);
+    if (!r) r = consumeToken(b, COLON);
+    if (!r) r = function_name(b, l + 1);
+    if (!r) r = function(b, l + 1);
     exit_section_(b, m, FUNCTION_PARAM, r);
     return r;
   }
@@ -830,7 +880,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // target_line recipe
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
-    if (!nextTokenIs(b, "<rule>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, RULE, "<rule>");
     r = target_line(b, l + 1);
@@ -840,13 +889,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier|variable_usage
+  // identifier|function-name|variable_usage
   public static boolean target(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target")) return false;
-    if (!nextTokenIs(b, "<target>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGET, "<target>");
     r = consumeToken(b, IDENTIFIER);
+    if (!r) r = function_name(b, l + 1);
     if (!r) r = consumeToken(b, VARIABLE_USAGE);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -856,7 +905,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?)
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
-    if (!nextTokenIs(b, "<target line>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, TARGET_LINE, "<target line>");
     r = targets(b, l + 1);
@@ -953,7 +1001,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // target+
   public static boolean targets(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "targets")) return false;
-    if (!nextTokenIs(b, "<targets>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGETS, "<targets>");
     r = target(b, l + 1);

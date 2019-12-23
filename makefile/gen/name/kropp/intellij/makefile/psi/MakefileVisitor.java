@@ -52,6 +52,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFunctionName(@NotNull MakefileFunctionName o) {
+    visitPsiElement(o);
+  }
+
   public void visitFunctionParam(@NotNull MakefileFunctionParam o) {
     visitPsiElement(o);
   }
