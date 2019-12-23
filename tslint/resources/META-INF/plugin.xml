@@ -10,7 +10,7 @@
   <resource-bundle>messages.TsLintBundle</resource-bundle>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="com.intellij.tslint.configDetector"
+    <extensionPoint dynamic="true" qualifiedName="com.intellij.tslint.configDetector"
                     interface="com.intellij.lang.javascript.linter.tslint.config.TsLintConfigDetector"/>
   </extensionPoints>
 
