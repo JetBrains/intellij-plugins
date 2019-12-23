@@ -13,7 +13,7 @@ Makefile
       MakefileConditionalImpl(CONDITIONAL)
         PsiElement(ifeq)('ifeq')
         PsiElement(condition)(' ($(call which,x),)')
-        PsiWhiteSpace('\n')
+        PsiElement(EOL)('\n')
         MakefileBlockImpl(BLOCK)
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')

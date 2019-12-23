@@ -47,12 +47,12 @@
 
 makefile ::= any*
 
-private any ::= (conditional|rule|command|variable-assignment|directive|function|macro)
+private any ::= (conditional|rule|command|variable-assignment|directive|function|macro|EOL)
 
 private directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe {methods=[getTargets]}
-recipe ::= (command|conditional|empty_command)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
+recipe ::= (command|conditional|empty_command|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
 command ::= '\t'* multiline
 private multiline ::= (line (split line?)* | (split line?)+)
 empty_command ::= '\t'+
@@ -69,7 +69,7 @@ order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier|variable_usage|function {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
-conditional ::= conditional-keyword condition block ('else' (conditional-keyword condition block | EOL block))* 'endif'
+conditional ::= conditional-keyword condition EOL? block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
 block ::= any+|empty_command?
 
 meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
@@ -77,16 +77,16 @@ private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= multiline
 define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
-undefine ::= 'undefine' variable EOL {pin=1}
+undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
-export ::= 'export' (variable-assignment|variable)? EOL {pin=1}
+export ::= 'export' (variable-assignment|variable)? EOL? {pin=1}
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 
-include ::= ('include'|'-include'|'sinclude') filename+ EOL {pin=1}
+include ::= ('include'|'-include'|'sinclude') filename+ EOL? {pin=1}
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-vpath ::= 'vpath' (pattern directory*)? EOL {pin=1}
+vpath ::= 'vpath' (pattern directory*)? EOL? {pin=1}
 pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 

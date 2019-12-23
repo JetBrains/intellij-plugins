@@ -25,9 +25,9 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 
 EOL=[\r\n]+
 SPACES=" "+
-BACKSLASHCRLF="\\"(\r|\n|\r\n)
-DOCCOMMENT="##"[^\r\n]*
-COMMENT="#"[^\r\n]*
+BACKSLASHCRLF="\\"(\r|\n|\r\n)(" "|\t)*
+DOCCOMMENT="##"[^\r\n]*\n?
+COMMENT="#"[^\r\n]*\n?
 MULTILINECOMMENT="#"[^\r\n\\]*("\\"\r?\n[^\r\n\\]*)+
 ERROR="$(error"
 WARNING="$(warning"
@@ -47,7 +47,7 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 VARIABLE_USAGE_EXPR="$("[^ )]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION FUNCTION_PREREQ EXPORT EXPORTVAR
+%state PREREQUISITES ELSE INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION FUNCTION_PREREQ EXPORT EXPORTVAR
 
 %%
 
@@ -73,7 +73,7 @@ CONDITION_CHARACTER=[^#\r\n]
 <YYINITIAL> {
     ^\t+               { yybegin(SOURCE); return TAB; }
     \t+                { return WHITE_SPACE; }
-    {EOL}              { return WHITE_SPACE; }
+    {EOL}              { return EOL; }
     {SPACES}           { return WHITE_SPACE; }
     {DOUBLECOLON}      { yybegin(PREREQUISITES); return DOUBLECOLON; }
     {COLON}            { yybegin(PREREQUISITES); return COLON; }
@@ -110,6 +110,7 @@ CONDITION_CHARACTER=[^#\r\n]
 }
 
 <PREREQUISITES> {
+    ^\t+                    { yybegin(SOURCE); return TAB; }
     {ERROR}                 { yybegin(FUNCTION_PREREQ); return FUNCTION_ERROR; }
     {WARNING}               { yybegin(FUNCTION_PREREQ); return FUNCTION_WARNING; }
     {INFO}                  { yybegin(FUNCTION_PREREQ); return FUNCTION_INFO; }
@@ -124,7 +125,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {PIPE}                  { return PIPE; }
     {DOUBLECOLON}           { return DOUBLECOLON; }
     {COLON}                 { return COLON; }
-    {SEMICOLON}             { yybegin(SOURCE); return SEMICOLON; }
+    {SEMICOLON}             { yybegin(SOURCE_FORCED); return SEMICOLON; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
@@ -146,6 +147,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {SHELL}                 { yybegin(FUNCTION); return FUNCTION_SHELL; }
     {WILDCARD}              { yybegin(FUNCTION); return FUNCTION_WILDCARD; }
     {PATHSUBST}             { yybegin(FUNCTION); return FUNCTION_PATHSUBST; }
+    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME_CHARACTER}+   { return IDENTIFIER; }
     {ASSIGN}                { yybegin(EXPORTVAR); return ASSIGN; }
@@ -155,6 +157,7 @@ CONDITION_CHARACTER=[^#\r\n]
 }
 
 <EXPORTVAR> {
+    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
     {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {VARIABLE_VALUE}        { return LINE; }
@@ -163,6 +166,16 @@ CONDITION_CHARACTER=[^#\r\n]
 }
 
 <SOURCE> {
+    ^\t+                    { return TAB; }
+    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
+    {SPACES}|\t+            { return WHITE_SPACE; }
+    {BACKSLASHCRLF}         { return SPLIT; }
+    {VARIABLE_VALUE}        { return LINE; }
+    {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
+}
+
+<SOURCE_FORCED> {
+    ^\t+                    { return TAB; }
     {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
     {VARIABLE_VALUE}        { return LINE; }

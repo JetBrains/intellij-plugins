@@ -18,7 +18,7 @@ Makefile
       MakefileConditionalImpl(CONDITIONAL)
         PsiElement(ifndef)('ifndef')
         PsiElement(condition)(' VERBOSE')
-        PsiWhiteSpace('\n')
+        PsiElement(EOL)('\n')
         MakefileBlockImpl(BLOCK)
           MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
             MakefileVariableImpl(VARIABLE)

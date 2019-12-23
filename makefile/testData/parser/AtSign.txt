@@ -1,8 +1,7 @@
 Makefile
-  PsiComment(COMMENT)('# GSettings')
-  PsiWhiteSpace('\n')
+  PsiComment(COMMENT)('# GSettings\n')
   PsiElement(macro)('@GSETTINGS_RULES@')
-  PsiWhiteSpace('\n')
+  PsiElement(EOL)('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
     MakefileVariableImpl(VARIABLE)
       PsiElement(identifier)('gsettings_SCHEMAS')

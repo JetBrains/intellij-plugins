@@ -10,14 +10,13 @@ Makefile
   MakefileConditionalImpl(CONDITIONAL)
     PsiElement(ifneq)('ifneq')
     PsiElement(condition)(' ("$(wildcard foo.mk)","")')
-    PsiWhiteSpace('\n')
+    PsiElement(EOL)('\n')
     MakefileBlockImpl(BLOCK)
       <empty list>
     PsiElement(else)('else')
     PsiWhiteSpace(' ')
     PsiElement(ifneq)('ifneq')
     PsiElement(condition)(' ("$(wildcard bar.mk)","")')
-    PsiWhiteSpace('\n')
     MakefileBlockImpl(BLOCK)
-      <empty list>
+      PsiElement(EOL)('\n')
     PsiElement(endif)('endif')
