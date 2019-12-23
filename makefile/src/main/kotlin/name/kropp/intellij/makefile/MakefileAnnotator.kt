@@ -1,12 +1,11 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference
-import com.intellij.psi.tree.TokenSet
+import com.intellij.codeInspection.*
+import com.intellij.lang.annotation.*
+import com.intellij.openapi.util.*
+import com.intellij.psi.*
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
+import com.intellij.psi.tree.*
 import name.kropp.intellij.makefile.psi.*
 
 
@@ -60,8 +59,8 @@ class MakefileAnnotator : Annotator {
       element.node.getChildren(lineTokenSet).forEach {
         holder.createInfoAnnotation(it, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_VALUE
       }
-    } else if (element is MakefileFunction) {
-      holder.createInfoAnnotation(element.firstChild, null).textAttributes = MakefileSyntaxHighlighter.FUNCTION
+    } else if (element is MakefileFunctionName && element.parent is MakefileFunction) {
+      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.FUNCTION
     }
   }
 

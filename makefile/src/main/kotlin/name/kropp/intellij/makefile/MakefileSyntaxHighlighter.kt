@@ -1,13 +1,12 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
-import com.intellij.openapi.editor.HighlighterColors
-import com.intellij.openapi.editor.colors.TextAttributesKey
-import com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey
-import com.intellij.openapi.fileTypes.SyntaxHighlighterBase
-import com.intellij.psi.TokenType
-import com.intellij.psi.tree.IElementType
-import name.kropp.intellij.makefile.psi.MakefileTypes
+import com.intellij.openapi.editor.*
+import com.intellij.openapi.editor.colors.*
+import com.intellij.openapi.editor.colors.TextAttributesKey.*
+import com.intellij.openapi.fileTypes.*
+import com.intellij.psi.*
+import com.intellij.psi.tree.*
+import name.kropp.intellij.makefile.psi.*
 
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {
@@ -23,7 +22,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val VARIABLE_USAGE = createTextAttributesKey("MAKEFILE_VARIABLE_USAGE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
     val LINE_SPLIT = createTextAttributesKey("MAKEFILE_LINE_SPLIT", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
     val TAB = createTextAttributesKey("MAKEFILE_TAB", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
-    val FUNCTION = createTextAttributesKey("MAKEFILE_FUNCTION", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+    val FUNCTION = createTextAttributesKey("MAKEFILE_FUNCTION", DefaultLanguageHighlighterColors.KEYWORD)
     val FUNCTION_PARAM = createTextAttributesKey("MAKEFILE_FUNCTION_PARAM", DefaultLanguageHighlighterColors.STRING)
     val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
@@ -31,7 +30,6 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val SEPARATOR_KEYS = arrayOf(SEPARATOR)
     private val KEYWORD_KEYS = arrayOf(KEYWORD)
     private val TARGET_KEYS = arrayOf(TARGET)
-    private val SPECIAL_TARGET_KEYS = arrayOf(SPECIAL_TARGET)
     private val PREREQUISITE_KEYS = arrayOf(PREREQUISITE)
     private val VARIABLE_KEYS = arrayOf(VARIABLE)
     private val VARIABLE_VALUE_KEYS = arrayOf(VARIABLE_VALUE)

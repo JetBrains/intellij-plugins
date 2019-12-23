@@ -1,8 +1,6 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.openapi.options.colors.AttributesDescriptor
-import com.intellij.openapi.options.colors.ColorDescriptor
-import com.intellij.openapi.options.colors.ColorSettingsPage
+import com.intellij.openapi.options.colors.*
 
 class MakefileColorSettingsPage : ColorSettingsPage {
   override fun getDisplayName() = MakefileLanguage.displayName
@@ -55,7 +53,7 @@ ${'\t'}$(GCC) -c qwe \
               -Wall
 else
 ${'\t'}echo "Hello World"
-${'\t'}<function>$(error<functionParam> Architecture <variableUsage>$(ARCH)</variableUsage> is not supported</functionParam>)</function>
+${'\t'}$(<function>error</function><functionParam> Architecture <variableUsage>$(ARCH)</variableUsage> is not supported</functionParam>)
 endif"""
 
   override fun getAdditionalHighlightingTagToDescriptorMap() = tags
