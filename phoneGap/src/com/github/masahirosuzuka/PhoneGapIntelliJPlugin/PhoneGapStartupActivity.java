@@ -6,16 +6,13 @@ import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSetting
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.events.VFileCreateEvent;
-import com.intellij.openapi.vfs.newvfs.events.VFileDeleteEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -40,54 +37,9 @@ public class PhoneGapStartupActivity implements StartupActivity {
       }
       PhoneGapExecutableChecker.check(project);
     }
-
-    VirtualFileManager.getInstance().addAsyncFileListener(new AsyncFileListener() {
-      @Nullable
-      @Override
-      public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
-        List<Runnable> toApply = null;
-        
-        for (VFileEvent event : events) {
-          Runnable runnable = null;
-          if (event instanceof VFileCreateEvent) {
-            ProgressManager.checkCanceled();
-            
-            if (!isProcess(event)) continue;
-            VirtualFile parent = getEventParent(event);
-            if (parent == null) continue;
-            runnable = getUpdateModuleExcludeByFSEventRunnable(project, parent, Collections.emptySet(),
-                                                               new HashSet<>(getExcludedFolderNames(event)));
-          }
-          else if (event instanceof VFileDeleteEvent) {
-            if (!isProcess(event)) continue;
-            VirtualFile parent = getEventParent(event);
-            if (parent == null) continue;
-            runnable = getUpdateModuleExcludeByFSEventRunnable(project, parent, getExcludedFolderNames(event),
-                                                               Collections.emptySet());
-          }
-          if (runnable != null) {
-            if (toApply == null) toApply = new ArrayList<>();
-            toApply.add(runnable);
-          }
-        }
-        List<Runnable> finalToApply = toApply;
-        return finalToApply == null ? null : new ChangeApplier() {
-          @Override
-          public void afterVfsChange() {
-            finalToApply.forEach(Runnable::run);
-          }
-        };
-      }
-
-      private boolean isProcess(@NotNull VFileEvent event) {
-        return PhoneGapSettings.getInstance().isExcludePlatformFolder() &&
-               shouldExcludeDirectory(event);
-      }
-
-    }, project);
   }
 
-  private static boolean shouldExcludeDirectory(@NotNull VFileEvent event) {
+  public static boolean shouldExcludeDirectory(@NotNull VFileEvent event) {
     String path = event.getPath();
     if (path.endsWith("/" + FOLDER_PLATFORMS)) return true;
     if (!path.endsWith("/" + FOLDER_WWW)) return false;
@@ -99,7 +51,7 @@ public class PhoneGapStartupActivity implements StartupActivity {
   }
 
   @Nullable
-  private static VirtualFile getEventParent(@NotNull VFileEvent event) {
+  public static VirtualFile getEventParent(@NotNull VFileEvent event) {
     VirtualFile candidateParent;
     if (event instanceof VFileCreateEvent) {
       candidateParent = ((VFileCreateEvent)event).getParent();
@@ -127,12 +79,12 @@ public class PhoneGapStartupActivity implements StartupActivity {
   }
 
   @NotNull
-  private static Set<String> getExcludedFolderNames(@NotNull VFileEvent event) {
+  public static Set<String> getExcludedFolderNames(@NotNull VFileEvent event) {
     return Collections.singleton(VirtualFileManager.constructUrl(event.getFileSystem().getProtocol(), event.getPath()));
   }
 
   @Nullable
-  private static Runnable getUpdateModuleExcludeByFSEventRunnable(@NotNull Project project,
+  public static Runnable getUpdateModuleExcludeByFSEventRunnable(@NotNull Project project,
                                                                   @NotNull VirtualFile parent,
                                                                   @NotNull Set<String> oldToUpdateFolders,
                                                                   @NotNull Set<String> newToUpdateFolders) {

@@ -35,6 +35,7 @@
     <projectConfigurable provider="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapConfigurationProvider"/>
     <stepsBeforeRunProvider implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.PhoneGapAddPlatformBeforeRun"/>
     <postStartupActivity implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapStartupActivity"/>
+    <vfs.asyncListener implementation="com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapFileListener"/>
   </extensions>
 
 
