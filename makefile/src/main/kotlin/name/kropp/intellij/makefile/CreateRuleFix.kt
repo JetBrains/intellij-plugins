@@ -19,7 +19,7 @@ class CreateRuleFix(private val prerequisite: PsiElement) : BaseIntentionAction(
       val file = psiFile as MakefileFile
       val rule = MakefileElementFactory.createRule(project, prerequisite.text)
       val anchor = prerequisite.parent.parent.parent.parent.nextSibling?.node
-      file.node.addChild(MakefileElementFactory.createWhiteSpace(project, "\n\n").node, anchor)
+      file.node.addChild(MakefileElementFactory.createEOL(project, "\n\n").node, anchor)
       file.node.addChild(rule.node, anchor)
       (rule.lastChild.navigationElement as Navigatable).navigate(true)
     }

@@ -20,6 +20,9 @@ object MakefileElementFactory {
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
 
+  fun createEOL(project: Project, whitespace: String) =
+      createFile(project, whitespace).firstChild
+
   fun createRecipe(project: Project, text: String) =
       createRule(project, "target:\n\t$text").firstChild.nextSibling as MakefileRecipe
 }
