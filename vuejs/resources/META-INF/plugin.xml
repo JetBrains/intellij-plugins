@@ -207,6 +207,6 @@ Vue components defined using separate .html, .js, and .css files are not support
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.inspections.VueAnalysisHandlersFactory" language="VueJS"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
-    <LanguageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
+    <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
   </extensions>
 </idea-plugin>
