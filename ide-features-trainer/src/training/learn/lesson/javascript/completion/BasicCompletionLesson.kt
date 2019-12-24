@@ -59,7 +59,7 @@ class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Cod
           }
         }
         task("EditorChooseLookupItem") {
-          text("Finally, let’s complete the <strong>console.log</strong> statement. Place the caret inside <strong>()</strong> on the line 6 and add <strong>pickAnimal(favoriteAnimals)</strong> using code completion.")
+          text("Finally, let’s complete the <strong>console.log</strong> statement. Place the caret inside <strong>()</strong> on the line 8 and add <strong>pickAnimal(favoriteAnimals)</strong> using code completion.")
           trigger(it) {
             textBeforeCaret("pickAnimal(favoriteAnimals")
           }
