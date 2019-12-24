@@ -271,9 +271,11 @@ public class DartFileListener implements VirtualFileListener {
       removeDependencyOnDartPackagesLibrary(module);
     }
 
-    final Library library = LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
+    final Library library =
+      LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library != null) {
-      ApplicationManager.getApplication().runWriteAction(() -> LibraryTablesRegistrar.getInstance().getLibraryTable(project).removeLibrary(library));
+      ApplicationManager.getApplication()
+        .runWriteAction(() -> LibraryTablesRegistrar.getInstance().getLibraryTable(project).removeLibrary(library));
     }
   }
 
@@ -356,12 +358,12 @@ public class DartFileListener implements VirtualFileListener {
     return false;
   }
 
-  public static class DartLibInfo {
+  private static class DartLibInfo {
     private final boolean myProjectWithoutPubspec;
     private final Set<String> myLibRootUrls = new TreeSet<>();
     private final Map<String, List<String>> myPackagesMap = new TreeMap<>();
 
-    public DartLibInfo(final boolean projectWithoutPubspec) {
+    private DartLibInfo(final boolean projectWithoutPubspec) {
       myProjectWithoutPubspec = projectWithoutPubspec;
     }
 
@@ -379,21 +381,15 @@ public class DartFileListener implements VirtualFileListener {
       }
     }
 
-    public void addRoots(final Collection<String> dirPaths) {
-      for (String path : dirPaths) {
-        myLibRootUrls.add(VfsUtilCore.pathToUrl(path));
-      }
-    }
-
-    public boolean isProjectWithoutPubspec() {
+    private boolean isProjectWithoutPubspec() {
       return myProjectWithoutPubspec;
     }
 
-    public Set<String> getLibRootUrls() {
+    private Set<String> getLibRootUrls() {
       return myLibRootUrls;
     }
 
-    public Map<String, List<String>> getPackagesMap() {
+    private Map<String, List<String>> getPackagesMap() {
       return myPackagesMap;
     }
   }
