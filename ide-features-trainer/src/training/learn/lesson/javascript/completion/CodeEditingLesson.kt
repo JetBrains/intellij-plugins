@@ -52,7 +52,7 @@ class CodeEditingLesson(module: Module) : KLesson("Code Editing Tips and Tricks"
         caret(232)
         task("EditorSelectWord") {
           caret(232)
-          text("That’s it! Now let’s see how to quickly select pieces of code in a file. Press ${action(it)} a few times to fully select the second tr element (lines 14-17).")
+          text("That’s it! Now let’s see how to quickly select pieces of code in a file. Press ${action(it)} a few times to fully select the second tr element (lines 14-18).")
           trigger(it) {
             val selectionEnd = editor.selectionModel.selectionEnd
             val selectionStart = editor.selectionModel.selectionStart
