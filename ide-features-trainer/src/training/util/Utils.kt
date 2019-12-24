@@ -2,7 +2,6 @@
 package training.util
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
@@ -12,7 +11,10 @@ import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
+import training.lang.LangManager
 import training.learn.CourseManager
+import training.learn.lesson.LessonStateManager
+import training.ui.UiManager
 import java.awt.Point
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -62,7 +64,7 @@ const val trainerPluginConfigName: String = "ide-features-trainer.xml"
 
 val featureTrainerVersion: String by lazy {
   val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
-  PluginManager.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
+  PluginManagerCore.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
 }
 
 val isFeatureTrainerSnapshot: Boolean by lazy {
@@ -76,4 +78,13 @@ fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
       action(e)
     }
   }
+}
+
+fun clearTrainingProgress() {
+  LessonStateManager.resetPassedStatus()
+  LangManager.getInstance().supportedLanguagesExtensions
+    .flatMap { CourseManager.instance.getModulesByLanguage(it.instance) }
+    .flatMap { module -> module.lessons }
+    .forEach { lesson -> lesson.passed = false }
+  UiManager.setLanguageChooserView()
 }

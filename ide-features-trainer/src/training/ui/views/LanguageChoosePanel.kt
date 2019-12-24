@@ -15,9 +15,8 @@ import training.lang.LangSupport
 import training.learn.BundlePlace
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.learn.lesson.LessonStateManager
 import training.ui.UISettings
-import training.ui.UiManager
+import training.util.clearTrainingProgress
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -122,14 +121,7 @@ class LanguageChoosePanel(opaque: Boolean = true,
     }
     button.isOpaque = false
     button.action = object : AbstractAction(LearnBundle.message("learn.choose.language.button.reset.tool.window")) {
-      override fun actionPerformed(e: ActionEvent?) {
-        LessonStateManager.resetPassedStatus()
-        myRadioButtonMap.values
-          .flatMap { CourseManager.instance.getModulesByLanguage(it.instance) }
-          .flatMap { module -> module.lessons }
-          .forEach { lesson -> lesson.passed = false }
-        UiManager.setLanguageChooserView()
-      }
+      override fun actionPerformed(e: ActionEvent?) = clearTrainingProgress()
     }
     return button
   }
@@ -181,9 +173,8 @@ class LanguageChoosePanel(opaque: Boolean = true,
       })
       return
     }
-    val sortedLangSupportExtensions = supportedLanguagesExtensions.sortedBy { it.language }
 
-    for (langSupportExt: LanguageExtensionPoint<LangSupport> in sortedLangSupportExtensions) {
+    for (langSupportExt: LanguageExtensionPoint<LangSupport> in supportedLanguagesExtensions) {
 
       val radioButton = createRadioButton(langSupportExt) ?: continue
       buttonGroup.add(radioButton)

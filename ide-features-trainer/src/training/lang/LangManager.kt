@@ -21,7 +21,8 @@ import training.util.trainerPluginConfigName
 class LangManager : PersistentStateComponent<LangManager.State> {
 
   var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(
-    LangSupport.EP_NAME).extensions.toList()
+    LangSupport.EP_NAME).extensions.toList().sortedBy { it.language }
+
   private var myState = State(null)
 
   private var myLangSupport: LangSupport? = null
