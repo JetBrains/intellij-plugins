@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.completion
 
+import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.ui.components.JBList
@@ -59,7 +60,8 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
         task {
           text("Rename the <strong>books</strong> parameter to <strong>listOfBooks</strong> and hit <action>EditorEnter</action>. This will apply the changes across all files in the project.")
           stateCheck {
-            textOnLine(0, "function listBookAuthors(listOfBooks) {")
+            textOnLine(0, "function listBookAuthors(listOfBooks) {") &&
+            TemplateManager.getInstance(project).getActiveTemplate(editor) == null
           }
         }
         task("IntroduceVariable") {
@@ -80,7 +82,8 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
           stateCheck {
             textOnLine(3, "let author = book.author;") &&
             textOnLine(4, "if (!listOfAuthors.includes(author)) {") &&
-            textOnLine(5, "listOfAuthors.push(author);")
+            textOnLine(5, "listOfAuthors.push(author);") &&
+            TemplateManager.getInstance(project).getActiveTemplate(editor) == null
           }
         }
         task {
