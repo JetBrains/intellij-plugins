@@ -230,6 +230,10 @@
     <webServerPathHandler implementation="com.jetbrains.lang.dart.pubServer.PubServerPathHandler"/>
   </extensions>
 
+  <projectListeners>
+    <listener class="com.jetbrains.lang.dart.DartModuleRootListener" topic="com.intellij.openapi.roots.ModuleRootListener"/>
+  </projectListeners>
+
   <actions>
     <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction" text="Stop Dart Webdev Server"/>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
