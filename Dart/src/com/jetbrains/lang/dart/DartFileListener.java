@@ -171,7 +171,7 @@ public class DartFileListener implements VirtualFileListener {
 
   @NotNull
   private static DartLibInfo collectPackagesLibraryRoots(@NotNull final Project project) {
-    final DartLibInfo libInfo = new DartLibInfo(false);
+    final DartLibInfo libInfo = new DartLibInfo();
 
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
@@ -230,7 +230,7 @@ public class DartFileListener implements VirtualFileListener {
 
     final Collection<String> libRootUrls = libInfo.getLibRootUrls();
 
-    if ((!libInfo.isProjectWithoutPubspec() && isBrokenPackageMap(((LibraryEx)library).getProperties())) ||
+    if ((isBrokenPackageMap(((LibraryEx)library).getProperties())) ||
         existingUrls.length != libRootUrls.size() ||
         !libRootUrls.containsAll(Arrays.asList(existingUrls))) {
       ApplicationManager.getApplication().runWriteAction(() -> {
@@ -359,13 +359,8 @@ public class DartFileListener implements VirtualFileListener {
   }
 
   private static class DartLibInfo {
-    private final boolean myProjectWithoutPubspec;
     private final Set<String> myLibRootUrls = new TreeSet<>();
     private final Map<String, List<String>> myPackagesMap = new TreeMap<>();
-
-    private DartLibInfo(final boolean projectWithoutPubspec) {
-      myProjectWithoutPubspec = projectWithoutPubspec;
-    }
 
     private void addPackage(@NotNull final String packageName, @NotNull final String packagePath) {
       myLibRootUrls.add(VfsUtilCore.pathToUrl(packagePath));
@@ -379,10 +374,6 @@ public class DartFileListener implements VirtualFileListener {
       if (!paths.contains(packagePath)) {
         paths.add(packagePath);
       }
-    }
-
-    private boolean isProjectWithoutPubspec() {
-      return myProjectWithoutPubspec;
     }
 
     private Set<String> getLibRootUrls() {
