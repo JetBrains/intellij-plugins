@@ -13,7 +13,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
@@ -30,11 +29,16 @@ import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
+/**
+ * {@link DartStartupActivity} configures "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) on project open.
+ * Afterwards the "Dart Packages" library is kept up-to-dated thanks to {@link DartFileListener} and {@link DartModuleRootListener}.
+ *
+ * @see DartFileListener
+ * @see DartModuleRootListener
+ */
 public class DartStartupActivity implements StartupActivity {
   @Override
   public void runActivity(@NotNull Project project) {
-    VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
-
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
 

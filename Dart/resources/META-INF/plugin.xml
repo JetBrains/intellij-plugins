@@ -218,6 +218,7 @@
 
     <backgroundPostStartupActivity implementation="com.jetbrains.lang.dart.DartBackgroundStartupActivity"/>
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
+    <vfs.asyncListener implementation="com.jetbrains.lang.dart.DartFileListener"/>
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
     <search.optionContributor implementation="com.jetbrains.lang.dart.DartSearchableOptionContributor"/>

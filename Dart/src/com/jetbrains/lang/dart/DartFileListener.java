@@ -9,6 +9,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
@@ -18,7 +19,13 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.AsyncFileListener;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFileMoveEvent;
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PathUtil;
@@ -30,6 +37,7 @@ import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,82 +45,58 @@ import java.util.*;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartFileListener implements VirtualFileListener {
+/**
+ * {@link DartFileListener} helps to keep "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) up-to-date.
+ * Also, it makes sure that Dart build output folder and related folders with Pub-specific cache are excluded.
+ * Also, it updates the list of files visible for Analysis Server in case of move and rename.
+ *
+ * @see DartStartupActivity
+ * @see DartModuleRootListener
+ */
+public class DartFileListener implements AsyncFileListener {
 
   private static final Key<Boolean> DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS =
     Key.create("DART_PACKAGE_ROOTS_UPDATE_SCHEDULED_OR_IN_PROGRESS");
 
-  private final Project myProject;
-
-  public DartFileListener(Project project) {
-    myProject = project;
-  }
-
+  @Nullable
   @Override
-  public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
-    if (VirtualFile.PROP_NAME.equals(event.getPropertyName())) {
-      fileChanged(myProject, event.getFile());
+  public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    SmartList<VFileEvent> dotPackageEvents = new SmartList<>();
+    SmartList<VFileEvent> moveOrRenameAnalyzableFileEvents = new SmartList<>();
 
-      if (event.getFile().isInLocalFileSystem() &&
-          (DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getOldValue().toString()) ||
-           DartAnalysisServerService.isFileNameRespectedByAnalysisServer(event.getFileName()))) {
-        updateVisibleFilesIfNeeded();
+    for (VFileEvent event : events) {
+      if (event.getFileSystem() != LocalFileSystem.getInstance() && !ApplicationManager.getApplication().isUnitTestMode()) continue;
+
+      if (event instanceof VFilePropertyChangeEvent) {
+        if (((VFilePropertyChangeEvent)event).isRename()) {
+          if (DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getOldValue()) ||
+              DotPackagesFileUtil.DOT_PACKAGES.equals(((VFilePropertyChangeEvent)event).getNewValue())) {
+            dotPackageEvents.add(event);
+          }
+
+          if (DartAnalysisServerService.isFileNameRespectedByAnalysisServer(((VFilePropertyChangeEvent)event).getOldValue().toString()) ||
+              DartAnalysisServerService.isFileNameRespectedByAnalysisServer(((VFilePropertyChangeEvent)event).getNewValue().toString())) {
+            moveOrRenameAnalyzableFileEvents.add(event);
+          }
+        }
+      }
+      else {
+        if (DotPackagesFileUtil.DOT_PACKAGES.equals(PathUtil.getFileName(event.getPath()))) {
+          dotPackageEvents.add(event);
+        }
+
+        if (event instanceof VFileMoveEvent &&
+            DartAnalysisServerService.isFileNameRespectedByAnalysisServer(PathUtil.getFileName(event.getPath()))) {
+          moveOrRenameAnalyzableFileEvents.add(event);
+        }
       }
     }
-  }
 
-  @Override
-  public void contentsChanged(@NotNull VirtualFileEvent event) {
-    fileChanged(myProject, event.getFile());
-  }
-
-  @Override
-  public void fileCreated(@NotNull VirtualFileEvent event) {
-    fileChanged(myProject, event.getFile());
-  }
-
-  @Override
-  public void fileDeleted(@NotNull VirtualFileEvent event) {
-    fileChanged(myProject, event.getFile());
-  }
-
-  @Override
-  public void fileMoved(@NotNull VirtualFileMoveEvent event) {
-    fileChanged(myProject, event.getFile());
-
-    if (DartAnalysisServerService.isLocalAnalyzableFile(event.getFile())) {
-      updateVisibleFilesIfNeeded();
+    if (dotPackageEvents.isEmpty() && moveOrRenameAnalyzableFileEvents.isEmpty()) {
+      return null;
     }
-  }
 
-  @Override
-  public void fileCopied(@NotNull VirtualFileCopyEvent event) {
-    fileChanged(myProject, event.getFile());
-  }
-
-  private void updateVisibleFilesIfNeeded() {
-    // Checking sdk here is for quick exit: no need to create DartAnalysisServerService instance for projects without Dart at all
-    if (DartSdk.getDartSdk(myProject) != null &&
-        DartAnalysisServerService.getInstance(myProject).isServerProcessActive()) {
-      DartAnalysisServerService.getInstance(myProject).updateVisibleFiles();
-    }
-  }
-
-  private static void fileChanged(@NotNull final Project project, @NotNull final VirtualFile file) {
-    if (!DotPackagesFileUtil.DOT_PACKAGES.equals(file.getName())) return;
-    if (LocalFileSystem.getInstance() != file.getFileSystem() && !ApplicationManager.getApplication().isUnitTestMode()) return;
-
-    final VirtualFile parent = file.getParent();
-    final VirtualFile pubspec = parent == null ? null : parent.findChild(PUBSPEC_YAML);
-
-    if (pubspec != null) {
-      scheduleDartPackageRootsUpdate(project);
-
-      final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
-      if (module != null && !module.isDisposed() && !project.isDisposed()) {
-        DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspec);
-      }
-    }
+    return new DartFileChangeApplier(dotPackageEvents, moveOrRenameAnalyzableFileEvents);
   }
 
   /**
@@ -382,6 +366,64 @@ public class DartFileListener implements VirtualFileListener {
 
     private Map<String, List<String>> getPackagesMap() {
       return myPackagesMap;
+    }
+  }
+
+  private static class DartFileChangeApplier implements ChangeApplier {
+    private final List<? extends VFileEvent> myDotPackageEvents;
+    private final List<? extends VFileEvent> myMoveOrRenameAnalyzableFileEvents;
+
+    private DartFileChangeApplier(List<? extends VFileEvent> dotPackageEvents,
+                                  List<? extends VFileEvent> moveOrRenameAnalyzableFileEvents) {
+      myDotPackageEvents = dotPackageEvents;
+      myMoveOrRenameAnalyzableFileEvents = moveOrRenameAnalyzableFileEvents;
+    }
+
+    @Override
+    public void afterVfsChange() {
+      Set<Project> projectsToUpdate = new THashSet<>();
+      Set<Project> projectsToUpdateVisibleFiles = new THashSet<>();
+
+      for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+        if (DartSdk.getDartSdk(project) == null) continue;
+
+        for (VFileEvent event : myDotPackageEvents) {
+          VirtualFile file = event.getFile();
+          if (file == null) continue;
+
+          VirtualFile parent = file.getParent();
+          VirtualFile pubspec = parent == null ? null : parent.findChild(PUBSPEC_YAML);
+          if (pubspec == null) continue;
+
+          if (ProjectFileIndex.getInstance(project).isInContent(file)) {
+            projectsToUpdate.add(project);
+
+            final Module module = ModuleUtilCore.findModuleForFile(pubspec, project);
+            if (module != null) {
+              DartStartupActivity.excludeBuildAndPackagesFolders(module, pubspec);
+            }
+          }
+        }
+
+        for (VFileEvent event : myMoveOrRenameAnalyzableFileEvents) {
+          VirtualFile file = event.getFile();
+          if (file == null) continue;
+
+          if (ProjectFileIndex.getInstance(project).isInContent(file)) {
+            projectsToUpdateVisibleFiles.add(project);
+            break;
+          }
+        }
+      }
+
+      for (Project project : projectsToUpdate) {
+        scheduleDartPackageRootsUpdate(project);
+      }
+
+      for (Project project : projectsToUpdateVisibleFiles) {
+        // this fixes WEB-39785
+        DartAnalysisServerService.getInstance(project).updateVisibleFiles();
+      }
     }
   }
 }

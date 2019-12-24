@@ -5,6 +5,12 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * {@link DartModuleRootListener} helps to keep "Dart Packages" library (based on Dart-specific pubspec.yaml and .packages files) up-to-date.
+ *
+ * @see DartStartupActivity
+ * @see DartFileListener
+ */
 public class DartModuleRootListener implements ModuleRootListener {
   @Override
   public void rootsChanged(@NotNull ModuleRootEvent event) {
