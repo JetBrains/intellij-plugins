@@ -293,7 +293,8 @@ public class DartServerData {
 
   boolean hasAllData_TESTS_ONLY(@NotNull VirtualFile file) {
     assert ApplicationManager.getApplication().isUnitTestMode();
-    return myHighlightData.get(file.getPath()) != null &&
+    return !isErrorInfoInaccurate(file.getPath()) &&
+           myHighlightData.get(file.getPath()) != null &&
            myNavigationData.get(file.getPath()) != null &&
            myOverrideData.get(file.getPath()) != null &&
            myImplementedClassData.get(file.getPath()) != null &&
