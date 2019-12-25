@@ -53,7 +53,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
                     @NotNull final CompileContext context) throws ProjectBuildException, IOException {
 
     final JpsJavaCompilerConfiguration configuration =
-      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject());
+      JpsJavaExtensionService.getInstance().getCompilerConfiguration(target.getModule().getProject());
     final JpsCompilerExcludes excludes = configuration.getCompilerExcludes();
 
     try {
