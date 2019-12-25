@@ -360,12 +360,12 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
                                           "  <error>Ra<caret>ndom</error> <warning>r</warning> = new <error>Random</error>();\n" +
                                           "}");
     myFixture.checkHighlighting();
-    final List<HighlightInfo> highlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
+    final List<HighlightInfo> initialHighlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
 
     myFixture.type(" ");
     myFixture.type('\b'); // backspace
 
-    assertSameElements(highlighting, myFixture.doHighlighting(HighlightSeverity.WARNING));
+    assertSameElements(myFixture.doHighlighting(HighlightSeverity.WARNING), initialHighlighting);
   }
 
   public void testErrorsRemoved() {
