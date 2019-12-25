@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.text.MarkdownUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartGenericSpecialization;
@@ -31,6 +32,7 @@ public class DartDocUtil {
   private static final String GT = "&gt;";
   private static final String LT = "&lt;";
 
+  @Nullable
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
       return null;
@@ -69,6 +71,7 @@ public class DartDocUtil {
     return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
+  @NotNull
   private static String formatSignature(@NotNull final String signature) {
     // Match the first open paren, "(", but ignore a starting "(new)" or "(const)" patterns.
     final int offsetToOpenParen = signature.indexOf('(', 1);
@@ -97,6 +100,7 @@ public class DartDocUtil {
   /**
    * Split around the ", " pattern, when not in a generic or function parameter (inside a nested parenthesize.)
    */
+  @NotNull
   private static String[] signatureSplit(@NotNull final String str) {
     List<String> result = new SmartList<>();
 
@@ -175,8 +179,14 @@ public class DartDocUtil {
     builder.append("<br>");
     builder.append("</code>\n");
     if (docText != null) {
-      final MarkdownProcessor processor = new MarkdownProcessor();
-      builder.append(processor.markdown(docText.trim()));
+      List<String> lines = StringUtil.split(docText, "\n");
+      MarkdownUtil.replaceCodeBlock(lines);
+      MarkdownUtil.removeImages(lines);
+      MarkdownUtil.replaceHeaders(lines);
+      MarkdownUtil.generateLists(lines);
+
+      MarkdownProcessor processor = new MarkdownProcessor();
+      builder.append(processor.markdown(StringUtil.join(lines, "\n")));
     }
     // done
     return builder.toString().trim();
