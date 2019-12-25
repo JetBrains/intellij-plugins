@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -360,12 +360,12 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
                                           "  <error>Ra<caret>ndom</error> <warning>r</warning> = new <error>Random</error>();\n" +
                                           "}");
     myFixture.checkHighlighting();
-    final List<HighlightInfo> highlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
+    final List<HighlightInfo> initialHighlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
 
     myFixture.type(" ");
     myFixture.type('\b'); // backspace
 
-    assertSameElements(highlighting, myFixture.doHighlighting(HighlightSeverity.WARNING));
+    assertSameElements(myFixture.doHighlighting(HighlightSeverity.WARNING), initialHighlighting);
   }
 
   public void testErrorsRemoved() {
