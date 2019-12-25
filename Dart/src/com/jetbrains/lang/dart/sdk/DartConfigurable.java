@@ -53,7 +53,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
-  private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
   private static final boolean ML_CODE_COMPLETION_DEFAULT_VALUE = false;
   private static final String ML_CODE_COMPLETION_PROPERTY_NAME = "dart.analysis.ml.code.completion";
@@ -215,7 +214,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   @Override
   @Nls
   public String getDisplayName() {
-    return DART_SETTINGS_PAGE_NAME;
+    return getDART_SETTINGS_PAGE_NAME();
   }
 
   @Override
@@ -517,5 +516,9 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static void setMLCodeCompletionEnabled(@NotNull Project project, boolean enabled) {
     PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
+  }
+
+  private static String getDART_SETTINGS_PAGE_NAME() {
+    return DartBundle.message("dart.title");
   }
 }

@@ -39,8 +39,6 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
   private static final int STYLES_INDEX_START = 4;
   private static final int MODULE_INDEX = 5;
 
-  private static final String GROUP_NAME = Angular2Bundle.message("angular.action.goto-related.group-name");
-
   @NotNull
   @Override
   public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
@@ -76,7 +74,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                       f -> !filter.equals(ObjectUtils.doIfNotNull(
                         f.getElement(), PsiElement::getContainingFile)));
       default:
-        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), GROUP_NAME));
+        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGROUP_NAME()));
     }
   }
 
@@ -118,6 +116,10 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
     return result;
   }
 
+  private static String getGROUP_NAME() {
+    return Angular2Bundle.message("angular.action.goto-related.group-name");
+  }
+
   private static final class Angular2GoToRelatedItem extends GotoRelatedItem {
 
     private final String myContainerName;
@@ -127,7 +129,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                     int mnemonic,
                                     boolean inlineable,
                                     @Nullable String name) {
-      super(element, GROUP_NAME, mnemonic > 9 ? -1 : mnemonic);
+      super(element, getGROUP_NAME(), mnemonic > 9 ? -1 : mnemonic);
       myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
                                         .getTopLevelFile(element) != element.getContainingFile()
                         ? Angular2Bundle.message("angular.action.goto-related.inline")

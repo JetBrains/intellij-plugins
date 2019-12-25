@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
-  private static final String INVALID_PREFIX = IdeBundle.message("node.hierarchy.invalid");
   private DartMethodHierarchyTreeStructure myTreeStructure;
   private Icon myRawIcon;
   private Icon myStateIcon;
@@ -55,8 +54,8 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     myHighlightedText = new CompositeAppearance();
     DartClass dartClass = getType();
     if (dartClass == null) {
-      if (!myHighlightedText.getText().startsWith(INVALID_PREFIX)) {
-        myHighlightedText.getBeginning().addText(INVALID_PREFIX, HierarchyNodeDescriptor.getInvalidPrefixAttributes());
+      if (!myHighlightedText.getText().startsWith(getINVALID_PREFIX())) {
+        myHighlightedText.getBeginning().addText(getINVALID_PREFIX(), HierarchyNodeDescriptor.getInvalidPrefixAttributes());
       }
       return true;
     }
@@ -106,5 +105,9 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
       return AllIcons.Hierarchy.MethodNotDefined;
     }
     return null;
+  }
+
+  private static String getINVALID_PREFIX() {
+    return IdeBundle.message("node.hierarchy.invalid");
   }
 }
