@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.service
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.xmlb.annotations.XMap
 import training.ui.welcomeScreen.recentProjects.actionGroups.commonActions.DefaultProjectsActionGroup
 import training.ui.welcomeScreen.recentProjects.actionGroups.commonActions.TutorialsActionGroup
@@ -22,6 +23,8 @@ class GroupManager : PersistentStateComponent<GroupManager> {
   @XMap(keyAttributeName = "name", valueAttributeName = "expanded")
   private var expandedByName: MutableMap<String, Boolean> = mutableMapOf()
 
+  var showTutorialsOnWelcomeFrame: Boolean = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")
+
   val registeredGroups: List<CommonActionGroup> = listOf(
     TutorialsActionGroup(),
     DefaultProjectsActionGroup()
@@ -34,6 +37,7 @@ class GroupManager : PersistentStateComponent<GroupManager> {
 
   @Synchronized
   override fun loadState(state: GroupManager) {
+    showTutorialsOnWelcomeFrame = state.showTutorialsOnWelcomeFrame
     expandedByName = state.expandedByName
     registeredGroups.forEach {
       val expanded = state.expandedByName[it.name] ?: it.isExpanded

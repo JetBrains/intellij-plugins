@@ -2,12 +2,12 @@
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.wm.WelcomeScreen
 import com.intellij.openapi.wm.impl.welcomeScreen.FlatWelcomeFrame
 import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -43,4 +43,4 @@ class IFTFlatWelcomeFrame : FlatWelcomeFrame() {
 }
 
 internal val showCustomWelcomeScreen
-  get() = Registry.`is`("ideFeaturesTrainer.welcomeScreen.tutorialsTree")
+  get() = GroupManager.instance.showTutorialsOnWelcomeFrame
