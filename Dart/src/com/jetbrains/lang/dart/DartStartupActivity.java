@@ -49,7 +49,9 @@ public class DartStartupActivity implements StartupActivity {
       }
     }
 
-    DartFileListener.scheduleDartPackageRootsUpdate(project);
+    if (!pubspecYamlFiles.isEmpty()) {
+      DartFileListener.scheduleDartPackageRootsUpdate(project);
+    }
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
