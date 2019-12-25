@@ -357,9 +357,8 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
 
   public void testErrorsUpdatedOnTypingAndUndo() {
     myFixture.configureByText("foo.dart", "main(){\n" +
-                                          "  <error>Ra<caret>ndom</error> <warning>r</warning> = new <error>Random</error>();\n" +
+                                          "  Ra<caret>ndom r = new Random();\n" +
                                           "}");
-    myFixture.checkHighlighting();
     final List<HighlightInfo> initialHighlighting = myFixture.doHighlighting(HighlightSeverity.WARNING);
 
     myFixture.type(" ");
