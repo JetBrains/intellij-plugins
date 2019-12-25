@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
@@ -50,7 +50,9 @@ public class DartStartupActivity implements StartupActivity {
       }
     }
 
-    DartFileListener.scheduleDartPackageRootsUpdate(project);
+    if (!pubspecYamlFiles.isEmpty()) {
+      DartFileListener.scheduleDartPackageRootsUpdate(project);
+    }
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
