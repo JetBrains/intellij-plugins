@@ -3,20 +3,18 @@ package training.ui.views
 
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import training.actions.StartLearnAction
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.BundlePlace
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.ui.UISettings
+import training.ui.UiManager
 import training.util.clearTrainingProgress
+import training.util.resetPrimaryLanguage
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -101,12 +99,9 @@ class LanguageChoosePanel(opaque: Boolean = true,
     button.isOpaque = false
     button.action = object : AbstractAction(LearnBundle.messageInPlace("learn.choose.language.button", place)) {
       override fun actionPerformed(e: ActionEvent?) {
-        val activeLangSupport = getActiveLangSupport()
-        LangManager.getInstance().updateLangSupport(activeLangSupport)
-        val context = DataContext.EMPTY_CONTEXT
-        val startLearnAction = StartLearnAction()
-        val event = AnActionEvent.createFromAnAction(startLearnAction, null, "LearnToolWindow.ChooseLanguageView", context)
-        ActionUtil.performActionDumbAware(startLearnAction, event)
+        if (!resetPrimaryLanguage(getActiveLangSupport())) {
+          UiManager.setModulesView()
+        }
       }
     }
     return button

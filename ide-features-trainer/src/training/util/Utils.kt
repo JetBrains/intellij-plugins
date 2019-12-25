@@ -12,7 +12,9 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
+import training.lang.LangSupport
 import training.learn.CourseManager
+import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonStateManager
 import training.ui.UiManager
 import java.awt.Point
@@ -87,4 +89,15 @@ fun clearTrainingProgress() {
     .flatMap { module -> module.lessons }
     .forEach { lesson -> lesson.passed = false }
   UiManager.setLanguageChooserView()
+}
+
+fun resetPrimaryLanguage(activeLangSupport: LangSupport): Boolean {
+  val old = LangManager.getInstance().getLangSupport()
+  if (activeLangSupport != old) {
+    LangManager.getInstance().updateLangSupport(activeLangSupport)
+    UiManager.setModulesView()
+    LessonManager.instance.stopLesson()
+    return true
+  }
+  return false
 }

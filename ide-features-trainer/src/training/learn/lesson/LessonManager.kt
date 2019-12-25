@@ -39,9 +39,6 @@ class LessonManager {
 
   init {
     ApplicationManager.getApplication().messageBus.connect().subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
-      override fun projectOpened(project: Project) {
-        super.projectOpened(project)
-      }
 
       override fun projectClosed(project: Project) {
         serviceIfCreated<LessonManager>()?.clearAllListeners()
@@ -54,11 +51,14 @@ class LessonManager {
     currentLessonExecutor = lessonExecutor
   }
 
+  internal fun stopLesson() {
+    currentLessonExecutor?.stopLesson()
+    clearAllListeners()
+  }
+
   @Throws(Exception::class)
   internal fun initLesson(editor: Editor, cLesson: Lesson) {
-    currentLessonExecutor?.stopLesson()
-
-    clearAllListeners()
+    stopLesson()
     //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
     UiManager.setLessonNameOnLearnPanels(cLesson.name)
