@@ -2105,7 +2105,7 @@ public class DartAnalysisServerService implements Disposable {
         startServer(sdk);
 
         if (myServer != null) {
-          myRootsHandler.ensureProjectServed();
+          myRootsHandler.onServerStarted();
         }
       }
 
@@ -2155,7 +2155,7 @@ public class DartAnalysisServerService implements Disposable {
       myVisibleFiles.clear();
       myChangedDocuments.clear();
       myServerData.clearData();
-      myRootsHandler.reset();
+      myRootsHandler.onServerStopped();
 
       if (myProject.isOpen() && !myProject.isDisposed()) {
         ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myProject.getDisposed());
