@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -278,7 +278,9 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       }
     }
 
-    DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
+    if (myPresentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage) {
+      DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
+    }
   }
 
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
