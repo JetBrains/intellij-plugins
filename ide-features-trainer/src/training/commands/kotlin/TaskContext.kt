@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
+import org.intellij.lang.annotations.Language
 import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.learn.ActionsRecorder
@@ -27,7 +28,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   /**
    * Write a text to the learn panel (panel with a learning tasks).
    */
-  fun text(text: String) {
+  fun text(@Language("HTML") text: String) {
     val wrappedText = "<root><text>$text</text></root>"
     val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
     LessonManager.instance.addMessages(Message.convert(textAsElement)) //support old format
