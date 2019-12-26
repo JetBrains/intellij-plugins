@@ -39,7 +39,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                    "cucumber.annotation.After",
                                                                                    "cucumber.api.java.Before",
-                                                                                   "cucumber.api.java.After");
+                                                                                   "cucumber.api.java.After",
+                                                                                   "io.cucumber.java.Before",
+                                                                                   "io.cucumber.java.After");
 
   @NotNull
   @Override
