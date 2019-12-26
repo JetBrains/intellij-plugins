@@ -14,10 +14,12 @@ class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Cod
 
   val sample = parseLessonSample("""
         let favoriteAnimals = ['dog', 'cat', 'unicorn'];
+        
         function pickAnimal(arr) {
             const rnd = arr.length * Math.random();
             return arr[<caret>];
         }
+        
         console.log();
         """.trimIndent())
 
