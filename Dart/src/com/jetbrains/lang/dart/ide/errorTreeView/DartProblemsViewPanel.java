@@ -66,8 +66,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
 
-  private DartProblemsView.ToolWindowUpdater myToolWindowUpdater;
-
   public DartProblemsViewPanel(@NotNull final Project project,
                                @NotNull final DartProblemsPresentationHelper presentationHelper) {
     super(false, true);
@@ -244,11 +242,10 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private void updateStatusDescription() {
-    if (myToolWindowUpdater != null) {
-      final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
-      myToolWindowUpdater.setHeaderText(model.getStatusText());
-      myToolWindowUpdater.setIcon(model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13);
-    }
+    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
+    DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
+    problemsView.setHeaderText(model.getStatusText());
+    problemsView.setToolWindowIcon(model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13);
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
@@ -425,10 +422,6 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   public void clearAll() {
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
     updateStatusDescription();
-  }
-
-  void setToolWindowUpdater(@NotNull final DartProblemsView.ToolWindowUpdater toolWindowUpdater) {
-    myToolWindowUpdater = toolWindowUpdater;
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {

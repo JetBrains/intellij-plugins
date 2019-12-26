@@ -4,7 +4,6 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationSettings;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
@@ -12,15 +11,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -51,13 +46,11 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   private final Project myProject;
   private final DartProblemsPresentationHelper myPresentationHelper;
-  private DartProblemsViewPanel myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
   private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
 
-  private ToolWindow myToolWindow;
   private Icon myCurrentIcon;
   private boolean myAnalysisIsBusy;
 
@@ -83,7 +76,10 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         myScheduledFilePathToErrors.clear();
       }
 
-      myPanel.setErrors(filePathToErrors);
+      DartProblemsViewPanel panel = getProblemsViewPanel();
+      if (panel != null) {
+        panel.setErrors(filePathToErrors);
+      }
     }
   };
 
@@ -91,46 +87,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     myProject = project;
     myPresentationHelper = new DartProblemsPresentationHelper(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
-    Disposer.register(project, myAlarm);
-
-    UIUtil.invokeLaterIfNeeded(() -> {
-      if (project.isDisposed()) {
-        return;
-      }
-
-      myPanel = new DartProblemsViewPanel(project, myPresentationHelper);
-
-      myToolWindow = ToolWindowManager.getInstance(project).registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM, project, true);
-      myToolWindow.setHelpId("reference.toolWindow.DartAnalysis");
-      myCurrentIcon = DartIcons.Dart_13;
-      updateIcon();
-
-      final Content content = ContentFactory.SERVICE.getInstance().createContent(myPanel, "", false);
-      myToolWindow.getContentManager().addContent(content);
-
-      ToolWindowEx toolWindowEx = (ToolWindowEx)myToolWindow;
-      toolWindowEx.setTitleActions(new AnalysisServerFeedbackAction());
-
-      myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
-        @Override
-        public void setIcon(@NotNull Icon icon) {
-          myCurrentIcon = icon;
-          updateIcon();
-        }
-
-        @Override
-        public void setHeaderText(@NotNull String headerText) {
-          content.setDisplayName(headerText);
-        }
-      });
-
-      if (PropertiesComponent.getInstance(project).getBoolean("dart.analysis.tool.window.force.activate", true)) {
-        PropertiesComponent.getInstance(project).setValue("dart.analysis.tool.window.force.activate", false, true);
-        myToolWindow.activate(null, false);
-      }
-
-      Disposer.register(project, () -> myToolWindow.getContentManager().removeAllContents(true));
-    });
+    myCurrentIcon = DartIcons.Dart_13;
 
     project.getMessageBus().connect().subscribe(
       DartAnalysisServerMessages.DART_ANALYSIS_TOPIC, new DartAnalysisServerMessages.DartAnalysisNotifier() {
@@ -149,12 +106,44 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     );
   }
 
-  void updateIcon() {
+  DartProblemsPresentationHelper getPresentationHelper() {
+    return myPresentationHelper;
+  }
+
+  @Nullable
+  private ToolWindow getDartAnalysisToolWindow() {
+    return ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID);
+  }
+
+  @Nullable
+  private DartProblemsViewPanel getProblemsViewPanel() {
+    ToolWindow toolWindow = getDartAnalysisToolWindow();
+    Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
+    return content != null ? (DartProblemsViewPanel)content.getComponent() : null;
+  }
+
+  void setHeaderText(@NotNull String headerText) {
+    ToolWindow toolWindow = getDartAnalysisToolWindow();
+    Content content = toolWindow != null ? toolWindow.getContentManager().getContent(0) : null;
+    if (content != null) {
+      content.setDisplayName(headerText);
+    }
+  }
+
+  void setToolWindowIcon(@NotNull Icon icon) {
+    myCurrentIcon = icon;
+    updateIcon();
+  }
+
+  private void updateIcon() {
+    ToolWindow toolWindow = getDartAnalysisToolWindow();
+    if (toolWindow == null) return;
+
     if (myAnalysisIsBusy) {
-      myToolWindow.setIcon(ExecutionUtil.getLiveIndicator(myCurrentIcon));
+      toolWindow.setIcon(ExecutionUtil.getLiveIndicator(myCurrentIcon));
     }
     else {
-      myToolWindow.setIcon(myCurrentIcon);
+      toolWindow.setIcon(myCurrentIcon);
     }
   }
 
@@ -217,7 +206,10 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         notification.expire();
 
         if (OPEN_DART_ANALYSIS_LINK.equals(e.getDescription())) {
-          ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID).activate(null);
+          ToolWindow toolWindow = getDartAnalysisToolWindow();
+          if (toolWindow != null) {
+            toolWindow.activate(null);
+          }
         }
         else if ("disable.for.session".equals(e.getDescription())) {
           myDisabledForSession = true;
@@ -256,9 +248,6 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   @Override
   public void loadState(@NotNull DartProblemsViewSettings state) {
     myPresentationHelper.setSettings(state);
-    if (myPanel != null) {
-      myPanel.fireGroupingOrFilterChanged();
-    }
   }
 
   /**
@@ -271,11 +260,12 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   public void setCurrentFile(@Nullable final VirtualFile file) {
     ApplicationManager.getApplication().assertIsDispatchThread();
 
-    if (myPresentationHelper.setCurrentFile(file) &&
+    // Calling getProblemsViewPanel() here also ensures that the tool window contents becomes visible when Analysis server starts
+    DartProblemsViewPanel panel = getProblemsViewPanel();
+    if (panel != null &&
+        myPresentationHelper.setCurrentFile(file) &&
         myPresentationHelper.getFileFilterMode() != DartProblemsViewSettings.FileFilterMode.All) {
-      if (myPanel != null) {
-        myPanel.fireGroupingOrFilterChanged();
-      }
+      panel.fireGroupingOrFilterChanged();
     }
 
     if (myPresentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage) {
@@ -303,14 +293,9 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       myScheduledFilePathToErrors.clear();
     }
 
-    if (myPanel != null) {
-      myPanel.clearAll();
+    DartProblemsViewPanel panel = getProblemsViewPanel();
+    if (panel != null) {
+      panel.clearAll();
     }
-  }
-
-  interface ToolWindowUpdater {
-    void setIcon(@NotNull final Icon icon);
-
-    void setHeaderText(@NotNull final String headerText);
   }
 }
