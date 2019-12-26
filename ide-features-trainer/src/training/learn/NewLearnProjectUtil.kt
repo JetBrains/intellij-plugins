@@ -3,12 +3,12 @@ package training.learn
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.SystemDependent
 import training.lang.LangSupport
-import training.learn.dialogs.LearnProjectWarningDialog
 import training.learn.exceptons.NoSdkException
 
 object NewLearnProjectUtil {
@@ -45,6 +45,12 @@ object NewLearnProjectUtil {
     FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
 
   fun showDialogOpenLearnProject(project: Project): Boolean {
-    return LearnProjectWarningDialog(project).showAndGet()
+    return Messages.showOkCancelDialog(project,
+                                       LearnBundle.message("dialog.learnProjectWarning.message",
+                                                           ApplicationNamesInfo.getInstance().fullProductName),
+                                       LearnBundle.message("dialog.learnProjectWarning.title"),
+                                       LearnBundle.message("dialog.learnProjectWarning.ok"),
+                                       Messages.CANCEL_BUTTON,
+                                       null) == Messages.OK
   }
 }
