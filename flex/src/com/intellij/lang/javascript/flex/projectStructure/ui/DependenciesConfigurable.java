@@ -92,8 +92,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private static final Logger LOG = Logger.getInstance(DependenciesConfigurable.class.getName());
 
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.dependencies.display.name");
-
   private static final Icon MISSING_BC_ICON = null;
 
   public static abstract class Location {
@@ -1150,7 +1148,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   @Nls
   public String getDisplayName() {
-    return TAB_NAME;
+    return getTAB_NAME();
   }
 
   @Override
@@ -1839,5 +1837,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
     return Pair.create("?", "?");
+  }
+
+  public static String getTAB_NAME() {
+    return FlexBundle.message("bc.tab.dependencies.display.name");
   }
 }

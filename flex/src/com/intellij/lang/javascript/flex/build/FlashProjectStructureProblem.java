@@ -39,13 +39,13 @@ public class FlashProjectStructureProblem {
   public static FlashProjectStructureProblem createDependenciesProblem(final ProjectStructureProblemType.Severity severity,
                                                                        final String errorMessage,
                                                                        final DependenciesConfigurable.Location location) {
-    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, DependenciesConfigurable.TAB_NAME, location);
+    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, DependenciesConfigurable.getTAB_NAME(), location);
   }
 
   public static FlashProjectStructureProblem createCompilerOptionsProblem(final ProjectStructureProblemType.Severity severity,
                                                                           final String errorMessage,
                                                                           final CompilerOptionsConfigurable.Location location) {
-    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, CompilerOptionsConfigurable.TAB_NAME, location);
+    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, CompilerOptionsConfigurable.getTAB_NAME(), location);
   }
 
   public static FlashProjectStructureProblem createPackagingOptionsProblem(final ProjectStructureProblemType.Severity severity,
@@ -53,11 +53,11 @@ public class FlashProjectStructureProblem {
                                                                            final String errorMessage,
                                                                            final AirPackagingConfigurableBase.Location location) {
     final String tabName = packagingOptions instanceof AirDesktopPackagingOptions
-                           ? AirDesktopPackagingConfigurable.TAB_NAME
+                           ? AirDesktopPackagingConfigurable.getTAB_NAME()
                            : packagingOptions instanceof AndroidPackagingOptions
-                             ? AndroidPackagingConfigurable.TAB_NAME
+                             ? AndroidPackagingConfigurable.getTAB_NAME()
                              : packagingOptions instanceof IosPackagingOptions
-                               ? IOSPackagingConfigurable.TAB_NAME :
+                               ? IOSPackagingConfigurable.getTAB_NAME() :
                                null;
     assert tabName != null : packagingOptions;
     return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, tabName, location);

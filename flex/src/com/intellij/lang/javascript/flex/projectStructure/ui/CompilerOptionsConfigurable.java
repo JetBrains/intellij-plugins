@@ -72,7 +72,6 @@ import java.util.*;
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
-  public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
   public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
 
   public enum Location {
@@ -169,7 +168,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myNature = nature;
     myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
-             ? TAB_NAME
+             ? getTAB_NAME()
              : myMode == Mode.Module
                ? FlexBundle.message("default.compiler.options.for.module.title", module.getName())
                : FlexBundle.message("default.compiler.options.for.project.title", project.getName());
@@ -1057,6 +1056,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
     return ActionCallback.DONE;
+  }
+
+  public static String getTAB_NAME() {
+    return FlexBundle.message("bc.tab.compiler.options.display.name");
   }
 }
 

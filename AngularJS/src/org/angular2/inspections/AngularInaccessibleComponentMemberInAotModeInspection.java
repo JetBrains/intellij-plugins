@@ -6,6 +6,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -33,7 +34,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.intellij.lang.javascript.presentable.JSFormatUtil.ANONYMOUS_ELEMENT_PRESENTATION;
 import static com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier;
 import static com.intellij.openapi.util.text.StringUtil.capitalize;
 import static com.intellij.util.ObjectUtils.notNull;
@@ -124,7 +124,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
   @NotNull
   private static String getName(@NotNull PsiElement member) {
     return notNull(member instanceof PsiNamedElement ? ((PsiNamedElement)member).getName() : null,
-                   ANONYMOUS_ELEMENT_PRESENTATION);
+                   JSFormatUtil.getANONYMOUS_ELEMENT_PRESENTATION());
   }
 
   private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {

@@ -272,7 +272,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testSpellChecker() throws Exception {
     enableInspectionTool(new SpellCheckingInspection());
-    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
+    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.getFIX_NAME());
   }
 
   public void testSpellChecker_2() throws Exception {
@@ -283,7 +283,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     TemplateManagerImpl.setTemplateTesting(getTestRootDisposable());
     enableInspectionTool(new SpellCheckingInspection());
 
-    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.FIX_NAME);
+    doSimpleHighlightingWithInvokeFixAndCheckResult(RenameTo.getFIX_NAME());
 
     final LookupEx lookup = LookupManager.getActiveLookup(myEditor);
     assertNotNull(lookup);

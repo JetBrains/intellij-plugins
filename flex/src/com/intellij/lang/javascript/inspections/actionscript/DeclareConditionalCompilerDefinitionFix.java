@@ -42,7 +42,7 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
     ShowSettingsUtil.getInstance().editConfigurable(project, configurable, () -> {
       final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, bc.getName())
-        .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.TAB_NAME)
+        .putPath(CompositeConfigurable.TAB_NAME, CompilerOptionsConfigurable.getTAB_NAME())
         .putPath(FlexBCConfigurable.LOCATION_ON_TAB, CompilerOptionsConfigurable.Location.ConditionalCompilerDefinition)
         .putPath(CompilerOptionsConfigurable.CONDITIONAL_COMPILER_DEFINITION_NAME, myConditionalCompilerDefinitionName);
     configurable.navigateTo(place, true);
