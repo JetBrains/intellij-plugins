@@ -368,7 +368,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testMarkdownUtil_testReplaceCodeBlock() {
-    doTest("<code><b>test.dart</b><br><b>foo</b>() → dynamic<br><br></code>\n" +
+    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
            "<p>   text</p>\n" +
            "\n" +
            "<pre><code>    code block</code></pre>\n" +
