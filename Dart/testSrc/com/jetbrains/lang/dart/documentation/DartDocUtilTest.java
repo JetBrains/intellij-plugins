@@ -241,8 +241,9 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "<pre><code>     doc1</code></pre>\n" +
            "\n" +
            "<p>doc2\n" +
-           " doc3\n" +
-           "   doc4</p>\n" +
+           " doc3</p>\n" +
+           "\n" +
+           "<p>   doc4</p>\n" +
            "\n" +
            "<pre><code>    code</code></pre>",
 
@@ -313,8 +314,9 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
       "<pre><code>     doc1</code></pre>\n" +
       "\n" +
       "<p>doc2\n" +
-      " doc3\n" +
-      "   doc4</p>\n" +
+      " doc3</p>\n" +
+      "\n" +
+      "<p>   doc4</p>\n" +
       "\n" +
       "<pre><code>    code</code></pre>",
 

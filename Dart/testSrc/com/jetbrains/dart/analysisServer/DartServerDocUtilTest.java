@@ -25,8 +25,9 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br>class A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           " doc3\n" +
-           "   doc4</p>\n" +
+           " doc3</p>\n" +
+           "\n" +
+           "<p>   doc4</p>\n" +
            "\n" +
            "<pre><code>    code</code></pre>",
 
@@ -274,8 +275,9 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br>dynamic foo()<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
-           " doc3\n" +
-           "   doc4</p>\n" +
+           " doc3</p>\n" +
+           "\n" +
+           "<p>   doc4</p>\n" +
            "\n" +
            "<pre><code>    code</code></pre>",
 
