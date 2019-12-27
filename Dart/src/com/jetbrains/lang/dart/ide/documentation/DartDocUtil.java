@@ -179,7 +179,7 @@ public class DartDocUtil {
     builder.append("<br>");
     builder.append("</code>\n");
     if (docText != null) {
-      List<String> lines = StringUtil.split(docText, "\n");
+      List<String> lines = StringUtil.split(docText, "\n", true, false);
       MarkdownUtil.replaceCodeBlock(lines);
       MarkdownUtil.removeImages(lines);
       MarkdownUtil.replaceHeaders(lines);
