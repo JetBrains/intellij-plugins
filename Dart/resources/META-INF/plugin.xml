@@ -187,8 +187,8 @@
     <projectService serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
     <projectService serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
-    <toolWindow id="Dart Analysis" anchor="bottom" icon="DartIcons.Dart_13" doNotActivateOnStart="true" canCloseContents="false" os=""
-                factoryClass="com.jetbrains.lang.dart.ide.errorTreeView.DartAnalysisToolWindowFactory" />
+    <toolWindow id="Dart Analysis" anchor="bottom" icon="DartIcons.Dart_13" doNotActivateOnStart="true" canCloseContents="false"
+                factoryClass="com.jetbrains.lang.dart.ide.errorTreeView.DartAnalysisToolWindowFactory"/>
 
     <applicationService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
     <applicationService serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
