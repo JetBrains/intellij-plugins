@@ -1996,7 +1996,7 @@ public class DartAnalysisServerService implements Disposable {
 
       try {
         startedServer.start();
-        server_setSubscriptions();
+        server_setSubscriptions(startedServer);
         startedServer.completion_setSubscriptions(ImmutableList.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
 
         if (!myInitializationOnServerStartupDone) {
@@ -2416,12 +2416,11 @@ public class DartAnalysisServerService implements Disposable {
   public void setServerLogSubscription(boolean subscribeToLog) {
     if (mySubscribeToServerLog != subscribeToLog) {
       mySubscribeToServerLog = subscribeToLog;
-      server_setSubscriptions();
+      server_setSubscriptions(myServer);
     }
   }
 
-  private void server_setSubscriptions() {
-    final RemoteAnalysisServerImpl server = myServer;
+  private void server_setSubscriptions(@Nullable AnalysisServer server) {
     if (server != null) {
       server.server_setSubscriptions(mySubscribeToServerLog ? Lists.newArrayList(ServerService.STATUS, ServerService.LOG)
                                                             : Collections.singletonList(ServerService.STATUS));
