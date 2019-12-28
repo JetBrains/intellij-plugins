@@ -54,7 +54,8 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "Layers", type = "list of string", description = "List of LayerVersion ARNs that should be used by this function. The order specified here is the order that they will be imported when running the Lambda function."),
         CloudFormationManualResourceProperty(name = "AutoPublishAlias", type = "string", description = "Name of the Alias. Read AutoPublishAlias Guide for how it works"),
         CloudFormationManualResourceProperty(name = "VersionDescription", type = "string", description = "A string that specifies the Description field which will be added on the new lambda version"),
-        CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency", excludedFromGlobals = true)
+        CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency"),
+        CloudFormationManualResourceProperty(name = "ProvisionedConcurrencyConfig", type = "ProvisionedConcurrencyConfig Object", description = "Configure provisioned capacity for a number of concurrent executions on Lambda Alias property.")
     ),
     attributes = listOf(
         CloudFormationManualResourceAttribute("Arn", "The ARN of the Lambda function.")
