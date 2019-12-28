@@ -88,6 +88,23 @@ object ResourceTypesSaver {
       .outputStream().use { outputStream -> MetadataSerializer.toXML(descriptions, outputStream) }
   }
 
+  private fun downloadDocumentHandlingPartialFiles(url: URL): Document {
+    val doc = downloadDocument(url)
+
+    if (doc.select("div").any { it.attr("id") == "main-col-body" }) {
+      return doc
+    }
+
+    val partialLocation = doc.location().removeSuffix(".html") + ".partial.html"
+    val partialDoc = downloadDocument(URL(partialLocation))
+
+    if (partialDoc.select("div").any { it.attr("id") == "main-col-body" }) {
+      return partialDoc
+    }
+
+    error("Could not fetch a valid AWS document page from both $doc and $partialDoc")
+  }
+
   private fun downloadDocument(url: URL): Document {
     println("Downloading $url")
     for (retry in 1..4) {
@@ -103,12 +120,12 @@ object ResourceTypesSaver {
   }
 
   private fun getDocumentFromUrl(url: URL): Document {
-    val doc = downloadDocument(url)
+    val doc = downloadDocumentHandlingPartialFiles(url)
 
     // Fix all links to be absolute URLs, this helps IDEA to navigate to them (opening external browser)
     val select = doc.select("a")
     for (e in select) {
-      val absUrl = e.absUrl("href")
+      val absUrl = e.absUrl("href").replace(".partial.html", ".html")
       e.attr("href", absUrl)
     }
 
@@ -190,7 +207,7 @@ object ResourceTypesSaver {
           assert(propertyId.contains(name, ignoreCase = true)) {
             "Property anchor id ($propertyId) should have a property name ($name) as substring in ${builder.url}"
           }
-          val docUrl = doc.baseUri() + "#" + propertyId
+          val docUrl = doc.location().replace(".partial.html", ".html") + "#" + propertyId
 
           val propertyBuilder = builder.addProperty(name)
           propertyBuilder.url = docUrl
