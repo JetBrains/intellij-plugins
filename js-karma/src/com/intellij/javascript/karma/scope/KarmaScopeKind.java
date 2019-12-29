@@ -24,7 +24,7 @@ public enum KarmaScopeKind {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
-      return new KarmaSuiteOrTestScopeView("Edit suite name", "Suite name:");
+      return new KarmaSuiteOrTestScopeView(project, "Edit suite name", "Suite name:");
     }
   },
 
@@ -32,7 +32,7 @@ public enum KarmaScopeKind {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
-      return new KarmaSuiteOrTestScopeView("Edit test name", "Test name:");
+      return new KarmaSuiteOrTestScopeView(project, "Edit test name", "Test name:");
     }
   };
 
