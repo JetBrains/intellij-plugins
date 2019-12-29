@@ -43,9 +43,6 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  */
 class StructureViewTreeModel extends DomStructureViewTreeModel implements StructureViewModel.ElementInfoProvider {
-
-  static final String HIDE_PARAMS_ID = StrutsBundle.message("structure.view.filter.params");
-
   private final Class[] alwaysPlus;
   private final Class[] alwaysLeaf;
 
@@ -96,7 +93,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
       @Override
       @NotNull
       public String getName() {
-        return HIDE_PARAMS_ID;
+        return getHIDE_PARAMS_ID();
       }
     }};
   }
@@ -121,5 +118,9 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
       }
     }
     return false;
+  }
+
+  static String getHIDE_PARAMS_ID() {
+    return StrutsBundle.message("structure.view.filter.params");
   }
 }
