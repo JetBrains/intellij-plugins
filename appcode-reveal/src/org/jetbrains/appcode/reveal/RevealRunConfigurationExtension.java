@@ -223,8 +223,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
         (Runnable)() -> response[0] = Messages.showYesNoDialog("Project is not configured with Reveal library.<br><br>" +
                                                              "Would you like to enable automatic library upload for this run configuration?",
                                                              "Reveal",
-                                                             Messages.YES_BUTTON,
-                                                             Messages.NO_BUTTON,
+                                                             Messages.getYES_BUTTON(),
+                                                             Messages.getNO_BUTTON(),
                                                              Messages.getQuestionIcon(),
                                                              new DialogWrapper.DoNotAskOption() {
                   @Override

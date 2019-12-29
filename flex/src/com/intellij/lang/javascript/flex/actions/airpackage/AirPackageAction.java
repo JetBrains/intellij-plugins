@@ -220,12 +220,12 @@ public class AirPackageAction extends DumbAwareAction {
         protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
           if ("full.error.message".equals(e.getDescription())) {
             Messages.showIdeaMessageDialog(project, reason, "Error Message",
-                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+                                           new String[]{Messages.getOK_BUTTON()}, 0, null, null);
           }
 
           if ("adt.command.line".equals(e.getDescription())) {
             Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
-                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+                                           new String[]{Messages.getOK_BUTTON()}, 0, null, null);
           }
         }
       };

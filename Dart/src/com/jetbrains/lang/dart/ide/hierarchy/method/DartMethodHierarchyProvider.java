@@ -36,6 +36,6 @@ public class DartMethodHierarchyProvider implements HierarchyProvider {
 
   @Override
   public void browserActivated(@NotNull HierarchyBrowser hierarchyBrowser) {
-    ((DartMethodHierarchyBrowser)hierarchyBrowser).changeView(MethodHierarchyBrowserBase.METHOD_TYPE);
+    ((DartMethodHierarchyBrowser)hierarchyBrowser).changeView(MethodHierarchyBrowserBase.getMETHOD_TYPE());
   }
 }

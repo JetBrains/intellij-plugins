@@ -394,7 +394,8 @@ public class FlexSdkUtils {
 
   public static void openModuleConfigurable(final Module module) {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, () -> projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true));
+    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, () -> projectStructureConfigurable
+      .select(module.getName(), ClasspathEditor.getNAME(), true));
   }
 
   /**

@@ -91,7 +91,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
 
   @NotNull
   protected GlobalSearchScope getScope() {
-    if (HierarchyBrowserBaseEx.SCOPE_CLASS.equals(myScopeType)) {
+    if (HierarchyBrowserBaseEx.getSCOPE_CLASS().equals(myScopeType)) {
       Object root = getRootElement();
       if (root instanceof DartCallHierarchyNodeDescriptor) {
         DartCallHierarchyNodeDescriptor rootElement = (DartCallHierarchyNodeDescriptor)root;
@@ -103,13 +103,13 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       }
       return GlobalSearchScope.projectScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_PROJECT.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(myScopeType)) {
       return GlobalSearchScope.projectScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_TEST.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getSCOPE_TEST().equals(myScopeType)) {
       return GlobalSearchScope.projectScope(myProject); // We do not have a module to get its test scope.
     }
-    else if (HierarchyBrowserBaseEx.SCOPE_ALL.equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getSCOPE_ALL().equals(myScopeType)) {
       return GlobalSearchScope.allScope(myProject);
     }
     return GlobalSearchScope.projectScope(myProject);

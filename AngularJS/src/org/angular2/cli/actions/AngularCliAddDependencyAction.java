@@ -97,7 +97,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
               new String[]{
                 Angular2Bundle.message("angular.action.ng-add.install-latest"),
                 Angular2Bundle.message("angular.action.ng-add.install-current"),
-                Messages.CANCEL_BUTTON
+                Messages.getCANCEL_BUTTON()
               }, 0, Messages.getQuestionIcon())) {
 
               case 0:
@@ -287,7 +287,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
             project,
             Angular2Bundle.message("angular.action.ng-add.not-supported-installed-try-latest"),
             Angular2Bundle.message("angular.action.ng-add.title"),
-            new String[]{Angular2Bundle.message("angular.action.ng-add.install-latest"), Messages.CANCEL_BUTTON},
+            new String[]{Angular2Bundle.message("angular.action.ng-add.install-latest"), Messages.getCANCEL_BUTTON()},
             0, Messages.getQuestionIcon())) {
 
             runAndShowConsole(project, cli, packageName + "@" + LATEST, false);

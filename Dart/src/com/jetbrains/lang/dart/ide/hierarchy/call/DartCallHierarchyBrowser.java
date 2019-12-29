@@ -41,8 +41,8 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   @Override
   protected void createTrees(@NotNull Map<String, JTree> type2TreeMap) {
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP);
-    type2TreeMap.put(CALLER_TYPE, createHierarchyTree(group));
-    type2TreeMap.put(CALLEE_TYPE, createHierarchyTree(group));
+    type2TreeMap.put(getCALLER_TYPE(), createHierarchyTree(group));
+    type2TreeMap.put(getCALLEE_TYPE(), createHierarchyTree(group));
   }
 
   private JTree createHierarchyTree(ActionGroup group) {
@@ -59,10 +59,10 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String typeName, @NotNull PsiElement psiElement) {
-    if (CALLER_TYPE.equals(typeName)) {
+    if (getCALLER_TYPE().equals(typeName)) {
       return new DartCallerTreeStructure(myProject, psiElement, getCurrentScopeType());
     }
-    else if (CALLEE_TYPE.equals(typeName)) {
+    else if (getCALLEE_TYPE().equals(typeName)) {
       return new DartCalleeTreeStructure(myProject, psiElement, getCurrentScopeType());
     }
     else {

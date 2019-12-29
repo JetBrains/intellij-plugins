@@ -43,7 +43,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
     final JTree tree = createTree(false);
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
-    trees.put(METHOD_TYPE, tree);
+    trees.put(getMETHOD_TYPE(), tree);
   }
 
   @Nullable
@@ -65,7 +65,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
-    if (!METHOD_TYPE.equals(type)) {
+    if (!getMETHOD_TYPE().equals(type)) {
       LOG.error("unexpected type: " + type);
       return null;
     }

@@ -40,6 +40,6 @@ public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   }
 
   private static boolean isApplicable(@Nullable final Project project) {
-    return project != null && ToolWindowManager.getInstance(project).getToolWindow(DartProblemsView.TOOLWINDOW_ID) != null;
+    return project != null && ToolWindowManager.getInstance(project).getToolWindow(DartProblemsView.getTOOLWINDOW_ID()) != null;
   }
 }

@@ -37,10 +37,14 @@ import java.util.Map;
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
 public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
-  public static final String TOOLWINDOW_ID = DartBundle.message("dart.analysis.tool.window");
+  /**
+   * Use {code {@link #getTOOLWINDOW_ID()}} instead
+   */
+  @Deprecated
+  public static final String TOOLWINDOW_ID = getTOOLWINDOW_ID();
 
   private static final NotificationGroup NOTIFICATION_GROUP =
-    NotificationGroup.toolWindowGroup(TOOLWINDOW_ID, TOOLWINDOW_ID, false);
+    NotificationGroup.toolWindowGroup(getTOOLWINDOW_ID(), getTOOLWINDOW_ID(), false);
 
   private static final int TABLE_REFRESH_PERIOD = 300;
 
@@ -112,7 +116,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   @Nullable
   private ToolWindow getDartAnalysisToolWindow() {
-    return ToolWindowManager.getInstance(myProject).getToolWindow(TOOLWINDOW_ID);
+    return ToolWindowManager.getInstance(myProject).getToolWindow(getTOOLWINDOW_ID());
   }
 
   @Nullable
@@ -297,5 +301,9 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     if (panel != null) {
       panel.clearAll();
     }
+  }
+
+  public static String getTOOLWINDOW_ID() {
+    return DartBundle.message("dart.analysis.tool.window");
   }
 }
