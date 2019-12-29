@@ -41,7 +41,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
    * Use {code {@link #getTOOLWINDOW_ID()}} instead
    */
   @Deprecated
-  public static final String TOOLWINDOW_ID = getTOOLWINDOW_ID();
+  public static final String TOOLWINDOW_ID = "Dart Analysis";
 
   private static final NotificationGroup NOTIFICATION_GROUP =
     NotificationGroup.toolWindowGroup(getTOOLWINDOW_ID(), getTOOLWINDOW_ID(), false);
