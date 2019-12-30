@@ -5,6 +5,7 @@ import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.AtomicNullableLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.RenameableFakePsiElement;
@@ -17,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class CfmlAssignmentExpression extends CfmlCompositeElement implements CfmlExpression {
-  private AssignedVariable myAssignedVariable = null;
-  private boolean myVariableWasInitialized = false;
+  private final AtomicNullableLazyValue<AssignedVariable> myAssignedVariable =
+    AtomicNullableLazyValue.createValue(() -> createAssignedVariable());
 
   public CfmlAssignmentExpression(@NotNull ASTNode node) {
     super(node);
@@ -64,12 +65,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
 
   @Nullable
   public CfmlVariable getAssignedVariable() {
-    if (!myVariableWasInitialized) {
-      myVariableWasInitialized = true;
-      myAssignedVariable = createAssignedVariable();
-    }
-
-    return myAssignedVariable;
+    return myAssignedVariable.getValue();
   }
 
   @Override
@@ -139,14 +135,6 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
     @Override
     public PsiType getPsiType() {
       return getAssignedVariableElementType();
-    }
-
-    public CfmlExpression getRightChildExpression() {
-      CfmlExpression[] expressions = findChildrenByClass(CfmlExpression.class);
-      if (expressions.length != 2) {
-        return null;
-      }
-      return expressions[1];
     }
 
     @Override

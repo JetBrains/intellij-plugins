@@ -43,6 +43,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
   }
 
   @Override
+  @NotNull
   public TextRange getTextRange() {
     return myComment.getTextRange();
   }
