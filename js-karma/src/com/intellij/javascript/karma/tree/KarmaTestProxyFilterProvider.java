@@ -17,7 +17,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
   private final Project myProject;
   private final KarmaServer myKarmaServer;
 
-  public KarmaTestProxyFilterProvider(@NotNull Project project, @NotNull KarmaServer karmaServer) {
+  public KarmaTestProxyFilterProvider(@NotNull Project project, @Nullable KarmaServer karmaServer) {
     myProject = project;
     myKarmaServer = karmaServer;
   }
@@ -25,7 +25,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
   @Nullable
   @Override
   public Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
-    String baseDir = myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent();
+    String baseDir = myKarmaServer == null ? null : myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent();
     if ("browser".equals(nodeType)) {
       AbstractFileHyperlinkFilter browserFilter = BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
       if (browserFilter != null) {
@@ -40,11 +40,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
 
   @Nullable
   private Filter getBrowserErrorFilter() {
-    KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
-    if (karmaConfig != null) {
-      return new KarmaBrowserErrorFilter(myProject, karmaConfig);
-    }
-    return null;
+    KarmaConfig karmaConfig = myKarmaServer != null ? myKarmaServer.getKarmaConfig() : null;
+    return karmaConfig != null ? new KarmaBrowserErrorFilter(myProject, karmaConfig) : null;
   }
-
 }

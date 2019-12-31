@@ -5,9 +5,12 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.testframework.sm.runner.SMRunnerConsolePropertiesProvider;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
+import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -39,7 +42,8 @@ import java.io.File;
 public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigurationOptions>
                                    implements RefactoringListenerProvider,
                                               PreferableRunConfiguration,
-                                              JSRunProfileWithCompileBeforeLaunchOption {
+                                              JSRunProfileWithCompileBeforeLaunchOption,
+                                              SMRunnerConsolePropertiesProvider {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
   private boolean myWorkingDirectoryDetected = false;
@@ -126,6 +130,18 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
       f = findFile(myRunSettings.getWorkingDirectorySystemDependent());
     }
     return f;
+  }
+
+  @NotNull
+  @Override
+  public KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor) {
+    return createTestConsoleProperties(executor, null);
+  }
+
+  @NotNull
+  public KarmaConsoleProperties createTestConsoleProperties(@NotNull Executor executor, @Nullable KarmaServer server) {
+    KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(getProject(), server);
+    return new KarmaConsoleProperties(this, executor, filterProvider);
   }
 
   @Nullable

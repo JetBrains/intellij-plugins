@@ -12,7 +12,6 @@ import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
-import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
@@ -83,8 +82,7 @@ public class KarmaExecutionSession {
 
   @NotNull
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
-    KarmaTestProxyFilterProvider filterProvider = new KarmaTestProxyFilterProvider(myProject, myKarmaServer);
-    KarmaConsoleProperties consoleProperties = new KarmaConsoleProperties(myRunConfiguration, myExecutor, filterProvider);
+    KarmaConsoleProperties consoleProperties = myRunConfiguration.createTestConsoleProperties(myExecutor, myKarmaServer);
     consoleProperties.addStackTraceFilter(new NodeStackTraceFilter(
       myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
     );
