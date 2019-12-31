@@ -191,7 +191,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
               continue;
             }
 
-            final Place p = FlexProjectStructureUtil.createPlace(bcConfigurable, DependenciesConfigurable.getTAB_NAME());
+            final Place p = FlexProjectStructureUtil.createPlace(bcConfigurable, DependenciesConfigurable.getTabName());
             final DependenciesConfigurable.Location.TableEntry tableEntry =
               DependenciesConfigurable.Location.TableEntry.forModuleLibrary(libraryId);
             p.putPath(FlexBCConfigurable.LOCATION_ON_TAB, tableEntry);

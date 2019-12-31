@@ -100,7 +100,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
 
   private void setCommandName(JSClass sourceClass, final PsiElement[] members) {
     StringBuilder commandName = new StringBuilder();
-    commandName.append(MoveHandler.getREFACTORING_NAME());
+    commandName.append(MoveHandler.getRefactoringName());
     commandName.append(" ");
     boolean first = true;
     for (PsiElement member : members) {

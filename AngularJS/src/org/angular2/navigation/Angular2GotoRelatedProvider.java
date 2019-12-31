@@ -74,7 +74,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                       f -> !filter.equals(ObjectUtils.doIfNotNull(
                         f.getElement(), PsiElement::getContainingFile)));
       default:
-        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGROUP_NAME()));
+        return map(components, c -> new GotoRelatedItem(Objects.requireNonNull(c.getTypeScriptClass()), getGroupName()));
     }
   }
 
@@ -116,7 +116,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
     return result;
   }
 
-  private static String getGROUP_NAME() {
+  private static String getGroupName() {
     return Angular2Bundle.message("angular.action.goto-related.group-name");
   }
 
@@ -129,7 +129,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                     int mnemonic,
                                     boolean inlineable,
                                     @Nullable String name) {
-      super(element, getGROUP_NAME(), mnemonic > 9 ? -1 : mnemonic);
+      super(element, getGroupName(), mnemonic > 9 ? -1 : mnemonic);
       myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
                                         .getTopLevelFile(element) != element.getContainingFile()
                         ? Angular2Bundle.message("angular.action.goto-related.inline")

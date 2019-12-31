@@ -25,7 +25,7 @@ public class FlexProjectStructureUtil {
 
   public static Place createPlace(Module module, DependenciesConfigurable configurable) {
     final FlexBCConfigurable bcConfigurable = findBcConfigurable(module, configurable);
-    return createPlace(bcConfigurable, DependenciesConfigurable.getTAB_NAME());
+    return createPlace(bcConfigurable, DependenciesConfigurable.getTabName());
   }
 
   public static Place createPlace(final Module module, final FlexBuildConfiguration bc, @Nullable final String tabName) {

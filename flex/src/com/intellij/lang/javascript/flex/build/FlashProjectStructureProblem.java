@@ -39,13 +39,13 @@ public class FlashProjectStructureProblem {
   public static FlashProjectStructureProblem createDependenciesProblem(final ProjectStructureProblemType.Severity severity,
                                                                        final String errorMessage,
                                                                        final DependenciesConfigurable.Location location) {
-    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, DependenciesConfigurable.getTAB_NAME(), location);
+    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, DependenciesConfigurable.getTabName(), location);
   }
 
   public static FlashProjectStructureProblem createCompilerOptionsProblem(final ProjectStructureProblemType.Severity severity,
                                                                           final String errorMessage,
                                                                           final CompilerOptionsConfigurable.Location location) {
-    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, CompilerOptionsConfigurable.getTAB_NAME(), location);
+    return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, CompilerOptionsConfigurable.getTabName(), location);
   }
 
   public static FlashProjectStructureProblem createPackagingOptionsProblem(final ProjectStructureProblemType.Severity severity,
@@ -53,7 +53,7 @@ public class FlashProjectStructureProblem {
                                                                            final String errorMessage,
                                                                            final AirPackagingConfigurableBase.Location location) {
     final String tabName = packagingOptions instanceof AirDesktopPackagingOptions
-                           ? AirDesktopPackagingConfigurable.getTAB_NAME()
+                           ? AirDesktopPackagingConfigurable.getTabName()
                            : packagingOptions instanceof AndroidPackagingOptions
                              ? AndroidPackagingConfigurable.getTAB_NAME()
                              : packagingOptions instanceof IosPackagingOptions

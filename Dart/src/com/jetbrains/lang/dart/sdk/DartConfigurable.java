@@ -214,7 +214,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   @Override
   @Nls
   public String getDisplayName() {
-    return getDART_SETTINGS_PAGE_NAME();
+    return getDartSettingsPageName();
   }
 
   @Override
@@ -518,7 +518,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     PropertiesComponent.getInstance(project).setValue(ML_CODE_COMPLETION_PROPERTY_NAME, enabled, ML_CODE_COMPLETION_DEFAULT_VALUE);
   }
 
-  private static String getDART_SETTINGS_PAGE_NAME() {
+  private static String getDartSettingsPageName() {
     return DartBundle.message("dart.title");
   }
 }

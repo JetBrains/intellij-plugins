@@ -93,7 +93,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
       @Override
       @NotNull
       public String getName() {
-        return getHIDE_PARAMS_ID();
+        return getHideParamsId();
       }
     }};
   }
@@ -120,7 +120,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
     return false;
   }
 
-  static String getHIDE_PARAMS_ID() {
+  static String getHideParamsId() {
     return StrutsBundle.message("structure.view.filter.params");
   }
 }

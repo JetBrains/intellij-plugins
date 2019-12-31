@@ -1148,7 +1148,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   @Nls
   public String getDisplayName() {
-    return getTAB_NAME();
+    return getTabName();
   }
 
   @Override
@@ -1839,7 +1839,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return Pair.create("?", "?");
   }
 
-  public static String getTAB_NAME() {
+  public static String getTabName() {
     return FlexBundle.message("bc.tab.dependencies.display.name");
   }
 }

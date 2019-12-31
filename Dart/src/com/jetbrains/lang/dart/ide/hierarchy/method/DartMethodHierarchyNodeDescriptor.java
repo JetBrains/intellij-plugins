@@ -54,8 +54,8 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     myHighlightedText = new CompositeAppearance();
     DartClass dartClass = getType();
     if (dartClass == null) {
-      if (!myHighlightedText.getText().startsWith(getINVALID_PREFIX())) {
-        myHighlightedText.getBeginning().addText(getINVALID_PREFIX(), HierarchyNodeDescriptor.getInvalidPrefixAttributes());
+      if (!myHighlightedText.getText().startsWith(getInvalidPrefix())) {
+        myHighlightedText.getBeginning().addText(getInvalidPrefix(), HierarchyNodeDescriptor.getInvalidPrefixAttributes());
       }
       return true;
     }
@@ -107,7 +107,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
     return null;
   }
 
-  private static String getINVALID_PREFIX() {
+  private static String getInvalidPrefix() {
     return IdeBundle.message("node.hierarchy.invalid");
   }
 }

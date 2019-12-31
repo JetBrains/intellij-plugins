@@ -104,7 +104,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
       assert jsFunction != null;
-      if (CallHierarchyBrowserBase.getCALLEE_TYPE().equals(hierarchyType)) {
+      if (CallHierarchyBrowserBase.getCalleeType().equals(hierarchyType)) {
         return new JSCalleeMethodsTreeStructure(getProject(), jsFunction, scope);
       }
       else if (CallHierarchyBrowserBase.getCALLER_TYPE().equals(hierarchyType)) {
@@ -154,7 +154,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   public void testMethodCalleeHierarchy() throws Exception {
     setUpJdk();
     final String testName = getTestName(false);
-    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCALLEE_TYPE(), "pack.subpack.Class1", "someFunction",
+    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCalleeType(), "pack.subpack.Class1", "someFunction",
                           HierarchyBrowserBaseEx.getSCOPE_ALL(),
                           testName + ".as", testName + ".mxml");
   }

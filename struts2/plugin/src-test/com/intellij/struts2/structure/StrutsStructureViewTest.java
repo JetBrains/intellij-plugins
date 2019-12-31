@@ -32,7 +32,7 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
   public void testDefaultPresentation() {
     myFixture.configureByFile("struts-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.getHIDE_PARAMS_ID(), false);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), false);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),
@@ -50,7 +50,7 @@ public class StrutsStructureViewTest extends BasicLightHighlightingTestCase {
   public void testHideParam() {
     myFixture.configureByFile("struts-structure.xml");
     myFixture.testStructureView(component -> {
-      component.setActionActive(StructureViewTreeModel.getHIDE_PARAMS_ID(), true);
+      component.setActionActive(StructureViewTreeModel.getHideParamsId(), true);
       PlatformTestUtil.expandAll(component.getTree());
       PlatformTestUtil.assertTreeEqual(
         component.getTree(),

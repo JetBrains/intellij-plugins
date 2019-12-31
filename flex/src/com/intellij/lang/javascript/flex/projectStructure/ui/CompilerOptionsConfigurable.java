@@ -168,7 +168,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myNature = nature;
     myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
-             ? getTAB_NAME()
+             ? getTabName()
              : myMode == Mode.Module
                ? FlexBundle.message("default.compiler.options.for.module.title", module.getName())
                : FlexBundle.message("default.compiler.options.for.project.title", project.getName());
@@ -1058,7 +1058,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return ActionCallback.DONE;
   }
 
-  public static String getTAB_NAME() {
+  public static String getTabName() {
     return FlexBundle.message("bc.tab.compiler.options.display.name");
   }
 }

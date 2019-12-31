@@ -282,7 +282,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
         }
         else {
           return !targetClass.isWritable() &&
-                 !JSRefactoringUtil.checkReadOnlyStatus(targetClass, null, ActionScriptMoveMembersHandler.getREFACTORING_NAME()) ? "" : null;
+                 !JSRefactoringUtil.checkReadOnlyStatus(targetClass, null, ActionScriptMoveMembersHandler.getRefactoringName()) ? "" : null;
         }
       }
     }

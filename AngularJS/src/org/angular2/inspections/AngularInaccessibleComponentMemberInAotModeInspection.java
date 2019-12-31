@@ -124,7 +124,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
   @NotNull
   private static String getName(@NotNull PsiElement member) {
     return notNull(member instanceof PsiNamedElement ? ((PsiNamedElement)member).getName() : null,
-                   JSFormatUtil.getANONYMOUS_ELEMENT_PRESENTATION());
+                   JSFormatUtil.getAnonymousElementPresentation());
   }
 
   private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {
