@@ -186,7 +186,7 @@ class InlineMethodDialog extends InlineOptionsDialog {
   protected InlineMethodDialog(Project project, PsiElement element, ServerInlineMethodRefactoring refactoring) {
     super(project, true, element);
     this.refactoring = refactoring;
-    setTitle(getREFACTORING_NAME());
+    setTitle(getRefactoringName());
     myInvokedOnReference = !refactoring.isDeclaration();
     init();
   }
@@ -230,7 +230,7 @@ class InlineMethodDialog extends InlineOptionsDialog {
     return !refactoring.isDeclaration();
   }
 
-  public static String getREFACTORING_NAME() {
+  public static String getRefactoringName() {
     return RefactoringBundle.message("inline.method.title");
   }
 }

@@ -28,7 +28,7 @@ public class DartTypeHierarchyTest extends DartHierarchyTestBase {
         DartClass dartClass = PsiTreeUtil.getParentOfType((PsiElement)item, DartClass.class);
         if (dartClass != null && dartClass.getName().equals(className)) {
           if (subtype) {
-            result.set(new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.getSCOPE_PROJECT()));
+            result.set(new DartServerTypeHierarchyTreeStructure(project, dartClass, HierarchyBrowserBaseEx.getScopeProject()));
           }
           else {
             result.set(new DartServerSupertypesHierarchyTreeStructure(project, dartClass));

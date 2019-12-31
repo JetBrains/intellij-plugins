@@ -15,7 +15,7 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
   @Override
   @Nls
   public String getDisplayName() {
-    return getTAB_NAME();
+    return getTabName();
   }
 
   @Override
@@ -23,7 +23,7 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
     return "BuildConfigurationPage.Android";
   }
 
-  public static String getTAB_NAME() {
+  public static String getTabName() {
     return FlexBundle.message("bc.tab.android.display.name");
   }
 }

@@ -51,10 +51,10 @@ public class DartCallHierarchyTest extends DartHierarchyTestBase {
               fail("Method not found");
             }
             if (caller) {
-              result.set(new DartCallerTreeStructure(project, member, HierarchyBrowserBaseEx.getSCOPE_PROJECT()));
+              result.set(new DartCallerTreeStructure(project, member, HierarchyBrowserBaseEx.getScopeProject()));
             }
             else {
-              result.set(new DartCalleeTreeStructure(project, member, HierarchyBrowserBaseEx.getSCOPE_PROJECT()));
+              result.set(new DartCalleeTreeStructure(project, member, HierarchyBrowserBaseEx.getScopeProject()));
             }
             return false;
           }
@@ -66,10 +66,10 @@ public class DartCallHierarchyTest extends DartHierarchyTestBase {
           PsiElement parent = PsiTreeUtil.getParentOfType((PsiElement)item, DartFunctionDeclarationWithBodyOrNative.class);
           if (parent != null) {
             if (caller) {
-              result.set(new DartCallerTreeStructure(project, parent, HierarchyBrowserBaseEx.getSCOPE_PROJECT()));
+              result.set(new DartCallerTreeStructure(project, parent, HierarchyBrowserBaseEx.getScopeProject()));
             }
             else {
-              result.set(new DartCalleeTreeStructure(project, parent, HierarchyBrowserBaseEx.getSCOPE_PROJECT()));
+              result.set(new DartCalleeTreeStructure(project, parent, HierarchyBrowserBaseEx.getScopeProject()));
             }
             return false;
           }

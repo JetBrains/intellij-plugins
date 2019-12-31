@@ -739,7 +739,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
   @Override
   public String getTabTitle() {
-    return getTAB_NAME();
+    return getTabName();
   }
 
   @Override
@@ -773,7 +773,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     return ActionCallback.DONE;
   }
 
-  public static String getTAB_NAME() {
+  public static String getTabName() {
     return FlexBundle.message("bc.tab.general.display.name");
   }
 }

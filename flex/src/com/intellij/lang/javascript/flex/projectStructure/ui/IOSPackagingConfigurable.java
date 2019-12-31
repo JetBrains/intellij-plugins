@@ -15,7 +15,7 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
   @Override
   @Nls
   public String getDisplayName() {
-    return getTAB_NAME();
+    return getTabName();
   }
 
   @Override
@@ -23,7 +23,7 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
     return "BuildConfigurationPage.iOS";
   }
 
-  public static String getTAB_NAME() {
+  public static String getTabName() {
     return FlexBundle.message("bc.tab.ios.packaging.display.name");
   }
 }

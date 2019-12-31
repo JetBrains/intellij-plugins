@@ -103,7 +103,7 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       }
       return GlobalSearchScope.projectScope(myProject);
     }
-    else if (HierarchyBrowserBaseEx.getSCOPE_PROJECT().equals(myScopeType)) {
+    else if (HierarchyBrowserBaseEx.getScopeProject().equals(myScopeType)) {
       return GlobalSearchScope.projectScope(myProject);
     }
     else if (HierarchyBrowserBaseEx.getSCOPE_TEST().equals(myScopeType)) {

@@ -58,7 +58,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
         (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
           .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
-      if (TypeHierarchyBrowserBase.getTYPE_HIERARCHY_TYPE().equals(hierarchyType)) {
+      if (TypeHierarchyBrowserBase.getTypeHierarchyType().equals(hierarchyType)) {
         return new JSTypeHierarchyTreeStructure(getProject(), jsClass);
       }
       else if (TypeHierarchyBrowserBase.getSUBTYPES_HIERARCHY_TYPE().equals(hierarchyType)) {
@@ -115,7 +115,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   }
 
   public void testTypeHierarchy() throws Exception {
-    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getTYPE_HIERARCHY_TYPE(), "mypack.SomeClass");
+    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getTypeHierarchyType(), "mypack.SomeClass");
   }
 
   public void testInterfacesHierarchy() throws Exception {
@@ -162,7 +162,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMethodCallerHierarchy() throws Exception {
     final String testName = getTestName(false);
-    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCALLER_TYPE(), "pack.Class1", "bar", HierarchyBrowserBaseEx.getSCOPE_PROJECT(),
+    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCALLER_TYPE(), "pack.Class1", "bar", HierarchyBrowserBaseEx.getScopeProject(),
                           testName + ".as");
   }
 }

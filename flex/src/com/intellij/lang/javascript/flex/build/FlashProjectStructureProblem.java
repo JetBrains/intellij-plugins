@@ -55,9 +55,9 @@ public class FlashProjectStructureProblem {
     final String tabName = packagingOptions instanceof AirDesktopPackagingOptions
                            ? AirDesktopPackagingConfigurable.getTabName()
                            : packagingOptions instanceof AndroidPackagingOptions
-                             ? AndroidPackagingConfigurable.getTAB_NAME()
+                             ? AndroidPackagingConfigurable.getTabName()
                              : packagingOptions instanceof IosPackagingOptions
-                               ? IOSPackagingConfigurable.getTAB_NAME() :
+                               ? IOSPackagingConfigurable.getTabName() :
                                null;
     assert tabName != null : packagingOptions;
     return new FlashProjectStructureProblem(severity, errorMessage, location.errorId, tabName, location);

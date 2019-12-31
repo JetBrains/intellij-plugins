@@ -22,7 +22,7 @@ public class FlexExtractSuperClassDialog extends FlexExtractSuperBaseDialog {
 
   public FlexExtractSuperClassDialog(@NotNull JSClass sourceClass, @Nullable JSElement selectedElement) {
     super(sourceClass, JSMemberInfo.selectMembers(sourceClass, selectedElement, new MemberInfoBase.EmptyFilter<>()),
-          JSExtractSuperClassHandler.getREFACTORING_NAME());
+          JSExtractSuperClassHandler.getRefactoringName());
     init();
   }
 

@@ -41,6 +41,6 @@ public class DartTypeHierarchyProvider implements HierarchyProvider {
 
   @Override
   public void browserActivated(@NotNull final HierarchyBrowser hierarchyBrowser) {
-    ((DartTypeHierarchyBrowser)hierarchyBrowser).changeView(TypeHierarchyBrowserBase.getTYPE_HIERARCHY_TYPE());
+    ((DartTypeHierarchyBrowser)hierarchyBrowser).changeView(TypeHierarchyBrowserBase.getTypeHierarchyType());
   }
 }
