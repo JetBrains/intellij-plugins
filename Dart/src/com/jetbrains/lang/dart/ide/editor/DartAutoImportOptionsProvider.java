@@ -17,7 +17,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
   public DartAutoImportOptionsProvider() {
     mySmartPasteCombo.addItem(getInsertImportsAlways());
     mySmartPasteCombo.addItem(getInsertImportsAsk());
-    mySmartPasteCombo.addItem(getINSERT_IMPORTS_NONE());
+    mySmartPasteCombo.addItem(getInsertImportsNone());
   }
 
   @Nullable
@@ -29,7 +29,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
   @Override
   public void reset() {
     final int val = DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE;
-    final String item = val == YES ? getInsertImportsAlways() : val == ASK ? getInsertImportsAsk() : getINSERT_IMPORTS_NONE();
+    final String item = val == YES ? getInsertImportsAlways() : val == ASK ? getInsertImportsAsk() : getInsertImportsNone();
     mySmartPasteCombo.setSelectedItem(item);
   }
 
@@ -45,7 +45,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
 
   private int getSmartPasteValue() {
     final Object item = mySmartPasteCombo.getSelectedItem();
-    return getInsertImportsAlways().equals(item) ? YES : getINSERT_IMPORTS_NONE().equals(item) ? NO : ASK;
+    return getInsertImportsAlways().equals(item) ? YES : getInsertImportsNone().equals(item) ? NO : ASK;
   }
 
   private static String getInsertImportsAlways() {
@@ -56,7 +56,7 @@ public class DartAutoImportOptionsProvider implements AutoImportOptionsProvider 
     return ApplicationBundle.message("combobox.insert.imports.ask");
   }
 
-  private static String getINSERT_IMPORTS_NONE() {
+  private static String getInsertImportsNone() {
     return ApplicationBundle.message("combobox.insert.imports.none");
   }
 }

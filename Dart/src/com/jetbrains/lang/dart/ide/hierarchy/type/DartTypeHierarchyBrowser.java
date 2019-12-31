@@ -68,7 +68,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
     if (getSUPERTYPES_HIERARCHY_TYPE().equals(typeName)) {
       return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
     }
-    else if (getSUBTYPES_HIERARCHY_TYPE().equals(typeName)) {
+    else if (getSubtypesHierarchyType().equals(typeName)) {
       return new DartServerSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
     else if (getTypeHierarchyType().equals(typeName)) {

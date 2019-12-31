@@ -61,7 +61,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
       if (TypeHierarchyBrowserBase.getTypeHierarchyType().equals(hierarchyType)) {
         return new JSTypeHierarchyTreeStructure(getProject(), jsClass);
       }
-      else if (TypeHierarchyBrowserBase.getSUBTYPES_HIERARCHY_TYPE().equals(hierarchyType)) {
+      else if (TypeHierarchyBrowserBase.getSubtypesHierarchyType().equals(hierarchyType)) {
         return new JSSubtypesHierarchyTreeStructure(getProject(), jsClass);
       }
       else if (TypeHierarchyBrowserBase.getSUPERTYPES_HIERARCHY_TYPE().equals(hierarchyType)) {
@@ -120,7 +120,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
 
   public void testInterfacesHierarchy() throws Exception {
     final String testName = getTestName(false);
-    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getSUBTYPES_HIERARCHY_TYPE(), "pack.Interface2", testName + ".as", testName + ".mxml");
+    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getSubtypesHierarchyType(), "pack.Interface2", testName + ".as", testName + ".mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
