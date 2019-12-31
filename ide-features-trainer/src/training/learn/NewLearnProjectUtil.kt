@@ -50,7 +50,7 @@ object NewLearnProjectUtil {
                                                            ApplicationNamesInfo.getInstance().fullProductName),
                                        LearnBundle.message("dialog.learnProjectWarning.title"),
                                        LearnBundle.message("dialog.learnProjectWarning.ok"),
-                                       Messages.getCANCEL_BUTTON(),
+                                       Messages.getCancelButton(),
                                        null) == Messages.OK
   }
 }
