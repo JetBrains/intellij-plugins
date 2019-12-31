@@ -64,7 +64,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
       else if (TypeHierarchyBrowserBase.getSubtypesHierarchyType().equals(hierarchyType)) {
         return new JSSubtypesHierarchyTreeStructure(getProject(), jsClass);
       }
-      else if (TypeHierarchyBrowserBase.getSUPERTYPES_HIERARCHY_TYPE().equals(hierarchyType)) {
+      else if (TypeHierarchyBrowserBase.getSupertypesHierarchyType().equals(hierarchyType)) {
         return new JSSupertypesHierarchyTreeStructure(getProject(), jsClass);
       }
       throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
@@ -107,7 +107,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
       if (CallHierarchyBrowserBase.getCalleeType().equals(hierarchyType)) {
         return new JSCalleeMethodsTreeStructure(getProject(), jsFunction, scope);
       }
-      else if (CallHierarchyBrowserBase.getCALLER_TYPE().equals(hierarchyType)) {
+      else if (CallHierarchyBrowserBase.getCallerType().equals(hierarchyType)) {
         return new JSCallerMethodsTreeStructure(getProject(), jsFunction, scope);
       }
       throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
@@ -127,7 +127,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   public void testSupertypesHierarchy() throws Exception {
     setUpJdk();
     final String testName = getTestName(false);
-    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getSUPERTYPES_HIERARCHY_TYPE(), "pack2.Class2", testName + ".as", testName + ".mxml");
+    doJSTypeHierarchyTest(TypeHierarchyBrowserBase.getSupertypesHierarchyType(), "pack2.Class2", testName + ".as", testName + ".mxml");
   }
 
   private static final String COMMON_METHOD_HIERARCHY_RESOURCE_NAME = "MethodHierarchyCommon";
@@ -162,7 +162,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testMethodCallerHierarchy() throws Exception {
     final String testName = getTestName(false);
-    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCALLER_TYPE(), "pack.Class1", "bar", HierarchyBrowserBaseEx.getScopeProject(),
+    doJSCallHierarchyTest(CallHierarchyBrowserBase.getCallerType(), "pack.Class1", "bar", HierarchyBrowserBaseEx.getScopeProject(),
                           testName + ".as");
   }
 }
