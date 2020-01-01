@@ -250,7 +250,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       public void actionPerformed(final ActionEvent e) {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
-          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.getTITLE(),
+          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.getTitleText(),
                                                                      FlexBundle.message("take.wrapper.template.from.sdk"));
           if (dialog.showAndGet()) {
             final Sdk dialogSdk = dialog.getSdk();

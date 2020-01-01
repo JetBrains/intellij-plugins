@@ -81,7 +81,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     super(project);
     myProject = project;
     myExtensions = extensions;
-    setTitle(getTITLE());
+    setTitle(getTitleText());
     setOKButtonText("Create");
     initControls();
 
@@ -229,7 +229,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
                                                          final boolean interactive,
                                                          final String descriptorPath,
                                                          final AirDescriptorOptions options) {
-    final VirtualFile dir = FlexUtils.createDirIfMissing(project, interactive, PathUtil.getParentPath(descriptorPath), getTITLE());
+    final VirtualFile dir = FlexUtils.createDirIfMissing(project, interactive, PathUtil.getParentPath(descriptorPath), getTitleText());
     if (dir == null) return null;
 
     final String fileName = PathUtil.getFileName(descriptorPath);
@@ -238,13 +238,13 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     if (file != null) {
       if (file.isDirectory()) {
         if (interactive) {
-          Messages.showErrorDialog(project, "Can't create AIR descriptor file.\nFolder with such name exists.", getTITLE());
+          Messages.showErrorDialog(project, "Can't create AIR descriptor file.\nFolder with such name exists.", getTitleText());
         }
         return null;
       }
       final int choice = interactive
                          ? Messages.showYesNoDialog(project, FlexBundle.message("file.exists.replace.question", fileName),
-                                                    getTITLE(), Messages.getQuestionIcon())
+                                                    getTitleText(), Messages.getQuestionIcon())
                          : Messages.YES;
       if (choice != Messages.YES) {
         return null;
@@ -271,7 +271,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     }
     catch (IOException e) {
       if (interactive) {
-        Messages.showErrorDialog(project, "Failed to create AIR descriptor file: " + e.getMessage(), getTITLE());
+        Messages.showErrorDialog(project, "Failed to create AIR descriptor file: " + e.getMessage(), getTitleText());
       }
       return null;
     }
@@ -291,7 +291,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     return "flex.CreateAirDescriptorTemplateDialog";
   }
 
-  static String getTITLE() {
+  static String getTitleText() {
     return FlexBundle.message("create.air.descriptor.template.title");
   }
 }

@@ -67,7 +67,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     myWrapperFolderComponent.getComponent()
       .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    setTitle(getTITLE());
+    setTitle(getTitleText());
     init();
   }
 
@@ -145,7 +145,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                                   final boolean enableHistory,
                                                   final boolean checkPlayerVersion,
                                                   final boolean expressInstall) {
-    final VirtualFile folder = FlexUtils.createDirIfMissing(project, true, templateFolderPath, getTITLE());
+    final VirtualFile folder = FlexUtils.createDirIfMissing(project, true, templateFolderPath, getTitleText());
     return folder != null &&
            checkIfEmpty(project, folder) &&
            doCreateWrapper(project, sdk, folder, enableHistory, checkPlayerVersion, expressInstall);
@@ -159,7 +159,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
         FlexBundle.message("folder.not.empty.keep.option"),
         FlexBundle.message("folder.not.empty.cancel.option")};
       final int choice = Messages.showDialog(project, FlexBundle.message("folder.not.empty.clear.or.overwrite"),
-                                             getTITLE(), options, 0, Messages.getWarningIcon());
+                                             getTitleText(), options, 0, Messages.getWarningIcon());
       switch (choice) {
         case 0:
           final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
@@ -178,7 +178,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
           });
 
           if (exception != null) {
-            Messages.showErrorDialog(project, FlexBundle.message("failed.to.delete", exception.getMessage()), getTITLE());
+            Messages.showErrorDialog(project, FlexBundle.message("failed.to.delete", exception.getMessage()), getTitleText());
             return false;
           }
           return true;
@@ -212,7 +212,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     final String sdkTemplatePath = sdk.getHomePath() + "/templates/" + wrapperName;
     final VirtualFile sdkTemplateFolder = LocalFileSystem.getInstance().findFileByPath(sdkTemplatePath);
     if (sdkTemplateFolder == null || !sdkTemplateFolder.isDirectory()) {
-      Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.in.sdk.not.found", sdkTemplatePath), getTITLE());
+      Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.in.sdk.not.found", sdkTemplatePath), getTitleText());
       return false;
     }
 
@@ -251,7 +251,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     });
 
     if (exception != null) {
-      Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.creation.failed", exception.getMessage()), getTITLE());
+      Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.creation.failed", exception.getMessage()), getTitleText());
       return false;
     }
 
@@ -290,7 +290,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     return "flex.CreateHtmlWrapperTemplateDialog";
   }
 
-  public static String getTITLE() {
+  public static String getTitleText() {
     return FlexBundle.message("create.html.wrapper.template.title");
   }
 }
