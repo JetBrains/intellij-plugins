@@ -155,7 +155,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     setUpJdk();
     final String testName = getTestName(false);
     doJSCallHierarchyTest(CallHierarchyBrowserBase.getCalleeType(), "pack.subpack.Class1", "someFunction",
-                          HierarchyBrowserBaseEx.getSCOPE_ALL(),
+                          HierarchyBrowserBaseEx.getScopeAll(),
                           testName + ".as", testName + ".mxml");
   }
 
