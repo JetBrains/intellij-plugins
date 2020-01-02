@@ -28,12 +28,15 @@ import aQute.bnd.build.Workspace;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.ExtensionPointUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
@@ -63,7 +66,10 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    MessageBusConnection connection = project.getMessageBus().connect();
+    Disposable activityDisposable = ExtensionPointUtil.createExtensionDisposable(this, StartupActivity.POST_STARTUP_ACTIVITY);
+    Disposer.register(project, activityDisposable);
+
+    MessageBusConnection connection = project.getMessageBus().connect(activityDisposable);
     connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       @Override
       public void facetAdded(@NotNull Facet facet) {
