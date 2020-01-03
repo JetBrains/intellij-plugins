@@ -183,11 +183,11 @@ public class KarmaExecutionSession {
       }
       return JSTestRunnerUtil.getTestsPattern(ContainerUtil.map(topNames, name -> Collections.singletonList(name)), true);
     }
-    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE) {
-      return JSTestRunnerUtil.getTestPattern(myRunSettings.getTestNames(), true);
-    }
-    if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
-      return JSTestRunnerUtil.getTestPattern(myRunSettings.getTestNames(), false);
+    if (myRunSettings.getScopeKind() == KarmaScopeKind.SUITE || myRunSettings.getScopeKind() == KarmaScopeKind.TEST) {
+      return JSTestRunnerUtil.buildTestNamesPattern(myProject,
+                                                    myRunSettings.getTestFileSystemDependentPath(),
+                                                    myRunSettings.getTestNames(),
+                                                    myRunSettings.getScopeKind() == KarmaScopeKind.SUITE);
     }
     return null;
   }
