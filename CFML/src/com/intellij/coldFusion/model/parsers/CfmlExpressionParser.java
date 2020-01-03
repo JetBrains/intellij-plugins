@@ -18,9 +18,12 @@ package com.intellij.coldFusion.model.parsers;
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
+import com.intellij.coldFusion.model.psi.CfmlElementType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
 
@@ -100,7 +103,8 @@ public class CfmlExpressionParser {
         return true;
       }
       expr.done(CfmlElementTypes.TERNARY_EXPRESSION);
-    } else if (myBuilder.getTokenType() == ELVIS) {
+    }
+    else if (myBuilder.getTokenType() == ELVIS) {
       advance();
       if (!parseExpression()) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
@@ -445,6 +449,9 @@ public class CfmlExpressionParser {
       }
       myBuilder.advanceLexer();
     }
+    if (myBuilder.getTokenType() == MUL) {
+      myBuilder.advanceLexer();
+    }
     componentReferenceMarker.done(CfmlElementTypes.COMPONENT_REFERENCE);
   }
 
@@ -619,7 +626,7 @@ public class CfmlExpressionParser {
   */
 
   private void parseAssignsList() {
-    while(true) {
+    while (true) {
       parseAssignmentExpression(true);
       if (getTokenType() != COMMA) break;
       advance();
