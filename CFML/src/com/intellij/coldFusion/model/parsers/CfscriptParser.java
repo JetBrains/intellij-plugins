@@ -24,6 +24,7 @@ import com.intellij.psi.tree.IElementType;
 
 import java.util.Objects;
 
+import static com.intellij.coldFusion.model.lexer.CfmlTokenTypes.*;
 import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
 import static com.intellij.coldFusion.model.parsers.CfmlKeywordsKt.isKeyword;
 import static com.intellij.coldFusion.model.parsers.CfmlKeywordsKt.parseKeyword;
@@ -444,14 +445,14 @@ public class CfscriptParser {
     }
     // try to parse type
     final PsiBuilder.Marker marker = myBuilder.mark();
-    if (!parseType(myBuilder) || myBuilder.getTokenType() != IDENTIFIER) {
+    if (!parseType(myBuilder) || (myBuilder.getTokenType() != IDENTIFIER && !KEYWORDS.contains(myBuilder.getTokenType()))) {
       marker.rollbackTo();
     }
     else {
       marker.drop();
     }
     // parse parameter name
-    if (myBuilder.getTokenType() == IDENTIFIER) {
+    if (myBuilder.getTokenType() == IDENTIFIER || KEYWORDS.contains(myBuilder.getTokenType())) {
       myBuilder.advanceLexer();
 
       if (myBuilder.getTokenType() == CfmlTokenTypes.ASSIGN) { // parse default value
