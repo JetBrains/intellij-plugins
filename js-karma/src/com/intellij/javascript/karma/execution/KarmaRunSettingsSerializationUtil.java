@@ -54,10 +54,8 @@ public class KarmaRunSettingsSerializationUtil {
 
     KarmaScopeKind scopeKind = readScopeKind(element);
     builder.setScopeKind(scopeKind);
-    if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      builder.setTestFilePath(JDOMExternalizerUtil.readCustomField(element, TEST_FILE_PATH));
-    }
-    else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+    builder.setTestFilePath(JDOMExternalizerUtil.readCustomField(element, TEST_FILE_PATH));
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       builder.setTestNames(readTestNames(element));
     }
 
@@ -108,10 +106,11 @@ public class KarmaRunSettingsSerializationUtil {
     if (scopeKind != KarmaScopeKind.ALL) {
       JDOMExternalizerUtil.writeCustomField(element, SCOPE_KIND, scopeKind.name());
     }
-    if (scopeKind == KarmaScopeKind.TEST_FILE) {
-      JDOMExternalizerUtil.writeCustomField(element, TEST_FILE_PATH, settings.getTestFileSystemIndependentPath());
+    String testFilePath = settings.getTestFileSystemIndependentPath();
+    if (StringUtil.isNotEmpty(testFilePath)) {
+      JDOMExternalizerUtil.writeCustomField(element, TEST_FILE_PATH, testFilePath);
     }
-    else if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
+    if (scopeKind == KarmaScopeKind.SUITE || scopeKind == KarmaScopeKind.TEST) {
       Element testNamesElement = new Element(TEST_NAMES);
       if (!settings.getTestNames().isEmpty()) {
         JDOMExternalizerUtil.addChildrenWithValueAttribute(testNamesElement, TEST_NAME, settings.getTestNames());
