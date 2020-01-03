@@ -47,11 +47,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.jetbrains.osgi.jps.model.OutputPathType;
 import org.jetbrains.osgi.jps.util.OrderedProperties;
-import org.osmorc.OsmorcProjectComponent;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
+import org.osmorc.util.OsgiUiUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -151,7 +151,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
       }
       else {
         String message = "The configuration at least one OSGi facet is invalid and has been reset. Please check your facet settings!";
-        OsmorcProjectComponent.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
+        OsgiUiUtil.IMPORTANT_NOTIFICATIONS.createNotification(message, NotificationType.WARNING).notify(myFacet.getModule().getProject());
       }
     }
     else {

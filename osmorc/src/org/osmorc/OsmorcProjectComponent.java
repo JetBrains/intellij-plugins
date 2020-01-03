@@ -43,9 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public final class OsmorcProjectComponent {
-  public static final NotificationGroup IMPORTANT_NOTIFICATIONS =
-    new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
-
   private final Project myProject;
   private final MergingUpdateQueue myQueue;
   private final AtomicBoolean myReimportNotification = new AtomicBoolean(false);
