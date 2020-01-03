@@ -635,6 +635,26 @@ public class CfscriptParser {
       typeMarker.done(CfmlElementTypes.TYPE);
     }
     else {
+      if (STRING_ELEMENTS.contains(myBuilder.getTokenType())) {
+        final PsiBuilder.Marker stringMarker = myBuilder.mark();
+        myBuilder.advanceLexer();
+        if (myBuilder.getTokenType() != STRING_TEXT) {
+          stringMarker.rollbackTo();
+          myBuilder.error(CfmlBundle.message("cfml.parsing.string.expected"));
+          return false;
+        }
+        final PsiBuilder.Marker typeMarker = myBuilder.mark();
+        myBuilder.advanceLexer();
+        typeMarker.done(CfmlElementTypes.TYPE);
+        if (!STRING_ELEMENTS.contains(myBuilder.getTokenType())) {
+          stringMarker.rollbackTo();
+          myBuilder.error(CfmlBundle.message("cfml.parsing.string.expected"));
+          return false;
+        }
+        myBuilder.advanceLexer();
+        stringMarker.done(CfmlElementTypes.STRING_LITERAL);
+        return true;
+      }
       if (myBuilder.getTokenType() != IDENTIFIER) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.type.expected"));
         return false;
