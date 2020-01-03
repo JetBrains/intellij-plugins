@@ -18,10 +18,14 @@ class CfqueryEscaper(tag: CfmlTagImpl) : LiteralTextEscaper<CfmlTagImpl>(tag) {
 
   //exclude cfquery tags from TextRange
   override fun getRelevantTextRange(): TextRange {
-    val startOffset = Regex("<cfquery[^>]*>").find(myHost.text)!!.range.endInclusive + 1
-    val closeTagOffset = Regex("</cfquery[^>]*>").find(myHost.text) ?: return TextRange(startOffset, startOffset)
-    val endOffset = closeTagOffset.range.start
-    return TextRange(startOffset, endOffset)
+    try {
+      val startOffset = Regex("<cfquery[^>]*>").find(myHost.text)!!.range.endInclusive + 1
+      val closeTagOffset = Regex("</cfquery[^>]*>").find(myHost.text) ?: return TextRange(startOffset, startOffset)
+      val endOffset = closeTagOffset.range.start
+      return TextRange(startOffset, endOffset)
+    } catch (e: KotlinNullPointerException) {
+      return TextRange(0, 0)
+    }
   }
 
 }
