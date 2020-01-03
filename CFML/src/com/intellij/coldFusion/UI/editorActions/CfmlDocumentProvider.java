@@ -2,6 +2,8 @@
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.coldFusion.model.CfmlUtil;
+import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlFunction;
 import com.intellij.coldFusion.model.psi.CfmlTag;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlAttributeNameImpl;
@@ -21,7 +23,17 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
 
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
-    if (element instanceof CfmlAttributeImpl && element.getParent() instanceof CfmlTag) {
+    if (element instanceof CfmlComponent) {
+      return CfmlUtil.getComponentDescription((CfmlComponent)element, element.getProject());
+    }
+    else if (element instanceof CfmlFunction) {
+      try{
+        return CfmlUtil.getFunctionDescription((CfmlFunction)element, element.getProject());
+      } catch (Exception e) {
+        System.err.println("error");
+      }
+    }
+    else if (element instanceof CfmlAttributeImpl && element.getParent() instanceof CfmlTag) {
       String tagName = StringUtil.toLowerCase(((CfmlTag)element.getParent()).getTagName());
       String attributeName = (element instanceof CfmlAttributeNameImpl) ?
                              "name" :

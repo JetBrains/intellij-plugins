@@ -85,6 +85,19 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
            new CfmlComponentType(type.getText(), getContainingFile(), getProject()) : null;
   }
 
+  @Nullable
+  @Override
+  public String getDescription() {
+    PsiElement previousSibling = getPrevSibling();
+    while (previousSibling instanceof PsiWhiteSpace) {
+      previousSibling = previousSibling.getPrevSibling();
+    }
+    if (!(previousSibling instanceof PsiComment)) {
+      return null;
+    }
+    return previousSibling.getText();
+  }
+
   @Override
   public Icon getIcon(int flags) {
     return PlatformIcons.METHOD_ICON;

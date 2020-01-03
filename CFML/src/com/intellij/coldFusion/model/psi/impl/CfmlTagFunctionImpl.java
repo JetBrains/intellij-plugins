@@ -45,6 +45,12 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   }
 
   @Override
+  @Nullable
+  public String getDescription() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "hint");
+  }
+
+  @Override
   public Icon getIcon(int flags) {
     String access = CfmlPsiUtil.getPureAttributeValue(this, "access");
     if (access == null) {

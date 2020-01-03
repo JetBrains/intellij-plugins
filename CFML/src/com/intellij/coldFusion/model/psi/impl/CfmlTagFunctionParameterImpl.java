@@ -2,6 +2,7 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
 import com.intellij.coldFusion.model.psi.CfmlParameter;
 import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.coldFusion.model.psi.CfmlVariable;
@@ -15,6 +16,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlParameter, CfmlVariable {
   public final static String TAG_NAME = "cfargument";
@@ -43,6 +45,12 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     return "";
   }
 
+  @Nullable
+  @Override
+  public String getDescription() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "hint");
+  }
+
   @Override
   public boolean isRequired() {
     String requiredAttr = CfmlPsiUtil.getPureAttributeValue(this, "required");
@@ -56,6 +64,11 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
   @Override
   public String getType() {
     return CfmlPsiUtil.getPureAttributeValue(this, "type");
+  }
+  
+  @Override
+  public String getDefault() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "default");
   }
 
   @Override
@@ -97,7 +110,9 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
 
   @Override
   public PsiType getPsiType() {
-    return null;
+    final String returnTypeString = this.getType();
+    return returnTypeString != null ?
+           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @Override

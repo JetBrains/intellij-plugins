@@ -5,6 +5,7 @@ package com.intellij.coldFusion.model.psi.impl;
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
 import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
 import com.intellij.coldFusion.model.psi.CfmlParameter;
 import com.intellij.coldFusion.model.psi.CfmlVariable;
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
@@ -32,7 +34,9 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
 
   @Override
   public PsiType getPsiType() {
-    return null;
+    final String returnTypeString = this.getType();
+    return returnTypeString != null ?
+           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull
@@ -43,6 +47,12 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
       return parameterName.getText();
     }
     return "";
+  }
+
+  @Nullable
+  @Override
+  public String getDescription() {
+    return null;
   }
 
   @Override
@@ -56,6 +66,14 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     final PsiElement typeElement = findChildByType(CfmlElementTypes.TYPE);
     if (typeElement != null) {
       return typeElement.getText();
+    }
+    return null;
+  }
+  
+  public String getDefault() {
+    final PsiElement defaultElement = findChildByType(CfmlElementTypes.VALUE);
+    if (defaultElement != null) {
+      return defaultElement.getText();
     }
     return null;
   }

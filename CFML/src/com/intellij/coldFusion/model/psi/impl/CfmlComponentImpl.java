@@ -16,6 +16,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
@@ -40,6 +41,12 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
       return nameElement.getText();
     }
     return "";
+  }
+
+  @Nullable
+  @Override
+  public String getDescription() {
+    return null;
   }
 
   @Override

@@ -132,9 +132,14 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     PsiType returnType = function.getReturnType();
     CfmlFunctionDescription functionInfo = new CfmlFunctionDescription(function.getName(),
                                                                        returnType != null ? returnType.getCanonicalText() : null);
+
+    functionInfo.setDescription(function.getDescription());
     CfmlParameter[] params = function.getParameters();
     for (CfmlParameter param : params) {
-      functionInfo.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(param.getName(), param.getType(), param.isRequired()));
+      CfmlFunctionDescription.CfmlParameterDescription description =
+        new CfmlFunctionDescription.CfmlParameterDescription(param.getName(), param.getType(), param.getDefault(), param.isRequired());
+      description.setDescription(param.getDescription());
+      functionInfo.addParameter(description);
     }
     return functionInfo;
   }
