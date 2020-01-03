@@ -643,11 +643,31 @@ public class CfmlExpressionParser {
       parseComponentReference();
     }
     else {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.identifier.expected"));
+      newExpression.rollbackTo();
+      return false;
     }
     parseArgumentsList();
     constructorCall.done(CfmlElementTypes.COMPONENT_CONSTRUCTOR_CALL);
     newExpression.done(CfmlElementTypes.NEW_EXPRESSION);
+    while (getTokenType() == POINT) {
+      PsiBuilder.Marker expr = newExpression.precede();
+      advance();
+      if (getTokenType() == IDENTIFIER) {
+        advance();
+        if (getTokenType() == L_BRACKET) {
+          expr.done(CfmlElementTypes.REFERENCE_EXPRESSION);
+          PsiBuilder.Marker functionExpr = expr.precede();
+          if (!parseArgumentsList()) {
+            expr.rollbackTo();
+            break;
+          }
+          functionExpr.done(CfmlElementTypes.FUNCTION_CALL_EXPRESSION);
+        }
+      } else {
+        expr.rollbackTo();
+        break;
+      }
+    }
     return true;
   }
 
