@@ -42,10 +42,11 @@ PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 VARIABLE_USAGE_EXPR="$("[^ $)]*")"
+VARIABLE_USAGE_CURLY_EXPR="${"[^ $}]*"}"
 FILENAME=[^:=!?#$)\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES ELSE INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION FUNCTION_PREREQ EXPORT EXPORTVAR
+%state ELSE INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
 
 %%
 
@@ -60,14 +61,6 @@ CONDITION_CHARACTER=[^#\r\n]
   [^$)]*        { return FUNCTION_PARAM_TEXT; }
   {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
   {EOL}         { yybegin(YYINITIAL); return EOL; }
-}
-
-<FUNCTION_PREREQ> {
-  {FUNCTIONS}   { return FUNCTION_NAME; }
-  ")"           { yybegin(PREREQUISITES); return FUNCTION_END; }
-  [^$)]*        { return FUNCTION_PARAM_TEXT; }
-  {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
-  {EOL}         { yybegin(PREREQUISITES); return EOL; }
 }
 
 <YYINITIAL> {
@@ -101,6 +94,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {FUNCTIONS}        { return FUNCTION_NAME; }
     ")"                { yybegin(YYINITIAL); return FUNCTION_END; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
+    {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME}              { return IDENTIFIER; }
 }
 
@@ -108,25 +102,6 @@ CONDITION_CHARACTER=[^#\r\n]
     {EOL}              { yybegin(YYINITIAL); return EOL; }
     {SPACES}           { return WHITE_SPACE; }
     [^]                { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
-}
-
-<PREREQUISITES> {
-    ^\t+                    { yybegin(SOURCE); return TAB; }
-    "$("                    { yybegin(FUNCTION_PREREQ); return FUNCTION_START; }
-    "override"              { yybegin(YYINITIAL); return KEYWORD_OVERRIDE; }
-    "export"                { yybegin(YYINITIAL); return KEYWORD_EXPORT; }
-    "private"               { yybegin(YYINITIAL); return KEYWORD_PRIVATE; }
-    {ASSIGN}                { yybegin(SOURCE); return ASSIGN; }
-    {BACKSLASHCRLF}         { return SPLIT; }
-    {PIPE}                  { return PIPE; }
-    {DOUBLECOLON}           { return DOUBLECOLON; }
-    {COLON}                 { return COLON; }
-    {SEMICOLON}             { yybegin(SOURCE_FORCED); return SEMICOLON; }
-    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
-    {FILENAME}              { return IDENTIFIER; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
 }
 
 <INCLUDES> {
