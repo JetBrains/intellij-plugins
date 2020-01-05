@@ -66,13 +66,13 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
 
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final HierarchyScopeType typeName, @NotNull final PsiElement psiElement) {
-    if (getSupertypesHierarchyType().equals(typeName)) {
+    if (getSupertypesHierarchyType() == typeName) {
       return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
     }
-    else if (getSubtypesHierarchyType().equals(typeName)) {
+    else if (getSubtypesHierarchyType() == typeName) {
       return new DartServerSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
-    else if (getTypeHierarchyType().equals(typeName)) {
+    else if (getTypeHierarchyType() == typeName) {
       return new DartServerTypeHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
     else {

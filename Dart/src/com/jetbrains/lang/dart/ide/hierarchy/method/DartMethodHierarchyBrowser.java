@@ -66,7 +66,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   @Nullable
   @Override
   protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull HierarchyScopeType type, @NotNull PsiElement psiElement) {
-    if (!getMethodType().equals(type)) {
+    if (getMethodType() != type) {
       LOG.error("unexpected type: " + type);
       return null;
     }
