@@ -286,9 +286,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // define|include|undefine|override|export|privatevar|vpath
-  static boolean directive(PsiBuilder b, int l) {
+  public static boolean directive(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "directive")) return false;
     boolean r;
+    Marker m = enter_section_(b, l, _NONE_, DIRECTIVE, "<directive>");
     r = define(b, l + 1);
     if (!r) r = include(b, l + 1);
     if (!r) r = undefine(b, l + 1);
@@ -296,6 +297,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = export(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
     if (!r) r = vpath(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

@@ -1,9 +1,11 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface MakefileBlock extends PsiElement {
 
@@ -14,36 +16,18 @@ public interface MakefileBlock extends PsiElement {
   List<MakefileConditional> getConditionalList();
 
   @NotNull
-  List<MakefileDefine> getDefineList();
+  List<MakefileDirective> getDirectiveList();
 
   @Nullable
   MakefileEmptyCommand getEmptyCommand();
 
   @NotNull
-  List<MakefileExport> getExportList();
-
-  @NotNull
   List<MakefileFunction> getFunctionList();
-
-  @NotNull
-  List<MakefileInclude> getIncludeList();
-
-  @NotNull
-  List<MakefileOverride> getOverrideList();
-
-  @NotNull
-  List<MakefilePrivatevar> getPrivatevarList();
 
   @NotNull
   List<MakefileRule> getRuleList();
 
   @NotNull
-  List<MakefileUndefine> getUndefineList();
-
-  @NotNull
   List<MakefileVariableAssignment> getVariableAssignmentList();
-
-  @NotNull
-  List<MakefileVpath> getVpathList();
 
 }
