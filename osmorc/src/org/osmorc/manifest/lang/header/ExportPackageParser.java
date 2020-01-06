@@ -24,7 +24,7 @@
  */
 package org.osmorc.manifest.lang.header;
 
-import com.intellij.codeInsight.daemon.JavaErrorMessages;
+import com.intellij.codeInsight.daemon.JavaErrorBundle;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
@@ -120,7 +120,7 @@ public class ExportPackageParser extends BasePackageParser {
               PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
               if (directories.length == 0) {
                 TextRange highlight = adjust(range, text).shiftRight(offset);
-                holder.createErrorAnnotation(highlight, JavaErrorMessages.message("cannot.resolve.package", packageName));
+                holder.createErrorAnnotation(highlight, JavaErrorBundle.message("cannot.resolve.package", packageName));
                 annotated = true;
               }
             }

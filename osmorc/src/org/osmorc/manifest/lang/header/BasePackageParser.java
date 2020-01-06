@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.manifest.lang.header;
 
-import com.intellij.codeInsight.daemon.JavaErrorMessages;
+import com.intellij.codeInsight.daemon.JavaErrorBundle;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -57,7 +57,7 @@ public class BasePackageParser extends OsgiHeaderParser {
 
           PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
           if (directories.length == 0) {
-            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorMessages.message("cannot.resolve.package", packageName));
+            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorBundle.message("cannot.resolve.package", packageName));
             annotated = true;
           }
         }
