@@ -46,7 +46,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
                                               SMRunnerConsolePropertiesProvider {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
-  private boolean myWorkingDirectoryDetected = false;
 
   protected KarmaRunConfiguration(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull String name) {
     super(project, factory, name);
@@ -159,8 +158,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
   }
 
   private void detectWorkingDirectoryIfNeeded() {
-    if (!myWorkingDirectoryDetected
-        && StringUtil.isEmptyOrSpaces(myRunSettings.getWorkingDirectorySystemDependent())
+    if (StringUtil.isEmptyOrSpaces(myRunSettings.getWorkingDirectorySystemDependent())
         && !getProject().isDefault()
         && !RunManager.getInstance(getProject()).isTemplate(this)) {
       String configPath = myRunSettings.getConfigPathSystemIndependent();
@@ -168,7 +166,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
       String workingDirectory = workingDir != null ? workingDir.getPath() : PathUtil.getParentPath(configPath);
       myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDirectory).build();
     }
-    myWorkingDirectoryDetected = true;
   }
 
   @Nullable
@@ -186,7 +183,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
   }
 
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
-    detectWorkingDirectoryIfNeeded();
     NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
     karmaPackage.validateForRunConfiguration(KarmaUtil.KARMA_PACKAGE_NAME);
     validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
@@ -212,7 +208,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
 
   @NotNull
   public KarmaRunSettings getRunSettings() {
-    detectWorkingDirectoryIfNeeded();
     return myRunSettings;
   }
 
