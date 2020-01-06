@@ -3,7 +3,7 @@ package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
+import com.intellij.codeInsight.daemon.XmlErrorBundle;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -345,7 +345,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
-      return XmlErrorMessages.message("wrong.value", "attribute");
+      return XmlErrorBundle.message("wrong.value", "attribute");
     }
   }
 }

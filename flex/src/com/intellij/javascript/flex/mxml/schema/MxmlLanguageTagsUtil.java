@@ -3,7 +3,7 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
+import com.intellij.codeInsight.daemon.XmlErrorBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -150,7 +149,7 @@ public class MxmlLanguageTagsUtil {
     }
 
     if (tag.getAttribute(NAME_ATTRIBUTE) == null) {
-      addErrorMessage(tag, XmlErrorMessages.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
+      addErrorMessage(tag, XmlErrorBundle.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
       return;
     }
 
@@ -162,7 +161,7 @@ public class MxmlLanguageTagsUtil {
 
   static void validateFxReparentTag(final XmlTag tag, final Validator.ValidationHost host) {
     if (tag.getAttribute(CodeContext.TARGET_ATTR_NAME) == null) {
-      addErrorMessage(tag, XmlErrorMessages.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
+      addErrorMessage(tag, XmlErrorBundle.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
                       host);
       return;
     }
@@ -316,7 +315,7 @@ public class MxmlLanguageTagsUtil {
     @Override
     @NotNull
     public String getFamilyName() {
-      return XmlErrorMessages.message("remove.attribute.quickfix.family");
+      return XmlErrorBundle.message("remove.attribute.quickfix.family");
     }
 
     @Override

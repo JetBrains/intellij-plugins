@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.parser;
 
-import com.intellij.codeInsight.daemon.XmlErrorMessages;
+import com.intellij.codeInsight.daemon.XmlErrorBundle;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.html.HtmlParsing;
 import com.intellij.psi.tree.ICustomParsingType;
@@ -64,7 +64,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         xmlText = startText(xmlText);
         final PsiBuilder.Marker error = mark();
         advance();
-        error.error(XmlErrorMessages.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+        error.error(XmlErrorBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
       }
       else if (tt == XmlTokenType.XML_END_TAG_START) {
         final PsiBuilder.Marker tagEndError = mark();
@@ -77,7 +77,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
           }
         }
 
-        tagEndError.error(XmlErrorMessages.message("xml.parsing.closing.tag.matches.nothing"));
+        tagEndError.error(XmlErrorBundle.message("xml.parsing.closing.tag.matches.nothing"));
       }
       else if (tt instanceof ICustomParsingType || tt instanceof ILazyParseableElementType) {
         xmlText = terminateText(xmlText);
@@ -231,7 +231,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         if (tt == XmlTokenType.XML_BAD_CHARACTER) {
           final PsiBuilder.Marker error = mark();
           advance();
-          error.error(XmlErrorMessages.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
+          error.error(XmlErrorBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"));
         }
         else if (tt == XmlTokenType.XML_ENTITY_REF_TOKEN) {
           parseReference();
@@ -252,7 +252,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         advance();
       }
       else {
-        error(XmlErrorMessages.message("xml.parsing.unclosed.attribute.value"));
+        error(XmlErrorBundle.message("xml.parsing.unclosed.attribute.value"));
       }
     }
     else {
