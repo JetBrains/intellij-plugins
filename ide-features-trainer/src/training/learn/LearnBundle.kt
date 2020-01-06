@@ -6,12 +6,11 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 
 @NonNls
-private const val BUNDLE = "training.learn.LearnBundle"
+private const val BUNDLE = "messages.LearnBundle"
 
 open class BundlePlace(val bundleAppendix: String)
 
 object LearnBundle : DynamicBundle(BUNDLE) {
-
   fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 
   fun messageInPlace(@PropertyKey(resourceBundle = BUNDLE) key: String, bundlePlace: BundlePlace, vararg params: Any): String =
