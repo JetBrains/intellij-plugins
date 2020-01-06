@@ -24,8 +24,9 @@
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
     <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
     <localInspection groupPath="JavaScript and TypeScript"
-                     groupName="Unit testing"
-                     displayName="Karma configuration file"
+                     groupBundle="messages.JavaScriptBundle" groupKey="js.testing.inspection.group.name"
+                     key="inspection.karma.config"
+                     bundle="com.intellij.javascript.karma.KarmaBundle"
                      shortName="KarmaConfigFile"
                      enabledByDefault="true"
                      level="WARNING"
@@ -38,5 +39,4 @@
   <extensions defaultExtensionNs="JavaScript">
     <runConfigurationBuilder implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationBuilder"/>
   </extensions>
-
 </idea-plugin>
