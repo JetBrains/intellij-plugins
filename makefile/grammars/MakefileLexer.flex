@@ -95,7 +95,8 @@ CONDITION_CHARACTER=[^#\r\n]
     ")"                { yybegin(YYINITIAL); return FUNCTION_END; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
-    {FILENAME}              { return IDENTIFIER; }
+    {FILENAME}         { return IDENTIFIER; }
+    "!"                { return IDENTIFIER; }
 }
 
 <ELSE> {
