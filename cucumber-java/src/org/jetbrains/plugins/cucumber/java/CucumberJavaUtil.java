@@ -23,6 +23,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Query;
 import com.intellij.util.text.VersionComparatorUtil;
+import com.siyeh.ig.callMatcher.CallMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -60,6 +61,9 @@ public class CucumberJavaUtil {
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
   public static final String CUCUMBER_4_5_MAIN_CLASS = "io.cucumber.core.cli.Main";
 
+  private static final CallMatcher FROM_ENUM_METHOD = CallMatcher.anyOf(
+    CallMatcher.staticCall("io.cucumber.cucumberexpressions.ParameterType", "fromEnum")
+  );
 
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
@@ -361,9 +365,7 @@ public class CucumberJavaUtil {
   private static void processParameterTypeMethodDeclaration(@NotNull Map<String, String> values,
                                                             @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
                                                             @NotNull PsiMethodCallExpression call) {
-    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(call.getProject());
-
-    if (!call.getMethodExpression().getQualifiedName().equals("ParameterType.fromEnum")) {
+    if (!FROM_ENUM_METHOD.matches(call)) {
       return;
     }
     PsiExpression[] arguments = call.getArgumentList().getExpressions();
@@ -377,22 +379,19 @@ public class CucumberJavaUtil {
     PsiClassObjectAccessExpression objectAccessExpression = (PsiClassObjectAccessExpression)enumClass;
     PsiClass psiClass = PsiUtil.resolveClassInClassTypeOnly(objectAccessExpression.getOperand().getType());
 
-    if (psiClass == null || !psiClass.isEnum()) {
+    if (psiClass == null || !psiClass.isEnum() || psiClass.getName() == null) {
       return;
     }
     String regex = Arrays.stream(psiClass.getFields()).map(f -> f.getName()).collect(Collectors.joining("|"));
 
     values.put(psiClass.getName(), regex);
 
-    SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(psiClass);
-    declarations.put(psiClass.getName(), smartPointer);
+    declarations.put(psiClass.getName(), SmartPointerManager.createPointer(psiClass));
   }
 
   private static void processParameterTypeFromConstructor(@NotNull Map<String, String> values,
                                                           @NotNull Map<String, SmartPsiElementPointer<PsiElement>> declarations,
                                                           @NotNull PsiNewExpression newExpression) {
-    SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(newExpression.getProject());
-
     PsiExpressionList arguments = newExpression.getArgumentList();
     if (arguments == null) {
       return;
@@ -416,8 +415,7 @@ public class CucumberJavaUtil {
       String value = constantValue.toString();
       values.put(name, value);
 
-      SmartPsiElementPointer<PsiElement> smartPointer = smartPointerManager.createSmartPsiElementPointer(expressions[0]);
-      declarations.put(name, smartPointer);
+      declarations.put(name, SmartPointerManager.createPointer(expressions[0]));
   }
 
   /**
