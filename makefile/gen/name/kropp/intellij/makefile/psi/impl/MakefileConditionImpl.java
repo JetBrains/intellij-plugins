@@ -5,22 +5,22 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileBlock;
 import name.kropp.intellij.makefile.psi.MakefileCondition;
-import name.kropp.intellij.makefile.psi.MakefileConditional;
+import name.kropp.intellij.makefile.psi.MakefileFunction;
+import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MakefileConditionalImpl extends ASTWrapperPsiElement implements MakefileConditional {
+public class MakefileConditionImpl extends ASTWrapperPsiElement implements MakefileCondition {
 
-  public MakefileConditionalImpl(@NotNull ASTNode node) {
+  public MakefileConditionImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitConditional(this);
+    visitor.visitCondition(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -30,14 +30,14 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
 
   @Override
   @NotNull
-  public List<MakefileBlock> getBlockList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileBlock.class);
+  public List<MakefileFunction> getFunctionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
   }
 
   @Override
   @NotNull
-  public List<MakefileCondition> getConditionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileCondition.class);
+  public List<MakefileVariableUsage> getVariableUsageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }
 
 }

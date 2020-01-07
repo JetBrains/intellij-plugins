@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -45,9 +44,9 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
   }
 
   @Override
-  @Nullable
-  public MakefileEmptyCommand getEmptyCommand() {
-    return PsiTreeUtil.getChildOfType(this, MakefileEmptyCommand.class);
+  @NotNull
+  public List<MakefileEmptyCommand> getEmptyCommandList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileEmptyCommand.class);
   }
 
   @Override

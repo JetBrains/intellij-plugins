@@ -20,6 +20,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitCondition(@NotNull MakefileCondition o) {
+    visitPsiElement(o);
+  }
+
   public void visitConditional(@NotNull MakefileConditional o) {
     visitPsiElement(o);
   }

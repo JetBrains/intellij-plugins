@@ -3,7 +3,6 @@ package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -18,8 +17,8 @@ public interface MakefileBlock extends PsiElement {
   @NotNull
   List<MakefileDirective> getDirectiveList();
 
-  @Nullable
-  MakefileEmptyCommand getEmptyCommand();
+  @NotNull
+  List<MakefileEmptyCommand> getEmptyCommandList();
 
   @NotNull
   List<MakefileFunction> getFunctionList();

@@ -1,5 +1,6 @@
 Makefile
-  PsiComment(COMMENT)('# ↓ occurred\n')
+  PsiComment(COMMENT)('# ↓ occurred')
+  PsiElement(EOL)('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
     MakefileVariableImpl(VARIABLE)
       PsiElement(identifier)('FAIL_VAL')

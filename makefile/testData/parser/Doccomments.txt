@@ -1,6 +1,6 @@
 Makefile
-  PsiComment(COMMENT)('# Self-Document Makefile\n')
-  PsiElement(EOL)('\n')
+  PsiComment(COMMENT)('# Self-Document Makefile')
+  PsiElement(EOL)('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

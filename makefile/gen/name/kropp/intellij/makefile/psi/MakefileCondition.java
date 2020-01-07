@@ -6,12 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface MakefileConditional extends PsiElement {
+public interface MakefileCondition extends PsiElement {
 
   @NotNull
-  List<MakefileBlock> getBlockList();
+  List<MakefileFunction> getFunctionList();
 
   @NotNull
-  List<MakefileCondition> getConditionList();
+  List<MakefileVariableUsage> getVariableUsageList();
 
 }

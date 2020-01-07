@@ -68,7 +68,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // any+|empty_command?
+  // any+|empty_command*
   public static boolean block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block")) return false;
     boolean r;
@@ -94,10 +94,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // empty_command?
+  // empty_command*
   private static boolean block_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block_1")) return false;
-    empty_command(b, l + 1);
+    while (true) {
+      int c = current_position_(b);
+      if (!empty_command(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "block_1", c)) break;
+    }
     return true;
   }
 
@@ -137,26 +141,77 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional-keyword condition EOL? block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
+  // ('(' (condition-body|',')* ')') | condition-body
+  public static boolean condition(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, CONDITION, "<condition>");
+    r = condition_0(b, l + 1);
+    if (!r) r = condition_body(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '(' (condition-body|',')* ')'
+  private static boolean condition_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, OPEN_BRACE);
+    r = r && condition_0_1(b, l + 1);
+    r = r && consumeToken(b, FUNCTION_END);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (condition-body|',')*
+  private static boolean condition_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_0_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!condition_0_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "condition_0_1", c)) break;
+    }
+    return true;
+  }
+
+  // condition-body|','
+  private static boolean condition_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_0_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = condition_body(b, l + 1);
+    if (!r) r = consumeToken(b, COMMA);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // identifier|variable-usage|function|string
+  static boolean condition_body(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_body")) return false;
+    boolean r;
+    r = consumeToken(b, IDENTIFIER);
+    if (!r) r = variable_usage(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = consumeToken(b, STRING);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // conditional-keyword condition EOL block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITIONAL, "<conditional>");
     r = conditional_keyword(b, l + 1);
-    r = r && consumeToken(b, CONDITION);
-    r = r && conditional_2(b, l + 1);
+    r = r && condition(b, l + 1);
+    r = r && consumeToken(b, EOL);
     r = r && block(b, l + 1);
     r = r && conditional_4(b, l + 1);
     r = r && consumeToken(b, KEYWORD_ENDIF);
     exit_section_(b, l, m, r, false, null);
     return r;
-  }
-
-  // EOL?
-  private static boolean conditional_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "conditional_2")) return false;
-    consumeToken(b, EOL);
-    return true;
   }
 
   // ('else' (conditional-keyword condition block | EOL? block))*
@@ -198,7 +253,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = conditional_keyword(b, l + 1);
-    r = r && consumeToken(b, CONDITION);
+    r = r && condition(b, l + 1);
     r = r && block(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
@@ -327,20 +382,38 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '\t'+
+  // '\t'+ EOL?
   public static boolean empty_command(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "empty_command")) return false;
     if (!nextTokenIs(b, TAB)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = empty_command_0(b, l + 1);
+    r = r && empty_command_1(b, l + 1);
+    exit_section_(b, m, EMPTY_COMMAND, r);
+    return r;
+  }
+
+  // '\t'+
+  private static boolean empty_command_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "empty_command_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, TAB);
     while (r) {
       int c = current_position_(b);
       if (!consumeToken(b, TAB)) break;
-      if (!empty_element_parsed_guard_(b, "empty_command", c)) break;
+      if (!empty_element_parsed_guard_(b, "empty_command_0", c)) break;
     }
-    exit_section_(b, m, EMPTY_COMMAND, r);
+    exit_section_(b, m, null, r);
     return r;
+  }
+
+  // EOL?
+  private static boolean empty_command_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "empty_command_1")) return false;
+    consumeToken(b, EOL);
+    return true;
   }
 
   /* ********************************************************** */
@@ -493,7 +566,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string|function-param-text|variable-usage|identifier|':'|function-name|function
+  // string|function-param-text|variable-usage|identifier|':'|','|function-name|function
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
     boolean r;
@@ -503,6 +576,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = variable_usage(b, l + 1);
     if (!r) r = consumeToken(b, IDENTIFIER);
     if (!r) r = consumeToken(b, COLON);
+    if (!r) r = consumeToken(b, COMMA);
     if (!r) r = function_name(b, l + 1);
     if (!r) r = function(b, l + 1);
     exit_section_(b, m, FUNCTION_PARAM, r);

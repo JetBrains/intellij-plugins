@@ -26,8 +26,8 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 EOL=[\r\n]+
 SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)(" "|\t)*
-DOCCOMMENT="##"[^\r\n]*\n?
-COMMENT="#"[^\r\n]*\n?
+DOCCOMMENT="##"[^\r\n]*
+COMMENT="#"[^\r\n]*
 MULTILINECOMMENT="#"[^\r\n\\]*("\\"\r?\n[^\r\n\\]*)+
 FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"pathsubst"|"strip"|"findstring"|
   "filter"|"filter-out"|"sort"|"word"|"wordlist"|"words"|"firstword"|"lastword"|"dir"|"notdir"|"suffix"|
@@ -39,16 +39,17 @@ SOURCE_CODE=[^\r\n#]*[^\\\r\n#]
 COLON=":"
 DOUBLECOLON="::"
 SEMICOLON=";"
+COMMA=","
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 VARIABLE_USAGE_EXPR="$("[^ $)]*")"
 VARIABLE_USAGE_CURLY_EXPR="${"[^ $}]*"}"
 STRING="\""[^\"]*"\""
-FILENAME=[^:=!?#$\")\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
+FILENAME=[^:=!?#$\",()\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
 CONDITION_CHARACTER=[^#\r\n]
 
-%state ELSE INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
+%state INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
 
 %%
 
@@ -72,6 +73,7 @@ CONDITION_CHARACTER=[^#\r\n]
     {SPACES}           { return WHITE_SPACE; }
     {DOUBLECOLON}      { return DOUBLECOLON; }
     {COLON}            { return COLON; }
+    {COMMA}            { return COMMA; }
     {ASSIGN}           { yybegin(SOURCE); return ASSIGN; }
     {BACKSLASHCRLF}    { return SPLIT; }
     {PIPE}             { return PIPE; }
@@ -82,28 +84,23 @@ CONDITION_CHARACTER=[^#\r\n]
     "vpath"            { return KEYWORD_VPATH; }
     "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
     "undefine"         { yybegin(INCLUDES); return KEYWORD_UNDEFINE; }
-    "ifeq"             { yybegin(CONDITIONALS); return KEYWORD_IFEQ; }
-    "ifneq"            { yybegin(CONDITIONALS); return KEYWORD_IFNEQ; }
-    "ifdef"            { yybegin(CONDITIONALS); return KEYWORD_IFDEF; }
-    "ifndef"           { yybegin(CONDITIONALS); return KEYWORD_IFNDEF; }
-    "else"             { yybegin(ELSE); return KEYWORD_ELSE; }
+    "ifeq"             { return KEYWORD_IFEQ; }
+    "ifneq"            { return KEYWORD_IFNEQ; }
+    "ifdef"            { return KEYWORD_IFDEF; }
+    "ifndef"           { return KEYWORD_IFNDEF; }
+    "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
     "export"           { yybegin(EXPORT); return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
     "$("               { return FUNCTION_START; }
     {FUNCTIONS}        { return FUNCTION_NAME; }
-    ")"                { yybegin(YYINITIAL); return FUNCTION_END; }
+    "("                { return OPEN_BRACE; }
+    ")"                { return FUNCTION_END; }
     {STRING}           { return STRING; }
     {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME}         { return IDENTIFIER; }
     "!"                { return IDENTIFIER; }
-}
-
-<ELSE> {
-    {EOL}              { yybegin(YYINITIAL); return EOL; }
-    {SPACES}           { return WHITE_SPACE; }
-    [^]                { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
 }
 
 <INCLUDES> {

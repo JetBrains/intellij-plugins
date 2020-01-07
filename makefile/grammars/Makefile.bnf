@@ -16,6 +16,7 @@
     COLON = ":"
     DOUBLECOLON = "::"
     SEMICOLON = ";"
+    COMMA = ","
     ASSIGN = "="
     PIPE = "|"
     KEYWORD_INCLUDE = "include"
@@ -34,6 +35,7 @@
     KEYWORD_VPATH = "vpath"
 
     FUNCTION_START = "$("
+    OPEN_BRACE = "("
     FUNCTION_END = ")"
   ]
 
@@ -52,7 +54,7 @@ command ::= '\t'+ multiline
 inline_command ::= multiline
 private multiline ::= split* line (split line?)*
 private line ::= (variable-usage|text)+
-empty_command ::= '\t'+
+empty_command ::= '\t'+ EOL?
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -66,8 +68,10 @@ order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier|variable_usage|function {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
-conditional ::= conditional-keyword condition EOL? block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
-block ::= any+|empty_command?
+conditional ::= conditional-keyword condition EOL block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
+condition ::= ('(' (condition-body|',')* ')') | condition-body
+private condition-body ::= identifier|variable-usage|function|string
+block ::= any+|empty_command*
 
 meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')

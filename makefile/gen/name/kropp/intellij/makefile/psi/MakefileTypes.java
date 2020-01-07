@@ -12,6 +12,7 @@ public interface MakefileTypes {
   IElementType BLOCK = new MakefileElementType("BLOCK");
   IElementType COMMAND = new MakefileElementType("COMMAND");
   IElementType COMMENT = new MakefileElementType("COMMENT");
+  IElementType CONDITION = new MakefileElementType("CONDITION");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTIVE = new MakefileElementType("DIRECTIVE");
@@ -47,7 +48,7 @@ public interface MakefileTypes {
 
   IElementType ASSIGN = new MakefileTokenType("=");
   IElementType COLON = new MakefileTokenType(":");
-  IElementType CONDITION = new MakefileTokenType("condition");
+  IElementType COMMA = new MakefileTokenType(",");
   IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType FUNCTION_END = new MakefileTokenType(")");
@@ -69,6 +70,7 @@ public interface MakefileTypes {
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
   IElementType MACRO = new MakefileTokenType("macro");
+  IElementType OPEN_BRACE = new MakefileTokenType("(");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
@@ -88,6 +90,9 @@ public interface MakefileTypes {
       }
       else if (type == COMMENT) {
         return new MakefileCommentImpl(node);
+      }
+      else if (type == CONDITION) {
+        return new MakefileConditionImpl(node);
       }
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);

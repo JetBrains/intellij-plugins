@@ -1,5 +1,6 @@
 Makefile
-  PsiComment(COMMENT)('# GSettings\n')
+  PsiComment(COMMENT)('# GSettings')
+  PsiElement(EOL)('\n')
   PsiElement(macro)('@GSETTINGS_RULES@')
   PsiElement(EOL)('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)
