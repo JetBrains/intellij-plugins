@@ -12,4 +12,7 @@ public interface MakefileFunctionParam extends PsiElement {
   @Nullable
   MakefileFunctionName getFunctionName();
 
+  @Nullable
+  MakefileVariableUsage getVariableUsage();
+
 }

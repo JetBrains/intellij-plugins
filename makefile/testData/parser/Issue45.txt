@@ -11,8 +11,6 @@ Makefile
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('runecho')
       PsiElement(EOL)('\n')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -24,8 +22,7 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
       PsiElement(;)(';')
-    PsiWhiteSpace(' ')
-    MakefileRecipeImpl(RECIPE)
-      MakefileCommandImpl(COMMAND)
+      PsiWhiteSpace(' ')
+      MakefileInlineCommandImpl(INLINE_COMMAND)
         PsiElement(split)('\\n')
-        PsiElement(line)('echo "hi"')
+        PsiElement(text)('echo "hi"')

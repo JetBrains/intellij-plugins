@@ -26,6 +26,6 @@ Makefile
             PsiWhiteSpace(' ')
             PsiElement(=)('=')
             MakefileVariableValueImpl(VARIABLE_VALUE)
-              PsiElement(line)(' asdasda')
-        PsiWhiteSpace('\n')
+              PsiElement(text)(' asdasda')
+          PsiElement(EOL)('\n')
         PsiElement(endif)('endif')

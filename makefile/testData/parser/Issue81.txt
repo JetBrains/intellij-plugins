@@ -12,5 +12,5 @@ Makefile
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
-        PsiElement(line)('@grep -E '^[a-zA-Z_-]+:.*?=!')
+        PsiElement(text)('@grep -E '^[a-zA-Z_-]+:.*?=!')
   PsiComment(DOC_COMMENT)('##'')

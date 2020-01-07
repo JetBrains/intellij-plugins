@@ -5,21 +5,20 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileCommand;
+import name.kropp.intellij.makefile.psi.MakefileVariable;
 import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class MakefileVariableUsageImpl extends ASTWrapperPsiElement implements MakefileVariableUsage {
 
-public class MakefileCommandImpl extends ASTWrapperPsiElement implements MakefileCommand {
-
-  public MakefileCommandImpl(@NotNull ASTNode node) {
+  public MakefileVariableUsageImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitCommand(this);
+    visitor.visitVariableUsage(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,9 +27,9 @@ public class MakefileCommandImpl extends ASTWrapperPsiElement implements Makefil
   }
 
   @Override
-  @NotNull
-  public List<MakefileVariableUsage> getVariableUsageList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
+  @Nullable
+  public MakefileVariable getVariable() {
+    return PsiTreeUtil.getChildOfType(this, MakefileVariable.class);
   }
 
 }

@@ -27,5 +27,3 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('c')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>

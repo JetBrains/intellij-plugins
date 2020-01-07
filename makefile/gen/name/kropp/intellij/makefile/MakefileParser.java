@@ -102,26 +102,31 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '\t'* multiline
+  // '\t'+ multiline
   public static boolean command(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command")) return false;
+    if (!nextTokenIs(b, TAB)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, COMMAND, "<command>");
+    Marker m = enter_section_(b);
     r = command_0(b, l + 1);
     r = r && multiline(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, COMMAND, r);
     return r;
   }
 
-  // '\t'*
+  // '\t'+
   private static boolean command_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "command_0")) return false;
-    while (true) {
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, TAB);
+    while (r) {
       int c = current_position_(b);
       if (!consumeToken(b, TAB)) break;
       if (!empty_element_parsed_guard_(b, "command_0", c)) break;
     }
-    return true;
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -488,14 +493,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string|function-param-text|variable_usage|identifier|':'|function-name|function
+  // string|function-param-text|variable-usage|identifier|':'|function-name|function
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, STRING);
     if (!r) r = consumeToken(b, FUNCTION_PARAM_TEXT);
-    if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    if (!r) r = variable_usage(b, l + 1);
     if (!r) r = consumeToken(b, IDENTIFIER);
     if (!r) r = consumeToken(b, COLON);
     if (!r) r = function_name(b, l + 1);
@@ -505,7 +510,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('include'|'-include'|'sinclude') filename+ EOL?
+  // ('include'|'-include'|'sinclude') (filename|variable-usage)+ EOL?
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
     boolean r, p;
@@ -530,18 +535,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // filename+
+  // (filename|variable-usage)+
   private static boolean include_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = filename(b, l + 1);
+    r = include_1_0(b, l + 1);
     while (r) {
       int c = current_position_(b);
-      if (!filename(b, l + 1)) break;
+      if (!include_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "include_1", c)) break;
     }
     exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // filename|variable-usage
+  private static boolean include_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "include_1_0")) return false;
+    boolean r;
+    r = filename(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
     return r;
   }
 
@@ -550,6 +564,43 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "include_2")) return false;
     consumeToken(b, EOL);
     return true;
+  }
+
+  /* ********************************************************** */
+  // multiline
+  public static boolean inline_command(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "inline_command")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, INLINE_COMMAND, "<inline command>");
+    r = multiline(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // (variable-usage|text)+
+  static boolean line(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "line")) return false;
+    if (!nextTokenIs(b, "", FUNCTION_START, TEXT)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = line_0(b, l + 1);
+    while (r) {
+      int c = current_position_(b);
+      if (!line_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "line", c)) break;
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // variable-usage|text
+  private static boolean line_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "line_0")) return false;
+    boolean r;
+    r = variable_usage(b, l + 1);
+    if (!r) r = consumeToken(b, TEXT);
+    return r;
   }
 
   /* ********************************************************** */
@@ -565,88 +616,55 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // line (split line?)* | (split line?)+
+  // split* line (split line?)*
   static boolean multiline(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiline")) return false;
-    if (!nextTokenIs(b, "", LINE, SPLIT)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = multiline_0(b, l + 1);
-    if (!r) r = multiline_1(b, l + 1);
+    r = r && line(b, l + 1);
+    r = r && multiline_2(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // line (split line?)*
+  // split*
   private static boolean multiline_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiline_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, LINE);
-    r = r && multiline_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
+    while (true) {
+      int c = current_position_(b);
+      if (!consumeToken(b, SPLIT)) break;
+      if (!empty_element_parsed_guard_(b, "multiline_0", c)) break;
+    }
+    return true;
   }
 
   // (split line?)*
-  private static boolean multiline_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_0_1")) return false;
+  private static boolean multiline_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiline_2")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!multiline_0_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "multiline_0_1", c)) break;
+      if (!multiline_2_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "multiline_2", c)) break;
     }
     return true;
   }
 
   // split line?
-  private static boolean multiline_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_0_1_0")) return false;
+  private static boolean multiline_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiline_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SPLIT);
-    r = r && multiline_0_1_0_1(b, l + 1);
+    r = r && multiline_2_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // line?
-  private static boolean multiline_0_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_0_1_0_1")) return false;
-    consumeToken(b, LINE);
-    return true;
-  }
-
-  // (split line?)+
-  private static boolean multiline_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_1")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = multiline_1_0(b, l + 1);
-    while (r) {
-      int c = current_position_(b);
-      if (!multiline_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "multiline_1", c)) break;
-    }
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // split line?
-  private static boolean multiline_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, SPLIT);
-    r = r && multiline_1_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // line?
-  private static boolean multiline_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "multiline_1_0_1")) return false;
-    consumeToken(b, LINE);
+  private static boolean multiline_2_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "multiline_2_0_1")) return false;
+    line(b, l + 1);
     return true;
   }
 
@@ -798,13 +816,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier|variable_usage|function
+  // identifier|variable-usage|function
   public static boolean prerequisite(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prerequisite")) return false;
+    if (!nextTokenIs(b, "<prerequisite>", FUNCTION_START, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREREQUISITE, "<prerequisite>");
     r = consumeToken(b, IDENTIFIER);
-    if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    if (!r) r = variable_usage(b, l + 1);
     if (!r) r = function(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -855,22 +874,56 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (command|conditional|empty_command|EOL)*
+  // (command|conditional|empty_command)+ (command|conditional|empty_command|EOL)*
   public static boolean recipe(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "recipe")) return false;
+    boolean r;
     Marker m = enter_section_(b, l, _NONE_, RECIPE, "<recipe>");
+    r = recipe_0(b, l + 1);
+    r = r && recipe_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (command|conditional|empty_command)+
+  private static boolean recipe_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recipe_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = recipe_0_0(b, l + 1);
+    while (r) {
+      int c = current_position_(b);
+      if (!recipe_0_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recipe_0", c)) break;
+    }
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // command|conditional|empty_command
+  private static boolean recipe_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recipe_0_0")) return false;
+    boolean r;
+    r = command(b, l + 1);
+    if (!r) r = conditional(b, l + 1);
+    if (!r) r = empty_command(b, l + 1);
+    return r;
+  }
+
+  // (command|conditional|empty_command|EOL)*
+  private static boolean recipe_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recipe_1")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!recipe_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "recipe", c)) break;
+      if (!recipe_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "recipe_1", c)) break;
     }
-    exit_section_(b, l, m, true, false, null);
     return true;
   }
 
   // command|conditional|empty_command|EOL
-  private static boolean recipe_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "recipe_0")) return false;
+  private static boolean recipe_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recipe_1_0")) return false;
     boolean r;
     r = command(b, l + 1);
     if (!r) r = conditional(b, l + 1);
@@ -880,32 +933,39 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // target_line recipe
+  // target_line recipe?
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, RULE, "<rule>");
     r = target_line(b, l + 1);
-    r = r && recipe(b, l + 1);
+    r = r && rule_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
+  // recipe?
+  private static boolean rule_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "rule_1")) return false;
+    recipe(b, l + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // identifier|function-name|variable_usage
+  // identifier|function-name|variable-usage
   public static boolean target(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGET, "<target>");
     r = consumeToken(b, IDENTIFIER);
     if (!r) r = function_name(b, l + 1);
-    if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    if (!r) r = variable_usage(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   /* ********************************************************** */
-  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?)
+  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?)
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     boolean r, p;
@@ -948,7 +1008,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?
+  // exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?
   private static boolean target_line_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_3")) return false;
     boolean r;
@@ -962,7 +1022,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // prerequisites ';'? EOL?
+  // prerequisites (';' inline_command?)? EOL?
   private static boolean target_line_3_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_3_4")) return false;
     boolean r;
@@ -974,10 +1034,28 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // ';'?
+  // (';' inline_command?)?
   private static boolean target_line_3_4_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_3_4_1")) return false;
-    consumeToken(b, SEMICOLON);
+    target_line_3_4_1_0(b, l + 1);
+    return true;
+  }
+
+  // ';' inline_command?
+  private static boolean target_line_3_4_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, SEMICOLON);
+    r = r && target_line_3_4_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // inline_command?
+  private static boolean target_line_3_4_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_4_1_0_1")) return false;
+    inline_command(b, l + 1);
     return true;
   }
 
@@ -1084,10 +1162,46 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // '$(' ((variable assignment text)|identifier) ')'
+  public static boolean variable_usage(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage")) return false;
+    if (!nextTokenIs(b, FUNCTION_START)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, FUNCTION_START);
+    r = r && variable_usage_1(b, l + 1);
+    r = r && consumeToken(b, FUNCTION_END);
+    exit_section_(b, m, VARIABLE_USAGE, r);
+    return r;
+  }
+
+  // (variable assignment text)|identifier
+  private static boolean variable_usage_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable_usage_1_0(b, l + 1);
+    if (!r) r = consumeToken(b, IDENTIFIER);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // variable assignment text
+  private static boolean variable_usage_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable(b, l + 1);
+    r = r && assignment(b, l + 1);
+    r = r && consumeToken(b, TEXT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // multiline
   public static boolean variable_value(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_value")) return false;
-    if (!nextTokenIs(b, "", LINE, SPLIT)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = multiline(b, l + 1);

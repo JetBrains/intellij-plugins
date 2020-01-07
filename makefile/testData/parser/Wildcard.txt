@@ -22,8 +22,6 @@ Makefile
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('FORCE')
       PsiElement(EOL)('\n\n')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -48,8 +46,6 @@ Makefile
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('FORCE')
       PsiElement(EOL)('\n\n')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -69,8 +65,8 @@ Makefile
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
-        PsiElement(line)('ugligyjs $@/*.js')
-  PsiWhiteSpace('\n\n')
+        PsiElement(text)('ugligyjs $@/*.js')
+      PsiElement(EOL)('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -80,5 +76,3 @@ Makefile
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
-    MakefileRecipeImpl(RECIPE)
-      <empty list>

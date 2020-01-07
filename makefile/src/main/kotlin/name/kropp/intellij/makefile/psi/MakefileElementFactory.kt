@@ -9,7 +9,7 @@ object MakefileElementFactory {
       PsiFileFactory.getInstance(project).createFileFromText("Makefile", MakefileFileType, text) as MakefileFile
 
   fun createRule(project: Project, target: String) =
-      createFile(project, "$target:\n").firstChild as MakefileRule
+      createFile(project, "$target:").firstChild as MakefileRule
 
   fun createTarget(project: Project, name: String) =
       createRule(project, name).firstChild.firstChild.firstChild as MakefileTarget

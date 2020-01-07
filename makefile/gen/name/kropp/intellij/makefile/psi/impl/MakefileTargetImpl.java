@@ -7,10 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileFunctionName;
-import name.kropp.intellij.makefile.psi.MakefilePsiImplUtil;
-import name.kropp.intellij.makefile.psi.MakefileTarget;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.psi.*;
 import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +35,12 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
   @Nullable
   public MakefileFunctionName getFunctionName() {
     return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
+  }
+
+  @Override
+  @Nullable
+  public MakefileVariableUsage getVariableUsage() {
+    return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
   }
 
   @Override

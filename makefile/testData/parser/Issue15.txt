@@ -17,6 +17,6 @@ Makefile
         MakefileBlockImpl(BLOCK)
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')
-            PsiElement(line)('x')
-        PsiWhiteSpace('\n')
+            PsiElement(text)('x')
+          PsiElement(EOL)('\n')
         PsiElement(endif)('endif')

@@ -10,7 +10,7 @@ import name.kropp.intellij.makefile.psi.*
 
 
 class MakefileAnnotator : Annotator {
-  private val lineTokenSet = TokenSet.create(MakefileTypes.LINE)
+  private val lineTokenSet = TokenSet.create(MakefileTypes.TEXT)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileRule && element.isUnused()) {
@@ -65,7 +65,7 @@ class MakefileAnnotator : Annotator {
   }
 
   private fun MakefileRule.isUnused(): Boolean {
-    if (!recipe.isEmpty) return false
+    if (recipe?.isEmpty == false) return false
     if (targetLine.targets.targetList.any { it.isSpecialTarget || it.isPatternTarget }) return false
     if (targetLine.prerequisites?.normalPrerequisites?.prerequisiteList?.any() == true) return false
     if (targetLine.variableAssignment != null) return false

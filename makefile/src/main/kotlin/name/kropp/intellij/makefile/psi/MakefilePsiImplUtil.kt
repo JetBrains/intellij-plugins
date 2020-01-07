@@ -12,7 +12,7 @@ object MakefilePsiImplUtil {
   private val suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$")
 
   private val ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN)
-  private val LINE = TokenSet.create(MakefileTypes.LINE)
+  private val LINE = TokenSet.create(MakefileTypes.TEXT, MakefileTypes.VARIABLE_USAGE)
   private val VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE)
 
   @JvmStatic

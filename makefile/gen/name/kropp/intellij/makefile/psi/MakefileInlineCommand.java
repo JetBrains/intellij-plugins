@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface MakefileCommand extends PsiElement {
+public interface MakefileInlineCommand extends PsiElement {
 
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();

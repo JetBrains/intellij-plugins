@@ -5,10 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileFunction;
-import name.kropp.intellij.makefile.psi.MakefileFunctionName;
-import name.kropp.intellij.makefile.psi.MakefileFunctionParam;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +34,12 @@ public class MakefileFunctionParamImpl extends ASTWrapperPsiElement implements M
   @Nullable
   public MakefileFunctionName getFunctionName() {
     return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
+  }
+
+  @Override
+  @Nullable
+  public MakefileVariableUsage getVariableUsage() {
+    return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
   }
 
 }

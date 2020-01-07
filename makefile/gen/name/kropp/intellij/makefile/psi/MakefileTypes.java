@@ -24,6 +24,7 @@ public interface MakefileTypes {
   IElementType FUNCTION_NAME = new MakefileElementType("FUNCTION_NAME");
   IElementType FUNCTION_PARAM = new MakefileElementType("FUNCTION_PARAM");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
+  IElementType INLINE_COMMAND = new MakefileElementType("INLINE_COMMAND");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
   IElementType ORDER_ONLY_PREREQUISITES = new MakefileElementType("ORDER_ONLY_PREREQUISITES");
   IElementType OVERRIDE = new MakefileElementType("OVERRIDE");
@@ -40,6 +41,7 @@ public interface MakefileTypes {
   IElementType UNDEFINE = new MakefileElementType("UNDEFINE");
   IElementType VARIABLE = new MakefileElementType("VARIABLE");
   IElementType VARIABLE_ASSIGNMENT = new MakefileElementType("VARIABLE_ASSIGNMENT");
+  IElementType VARIABLE_USAGE = new MakefileElementType("VARIABLE_USAGE");
   IElementType VARIABLE_VALUE = new MakefileElementType("VARIABLE_VALUE");
   IElementType VPATH = new MakefileElementType("VPATH");
 
@@ -66,14 +68,13 @@ public interface MakefileTypes {
   IElementType KEYWORD_PRIVATE = new MakefileTokenType("private");
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
-  IElementType LINE = new MakefileTokenType("line");
   IElementType MACRO = new MakefileTokenType("macro");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
   IElementType STRING = new MakefileTokenType("string");
   IElementType TAB = new MakefileTokenType("\\t");
-  IElementType VARIABLE_USAGE = new MakefileTokenType("variable_usage");
+  IElementType TEXT = new MakefileTokenType("text");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {
@@ -124,6 +125,9 @@ public interface MakefileTypes {
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);
       }
+      else if (type == INLINE_COMMAND) {
+        return new MakefileInlineCommandImpl(node);
+      }
       else if (type == NORMAL_PREREQUISITES) {
         return new MakefileNormalPrerequisitesImpl(node);
       }
@@ -171,6 +175,9 @@ public interface MakefileTypes {
       }
       else if (type == VARIABLE_ASSIGNMENT) {
         return new MakefileVariableAssignmentImpl(node);
+      }
+      else if (type == VARIABLE_USAGE) {
+        return new MakefileVariableUsageImpl(node);
       }
       else if (type == VARIABLE_VALUE) {
         return new MakefileVariableValueImpl(node);

@@ -11,8 +11,6 @@ Makefile
           MakefilePrerequisiteImpl(PREREQUISITE)
             PsiElement(identifier)('hello')
       PsiElement(EOL)('\n\n')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
@@ -29,4 +27,4 @@ Makefile
     MakefileRecipeImpl(RECIPE)
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
-        PsiElement(line)('$(GCC) -c hello.c')
+        PsiElement(text)('$(GCC) -c hello.c')

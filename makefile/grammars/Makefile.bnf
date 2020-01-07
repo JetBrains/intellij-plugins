@@ -46,13 +46,15 @@ private any ::= (conditional|rule|command|variable-assignment|directive|function
 
 directive ::= define|include|undefine|override|export|privatevar|vpath
 
-rule ::= target_line recipe {methods=[getTargets]}
-recipe ::= (command|conditional|empty_command|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
-command ::= '\t'* multiline
-private multiline ::= (line (split line?)* | (split line?)+)
+rule ::= target_line recipe? {methods=[getTargets]}
+recipe ::= (command|conditional|empty_command)+ (command|conditional|empty_command|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
+command ::= '\t'+ multiline
+inline_command ::= multiline
+private multiline ::= split* line (split line?)*
+private line ::= (variable-usage|text)+
 empty_command ::= '\t'+
 
-target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites ';'? EOL?) {pin=2 methods=[getTargetName]}
+target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
 target ::= identifier|function-name|variable_usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
 
@@ -78,7 +80,7 @@ export ::= 'export' (variable-assignment|variable)? EOL? {pin=1}
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 
-include ::= ('include'|'-include'|'sinclude') filename+ EOL? {pin=1}
+include ::= ('include'|'-include'|'sinclude') (filename|variable-usage)+ EOL? {pin=1}
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 vpath ::= 'vpath' (pattern directory*)? EOL? {pin=1}

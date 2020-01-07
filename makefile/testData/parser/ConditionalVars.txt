@@ -10,8 +10,8 @@ Makefile
         PsiWhiteSpace(' ')
         PsiElement(=)('=')
         MakefileVariableValueImpl(VARIABLE_VALUE)
-          PsiElement(line)(' gcc')
-    PsiWhiteSpace('\n')
+          PsiElement(text)(' gcc')
+      PsiElement(EOL)('\n')
     PsiElement(else)('else')
     PsiElement(EOL)('\n')
     MakefileBlockImpl(BLOCK)
@@ -21,8 +21,8 @@ Makefile
         PsiWhiteSpace(' ')
         PsiElement(=)('=')
         MakefileVariableValueImpl(VARIABLE_VALUE)
-          PsiElement(line)(' g++')
-    PsiWhiteSpace('\n')
+          PsiElement(text)(' g++')
+      PsiElement(EOL)('\n')
     PsiElement(endif)('endif')
   PsiElement(EOL)('\n\n')
   MakefileRuleImpl(RULE)
@@ -36,5 +36,3 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
       PsiElement(;)(';')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>

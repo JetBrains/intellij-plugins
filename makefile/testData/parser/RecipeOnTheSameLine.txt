@@ -10,6 +10,5 @@ Makefile
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
           <empty list>
       PsiElement(;)(';')
-    MakefileRecipeImpl(RECIPE)
-      MakefileCommandImpl(COMMAND)
-        PsiElement(line)(' echo hello')
+      MakefileInlineCommandImpl(INLINE_COMMAND)
+        PsiElement(text)(' echo hello')

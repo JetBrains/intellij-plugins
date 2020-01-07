@@ -34,7 +34,8 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"pathsubst"|"strip"|"findstr
   "basename"|"addsuffix"|"addprefix"|"join"|"wildcard"|"realpath"|"abspath"|"if"|"or"|"and"|
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")
 MACRO="@"[^@ \r\n]+"@"
-VARIABLE_VALUE=[^\r\n#]*[^\\\r\n#]
+VARIABLE_VALUE=[^\r\n)#]*[^\\\r\n)#]
+SOURCE_CODE=[^\r\n#]*[^\\\r\n#]
 COLON=":"
 DOUBLECOLON="::"
 SEMICOLON=";"
@@ -75,7 +76,6 @@ CONDITION_CHARACTER=[^#\r\n]
     {BACKSLASHCRLF}    { return SPLIT; }
     {PIPE}             { return PIPE; }
     {SEMICOLON}        { yybegin(SOURCE_FORCED); return SEMICOLON; }
-    {ASSIGN}           { yybegin(SOURCE); return ASSIGN; }
     "include"          { return KEYWORD_INCLUDE; }
     "-include"         { return KEYWORD_INCLUDE; }
     "sinclude"         { return KEYWORD_INCLUDE; }
@@ -95,7 +95,6 @@ CONDITION_CHARACTER=[^#\r\n]
     {FUNCTIONS}        { return FUNCTION_NAME; }
     ")"                { yybegin(YYINITIAL); return FUNCTION_END; }
     {STRING}           { return STRING; }
-    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME}         { return IDENTIFIER; }
     "!"                { return IDENTIFIER; }
@@ -129,7 +128,7 @@ CONDITION_CHARACTER=[^#\r\n]
     ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
     {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
-    {VARIABLE_VALUE}        { return LINE; }
+    {SOURCE_CODE}           { return TEXT; }
     {EOL}                   { yybegin(YYINITIAL); return EOL; }
     <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
 }
@@ -139,16 +138,16 @@ CONDITION_CHARACTER=[^#\r\n]
     ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
     {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
-    {VARIABLE_VALUE}        { return LINE; }
-    {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
+    {SOURCE_CODE}           { return TEXT; }
+    {EOL}                   { yybegin(YYINITIAL); return EOL; }
 }
 
 <SOURCE_FORCED> {
     ^\t+                    { return TAB; }
     {SPACES}|\t+            { return WHITE_SPACE; }
     {BACKSLASHCRLF}         { return SPLIT; }
-    {VARIABLE_VALUE}        { return LINE; }
-    {EOL}                   { yybegin(YYINITIAL); return WHITE_SPACE; }
+    {SOURCE_CODE}           { return TEXT; }
+    {EOL}                   { yybegin(YYINITIAL); return EOL; }
 }
 
 <DEFINE> {
@@ -162,7 +161,7 @@ CONDITION_CHARACTER=[^#\r\n]
     "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
     ({SPACES}|\t)+{COMMENT}              { return COMMENT; }
     {BACKSLASHCRLF}        { return SPLIT; }
-    {VARIABLE_VALUE}       { return VARIABLE_VALUE_LINE; }
+    {SOURCE_CODE}          { return VARIABLE_VALUE_LINE; }
     {EOL}                  { return WHITE_SPACE; }
 }
 

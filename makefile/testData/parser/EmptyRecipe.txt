@@ -12,5 +12,3 @@ Makefile
             PsiElement(identifier)('world')
       PsiWhiteSpace(' ')
       PsiElement(;)(';')
-    MakefileRecipeImpl(RECIPE)
-      <empty list>
