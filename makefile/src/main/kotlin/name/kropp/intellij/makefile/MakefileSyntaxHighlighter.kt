@@ -19,6 +19,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val PREREQUISITE = createTextAttributesKey("MAKEFILE_PREREQUISITE", DefaultLanguageHighlighterColors.INSTANCE_METHOD)
     val VARIABLE = createTextAttributesKey("MAKEFILE_VARIABLE", DefaultLanguageHighlighterColors.GLOBAL_VARIABLE)
     val VARIABLE_VALUE = createTextAttributesKey("MAKEFILE_VARIABLE_VALUE", DefaultLanguageHighlighterColors.STRING)
+    val STRING = createTextAttributesKey("MAKEFILE_STRING", DefaultLanguageHighlighterColors.STRING)
     val VARIABLE_USAGE = createTextAttributesKey("MAKEFILE_VARIABLE_USAGE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
     val LINE_SPLIT = createTextAttributesKey("MAKEFILE_LINE_SPLIT", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
     val TAB = createTextAttributesKey("MAKEFILE_TAB", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
@@ -35,6 +36,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     private val VARIABLE_VALUE_KEYS = arrayOf(VARIABLE_VALUE)
     private val VARIABLE_USAGE_KEYS = arrayOf(VARIABLE_USAGE)
     private val FUNCTION_PARAM_KEYS = arrayOf(FUNCTION_PARAM)
+    private val STRING_KEYS = arrayOf(STRING)
     private val LINE_SPLIT_KEYS = arrayOf(LINE_SPLIT)
     private val TAB_KEYS = arrayOf(TAB)
     private val COMMENT_KEYS = arrayOf(COMMENT)
@@ -55,6 +57,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     MakefileTypes.TAB -> TAB_KEYS
     MakefileTypes.FUNCTION_PARAM_TEXT -> FUNCTION_PARAM_KEYS
     MakefileTypes.VARIABLE_USAGE -> VARIABLE_USAGE_KEYS
+    MakefileTypes.STRING -> STRING_KEYS
     TokenType.BAD_CHARACTER -> BAD_CHAR_KEYS
     else -> EMPTY_KEYS
   }

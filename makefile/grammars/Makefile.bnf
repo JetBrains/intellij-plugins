@@ -90,7 +90,7 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'pathsubst'|'strip'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
-meta function-param ::= function-param-text|variable_usage|identifier|':'|function-name|function
+meta function-param ::= string|function-param-text|variable_usage|identifier|':'|function-name|function
 
 comment ::=
 doc_comment ::=

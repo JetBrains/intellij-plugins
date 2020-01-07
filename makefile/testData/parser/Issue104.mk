@@ -1,0 +1,1 @@
+$(error "Add Git to $$PATH")

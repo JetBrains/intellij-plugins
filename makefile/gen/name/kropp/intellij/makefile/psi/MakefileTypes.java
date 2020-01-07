@@ -71,6 +71,7 @@ public interface MakefileTypes {
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
+  IElementType STRING = new MakefileTokenType("string");
   IElementType TAB = new MakefileTokenType("\\t");
   IElementType VARIABLE_USAGE = new MakefileTokenType("variable_usage");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");

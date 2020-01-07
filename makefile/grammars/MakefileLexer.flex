@@ -43,7 +43,8 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 VARIABLE_USAGE_EXPR="$("[^ $)]*")"
 VARIABLE_USAGE_CURLY_EXPR="${"[^ $}]*"}"
-FILENAME=[^:=!?#$)\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
+STRING="\""[^\"]*"\""
+FILENAME=[^:=!?#$\")\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
 CONDITION_CHARACTER=[^#\r\n]
 
 %state ELSE INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
@@ -93,6 +94,7 @@ CONDITION_CHARACTER=[^#\r\n]
     "$("               { return FUNCTION_START; }
     {FUNCTIONS}        { return FUNCTION_NAME; }
     ")"                { yybegin(YYINITIAL); return FUNCTION_END; }
+    {STRING}           { return STRING; }
     {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
     {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
     {FILENAME}         { return IDENTIFIER; }

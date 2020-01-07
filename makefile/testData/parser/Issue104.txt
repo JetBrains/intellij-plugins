@@ -1,0 +1,9 @@
+Makefile
+  MakefileFunctionImpl(FUNCTION)
+    PsiElement($()('$(')
+    MakefileFunctionNameImpl(FUNCTION_NAME)
+      PsiElement(FUNCTION_NAME)('error')
+    PsiWhiteSpace(' ')
+    MakefileFunctionParamImpl(FUNCTION_PARAM)
+      PsiElement(string)('"Add Git to $$PATH"')
+    PsiElement())(')')
