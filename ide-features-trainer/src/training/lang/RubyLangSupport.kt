@@ -88,9 +88,7 @@ class RubyLangSupport : AbstractLangSupport() {
                                            listOf(GemDependency.any(bundlerGem.absolutePath)),
                                            false, false, false, false, true, null, mutableMapOf())
 
-    GemRunner.bundle(module, sdk, "install", null, null, null,
-                     "--local",
-                     false)
+    GemRunner.bundle(module, sdk, "install", null, null, null, "--local")
   }
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
