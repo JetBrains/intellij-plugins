@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.run;
 
 import com.intellij.execution.RunManager;
@@ -19,7 +19,7 @@ import java.util.List;
 class OsmorcModuleRenameHandler implements ModuleListener {
   @Override
   public void modulesRenamed(@NotNull Project project, @NotNull List<Module> modules, @NotNull Function<Module, String> oldNameProvider) {
-    final List<Pair<SelectedBundle, String>> pairs = new SmartList<>();
+    List<Pair<SelectedBundle, String>> pairs = new SmartList<>();
     OsgiConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType(OsgiConfigurationType.class);
     for (Module module : modules) {
       String oldName = oldNameProvider.fun(module);

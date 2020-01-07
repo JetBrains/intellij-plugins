@@ -60,13 +60,14 @@ import java.util.stream.Collectors;
 public class FrameworkDefinitionsEditorComponent {
   private JPanel myMainPanel;
   private JPanel myFrameworkInstancesPanel;
-  private final JBList myFrameworkInstances;
   private JLabel myFrameworkIntegrator;
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;
   private JLabel myVersion;
   private JPanel myContentPanel;
+
   private final DefaultListModel<FrameworkInstanceDefinition> myModel;
+  private final JBList<FrameworkInstanceDefinition> myFrameworkInstances;
   private final MessageBus myBus;
   private final List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> myModified;
 
@@ -77,7 +78,7 @@ public class FrameworkDefinitionsEditorComponent {
 
     myContentPanel.setBorder(IdeBorderFactory.createTitledBorder("Framework instances:", false, JBUI.insetsTop(8)).setShowLine(false));
 
-    myFrameworkInstances = new JBList(myModel);
+    myFrameworkInstances = new JBList<>(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
     myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 

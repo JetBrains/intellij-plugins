@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.settings;
 
 import com.intellij.openapi.util.Pair;
@@ -11,8 +12,8 @@ public interface FrameworkDefinitionListener {
   Topic<FrameworkDefinitionListener> TOPIC = new Topic<>("OSGi Framework Definition Changes", FrameworkDefinitionListener.class);
 
   /**
-   * Receives pairs of (oldInstance, newInstance).
-   * Old instance is null for added frameworks, new instance is null for removed ones.
+   * Receives a list of {@code [old_instance, new_instance]} pairs.
+   * {@code old_instance} is {@code null} for added frameworks, {@code new_instance} is {@code null} for removed ones.
    */
   void definitionsChanged(@NotNull List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> changes);
 }
