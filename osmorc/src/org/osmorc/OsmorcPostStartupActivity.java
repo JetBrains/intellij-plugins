@@ -25,14 +25,9 @@
 package org.osmorc;
 
 import aQute.bnd.build.Workspace;
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointUtil;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,8 +38,6 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.bnd.imp.BndProjectImporter;
-import org.osmorc.facet.OsmorcFacetType;
-import org.osmorc.impl.AdditionalJARContentsWatcherManager;
 
 import java.util.List;
 
@@ -52,16 +45,6 @@ import java.util.List;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
-  private static void handleFacetChange(@NotNull Facet<?> facet, @NotNull Project project) {
-    if (facet.getTypeId() != OsmorcFacetType.ID) {
-      return;
-    }
-
-    for (Module module : ModuleManager.getInstance(project).getModules()) {
-      AdditionalJARContentsWatcherManager.getInstance(module).updateWatcherSetup();
-    }
-  }
-
   @Override
   public void runActivity(@NotNull Project project) {
     Workspace workspace = BndProjectImporter.findWorkspace(project);
@@ -95,31 +78,6 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
             }
           }
         }
-      }
-    }
-  }
-
-  public static class MyFacetManagerAdapter extends FacetManagerAdapter {
-    private final Project myProject;
-
-    public MyFacetManagerAdapter(@NotNull Project project) {myProject = project;}
-
-    @Override
-    public void facetAdded(@NotNull Facet facet) {
-      handleFacetChange(facet, myProject);
-    }
-
-    @Override
-    public void facetConfigurationChanged(@NotNull Facet facet) {
-      handleFacetChange(facet, myProject);
-    }
-  }
-
-  public static class MyProjectManagerListener implements ProjectManagerListener {
-    @Override
-    public void projectClosing(@NotNull Project project) {
-      for (Module module : ModuleManager.getInstance(project).getModules()) {
-        AdditionalJARContentsWatcherManager.getInstance(module).cleanup();
       }
     }
   }
