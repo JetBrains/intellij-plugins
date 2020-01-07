@@ -106,12 +106,14 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
                         : getReferencedFile(getDecoratorProperty(TEMPLATE_PROP), false);
   }
 
+  @NotNull
   private List<PsiFile> findCssFiles() {
     return findCssFiles(getDecoratorProperty(STYLE_URLS_PROP), true)
       .append(findCssFiles(getDecoratorProperty(STYLES_PROP), false))
       .toList();
   }
 
+  @NotNull
   private static StreamEx<PsiFile> findCssFiles(@Nullable JSProperty property, boolean directRefs) {
     if (property == null) {
       return StreamEx.empty();
@@ -123,14 +125,16 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
         return StreamEx.of(stub.getChildrenStubs())
           .map(StubElement::getPsi)
           .select(JSExpression.class)
-          .map(expr -> getReferencedFileFromStub(expr, directRefs));
+          .map(expr -> getReferencedFileFromStub(expr, directRefs))
+          .nonNull();
       }
     }
     return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(), () ->
       StreamEx.ofNullable(property.getValue())
         .select(JSArrayLiteralExpression.class)
         .flatArray(JSArrayLiteralExpression::getExpressions)
-        .map(expr -> getReferencedFileFromPsi(expr, directRefs)));
+        .map(expr -> getReferencedFileFromPsi(expr, directRefs)))
+        .nonNull();
   }
 
   @StubSafe
@@ -155,6 +159,7 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   }
 
   @StubSafe
+  @Nullable
   private static PsiFile getReferencedFileFromStub(@Nullable JSExpression stubbedExpression, boolean directRefs) {
     if (!directRefs
         && stubbedExpression instanceof JSCallExpression
