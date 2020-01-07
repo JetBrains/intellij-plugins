@@ -55,7 +55,7 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="org.osmorc.OsmorcPostStartupActivity"/>
+    <postStartupActivity implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity"/>
 
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
@@ -124,8 +124,6 @@
       <configurable id="reference.settings.project.osgi.library.bundling" displayName="Library Bundling"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
-
-    <projectService serviceImplementation="org.osmorc.OsmorcProjectComponent"/>
   </extensions>
 
   <extensions defaultExtensionNs="Osmorc">
