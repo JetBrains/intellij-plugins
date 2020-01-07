@@ -140,6 +140,10 @@
   <projectListeners>
     <listener class="org.osmorc.run.OsmorcModuleRenameHandler" topic="com.intellij.openapi.project.ModuleListener"/>
     <listener class="org.osmorc.run.OsmorcFrameworkDefinitionListener" topic="org.osmorc.settings.FrameworkDefinitionListener"/>
+    <listener class="org.osmorc.OsmorcPostStartupActivity$MyFacetManagerAdapter"
+              topic="com.intellij.facet.FacetManagerListener"/>
+    <listener class="org.osmorc.OsmorcPostStartupActivity$MyProjectManagerListener"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
   </projectListeners>
 
   <actions>

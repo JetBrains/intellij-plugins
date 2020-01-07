@@ -26,14 +26,12 @@ package org.osmorc;
 
 import aQute.bnd.build.Workspace;
 import com.intellij.facet.Facet;
-import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
@@ -66,33 +64,13 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    Disposable activityDisposable = ExtensionPointUtil.createExtensionDisposable(this, StartupActivity.POST_STARTUP_ACTIVITY);
-    Disposer.register(project, activityDisposable);
-
-    MessageBusConnection connection = project.getMessageBus().connect(activityDisposable);
-    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
-      @Override
-      public void facetAdded(@NotNull Facet facet) {
-        handleFacetChange(facet, project);
-      }
-
-      @Override
-      public void facetConfigurationChanged(@NotNull Facet facet) {
-        handleFacetChange(facet, project);
-      }
-    });
-
-    connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
-      @Override
-      public void projectClosing(@NotNull Project project) {
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-          AdditionalJARContentsWatcherManager.getInstance(module).cleanup();
-        }
-      }
-    });
-
     Workspace workspace = BndProjectImporter.findWorkspace(project);
     if (workspace != null) {
+      Disposable activityDisposable = ExtensionPointUtil.createExtensionDisposable(this, StartupActivity.POST_STARTUP_ACTIVITY);
+      Disposer.register(project, activityDisposable);
+
+      MessageBusConnection connection = project.getMessageBus().connect(activityDisposable);
+
       connection.subscribe(VirtualFileManager.VFS_CHANGES, new MyVfsListener(project));
     }
   }
@@ -117,6 +95,31 @@ public class OsmorcPostStartupActivity implements StartupActivity.DumbAware {
             }
           }
         }
+      }
+    }
+  }
+
+  public static class MyFacetManagerAdapter extends FacetManagerAdapter {
+    private final Project myProject;
+
+    public MyFacetManagerAdapter(@NotNull Project project) {myProject = project;}
+
+    @Override
+    public void facetAdded(@NotNull Facet facet) {
+      handleFacetChange(facet, myProject);
+    }
+
+    @Override
+    public void facetConfigurationChanged(@NotNull Facet facet) {
+      handleFacetChange(facet, myProject);
+    }
+  }
+
+  public static class MyProjectManagerListener implements ProjectManagerListener {
+    @Override
+    public void projectClosing(@NotNull Project project) {
+      for (Module module : ModuleManager.getInstance(project).getModules()) {
+        AdditionalJARContentsWatcherManager.getInstance(module).cleanup();
       }
     }
   }
