@@ -566,7 +566,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string|function-param-text|variable-usage|identifier|':'|','|function-name|function
+  // string|function-param-text|variable-usage|variable-usage-curly|identifier|':'|','|function-name|function
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
     boolean r;
@@ -574,6 +574,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, STRING);
     if (!r) r = consumeToken(b, FUNCTION_PARAM_TEXT);
     if (!r) r = variable_usage(b, l + 1);
+    if (!r) r = consumeToken(b, VARIABLE_USAGE_CURLY);
     if (!r) r = consumeToken(b, IDENTIFIER);
     if (!r) r = consumeToken(b, COLON);
     if (!r) r = consumeToken(b, COMMA);

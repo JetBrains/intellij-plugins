@@ -98,7 +98,7 @@ CONDITION_CHARACTER=[^#\r\n]
     "("                { return OPEN_BRACE; }
     ")"                { return FUNCTION_END; }
     {STRING}           { return STRING; }
-    {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE; }
+    {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE_CURLY; }
     {FILENAME}         { return IDENTIFIER; }
     "!"                { return IDENTIFIER; }
 }
