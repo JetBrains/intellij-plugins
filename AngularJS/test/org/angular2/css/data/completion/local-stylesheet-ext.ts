@@ -22,7 +22,8 @@ import {Component} from "@angular/core";
         }
     `],
     styleUrls: [
-        `./local-stylesheet-ext.css`
+        `./local-stylesheet-ext.css`,
+        `./local-stylesheet-ext-absent.css`
     ]
 })
 export class TodoCmp {
