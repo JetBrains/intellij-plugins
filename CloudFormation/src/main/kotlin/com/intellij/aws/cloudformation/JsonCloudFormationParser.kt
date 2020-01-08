@@ -2,47 +2,12 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
-import com.intellij.aws.cloudformation.model.CfnArrayValueNode
-import com.intellij.aws.cloudformation.model.CfnConditionNode
-import com.intellij.aws.cloudformation.model.CfnConditionsNode
-import com.intellij.aws.cloudformation.model.CfnExpressionNode
-import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
-import com.intellij.aws.cloudformation.model.CfnFunctionNode
-import com.intellij.aws.cloudformation.model.CfnGlobalsNode
-import com.intellij.aws.cloudformation.model.CfnMappingValue
-import com.intellij.aws.cloudformation.model.CfnMappingsNode
-import com.intellij.aws.cloudformation.model.CfnMetadataNode
-import com.intellij.aws.cloudformation.model.CfnNameValueNode
-import com.intellij.aws.cloudformation.model.CfnNamedNode
-import com.intellij.aws.cloudformation.model.CfnNode
-import com.intellij.aws.cloudformation.model.CfnObjectValueNode
-import com.intellij.aws.cloudformation.model.CfnOutputNode
-import com.intellij.aws.cloudformation.model.CfnOutputsNode
-import com.intellij.aws.cloudformation.model.CfnParameterNode
-import com.intellij.aws.cloudformation.model.CfnParametersNode
-import com.intellij.aws.cloudformation.model.CfnResourceConditionNode
-import com.intellij.aws.cloudformation.model.CfnResourceDependsOnNode
-import com.intellij.aws.cloudformation.model.CfnResourceNode
-import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
-import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
-import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
-import com.intellij.aws.cloudformation.model.CfnResourcesNode
-import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnScalarValueNode
-import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
-import com.intellij.aws.cloudformation.model.CfnTransformNode
-import com.intellij.json.psi.JsonArray
-import com.intellij.json.psi.JsonBooleanLiteral
-import com.intellij.json.psi.JsonNumberLiteral
-import com.intellij.json.psi.JsonObject
-import com.intellij.json.psi.JsonProperty
-import com.intellij.json.psi.JsonReferenceExpression
-import com.intellij.json.psi.JsonStringLiteral
-import com.intellij.json.psi.JsonValue
+import com.intellij.aws.cloudformation.model.*
+import com.intellij.json.psi.*
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import java.util.ArrayList
+import java.util.*
 
 class JsonCloudFormationParser private constructor () {
   private val myProblems = ArrayList<CloudFormationProblem>()
@@ -93,7 +58,7 @@ class JsonCloudFormationParser private constructor () {
         else -> {
           addProblemOnNameElement(
               property,
-              CloudFormationBundle.getString("format.unknown.section", name))
+              CloudFormationBundle.message("format.unknown.section", name))
           null
         }
       }
@@ -211,7 +176,7 @@ class JsonCloudFormationParser private constructor () {
       val propertyName = property.name
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyName)) {
-        addProblemOnNameElement(property, CloudFormationBundle.getString("format.unknown.resource.property", propertyName))
+        addProblemOnNameElement(property, CloudFormationBundle.message("format.unknown.resource.property", propertyName))
       }
 
       val node = when (propertyName) {
@@ -313,7 +278,7 @@ class JsonCloudFormationParser private constructor () {
         }
       }
       else -> {
-        addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+        addProblem(value, CloudFormationBundle.message("format.unknown.value", value.javaClass.simpleName))
         return null
       }
     }
@@ -351,7 +316,7 @@ class JsonCloudFormationParser private constructor () {
     if (obj == null) {
       addProblem(
           expression,
-          CloudFormationBundle.getString("format.expected.json.object"))
+          CloudFormationBundle.message("format.expected.json.object"))
 
       return null
     }
@@ -365,7 +330,7 @@ class JsonCloudFormationParser private constructor () {
 
     if (!CloudFormationConstants.SupportedTemplateFormatVersions.contains(version)) {
       val supportedVersions = StringUtil.join(CloudFormationConstants.SupportedTemplateFormatVersions, ", ")
-      addProblem(value, CloudFormationBundle.getString("format.unknownVersion", supportedVersions))
+      addProblem(value, CloudFormationBundle.message("format.unknownVersion", supportedVersions))
     }
   }
 
@@ -374,11 +339,11 @@ class JsonCloudFormationParser private constructor () {
       null -> null
       is JsonStringLiteral -> CfnScalarValueNode(expression.value).registerNode(expression)
       is JsonReferenceExpression -> {
-        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        addProblem(expression, CloudFormationBundle.message("format.expected.quoted.string"))
         CfnScalarValueNode(expression.identifier.text).registerNode(expression)
       }
       else -> {
-        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        addProblem(expression, CloudFormationBundle.message("format.expected.quoted.string"))
         null
       }
     }
@@ -389,11 +354,11 @@ class JsonCloudFormationParser private constructor () {
       null -> null
       is JsonStringLiteral -> expression.value
       is JsonReferenceExpression -> {
-        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        addProblem(expression, CloudFormationBundle.message("format.expected.quoted.string"))
         expression.identifier.text
       }
       else -> {
-        addProblem(expression, CloudFormationBundle.getString("format.expected.quoted.string"))
+        addProblem(expression, CloudFormationBundle.message("format.expected.quoted.string"))
         null
       }
     }

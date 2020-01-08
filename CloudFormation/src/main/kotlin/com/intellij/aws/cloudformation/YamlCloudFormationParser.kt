@@ -2,49 +2,14 @@ package com.intellij.aws.cloudformation
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
-import com.intellij.aws.cloudformation.model.CfnArrayValueNode
-import com.intellij.aws.cloudformation.model.CfnConditionNode
-import com.intellij.aws.cloudformation.model.CfnConditionsNode
-import com.intellij.aws.cloudformation.model.CfnExpressionNode
-import com.intellij.aws.cloudformation.model.CfnFirstLevelMappingNode
-import com.intellij.aws.cloudformation.model.CfnFunctionNode
-import com.intellij.aws.cloudformation.model.CfnGlobalsNode
-import com.intellij.aws.cloudformation.model.CfnMappingValue
-import com.intellij.aws.cloudformation.model.CfnMappingsNode
-import com.intellij.aws.cloudformation.model.CfnMetadataNode
-import com.intellij.aws.cloudformation.model.CfnNameValueNode
-import com.intellij.aws.cloudformation.model.CfnNamedNode
-import com.intellij.aws.cloudformation.model.CfnNode
-import com.intellij.aws.cloudformation.model.CfnObjectValueNode
-import com.intellij.aws.cloudformation.model.CfnOutputNode
-import com.intellij.aws.cloudformation.model.CfnOutputsNode
-import com.intellij.aws.cloudformation.model.CfnParameterNode
-import com.intellij.aws.cloudformation.model.CfnParametersNode
-import com.intellij.aws.cloudformation.model.CfnResourceConditionNode
-import com.intellij.aws.cloudformation.model.CfnResourceDependsOnNode
-import com.intellij.aws.cloudformation.model.CfnResourceNode
-import com.intellij.aws.cloudformation.model.CfnResourcePropertiesNode
-import com.intellij.aws.cloudformation.model.CfnResourcePropertyNode
-import com.intellij.aws.cloudformation.model.CfnResourceTypeNode
-import com.intellij.aws.cloudformation.model.CfnResourcesNode
-import com.intellij.aws.cloudformation.model.CfnRootNode
-import com.intellij.aws.cloudformation.model.CfnScalarValueNode
-import com.intellij.aws.cloudformation.model.CfnSecondLevelMappingNode
-import com.intellij.aws.cloudformation.model.CfnServerlessEntityDefaultsNode
-import com.intellij.aws.cloudformation.model.CfnTransformNode
+import com.intellij.aws.cloudformation.model.*
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.yaml.psi.YAMLFile
-import org.jetbrains.yaml.psi.YAMLKeyValue
-import org.jetbrains.yaml.psi.YAMLMapping
-import org.jetbrains.yaml.psi.YAMLScalar
-import org.jetbrains.yaml.psi.YAMLSequence
-import org.jetbrains.yaml.psi.YAMLValue
+import org.jetbrains.yaml.psi.*
 import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl
 import org.jetbrains.yaml.psi.impl.YAMLCompoundValueImpl
-import java.util.ArrayList
-import java.util.Optional
+import java.util.*
 
 class YamlCloudFormationParser private constructor () {
   private val myProblems = ArrayList<CloudFormationProblem>()
@@ -106,7 +71,7 @@ class YamlCloudFormationParser private constructor () {
         else -> {
           addProblemOnNameElement(
               property.owner,
-              CloudFormationBundle.getString("format.unknown.section", name))
+              CloudFormationBundle.message("format.unknown.section", name))
           null
         }
       }
@@ -239,7 +204,7 @@ class YamlCloudFormationParser private constructor () {
       val propertyKey = property.keyText.trim()
 
       if (!CloudFormationConstants.AllTopLevelResourceProperties.contains(propertyKey)) {
-        addProblemOnNameElement(property.owner, CloudFormationBundle.getString("format.unknown.resource.property", propertyKey))
+        addProblemOnNameElement(property.owner, CloudFormationBundle.message("format.unknown.resource.property", propertyKey))
       }
 
       val node = when (propertyKey) {
@@ -399,7 +364,7 @@ class YamlCloudFormationParser private constructor () {
       }
 
       else -> {
-        addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+        addProblem(value, CloudFormationBundle.message("format.unknown.value", value.javaClass.simpleName))
         null
       }
     }
@@ -444,7 +409,7 @@ class YamlCloudFormationParser private constructor () {
         }
       }
       else -> {
-        addProblem(value, CloudFormationBundle.getString("format.unknown.value", value.javaClass.simpleName))
+        addProblem(value, CloudFormationBundle.message("format.unknown.value", value.javaClass.simpleName))
         null
       }
     }
@@ -489,7 +454,7 @@ class YamlCloudFormationParser private constructor () {
 
     if (!CloudFormationConstants.SupportedTemplateFormatVersions.contains(version)) {
       val supportedVersions = StringUtil.join(CloudFormationConstants.SupportedTemplateFormatVersions, ", ")
-      addProblem(value, CloudFormationBundle.getString("format.unknownVersion", supportedVersions))
+      addProblem(value, CloudFormationBundle.message("format.unknownVersion", supportedVersions))
     }
   }
 

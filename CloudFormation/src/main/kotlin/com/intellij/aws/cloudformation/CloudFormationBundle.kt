@@ -1,12 +1,12 @@
 package com.intellij.aws.cloudformation
 
-import com.intellij.CommonBundle
+import com.intellij.DynamicBundle
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
-import java.util.*
 
-object CloudFormationBundle {
-  private val bundle = ResourceBundle.getBundle(CloudFormationBundle::class.java.name)
+@NonNls
+private const val BUNDLE = "messages.CloudFormationBundle"
 
-  fun getString(@PropertyKey(resourceBundle = "messages.CloudFormationBundle") key: String,
-                vararg params: Any): String = CommonBundle.message(bundle, key, *params)
+object CloudFormationBundle : DynamicBundle(BUNDLE) {
+  fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
 }
