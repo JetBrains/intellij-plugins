@@ -241,73 +241,56 @@
   </projectListeners>
 
   <actions>
-    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction" text="Stop Dart Webdev Server"/>
-    <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
-            text="Dart File" description="Create new Dart file">
+    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction"/>
+    <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
-    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.errorTreeView.ReanalyzeDartSourcesAction"
-            text="Reanalyze Dart Sources" description="Reanalyze all Dart source files">
+    <action id="Dart.Reanalyze" class="com.jetbrains.lang.dart.ide.errorTreeView.ReanalyzeDartSourcesAction">
     </action>
-    <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction"
-            text="Restart Dart Analysis Server" description="Restart Dart Analysis Server">
+    <action id="Dart.Restart.Analysis.Server" class="com.jetbrains.lang.dart.ide.errorTreeView.RestartDartAnalysisServerAction">
     </action>
-    <action id="Dart.Analyzer.Diagnostics" class="com.jetbrains.lang.dart.ide.errorTreeView.AnalysisServerDiagnosticsAction"
-            text="Dart Analyzer Diagnostics" description="View Dart analyzer diagnostics">
+    <action id="Dart.Analyzer.Diagnostics" class="com.jetbrains.lang.dart.ide.errorTreeView.AnalysisServerDiagnosticsAction">
     </action>
-    <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
-            text="Reformat Code with dartfmt" description="Format your Dart code using dartfmt (the Dart Style formatter)">
+    <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction">
       <add-to-group group-id="CodeFormatGroup" anchor="last"/>
       <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="after"/>
       <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="before" relative-to-action="$Delete"/>
     </action>
-    <action id="Dart.DartSortMembers" class="com.jetbrains.lang.dart.ide.actions.DartSortMembersAction"
-            text="Sort members in Dart File" description="Sort members in your Dart code">
+    <action id="Dart.DartSortMembers" class="com.jetbrains.lang.dart.ide.actions.DartSortMembersAction">
       <add-to-group group-id="CodeFormatGroup" anchor="after" relative-to-action="Dart.DartStyle"/>
     </action>
 <!--    <action id="Dart.DartFix" class="com.jetbrains.lang.dart.ide.actions.DartFixAction"-->
 <!--            text="Migrate Code to NNBD with dartfix" description="Migrate your Dart code to NNBD with dartfix"/>-->
-    <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction"
-            text="Constructor">
+    <action id="Generate.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateConstructorAction">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.Named.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateNamedConstructorAction"
-            text="Named Constructor">
+    <action id="Generate.Named.Constructor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateNamedConstructorAction">
       <add-to-group anchor="after" relative-to-action="Generate.Constructor.Dart"  group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.GetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterAction"
-            text="Getter">
+    <action id="Generate.GetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterAction">
       <add-to-group anchor="after" relative-to-action="Generate.Named.Constructor.Dart" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.SetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateSetterAction"
-            text="Setter">
+    <action id="Generate.SetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateSetterAction">
       <add-to-group anchor="after" relative-to-action="Generate.GetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.GetSetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterSetterAction"
-            text="Getter and Setter">
+    <action id="Generate.GetSetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterSetterAction">
       <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.ToString.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateToStringAction"
-            text="toString()">
+    <action id="Generate.ToString.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateToStringAction">
       <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Dart" group-id="GenerateGroup"/>
     </action>
-    <action id="Generate.EqualsAndHashcode.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeAction"
-            text="==() and hashCode">
+    <action id="Generate.EqualsAndHashcode.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateEqualsAndHashcodeAction">
       <add-to-group anchor="after" relative-to-action="Generate.ToString.Dart" group-id="GenerateGroup"/>
     </action>
 
     <group>
-      <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction" text="Pub: Get Dependencies"
-              description="Run 'pub get'"/>
-      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction" text="Pub: Upgrade Dependencies"
-              description="Run 'pub upgrade'"/>
-      <action id="Dart.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..."
-              description="Run 'webdev build' (Dart 2) or 'pub build' (Dart 1)"/>
+      <action id="Dart.pub.get" class="com.jetbrains.lang.dart.ide.actions.DartPubGetAction"/>
+      <action id="Dart.pub.upgrade" class="com.jetbrains.lang.dart.ide.actions.DartPubUpgradeAction"/>
+      <action id="Dart.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction"/>
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
-    <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..."
-            description="Run 'pub cache repair'"/>
+    <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction"/>
   </actions>
 </idea-plugin>
