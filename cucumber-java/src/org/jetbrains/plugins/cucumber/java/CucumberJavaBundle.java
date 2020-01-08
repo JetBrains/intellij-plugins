@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class CucumberJavaBundle extends DynamicBundle {
-  @NonNls public static final String BUNDLE = "org.jetbrains.plugins.cucumber.java.CucumberJavaBundle";
+  @NonNls public static final String BUNDLE = "messages.CucumberJavaBundle";
   private static final CucumberJavaBundle INSTANCE = new CucumberJavaBundle();
 
   private CucumberJavaBundle() { super(BUNDLE); }

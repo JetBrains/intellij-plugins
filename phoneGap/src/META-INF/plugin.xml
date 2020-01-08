@@ -3,7 +3,7 @@
   <name>PhoneGap/Cordova</name>
   <vendor>JetBrains</vendor>
 
-  <resource-bundle>com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle</resource-bundle>
+  <resource-bundle>messages.PhoneGapBundle</resource-bundle>
 
   <description><![CDATA[
         <h4>PhoneGap/Cordova integration for IntelliJ Platform.</h4>

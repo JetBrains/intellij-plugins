@@ -12,7 +12,7 @@ public class PhoneGapBundle extends DynamicBundle {
     return ourInstance.getMessage(key, params);
   }
 
-  @NonNls public static final String BUNDLE = "com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle";
+  @NonNls public static final String BUNDLE = "messages.PhoneGapBundle";
   private static final PhoneGapBundle ourInstance = new PhoneGapBundle();
 
   private PhoneGapBundle() {

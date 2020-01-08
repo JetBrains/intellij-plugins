@@ -34,31 +34,31 @@
     <psi.referenceContributor  language="Gherkin"
                                implementation="org.jetbrains.plugins.cucumber.steps.reference.CucumberReferenceContributor"/>
 
-    <localInspection language="Gherkin" shortName="CucumberUndefinedStep" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="CucumberUndefinedStep" bundle="messages.CucumberBundle"
                      key="cucumber.inspection.undefined.step.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection"/>
 
-    <localInspection language="Gherkin" shortName="CucumberExamplesColon" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="CucumberExamplesColon" bundle="messages.CucumberBundle"
                      key="inspection.missed.colon.example.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberExamplesColonInspection"/>
 
-    <localInspection language="Gherkin" shortName="CucumberMissedExamples" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="CucumberMissedExamples" bundle="messages.CucumberBundle"
                      key="inspection.missed.example.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberMissedExamplesInspection"/>
 
     <localInspection language="Gherkin" shortName="CucumberTableInspection" displayName="Unused or missing columns in Cucumber tables"
-                     groupBundle="org.jetbrains.plugins.cucumber.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
+                     groupBundle="messages.CucumberBundle" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberTableInspection"/>
 
-    <localInspection  language="Gherkin" shortName="GherkinBrokenTableInspection" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection  language="Gherkin" shortName="GherkinBrokenTableInspection" bundle="messages.CucumberBundle"
                       key="inspection.gherkin.table.is.broken.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                       level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinBrokenTableInspection"/>
 
-    <localInspection language="Gherkin" shortName="GherkinMisplacedBackground" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="GherkinMisplacedBackground" bundle="messages.CucumberBundle"
                      key="inspection.gherkin.background.after.scenario.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection"/>
 
-    <localInspection language="Gherkin" shortName="GherkinScenarioToScenarioOutline" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+    <localInspection language="Gherkin" shortName="GherkinScenarioToScenarioOutline" bundle="messages.CucumberBundle"
                      key="inspection.gherkin.scenario.with.examples.section.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinScenarioToScenarioOutlineInspection"/>
 

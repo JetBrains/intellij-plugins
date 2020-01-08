@@ -11,7 +11,7 @@ public class PostCssBundle extends DynamicBundle {
     return ourInstance.getMessage(key, params);
   }
 
-  private static final String PATH_TO_BUNDLE = "org.intellij.plugins.postcss.PostCssBundle";
+  private static final String PATH_TO_BUNDLE = "messages.PostCssBundle";
   private static final AbstractBundle ourInstance = new PostCssBundle();
 
   private PostCssBundle() {

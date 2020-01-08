@@ -28,7 +28,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="resources/Struts2Bundle" key="facet.fileset.editor.label.fileset.name"/>
+          <text resource-bundle="messages/Struts2Bundle" key="facet.fileset.editor.label.fileset.name"/>
         </properties>
       </component>
       <component id="aa71d" class="javax.swing.JTextField" binding="mySetName">

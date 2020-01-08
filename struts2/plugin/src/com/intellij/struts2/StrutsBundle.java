@@ -29,7 +29,7 @@ public class StrutsBundle extends DynamicBundle {
     return ourInstance.getMessage(key, params);
   }
 
-  private static final String PATH_TO_BUNDLE = "resources.Struts2Bundle";
+  private static final String PATH_TO_BUNDLE = "messages.Struts2Bundle";
   private static final StrutsBundle ourInstance = new StrutsBundle();
 
   private StrutsBundle() {

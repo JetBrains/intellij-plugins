@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class FlexBundle extends DynamicBundle {
-  @NonNls public static final String BUNDLE = "com.intellij.lang.javascript.flex.FlexBundle";
+  @NonNls public static final String BUNDLE = "messages.FlexBundle";
   private static final FlexBundle INSTANCE = new FlexBundle();
 
   private FlexBundle() { super(BUNDLE); }

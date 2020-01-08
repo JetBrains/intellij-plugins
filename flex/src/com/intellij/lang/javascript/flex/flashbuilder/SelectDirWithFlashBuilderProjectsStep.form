@@ -19,7 +19,7 @@
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flash.builder.workspace.or.project.dir"/>
+          <text resource-bundle="messages/FlexBundle" key="flash.builder.workspace.or.project.dir"/>
         </properties>
       </component>
       <nested-form id="4629" form-file="com/intellij/projectImport/ProjectFormatPanel.form" binding="myProjectFormatPanel" custom-create="true">
@@ -42,7 +42,7 @@
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="project.files.location"/>
+          <text resource-bundle="messages/FlexBundle" key="project.files.location"/>
         </properties>
       </component>
       <vspacer id="d4c06">
@@ -57,7 +57,7 @@
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="extract.single.to.subfolder.0"/>
+          <text resource-bundle="messages/FlexBundle" key="extract.single.to.subfolder.0"/>
         </properties>
       </component>
       <component id="70980" class="com.intellij.openapi.ui.LabeledComponent" binding="myExtractPathComponent">
@@ -66,7 +66,7 @@
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="folder.to.unzip.several.FB.projects"/>
+          <text resource-bundle="messages/FlexBundle" key="folder.to.unzip.several.FB.projects"/>
         </properties>
       </component>
       <component id="4b399" class="javax.swing.JLabel" binding="myMultiProjectNote">
@@ -74,7 +74,7 @@
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="note.multiple.projects.extract.to.subfolders"/>
+          <text resource-bundle="messages/FlexBundle" key="note.multiple.projects.extract.to.subfolders"/>
         </properties>
       </component>
     </children>

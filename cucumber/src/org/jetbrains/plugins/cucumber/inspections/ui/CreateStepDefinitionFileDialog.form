@@ -27,7 +27,7 @@
         <properties>
           <horizontalAlignment value="10"/>
           <labelFor value="493c5"/>
-          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.name"/>
+          <text resource-bundle="messages/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.name"/>
         </properties>
       </component>
       <component id="493c5" class="javax.swing.JTextField" binding="myFileNameTextField">
@@ -48,7 +48,7 @@
         </constraints>
         <properties>
           <labelFor value="84ccc"/>
-          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.type"/>
+          <text resource-bundle="messages/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.type"/>
         </properties>
       </component>
       <component id="84ccc" class="javax.swing.JComboBox" binding="myFileTypeCombobox">
@@ -76,7 +76,7 @@
         </constraints>
         <properties>
           <labelFor value="e76a8"/>
-          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.location"/>
+          <text resource-bundle="messages/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.location"/>
         </properties>
       </component>
     </children>

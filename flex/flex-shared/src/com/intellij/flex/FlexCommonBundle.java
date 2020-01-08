@@ -31,7 +31,7 @@ public class FlexCommonBundle {
   }
 
   private static Reference<ResourceBundle> ourBundle;
-  @NonNls public static final String BUNDLE = "com.intellij.flex.FlexCommonBundle";
+  @NonNls public static final String BUNDLE = "messages.FlexCommonBundle";
 
   private FlexCommonBundle() {
   }

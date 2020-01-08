@@ -26,7 +26,7 @@
     <localInspection groupPath="JavaScript and TypeScript"
                      groupBundle="messages.JavaScriptBundle" groupKey="js.testing.inspection.group.name"
                      key="inspection.karma.config"
-                     bundle="com.intellij.javascript.karma.KarmaBundle"
+                     bundle="messages.KarmaBundle"
                      shortName="KarmaConfigFile"
                      enabledByDefault="true"
                      level="WARNING"

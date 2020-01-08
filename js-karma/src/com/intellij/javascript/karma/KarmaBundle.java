@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class KarmaBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "com.intellij.javascript.karma.KarmaBundle";
+  @NonNls private static final String BUNDLE = "messages.KarmaBundle";
   private static final KarmaBundle INSTANCE = new KarmaBundle();
 
   private KarmaBundle() { super(BUNDLE); }

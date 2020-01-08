@@ -59,23 +59,23 @@
 
     <gotoSymbolContributor implementation="org.intellij.plugins.postcss.PostCssGotoSymbolContributor"/>
 
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.nesting.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="false" level="WARNING"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssNestingInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.selector.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomSelectorInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.media.query.range.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssMediaRangeInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.media.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="ERROR"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomMediaInspection"/>
-    <localInspection language="PostCSS" bundle="org.intellij.plugins.postcss.PostCssBundle"
+    <localInspection language="PostCSS" bundle="messages.PostCssBundle"
                      key="inspections.custom.property.problems.name"
                      groupKey="inspections.group.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.intellij.plugins.postcss.inspections.PostCssCustomPropertiesInspection"/>
