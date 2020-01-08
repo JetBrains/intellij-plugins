@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Predicate;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -12,6 +13,8 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.InputValidator;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -66,8 +69,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   @Nullable private final ExecutionResult myExecutionResult;
   @NotNull private final DartUrlResolver myDartUrlResolver;
-  @NotNull private final String myDebuggingHost;
-  private final int myObservatoryPort;
 
   private boolean myVmConnected = false;
 
@@ -113,6 +114,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
          remoteDebug ? DebugType.REMOTE : DebugType.CLI, timeout, currentWorkingDirectory);
   }
 
+  private static Predicate<String> isDebugUrl =
+    (inputString) -> inputString != null && inputString.length() > 5 &&
+                     (
+                       (inputString.startsWith("http://") && inputString.endsWith("/")) ||
+                       (inputString.startsWith("ws://") && inputString.endsWith("/ws")) ||
+                       (inputString.startsWith("vm@ws://") && inputString.endsWith("/ws"))
+                     );
+
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
                                    final int observatoryPort,
@@ -123,8 +132,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                    final int timeout,
                                    @Nullable final VirtualFile currentWorkingDirectory) {
     super(session);
-    myDebuggingHost = debuggingHost;
-    myObservatoryPort = observatoryPort;
     myExecutionResult = executionResult;
     myDartUrlResolver = dartUrlResolver;
     myDebugType = debugType;
@@ -157,8 +164,40 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myDASExecutionContextId = dasExecutionContextId;
 
     if (DebugType.REMOTE == debugType) {
-      // TODO won't work since Dart SDK 1.22 because auth token in URL is required
-      scheduleConnect("ws://" + myDebuggingHost + ":" + myObservatoryPort + "/ws");
+      final String httpDebuggerUrl =
+        Messages.showInputDialog(getSession().getProject(), "Enter a URL to a running Dart or Flutter application",
+                                 "Connect to a Running App", null, "http://127.0.0.1:12345/AUTH_CODE=/", new InputValidator() {
+            @Override
+            public boolean checkInput(final String inputString) {
+              return isDebugUrl.test(inputString);
+            }
+
+            @Override
+            public boolean canClose(String inputString) {
+              return true;
+            }
+          });
+      if (isDebugUrl.test(httpDebuggerUrl)) {
+        assert httpDebuggerUrl != null;
+        final String wsToConnect;
+        if (httpDebuggerUrl.startsWith("http://")) {
+          // Convert the dialog entry of some "http://127.0.0.1:PORT/AUTH_CODE=/" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+          wsToConnect = "ws" + StringUtil.trimStart(httpDebuggerUrl, "http") + "ws";
+        }
+        else if (httpDebuggerUrl.startsWith("vm@ws://")) {
+          // Convert the dialog entry of some "vm@ws://127.0.0.1:PORT/AUTH_CODE=/ws" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+          // This is included as this is the format printed at the top of the Observatory page.
+          wsToConnect = StringUtil.trimStart(httpDebuggerUrl, "vm@");
+        }
+        else {
+          // This is the httpDebuggerUrl.startsWith("ws://") case,
+          // don't modify the dialog entry if it appears like "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+          wsToConnect = httpDebuggerUrl;
+        }
+
+        scheduleConnect(wsToConnect);
+        myOpenObservatoryAction.setUrl(httpDebuggerUrl);
+      }
     }
     else if (DebugType.CLI == debugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
