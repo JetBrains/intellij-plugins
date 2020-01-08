@@ -20,7 +20,7 @@
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
 
-  <resource-bundle>com.jetbrains.lang.dart.DartBundle</resource-bundle>
+  <resource-bundle>messages.DartBundle</resource-bundle>
 
   <extensionPoints>
     <extensionPoint name="completionExtension" interface="com.jetbrains.lang.dart.ide.completion.DartCompletionExtension" />
@@ -122,7 +122,7 @@
     <directoryProjectGenerator implementation="com.jetbrains.lang.dart.projectWizard.DartProjectGenerator"/>
 
     <projectConfigurable groupId="language" instance="com.jetbrains.lang.dart.sdk.DartConfigurable"
-                         id="dart.settings" key="dart.title" bundle="com.jetbrains.lang.dart.DartBundle" nonDefaultProject="true"/>
+                         id="dart.settings" key="dart.title" bundle="messages.DartBundle" nonDefaultProject="true"/>
     <library.presentationProvider implementation="com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider"/>
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
 
@@ -210,7 +210,7 @@
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.DartRunner"/>
 
-    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="outdated.dependencies.inspection.name"
+    <localInspection bundle="messages.DartBundle" key="outdated.dependencies.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>

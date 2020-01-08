@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
 public class DartBundle extends DynamicBundle {
-  @NonNls private static final String BUNDLE = "com.jetbrains.lang.dart.DartBundle";
+  @NonNls private static final String BUNDLE = "messages.DartBundle";
   private static final DartBundle INSTANCE = new DartBundle();
 
   private DartBundle() { super(BUNDLE); }

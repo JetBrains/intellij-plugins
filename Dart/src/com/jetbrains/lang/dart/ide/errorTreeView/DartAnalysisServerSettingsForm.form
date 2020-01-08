@@ -13,7 +13,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="open.dart.plugin.settings"/>
+          <text resource-bundle="messages/DartBundle" key="open.dart.plugin.settings"/>
         </properties>
       </component>
       <component id="b6360" class="com.intellij.ui.HoverHyperlinkLabel" binding="myAnalysisDiagnosticsHyperlink" custom-create="true">
@@ -21,7 +21,7 @@
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="analysis.server.settings.diagnostics"/>
+          <text resource-bundle="messages/DartBundle" key="analysis.server.settings.diagnostics"/>
         </properties>
       </component>
       <component id="ea520" class="com.intellij.ui.components.JBCheckBox" binding="packageScopedAnalysisCheckbox">
@@ -29,7 +29,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="com/jetbrains/lang/dart/DartBundle" key="analysis.server.settings.package.analysis"/>
+          <text resource-bundle="messages/DartBundle" key="analysis.server.settings.package.analysis"/>
         </properties>
       </component>
       <component id="4a605" class="com.intellij.ui.TitledSeparator">

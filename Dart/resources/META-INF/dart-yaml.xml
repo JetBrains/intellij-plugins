@@ -1,6 +1,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="path.package.reference.inspection.name"
+    <localInspection bundle="messages.DartBundle" key="path.package.reference.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="yaml"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection"/>
     <psi.referenceContributor language="yaml" implementation="com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor" order="last"/>
