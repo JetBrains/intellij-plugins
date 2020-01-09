@@ -19,6 +19,7 @@ Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with st
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
     <codeInsight.lineMarkerProvider implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.GrCucumberLineMarkerProvider" language="Groovy"/>
+    <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberStepIndex"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

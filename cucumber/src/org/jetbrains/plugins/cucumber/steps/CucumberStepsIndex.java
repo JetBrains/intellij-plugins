@@ -81,21 +81,6 @@ public class CucumberStepsIndex {
 
 
   /**
-   * Searches for step definition.
-   * More info is available in {@link #findStepDefinitions(PsiFile, GherkinStep)} doc
-   *
-   * @param featureFile file with steps
-   * @param step        step itself
-   * @return definition or null if not found
-   * @see #findStepDefinitions(PsiFile, GherkinStep)
-   */
-  @Nullable
-  public AbstractStepDefinition findStepDefinition(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
-    final Collection<AbstractStepDefinition> definitions = findStepDefinitions(featureFile, step);
-    return (definitions.isEmpty() ? null : definitions.iterator().next());
-  }
-
-  /**
    * Searches for ALL step definitions, groups it by step definition class and sorts by pattern size.
    * For each step definition class it finds the largest pattern.
    *
