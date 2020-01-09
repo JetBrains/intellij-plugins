@@ -49,17 +49,14 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
   </extensions>
   <actions>
-    <action id="ReformatWithPrettierAction"
-            class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
-            description="Reformat with Prettier">
+    <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift P"/>
       <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
       <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt shift P"/>
     </action>
-    <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction"
-            text="Apply Prettier Code Style Rules">
+    <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
