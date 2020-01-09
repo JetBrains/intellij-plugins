@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.documentation;
 
 import com.intellij.psi.PsiFile;
@@ -392,6 +392,34 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "///     $ code\n" +
            "/// \t$ code continues\n" +
            "/// code done\n" +
+           "<caret>foo(){}");
+  }
+
+  public void testInlineCodeBlocks() {
+    doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
+           "<p>   text <code>one</code> <a href=\"www.example.com\">two</a></p>\n" +
+           "\n" +
+           "<pre><code>    code block [three]</code></pre>\n" +
+           "\n" +
+           "<pre><code>\n" +
+           " code block too [four]\n" +
+           "</code></pre>\n" +
+           "\n" +
+           "<p>simple text <code>five</code> <a href=\"www.example.com\">six</a></p>\n" +
+           "\n" +
+           "<pre><code>    $ code [seven]\n" +
+           "    $ code continues [eight] </code></pre>\n" +
+           "\n" +
+           "<p>code done <code></code> <code>nine</code></p>",
+           "///    text [one] [two](www.example.com)\n" +
+           "///     code block [three]\n" +
+           "/// ```\n" +
+           "///  code block too [four]\n" +
+           "/// ```\n" +
+           "/// simple text [five] [six](www.example.com)\n" +
+           "///     $ code [seven]\n" +
+           "/// \t$ code continues [eight] \n" +
+           "/// code done [] [nine]\n" +
            "<caret>foo(){}");
   }
 

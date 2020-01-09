@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -136,7 +136,7 @@ public class DartDocUtil {
   @NotNull
   public static String generateDoc(@Nullable final String signature,
                                    final boolean signatureIsHtml,
-                                   @Nullable final String docText,
+                                   @Nullable String docText,
                                    @Nullable final String containingLibraryName,
                                    @Nullable final String containingClassDescription,
                                    @Nullable final String staticType,
@@ -185,11 +185,61 @@ public class DartDocUtil {
       MarkdownUtil.replaceHeaders(lines);
       MarkdownUtil.generateLists(lines);
 
+      docText = handleInlineCodeBlocks(StringUtil.join(lines, "\n"));
+
       MarkdownProcessor processor = new MarkdownProcessor();
-      builder.append(processor.markdown(StringUtil.join(lines, "\n")));
+      builder.append(processor.markdown(docText));
     }
     // done
     return builder.toString().trim();
+  }
+
+  /**
+   * This method converts all in-line code blocks such as "[text]" and "[:text:]", that are not followed by "()" to "<code>text</code>".
+   */
+  @NotNull
+  private static String handleInlineCodeBlocks(@NotNull final String text) {
+    // This method does the following:
+    // - Create a new StringBuilder
+    // - Loops through the passed markdown text one character at a time, writing the char to the StringBuilder in most cases
+    // - In cases where some <pre><code> or </pre></code>, inSourceCodeBlock is set appropriately
+    // - When some "[*]" is encountered that is not followed by "()", the contents are replaced with "<code>*</code>"
+    // - Return the result of the StringBuilder
+
+    // The following start and end tags are inserted by MarkdownUtil.replaceCodeBlock().
+    final String START_TAGS = "<pre><code>";
+    final String END_TAGS = "</code></pre>";
+
+    boolean inSourceCodeBlock = false;
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < text.length(); ) {
+      char c = text.charAt(i);
+      if (c == '<') {
+        if (text.regionMatches(i, START_TAGS, 0, START_TAGS.length())) {
+          inSourceCodeBlock = true;
+        }
+        else if (text.regionMatches(i, END_TAGS, 0, END_TAGS.length())) {
+          inSourceCodeBlock = false;
+        }
+      }
+      else if (c == '[' && !inSourceCodeBlock) {
+        int indexOfClose = text.indexOf(']', i + 1);
+        if (indexOfClose != -1 && (indexOfClose == text.length() - 1 || text.charAt(indexOfClose + 1) != '(')) {
+          builder.append("<code>");
+          String codeSnippet = text.substring(i + 1, indexOfClose);
+          if (codeSnippet.startsWith(":") && codeSnippet.endsWith(":")) {
+            codeSnippet = codeSnippet.substring(1, codeSnippet.length() - 2);
+          }
+          builder.append(codeSnippet);
+          builder.append("</code>");
+          i = indexOfClose + 1;
+          continue;
+        }
+      }
+      builder.append(c);
+      i++;
+    }
+    return builder.toString();
   }
 
   @Nullable
