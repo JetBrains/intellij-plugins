@@ -17,13 +17,13 @@ class DebuggingSecondPart(module: Module) : KLesson("Debugging Code. Part II", m
         JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
         prepareSample(BeforeDebugging.jsDebuggerSample)
         task("StepInto") {
-          text("<strong>Important</strong>: Please make sure that there’s a breakpoint on line 1 and that the debugger is launched (<action>DebugClass</action>) and its tool window is opened before moving forward. Let's continue with locating a bug in our code and learn a few more things that come in handy when debugging in WebStorm. \n" +
+          text("<strong>Important</strong>: Please make sure that there’s a breakpoint on line 1 and that the debugger is launched (<action>DebugClass</action>) and opened on the <strong>Debugger</strong> tab before moving forward.\nLet's continue with locating a bug in our code and learn a few more things that come in handy when debugging in WebStorm." +
             "To better understand how our code is executed, we could put a few more breakpoints in it and then move from one to another using <strong>Resume Program</strong> button (<icon>AllIcons.Actions.Resume</icon>), but there’s a faster way. Let’s step to the next executed line by pressing ${action(it)} and using <strong>Step Into</strong> (<icon>AllIcons.Actions.TraceInto</icon>).")
           trigger(it)
         }
 
         task("EvaluateExpression") {
-          text("Depending on the situation, you may also like <strong>Step over action</strong> (<action>StepOver</action>), which moves the execution in the current file, line by line, without stepping into any function calls. <strong>Smart Step Into</strong> (<action>SmartStepInto</action>) lets you select the chained or nested call to step into, Finally, <strong>Step Out</strong> (<action>StepOut</action>) finishes the execution of the current function and stops at the next statement after the call. \n" +
+          text("Depending on the situation, you may also like <strong>Step over action</strong> (<action>StepOver</action>), which moves the execution in the current file, line by line, without stepping into any function calls. <strong>Smart Step Into</strong> (<action>SmartStepInto</action>) lets you select the chained or nested call to step into. Finally, <strong>Step Out</strong> (<action>StepOut</action>) finishes the execution of the current function and stops at the next statement after the call. \n" +
             "Now, what if we want to check the value of an expression? WebStorm lets you do it quickly with the <strong>Evaluate Expression</strong> popup. Press ${action(it)} to call it.")
           trigger(it)
         }

@@ -30,7 +30,7 @@ class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Cod
         JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
         prepareSample(sample)
 
-        caret(135)
+        caret(136)
         task("EditorChooseLookupItem") {
           text("WebStorm is full of features that help you write better code and increase your productivity. Let’s start with code completion. It enables you to code faster by completing keywords and symbols from language APIs and project dependencies. Type <strong>M</strong> and hit <action>EditorChooseLookupItem</action> to autocomplete <strong>Math</strong>.")
           trigger(it) {
@@ -50,7 +50,7 @@ class BasicCompletionLesson(module: Module) : KLesson("The Nuts and Bolts of Cod
           stateCheck {
             val line = editor.caretModel.logicalPosition.line
             val column = editor.caretModel.logicalPosition.column
-            line == 3 && column in 20..26
+            line == 4 && column in 20..26
           }
           trigger(it)
         }

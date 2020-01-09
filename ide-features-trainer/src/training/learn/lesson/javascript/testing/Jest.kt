@@ -35,7 +35,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
           const sum = require('./sum');
 
           test('adds 1 + 2 to equal 3', () => {
-            expect(sum(1, 2)).toBe(3);
+            expect(sum(1, 2)).toBe(4);
           });
         """.trimIndent()))
 
@@ -64,7 +64,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
 
         task("Run") {
           text(""" 
-            So, now the new <strong>All Tests</strong> configuration is selected by default. Let’s click the <strong>Run</strong> button right next to it.
+            So, now the new <strong>All Tests</strong> configuration is selected by default. Let’s click the <strong>Run</strong> (<icon>AllIcons.RunConfigurations.TestState.Run</icon>) button right next to it.
           """.trimIndent())
           trigger(it)
         }
@@ -98,7 +98,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
 
         task {
           text("""
-            Now that we have the right value for the expected result, we can rerun our test. Let’s do it in a different way this time. See the icon on the left of the test in the editor? This icon not only shows you the test status for the tests you’ve run recently, but also lets you quickly run and debug a specific test.
+            Now that we have the right value for the expected result, we can rerun our test. Let’s do it in a different way this time. See the <strong>Shield</strong> <icon>AllIcons.RunConfigurations.TestState.Red2</icon> on the left of the test in the editor? This icon not only shows you the test status for the tests you’ve run recently, but also lets you quickly run and debug a specific test.
             Let’s click it and select <strong>Run adds 1 + 2 to equal 3</strong>.
           """.trimIndent())
           stateCheck {
@@ -109,7 +109,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
         task("Coverage") {
           text("""
             Great job! Our test has successfully passed. 
-            Let’s take a look at another handy tool. Click the <icon>AllIcons.General.RunWithCoverage</icon> located next to the run/debug configurations menu and then click the Run icon at the top.
+            Let’s take a look at another handy tool. Click the <icon>AllIcons.General.RunWithCoverage</icon> located next to the run/debug configurations menu.
           """.trimIndent())
           trigger(it)
         }
