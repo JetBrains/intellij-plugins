@@ -56,7 +56,6 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
             With WebStorm, all testing workflows become easier. Let’s see how. For this module, we’ll use <a href="https://jestjs.io/en/">Jest</a> and one of <a href="https://github.com/facebook/jest/tree/master/examples/getting-started">its sample projects</a> as an example, so please make sure you have Jest and npm/Yarn installed on your machine (see <a href="https://jestjs.io/docs/en/getting-started">this</a> webpage for more information).
             We’ll start by creating a run/debug configuration, which is going to be Jest-specific. On the main menu, select <strong>Run > Edit Configurations</strong>. Then click <icon>AllIcons.General.Add</icon>, add the <strong>Jest</strong> configuration with the default parameters, and hit <strong>OK</strong> to save it.
           """.trimIndent())
-          trigger(it)
           stateCheck {
             RunManager.getInstance(project).findConfigurationByName("All Tests") != null
           }
