@@ -235,14 +235,16 @@ public class DartAnnotator implements Annotator {
       final DartQuickFixSet quickFixSet =
         new DartQuickFixSet(psiFile.getManager(), file, error.getOffset(), error.getCode(), error.getSeverity());
       createAnnotation(holder, error, psiFile.getTextLength(), problemGroup, quickFixSet.getQuickFixes());
-
     }
 
     for (DartServerData.DartHighlightRegion region : das.getHighlight(file)) {
       final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());
-        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(textRange).textAttributes(TextAttributesKey.find(attributeKey)).create();
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+          .range(textRange)
+          .textAttributes(TextAttributesKey.find(attributeKey))
+          .create();
       }
     }
   }
@@ -344,8 +346,10 @@ public class DartAnnotator implements Annotator {
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(range).textAttributes(attribute).create();
       }
       else {
-        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("dart.color.settings.description.invalid.string.escape")).range(range)
-          .textAttributes(attribute).create();
+        holder.newAnnotation(HighlightSeverity.ERROR, DartBundle.message("dart.color.settings.description.invalid.string.escape"))
+          .range(range)
+          .textAttributes(attribute)
+          .create();
       }
     }
   }
