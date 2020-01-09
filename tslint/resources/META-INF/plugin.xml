@@ -58,8 +58,7 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Javascript.Linters.EsLint.Fix"/>
     </action>
     <action id="TslintImportCodeStyleAction"
-            class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction"
-            text="Apply TSLint Code Style Rules">
+            class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
