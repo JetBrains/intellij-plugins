@@ -161,7 +161,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testFunctionDoc1() {
-    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>A function on [x]s.</p>",
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>A function on <code>x</code>s.</p>",
            "/// A function on [x]s.\nvoid <caret>foo(int x) { }");
   }
 
