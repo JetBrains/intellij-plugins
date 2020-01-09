@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.project.Project;
@@ -18,6 +19,8 @@ public class DartAnalysisServerMessages {
   }
 
   public static void sendAnalysisStarted(@NotNull Project project, boolean isStarting) {
+    if (project.isDisposed()) return;
+
     final MessageBus bus = project.getMessageBus();
     final DartAnalysisNotifier publisher = bus.syncPublisher(DART_ANALYSIS_TOPIC);
     if (isStarting) {
