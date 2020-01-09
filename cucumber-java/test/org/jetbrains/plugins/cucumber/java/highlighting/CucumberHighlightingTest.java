@@ -32,7 +32,6 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
 
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new CucumberStepInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");

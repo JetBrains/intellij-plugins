@@ -5,6 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
@@ -54,10 +55,16 @@ public interface CucumberJvmExtensionPoint {
    */
   List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module);
 
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
   void flush(@NotNull Project project);
 
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
   void reset(@NotNull Project project);
 
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
   Object getDataObject(@NotNull Project project);
 
   Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile file);

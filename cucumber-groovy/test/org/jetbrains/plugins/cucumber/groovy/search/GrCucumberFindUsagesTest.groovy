@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals
 class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
 
   protected void doTest(String text, String ext, String additional = null, String additionalExt = null, int count = 1) {
-    CucumberStepsIndex.getInstance(project).reset()
     if (additional && additionalExt) {
       fixture.addFileToProject("steps.$additionalExt", additional)
     }

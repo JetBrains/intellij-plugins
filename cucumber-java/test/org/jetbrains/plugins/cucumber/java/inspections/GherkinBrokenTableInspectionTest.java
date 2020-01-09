@@ -11,7 +11,6 @@ public class GherkinBrokenTableInspectionTest extends CucumberJavaCodeInsightTes
   }
 
   protected void doTest() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new GherkinBrokenTableInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");

@@ -76,6 +76,5 @@ public class CucumberJavaCompletionTest extends CucumberJavaCodeInsightTestCase 
   protected void setUp() throws Exception {
     super.setUp();
     myCompletionTester = new CompletionTester(myFixture);
-    CucumberStepsIndex.getInstance(getProject()).reset();
   }
 }

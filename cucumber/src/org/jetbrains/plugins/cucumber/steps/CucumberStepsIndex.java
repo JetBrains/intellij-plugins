@@ -29,13 +29,9 @@ public class CucumberStepsIndex {
 
   private final Map<BDDFrameworkType, CucumberJvmExtensionPoint> myExtensionMap;
   private final Map<CucumberJvmExtensionPoint, Object> myExtensionData;
-  private Project myProject;
 
   public static CucumberStepsIndex getInstance(Project project) {
-    CucumberStepsIndex result = ServiceManager.getService(project, CucumberStepsIndex.class);
-    result.myProject = project;
-
-    return result;
+    return ServiceManager.getService(project, CucumberStepsIndex.class);
   }
 
   public CucumberStepsIndex(final Project project) {
@@ -174,18 +170,6 @@ public class CucumberStepsIndex {
       }
     }
     return result;
-  }
-
-  public void reset() {
-    for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
-      e.reset(myProject);
-    }
-  }
-
-  public void flush() {
-    for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
-      e.flush(myProject);
-    }
   }
 
   public Map<BDDFrameworkType, CucumberJvmExtensionPoint> getExtensionMap() {

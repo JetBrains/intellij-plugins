@@ -60,7 +60,6 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     checkReference(step, null);
     final String stepDefinitionName = createStepDefinition(stepDefinitionContent);
-    CucumberStepsIndex.getInstance(getProject()).flush();
     checkReference(step, stepDefinitionName);
   }
 
@@ -69,7 +68,6 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
 
     checkReference(step, stepDefinitionName);
     deleteStepDefinition(stepDefinitionName);
-    CucumberStepsIndex.getInstance(getProject()).flush();
     checkReference(step, null);
   }
 }

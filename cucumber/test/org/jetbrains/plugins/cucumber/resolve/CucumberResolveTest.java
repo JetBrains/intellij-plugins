@@ -54,7 +54,6 @@ public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   }
 
   protected void init(String folder, String fileName) {
-    CucumberStepsIndex.getInstance(myFixture.getProject()).reset();
     myFixture.copyDirectoryToProject(folder, "");
     myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(fileName));
   }

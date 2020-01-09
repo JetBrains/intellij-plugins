@@ -118,7 +118,6 @@ Given(~'calculator', 1000) {->
   }
 
   void doTest(String feature, String stepDef) {
-    CucumberStepsIndex.getInstance(project).reset()
     fixture.configureByText('test.feature', feature)
     fixture.addFileToProject('steps.groovy', stepDef)
     assert referenceUnderCaret(PsiReference).resolve()

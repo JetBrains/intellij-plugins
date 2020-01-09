@@ -12,7 +12,6 @@ import java.util.List;
 
 public class CucumberGotoRelatedFileTest extends CucumberJavaCodeInsightTestCase {
   public void testGotoRelated() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.copyDirectoryToProject("gotoRelated", "");
     myFixture.configureByFile("gotoRelated/test.feature");
     List<GotoRelatedItem> items = GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), null);

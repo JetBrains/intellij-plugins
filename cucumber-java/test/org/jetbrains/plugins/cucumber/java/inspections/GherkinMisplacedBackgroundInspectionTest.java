@@ -11,7 +11,6 @@ public class GherkinMisplacedBackgroundInspectionTest extends CucumberJavaCodeIn
   }
 
   protected void doTest() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new GherkinMisplacedBackgroundInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");
