@@ -115,12 +115,15 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   private static Predicate<String> isDebugUrl =
-    (inputString) -> inputString != null && inputString.length() > 5 &&
-                     (
-                       (inputString.startsWith("http://") && inputString.endsWith("/")) ||
-                       (inputString.startsWith("ws://") && inputString.endsWith("/ws")) ||
-                       (inputString.startsWith("vm@ws://") && inputString.endsWith("/ws"))
-                     );
+    inputString -> {
+      inputString = inputString != null ? inputString.trim() : "";
+      return inputString.length() > 5 &&
+             (
+               (inputString.startsWith("http://") && inputString.endsWith("/")) ||
+               (inputString.startsWith("ws://") && inputString.endsWith("/ws")) ||
+               (inputString.startsWith("vm@ws://") && inputString.endsWith("/ws"))
+             );
+    };
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
                                    @NotNull final String debuggingHost,
@@ -164,7 +167,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     myDASExecutionContextId = dasExecutionContextId;
 
     if (DebugType.REMOTE == debugType) {
-      final String httpDebuggerUrl =
+      String httpDebuggerUrl =
         Messages.showInputDialog(getSession().getProject(), "Enter a URL to a running Dart or Flutter application",
                                  "Connect to a Running App", null, "http://127.0.0.1:12345/AUTH_CODE=/", new InputValidator() {
             @Override
@@ -179,6 +182,10 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           });
       if (isDebugUrl.test(httpDebuggerUrl)) {
         assert httpDebuggerUrl != null;
+
+        // trim the url for copy and paste mistakes with surrounding white space
+        httpDebuggerUrl = httpDebuggerUrl.trim();
+
         final String wsToConnect;
         if (httpDebuggerUrl.startsWith("http://")) {
           // Convert the dialog entry of some "http://127.0.0.1:PORT/AUTH_CODE=/" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
