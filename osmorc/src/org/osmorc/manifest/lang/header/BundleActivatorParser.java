@@ -25,6 +25,7 @@
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
@@ -45,7 +46,7 @@ public class BundleActivatorParser extends ClassReferenceParser {
   protected boolean checkClass(@NotNull HeaderValuePart valuePart, @NotNull PsiClass aClass, @NotNull AnnotationHolder holder) {
     PsiClass activatorClass = OsgiPsiUtil.getActivatorClass(valuePart.getProject());
     if (activatorClass != null && !aClass.isInheritor(activatorClass, true)) {
-      holder.createErrorAnnotation(valuePart.getHighlightingRange(), OsmorcBundle.message("manifest.activator.class.invalid"));
+      holder.newAnnotation(HighlightSeverity.ERROR, OsmorcBundle.message("manifest.activator.class.invalid")).range(valuePart.getHighlightingRange()).create();
       return true;
     }
 

@@ -3,6 +3,7 @@ package org.osmorc.manifest.lang.header;
 
 import com.intellij.codeInsight.daemon.JavaErrorBundle;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -50,14 +51,14 @@ public class BasePackageParser extends OsgiHeaderParser {
           packageName = StringUtil.trimEnd(packageName, ".*");
 
           if (StringUtil.isEmptyOrSpaces(packageName)) {
-            holder.createErrorAnnotation(valuePart.getHighlightingRange(), ManifestBundle.message("header.reference.invalid"));
+            holder.newAnnotation(HighlightSeverity.ERROR, ManifestBundle.message("header.reference.invalid")).range(valuePart.getHighlightingRange()).create();
             annotated = true;
             continue;
           }
 
           PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
           if (directories.length == 0) {
-            holder.createErrorAnnotation(valuePart.getHighlightingRange(), JavaErrorBundle.message("cannot.resolve.package", packageName));
+            holder.newAnnotation(HighlightSeverity.ERROR, JavaErrorBundle.message("cannot.resolve.package", packageName)).range(valuePart.getHighlightingRange()).create();
             annotated = true;
           }
         }

@@ -25,6 +25,7 @@
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public class BundleVersionParser extends StandardHeaderParser {
       }
       catch (IllegalArgumentException e) {
         TextRange range = ((HeaderValuePart)value).getHighlightingRange();
-        holder.createErrorAnnotation(range, e.getMessage());
+        holder.newAnnotation(HighlightSeverity.ERROR, e.getMessage()).range(range).create();
         return true;
       }
     }

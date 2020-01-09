@@ -27,6 +27,7 @@ package org.osmorc.manifest.lang.header;
 import com.intellij.codeInsight.daemon.JavaErrorBundle;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -112,7 +113,7 @@ public class ExportPackageParser extends BasePackageParser {
 
               if (StringUtil.isEmptyOrSpaces(packageName)) {
                 TextRange highlight = range.shiftRight(offset);
-                holder.createErrorAnnotation(highlight, ManifestBundle.message("header.reference.invalid"));
+                holder.newAnnotation(HighlightSeverity.ERROR, ManifestBundle.message("header.reference.invalid")).range(highlight).create();
                 annotated = true;
                 continue;
               }
@@ -120,7 +121,7 @@ public class ExportPackageParser extends BasePackageParser {
               PsiDirectory[] directories = OsgiPsiUtil.resolvePackage(header, packageName);
               if (directories.length == 0) {
                 TextRange highlight = adjust(range, text).shiftRight(offset);
-                holder.createErrorAnnotation(highlight, JavaErrorBundle.message("cannot.resolve.package", packageName));
+                holder.newAnnotation(HighlightSeverity.ERROR, JavaErrorBundle.message("cannot.resolve.package", packageName)).range(highlight).create();
                 annotated = true;
               }
             }
