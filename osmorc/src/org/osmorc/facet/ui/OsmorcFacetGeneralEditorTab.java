@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -197,7 +198,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return "General";
+    return OsmorcBundle.message("configurable.OsmorcFacetGeneralEditorTab.display.name");
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.tapestry.TapestryBundle;
 import com.intellij.tapestry.intellij.facet.AddTapestrySupportUtil;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
@@ -40,7 +41,7 @@ public class FacetEditor extends FacetEditorTab {
     @Override
     @Nls
     public String getDisplayName() {
-        return "Tapestry";
+      return TapestryBundle.message("configurable.FacetEditor.display.name");
     }
 
     @Override
