@@ -106,7 +106,7 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.ICON -> {
             val icon = iconFromPath(message)
             var placeholder = " "
-            while (this.getFontMetrics(this.font).stringWidth(placeholder) < icon.iconWidth) {
+            while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
               placeholder += " "
             }
             placeholder += " "
