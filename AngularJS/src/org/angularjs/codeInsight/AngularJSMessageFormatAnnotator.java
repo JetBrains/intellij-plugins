@@ -3,6 +3,7 @@ package org.angularjs.codeInsight;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -34,7 +35,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
   @Override
   public void visitMessageFormatExpression(@NotNull final AngularJSMessageFormatExpression expression) {
     final AngularJSMessageFormatParser.ExtensionType type = expression.getExtensionType();
-    if (type == null) myHolder.createErrorAnnotation((PsiElement)expression, "missing or unknown message format extension");// will not happen, but
+    if (type == null) myHolder.newAnnotation(HighlightSeverity.ERROR, "missing or unknown message format extension").create();// will not happen, but
     final List<PsiElement> elements = expression.getSelectionKeywordElements();
     final List<String> selectionKeywords = ContainerUtil.map(elements, element -> element.getText());
 
@@ -53,7 +54,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
           if (AngularJSMessageFormatParser.OFFSET_OPTION.equals(option.getNode().getFirstChildNode().getText())) {
             final ASTNode lastChild = option.getNode().getLastChildNode();
             if (lastChild.getElementType() != JSTokenTypes.NUMERIC_LITERAL) {
-              myHolder.createErrorAnnotation(option, "Expected integer value");
+              myHolder.newAnnotation(HighlightSeverity.ERROR, "Expected integer value").range(option).create();
             }
           }
         }
@@ -85,7 +86,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
         for (PsiElement element : elements) {
           final String errorText = errors.get(element.getText());
           if (errorText != null) {
-            myHolder.createErrorAnnotation(element, errorText);
+            myHolder.newAnnotation(HighlightSeverity.ERROR, errorText).range(element).create();
           }
         }
       }
@@ -102,7 +103,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
     if (!duplicate.isEmpty()) {
       for (PsiElement element : elements) {
         if (duplicate.contains(element.getText())) {
-          myHolder.createErrorAnnotation(element, "Duplicate selection keyword");
+          myHolder.newAnnotation(HighlightSeverity.ERROR, "Duplicate selection keyword").range(element).create();
         }
       }
     }
@@ -116,7 +117,7 @@ public class AngularJSMessageFormatAnnotator extends AngularJSElementVisitor imp
       if (!requiredKeywords.isEmpty()) {
         for (String requiredKeyword : requiredKeywords) {
           if (!selectionKeywords.contains(requiredKeyword)) {
-            myHolder.createErrorAnnotation((PsiElement)expression, "Missing required selection keyword '" + requiredKeyword + "'");
+            myHolder.newAnnotation(HighlightSeverity.ERROR, "Missing required selection keyword '" + requiredKeyword + "'").create();
           }
         }
       }

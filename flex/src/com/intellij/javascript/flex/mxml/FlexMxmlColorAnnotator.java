@@ -5,9 +5,9 @@ import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.LineMarkerSettings;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -68,8 +68,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     if (!JSCommonTypeNames.ARRAY_CLASS_NAME.equals(annotationBackedDescriptor.getType())) {
       XmlAttributeValue valueElement = attribute.getValueElement();
       if (valueElement != null) {
-        Annotation annotation = holder.createInfoAnnotation(valueElement, null);
-        annotation.setGutterIconRenderer(new MyRenderer(value, attribute));
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(valueElement).gutterIconRenderer(new MyRenderer(value, attribute)).create();
       }
     }
   }
