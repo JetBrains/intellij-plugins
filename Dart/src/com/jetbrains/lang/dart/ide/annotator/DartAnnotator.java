@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -166,7 +166,7 @@ public class DartAnnotator implements Annotator {
     if (holder.isBatchMode()) return;
 
     final AnnotationSession session = holder.getCurrentAnnotationSession();
-    if (session.getUserData(DART_SERVER_DATA_HANDLED) != Boolean.TRUE) {
+    if (element instanceof PsiFile && session.getUserData(DART_SERVER_DATA_HANDLED) != Boolean.TRUE) {
       session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
