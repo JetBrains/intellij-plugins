@@ -362,7 +362,10 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
         val fileName = lesson.fileName
 
         var lessonVirtualFile: VirtualFile? = null
-        val roots = manager.contentSourceRoots
+        var roots = manager.contentSourceRoots
+        if (roots.isEmpty()) {
+          roots = manager.contentRoots
+        }
         for (file in roots) {
           if (file.name == fileName) {
             lessonVirtualFile = file
