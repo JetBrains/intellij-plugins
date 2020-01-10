@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module name="Features of GoLand 2019.3" lessonsPath="GoLand2019.3/" version="0.1" id="release2019.3" fileType="SCRATCH"
+<module name="Features of GoLand 2019.3" lessonsPath="GoLand2019.3/" version="0.1" id="release2019.3" fileType="PROJECT"
         description="New features of GoLand 2019.3 (November 2019).">
     <lesson filename="00.DeleteUnusedParameters.xml" lang="go"/>
     <lesson filename="01.DeleteParameterNames.xml" lang="go"/>

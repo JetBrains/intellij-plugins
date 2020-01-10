@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Short and long type specification for parameters" id="Goland2019.3.ReuseSignatureTypes" lang="go">
+<xml type="Scenario" name="Short and long type specification for parameters" id="Goland2019.3.ReuseSignatureTypes" lang="go" file="main.go">
     <MouseBlock>
         <CopyText><![CDATA[package main
 

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Delete unused parameters" id="Goland2019.3.DeleteUnusedParameters" lang="go">
+<xml type="Scenario" name="Delete unused parameters" id="Goland2019.3.DeleteUnusedParameters" lang="go" file="main.go">
     <MouseBlock>
         <CopyText><![CDATA[package main
 
