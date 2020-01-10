@@ -300,7 +300,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return "Bundle .jar";
+    return OsmorcBundle.message("configurable.OsmorcFacetJAREditorTab.display.name");
   }
 
   @NotNull

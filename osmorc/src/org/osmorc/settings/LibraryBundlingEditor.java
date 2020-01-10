@@ -22,6 +22,7 @@ import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 
@@ -34,7 +35,7 @@ public class LibraryBundlingEditor implements SearchableConfigurable, Configurab
   @Nls
   @Override
   public String getDisplayName() {
-    return "Library Bundling";
+    return OsmorcBundle.message("configurable.LibraryBundlingEditor.display.name");
   }
 
   @NotNull

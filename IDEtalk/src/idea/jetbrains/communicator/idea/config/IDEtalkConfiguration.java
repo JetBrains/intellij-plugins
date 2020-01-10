@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.config;
 
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -127,8 +128,7 @@ public class IDEtalkConfiguration implements Configurable {
 
   @Override
   public String getDisplayName() {
-    //noinspection HardCodedStringLiteral
-    return "IDEtalk Options";
+    return IdeBundle.message("configurable.IDEtalkConfiguration.display.name");
   }
 
 
