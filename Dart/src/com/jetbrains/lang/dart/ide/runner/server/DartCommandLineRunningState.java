@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
@@ -41,7 +41,6 @@ import java.util.*;
 
 public class DartCommandLineRunningState extends CommandLineState {
   protected final @NotNull DartCommandLineRunnerParameters myRunnerParameters;
-  private int myObservatoryPort = -1;
   private final Collection<Consumer<String>> myObservatoryUrlConsumers = new ArrayList<>();
 
   public DartCommandLineRunningState(final @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -116,7 +115,7 @@ public class DartCommandLineRunningState extends CommandLineState {
         if (text.startsWith(prefix)) {
           processHandler.removeProcessListener(this);
           final String url = "http://" + text.substring(prefix.length());
-          for (Consumer<String> consumer: myObservatoryUrlConsumers) {
+          for (Consumer<String> consumer : myObservatoryUrlConsumers) {
             consumer.consume(url);
           }
         }
@@ -202,18 +201,13 @@ public class DartCommandLineRunningState extends CommandLineState {
       addVmOption(commandLine, "--pause_isolates_on_start");
     }
 
-    if (customObservatoryPort > 0) {
-      myObservatoryPort = customObservatoryPort;
-    }
-    else {
+    if (customObservatoryPort <= 0) {
       try {
-        myObservatoryPort = NetUtils.findAvailableSocketPort();
+        addVmOption(commandLine, "--enable-vm-service:" + NetUtils.findAvailableSocketPort());
       }
       catch (IOException e) {
         throw new ExecutionException(e);
       }
-
-      addVmOption(commandLine, "--enable-vm-service:" + myObservatoryPort);
 
       if (getEnvironment().getRunner() instanceof DartCoverageProgramRunner) {
         addVmOption(commandLine, "--pause-isolates-on-exit");
@@ -251,9 +245,5 @@ public class DartCommandLineRunningState extends CommandLineState {
     // "5858" or "5858/0.0.0.0"
     final int index = s.indexOf('/');
     return Integer.parseInt(index > 0 ? s.substring(0, index) : s);
-  }
-
-  public int getObservatoryPort() {
-    return myObservatoryPort;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.ExecutionException;
@@ -24,7 +24,6 @@ import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
@@ -120,7 +119,7 @@ public class DartRunner extends GenericProgramRunner {
       }
 
       debuggingHost = null;
-      observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
+      observatoryPort = -1;
       debugType = DartVmServiceDebugProcess.DebugType.CLI;
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
