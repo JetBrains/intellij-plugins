@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.actions
 
 import com.intellij.ide.scratch.ScratchFileService
@@ -343,26 +343,25 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     dialog.show()
   }
 
-  //
   @Throws(IOException::class)
   private fun getFileInLearnProject(lesson: Lesson): VirtualFile {
     val function = object : Computable<VirtualFile> {
 
       override fun compute(): VirtualFile {
         val learnProject = CourseManager.instance.learnProject!!
-        val languageByID = findLanguageByID(lesson.lang)
-        val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
         val existedFile = lesson.existedFile
+        val manager = ProjectRootManager.getInstance(learnProject)
         if (existedFile != null) {
-          val root = ProjectRootManager.getInstance(learnProject).contentRoots[0]
+          val root = manager.contentRoots[0]
           return root.findFileByRelativePath(existedFile)!!
         }
 
-        val fileName = lesson.module.sanitizedName + "." + extensionFile
+        val fileName = lesson.fileName
 
         var lessonVirtualFile: VirtualFile? = null
-        for (file in ProjectRootManager.getInstance(learnProject).contentSourceRoots) {
+        val roots = manager.contentSourceRoots
+        for (file in roots) {
           if (file.name == fileName) {
             lessonVirtualFile = file
             break
@@ -375,17 +374,10 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           }
         }
         if (lessonVirtualFile == null) {
-          try {
-            val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
-            lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
-          }
-          catch (e: IOException) {
-            LOG.error(e)
-          }
-
+          lessonVirtualFile = roots[0].createChildData(this, fileName)
         }
 
-        CourseManager.instance.registerVirtualFile(lesson.module, lessonVirtualFile!!)
+        CourseManager.instance.registerVirtualFile(lesson.module, lessonVirtualFile)
         return lessonVirtualFile
       }
     }

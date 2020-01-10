@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson
 
 import com.intellij.openapi.project.Project
@@ -21,6 +21,8 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
   override var isOpen: Boolean = false
   override val name: String = scenario.name
   override val id: String = scenario.id
+  override val fileName: String
+    get() = scenario.file ?: super.fileName
 
   /*Log lesson metrics*/
   private val lessonLog: LessonLog = LessonLog(this)
