@@ -2,7 +2,6 @@
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -27,25 +26,10 @@ import java.util.regex.Pattern;
 public class CucumberStepsIndex {
   private static final Logger LOG = Logger.getInstance(CucumberStepsIndex.class.getName());
 
-  private final Map<BDDFrameworkType, CucumberJvmExtensionPoint> myExtensionMap;
-  private final Map<CucumberJvmExtensionPoint, Object> myExtensionData;
+  private static final CucumberStepsIndex INSTANCE = new CucumberStepsIndex();
 
   public static CucumberStepsIndex getInstance(Project project) {
-    return ServiceManager.getService(project, CucumberStepsIndex.class);
-  }
-
-  public CucumberStepsIndex(final Project project) {
-    myExtensionMap = new HashMap<>();
-    myExtensionData = new HashMap<>();
-
-    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
-      myExtensionMap.put(e.getStepFileType(), e);
-      myExtensionData.put(e, e.getDataObject(project));
-    }
-  }
-
-  public Object getExtensionDataObject(CucumberJvmExtensionPoint e) {
-    return myExtensionData.get(e);
+    return INSTANCE;
   }
 
   /**
@@ -58,7 +42,7 @@ public class CucumberStepsIndex {
   public PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir,
                                           @NotNull final String fileNameWithoutExtension,
                                           @NotNull final BDDFrameworkType frameworkType) {
-    final CucumberJvmExtensionPoint ep = myExtensionMap.get(frameworkType);
+    final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     if (ep == null) {
       LOG.error(String.format("Unsupported step definition file type %s", frameworkType.toString()));
       return null;
@@ -70,7 +54,7 @@ public class CucumberStepsIndex {
   public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory,
                                                    @NotNull final String fileName,
                                                    @NotNull final BDDFrameworkType frameworkType) {
-    final CucumberJvmExtensionPoint ep = myExtensionMap.get(frameworkType);
+    final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     assert ep != null;
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
   }
@@ -149,7 +133,7 @@ public class CucumberStepsIndex {
   private List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
-    for (CucumberJvmExtensionPoint extension : myExtensionMap.values()) {
+    for (CucumberJvmExtensionPoint extension : getCucumberExtensions()) {
       result.addAll(extension.loadStepsFor(featureFile, module));
     }
     return result;
@@ -157,7 +141,7 @@ public class CucumberStepsIndex {
 
   public Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
-    for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
+    for (CucumberJvmExtensionPoint ep : getCucumberExtensions()) {
       // Skip if framework file creation support is optional
       if ((ep instanceof OptionalStepDefinitionExtensionPoint) &&
           !((OptionalStepDefinitionExtensionPoint)ep).participateInStepDefinitionCreation(featureFile)) {
@@ -173,18 +157,26 @@ public class CucumberStepsIndex {
   }
 
   public Map<BDDFrameworkType, CucumberJvmExtensionPoint> getExtensionMap() {
-    return myExtensionMap;
+    HashMap<BDDFrameworkType, CucumberJvmExtensionPoint> result = new HashMap<>();
+    for (CucumberJvmExtensionPoint e : getCucumberExtensions()) {
+      result.put(e.getStepFileType(), e);
+    }
+    return result;
+  }
+
+  public List<CucumberJvmExtensionPoint> getCucumberExtensions() {
+    return CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
   }
 
   public int getExtensionCount() {
-    return myExtensionMap.size();
+    return getCucumberExtensions().size();
   }
   
   public boolean isGherkin6Supported(@NotNull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return true;
     }
-    for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
+    for (CucumberJvmExtensionPoint ep : getCucumberExtensions()) {
       if (ep.isGherkin6Supported(module)) {
         return true;
       }

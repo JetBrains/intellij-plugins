@@ -30,7 +30,6 @@
     <lang.findUsagesProvider language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFindUsagesProvider"/>
     <colorSettingsPage implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"/>
 
-    <projectService serviceImplementation="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"/>
     <psi.referenceContributor  language="Gherkin"
                                implementation="org.jetbrains.plugins.cucumber.steps.reference.CucumberReferenceContributor"/>
 
