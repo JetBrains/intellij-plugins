@@ -14,7 +14,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
@@ -103,8 +102,6 @@ public class DartRunner extends GenericProgramRunner {
     final VirtualFile contextFileOrDir;
     VirtualFile currentWorkingDirectory;
     final ExecutionResult executionResult;
-    final String debuggingHost;
-    final int observatoryPort;
     final Project project = env.getProject();
     final DartVmServiceDebugProcess.DebugType debugType;
 
@@ -120,8 +117,6 @@ public class DartRunner extends GenericProgramRunner {
         return null;
       }
 
-      debuggingHost = null;
-      observatoryPort = -1;
       debugType = DartVmServiceDebugProcess.DebugType.CLI;
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
@@ -132,11 +127,7 @@ public class DartRunner extends GenericProgramRunner {
       }
 
       currentWorkingDirectory = contextFileOrDir;
-
       executionResult = null;
-
-      debuggingHost = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getHost();
-      observatoryPort = ((DartRemoteDebugConfiguration)runConfiguration).getParameters().getPort();
       debugType = DartVmServiceDebugProcess.DebugType.REMOTE;
     }
     else if (runConfiguration instanceof DartWebdevConfiguration) {
@@ -149,8 +140,6 @@ public class DartRunner extends GenericProgramRunner {
         return null;
       }
 
-      debuggingHost = null;
-      observatoryPort = -1;
       debugType = DartVmServiceDebugProcess.DebugType.WEBDEV;
     }
     else {
@@ -164,11 +153,9 @@ public class DartRunner extends GenericProgramRunner {
     final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
       @Override
       @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) {
+      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException{
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
         DartVmServiceDebugProcess debugProcess = new DartVmServiceDebugProcess(session,
-                                                                               StringUtil.notNullize(debuggingHost, "localhost"),
-                                                                               observatoryPort,
                                                                                executionResult,
                                                                                dartUrlResolver,
                                                                                dasExecutionContextId,
