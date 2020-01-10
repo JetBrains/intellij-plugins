@@ -23,6 +23,9 @@ class GoLangSupport : AbstractLangSupport() {
   override val filename: String
     get() = "learning.go"
 
+  override val defaultProjectName: String
+    get() = "LearnGoProject"
+
   override fun importLearnProject(): Project? {
     TODO("not implemented")
   }
@@ -52,7 +55,7 @@ class GoLangSupport : AbstractLangSupport() {
   private fun Project.hasValidSdk() = GoSdkService.getInstance(this).getSdk(null).isValid
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/go/LearnProject", "LearnProject")
+    return ProjectUtils.importOrOpenProject("/learnProjects/go/LearnGoProject", defaultProjectName)
   }
 
 }
