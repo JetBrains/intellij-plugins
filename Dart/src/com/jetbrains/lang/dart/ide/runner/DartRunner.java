@@ -24,7 +24,6 @@ import com.intellij.xdebugger.XDebuggerManager;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.runner.base.DartRunConfigurationBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
-import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunningState;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
@@ -122,7 +121,7 @@ public class DartRunner extends GenericProgramRunner {
       }
 
       debuggingHost = null;
-      observatoryPort = ((DartCommandLineRunningState)state).getObservatoryPort();
+      observatoryPort = -1;
       debugType = DartVmServiceDebugProcess.DebugType.CLI;
     }
     else if (runConfiguration instanceof DartRemoteDebugConfiguration) {
