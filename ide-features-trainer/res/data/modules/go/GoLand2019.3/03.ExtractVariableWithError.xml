@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Better names for error variables" id="Goland2019.3.ExtractVariableWithError" lang="go">
+<xml type="Scenario" name="Better names for error variables" id="Goland2019.3.ExtractVariableWithError" lang="go" file="main.go">
     <MouseBlock>
         <CopyText><![CDATA[package main
 
