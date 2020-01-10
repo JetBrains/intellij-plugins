@@ -37,7 +37,7 @@ public class PrettierConfigurable implements SearchableConfigurable {
   @Nls
   @Override
   public String getDisplayName() {
-    return "Prettier";
+    return PrettierBundle.message("configurable.PrettierConfigurable.display.name");
   }
 
   public void showEditDialog() {
