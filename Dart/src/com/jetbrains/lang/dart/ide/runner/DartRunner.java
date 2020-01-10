@@ -57,6 +57,7 @@ public class DartRunner extends GenericProgramRunner {
             profile instanceof DartWebdevConfiguration);
   }
 
+  @Nullable
   @Override
   protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment env) throws ExecutionException {
     final String executorId = env.getExecutor().getId();
@@ -90,6 +91,7 @@ public class DartRunner extends GenericProgramRunner {
     return OBSERVATORY_TIMEOUT_MS;
   }
 
+  @Nullable
   private RunContentDescriptor doExecuteDartDebug(final @NotNull RunProfileState state,
                                                   final @NotNull ExecutionEnvironment env,
                                                   final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
@@ -164,15 +166,17 @@ public class DartRunner extends GenericProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
-        return new DartVmServiceDebugProcess(session,
-                                             StringUtil.notNullize(debuggingHost, "localhost"),
-                                             observatoryPort,
-                                             executionResult,
-                                             dartUrlResolver,
-                                             dasExecutionContextId,
-                                             debugType,
-                                             getTimeout(),
-                                             currentWorkingDirectory);
+        DartVmServiceDebugProcess debugProcess = new DartVmServiceDebugProcess(session,
+                                                                               StringUtil.notNullize(debuggingHost, "localhost"),
+                                                                               observatoryPort,
+                                                                               executionResult,
+                                                                               dartUrlResolver,
+                                                                               dasExecutionContextId,
+                                                                               debugType,
+                                                                               getTimeout(),
+                                                                               currentWorkingDirectory);
+        debugProcess.start();
+        return debugProcess;
       }
     });
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
@@ -138,9 +138,23 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       new DartExceptionBreakpointHandler(this)
     };
 
+    myDASExecutionContextId = dasExecutionContextId;
+
+    if (DebugType.REMOTE == debugType) {
+      LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myExecutionResult);
+    }
+    else if (DebugType.CLI == debugType) {
+      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
+    }
+    else if (DebugType.WEBDEV == debugType) {
+      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId == null, myExecutionResult);
+    }
+  }
+
+  public void start() {
     setLogger();
 
-    session.addSessionListener(new XDebugSessionListener() {
+    getSession().addSessionListener(new XDebugSessionListener() {
       @Override
       public void sessionPaused() {
         stackFrameChanged();
@@ -154,13 +168,12 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
       }
     });
 
-    myDASExecutionContextId = dasExecutionContextId;
 
-    if (DebugType.REMOTE == debugType) {
-      // TODO won't work since Dart SDK 1.22 because auth token in URL is required
+    if (DebugType.REMOTE == myDebugType) {
+      // TODO won't work since Dart SDK 2.5 because auth token in URL is required
       scheduleConnect("ws://" + myDebuggingHost + ":" + myObservatoryPort + "/ws");
     }
-    else if (DebugType.CLI == debugType) {
+    else if (DebugType.CLI == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
@@ -175,7 +188,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
         }
       });
     }
-    else if (DebugType.WEBDEV == debugType) {
+    else if (DebugType.WEBDEV == myDebugType) {
       getProcessHandler().addProcessListener(new ProcessAdapter() {
         @Override
         public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
@@ -191,16 +204,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
           }
         }
       });
-    }
-
-    if (DebugType.REMOTE == debugType) {
-      LOG.assertTrue(myExecutionResult == null && myDASExecutionContextId == null, myExecutionResult);
-    }
-    else if (DebugType.CLI == debugType) {
-      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId != null, myDASExecutionContextId + myExecutionResult);
-    }
-    else if (DebugType.WEBDEV == debugType) {
-      LOG.assertTrue(myExecutionResult != null && myDASExecutionContextId == null, myExecutionResult);
     }
   }
 
