@@ -47,6 +47,9 @@ public class CfmlParser implements PsiParser {
     else if ("cfargument".equals(StringUtil.toLowerCase(tagName))) {
       return CfmlElementTypes.ARGUMENT_TAG;
     }
+    else if ("cfparam".equals(StringUtil.toLowerCase(tagName))) {
+      return CfmlElementTypes.PARAM_TAG;
+    }
     else if ("cfscript".equals(StringUtil.toLowerCase(tagName))) {
       return CfmlElementTypes.SCRIPT_TAG;
     }
@@ -185,6 +188,7 @@ public class CfmlParser implements PsiParser {
       return false;
     }
     return !(StringUtil.toLowerCase(tagName).equals("cffunction") ||
+             StringUtil.toLowerCase(tagName).equals("cfparam") ||
              StringUtil.toLowerCase(tagName).equals("cfargument"));
   }
 

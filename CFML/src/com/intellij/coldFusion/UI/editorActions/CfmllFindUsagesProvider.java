@@ -19,6 +19,7 @@ public class CfmllFindUsagesProvider implements FindUsagesProvider {
   public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {
     return psiElement instanceof CfmlReferenceExpression || (psiElement instanceof CfmlTagFunctionImpl) ||
            (psiElement instanceof CfmlTag && ((CfmlTag)psiElement).getTagName().equalsIgnoreCase("cfargument")) ||
+           (psiElement instanceof CfmlTag && ((CfmlTag)psiElement).getTagName().equalsIgnoreCase("cfparam")) ||
            psiElement instanceof CfmlFunctionImpl || psiElement instanceof CfmlFunctionParameterImpl;
   }
 

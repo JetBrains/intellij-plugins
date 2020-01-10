@@ -181,6 +181,12 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
       return new CfmlTagFunctionParameterImpl(node);
     }
   };
+  CfmlCompositeElementType PARAM_TAG = new CfmlCompositeElementType("Tag") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new CfmlTagParamImpl(node);
+    }
+  };
   CfmlCompositeElementType SCRIPT_TAG = new CfmlCompositeElementType("Tag") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
