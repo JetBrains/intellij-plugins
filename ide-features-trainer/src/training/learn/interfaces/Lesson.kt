@@ -11,6 +11,7 @@ interface Lesson {
 
   val id: String
 
+  /** This name will be used for generated file with lesson sample */
   val fileName: String
     get() = module.sanitizedName + "." + findLanguageByID(lang)!!.associatedFileType!!.defaultExtension
 
@@ -27,6 +28,7 @@ interface Lesson {
 
   val lessonListeners: MutableList<LessonListener>
 
+  /** Relative path to existed file in the learning project */
   val existedFile: String?
     get() = null
 
