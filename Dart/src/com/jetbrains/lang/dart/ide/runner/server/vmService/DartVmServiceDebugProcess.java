@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.base.Charsets;
@@ -94,23 +94,6 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   public enum DebugType {
     CLI, REMOTE, WEBDEV
-  }
-
-  /**
-   * @deprecated use another constructor
-   */
-  @Deprecated
-  public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
-                                   @NotNull final String debuggingHost,
-                                   final int observatoryPort,
-                                   @Nullable final ExecutionResult executionResult,
-                                   @NotNull final DartUrlResolver dartUrlResolver,
-                                   @Nullable final String dasExecutionContextId,
-                                   final boolean remoteDebug,
-                                   final int timeout,
-                                   @Nullable final VirtualFile currentWorkingDirectory) {
-    this(session, debuggingHost, observatoryPort, executionResult, dartUrlResolver, dasExecutionContextId,
-         remoteDebug ? DebugType.REMOTE : DebugType.CLI, timeout, currentWorkingDirectory);
   }
 
   public DartVmServiceDebugProcess(@NotNull final XDebugSession session,
