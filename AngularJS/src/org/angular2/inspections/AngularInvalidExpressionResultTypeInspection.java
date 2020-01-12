@@ -54,7 +54,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
       private <T extends JSElement> void validateBinding(@Nullable T binding,
                                                          @NotNull BiFunction<T, XmlAttribute, Pair<JSExpression, JSType>>
                                                            getTypeAndExpression,
-                                                         @NotNull Angular2AttributeType... supportedTypes) {
+                                                         Angular2AttributeType @NotNull ... supportedTypes) {
         if (binding == null) {
           return;
         }

@@ -13,9 +13,8 @@ import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspec
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2TemplateInspectionsProvider implements InspectionToolProvider {
-  @NotNull
   @Override
-  public Class[] getInspectionClasses() {
+  public Class @NotNull [] getInspectionClasses() {
     return new Class[]{
       AngularIncorrectTemplateDefinitionInspection.class,
       AngularInsecureBindingToEventInspection.class,

@@ -31,9 +31,8 @@ public class ActionReferenceInjector extends ReferenceInjector {
 
   private final PsiReferenceProvider myActionReferenceProvider = new ActionReferenceProvider();
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull PsiElement element, @NotNull ProcessingContext context, @NotNull TextRange range) {
+  public PsiReference @NotNull [] getReferences(@NotNull PsiElement element, @NotNull ProcessingContext context, @NotNull TextRange range) {
     if (!(element instanceof XmlAttributeValue)) {
       return PsiReference.EMPTY_ARRAY;
     }

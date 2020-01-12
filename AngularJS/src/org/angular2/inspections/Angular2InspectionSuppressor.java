@@ -38,9 +38,8 @@ public class Angular2InspectionSuppressor implements InspectionSuppressor {
     return isSuppressedInStatement(element, stripToolIdPrefix(toolId));
   }
 
-  @NotNull
   @Override
-  public SuppressQuickFix[] getSuppressActions(@Nullable PsiElement element, @NotNull String toolId) {
+  public SuppressQuickFix @NotNull [] getSuppressActions(@Nullable PsiElement element, @NotNull String toolId) {
     return new SuppressQuickFix[]{new Angular2SuppressByCommentFix(stripToolIdPrefix(toolId))};
   }
 

@@ -107,9 +107,8 @@ public class UserModelImpl implements UserModel, Disposable {
     return result.toArray(new User[0]);
   }
 
-  @NotNull
   @Override
-  public User[] getAllUsers() {
+  public User @NotNull [] getAllUsers() {
     User[] usersList = myCachedUsers.get();
     if (usersList != null) {
       return usersList;

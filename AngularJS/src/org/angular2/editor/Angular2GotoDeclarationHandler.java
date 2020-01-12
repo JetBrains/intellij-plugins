@@ -15,9 +15,8 @@ import java.util.List;
 
 public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
 
-  @Nullable
   @Override
-  public PsiElement[] getGotoDeclarationTargets(@Nullable PsiElement sourceElement, int offset, Editor editor) {
+  public PsiElement @Nullable [] getGotoDeclarationTargets(@Nullable PsiElement sourceElement, int offset, Editor editor) {
     return null;
   }
 

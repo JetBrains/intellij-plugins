@@ -12,16 +12,14 @@ import com.jetbrains.lang.dart.util.DartRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartExpressionSurroundDescriptor implements SurroundDescriptor {
-  @NotNull
   @Override
-  public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
+  public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final DartExpression result = DartRefactoringUtil.findExpressionInRange(file, startOffset, endOffset);
     return result == null ? PsiElement.EMPTY_ARRAY : new PsiElement[]{result};
   }
 
-  @NotNull
   @Override
-  public Surrounder[] getSurrounders() {
+  public Surrounder @NotNull [] getSurrounders() {
     return new Surrounder[]{
       new DartWithParenthesisExpressionSurrounder(),
       new DartWithNotParenthesisExpressionSurrounder(),

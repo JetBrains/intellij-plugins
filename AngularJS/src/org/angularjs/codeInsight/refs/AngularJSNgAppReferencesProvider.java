@@ -22,9 +22,8 @@ import java.util.*;
  * @author Irina.Chernushina on 3/21/2016.
  */
 public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[]{new AngularJSNgAppReference(((XmlAttributeValue)element))};
   }
 
@@ -37,9 +36,8 @@ public class AngularJSNgAppReferencesProvider extends PsiReferenceProvider {
       return StringUtil.unquoteString(getCanonicalText());
     }
 
-    @NotNull
     @Override
-    protected ResolveResult[] resolveInner() {
+    protected ResolveResult @NotNull [] resolveInner() {
       final String appName = getAppName();
       if (StringUtil.isEmptyOrSpaces(appName)) return ResolveResult.EMPTY_ARRAY;
 

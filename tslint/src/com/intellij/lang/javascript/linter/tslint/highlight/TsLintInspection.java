@@ -43,9 +43,8 @@ public final class TsLintInspection extends JSLinterInspection {
     TslintLanguageServiceManager.getInstance(project).terminateServices();
   }
 
-  @NotNull
   @Override
-  public SuppressQuickFix[] getBatchSuppressActions(@Nullable PsiElement element) {
+  public SuppressQuickFix @NotNull [] getBatchSuppressActions(@Nullable PsiElement element) {
     return SuppressQuickFix.EMPTY_ARRAY;
   }
 

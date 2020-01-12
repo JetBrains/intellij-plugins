@@ -39,10 +39,9 @@ public class ParamNameConverterImpl extends ParamNameConverter {
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
-                                         final PsiElement psiElement,
-                                         final ConvertContext convertContext) {
+  public PsiReference @NotNull [] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
+                                                   final PsiElement psiElement,
+                                                   final ConvertContext convertContext) {
     final DomElement paramsElement = findEnclosingTag(convertContext);
     if (paramsElement == null) {
       return PsiReference.EMPTY_ARRAY;

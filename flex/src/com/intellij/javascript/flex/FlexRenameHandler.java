@@ -34,7 +34,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   @Override
   public void renameElement(@NotNull final PsiElement element,
                             @NotNull final String newName,
-                            @NotNull final UsageInfo[] usages,
+                            final UsageInfo @NotNull [] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     super.renameElement(element, newName, usages, listener);
     if (element instanceof JSFile) {

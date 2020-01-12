@@ -89,8 +89,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiTypeParameter[] getTypeParameters() {
+  public PsiTypeParameter @NotNull [] getTypeParameters() {
     return PsiTypeParameter.EMPTY_ARRAY;
   }
 
@@ -178,20 +177,17 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods() {
+  public PsiMethod @NotNull [] findSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods(boolean checkAccess) {
+  public PsiMethod @NotNull [] findSuperMethods(boolean checkAccess) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findSuperMethods(PsiClass parentClass) {
+  public PsiMethod @NotNull [] findSuperMethods(PsiClass parentClass) {
     return PsiMethod.EMPTY_ARRAY;
   }
 
@@ -202,8 +198,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   }
 
   @Override
-  @NotNull
-  public PsiMethod[] findDeepestSuperMethods() {
+  public PsiMethod @NotNull [] findDeepestSuperMethods() {
     return PsiMethod.EMPTY_ARRAY;
   }
 
@@ -280,8 +275,7 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     }
 
     @Override
-    @NotNull
-    public PsiParameter[] getParameters() {
+    public PsiParameter @NotNull [] getParameters() {
       if (myParameters == null) {
         myParameters = myParametersComputation.compute();
       }

@@ -27,9 +27,8 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     myErrorSeverity = errorSeverity;
   }
 
-  @NotNull
   @Override
-  public SuppressIntentionAction[] getSuppressActions(@Nullable final PsiElement element) {
+  public SuppressIntentionAction @NotNull [] getSuppressActions(@Nullable final PsiElement element) {
     if (element != null && element.getContainingFile() instanceof DartFile) {
       return new SuppressIntentionAction[]{
         new DartSuppressAction(myErrorCode, myErrorSeverity, false, false),

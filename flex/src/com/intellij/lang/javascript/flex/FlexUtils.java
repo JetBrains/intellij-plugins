@@ -78,7 +78,7 @@ public class FlexUtils {
   private FlexUtils() {
   }
 
-  public static FileChooserDescriptor createFileChooserDescriptor(@Nullable final String... allowedExtensions) {
+  public static FileChooserDescriptor createFileChooserDescriptor(final String @Nullable ... allowedExtensions) {
     return allowedExtensions == null
            ? new FileChooserDescriptor(true, false, true, true, false, false)
            : new FileChooserDescriptor(true, false, true, true, false, false) {

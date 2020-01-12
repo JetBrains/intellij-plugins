@@ -23,9 +23,8 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
     return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
-  @NotNull
   @Override
-  public String[] getSupportedExtensions() {
+  public String @NotNull [] getSupportedExtensions() {
     // This method is called from:
     // 1. OpenProjectAction#action (to make label text): we don't want *.zip to appear in label.
     // 2. OpenProjectProcessorBase#canOpenProject: not called, because overridden in this class

@@ -41,9 +41,8 @@ public class PackageNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         final TreeSet<TapestryNode> children = new TreeSet<>(PackageNodesComparator.getInstance());
 
         for (PsiDirectory psiDirectory : ((PsiDirectory) getElement()).getSubdirectories()) {

@@ -24,17 +24,13 @@ import org.jetbrains.annotations.Nullable;
 public interface CfmlComponent extends CfmlPsiElement, CfmlNamedElement {
   CfmlComponent[] EMPTY_ARRAY = new CfmlComponent[0];
 
-  @NotNull
-  CfmlFunction[] getFunctions();
+  CfmlFunction @NotNull [] getFunctions();
 
-  @NotNull
-  CfmlFunction[] getFunctionsWithSupers(boolean isSuperPriority);
+  CfmlFunction @NotNull [] getFunctionsWithSupers(boolean isSuperPriority);
 
-  @NotNull
-  CfmlProperty[] getProperties();
+  CfmlProperty @NotNull [] getProperties();
 
-  @NotNull
-  CfmlProperty[] getPropertiesWithSupers(boolean isSuperPriority);
+  CfmlProperty @NotNull [] getPropertiesWithSupers(boolean isSuperPriority);
 
   boolean isInterface();
 

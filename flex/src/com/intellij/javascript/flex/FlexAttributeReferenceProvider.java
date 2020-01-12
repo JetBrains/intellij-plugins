@@ -37,9 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  */
 public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     JSAttributeNameValuePairImpl nameValuePair = (JSAttributeNameValuePairImpl) element;
     final @NonNls String name = nameValuePair.getName();
     return valueRefs(nameValuePair, name);
@@ -332,8 +331,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       return myAllowedValues;
     }
 

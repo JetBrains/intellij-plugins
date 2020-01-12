@@ -205,7 +205,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
   }
 
   @Override
-  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) {
+  protected VirtualFile configureByFiles(final File projectRoot, final VirtualFile @NotNull [] vFiles) {
     final Ref<VirtualFile> result = new Ref<>();
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> {
       try {

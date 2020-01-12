@@ -30,9 +30,8 @@ import java.util.function.BiPredicate;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[]{new Angular2ViewChildReference((JSLiteralExpression)element)};
   }
 
@@ -65,9 +64,8 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return result.get();
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<PsiElement> result = new ArrayList<>();
       final Set<String> names = new HashSet<>();
       processVariables((name, psi) -> {

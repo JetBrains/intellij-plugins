@@ -95,8 +95,7 @@ public class HbHighlighter extends SyntaxHighlighterBase {
   }
 
   @Override
-  @NotNull
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     return pack(keys1.get(tokenType), keys2.get(tokenType));
   }
 

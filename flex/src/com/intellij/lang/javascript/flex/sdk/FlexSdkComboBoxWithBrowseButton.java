@@ -331,9 +331,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       return myOriginal.getMulticaster();
     }
 
-    @NotNull
     @Override
-    public Sdk[] getSdks() {
+    public Sdk @NotNull [] getSdks() {
       return myOriginal.getSdks();
     }
 

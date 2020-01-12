@@ -40,7 +40,7 @@ public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> exte
     }
   }
 
-  protected void stubDecoratorFields(@NotNull JsonObject initializer, @NotNull String... fields) {
+  protected void stubDecoratorFields(@NotNull JsonObject initializer, String @NotNull ... fields) {
     for (String name : fields) {
       JsonProperty property = initializer.findProperty(name);
       if (property != null) {

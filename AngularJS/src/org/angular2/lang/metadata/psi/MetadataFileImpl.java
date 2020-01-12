@@ -50,9 +50,8 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
     return MetadataJsonLanguage.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getChildren() {
+  public PsiElement @NotNull [] getChildren() {
     MetadataFileStubImpl root = (MetadataFileStubImpl)getStubTree().getRoot();
     return ContainerUtil.map2Array(root.getChildrenStubs(), PsiElement.class, s -> s.getPsi());
   }

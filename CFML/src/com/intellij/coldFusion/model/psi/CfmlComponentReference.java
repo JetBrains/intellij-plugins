@@ -235,8 +235,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
     };
 
   @Override
-  @NotNull
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     // incompleteCode = true, when autocompletion is executed,
     // in this case, containingFile is not physical and there is no way to get parent directory
     return MY_RESOLVER.resolve(this, incompleteCode);
@@ -323,16 +322,14 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     // final CfmlIndex cfmlIndex = CfmlIndex.getInstance(getProject());
     return buildVariants(getText(), getContainingFile(), getProject(), this, true);
   }
 
-  @NotNull
-  public static Object[] buildVariants(String text, PsiFile containingFile, final Project project,
-                                       @Nullable CfmlComponentReference reference,
-                                       final boolean forceQualify
+  public static Object @NotNull [] buildVariants(String text, PsiFile containingFile, final Project project,
+                                                 @Nullable CfmlComponentReference reference,
+                                                 final boolean forceQualify
                                        ) {
     Collection<Object> variants = new THashSet<>();
 

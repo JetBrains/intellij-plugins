@@ -16,9 +16,8 @@ public class PostCssCustomMediaReference extends PsiPolyVariantReferenceBase<Psi
     super(psiElement);
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     String name = getCustomMediaName();
     return name != null ? PsiElementResolveResult.createResults(PostCssCustomMediaIndex.getCustomMediaFeatures(name, myElement))
                         : ResolveResult.EMPTY_ARRAY;

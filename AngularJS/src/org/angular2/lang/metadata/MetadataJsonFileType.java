@@ -41,7 +41,7 @@ public abstract class MetadataJsonFileType implements FileType, FileTypeIdentifi
 
   @Override
   @Nullable
-  public String getCharset(@NotNull VirtualFile file, @NotNull final byte[] content) {
+  public String getCharset(@NotNull VirtualFile file, final byte @NotNull [] content) {
     return null;
   }
 

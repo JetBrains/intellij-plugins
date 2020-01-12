@@ -22,9 +22,8 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  */
 public class FlexUndefinedElementFixProvider extends XmlUndefinedElementFixProvider {
-  @Nullable
   @Override
-  public IntentionAction[] createFixes(@NotNull XmlAttribute attribute) {
+  public IntentionAction @Nullable [] createFixes(@NotNull XmlAttribute attribute) {
     if (!JavaScriptSupportLoader.isFlexMxmFile(attribute.getContainingFile())) return null;
 
     final String name = attribute.getName();

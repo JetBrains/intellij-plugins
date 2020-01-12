@@ -13,7 +13,7 @@ public class DartClassNameMethodNameMacro extends DartMacroBase {
   }
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, final ExpressionContext context) {
     final Result classNameResult = (new DartClassNameMacro()).calculateResult(params, context);
     final Result methodNameResult = (new DartMethodNameMacro()).calculateResult(params, context);
 

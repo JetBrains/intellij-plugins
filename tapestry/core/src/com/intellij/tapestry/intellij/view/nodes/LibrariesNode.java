@@ -24,9 +24,8 @@ public class LibrariesNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         List<TapestryNode> children = new ArrayList<>();
 
         for (TapestryLibrary library : TapestryModuleSupportLoader.getTapestryProject(_module).getLibraries()) {

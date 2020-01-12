@@ -48,9 +48,8 @@ public class DartHtmlAttributeDescriptor extends DartHtmlDescriptorBase implemen
     return false;
   }
 
-  @Nullable
   @Override
-  public String[] getEnumeratedValues() {
+  public String @Nullable [] getEnumeratedValues() {
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 

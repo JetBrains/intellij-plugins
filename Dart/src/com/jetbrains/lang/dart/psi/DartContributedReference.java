@@ -58,9 +58,8 @@ class DartContributedReference implements PsiPolyVariantReference {
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     final List<? extends PsiElement> elements =
       ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
     return DartResolveUtil.toCandidateInfoArray(elements);

@@ -50,7 +50,7 @@ public class DartServerFindUsagesTest extends CodeInsightFixtureTestCase {
     return processor.getResults();
   }
 
-  private void checkUsages(@NotNull final SearchScope scope, @NotNull final String... expected) {
+  private void checkUsages(@NotNull final SearchScope scope, final String @NotNull ... expected) {
     final String[] actualResult = ContainerUtil.map2Array(findUsages(scope), String.class, info -> {
       final PsiElement element = info.getElement();
       assertNotNull(element);

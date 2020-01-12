@@ -25,9 +25,8 @@ public class MixinNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         Mixin mixin = (Mixin) getElement();
 
         return new SimpleNode[]{new ClassNode((PsiClassOwner) ((IntellijJavaClassType) mixin.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder)};

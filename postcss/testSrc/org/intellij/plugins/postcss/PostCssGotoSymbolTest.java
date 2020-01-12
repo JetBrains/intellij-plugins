@@ -48,7 +48,7 @@ public class PostCssGotoSymbolTest extends PostCssFixtureTestCase {
     doTest("--media-query", "media-query test.html:2", "media-query test.pcss:1");
   }
 
-  public void doTest(@NotNull String name, @NotNull String... expectedNames) {
+  public void doTest(@NotNull String name, String @NotNull ... expectedNames) {
     myFixture.copyDirectoryToProject(getTestName(true), ".");
     ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
     GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());

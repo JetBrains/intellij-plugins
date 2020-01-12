@@ -32,8 +32,7 @@ public abstract class Angular2HtmlPropertyBindingBase extends Angular2HtmlBoundA
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Binding.class));
   }
 
-  @NotNull
-  public final Angular2Interpolation[] getInterpolations() {
+  public final Angular2Interpolation @NotNull [] getInterpolations() {
     return PsiTreeUtil.findChildrenOfType(this, Angular2Interpolation.class)
       .toArray(new Angular2Interpolation[0]);
   }

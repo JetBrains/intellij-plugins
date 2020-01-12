@@ -178,7 +178,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
   @Override
   protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                 boolean isNewExpression,
-                                                @NotNull ResolveResult[] resolveResults,
+                                                ResolveResult @NotNull [] resolveResults,
                                                 @NotNull List<LocalQuickFix> quickFixes) {
     if (canHaveImportTo(resolveResults)) {
       quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, methodExpression));

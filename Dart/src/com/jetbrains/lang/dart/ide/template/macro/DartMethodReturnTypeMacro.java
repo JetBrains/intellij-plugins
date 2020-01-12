@@ -19,7 +19,7 @@ public class DartMethodReturnTypeMacro extends DartMacroBase {
 
   @Nullable
   @Override
-  public Result calculateResult(@NotNull final Expression[] params, final ExpressionContext context) {
+  public Result calculateResult(final Expression @NotNull [] params, final ExpressionContext context) {
     final String returnType = getContainingFunctionReturnType(context.getPsiElementAtStartOffset());
     return returnType == null ? null : new TextResult(returnType);
   }

@@ -125,8 +125,7 @@ public class CfmlJavaLoaderClassType extends PsiType {
   }
 
   @Override
-  @NotNull
-  public PsiType[] getSuperTypes() {
+  public PsiType @NotNull [] getSuperTypes() {
     return EMPTY_ARRAY;
   }
 }

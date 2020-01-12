@@ -32,9 +32,8 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     Angular2DirectiveSelector directiveSelector;
     if (element instanceof Angular2HtmlNgContentSelector) {
       directiveSelector = ((Angular2HtmlNgContentSelector)element).getSelector();
@@ -121,9 +120,8 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
       myElementName = elementName;
     }
 
-    @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
       XmlElementDescriptor descriptor =
         myElementName != null ? getElementDescriptor(myElementName, getElement().getContainingFile()) : null;
       if (descriptor == null) {

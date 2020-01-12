@@ -7,8 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexStackTraceFilterProvider implements ConsoleFilterProvider{
   @Override
-  @NotNull
-  public Filter[] getDefaultFilters(final @NotNull Project project) {
+  public Filter @NotNull [] getDefaultFilters(final @NotNull Project project) {
     return new Filter[]{new FlexStackTraceFilter(project)};
   }
 }

@@ -28,8 +28,7 @@ public interface UserModel {
 
   User[] getUsers(String groupName);
 
-  @NotNull
-  User[] getAllUsers();
+  User @NotNull [] getAllUsers();
 
   boolean hasUser(User user);
   String getGroup(User user);

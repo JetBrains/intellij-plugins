@@ -48,9 +48,8 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     return result;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
+  public ResolveResult @NotNull [] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
     if (myRef.getParent() instanceof JSDefinitionExpression) {
       final PsiElement sibling = PsiTreeUtil.prevVisibleLeaf(myRef);

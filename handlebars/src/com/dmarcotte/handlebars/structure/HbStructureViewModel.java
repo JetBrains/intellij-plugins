@@ -17,9 +17,8 @@ class HbStructureViewModel extends TextEditorBasedStructureViewModel {
     super(editor, psiFile);
   }
 
-  @NotNull
   @Override
-  protected Class[] getSuitableClasses() {
+  protected Class @NotNull [] getSuitableClasses() {
     return ourSuitableClasses;
   }
 

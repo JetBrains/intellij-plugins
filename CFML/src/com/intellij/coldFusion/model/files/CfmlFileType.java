@@ -42,9 +42,8 @@ public class CfmlFileType extends LanguageFileType {
     return CFMLIcons.Cfml;
   }
 
-  @NotNull
   @NonNls
-  public String[] getExtensions() {
+  public String @NotNull [] getExtensions() {
     return new String[]{"cfm", "cfml", "cfc"};
   }
 }

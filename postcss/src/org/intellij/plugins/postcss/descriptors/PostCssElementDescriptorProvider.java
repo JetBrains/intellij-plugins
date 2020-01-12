@@ -26,9 +26,8 @@ public class PostCssElementDescriptorProvider extends CssElementDescriptorProvid
     return PostCssPsiUtil.isInsidePostCss(context);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
+  public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     return PsiElement.EMPTY_ARRAY;
   }
 

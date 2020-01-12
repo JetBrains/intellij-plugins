@@ -122,18 +122,17 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
 
   @Override
   @NotNull
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new MoveMemberViewDescriptor(PsiUtilCore.toPsiElementArray(myMembersToMove));
   }
 
   @Override
-  @NotNull
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     return JSRefactoringUtil.getUsages(myMembersToMove, myTargetClass);
   }
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
     LOG.assertTrue(myMembersToMove.size() == elements.length);
     myMembersToMove.clear();
     for (PsiElement element : elements) {
@@ -142,7 +141,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull final UsageInfo[] usages) {
+  protected void performRefactoring(final UsageInfo @NotNull [] usages) {
     try {
       final Collection<PsiFile> filesWithUsages = ActionScriptRefactoringUtil.qualifyIncomingReferences(usages);
 

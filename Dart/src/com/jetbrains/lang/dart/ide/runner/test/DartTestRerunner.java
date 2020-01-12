@@ -39,8 +39,7 @@ public class DartTestRerunner implements RunProfileState {
     return state.execute(executor, runner);
   }
 
-  @NotNull
-  Module[] getModulesToCompile() {
+  Module @NotNull [] getModulesToCompile() {
     return Module.EMPTY_ARRAY;
   }
 

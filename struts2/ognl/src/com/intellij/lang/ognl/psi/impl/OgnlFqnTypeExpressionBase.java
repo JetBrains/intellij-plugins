@@ -35,9 +35,8 @@ abstract class OgnlFqnTypeExpressionBase extends OgnlExpressionImpl implements O
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     JavaClassReferenceProvider referenceProvider = new JavaClassReferenceProvider();
     referenceProvider.setOption(JavaClassReferenceProvider.IMPORTS, Collections.singletonList(CommonClassNames.DEFAULT_PACKAGE));
 

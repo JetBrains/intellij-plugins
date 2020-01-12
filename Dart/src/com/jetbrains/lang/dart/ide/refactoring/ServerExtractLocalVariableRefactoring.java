@@ -22,29 +22,24 @@ public class ServerExtractLocalVariableRefactoring extends ServerRefactoring {
     super(project, "Extract Local Variable", RefactoringKind.EXTRACT_LOCAL_VARIABLE, file, offset, length);
   }
 
-  @NotNull
-  public int[] getCoveringExpressionOffsets() {
+  public int @NotNull [] getCoveringExpressionOffsets() {
     return DartAnalysisServerService.getInstance(getProject()).getConvertedOffsets(getFile(), feedback.getCoveringExpressionOffsets());
   }
 
-  @NotNull
-  public int[] getCoveringExpressionLengths() {
+  public int @NotNull [] getCoveringExpressionLengths() {
     return DartAnalysisServerService.getInstance(getProject())
       .getConvertedLengths(getFile(), feedback.getCoveringExpressionOffsets(), feedback.getCoveringExpressionLengths());
   }
 
-  @NotNull
-  public String[] getNames() {
+  public String @NotNull [] getNames() {
     return ArrayUtilRt.toStringArray(feedback.getNames());
   }
 
-  @NotNull
-  public int[] getOccurrencesOffsets() {
+  public int @NotNull [] getOccurrencesOffsets() {
     return DartAnalysisServerService.getInstance(getProject()).getConvertedOffsets(getFile(), feedback.getOffsets());
   }
 
-  @NotNull
-  public int[] getOccurrencesLengths() {
+  public int @NotNull [] getOccurrencesLengths() {
     return DartAnalysisServerService.getInstance(getProject()).getConvertedLengths(getFile(), feedback.getOffsets(), feedback.getLengths());
   }
 

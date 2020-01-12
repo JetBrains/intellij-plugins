@@ -57,9 +57,8 @@ public class DartFileReference implements PsiPolyVariantReference {
     return myRange;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     return ResolveCache.getInstance(myUriElement.getProject()).resolveWithCaching(this, RESOLVER, true, incompleteCode);
   }
 
@@ -134,9 +133,8 @@ public class DartFileReference implements PsiPolyVariantReference {
   }
 
   private static class Resolver implements ResolveCache.PolyVariantResolver<DartFileReference> {
-    @NotNull
     @Override
-    public ResolveResult[] resolve(@NotNull final DartFileReference reference, final boolean incompleteCode) {
+    public ResolveResult @NotNull [] resolve(@NotNull final DartFileReference reference, final boolean incompleteCode) {
       final PsiFile refPsiFile = reference.getElement().getContainingFile();
       final int refOffset = reference.getElement().getTextRange().getStartOffset();
       final int refLength = reference.getElement().getTextRange().getLength();

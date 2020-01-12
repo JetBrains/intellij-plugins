@@ -28,9 +28,8 @@ public class JSChangeInfo implements ChangeInfo {
     myNewParameters = JSMethodDescriptor.getParameters(method);
   }
 
-  @NotNull
   @Override
-  public JSParameterInfo[] getNewParameters() {
+  public JSParameterInfo @NotNull [] getNewParameters() {
     return myNewParameters.toArray(JSParameterInfo.EMPTY_ARRAY);
   }
 

@@ -137,8 +137,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
     }
 
     @Override
-    @NotNull
-    public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+    public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
       return pack(keys2.get(tokenType));
     }
   }

@@ -107,7 +107,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @Override
-  protected VirtualFile configureByFiles(final File projectRoot, @NotNull final VirtualFile[] vFiles) throws IOException {
+  protected VirtualFile configureByFiles(final File projectRoot, final VirtualFile @NotNull [] vFiles) throws IOException {
     VirtualFile result = super.configureByFiles(projectRoot, vFiles);
     for (VirtualFile vFile : vFiles) {
       // to have new instance of PsiFile created that will replace original that was parsed in order

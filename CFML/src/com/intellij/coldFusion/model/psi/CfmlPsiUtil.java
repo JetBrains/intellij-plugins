@@ -250,8 +250,7 @@ public class CfmlPsiUtil {
     return null;
   }
 
-  @NotNull
-  public static PsiReference[] getComponentReferencesFromAttributes(PsiElement element) {
+  public static PsiReference @NotNull [] getComponentReferencesFromAttributes(PsiElement element) {
     final PsiElement rEx = getAttributeValueElement(element, "extends");
     final PsiElement rImpl = getAttributeValueElement(element, "implements");
 
@@ -342,8 +341,7 @@ public class CfmlPsiUtil {
     return result.toArray(EMPTY_ARRAY);
   }
 
-  @NotNull
-  public static CfmlFunction[] getFunctionsWithSupers(CfmlComponent component, boolean isSuperPriority) {
+  public static CfmlFunction @NotNull [] getFunctionsWithSupers(CfmlComponent component, boolean isSuperPriority) {
     return componentHierarchyGatherer(component, new Getter<CfmlFunction[], CfmlComponent>() {
       @Override
       public CfmlFunction[] get(CfmlComponent component) {
@@ -352,8 +350,7 @@ public class CfmlPsiUtil {
     }, CfmlFunction.EMPTY_ARRAY, isSuperPriority);
   }
 
-  @NotNull
-  public static CfmlProperty[] getPropertiesWithSupers(CfmlComponent component, boolean isSuperPriority) {
+  public static CfmlProperty @NotNull [] getPropertiesWithSupers(CfmlComponent component, boolean isSuperPriority) {
     return componentHierarchyGatherer(component, new Getter<CfmlProperty[], CfmlComponent>() {
       @Override
       public CfmlProperty[] get(CfmlComponent component) {

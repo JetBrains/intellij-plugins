@@ -22,9 +22,8 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
 
   private final Stub myStub;
   private final AtomicNotNullLazyValue<PsiElement[]> children = new AtomicNotNullLazyValue<PsiElement[]>() {
-    @NotNull
     @Override
-    protected PsiElement[] compute() {
+    protected PsiElement @NotNull [] compute() {
       return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
     }
   };
@@ -75,9 +74,8 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     return (MetadataElement)ObjectUtils.doIfNotNull(getStub().findMember(name), MetadataElementStub::getPsi);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getChildren() {
+  public PsiElement @NotNull [] getChildren() {
     return children.getValue();
   }
 

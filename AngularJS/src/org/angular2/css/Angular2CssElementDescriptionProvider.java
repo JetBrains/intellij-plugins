@@ -64,16 +64,14 @@ public class Angular2CssElementDescriptionProvider extends CssElementDescriptorP
     return context != null && Angular2LangUtil.isAngular2Context(context) ? PSEUDO_SELECTORS : Collections.emptySet();
   }
 
-  @NotNull
   @Override
-  public String[] getSimpleSelectors(@NotNull PsiElement context) {
+  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
     return ArrayUtilRt.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
                                      .keySet());
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
+  public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     XmlElementDescriptor descriptor = Angular2SelectorReferencesProvider.getElementDescriptor(
       selector.getElementName(), selector.getContainingFile());
     if (descriptor != null) {

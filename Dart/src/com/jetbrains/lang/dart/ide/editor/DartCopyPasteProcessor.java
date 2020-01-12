@@ -46,8 +46,8 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
   @Override
   public List<DartImportsTransferableData> collectTransferableData(@NotNull final PsiFile psiFile,
                                                                    @NotNull final Editor editor,
-                                                                   @NotNull final int[] startOffsets,
-                                                                   @NotNull final int[] endOffsets) {
+                                                                   final int @NotNull [] startOffsets,
+                                                                   final int @NotNull [] endOffsets) {
     if (!(psiFile instanceof DartFile)) return Collections.emptyList();
     final Project project = psiFile.getProject();
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(psiFile);

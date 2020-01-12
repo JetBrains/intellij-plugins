@@ -23,9 +23,8 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
     return this;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     PsiElement resolveResult = resolve();
     if (resolveResult == null) {
       return ResolveResult.EMPTY_ARRAY;

@@ -338,8 +338,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return result;
   }
 
-  @NotNull
-  public static XmlAttributeDescriptor[] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
+  public static XmlAttributeDescriptor @NotNull [] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
     XmlElementDescriptor descriptor = tag.getDescriptor();
     if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
       descriptor = ObjectUtils.tryCast(HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag), HtmlElementDescriptorImpl.class);

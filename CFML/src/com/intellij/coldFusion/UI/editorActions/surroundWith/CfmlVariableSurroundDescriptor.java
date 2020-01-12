@@ -32,9 +32,8 @@ public class CfmlVariableSurroundDescriptor implements SurroundDescriptor {
     new CfmlSharpSurrounder()
   };
 
-  @NotNull
   @Override
-  public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
+  public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final FileViewProvider viewProvider = file.getViewProvider();
     PsiElement elementAt = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, CfmlReferenceExpression.class);
     if (elementAt != null) {
@@ -54,9 +53,8 @@ public class CfmlVariableSurroundDescriptor implements SurroundDescriptor {
     return PsiElement.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  public Surrounder[] getSurrounders() {
+  public Surrounder @NotNull [] getSurrounders() {
     return SURROUNDERS;
   }
 

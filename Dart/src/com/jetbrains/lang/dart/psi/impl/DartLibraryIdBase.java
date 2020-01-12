@@ -80,9 +80,8 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     final List<? extends PsiElement> elements =
       ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
     return DartResolveUtil.toCandidateInfoArray(elements);
@@ -94,9 +93,8 @@ public class DartLibraryIdBase extends DartExpressionImpl implements DartReferen
     return DartClassResolveResult.EMPTY;
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     return PsiReference.EMPTY_ARRAY; // completion comes from DAS
     /*
     final VirtualFile vFile = DartResolveUtil.getRealVirtualFile(getContainingFile());

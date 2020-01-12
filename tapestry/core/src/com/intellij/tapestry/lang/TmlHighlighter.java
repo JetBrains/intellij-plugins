@@ -20,8 +20,7 @@ public class TmlHighlighter extends XmlFileHighlighter {
   }
 
   @Override
-  @NotNull
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     return tokenType instanceof TelTokenType
            ? TelHighlighter.getTokenHighlightsStatic(tokenType)
            : super.getTokenHighlights(tokenType);

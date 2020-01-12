@@ -102,8 +102,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     @NotNull
     ProblemHighlightType getSeverity();
 
-    @Nullable
-    LocalQuickFix[] getFixes();
+    LocalQuickFix @Nullable [] getFixes();
   }
 
   public static class ValidationResults<T extends Enum> {
@@ -146,9 +145,8 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
         @Override
         public ProblemHighlightType getSeverity() {return severity;}
 
-        @Nullable
         @Override
-        public LocalQuickFix[] getFixes() {return quickFixes;}
+        public LocalQuickFix @Nullable [] getFixes() {return quickFixes;}
       });
     }
   }

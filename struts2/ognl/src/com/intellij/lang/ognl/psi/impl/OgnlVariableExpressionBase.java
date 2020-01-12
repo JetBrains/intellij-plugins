@@ -56,9 +56,8 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
       super(element, TextRange.from(1, element.getTextLength() - 1), true);
     }
 
-    @NotNull
     @Override
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
       final String name = getValue();
 
       final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
@@ -72,9 +71,8 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
       return ContainerUtil.map2Array(processor.getResults(), PsiElementResolveResult.class, RESOLVE_FUNCTION);
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
         new CommonProcessors.CollectProcessor<>();
       OgnlResolveUtil.processVariables(getElement(), processor);

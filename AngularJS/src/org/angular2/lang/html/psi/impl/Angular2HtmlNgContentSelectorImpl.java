@@ -55,8 +55,7 @@ public class Angular2HtmlNgContentSelectorImpl extends StubBasedPsiElementBase<A
   }
 
   @Override
-  @NotNull
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 

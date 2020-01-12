@@ -70,9 +70,8 @@ public class DartWebdevRunningState extends CommandLineState {
     myObservatoryUrlConsumers.add(consumer);
   }
 
-  @NotNull
   @Override
-  protected AnAction[] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
+  protected AnAction @NotNull [] createActions(final ConsoleView console, final ProcessHandler processHandler, final Executor executor) {
     // These actions are effectively added only to the Run tool window. For Debug see DartCommandLineDebugProcess.registerAdditionalActions()
     final List<AnAction> actions = new ArrayList<>(Arrays.asList(super.createActions(console, processHandler, executor)));
     addObservatoryActions(actions, processHandler);

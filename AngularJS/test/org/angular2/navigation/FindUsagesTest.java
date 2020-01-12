@@ -57,7 +57,7 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
                 "attr-slot <slots.test.component.html:(78,87):(0,9)>");
   }
 
-  private void checkUsages(@NotNull String signature, @NotNull String... usages) {
+  private void checkUsages(@NotNull String signature, String @NotNull ... usages) {
     AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
     assertEquals(Stream.of(usages)
                    .sorted()

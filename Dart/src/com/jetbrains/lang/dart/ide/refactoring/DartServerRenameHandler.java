@@ -32,7 +32,7 @@ public class DartServerRenameHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext context) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext context) {
     // Dart file rename is not handled using server yet
   }
 

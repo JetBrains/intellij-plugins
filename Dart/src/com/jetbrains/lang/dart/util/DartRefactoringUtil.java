@@ -71,8 +71,7 @@ public class DartRefactoringUtil {
     return occurrences;
   }
 
-  @NotNull
-  public static PsiElement[] findStatementsInRange(PsiFile file, int startOffset, int endOffset) {
+  public static PsiElement @NotNull [] findStatementsInRange(PsiFile file, int startOffset, int endOffset) {
     PsiElement element1 = file.findElementAt(startOffset);
     PsiElement element2 = file.findElementAt(endOffset - 1);
     if (element1 instanceof PsiWhiteSpace) {
@@ -117,8 +116,7 @@ public class DartRefactoringUtil {
     return expression;
   }
 
-  @NotNull
-  public static PsiElement[] findListExpressionInRange(@NotNull PsiFile file, int startOffset, int endOffset) {
+  public static PsiElement @NotNull [] findListExpressionInRange(@NotNull PsiFile file, int startOffset, int endOffset) {
     // startOffset and endOffset are at the beginning of lines
     // return an expression that spans those lines, plus optional comma if any
     PsiElement element1 = file.findElementAt(startOffset);

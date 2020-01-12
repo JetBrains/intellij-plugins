@@ -49,9 +49,8 @@ class ResolutionFailedDialog extends DialogWrapper {
     return label;
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{getOKAction()};
   }
 }

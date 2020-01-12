@@ -61,9 +61,8 @@ public class ViewGeneratedManifestGroup extends ActionGroup {
     e.getPresentation().setVisible(enabled);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     if (e != null) {
       Project project = e.getProject();
       if (project != null) {

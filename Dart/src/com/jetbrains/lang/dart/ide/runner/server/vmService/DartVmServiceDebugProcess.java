@@ -72,7 +72,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
   private boolean myVmConnected = false;
 
-  @NotNull private final XBreakpointHandler[] myBreakpointHandlers;
+  private final XBreakpointHandler @NotNull [] myBreakpointHandlers;
   private final IsolatesInfo myIsolatesInfo;
   private VmServiceWrapper myVmServiceWrapper;
 
@@ -366,8 +366,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
   }
 
   @Override
-  @NotNull
-  public XBreakpointHandler<?>[] getBreakpointHandlers() {
+  public XBreakpointHandler<?> @NotNull [] getBreakpointHandlers() {
     return myBreakpointHandlers;
   }
 

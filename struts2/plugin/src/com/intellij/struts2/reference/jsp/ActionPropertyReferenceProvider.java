@@ -48,10 +48,9 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
     this.supportsReadOnlyProperties = supportsReadOnlyProperties;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     if (TaglibUtil.isDynamicExpression(((XmlAttributeValue) psiElement).getValue())) {
       return PsiReference.EMPTY_ARRAY;
     }

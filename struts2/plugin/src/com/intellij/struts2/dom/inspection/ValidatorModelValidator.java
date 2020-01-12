@@ -98,9 +98,8 @@ public class ValidatorModelValidator extends ValidatorBase {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(CompileContext context) {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionToolClasses(CompileContext context) {
     return new Class[]{ValidatorModelInspection.class, ValidatorConfigModelInspection.class};
   }
 }

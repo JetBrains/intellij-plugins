@@ -105,12 +105,11 @@ public class AngularIndexUtil {
     );
   }
 
-  @NotNull
-  public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
-                                                                        @NotNull final ID<? super String, AngularNamedItemDefinition> INDEX,
-                                                                        @NotNull final String id,
-                                                                        @NotNull final Condition<? super VirtualFile> filter,
-                                                                        boolean dirtyResolve) {
+  public static ResolveResult @NotNull [] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
+                                                                                  @NotNull final ID<? super String, AngularNamedItemDefinition> INDEX,
+                                                                                  @NotNull final String id,
+                                                                                  @NotNull final Condition<? super VirtualFile> filter,
+                                                                                  boolean dirtyResolve) {
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     Collection<VirtualFile> files = instance.getContainingFiles(INDEX, id, GlobalSearchScope.allScope(project));
     if (files.isEmpty()) return ResolveResult.EMPTY_ARRAY;

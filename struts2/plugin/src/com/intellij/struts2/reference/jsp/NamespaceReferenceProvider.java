@@ -41,9 +41,8 @@ import java.util.List;
 public class NamespaceReferenceProvider extends PsiReferenceProvider {
 
   @Override
-  @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext context) {
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
     final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
@@ -72,8 +71,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public ResolveResult[] multiResolve(final boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(final boolean incompleteCode) {
       final String namespace = myElement.getValue();
       final List<ResolveResult> resolveResults = new SmartList<>();
       for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
@@ -87,8 +85,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), LookupElement.class,
                                      STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION);
     }

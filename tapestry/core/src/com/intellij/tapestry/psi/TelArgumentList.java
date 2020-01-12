@@ -15,8 +15,7 @@ public class TelArgumentList extends TelCompositeElement {
     super(node);
   }
 
-  @NotNull
-  public TelExpression[] getArguments() {
+  public TelExpression @NotNull [] getArguments() {
     return findChildrenByClass(TelExpression.class);
   }
 }

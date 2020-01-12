@@ -14,9 +14,8 @@ public class AngularJSExpressionSurroundDescriptor extends JSExpressionSurroundD
     new JSNotWithParenthesesSurrounder()
   };
 
-  @NotNull
   @Override
-  public Surrounder[] getSurrounders() {
+  public Surrounder @NotNull [] getSurrounders() {
     return SURROUNDERS;
   }
 }

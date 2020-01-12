@@ -118,9 +118,8 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     myInterpolationConfig = interpolationConfig;
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     TextAttributesKey[] result = keys.get(tokenType);
     if (result != null) {
       return result;
@@ -141,8 +140,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
                                              FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
   }
 
-  @NotNull
-  private static TextAttributesKey[] mapToTsKeys(@NotNull TextAttributesKey[] tokenHighlights, @NotNull IElementType tokenType) {
+  private static TextAttributesKey @NotNull [] mapToTsKeys(TextAttributesKey @NotNull [] tokenHighlights, @NotNull IElementType tokenType) {
     return ContainerUtil.map2Array(tokenHighlights, TextAttributesKey.class, key -> getTsMappedKey(key, tokenType));
   }
 

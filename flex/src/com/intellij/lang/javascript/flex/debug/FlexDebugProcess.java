@@ -1030,8 +1030,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  @NotNull
-  public XBreakpointHandler<?>[] getBreakpointHandlers() {
+  public XBreakpointHandler<?> @NotNull [] getBreakpointHandlers() {
     return myBreakpointsHandler.getBreakpointHandlers();
   }
 

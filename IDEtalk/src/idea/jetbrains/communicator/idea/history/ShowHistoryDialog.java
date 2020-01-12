@@ -102,8 +102,7 @@ public class ShowHistoryDialog extends IdeaDialog {
   }
 
   @Override
-  @NotNull
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{
         new AbstractAction(CommonBundle.getCloseButtonText()) {
           @Override

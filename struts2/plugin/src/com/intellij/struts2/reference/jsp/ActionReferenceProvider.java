@@ -48,9 +48,8 @@ import java.util.List;
 public class ActionReferenceProvider extends PsiReferenceProvider {
 
   @Override
-  @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
     final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
     if (strutsModel == null) {
@@ -111,8 +110,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       if (action == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }
@@ -158,8 +156,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
 
       final List<Object> variants = new ArrayList<>(actionList.size());

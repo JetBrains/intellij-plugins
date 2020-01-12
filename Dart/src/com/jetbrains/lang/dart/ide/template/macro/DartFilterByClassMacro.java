@@ -15,7 +15,7 @@ import java.util.Set;
 
 public abstract class DartFilterByClassMacro extends Macro {
   @Override
-  public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, ExpressionContext context) {
     final PsiElement at = context.getPsiElementAtStartOffset();
     final Set<DartComponentName> variables = DartRefactoringUtil.collectUsedComponents(at);
     final List<DartComponentName> filtered = ContainerUtil.filter(variables, name -> {

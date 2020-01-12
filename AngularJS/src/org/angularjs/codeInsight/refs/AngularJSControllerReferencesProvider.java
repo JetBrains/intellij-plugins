@@ -21,9 +21,8 @@ import java.util.Collection;
  * @author Dennis.Ushakov
  */
 public class AngularJSControllerReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[] { new AngularJSControllerReference((JSLiteralExpression)element) };
   }
 
@@ -49,9 +48,8 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
       return AngularIndexUtil.resolve(getElement().getProject(), AngularControllerIndex.KEY, getCanonicalText());
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final Collection<String> controllers = AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, getElement().getProject());
       final LookupElement[] result = new LookupElement[controllers.size()];
       int i = 0;

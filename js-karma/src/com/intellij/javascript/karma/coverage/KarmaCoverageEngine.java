@@ -64,7 +64,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   public CoverageSuite createCoverageSuite(@NotNull CoverageRunner covRunner,
                                            @NotNull String name,
                                            @NotNull CoverageFileProvider coverageDataFileProvider,
-                                           @Nullable String[] filters,
+                                           String @Nullable [] filters,
                                            long lastCoverageTimeStamp,
                                            @Nullable String suiteToMerge,
                                            boolean coverageByTestEnabled,
@@ -165,7 +165,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public List<PsiElement> findTestsByNames(@NotNull String[] testNames, @NotNull Project project) {
+  public List<PsiElement> findTestsByNames(String @NotNull [] testNames, @NotNull Project project) {
     return Collections.emptyList();
   }
 

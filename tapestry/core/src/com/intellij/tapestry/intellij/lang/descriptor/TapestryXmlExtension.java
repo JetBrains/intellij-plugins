@@ -52,9 +52,8 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
 
   }
 
-  @Nullable
   @Override
-  public String[][] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
+  public String[] @Nullable [] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
     String[][] namespaces = {
       {"", XmlUtil.XHTML_URI},
       {"t", TapestryConstants.TEMPLATE_NAMESPACE},

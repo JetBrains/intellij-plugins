@@ -78,15 +78,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   }
 
   @Override
-  @NotNull
-  protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  protected String @NotNull [] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
     return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
   @Override
-  @NotNull
-  protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
+  protected String @NotNull [] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Settings settings) {
     AngularCLIProjectSettings ngSettings = (AngularCLIProjectSettings)settings;
     List<String> result = new ArrayList<>();
     result.add("new");
@@ -121,9 +119,8 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
            || ver.isGreaterOrEqualThan(major, minor, patch);
   }
 
-  @NotNull
   @Override
-  protected Filter[] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  protected Filter @NotNull [] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
     return new Filter[]{new AngularCliFilter(project, baseDir.getParent().getPath())};
   }
 

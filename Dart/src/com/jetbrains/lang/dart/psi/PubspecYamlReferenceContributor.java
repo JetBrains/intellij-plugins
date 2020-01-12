@@ -47,9 +47,8 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class PubspecYamlReferenceProvider extends PsiReferenceProvider {
-    @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
       if (!(element instanceof YAMLKeyValue) || !isPathPackageDefinition((YAMLKeyValue)element)) {
         return PsiReference.EMPTY_ARRAY;
       }

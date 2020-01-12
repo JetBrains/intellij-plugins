@@ -63,14 +63,12 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public PsiClassType[] getExtendsListTypes() {
+    public PsiClassType @NotNull [] getExtendsListTypes() {
         return PsiClassType.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClassType[] getImplementsListTypes() {
+    public PsiClassType @NotNull [] getImplementsListTypes() {
         return PsiClassType.EMPTY_ARRAY;
     }
 
@@ -80,69 +78,58 @@ public class PsiClassMock implements PsiClass {
         return null;
     }
 
-    @NotNull
     @Override
-    public PsiClass[] getInterfaces() {
+    public PsiClass @NotNull [] getInterfaces() {
         return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClass[] getSupers() {
+    public PsiClass @NotNull [] getSupers() {
         return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClassType[] getSuperTypes() {
+    public PsiClassType @NotNull [] getSuperTypes() {
         return PsiClassType.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiField[] getFields() {
+    public PsiField @NotNull [] getFields() {
         return PsiField.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiMethod[] getMethods() {
+    public PsiMethod @NotNull [] getMethods() {
         return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiMethod[] getConstructors() {
+    public PsiMethod @NotNull [] getConstructors() {
         return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClass[] getInnerClasses() {
+    public PsiClass @NotNull [] getInnerClasses() {
         return PsiClass.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClassInitializer[] getInitializers() {
+    public PsiClassInitializer @NotNull [] getInitializers() {
         return PsiClassInitializer.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiField[] getAllFields() {
+    public PsiField @NotNull [] getAllFields() {
         return PsiField.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiMethod[] getAllMethods() {
+    public PsiMethod @NotNull [] getAllMethods() {
         return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiClass[] getAllInnerClasses() {
+    public PsiClass @NotNull [] getAllInnerClasses() {
         return PsiClass.EMPTY_ARRAY;
     }
 
@@ -159,14 +146,12 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public PsiMethod[] findMethodsBySignature(PsiMethod patternMethod, boolean checkBases) {
+    public PsiMethod @NotNull [] findMethodsBySignature(PsiMethod patternMethod, boolean checkBases) {
         return PsiMethod.EMPTY_ARRAY;
     }
 
     @Override
-    @NotNull
-    public PsiMethod[] findMethodsByName(@NonNls String name, boolean checkBases) {
+    public PsiMethod @NotNull [] findMethodsByName(@NonNls String name, boolean checkBases) {
         return PsiMethod.EMPTY_ARRAY;
     }
 
@@ -256,8 +241,7 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public PsiElement[] getChildren() {
+    public PsiElement @NotNull [] getChildren() {
         return PsiElement.EMPTY_ARRAY;
     }
 
@@ -340,8 +324,7 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public char[] textToCharArray() {
+    public char @NotNull [] textToCharArray() {
         return new char[0];
     }
 
@@ -459,8 +442,7 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public PsiReference[] getReferences() {
+    public PsiReference @NotNull [] getReferences() {
         return PsiReference.EMPTY_ARRAY;
     }
 
@@ -605,8 +587,7 @@ public class PsiClassMock implements PsiClass {
     }
 
     @Override
-    @NotNull
-    public PsiTypeParameter[] getTypeParameters() {
+    public PsiTypeParameter @NotNull [] getTypeParameters() {
         return PsiTypeParameter.EMPTY_ARRAY;
     }
 }

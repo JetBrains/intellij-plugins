@@ -29,8 +29,7 @@ public class FlexColorReference extends BasicAttributeValueReference {
 
    @Override
    @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod"})
-   @NotNull
-   public Object[] getVariants() {
+   public Object @NotNull [] getVariants() {
      if (ourValues == null) {
        ColorSampleLookupValue[] colors = ColorSampleLookupValue.getColors();
        List<Object> mxmlColors = new ArrayList<>();

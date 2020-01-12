@@ -41,9 +41,8 @@ public class CssMediaFeatureDescriptorStub extends CssNullValue implements CssMe
     return "";
   }
 
-  @NotNull
   @Override
-  public CssMediaGroup[] getMediaGroups() {
+  public CssMediaGroup @NotNull [] getMediaGroups() {
     return CssConstants.DEFAULT_MEDIA_GROUPS;
   }
 

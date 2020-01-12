@@ -73,9 +73,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   // GUI helpers
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>(myBuffer.size());
       for (final StrutsFileSet entry : myBuffer) {
         if (!entry.isRemoved()) {
@@ -372,9 +371,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       final List<SimpleNode> nodes = new ArrayList<>();
 
       for (final VirtualFilePointer file : mySet.getFiles()) {
@@ -389,8 +387,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     }
 
     @Override
-    @NotNull
-    public Object[] getEqualityObjects() {
+    public Object @NotNull [] getEqualityObjects() {
       return new Object[]{mySet, mySet.getName(), mySet.getFiles()};
     }
   }
@@ -434,9 +431,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
 
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
       return NO_CHILDREN;
     }
   }

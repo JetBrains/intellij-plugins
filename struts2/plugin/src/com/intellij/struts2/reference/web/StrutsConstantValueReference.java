@@ -98,9 +98,8 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   }
 
   @Override
-  @NotNull
   @SuppressWarnings({"unchecked"})
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     if (elementConverterPair == null) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }

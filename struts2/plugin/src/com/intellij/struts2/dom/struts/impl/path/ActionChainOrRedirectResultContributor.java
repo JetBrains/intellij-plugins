@@ -115,8 +115,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<Action> allActions = model.getActionsForNamespace(null);
       final List<LookupElementBuilder> variants = new ArrayList<>(allActions.size());
       for (final Action action : allActions) {

@@ -57,9 +57,8 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl
     return JSEmbeddedContentImpl.getQuoteChar(this);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull PsiReferenceService.Hints hints) {
+  public PsiReference @NotNull [] getReferences(@NotNull PsiReferenceService.Hints hints) {
     return PsiReference.EMPTY_ARRAY;
   }
 

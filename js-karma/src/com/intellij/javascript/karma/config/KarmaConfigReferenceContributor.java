@@ -50,9 +50,8 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(Holder.STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE, new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull ProcessingContext processingContext) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull ProcessingContext processingContext) {
         JSLiteralExpression literalExpression = ObjectUtils.tryCast(psiElement, JSLiteralExpression.class);
         if (literalExpression == null) {
           return PsiReference.EMPTY_ARRAY;

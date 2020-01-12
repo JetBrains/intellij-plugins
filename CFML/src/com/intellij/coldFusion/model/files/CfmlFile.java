@@ -102,8 +102,7 @@ public class CfmlFile extends PsiFileBase {
     return true;
   }
 
-  @Nullable
-  private static String[] findVariableNameAndType(String text) {
+  private static String @Nullable [] findVariableNameAndType(String text) {
     Matcher matcher = IMPLICIT_VAR_DECL_PATTERN_TEMP.matcher(text);
     Matcher javaLoaderMatcher = LOADER_DECL_PATTERN_TEMP.matcher(text);
     if (!matcher.matches()) {

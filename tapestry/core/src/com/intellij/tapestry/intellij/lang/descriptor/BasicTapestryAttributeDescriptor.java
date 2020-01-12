@@ -39,8 +39,7 @@ public abstract class BasicTapestryAttributeDescriptor extends BasicXmlAttribute
   }
 
   @Override
-  @Nullable
-  public String[] getEnumeratedValues() {
+  public String @Nullable [] getEnumeratedValues() {
     return null;
   }
 

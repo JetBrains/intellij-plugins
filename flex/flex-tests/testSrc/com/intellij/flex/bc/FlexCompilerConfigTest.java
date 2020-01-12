@@ -274,8 +274,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
       public RootProvider getRootProvider() {
         return new RootProviderBaseImpl() {
           @Override
-          @NotNull
-          public String[] getUrls(@NotNull final OrderRootType rootType) {
+          public String @NotNull [] getUrls(@NotNull final OrderRootType rootType) {
             final String[] relPaths = sdkVersion.startsWith("AIR SDK ")
                                       ? AIR_SDK_ROOTS
                                       : sdkVersion.startsWith("4.6")
@@ -293,8 +292,7 @@ public class FlexCompilerConfigTest extends HeavyPlatformTestCase {
           }
 
           @Override
-          @NotNull
-          public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
+          public VirtualFile @NotNull [] getFiles(@NotNull final OrderRootType rootType) {
             return VirtualFile.EMPTY_ARRAY;
           }
         };

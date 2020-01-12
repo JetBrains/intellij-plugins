@@ -85,9 +85,8 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return prefix + getName();
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(getReferencesInner(), this));
   }
 

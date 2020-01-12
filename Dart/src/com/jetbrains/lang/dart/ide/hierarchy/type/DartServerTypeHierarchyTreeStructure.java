@@ -30,9 +30,8 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
     setBaseElement(myBaseDescriptor); //to set myRoot
   }
 
-  @NotNull
   @Override
-  protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
+  protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
     return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
@@ -71,8 +70,7 @@ public final class DartServerTypeHierarchyTreeStructure extends HierarchyTreeStr
     return descriptor;
   }
 
-  @NotNull
-  public static DartClass[] filterSuperClasses(@NotNull final Project project, @NotNull final List<? extends TypeHierarchyItem> items) {
+  public static DartClass @NotNull [] filterSuperClasses(@NotNull final Project project, @NotNull final List<? extends TypeHierarchyItem> items) {
     if (items.isEmpty()) return new DartClass[]{};
 
     final Set<TypeHierarchyItem> seenItems = Sets.newHashSet();

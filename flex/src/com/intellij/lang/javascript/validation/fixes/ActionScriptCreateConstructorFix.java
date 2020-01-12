@@ -149,7 +149,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
       new JSChangeSignatureFix(fakeFunction, node.getArgumentList()) {
         @Override
-        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, @NotNull JSExpression[] arguments, boolean dryRun) {
+        protected Pair<Boolean, List<JSParameterInfo>> handleCall(@NotNull JSFunction function, JSExpression @NotNull [] arguments, boolean dryRun) {
           List<JSParameterInfo> parameterInfos = super.handleCall(function, arguments, dryRun).second;
           return Pair.create(true, parameterInfos); // always show dialog
         }
@@ -296,9 +296,8 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       super(method, visibility, methodName, returnType, parameters, methodsToPropagateParameters, Collections.emptySet());
     }
 
-    @NotNull
     @Override
-    protected UsageInfo[] findUsages() {
+    protected UsageInfo @NotNull [] findUsages() {
       final Collection<UsageInfo> declarations = Collections.synchronizedCollection(new HashSet<>());
       final Collection<OtherUsageInfo> usages = Collections.synchronizedCollection(new HashSet<>());
 
@@ -324,7 +323,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     }
 
     @Override
-    protected void performRefactoring(@NotNull UsageInfo[] usageInfos) {
+    protected void performRefactoring(UsageInfo @NotNull [] usageInfos) {
       final Collection<String> toImport = new ArrayList<>();
       JSCallExpression node = myNode.getElement();
       assert node != null;

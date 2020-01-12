@@ -150,8 +150,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<String> extensions = getActionExtensions();
       if (extensions.isEmpty()) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

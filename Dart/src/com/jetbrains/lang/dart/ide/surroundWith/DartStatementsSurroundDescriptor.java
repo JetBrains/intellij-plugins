@@ -13,16 +13,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DartStatementsSurroundDescriptor implements SurroundDescriptor {
   @Override
-  @NotNull
-  public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
+  public PsiElement @NotNull [] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
     final PsiElement[] statements = DartRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
     if (statements == null) return PsiElement.EMPTY_ARRAY;
     return statements;
   }
 
   @Override
-  @NotNull
-  public Surrounder[] getSurrounders() {
+  public Surrounder @NotNull [] getSurrounders() {
     return new Surrounder[]{
       new DartWithIfSurrounder(),
       new DartWithIfElseSurrounder(),

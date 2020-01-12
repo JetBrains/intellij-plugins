@@ -140,8 +140,7 @@ public class CfmlLangInfo {
 
   private static final Logger LOG = Logger.getInstance(CfmlLangInfo.class.getName());
 
-  @Nullable
-  private static String[] readStringsFromFile(String fileName) {
+  private static String @Nullable [] readStringsFromFile(String fileName) {
     String[] result = null;
     try {
       InputStream predefined = CfmlLangInfo.class.getResourceAsStream(fileName);

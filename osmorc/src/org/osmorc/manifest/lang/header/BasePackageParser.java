@@ -33,9 +33,8 @@ import java.util.List;
 public class BasePackageParser extends OsgiHeaderParser {
   public static final HeaderParser INSTANCE = new BasePackageParser();
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+  public PsiReference @NotNull [] getReferences(@NotNull HeaderValuePart headerValuePart) {
     return headerValuePart.getParent() instanceof Clause ? getPackageReferences(headerValuePart) : PsiReference.EMPTY_ARRAY;
   }
 

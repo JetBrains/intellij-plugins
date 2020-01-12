@@ -51,9 +51,8 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
   @NotNull
   protected abstract List<PsiElement> getChildren(@NotNull PsiElement element);
 
-  @NotNull
   @Override
-  protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
+  protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
     final List<DartCallHierarchyNodeDescriptor> descriptors = new ArrayList<>();
     if (descriptor instanceof DartCallHierarchyNodeDescriptor) {
       final DartCallHierarchyNodeDescriptor dartDescriptor = (DartCallHierarchyNodeDescriptor)descriptor;

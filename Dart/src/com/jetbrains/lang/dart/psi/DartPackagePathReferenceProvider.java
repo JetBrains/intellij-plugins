@@ -57,9 +57,8 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
            ("img".equalsIgnoreCase(tagName) && "src".equalsIgnoreCase(attrName));
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext context) {
     if (!(psiElement instanceof XmlAttributeValue) || !HtmlUtil.isHtmlFile(psiElement.getContainingFile())) return PsiReference.EMPTY_ARRAY;
 
     final PsiElement parent = psiElement.getParent();

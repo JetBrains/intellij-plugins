@@ -37,7 +37,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
   @Override
   public void renameElement(@NotNull PsiElement element,
                             @NotNull String newName,
-                            @NotNull UsageInfo[] usages,
+                            UsageInfo @NotNull [] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     final PsiNamedElement directive = (PsiNamedElement)element;
     final String attributeName;

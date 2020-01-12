@@ -7,6 +7,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2Chain extends JSStatement {
 
-  @NotNull
-  JSExpressionStatement[] getStatements();
+  JSExpressionStatement @NotNull [] getStatements();
 }

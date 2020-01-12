@@ -65,8 +65,7 @@ public class OsgiPsiUtil {
     });
   }
 
-  @NotNull
-  public static PsiDirectory[] resolvePackage(@NotNull PsiElement element, @NotNull String packageName) {
+  public static PsiDirectory @NotNull [] resolvePackage(@NotNull PsiElement element, @NotNull String packageName) {
     Project project = element.getProject();
     Module module = ModuleUtilCore.findModuleForPsiElement(element);
     GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : ProjectScope.getAllScope(project);

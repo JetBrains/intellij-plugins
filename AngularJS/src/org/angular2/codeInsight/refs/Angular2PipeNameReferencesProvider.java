@@ -21,9 +21,8 @@ import static org.angular2.Angular2DecoratorUtil.PIPE_DEC;
 
 public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[]{new Angular2PipeNameReference((JSLiteralExpression)element)};
   }
 
@@ -48,9 +47,8 @@ public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
       return null;
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
     }
   }

@@ -16,9 +16,8 @@ public class PostCssCustomSelectorReference extends PsiPolyVariantReferenceBase<
     super(psiElement);
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     String name = getCustomSelectorName();
     return name != null ? PsiElementResolveResult.createResults(PostCssCustomSelectorIndex.getCustomSelectors(name, myElement))
                         : ResolveResult.EMPTY_ARRAY;

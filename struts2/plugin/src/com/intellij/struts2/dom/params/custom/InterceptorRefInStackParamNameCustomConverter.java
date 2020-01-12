@@ -49,10 +49,9 @@ import java.util.List;
  */
 public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConverter.ParamNameCustomConverter {
 
-  @NotNull
   @Override
-  public PsiReference[] getCustomReferences(final XmlAttributeValue nameAttributeValue,
-                                            final DomElement paramsElement) {
+  public PsiReference @NotNull [] getCustomReferences(final XmlAttributeValue nameAttributeValue,
+                                                      final DomElement paramsElement) {
     if (!(paramsElement instanceof InterceptorRef)) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -123,9 +122,8 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
       return domTarget == null ? null : PomService.convertToPsi(domTarget);
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final List<InterceptorRef> allInterceptorRefs = interceptorStack.getInterceptorRefs();
       List<LookupElement> names = new ArrayList<>(allInterceptorRefs.size());
       for (InterceptorRef interceptorRef : allInterceptorRefs) {

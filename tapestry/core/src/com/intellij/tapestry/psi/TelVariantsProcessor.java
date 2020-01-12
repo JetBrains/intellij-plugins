@@ -114,8 +114,7 @@ abstract class TelVariantsProcessor<T> implements PsiScopeProcessor {
   @Nullable
   protected abstract T createResult(final PsiNamedElement element, final boolean validResult);
 
-  @NotNull
-  public T[] getVariants(T[] array) {
+  public T @NotNull [] getVariants(T[] array) {
     if (myPropertyAccessors != null) {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myPropertyAccessors.getMethods()) {
         final BeanProperty property = BeanProperty.createBeanProperty(methodCandidateInfo.getMethod());

@@ -77,9 +77,8 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
     return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, RESOLVER, false, false);
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     final SmartList<LookupElement> result = new SmartList<>();
     processSimpleVariableDeclarations(myElement, element -> {
       LookupElementBuilder lookup = LookupElementBuilder.create(element).withIcon(AllIcons.Nodes.Variable);

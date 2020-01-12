@@ -56,7 +56,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
   @Override
   public void renameElement(@NotNull PsiElement element,
                             @NotNull String newName,
-                            @NotNull UsageInfo[] usages,
+                            UsageInfo @NotNull [] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     if (element instanceof JSImplicitElement && element.getParent() instanceof TypeScriptClass) {
       ES6Decorator decorator = Angular2DecoratorUtil.findDecorator((TypeScriptClass)element.getParent(), PIPE_DEC);

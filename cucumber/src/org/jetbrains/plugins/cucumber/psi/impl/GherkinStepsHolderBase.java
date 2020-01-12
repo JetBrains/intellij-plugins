@@ -33,9 +33,8 @@ public abstract class GherkinStepsHolderBase extends GherkinPsiElementBase imple
     return result.toString().trim();
   }
 
-  @NotNull
   @Override
-  public final GherkinStep[] getSteps() {
+  public final GherkinStep @NotNull [] getSteps() {
     final GherkinStep[] steps = PsiTreeUtil.getChildrenOfType(this, GherkinStep.class);
     return steps == null ? GherkinStep.EMPTY_ARRAY : steps;
   }

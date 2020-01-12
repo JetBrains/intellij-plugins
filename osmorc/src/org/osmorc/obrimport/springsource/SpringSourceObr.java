@@ -56,8 +56,7 @@ public class SpringSourceObr implements Obr {
   }
 
   @Override
-  @NotNull
-  public ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString, @NotNull ProgressIndicator indicator) throws IOException {
+  public ObrMavenResult @NotNull [] queryForMavenArtifact(@NotNull String queryString, @NotNull ProgressIndicator indicator) throws IOException {
     try {
       // TODO: make this more robust against URL changes.
       List<ObrMavenResult> result = new ArrayList<>();
@@ -151,8 +150,7 @@ public class SpringSourceObr implements Obr {
   }
 
   @Override
-  @NotNull
-  public MavenRepository[] getMavenRepositories() {
+  public MavenRepository @NotNull [] getMavenRepositories() {
     return SPRINGSOURCE_REPOS;
   }
 

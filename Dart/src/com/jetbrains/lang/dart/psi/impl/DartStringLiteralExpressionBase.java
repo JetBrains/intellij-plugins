@@ -26,16 +26,15 @@ public abstract class DartStringLiteralExpressionBase extends DartClassReference
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     if (getParent() instanceof DartUriElement) {
       return super.getReferences(); // DartFileReferences are handled in DartUriElement implementation
     }
     return filterOutReferencesInTemplatesOrInjected(ReferenceProvidersRegistry.getReferencesFromProviders(this));
   }
 
-  private PsiReference[] filterOutReferencesInTemplatesOrInjected(@NotNull final PsiReference[] references) {
+  private PsiReference[] filterOutReferencesInTemplatesOrInjected(final PsiReference @NotNull [] references) {
     if (references.length == 0) return references;
     // String literal expression is a complex object that may contain injected HTML and regular Dart code (as a string template).
     // References in HTML and in Dart code are handled somewhere else, so if they occasionally appeared here we need to filter them out.

@@ -47,9 +47,8 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
     fileTypeSink.consume(StdFileTypes.XHTML);
   }
 
-  @NotNull
   @Override
-  public FileIncludeInfo[] getIncludeInfos(@NotNull final FileContent content) {
+  public FileIncludeInfo @NotNull [] getIncludeInfos(@NotNull final FileContent content) {
     if (PubspecYamlUtil.findPubspecYamlFile(content.getProject(), content.getFile()) == null) return FileIncludeInfo.EMPTY;
 
     final PsiFile psiFile = content.getPsiFile();

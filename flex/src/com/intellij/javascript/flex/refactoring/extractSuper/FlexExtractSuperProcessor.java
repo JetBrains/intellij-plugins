@@ -96,13 +96,12 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   @NotNull
   @Override
-  protected UsageViewDescriptor createUsageViewDescriptor(@NotNull UsageInfo[] usages) {
+  protected UsageViewDescriptor createUsageViewDescriptor(UsageInfo @NotNull [] usages) {
     return new JSExtractInterfaceUsageViewDescriptor();
   }
 
-  @NotNull
   @Override
-  protected UsageInfo[] findUsages() {
+  protected UsageInfo @NotNull [] findUsages() {
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }
@@ -146,7 +145,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
 
   @Override
-  protected void refreshElements(@NotNull PsiElement[] elements) {
+  protected void refreshElements(PsiElement @NotNull [] elements) {
   }
 
   @Override
@@ -277,7 +276,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   @Override
-  protected void performRefactoring(@NotNull UsageInfo[] usages) {
+  protected void performRefactoring(UsageInfo @NotNull [] usages) {
     List<FormatFixer> formatters = new ArrayList<>();
     if (myMode == JSExtractSuperMode.ExtractSuper) {
       createSuperClassifier(formatters);
@@ -304,7 +303,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
     JSRefactoringUtil.format(formatters);
   }
 
-  private void rebindReferencesToTarget(@NotNull UsageInfo[] usages, List<FormatFixer> formatters) {
+  private void rebindReferencesToTarget(UsageInfo @NotNull [] usages, List<FormatFixer> formatters) {
     bindRefsToTarget(usages, formatters);
     Collection<UsageInfo> usagesInMovedMembers = new ArrayList<>();
     Map<PsiElement, JSConvertReferencesToSuperUtil.Status> variablesResults = new HashMap<>();
@@ -539,8 +538,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   private class JSExtractInterfaceUsageViewDescriptor extends UsageViewDescriptorAdapter {
     @Override
-    @NotNull
-    public PsiElement[] getElements() {
+    public PsiElement @NotNull [] getElements() {
       return new PsiElement[]{mySourceClass};
     }
 

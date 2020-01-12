@@ -38,9 +38,8 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
     return CssBundle.message("invalid.css.property.name.message");
   }
 
-  @NotNull
   @Override
-  protected ResolveResult[] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
+  protected ResolveResult @NotNull [] resolveInner(boolean incompleteCode, @NotNull PsiFile containingFile) {
     String value = myElement.getText();
     if (FlexCssUtil.inQuotes(value)) {
       FlexCssElementDescriptorProvider provider =
@@ -89,8 +88,7 @@ public class CssPropertyValueReference extends PsiPolyVariantCachingReference im
   }
 
   @Override
-  @NotNull
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     FlexCssElementDescriptorProvider flexDescriptorProvider = CssElementDescriptorProvider.EP_NAME.findExtension(FlexCssElementDescriptorProvider.class);
     return extractDescriptorsIdsAsArray(flexDescriptorProvider.getAllPropertyDescriptors(myElement));
   }

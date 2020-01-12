@@ -107,8 +107,7 @@ public class FlexReferenceContributor {
     }
 
     @Override
-    @NotNull
-    public ResolveResult[] multiResolve(boolean incompleteCode) {
+    public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
       final List<ResolveResult> result = new ArrayList<>(1);
       process(new StateProcessor() {
         @Override
@@ -143,8 +142,7 @@ public class FlexReferenceContributor {
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final Set<String> list = new THashSet<>();
 
       process(new StateProcessor() {

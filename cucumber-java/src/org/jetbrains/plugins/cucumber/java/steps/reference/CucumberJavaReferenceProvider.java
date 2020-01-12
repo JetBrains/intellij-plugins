@@ -13,9 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     if (!(element instanceof PsiLiteralExpression)) {
       return PsiReference.EMPTY_ARRAY;
     }

@@ -62,9 +62,8 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     myCreateAction = new CreateAction();
   }
 
-  @NotNull
   @Override
-  protected Action[] createActions() {
+  protected Action @NotNull [] createActions() {
     return new Action[]{myCreateAction, getCancelAction()};
   }
 

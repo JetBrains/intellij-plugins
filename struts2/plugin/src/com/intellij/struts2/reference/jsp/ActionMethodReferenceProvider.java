@@ -40,10 +40,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ActionMethodReferenceProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext context) {
     final XmlAttributeValue methodAttribute = (XmlAttributeValue) psiElement;
 
     final PsiElement parent = methodAttribute.getParent().getParent();
@@ -103,9 +102,8 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
       return ContainerUtil.find(action.getActionMethods(), psiMethod -> Comparing.equal(psiMethod.getName(), methodName));
     }
 
-    @NotNull
     @Override
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       if (action == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }

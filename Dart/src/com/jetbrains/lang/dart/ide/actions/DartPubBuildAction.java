@@ -49,8 +49,7 @@ public class DartPubBuildAction extends DartPubActionBase {
   }
 
   @Override
-  @Nullable
-  protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
+  protected String @Nullable [] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     final DartPubBuildDialog dialog = new DartPubBuildDialog(project, pubspecYamlFile.getParent());
     dialog.show();
     if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {

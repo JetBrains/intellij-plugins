@@ -30,9 +30,8 @@ public class ActionScriptReferenceExpressionResolver
     super(expression, ignorePerformanceLimits);
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
+  public ResolveResult @NotNull [] resolve(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
     PsiElement currentParent = JSResolveUtil.getTopReferenceParent(myParent);

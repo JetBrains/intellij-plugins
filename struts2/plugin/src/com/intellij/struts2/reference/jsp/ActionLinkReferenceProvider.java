@@ -151,8 +151,7 @@ TODO not needed so far ?!
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final String namespace = getNamespace(fullActionPath);
 
       final String firstExtension = actionExtensions.get(0);
@@ -249,8 +248,7 @@ TODO not needed so far ?!
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       return ContainerUtil.map2Array(allStrutsPackages, Object.class, (Function<StrutsPackage, Object>)strutsPackage -> {
         final String packageNamespace = strutsPackage.searchNamespace();
         return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)

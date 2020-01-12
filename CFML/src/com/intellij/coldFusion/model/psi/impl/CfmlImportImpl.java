@@ -49,9 +49,8 @@ public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
     return taglib != null ? taglib.getText() : null;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     PsiElement taglib = getAttributeValueElement("taglib");
     if (taglib != null) {
       return new PsiReference[]{new CfmlComponentReference(taglib.getNode(), this)};

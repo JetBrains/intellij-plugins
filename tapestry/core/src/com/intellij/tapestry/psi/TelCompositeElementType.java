@@ -40,9 +40,8 @@ public abstract class TelCompositeElementType extends IElementType implements IC
     @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelCompositeElement(node) {
-        @NotNull
         @Override
-        public PsiReference[] getReferences() {
+        public PsiReference @NotNull [] getReferences() {
           ASTNode child = getNode().findChildByType(TelTokenTypes.TAP5_EL_IDENTIFIER);
           if (child != null && "message".equals(child.getText())) {
             child = getNode().findChildByType(TelTokenTypes.TAP5_EL_IDENTIFIER, child.getTreeNext());

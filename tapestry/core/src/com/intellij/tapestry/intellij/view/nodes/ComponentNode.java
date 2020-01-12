@@ -31,9 +31,8 @@ public class ComponentNode extends TapestryNode {
     /**
      * {@inheritDoc}
      */
-    @NotNull
     @Override
-    public SimpleNode[] getChildren() {
+    public SimpleNode @NotNull [] getChildren() {
         TapestryComponent component = (TapestryComponent) getElement();
         List<SimpleNode> children = new ArrayList<>();
 

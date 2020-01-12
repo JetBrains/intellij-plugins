@@ -48,9 +48,8 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
     return DEFAULT_ADD_HANDLER;
   }
 
-  @NotNull
   @Override
-  public DiagramConfigGroup[] getAdditionalDiagramSettings() {
+  public DiagramConfigGroup @NotNull [] getAdditionalDiagramSettings() {
     return ADDITIONAL_SETTINGS_GROUPS;
   }
 

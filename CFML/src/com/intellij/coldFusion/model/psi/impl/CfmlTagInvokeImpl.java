@@ -68,9 +68,8 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
     return TAG_NAME;
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     final PsiElement reference = getAttributeValueElement("component");
 
     if (reference != null) {

@@ -56,9 +56,8 @@ public class ExportPackageParser extends BasePackageParser {
 
   private static final TokenSet TOKEN_FILTER = TokenSet.create(ManifestTokenType.HEADER_VALUE_PART);
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+  public PsiReference @NotNull [] getReferences(@NotNull HeaderValuePart headerValuePart) {
     PsiElement parent = headerValuePart.getParent();
     if (parent instanceof Clause) {
       PsiElement element = headerValuePart.getOriginalElement().getPrevSibling();

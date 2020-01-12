@@ -64,8 +64,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    @NotNull
-    public PsiFile[] getPsiRoots() {
+    public PsiFile @NotNull [] getPsiRoots() {
         return PsiFile.EMPTY_ARRAY;
     }
 
@@ -122,8 +121,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    @NotNull
-    public PsiElement[] getChildren() {
+    public PsiElement @NotNull [] getChildren() {
         return PsiElement.EMPTY_ARRAY;
     }
 
@@ -200,8 +198,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    @NotNull
-    public char[] textToCharArray() {
+    public char @NotNull [] textToCharArray() {
         return new char[0];
     }
 
@@ -317,8 +314,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    @NotNull
-    public PsiReference[] getReferences() {
+    public PsiReference @NotNull [] getReferences() {
         return PsiReference.EMPTY_ARRAY;
     }
 

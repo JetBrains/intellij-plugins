@@ -43,8 +43,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
      * {@inheritDoc}
      */
     @Override
-    @NotNull
-    public AnAction[] getChildren(@Nullable AnActionEvent event) {
+    public AnAction @NotNull [] getChildren(@Nullable AnActionEvent event) {
         if (event == null)
             return EMPTY_ACTION_ARRAY;
 

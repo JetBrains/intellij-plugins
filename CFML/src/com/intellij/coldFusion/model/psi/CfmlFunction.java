@@ -13,8 +13,7 @@ public interface CfmlFunction extends PsiNameIdentifierOwner {
   @NotNull
   String getParametersAsString();
 
-  @NotNull
-  CfmlParameter[] getParameters();
+  CfmlParameter @NotNull [] getParameters();
 
   @Nullable
   PsiType getReturnType();

@@ -56,7 +56,7 @@ public class FormattingTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkResultByFile("attrTyping_after.html");
   }
 
-  private void doTest(@NotNull String expectedFile, @NotNull String... before) {
+  private void doTest(@NotNull String expectedFile, String @NotNull ... before) {
     myFixture.configureByFile("package.json");
     PsiFile psiFile = myFixture.configureByFiles(before)[0];
     doReformat(psiFile);

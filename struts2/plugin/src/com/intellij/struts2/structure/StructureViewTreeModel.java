@@ -48,8 +48,8 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
 
   StructureViewTreeModel(@NotNull final XmlFile xmlFile,
                          @Nullable Editor editor,
-                         @NotNull final Class[] alwaysPlus,
-                         @NotNull final Class[] alwaysLeaf,
+                         final Class @NotNull [] alwaysPlus,
+                         final Class @NotNull [] alwaysLeaf,
                          Function<DomElement, DomService.StructureViewMode> descriptor) {
     super(xmlFile, descriptor, editor);
     this.alwaysPlus = alwaysPlus;
@@ -69,8 +69,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
   }
 
   @Override
-  @NotNull
-  public Filter[] getFilters() {
+  public Filter @NotNull [] getFilters() {
     return new Filter[]{new Filter() {
       @Override
       public boolean isVisible(final TreeElement treeElement) {

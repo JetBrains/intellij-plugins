@@ -40,9 +40,8 @@ public CfmlTagComponentImpl(ASTNode astNode) {
     return null;
   }
 
-  @NotNull
   @Override
-  public CfmlFunction[] getFunctions() {
+  public CfmlFunction @NotNull [] getFunctions() {
     CfmlFunction[] functions = findChildrenByClass(CfmlFunction.class);
     final CfmlTagScriptImpl[] tagScripts = PsiTreeUtil.getChildrenOfType(this, CfmlTagScriptImpl.class);
     if (tagScripts != null) {
@@ -54,21 +53,18 @@ public CfmlTagComponentImpl(ASTNode astNode) {
     return functions;
   }
 
-  @NotNull
   @Override
-  public CfmlFunction[] getFunctionsWithSupers(boolean isSuperPriority) {
+  public CfmlFunction @NotNull [] getFunctionsWithSupers(boolean isSuperPriority) {
     return CfmlPsiUtil.getFunctionsWithSupers(this, isSuperPriority);
   }
 
-  @NotNull
   @Override
-  public CfmlProperty[] getProperties() {
+  public CfmlProperty @NotNull [] getProperties() {
     return findChildrenByClass(CfmlProperty.class);
   }
 
-  @NotNull
   @Override
-  public CfmlProperty[] getPropertiesWithSupers(boolean isSuperPriority) {
+  public CfmlProperty @NotNull [] getPropertiesWithSupers(boolean isSuperPriority) {
     return CfmlPsiUtil.getPropertiesWithSupers(this, isSuperPriority);
   }
 
@@ -156,9 +152,8 @@ public CfmlTagComponentImpl(ASTNode astNode) {
     return getNavigationElement();
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return CfmlPsiUtil.getComponentReferencesFromAttributes(this);
   }
 

@@ -40,7 +40,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
    *
    * @param values Autocompletion values.
    */
-  public StaticStringValuesReferenceProvider(@NotNull @NonNls final String... values) {
+  public StaticStringValuesReferenceProvider(@NonNls final String @NotNull ... values) {
     this(true, values);
   }
 
@@ -50,16 +50,15 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
    * @param allowOtherValues Set to false to enable error highlighting.
    * @param values           Autocompletion values.
    */
-  public StaticStringValuesReferenceProvider(final boolean allowOtherValues, @NotNull @NonNls final String... values) {
+  public StaticStringValuesReferenceProvider(final boolean allowOtherValues, @NonNls final String @NotNull ... values) {
     this.allowOtherValues = allowOtherValues;
     Arrays.sort(values); // make sure Arrays.binarySearch() works later on..
     this.values = values;
   }
 
   @Override
-  @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                               @NotNull final ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element,
+                                                         @NotNull final ProcessingContext context) {
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
       @Override
       public PsiElement resolve() {
@@ -73,8 +72,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProvider {
       }
 
       @Override
-      @NotNull
-      public Object[] getVariants() {
+      public Object @NotNull [] getVariants() {
         return values;
       }
     }};

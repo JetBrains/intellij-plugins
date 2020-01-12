@@ -36,8 +36,7 @@ public class PsiClassTypeMock extends PsiClassType {
   }
 
   @Override
-  @NotNull
-  public PsiType[] getParameters() {
+  public PsiType @NotNull [] getParameters() {
     return EMPTY_ARRAY;
   }
 

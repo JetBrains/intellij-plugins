@@ -51,7 +51,7 @@ import java.util.List;
 
 public class DartServerExtractLocalVariableHandler implements RefactoringActionHandler {
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
   }
 
   @Override

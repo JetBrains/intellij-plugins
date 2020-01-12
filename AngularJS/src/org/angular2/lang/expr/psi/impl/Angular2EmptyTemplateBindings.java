@@ -26,9 +26,8 @@ public class Angular2EmptyTemplateBindings extends FakePsiElement implements Ang
     return myTemplateName;
   }
 
-  @NotNull
   @Override
-  public Angular2TemplateBinding[] getBindings() {
+  public Angular2TemplateBinding @NotNull [] getBindings() {
     return Angular2TemplateBinding.EMPTY_ARRAY;
   }
 

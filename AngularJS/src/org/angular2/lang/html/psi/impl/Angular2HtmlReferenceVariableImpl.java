@@ -171,9 +171,8 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
       this, Angular2HtmlReference.class::isInstance);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences(@NotNull PsiReferenceService.Hints hints) {
+  public PsiReference @NotNull [] getReferences(@NotNull PsiReferenceService.Hints hints) {
     return super.getReferences();
   }
 

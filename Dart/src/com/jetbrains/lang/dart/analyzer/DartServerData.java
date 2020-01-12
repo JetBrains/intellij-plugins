@@ -133,7 +133,7 @@ public class DartServerData {
                                                     myService.getProject().getDisposed());
   }
 
-  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed, @NotNull final int[] removed) {
+  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed, final int @NotNull [] removed) {
     for (int id : removed) {
       myAvailableSuggestionSetMap.remove(id);
     }

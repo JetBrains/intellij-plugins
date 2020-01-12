@@ -24,9 +24,8 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
       new NamespaceFilter(FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG),
       true,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
           if (myRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
           XmlTag tag = (XmlTag)element;
@@ -46,8 +45,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
       xmlAttributeValue(xmlAttribute("class").withParent(xmlTag().withName("component").withParent(xmlTag().withName("componentPackage")))),
       new PsiReferenceProvider() {
         @Override
-        @NotNull
-        public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
           if (myRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
           final String attrValue = ((XmlAttributeValue)element).getValue();

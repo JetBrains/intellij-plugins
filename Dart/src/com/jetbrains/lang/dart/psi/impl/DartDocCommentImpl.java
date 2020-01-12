@@ -28,9 +28,8 @@ public class DartDocCommentImpl extends ASTWrapperPsiElement implements DartDocC
     return getNode().getElementType();
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 }

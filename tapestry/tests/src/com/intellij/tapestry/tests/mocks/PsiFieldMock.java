@@ -74,8 +74,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public PsiElement[] getChildren() {
+    public PsiElement @NotNull [] getChildren() {
         return PsiElement.EMPTY_ARRAY;
     }
 
@@ -152,8 +151,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public char[] textToCharArray() {
+    public char @NotNull [] textToCharArray() {
         return new char[0];
     }
 
@@ -270,8 +268,7 @@ public class PsiFieldMock implements PsiField {
     }
 
     @Override
-    @NotNull
-    public PsiReference[] getReferences() {
+    public PsiReference @NotNull [] getReferences() {
         return PsiReference.EMPTY_ARRAY;
     }
 

@@ -78,10 +78,9 @@ public class ExtendableClassConverterSpringContributor
   }
 
   @Override
-  @NotNull
-  public PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
-                                      @NotNull final PsiElement psiElement,
-                                      @NotNull final ExtendClass extendClass) {
+  public PsiReference @NotNull [] getReferences(@NotNull final ConvertContext convertContext,
+                                                @NotNull final PsiElement psiElement,
+                                                @NotNull final ExtendClass extendClass) {
     return new PsiReference[]{new SpringBeanReference((XmlAttributeValue)psiElement,
                                                       convertContext.getModule(),
                                                       extendClass)};
@@ -128,8 +127,7 @@ public class ExtendableClassConverterSpringContributor
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final SpringModel springModel = getSpringModel();
 
       final PsiClass subClass = getPossibleSubClass();

@@ -958,7 +958,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
-    private @Nullable String[] myAllowedExtensions;
+    private String @Nullable [] myAllowedExtensions;
 
     ExtensionAwareFileChooserDescriptor() {
       super(true, false, true, true, false, false);
@@ -980,7 +980,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       return false;
     }
 
-    public void setAllowedExtensions(final @Nullable String... allowedExtensions) {
+    public void setAllowedExtensions(final String @Nullable ... allowedExtensions) {
       myAllowedExtensions = allowedExtensions;
     }
   }

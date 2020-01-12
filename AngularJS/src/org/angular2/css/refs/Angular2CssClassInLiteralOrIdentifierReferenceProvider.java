@@ -18,9 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class Angular2CssClassInLiteralOrIdentifierReferenceProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     String text = null;
     int offset = 0;
     if (element instanceof JSLiteralExpression) {

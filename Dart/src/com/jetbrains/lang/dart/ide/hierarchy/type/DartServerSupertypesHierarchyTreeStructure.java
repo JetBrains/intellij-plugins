@@ -25,8 +25,7 @@ public final class DartServerSupertypesHierarchyTreeStructure extends HierarchyT
   }
 
   @Override
-  @NotNull
-  protected final Object[] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
+  protected final Object @NotNull [] buildChildren(@NotNull final HierarchyNodeDescriptor descriptor) {
     final DartClass dartClass = ((DartTypeHierarchyNodeDescriptor)descriptor).getDartClass();
     if (dartClass == null || DartResolveUtil.OBJECT.equals(dartClass.getName())) {
       return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

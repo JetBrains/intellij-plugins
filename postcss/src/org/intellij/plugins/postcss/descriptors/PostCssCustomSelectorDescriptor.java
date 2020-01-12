@@ -48,9 +48,8 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     return CssVersion.UNKNOWN;
   }
 
-  @NotNull
   @Override
-  public BrowserVersion[] getBrowsers() {
+  public BrowserVersion @NotNull [] getBrowsers() {
     return BrowserVersion.EMPTY_ARRAY;
   }
 
@@ -95,9 +94,8 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
     return null;
   }
 
-  @NotNull
   @Override
-  public CssContextType[] getAllowedContextTypes() {
+  public CssContextType @NotNull [] getAllowedContextTypes() {
     return CssContextType.EMPTY_ARRAY;
   }
 

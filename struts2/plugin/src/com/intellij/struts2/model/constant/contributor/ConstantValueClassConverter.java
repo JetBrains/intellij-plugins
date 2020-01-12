@@ -106,9 +106,8 @@ class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implement
     return shortCutToPsiClassMap.keySet();
   }
 
-  @NotNull
   @Override
-  public PsiReference[] createReferences(GenericDomValue value, PsiElement element, ConvertContext context) {
+  public PsiReference @NotNull [] createReferences(GenericDomValue value, PsiElement element, ConvertContext context) {
     final PsiReference[] references = javaClassReferenceProvider.getReferencesByElement(element);
     //noinspection unchecked
     return ArrayUtil.append(references, new GenericDomValueReference(value), PsiReference.ARRAY_FACTORY);

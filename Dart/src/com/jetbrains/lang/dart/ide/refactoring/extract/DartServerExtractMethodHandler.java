@@ -27,7 +27,7 @@ import java.awt.*;
 
 public class DartServerExtractMethodHandler implements RefactoringActionHandler {
   @Override
-  public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
+  public void invoke(@NotNull Project project, PsiElement @NotNull [] elements, DataContext dataContext) {
   }
 
   @Override

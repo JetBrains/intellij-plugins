@@ -47,9 +47,8 @@ public class OgnlHighlighter extends SyntaxHighlighterBase implements EmbeddedTo
     return new OgnlHighlightingLexer();
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(final IElementType iElementType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType iElementType) {
     return pack(BACKGROUND, keys1.get(iElementType));
   }
 

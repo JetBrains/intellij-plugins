@@ -48,7 +48,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                     boolean isNewExpression,
-                                                    @NotNull ResolveResult[] resolveResults,
+                                                    ResolveResult @NotNull [] resolveResults,
                                                     @NotNull List<LocalQuickFix> quickFixes) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
           // TODO Create pipe from usage
@@ -74,7 +74,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       }
 
       @Override
-      protected void reportUnresolvedReference(@NotNull ResolveResult[] resolveResults,
+      protected void reportUnresolvedReference(ResolveResult @NotNull [] resolveResults,
                                                @NotNull JSReferenceExpression referenceExpression,
                                                @NotNull List<LocalQuickFix> quickFixes,
                                                @NotNull Ref<String> message,

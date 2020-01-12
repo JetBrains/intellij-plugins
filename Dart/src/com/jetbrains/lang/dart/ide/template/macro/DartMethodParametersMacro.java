@@ -19,7 +19,7 @@ public class DartMethodParametersMacro extends DartMacroBase {
   }
 
   @Override
-  public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+  public Result calculateResult(Expression @NotNull [] params, final ExpressionContext context) {
     final List<String> parameterNames = getContainingMethodParameterNames(context.getPsiElementAtStartOffset());
     if (parameterNames == null) {
       return null;

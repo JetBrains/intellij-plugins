@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class AngularTestUtil {
 
   public static void configureWithMetadataFiles(@NotNull CodeInsightTestFixture fixture,
-                                                @NotNull String... names) {
+                                                String @NotNull ... names) {
     fixture.configureByFiles("package.json");
     for (String name : names) {
       fixture.configureByFiles(name + ".d.ts");

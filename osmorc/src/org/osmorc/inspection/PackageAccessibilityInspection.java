@@ -67,9 +67,8 @@ public class PackageAccessibilityInspection extends AbstractBaseJavaLocalInspect
     return new SingleCheckboxOptionsPanel(message("PackageAccessibilityInspection.ui.check.tests"), this, "checkTests");
   }
 
-  @Nullable
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
+  public ProblemDescriptor @Nullable [] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
     if (!(file instanceof PsiClassOwner) || !checkTests && ProjectRootsUtil.isInTestSource(file)) {
       return null;
     }

@@ -45,7 +45,7 @@ public class PostCssFileType extends LanguageFileType {
   }
 
   @Override
-  public String getCharset(@NotNull VirtualFile file, @NotNull byte[] content) {
+  public String getCharset(@NotNull VirtualFile file, byte @NotNull [] content) {
     Charset charset = CssFileType.getCharsetFromCssContent(content);
     return charset != null ? charset.name() : null;
   }

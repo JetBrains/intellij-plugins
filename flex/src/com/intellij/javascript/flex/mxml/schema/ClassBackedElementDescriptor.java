@@ -1137,7 +1137,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     @Override
-    public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, @NotNull final IntentionAction... fixes) {
+    public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, final IntentionAction @NotNull ... fixes) {
       final ValidationHost.ErrorType errorType = kind == ProblemKind.ERROR ? ValidationHost.ErrorType.ERROR: ValidationHost.ErrorType.WARNING;
       if (myHost instanceof IdeValidationHost) {
         ((IdeValidationHost) myHost).addMessageWithFixes(nameIdentifier.getPsi(), s, errorType, fixes);

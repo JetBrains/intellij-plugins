@@ -36,10 +36,9 @@ import java.util.List;
  */
 public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvider {
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                               @NotNull final ProcessingContext processingContext) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                         @NotNull final ProcessingContext processingContext) {
     return new PsiReference[]{new StrutsConstantNameReference((XmlTag) psiElement)};
   }
 
@@ -56,8 +55,7 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
     }
 
     @Override
-    @NotNull
-    public Object[] getVariants() {
+    public Object @NotNull [] getVariants() {
       final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
       if (module == null) {
         return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

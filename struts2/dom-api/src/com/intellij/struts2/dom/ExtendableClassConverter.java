@@ -82,10 +82,9 @@ public abstract class ExtendableClassConverter extends Converter<PsiClass>
      * @param extendClass    Extend class definition for this element.
      * @return References.
      */
-    @NotNull
-    public abstract PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
-                                                 @NotNull final PsiElement psiElement,
-                                                 @NotNull final ExtendClass extendClass);
+    public abstract PsiReference @NotNull [] getReferences(@NotNull final ConvertContext convertContext,
+                                                           @NotNull final PsiElement psiElement,
+                                                           @NotNull final ExtendClass extendClass);
 
   }
 

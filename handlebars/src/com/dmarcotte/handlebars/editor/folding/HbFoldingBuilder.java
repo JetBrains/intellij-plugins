@@ -20,9 +20,8 @@ import java.util.List;
 
 public class HbFoldingBuilder implements FoldingBuilder, DumbAware {
 
-  @NotNull
   @Override
-  public FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
+  public FoldingDescriptor @NotNull [] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
     List<FoldingDescriptor> descriptors = new ArrayList<>();
     appendDescriptors(node.getPsi(), descriptors, document);
     return descriptors.toArray(FoldingDescriptor.EMPTY);

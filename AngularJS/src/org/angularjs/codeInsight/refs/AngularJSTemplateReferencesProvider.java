@@ -29,9 +29,8 @@ import java.util.function.Consumer;
 import static com.intellij.lang.typescript.modules.TypeScriptModuleFileReferenceSet.addParentPathContexts;
 
 public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return ArrayUtil.mergeArrays(new Angular2SoftFileReferenceSet(element).getAllReferences(),
                                  new PsiReference[]{new AngularJSTemplateCacheReference((JSLiteralExpression)element)});
   }

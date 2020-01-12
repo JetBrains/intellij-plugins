@@ -428,12 +428,12 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static List<DartComponent> findNamedSubComponents(@NotNull DartClass... rootDartClasses) {
+  public static List<DartComponent> findNamedSubComponents(DartClass @NotNull ... rootDartClasses) {
     return findNamedSubComponents(true, rootDartClasses);
   }
 
   @NotNull
-  public static List<DartComponent> findNamedSubComponents(boolean unique, @NotNull DartClass... rootDartClasses) {
+  public static List<DartComponent> findNamedSubComponents(boolean unique, DartClass @NotNull ... rootDartClasses) {
     final List<DartComponent> unfilteredResult = findSubComponents(dartClass -> {
       final List<DartComponent> result = new ArrayList<>();
       for (DartComponent namedComponent : getNamedSubComponents(dartClass)) {
@@ -466,7 +466,7 @@ public class DartResolveUtil {
 
   @NotNull
   public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun,
-                                              @NotNull DartClass... rootDartClasses) {
+                                              DartClass @NotNull ... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(dartClass -> {
       unfilteredResult.addAll(fun.fun(dartClass));
@@ -475,7 +475,7 @@ public class DartResolveUtil {
     return unfilteredResult;
   }
 
-  public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, @NotNull DartClass... rootDartClasses) {
+  public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, DartClass @NotNull ... rootDartClasses) {
     final Set<DartClass> processedClasses = new THashSet<>();
     final LinkedList<DartClass> classes = new LinkedList<>();
     classes.addAll(Arrays.asList(rootDartClasses));
@@ -933,8 +933,7 @@ public class DartResolveUtil {
            getLeftReference(reference.getParent()) == null;
   }
 
-  @NotNull
-  public static ResolveResult[] toCandidateInfoArray(@Nullable List<? extends PsiElement> elements) {
+  public static ResolveResult @NotNull [] toCandidateInfoArray(@Nullable List<? extends PsiElement> elements) {
     if (elements == null) {
       return ResolveResult.EMPTY_ARRAY;
     }

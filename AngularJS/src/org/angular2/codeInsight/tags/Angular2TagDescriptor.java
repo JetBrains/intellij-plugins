@@ -52,9 +52,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return myName;
   }
 
-  @NotNull
   @Override
-  public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
+  public XmlElementDescriptor @NotNull [] getElementsDescriptors(XmlTag context) {
     return XmlDescriptorUtil.getElementsDescriptors(context);
   }
 
@@ -65,8 +64,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   }
 
   @Override
-  @NotNull
-  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
+  public XmlAttributeDescriptor @NotNull [] getAttributesDescriptors(@Nullable XmlTag context) {
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 

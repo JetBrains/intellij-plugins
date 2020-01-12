@@ -27,9 +27,8 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
     super(element, ElementManipulators.getValueTextRange(element));
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularTemplateCacheIndex.TEMPLATE_CACHE_INDEX, getElement().getProject());
     return ArrayUtilRt.toStringArray(keys);
   }

@@ -157,8 +157,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   }
 
   @Override
-  @NotNull
-  public AnAction[] createConsoleActions() {
+  public AnAction @NotNull [] createConsoleActions() {
     return AnAction.EMPTY_ARRAY;
   }
 }

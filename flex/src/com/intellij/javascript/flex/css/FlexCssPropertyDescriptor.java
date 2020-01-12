@@ -413,9 +413,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarations(@NotNull PsiElement context) {
+  public PsiElement @NotNull [] getDeclarations(@NotNull PsiElement context) {
     Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<>();
     final Project project = context.getProject();
 

@@ -46,7 +46,7 @@ public abstract class JavaTestFrameworkIntegrationTest extends HeavyPlatformTest
     return JavaAwareProjectJdkTableImpl.getInstanceEx().getInternalJdk();
   }
 
-  protected void runExternalCommand(@NotNull String... command) throws ExecutionException {
+  protected void runExternalCommand(String @NotNull ... command) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine(command);
 
     commandLine.setWorkDirectory(getProject().getBasePath());

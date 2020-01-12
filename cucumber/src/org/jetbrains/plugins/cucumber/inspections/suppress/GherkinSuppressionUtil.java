@@ -22,8 +22,7 @@ public class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  @NotNull
-  public static SuppressQuickFix[] getDefaultSuppressActions(@NotNull final String toolId) {
+  public static SuppressQuickFix @NotNull [] getDefaultSuppressActions(@NotNull final String toolId) {
     return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(toolId),
       new GherkinSuppressForScenarioCommentFix(toolId),

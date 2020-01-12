@@ -18,9 +18,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Irina.Chernushina on 2/11/2016.
  */
 public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     final PsiElement identifier = element instanceof JSProperty ? ((JSProperty)element).getNameIdentifier() : element;
     return new PsiReference[] {new AngularJSUiRouterViewReference(identifier)};
   }
@@ -38,8 +37,7 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
     }
 
     @Override
-    @NotNull
-    public ResolveResult[] resolveInner() {
+    public ResolveResult @NotNull [] resolveInner() {
       final String id = getViewName();
       final Condition<VirtualFile> filter = StringUtil.isEmptyOrSpaces(id) ? filterByTemplateUrl() : Conditions.alwaysTrue();
       return AngularIndexUtil.multiResolveAngularNamedDefinitionIndex(getElement().getProject(),

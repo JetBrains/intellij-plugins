@@ -121,8 +121,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     return myNameSuggestionsField.getEnteredName().trim();
   }
 
-  @NotNull
-  private String[] getSuggestedNames() {
+  private String @NotNull [] getSuggestedNames() {
     return new String[]{myRefactoring.getOldName()};
   }
 

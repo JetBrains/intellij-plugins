@@ -202,7 +202,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
                 element.getValue() instanceof JSReferenceExpression || element.getValue() == null);
       }
 
-      private PsiElement moveUpChain(@Nullable final PsiElement element, @NotNull final Class<? extends PsiElement>... clazz) {
+      private PsiElement moveUpChain(@Nullable final PsiElement element, final Class<? extends PsiElement> @NotNull ... clazz) {
         PsiElement current = element;
         for (Class<? extends PsiElement> aClass : clazz) {
           current = current != null && aClass.isInstance(current.getParent()) ? current.getParent() : current;

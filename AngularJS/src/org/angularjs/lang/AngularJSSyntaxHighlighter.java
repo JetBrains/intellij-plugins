@@ -24,8 +24,7 @@ public class AngularJSSyntaxHighlighter extends JSHighlighter {
   }
 
   @Override
-  @NotNull
-  public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(final IElementType tokenType) {
     if (myKeysMap.containsKey(tokenType)) {
       return pack(myKeysMap.get(tokenType));
     }

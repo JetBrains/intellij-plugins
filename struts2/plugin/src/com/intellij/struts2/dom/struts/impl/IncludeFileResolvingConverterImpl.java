@@ -86,10 +86,9 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
   }
 
   @Override
-  @NotNull
-  public PsiReference[] createReferences(@NotNull final GenericDomValue genericDomValue,
-                                         @NotNull final PsiElement element,
-                                         @NotNull final ConvertContext context) {
+  public PsiReference @NotNull [] createReferences(@NotNull final GenericDomValue genericDomValue,
+                                                   @NotNull final PsiElement element,
+                                                   @NotNull final ConvertContext context) {
     final String s = genericDomValue.getStringValue();
     if (s == null) {
       return PsiReference.EMPTY_ARRAY;

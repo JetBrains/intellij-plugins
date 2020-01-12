@@ -39,8 +39,7 @@ public class Angular2TemplateBindingsImpl extends Angular2EmbeddedExpressionImpl
   }
 
   @Override
-  @NotNull
-  public Angular2TemplateBinding[] getBindings() {
+  public Angular2TemplateBinding @NotNull [] getBindings() {
     return Arrays.stream(getChildren(TokenSet.create(Angular2ElementTypes.TEMPLATE_BINDING_STATEMENT)))
       .map(n -> n.getPsi(Angular2TemplateBinding.class))
       .toArray(Angular2TemplateBinding[]::new);

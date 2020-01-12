@@ -268,9 +268,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
     }
   }
 
-  @NotNull
   @Override
-  public Module[] getModules() {
+  public Module @NotNull [] getModules() {
     List<Module> modules = new ArrayList<>();
 
     ModuleManager moduleManager = ModuleManager.getInstance(getProject());

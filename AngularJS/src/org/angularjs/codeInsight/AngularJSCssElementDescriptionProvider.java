@@ -38,9 +38,8 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     return DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector), context.getProject()) != null;
   }
 
-  @NotNull
   @Override
-  public String[] getSimpleSelectors(@NotNull PsiElement context) {
+  public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
     final List<String> result = new LinkedList<>();
     DirectiveUtil.processTagDirectives(context.getProject(), proxy -> {
       result.add(DirectiveUtil.getAttributeName(proxy.getName()));
@@ -49,9 +48,8 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
     return ArrayUtilRt.toStringArray(result);
   }
 
-  @NotNull
   @Override
-  public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
+  public PsiElement @NotNull [] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     final JSImplicitElement directive =
       DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector.getElementName()), selector.getProject());
     return directive != null ? new PsiElement[]{directive} : PsiElement.EMPTY_ARRAY;

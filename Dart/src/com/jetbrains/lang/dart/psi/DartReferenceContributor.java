@@ -43,9 +43,8 @@ public class DartReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class DartReferenceProvider extends PsiReferenceProvider {
-    @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
       if (element.getText().contains(DartMultiHostInjector.STRING_TEMPLATE_PLACEHOLDER)) {
         return PsiReference.EMPTY_ARRAY;
       }

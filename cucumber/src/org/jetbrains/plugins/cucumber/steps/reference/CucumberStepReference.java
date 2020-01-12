@@ -88,9 +88,8 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return false;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     Project project = getElement().getProject();
     return ResolveCache.getInstance(project).resolveWithCaching(this, RESOLVER, false, incompleteCode);
   }
@@ -156,8 +155,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
 
   private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
     @Override
-    @NotNull
-    public ResolveResult[] resolve(@NotNull CucumberStepReference ref, boolean incompleteCode) {
+    public ResolveResult @NotNull [] resolve(@NotNull CucumberStepReference ref, boolean incompleteCode) {
       return ref.multiResolveInner();
     }
   }

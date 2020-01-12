@@ -34,9 +34,8 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     myMethod = SmartPointerManager.getInstance(myProject).createSmartPsiElementPointer(element);
   }
 
-  @NotNull
   @Override
-  protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descript) {
+  protected Object @NotNull [] buildChildren(@NotNull HierarchyNodeDescriptor descript) {
     final DartMethodHierarchyNodeDescriptor descriptor = (DartMethodHierarchyNodeDescriptor)descript;
     final DartClass dartClass = descriptor.getType();
     if (dartClass == null) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;

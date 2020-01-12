@@ -78,8 +78,7 @@ public class FlexPushDownTest extends MultiFileTestCase {
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
     new JSPushDownProcessor(myProject, infosArray, sourceClass, docCommentPolicy) {
       @Override
-      @NotNull
-      protected UsageInfo[] findUsages() {
+      protected UsageInfo @NotNull [] findUsages() {
         // ensure stable order
         final UsageInfo[] usages = super.findUsages();
         Arrays.sort(usages,

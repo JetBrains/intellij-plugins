@@ -84,7 +84,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
                                final String extractedSuperName,
                                final int docCommentPolicy,
                                final String[] members,
-                               @NotNull final String[] conflicts) {
+                               final String @NotNull [] conflicts) {
     doTest(new PerformAction() {
       @Override
       public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {

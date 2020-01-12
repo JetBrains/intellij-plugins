@@ -49,9 +49,8 @@ import java.util.*;
 public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   public static final String ANGULAR = "angular";
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[] {new AngularJSModuleReference((JSLiteralExpression)element)};
   }
 
@@ -64,9 +63,8 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
       return StringUtil.unquoteString(getCanonicalText());
     }
 
-    @NotNull
     @Override
-    protected ResolveResult[] resolveInner() {
+    protected ResolveResult @NotNull [] resolveInner() {
       if(! isAngularModuleReferenceAccurate()) return ResolveResult.EMPTY_ARRAY;
       final String moduleName = getModuleName();
       if (StringUtil.isEmptyOrSpaces(moduleName)) return ResolveResult.EMPTY_ARRAY;

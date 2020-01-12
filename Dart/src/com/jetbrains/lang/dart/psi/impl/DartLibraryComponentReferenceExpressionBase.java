@@ -82,9 +82,8 @@ public class DartLibraryComponentReferenceExpressionBase extends DartExpressionI
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     final List<? extends PsiElement> elements =
       ResolveCache.getInstance(getProject()).resolveWithCaching(this, DartResolver.INSTANCE, true, incompleteCode);
     return DartResolveUtil.toCandidateInfoArray(elements);

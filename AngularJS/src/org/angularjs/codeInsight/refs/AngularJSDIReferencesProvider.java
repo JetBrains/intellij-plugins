@@ -16,9 +16,8 @@ import org.jetbrains.annotations.Nullable;
 * @author Dennis.Ushakov
 */
 public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     return new PsiReference[] { new AngularJSDIReference((JSParameter)element) };
   }
 

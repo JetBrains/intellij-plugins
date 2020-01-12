@@ -246,8 +246,7 @@ public class CfmlUtil {
 
   private static final String[] EMPTY_STRING_ARRAY = ArrayUtilRt.EMPTY_STRING_ARRAY;
 
-  @NotNull
-  public static String[] getAttributeValues(String tagName, String attributeName, Project project) {
+  public static String @NotNull [] getAttributeValues(String tagName, String attributeName, Project project) {
     CfmlAttributeDescription attribute = getAttribute(tagName, attributeName, project);
     if (attribute != null) {
       String[] values = attribute.getValues();
@@ -256,8 +255,7 @@ public class CfmlUtil {
     return EMPTY_STRING_ARRAY;
   }
 
-  @NotNull
-  public static String[] getCreateObjectArgumentValues() {
+  public static String @NotNull [] getCreateObjectArgumentValues() {
     return new String[]{"component", "java", "com", "corba",
       "webservice"}; //http://livedocs.adobe.com/coldfusion/8/htmldocs/help.html?content=functions_c-d_15.html
   }

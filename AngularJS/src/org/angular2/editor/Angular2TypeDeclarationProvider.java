@@ -18,9 +18,8 @@ import java.util.List;
 
 public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider {
 
-  @Nullable
   @Override
-  public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
+  public PsiElement @Nullable [] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
     Angular2Component component;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && (component = Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol)) != null) {

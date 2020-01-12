@@ -128,7 +128,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
   @NotNull
   private static List<VirtualFile> getApplicableVirtualFiles(@NotNull final Project project,
-                                                             @NotNull final VirtualFile[] filesAndDirs) {
+                                                             final VirtualFile @NotNull [] filesAndDirs) {
     final List<VirtualFile> result = new SmartList<>();
 
     GlobalSearchScope dirScope = null;
@@ -171,7 +171,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   private static boolean mayHaveApplicableDartFiles(@NotNull final Project project,
-                                                    @NotNull final VirtualFile[] files) {
+                                                    final VirtualFile @NotNull [] files) {
     for (VirtualFile fileOrDir : files) {
       if (!fileOrDir.isDirectory() && isApplicableFile(project, fileOrDir)) {
         return true;

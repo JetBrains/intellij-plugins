@@ -1760,8 +1760,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    @NotNull
-    public Library[] getLibraries() {
+    public Library @NotNull [] getLibraries() {
       List<Library> filtered = ContainerUtil.filter(myDelegate.getLibraries(), myLibraryFilter);
       return filtered.toArray(Library.EMPTY_ARRAY);
     }
@@ -1811,8 +1810,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    @NotNull
-    protected Library[] getLibraries(@NotNull final LibraryTable table) {
+    protected Library @NotNull [] getLibraries(@NotNull final LibraryTable table) {
       final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();
       final Library[] libraries = context.createModifiableModelProvider(table.getTableLevel()).getModifiableModel().getLibraries();
       final List<Library> filtered = ContainerUtil.mapNotNull(libraries, library -> {

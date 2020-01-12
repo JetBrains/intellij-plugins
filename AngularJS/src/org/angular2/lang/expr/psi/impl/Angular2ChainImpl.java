@@ -30,8 +30,7 @@ public class Angular2ChainImpl extends JSStatementImpl implements Angular2Chain 
   }
 
   @Override
-  @NotNull
-  public JSExpressionStatement[] getStatements() {
+  public JSExpressionStatement @NotNull [] getStatements() {
     final ASTNode[] nodes = getChildren(TokenSet.create(EXPRESSION_STATEMENT));
     if (nodes.length == 0) {
       return new JSExpressionStatement[0];

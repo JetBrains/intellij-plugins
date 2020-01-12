@@ -315,8 +315,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Override
-  @Nullable
-  public String[] getEnumeratedValues() {
+  public String @Nullable [] getEnumeratedValues() {
     if (myOverriddenHtmlDescriptor != null) {
       return myOverriddenHtmlDescriptor.getEnumeratedValues();
     }

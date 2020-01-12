@@ -44,20 +44,17 @@ public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
   }
 
   @Override
-  @NotNull
-  public Sorter[] getSorters() {
+  public Sorter @NotNull [] getSorters() {
     return new Sorter[]{Sorter.ALPHA_SORTER};
   }
 
   @Override
-  @NotNull
-  public Filter[] getFilters() {
+  public Filter @NotNull [] getFilters() {
     return Filter.EMPTY_ARRAY;
   }
 
-  @NotNull
   @Override
-  protected Class[] getSuitableClasses() {
+  protected Class @NotNull [] getSuitableClasses() {
     return myClasses;
   }
 }

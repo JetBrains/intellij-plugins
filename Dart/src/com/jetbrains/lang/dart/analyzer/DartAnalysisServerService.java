@@ -176,7 +176,7 @@ public class DartAnalysisServerService implements Disposable {
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
     @Override
-    public void computedAvailableSuggestions(@NotNull List<AvailableSuggestionSet> changed, @NotNull int[] removed) {
+    public void computedAvailableSuggestions(@NotNull List<AvailableSuggestionSet> changed, int @NotNull [] removed) {
       myServerData.computedAvailableSuggestions(changed, removed);
     }
 
@@ -1146,8 +1146,7 @@ public class DartAnalysisServerService implements Disposable {
     return resultRef.get();
   }
 
-  @Nullable
-  public PostfixCompletionTemplate[] edit_listPostfixCompletionTemplates() {
+  public PostfixCompletionTemplate @Nullable [] edit_listPostfixCompletionTemplates() {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;

@@ -26,9 +26,8 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
     .set("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
          "getUint", "getBoolean");
 
-  @NotNull
   @Override
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+  public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     PsiElement parent = element.getParent();
 
     JSReferenceExpression invokedMethod = JSUtils.getMethodNameIfInsideCall(parent);

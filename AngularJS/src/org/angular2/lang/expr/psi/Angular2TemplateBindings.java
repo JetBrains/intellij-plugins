@@ -13,8 +13,7 @@ public interface Angular2TemplateBindings extends Angular2EmbeddedExpression {
   @NotNull
   String getTemplateName();
 
-  @NotNull
-  Angular2TemplateBinding[] getBindings();
+  Angular2TemplateBinding @NotNull [] getBindings();
 
   @NotNull
   static Angular2TemplateBindings get(@NotNull XmlAttribute attribute) {

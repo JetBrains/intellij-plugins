@@ -77,8 +77,7 @@ public final class RemoteFlashRunConfiguration extends LocatableConfigurationBas
     return myRunnerParameters;
   }
 
-  @NotNull
-  public Module[] getModules() {
+  public Module @NotNull [] getModules() {
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
     if (module != null && ModuleType.get(module) instanceof FlexModuleType) {
       return new Module[]{module};

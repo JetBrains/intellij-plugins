@@ -57,9 +57,8 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
 
     static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {
       @Override
-      @NotNull
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                                   @NotNull final ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element,
+                                                             @NotNull final ProcessingContext context) {
         final String pathValue = ((XmlAttributeValue)element).getValue();
         return PathReferenceManager.getInstance()
           .createReferences(element, TaglibUtil.isDynamicExpression(pathValue), false, true);
@@ -70,10 +69,9 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
      * Reference to HTML element's "id".
      */
     static final PsiReferenceProvider HTML_ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                                   @NotNull final ProcessingContext context) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element,
+                                                             @NotNull final ProcessingContext context) {
         return new PsiReference[]{new IdRefReference(element)};
       }
     };
@@ -82,10 +80,9 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
      * "ID" self reference for validation.
      */
     static final PsiReferenceProvider ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
-                                                   @NotNull final ProcessingContext processingContext) {
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                                             @NotNull final ProcessingContext processingContext) {
         return new PsiReference[]{new IdReferenceProvider.GlobalAttributeValueSelfReference(psiElement, false)};
       }
     };
@@ -107,10 +104,9 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
       this.additionalVariants = additionalVariants;
     }
 
-    @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                                 @NotNull final ProcessingContext context) {
+    public PsiReference @NotNull [] getReferencesByElement(@NotNull final PsiElement element,
+                                                           @NotNull final ProcessingContext context) {
       return new PsiReference[]{new IdRefReference(element) {
         @Override
         public PsiElement resolve() {
@@ -123,9 +119,8 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
                                      ((XmlAttributeValue) myElement).getValue()) > -1 ? myElement : null;
         }
 
-        @NotNull
         @Override
-        public Object[] getVariants() {
+        public Object @NotNull [] getVariants() {
           return ArrayUtil.mergeArrays(super.getVariants(), additionalVariants);
         }
       }};

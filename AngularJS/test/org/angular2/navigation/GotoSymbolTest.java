@@ -46,7 +46,7 @@ public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
            "foo (foo.pipe.ts)");
   }
 
-  private void doTest(@NotNull String name, boolean detailed, @NotNull String... expectedItems) {
+  private void doTest(@NotNull String name, boolean detailed, String @NotNull ... expectedItems) {
     ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
 
     GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());

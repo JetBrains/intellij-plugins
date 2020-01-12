@@ -80,9 +80,8 @@ public class Struts2ModelValidator extends ValidatorBase {
   }
 
   @SuppressWarnings("unchecked")
-  @NotNull
   @Override
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(CompileContext context) {
+  public Class<? extends LocalInspectionTool> @NotNull [] getInspectionToolClasses(CompileContext context) {
     return new Class[]{Struts2ModelInspection.class};
   }
 }

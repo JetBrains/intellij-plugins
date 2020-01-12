@@ -12,16 +12,14 @@ import org.jetbrains.annotations.Nullable;
  * @author Dennis.Ushakov
  */
 public class AngularJSTemplateFactory extends ProjectTemplatesFactory {
-  @NotNull
   @Override
-  public String[] getGroups() {
+  public String @NotNull [] getGroups() {
     return new String[]{WebModuleBuilder.GROUP_NAME};
   }
 
 
-  @NotNull
   @Override
-  public ProjectTemplate[] createTemplates(@Nullable String group, WizardContext context) {
+  public ProjectTemplate @NotNull [] createTemplates(@Nullable String group, WizardContext context) {
     return new ProjectTemplate[]{
       new AngularJSProjectGenerator(),
       new AngularCliProjectGenerator()

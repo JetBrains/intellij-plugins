@@ -100,8 +100,7 @@ public class DartDocUtil {
   /**
    * Split around the ", " pattern, when not in a generic or function parameter (inside a nested parenthesize.)
    */
-  @NotNull
-  private static String[] signatureSplit(@NotNull final String str) {
+  private static String @NotNull [] signatureSplit(@NotNull final String str) {
     List<String> result = new SmartList<>();
 
     int beginningOffset = 0;
@@ -367,7 +366,7 @@ public class DartDocUtil {
   }
 
   @Nullable
-  private static String getSingleLineDocCommentsText(final @NotNull PsiComment[] comments) {
+  private static String getSingleLineDocCommentsText(final PsiComment @NotNull [] comments) {
     StringBuilder buf = null;
 
     for (PsiComment comment : comments) {

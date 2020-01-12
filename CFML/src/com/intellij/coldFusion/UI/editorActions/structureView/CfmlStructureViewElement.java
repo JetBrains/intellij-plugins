@@ -76,7 +76,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     return "";
   }
 
-  private static Collection<StructureViewTreeElement> makeCollection(@Nullable PsiElement[] tags) {
+  private static Collection<StructureViewTreeElement> makeCollection(PsiElement @Nullable [] tags) {
     if (tags == null) {
       return Collections.emptyList();
     }

@@ -75,7 +75,7 @@ public class Angular2DecoratorUtil {
 
   @StubSafe
   @Nullable
-  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String... names) {
+  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, String @NotNull ... names) {
     JSAttributeList list = attributeListOwner.getAttributeList();
     if (list == null || names.length == 0) {
       return null;
@@ -179,7 +179,7 @@ public class Angular2DecoratorUtil {
                        expr -> expr.findProperty(name));
   }
 
-  public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, @NotNull String... names) {
+  public static boolean isAngularEntityDecorator(@NotNull ES6Decorator decorator, String @NotNull ... names) {
     String decoratorName = decorator.getDecoratorName();
     return decoratorName != null
            && contains(decoratorName, names)

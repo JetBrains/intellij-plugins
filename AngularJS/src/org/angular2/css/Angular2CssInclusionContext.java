@@ -42,9 +42,8 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
   @NonNls private static final Key<CachedValue<ComponentCssContext>> COMPONENT_CONTEXT_KEY =
     new Key<>("ng.component.context");
 
-  @NotNull
   @Override
-  public PsiFile[] getContextFiles(@NotNull PsiFile current) {
+  public PsiFile @NotNull [] getContextFiles(@NotNull PsiFile current) {
     ComponentCssContext componentContext = getComponentContext(current);
     if (componentContext != null) {
       return componentContext.getCssFiles();
@@ -59,9 +58,8 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
            && !componentContext.isAngularCli();
   }
 
-  @NotNull
   @Override
-  public PsiFile[] getLocalUseScope(@NotNull PsiFile file) {
+  public PsiFile @NotNull [] getLocalUseScope(@NotNull PsiFile file) {
     if (file instanceof StylesheetFile) {
       Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
       if (component != null) {
