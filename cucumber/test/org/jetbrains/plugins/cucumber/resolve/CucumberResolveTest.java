@@ -5,7 +5,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   protected void checkReference(@NotNull final String element, @Nullable final String stepDefinitionName) {

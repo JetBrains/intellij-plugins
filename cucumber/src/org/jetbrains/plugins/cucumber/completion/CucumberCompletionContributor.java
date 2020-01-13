@@ -27,7 +27,7 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -82,7 +82,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile) {
           Module module = findModuleForPsiElement(psiFile);
-          boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(psiFile.getProject()).isGherkin6Supported(module);
+          boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
           GherkinKeywordProvider keywordProvider = JsonGherkinKeywordProvider.getKeywordProvider(gherkin6Enabled);
           final String language = GherkinUtil.getFeatureLanguage((GherkinFile)psiFile);
           GherkinKeywordTable gherkinKeywordTable = keywordProvider.getKeywordsTable(language);
@@ -236,7 +236,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
 
   private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
-    final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
+    final List<AbstractStepDefinition> definitions = CucumberStepHelper.getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
       String expression = definition.getExpression();
       if (expression == null) {

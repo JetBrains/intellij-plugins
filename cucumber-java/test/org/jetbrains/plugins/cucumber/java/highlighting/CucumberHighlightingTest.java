@@ -3,7 +3,6 @@ package org.jetbrains.plugins.cucumber.java.highlighting;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
   public void testStepParameter() {

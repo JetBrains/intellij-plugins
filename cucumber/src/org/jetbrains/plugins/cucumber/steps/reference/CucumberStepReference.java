@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinStepImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -151,8 +151,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
    */
   @NotNull
   public Collection<AbstractStepDefinition> resolveToDefinitions() {
-    final CucumberStepsIndex index = CucumberStepsIndex.getInstance(myStep.getProject());
-    return index.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
+    return CucumberStepHelper.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
   }
 
   private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {

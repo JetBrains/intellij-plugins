@@ -4,7 +4,6 @@ package org.jetbrains.plugins.cucumber.groovy.resolve
 import com.intellij.psi.PsiReference
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
 import org.jetbrains.plugins.groovy.util.ResolveTest
 import org.junit.Test
 

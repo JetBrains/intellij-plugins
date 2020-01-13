@@ -7,7 +7,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public abstract class AbstractCucumberJavaCreateStepTest extends CucumberJavaCodeInsightTestCase {
   protected void doTest(boolean createAll) {

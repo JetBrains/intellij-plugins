@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import groovy.transform.CompileStatic
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals

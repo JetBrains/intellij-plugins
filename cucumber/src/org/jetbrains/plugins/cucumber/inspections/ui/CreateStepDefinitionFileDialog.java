@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.model.FileTypeComboboxItem;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -122,9 +122,8 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
   protected boolean validateFileName() {
     final String fileName = myFileNameTextField.getText();
 
-    Project project = myModel.getDirectory().getProject();
     boolean fileNameIsOk = fileName != null &&
-                           CucumberStepsIndex.getInstance(project)
+                           CucumberStepHelper
                              .validateNewStepDefinitionFileName(myModel.getDirectory(), fileName, myModel.getSelectedFileType());
 
     if (!fileNameIsOk) {

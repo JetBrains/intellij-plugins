@@ -5,7 +5,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
   public void testCreationOfStepDefinition() {

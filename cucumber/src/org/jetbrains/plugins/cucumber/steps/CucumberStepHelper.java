@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -23,14 +22,8 @@ import java.util.regex.Pattern;
 /**
  * @author yole
  */
-public class CucumberStepsIndex {
-  private static final Logger LOG = Logger.getInstance(CucumberStepsIndex.class.getName());
-
-  private static final CucumberStepsIndex INSTANCE = new CucumberStepsIndex();
-
-  public static CucumberStepsIndex getInstance(Project project) {
-    return INSTANCE;
-  }
+public class CucumberStepHelper {
+  private static final Logger LOG = Logger.getInstance(CucumberStepHelper.class.getName());
 
   /**
    * Creates a file that will contain step definitions
@@ -39,7 +32,7 @@ public class CucumberStepsIndex {
    * @param fileNameWithoutExtension name of the file with out "." and extension
    * @param frameworkType            type of file to create
    */
-  public PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir,
+  public static PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir,
                                           @NotNull final String fileNameWithoutExtension,
                                           @NotNull final BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
@@ -51,9 +44,9 @@ public class CucumberStepsIndex {
     return ep.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
-  public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory,
-                                                   @NotNull final String fileName,
-                                                   @NotNull final BDDFrameworkType frameworkType) {
+  public static boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory,
+                                                          @NotNull final String fileName,
+                                                          @NotNull final BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     assert ep != null;
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
@@ -69,7 +62,7 @@ public class CucumberStepsIndex {
    * @return definitions
    */
   @NotNull
-  public Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
+  public static Collection<AbstractStepDefinition> findStepDefinitions(@NotNull final PsiFile featureFile, @NotNull final GherkinStep step) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) {
       return Collections.emptyList();
@@ -111,7 +104,7 @@ public class CucumberStepsIndex {
   }
 
   // ToDo: use binary search here
-  public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
+  public static List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
     final List<AbstractStepDefinition> result = new ArrayList<>();
     for (AbstractStepDefinition stepDefinition : allSteps) {
@@ -123,14 +116,14 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
+  public static List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
     if (module == null) return Collections.emptyList();
     return loadStepsFor(featureFile, module);
   }
 
 
-  private List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
+  private static List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
     for (CucumberJvmExtensionPoint extension : getCucumberExtensions()) {
@@ -139,7 +132,7 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+  public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     Set<CucumberStepDefinitionCreationContext> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : getCucumberExtensions()) {
       // Skip if framework file creation support is optional
@@ -156,7 +149,7 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Map<BDDFrameworkType, CucumberJvmExtensionPoint> getExtensionMap() {
+  public static Map<BDDFrameworkType, CucumberJvmExtensionPoint> getExtensionMap() {
     HashMap<BDDFrameworkType, CucumberJvmExtensionPoint> result = new HashMap<>();
     for (CucumberJvmExtensionPoint e : getCucumberExtensions()) {
       result.put(e.getStepFileType(), e);
@@ -164,15 +157,15 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public List<CucumberJvmExtensionPoint> getCucumberExtensions() {
+  public static List<CucumberJvmExtensionPoint> getCucumberExtensions() {
     return CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
   }
 
-  public int getExtensionCount() {
+  public static int getExtensionCount() {
     return getCucumberExtensions().size();
   }
   
-  public boolean isGherkin6Supported(@NotNull Module module) {
+  public static boolean isGherkin6Supported(@NotNull Module module) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return true;
     }

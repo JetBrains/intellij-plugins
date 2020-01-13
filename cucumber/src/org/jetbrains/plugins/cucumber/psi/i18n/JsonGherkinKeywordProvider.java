@@ -12,7 +12,7 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -49,7 +49,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   
   public static GherkinKeywordProvider getKeywordProvider(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
-    boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(context.getProject()).isGherkin6Supported(module);
+    boolean gherkin6Enabled = module != null && CucumberStepHelper.isGherkin6Supported(module);
     return getKeywordProvider(gherkin6Enabled);
   }
 

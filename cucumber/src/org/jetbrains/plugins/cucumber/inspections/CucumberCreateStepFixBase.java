@@ -30,14 +30,14 @@ import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFile
 import org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
 public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.plugins.cucumber.inspections.CucumberCreateStepFixBase");
+  private static final Logger LOG = Logger.getInstance(CucumberCreateStepFixBase.class);
   protected abstract void createStepOrSteps(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext fileAndFrameworkType);
 
   @Override
@@ -80,8 +80,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             final VirtualFile file = value.getPsiFile().getVirtualFile();
             assert file != null;
 
-            CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(psiFile.getProject());
-            StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(value.getFrameworkType()).getStepDefinitionCreator();
+            StepDefinitionCreator stepDefinitionCreator =
+              CucumberStepHelper.getExtensionMap().get(value.getFrameworkType()).getStepDefinitionCreator();
             return stepDefinitionCreator.getStepDefinitionFilePath(psiFile);
           }
 
@@ -109,9 +109,8 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   }
 
   public static Set<CucumberStepDefinitionCreationContext> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
-    CucumberStepsIndex index = CucumberStepsIndex.getInstance(featureFile.getProject());
-    final Set<CucumberStepDefinitionCreationContext> result = index.getStepDefinitionContainers(featureFile);
-    result.removeIf(e -> index.getExtensionMap().get(e.getFrameworkType()) == null);
+    final Set<CucumberStepDefinitionCreationContext> result = CucumberStepHelper.getStepDefinitionContainers(featureFile);
+    result.removeIf(e -> CucumberStepHelper.getExtensionMap().get(e.getFrameworkType()) == null);
     return result;
   }
 
@@ -138,8 +137,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
             PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
             assert parentPsiDir != null;
-            PsiFile newFile = CucumberStepsIndex.getInstance(project)
-              .createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
+            PsiFile newFile = CucumberStepHelper.createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
             createStepDefinition(step, new CucumberStepDefinitionCreationContext(newFile, frameworkType));
             context.setPsiFile(newFile);
           }
@@ -211,8 +209,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   }
 
   private void createStepDefinition(GherkinStep step, @NotNull final CucumberStepDefinitionCreationContext context) {
-    CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(step.getProject());
-    StepDefinitionCreator stepDefCreator = stepsIndex.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
+    StepDefinitionCreator stepDefCreator = CucumberStepHelper.getExtensionMap().get(context.getFrameworkType()).getStepDefinitionCreator();
     PsiFile file = context.getPsiFile();
     if (file != null) {
       WriteCommandAction.runWriteCommandAction(step.getProject(), null, null,
