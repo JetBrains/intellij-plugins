@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.ide.projectView.TreeStructureProvider;
@@ -24,8 +24,8 @@ public class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAwar
 
   @Override
   @NotNull
-  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent, @NotNull Collection<AbstractTreeNode> children, ViewSettings settings) {
-    ArrayList<AbstractTreeNode> result = new ArrayList<>();
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent, @NotNull Collection<AbstractTreeNode<?>> children, ViewSettings settings) {
+    ArrayList<AbstractTreeNode<?>> result = new ArrayList<>();
     for (AbstractTreeNode child : children) {
       if (child.getValue() instanceof PsiFile) {
         VirtualFile file = ((PsiFile)child.getValue()).getVirtualFile();

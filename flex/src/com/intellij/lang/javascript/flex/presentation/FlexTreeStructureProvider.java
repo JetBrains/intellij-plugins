@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -48,10 +49,10 @@ import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewPr
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
-  public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
-                                             @NotNull Collection<AbstractTreeNode> children,
+  public Collection<AbstractTreeNode<?>> modify(@NotNull AbstractTreeNode<?> parent,
+                                             @NotNull Collection<AbstractTreeNode<?>> children,
                                              ViewSettings settings) {
-    List<AbstractTreeNode> result = new ArrayList<>();
+    List<AbstractTreeNode<?>> result = new ArrayList<>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
       JSQualifiedNamedElement psiParent = getElement(parent);
       if (settings != null && settings.isShowMembers() && psiParent != null) {
@@ -207,7 +208,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
     @Override
     @NotNull
-    public Collection<? extends AbstractTreeNode> getChildren() {
+    public Collection<? extends AbstractTreeNode<?>> getChildren() {
       return Collections.emptyList();
     }
 

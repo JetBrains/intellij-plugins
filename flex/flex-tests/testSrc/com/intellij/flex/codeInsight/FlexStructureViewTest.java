@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -81,7 +81,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("ZZZ2", getText(items[2]));
     assertEquals("A15", getText(items[0]));
 
-    List<AbstractTreeNode> treeNodes = getChildren(items[1]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[1]);
     assertEquals(4 + OBJECT_METHODS_COUNT, treeNodes.size());
 
     assertEquals("EE", getText(treeNodes.get(0)));
@@ -110,16 +110,16 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("ZZZ2", getText(items[2]));
     assertEquals("A15", getText(items[0]));
 
-    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[0]);
     assertEquals(6, treeNodes.size());
-    Iterator<? extends AbstractTreeNode> iterator = treeNodes.iterator();
+    Iterator<? extends AbstractTreeNode<?>> iterator = treeNodes.iterator();
 
     AbstractTreeNode node = iterator.next();
     assertEquals("mypackage.ZZZ", getText(node));
 
-    Collection<? extends AbstractTreeNode> treeNodes2 = getChildren(node);
+    Collection<? extends AbstractTreeNode<?>> treeNodes2 = getChildren(node);
     assertEquals(2, treeNodes2.size());
-    Iterator<? extends AbstractTreeNode> iterator2 = treeNodes2.iterator();
+    Iterator<? extends AbstractTreeNode<?>> iterator2 = treeNodes2.iterator();
 
     assertEquals("aaa:*", getText(iterator2.next()));
     assertEquals("c2:*", getText(iterator2.next()));
@@ -141,13 +141,13 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
     assertEquals("A15", getText(items[0]));
 
-    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[0]);
     assertEquals(3, treeNodes.size());
 
     assertEquals("mypackage.ZZZ", getText(treeNodes.get(0)));
     assertEquals("Object", getText(treeNodes.get(1)));
 
-    List<AbstractTreeNode> treeNodes2 = getChildren(treeNodes.get(0));
+    List<AbstractTreeNode<?>> treeNodes2 = getChildren(treeNodes.get(0));
     assertEquals(2, treeNodes2.size());
 
     assertEquals("aaa:*", getText(treeNodes2.get(0)));
@@ -163,7 +163,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("XXX", getText(items[0]));
     assertEquals("YYY", getText(items[1]));
 
-    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[0]);
     assertEquals(3 + OBJECT_METHODS_COUNT, treeNodes.size());
     assertEquals("constructor:*", getText(treeNodes.get(0)));
     assertEquals("aaa:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
@@ -186,7 +186,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     myFixture.configureByFile(BASE_PATH + "15.js2");
     Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
-    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[0]);
     assertEquals(JSAttributeList.AccessType.PUBLIC, getAccessType(treeNodes.get(1), false)); // automation():Object
 
     treeNodes = getChildren(items[1]);
@@ -203,7 +203,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals(1, items.length);
 
     assertEquals("C", getText(items[0]));
-    List<AbstractTreeNode> treeNodes = getChildren(items[0]);
+    List<AbstractTreeNode<?>> treeNodes = getChildren(items[0]);
     assertEquals(2 + OBJECT_METHODS_COUNT, treeNodes.size());
     assertEquals("__aaa__():*", getText(treeNodes.get(0)));
   }
