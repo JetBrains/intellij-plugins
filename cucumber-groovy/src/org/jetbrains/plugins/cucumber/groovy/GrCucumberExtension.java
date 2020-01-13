@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -51,6 +52,7 @@ public class GrCucumberExtension extends AbstractCucumberJavaExtension {
   public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
     final List<AbstractStepDefinition> result = new ArrayList<>();
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+    GlobalSearchScope scope = featureFile != null ? featureFile.getResolveScope() : module.getModuleWithDependenciesAndLibrariesScope(true);
 
     Project project = module.getProject();
     fileBasedIndex.processValues(GrCucumberStepIndex.INDEX_ID, true, null,
@@ -69,7 +71,7 @@ public class GrCucumberExtension extends AbstractCucumberJavaExtension {
                                      }
                                    }
                                    return true;
-                                 }, GlobalSearchScope.projectScope(project));
+                                 }, scope);
     return result;
   }
 }
