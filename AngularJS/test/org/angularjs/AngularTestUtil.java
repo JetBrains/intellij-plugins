@@ -47,7 +47,7 @@ public class AngularTestUtil {
     Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
 
-  public static String getBaseTestDataPath(Class clazz) {
+  public static String getBaseTestDataPath(Class<?> clazz) {
     String contribPath = getContribPath();
     return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";
   }

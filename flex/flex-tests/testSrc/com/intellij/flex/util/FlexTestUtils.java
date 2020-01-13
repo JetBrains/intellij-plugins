@@ -99,7 +99,7 @@ public class FlexTestUtils {
     return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/flex-sdk/" + version;
   }
 
-  public static void setupFlexLib(final Project project, final Class clazz, final String testName) {
+  public static void setupFlexLib(final Project project, final Class<?> clazz, final String testName) {
     if (JSTestUtils.testMethodHasOption(clazz, testName, JSTestOption.WithFlexLib)) {
       Module[] modules = ModuleManager.getInstance(project).getModules();
 
@@ -109,7 +109,7 @@ public class FlexTestUtils {
     }
   }
 
-  public static String getPathToMockFlex(@NotNull Class clazz, @NotNull String testName) {
+  public static String getPathToMockFlex(@NotNull Class<?> clazz, @NotNull String testName) {
     if (JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk)) {
       return getTestDataPath("MockFlexSdk4");
     }
@@ -122,7 +122,7 @@ public class FlexTestUtils {
 
   public static void setupFlexSdk(@NotNull final Module module,
                                   @NotNull String testName,
-                                  @NotNull Class clazz,
+                                  @NotNull Class<?> clazz,
                                   String pathToFlexSdk,
                                   boolean air, @NotNull Disposable parent) {
     boolean withFlexSdk = JSTestUtils
@@ -141,15 +141,15 @@ public class FlexTestUtils {
     return getSdkVersion(testDescriptor.second, testDescriptor.first);
   }
 
-  private static String getSdkVersion(String testName, Class clazz) {
+  private static String getSdkVersion(String testName, Class<?> clazz) {
     return JSTestUtils.testMethodHasOption(JSTestUtils.getTestMethod(clazz, testName), JSTestOption.WithGumboSdk) ? "4.0.0" : "3.4.0";
   }
 
-  public static void setupFlexSdk(@NotNull final Module module, @NotNull String testName, @NotNull Class clazz, @NotNull Disposable parent) {
+  public static void setupFlexSdk(@NotNull final Module module, @NotNull String testName, @NotNull Class<?> clazz, @NotNull Disposable parent) {
     setupFlexSdk(module, testName, clazz, getPathToMockFlex(clazz, testName), false, parent);
   }
 
-  public static void addASDocToSdk(final Module module, final Class clazz, final String testName) {
+  public static void addASDocToSdk(final Module module, final Class<?> clazz, final String testName) {
     WriteAction.run(() -> {
       final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
       final SdkModificator sdkModificator = flexSdk.getSdkModificator();
@@ -610,7 +610,7 @@ public class FlexTestUtils {
     });
   }
 
-  public static void addFlexUnitLib(Class clazz, String method, Module module,
+  public static void addFlexUnitLib(Class<?> clazz, String method, Module module,
                                     String libRootPath, String flexUnit1Swc, String flexUnit4Swc) {
     if (JSTestUtils.testMethodHasOption(clazz, method, JSTestOption.WithFlexUnit1)) {
       addLibrary(module, "FlexUnit1", libRootPath, flexUnit1Swc, null, null);

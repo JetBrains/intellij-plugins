@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class ClassUtils {
 
-  public static boolean instanceOf(Object[] items, @NotNull Class aClass) {
+  public static boolean instanceOf(Object[] items, @NotNull Class<?> aClass) {
     for (Object item : items) {
       if(!aClass.isInstance(item)){
         return false;
