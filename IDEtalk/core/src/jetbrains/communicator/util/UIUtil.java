@@ -11,7 +11,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -80,7 +80,7 @@ public class UIUtil {
 
     IDEFacade.Process process = new IDEFacade.Process() {
       @Override
-      public void run(ProgressIndicator indicator) {
+      public void run(TalkProgressIndicator indicator) {
         indicator.setIndefinite(true);
         indicator.setText(title);
 

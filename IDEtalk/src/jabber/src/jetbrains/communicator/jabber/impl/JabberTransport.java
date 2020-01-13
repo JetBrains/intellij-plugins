@@ -12,7 +12,7 @@ import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
 import jetbrains.communicator.core.transport.*;
 import jetbrains.communicator.core.users.*;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;
@@ -114,7 +114,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   @Override
-  public User[] findUsers(ProgressIndicator progressIndicator) {
+  public User[] findUsers(TalkProgressIndicator progressIndicator) {
     if (isOnline()) {
       return myUserFinder.findUsers(progressIndicator);
     }

@@ -8,7 +8,7 @@ import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.XStreamUtil;
@@ -44,7 +44,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
   }
 
   @Override
-  public User[] findUsers(ProgressIndicator progressIndicator) {
+  public User[] findUsers(TalkProgressIndicator progressIndicator) {
     final String currentProjectId = myIdeFacade.getCurrentProjectId();
     List<User> users = new ArrayList<>();
     if (currentProjectId != null) {

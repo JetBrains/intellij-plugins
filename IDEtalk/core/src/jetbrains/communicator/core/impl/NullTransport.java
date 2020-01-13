@@ -6,7 +6,7 @@ import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.transport.XmlMessage;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import org.picocontainer.MutablePicoContainer;
 
 import javax.swing.*;
@@ -51,7 +51,7 @@ public class NullTransport implements Transport {
   }
 
   @Override
-  public User[] findUsers(ProgressIndicator progressIndicator) {
+  public User[] findUsers(TalkProgressIndicator progressIndicator) {
     return new User[0];
   }
 

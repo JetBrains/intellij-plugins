@@ -5,7 +5,7 @@ package jetbrains.communicator.ide;
 /**
  * @author Kir
  */
-public interface ProgressIndicator {
+public interface TalkProgressIndicator {
 
   void setIndefinite(boolean indefinite);
   void setText(String text);

@@ -5,7 +5,7 @@ package jetbrains.communicator.ide;
 /**
  * @author Kir
  */
-public class NullProgressIndicator implements ProgressIndicator{
+public class NullProgressIndicator implements TalkProgressIndicator {
   @Override
   public void setIndefinite(boolean indefinite) {
   }

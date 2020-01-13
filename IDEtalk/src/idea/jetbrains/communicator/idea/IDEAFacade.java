@@ -143,7 +143,7 @@ public class IDEAFacade implements IDEFacade {
           else {
             progressIndicator.pushState();
             try {
-              process.run(new jetbrains.communicator.ide.ProgressIndicator() {
+              process.run(new TalkProgressIndicator() {
                 @Override
                 public void setIndefinite(boolean indefinite) {
                   progressIndicator.setIndeterminate(indefinite);

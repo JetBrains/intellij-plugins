@@ -9,7 +9,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
@@ -55,7 +55,7 @@ public class FindUsersCommand implements NamedUserCommand {
     try {
       myIdeFacade.runLongProcess(CommunicatorStrings.getMsg("FindUsersCommand.dialog.title"), new IDEFacade.Process() {
         @Override
-        public void run(ProgressIndicator indicator) {
+        public void run(TalkProgressIndicator indicator) {
           List<User> result = new ArrayList<>();
           for (Transport transport : myTransports) {
             result.addAll(Arrays.asList(transport.findUsers(indicator)));

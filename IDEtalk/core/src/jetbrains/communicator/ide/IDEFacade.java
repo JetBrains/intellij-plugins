@@ -80,6 +80,6 @@ public interface IDEFacade {
   String getCurrentProjectId();
 
   interface Process {
-    void run(ProgressIndicator indicator);
+    void run(TalkProgressIndicator indicator);
   }
 }

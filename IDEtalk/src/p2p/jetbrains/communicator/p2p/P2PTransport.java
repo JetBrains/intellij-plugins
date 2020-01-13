@@ -24,7 +24,7 @@ import jetbrains.communicator.core.transport.XmlMessage;
 import jetbrains.communicator.core.users.*;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.NullProgressIndicator;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
 import jetbrains.communicator.p2p.commands.SendXmlMessageP2PCommand;
 import jetbrains.communicator.util.CommunicatorStrings;
@@ -236,7 +236,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   @Override
-  public User[] findUsers(ProgressIndicator progressIndicator) {
+  public User[] findUsers(TalkProgressIndicator progressIndicator) {
     myUserMonitorThread.findNow(progressIndicator);
 
     return myOnlineUsers.toArray(new User[0]);

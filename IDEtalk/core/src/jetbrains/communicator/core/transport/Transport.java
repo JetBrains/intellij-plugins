@@ -5,7 +5,7 @@ package jetbrains.communicator.core.transport;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
-import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.ide.TalkProgressIndicator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
@@ -31,7 +31,7 @@ public interface Transport {
   String getName();
 
   /** This call should search all users this transport can find. */
-  User[] findUsers(ProgressIndicator progressIndicator);
+  User[] findUsers(TalkProgressIndicator progressIndicator);
 
   /** Can return null if no specific user finder exist in the current transport.
    * Specific finder is used as an option in FindUsers command. For Jabber, it can be
