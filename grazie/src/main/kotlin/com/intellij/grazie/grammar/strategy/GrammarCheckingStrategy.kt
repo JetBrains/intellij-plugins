@@ -64,7 +64,6 @@ interface GrammarCheckingStrategy {
    * @param child current checking element for which behavior is specified
    * @return [ElementBehavior] for [child] element
    */
-  @JvmDefault
   fun getElementBehavior(root: PsiElement, child: PsiElement) = TEXT
 
   /**
@@ -76,7 +75,6 @@ interface GrammarCheckingStrategy {
    * in which you need to specify the ranges to remove from the grammar checking
    * @return set of ranges in the [text] to be ignored
    */
-  @JvmDefault
   fun getStealthyRanges(root: PsiElement, text: CharSequence) = LinkedSet<IntRange>()
 
   /**
@@ -87,7 +85,6 @@ interface GrammarCheckingStrategy {
    * @param ruleRange range of elements needed for rule to find typo
    * @return true if typo should be accepted
    */
-  @JvmDefault
   fun isTypoAccepted(root: PsiElement, typoRange: IntRange, ruleRange: IntRange) = true
 
   /**
@@ -97,7 +94,6 @@ interface GrammarCheckingStrategy {
    * @param child current checking element for which ignored categories are specified
    * @return set of the ignored categories for [child]
    */
-  @JvmDefault
   fun getIgnoredTypoCategories(root: PsiElement, child: PsiElement): Set<Typo.Category>? = null
 
   /**
@@ -107,7 +103,6 @@ interface GrammarCheckingStrategy {
    * @param child current checking element for which ignored rules are specified
    * @return RuleGroup with ignored rules for [child]
    */
-  @JvmDefault
   fun getIgnoredRuleGroup(root: PsiElement, child: PsiElement): RuleGroup? = null
 
   /**
@@ -117,7 +112,6 @@ interface GrammarCheckingStrategy {
    * @param root root element previously selected in [isMyContextRoot]
    * @return list of char replacement rules for whole root context
    */
-  @JvmDefault
   @Deprecated("Use getStealthyRanges() if you don't need some chars")
   fun getReplaceCharRules(root: PsiElement): List<ReplaceCharRule> = emptyList()
 }
