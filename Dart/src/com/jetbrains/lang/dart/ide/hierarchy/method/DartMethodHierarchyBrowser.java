@@ -1,10 +1,11 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.newAPI.HierarchyScopeType;
 import com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase;
-import com.intellij.ide.hierarchy.newAPI.HierarchyScopeType;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -75,7 +76,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
 
   @Nullable
   @Override
-  protected Comparator<NodeDescriptor> getComparator() {
+  protected Comparator<NodeDescriptor<?>> getComparator() {
     return null;
   }
 }

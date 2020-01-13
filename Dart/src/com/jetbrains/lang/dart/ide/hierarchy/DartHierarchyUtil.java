@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy;
 
 import com.intellij.ide.hierarchy.newAPI.HierarchyBrowserManager;
@@ -29,7 +30,7 @@ import java.util.List;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 
 public class DartHierarchyUtil {
-  private static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR = Comparator.comparingInt(NodeDescriptor::getIndex);
+  private static final Comparator<NodeDescriptor<?>> NODE_DESCRIPTOR_COMPARATOR = Comparator.comparingInt(NodeDescriptor::getIndex);
 
   private DartHierarchyUtil() {
   }
@@ -42,7 +43,7 @@ public class DartHierarchyUtil {
     return component instanceof DartClass ? (DartClass)component : null;
   }
 
-  public static Comparator<NodeDescriptor> getComparator(Project project) {
+  public static Comparator<NodeDescriptor<?>> getComparator(Project project) {
     final HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(project).getState();
     if (state != null && state.SORT_ALPHABETICALLY) {
       return AlphaComparator.INSTANCE;
