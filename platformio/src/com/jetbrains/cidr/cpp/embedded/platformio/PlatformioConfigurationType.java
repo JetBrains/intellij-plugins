@@ -9,6 +9,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.EmptyEditor;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
+import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class PlatformioConfigurationType extends CMakeRunConfigurationType {
@@ -18,7 +19,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
 
   public PlatformioConfigurationType() {
     super(TYPE_ID, PLATFORM_IO_DEBUG_ID, "PlatformIO", "PlatformIO",
-          NotNullLazyValue.createValue(() -> PlatformioFileType.ICON));
+          NotNullLazyValue.createValue(() -> ClionEmbeddedPlatformioIcons.Platformio));
     addFactory(new ToolConfigurationFactory("PlatformIO Test", "-c", "clion", "test"));
     addFactory(new ToolConfigurationFactory("PlatformIO Upload", "-c", "clion", "run", "--target", "upload"));
     addFactory(new ToolConfigurationFactory("PlatformIO Program", "-c", "clion", "run", "--target", "program"));

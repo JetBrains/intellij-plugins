@@ -2,7 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.IconManager;
+import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +11,6 @@ import javax.swing.*;
 public class PlatformioFileType implements FileType {
   public static final String EXTENSION = "ini";
   public static final PlatformioFileType INSTANCE = new PlatformioFileType();
-  public static final @NotNull Icon ICON = IconManager.getInstance().getIcon("/icons/platformio.svg", PlatformioFileType.class);
   public static final String FILE_NAME = "platformio.ini";
 
   @Override
@@ -35,7 +34,7 @@ public class PlatformioFileType implements FileType {
   @Override
   public @Nullable
   Icon getIcon() {
-    return ICON;
+    return ClionEmbeddedPlatformioIcons.Platformio;
   }
 
   @Override
