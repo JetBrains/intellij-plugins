@@ -12,6 +12,7 @@ import com.intellij.grazie.ide.quickfix.supress.GrazieDisableRuleQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.util.containers.WeakStringInterner
 import kotlinx.html.*
 
 class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
@@ -22,6 +23,9 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
   fix.toSelectionRange(), true, isOnTheFly
 ) {
   companion object {
+
+    private val interner: WeakStringInterner = WeakStringInterner()
+
     private fun Typo.toFixes(isOnTheFly: Boolean) = buildList<LocalQuickFix> {
       if (isOnTheFly && !ApplicationManager.getApplication().isUnitTestMode) {
         if (fixes.isNotEmpty()) {
@@ -36,7 +40,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
 
     private fun Typo.toDescriptionTemplate(isOnTheFly: Boolean): String {
       if (ApplicationManager.getApplication().isUnitTestMode) return info.rule.id
-      return html {
+      val html = html {
         p {
           info.incorrectExample?.let {
             style = "padding-bottom: 8px;"
@@ -83,6 +87,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
           }
         }
       }
+      return interner.intern(html)
     }
   }
 }
