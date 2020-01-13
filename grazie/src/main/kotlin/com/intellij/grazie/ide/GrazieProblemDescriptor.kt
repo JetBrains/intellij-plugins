@@ -13,12 +13,13 @@ import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.containers.WeakStringInterner
+import com.intellij.util.containers.toArray
 import kotlinx.html.*
 
 class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
   fix.location.element!!, fix.location.element!!,
   fix.toDescriptionTemplate(isOnTheFly),
-  fix.toFixes(isOnTheFly).toTypedArray(),
+  fix.toFixes(isOnTheFly).toArray(LocalQuickFix.EMPTY_ARRAY),
   ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false,
   fix.toSelectionRange(), true, isOnTheFly
 ) {
