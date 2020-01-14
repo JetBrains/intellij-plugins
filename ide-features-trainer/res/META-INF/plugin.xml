@@ -62,7 +62,8 @@
     <registryKey key="ideFeaturesTrainer.welcomeScreen.tutorialsTree" defaultValue="FALSE" restartRequired="true"
                  description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
 
-    <applicationConfigurable groupId="tools" displayName="Features Trainer" id="FeaturesTrainerSettingsPanel" instance="training.ui.FeaturesTrainerSettingsPanel"/>
+    <applicationConfigurable groupId="tools" bundle="messages.LearnBundle" key="learn.options.panel.name" id="FeaturesTrainerSettingsPanel"
+                             instance="training.ui.FeaturesTrainerSettingsPanel"/>
 
   </extensions>
 

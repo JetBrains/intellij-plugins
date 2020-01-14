@@ -116,12 +116,19 @@
 
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
-    <projectConfigurable groupId="language" id="reference.settings.project.osgi.project.settings" displayName="OSGi"
+    <projectConfigurable groupId="language" id="reference.settings.project.osgi.project.settings"
+                         bundle="messages.OsmorcBundle"
+                         key="configurable.ProjectSettingsEditor.display.name"
                          instance="org.osmorc.settings.ProjectSettingsEditor"/>
 
-    <applicationConfigurable groupId="language" id="osmorc.ide.settings" displayName="OSGi Framework Instances"
+    <applicationConfigurable groupId="language" id="osmorc.ide.settings"
+                             bundle="messages.OsmorcBundle"
+                             key="configurable.ApplicationSettingsEditor.display.name"
                              instance="org.osmorc.settings.ApplicationSettingsEditor">
-      <configurable id="reference.settings.project.osgi.library.bundling" displayName="Library Bundling"
+
+      <configurable id="reference.settings.project.osgi.library.bundling"
+                    bundle="messages.OsmorcBundle"
+                    key="configurable.LibraryBundlingEditor.display.name"
                     instance="org.osmorc.settings.LibraryBundlingEditor"/>
     </applicationConfigurable>
   </extensions>
