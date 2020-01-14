@@ -32,7 +32,14 @@ object GrammarChecker {
       var deleted = 0
       for ((position, length) in iterator) {
         if (position < range.start) {   // shift before range (remains the same, just add)
-          add(ShiftInText(position - stealthed, length, total + length))
+          val start = position - stealthed
+          if (isNotEmpty() && last().start == start) {
+            val last = removeAt(size - 1)
+            // combine shifts from same position
+            add(ShiftInText(start, last.length + length, last.totalDeleted + length))
+          } else {
+            add(ShiftInText(start, length, total + length))
+          }
         } else if (position in range) { // shift inside range (combine in one)
           deleted += length
         } else {                        // shift after range - need a step back
