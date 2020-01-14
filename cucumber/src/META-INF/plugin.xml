@@ -93,6 +93,7 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
-                    interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"/>
+                    interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"
+                    dynamic="true"/>
   </extensionPoints>
 </idea-plugin>
