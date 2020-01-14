@@ -27,13 +27,13 @@ import static com.jetbrains.lang.dart.ide.index.DartClassIndex.DART_CLASS_INDEX;
  */
 public class DartClassContributor implements ChooseByNameContributorEx {
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     FileBasedIndex.getInstance().processAllKeys(DART_CLASS_INDEX, processor, scope, filter);
   }
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     doProcessElements(DART_CLASS_INDEX, DartResolveUtil::getClassDeclarations, name, processor, parameters);
   }
@@ -41,7 +41,7 @@ public class DartClassContributor implements ChooseByNameContributorEx {
   static void doProcessElements(@NotNull ID<String, Void> index,
                                 @NotNull Function<PsiElement, Iterable<? extends DartComponent>> componentGetter,
                                 @NotNull String name,
-                                @NotNull Processor<NavigationItem> processor,
+                                @NotNull Processor<? super NavigationItem> processor,
                                 @NotNull FindSymbolParameters parameters) {
     PsiManager psiManager = PsiManager.getInstance(parameters.getProject());
     FileBasedIndex.getInstance().getFilesWithKey(

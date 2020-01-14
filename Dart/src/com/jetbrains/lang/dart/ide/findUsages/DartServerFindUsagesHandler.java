@@ -42,7 +42,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
 
   @Override
   public boolean processElementUsages(@NotNull final PsiElement elementToSearch,
-                                      @NotNull final Processor<UsageInfo> processor,
+                                      @NotNull final Processor<? super UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final SearchScope scope = options.searchScope;
     final Project project = ReadAction.compute(this::getProject);

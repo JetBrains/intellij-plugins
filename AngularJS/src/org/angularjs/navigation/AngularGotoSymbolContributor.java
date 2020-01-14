@@ -19,14 +19,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AngularGotoSymbolContributor implements ChooseByNameContributorEx {
   @Override
-  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+  public void processNames(@NotNull Processor<? super String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
     Project project = ObjectUtils.notNull(scope.getProject());
     ContainerUtil.process(AngularIndexUtil.getAllKeys(AngularSymbolIndex.KEY, project), processor);
   }
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     AngularIndexUtil.multiResolve(parameters.getProject(), parameters.getSearchScope(),
                                   AngularSymbolIndex.KEY, name, processor);

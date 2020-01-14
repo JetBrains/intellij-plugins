@@ -28,8 +28,7 @@ import static org.angular2.entities.Angular2EntitiesProvider.getDirective;
 public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx {
 
   @Override
-  public void processNames(@SuppressWarnings("BoundedWildcard")
-                           @NotNull Processor<String> processor,
+  public void processNames(@NotNull Processor<? super String> processor,
                            @NotNull GlobalSearchScope scope,
                            @Nullable IdFilter filter) {
     StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, key -> {
@@ -51,8 +50,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   @Override
   public void processElementsWithName(@NotNull String name,
-                                      @SuppressWarnings("BoundedWildcard")
-                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull Processor<? super NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
     Stream.of(Angular2EntityUtils.getAttributeDirectiveIndexName(name),
               Angular2EntityUtils.getElementDirectiveIndexName(name))

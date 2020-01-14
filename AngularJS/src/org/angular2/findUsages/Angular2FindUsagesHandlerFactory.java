@@ -41,7 +41,7 @@ public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
 
     @Override
     public boolean processElementUsages(@NotNull PsiElement element,
-                                        @NotNull Processor<UsageInfo> processor,
+                                        @NotNull Processor<? super UsageInfo> processor,
                                         @NotNull FindUsagesOptions options) {
       if (options.isUsages) {
         Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));
