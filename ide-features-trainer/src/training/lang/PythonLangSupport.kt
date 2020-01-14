@@ -60,7 +60,7 @@ class PythonLangSupport : AbstractLangSupport() {
     val model = ProjectSdksModel()
     model.reset(null)
     val sdkHomes = mutableListOf<String>()
-    sdkHomes.addAll(VirtualEnvSdkFlavor.INSTANCE.suggestHomePaths(null))
+    sdkHomes.addAll(VirtualEnvSdkFlavor.getInstance().suggestHomePaths(null))
     PythonSdkFlavor.getApplicableFlavors()
       .filter { it !is VirtualEnvSdkFlavor }
       .forEach { sdkHomes.addAll(it.suggestHomePaths(null)) }
