@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>training</id>
     <name>IDE Features Trainer</name>
-    <vendor email="sergey.karashevich@jetbrains.com" url="http://www.jetbrains.com">JetBrains</vendor>
+    <vendor>JetBrains</vendor>
 
     <description><![CDATA[
 
@@ -13,19 +13,10 @@
         </component>
     </application-components>
 
-    <depends optional="true">com.intellij.testGuiFramework</depends>
-
     <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="ruby-deps.xml">com.intellij.modules.ruby</depends>
-    <!--<depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>-->
-    <!--<depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>-->
     <depends optional="true" config-file="go-deps.xml">org.jetbrains.plugins.go</depends>
-    <!--<depends optional="true" config-file="objc-deps.xml">com.intellij.modules.cidr.lang</depends>-->
     <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
-    <!--<depends optional="true" config-file="webstorm-deps.xml">com.intellij.modules.webstorm</depends>-->
-    <!--<depends optional="true" config-file="phpstorm-deps.xml">com.jetbrains.php</depends>-->
-    <!--<depends optional="true" config-file="clion-deps.xml">com.intellij.modules.clion</depends>-->
-    <!--<depends optional="true" config-file="rider-deps.xml">com.intellij.modules.rider</depends>-->
 
     <extensionPoints>
         <extensionPoint name="TrainingLangExtension"
@@ -33,10 +24,6 @@
             <with attribute="implementationClass" implements="training.lang.LangSupport"/>
         </extensionPoint>
     </extensionPoints>
-
-
-    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="193.2956.37"/>
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -74,9 +61,6 @@
                      description="When this option is enabled, welcome screen shows Tutorials along the Projects in the recent projects list, additional action link Learn IDE is disabled"/>
 
     </extensions>
-
-    <application-components>
-    </application-components>
 
     <project-components>
         <component>
