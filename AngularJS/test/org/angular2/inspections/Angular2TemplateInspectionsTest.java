@@ -32,7 +32,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testBindingToEvent2() {
-    doTest(2, "[on<caret>foo]", "Remove '[onfoo]' attribute", AngularInsecureBindingToEventInspection.class,
+    doTest(2, "[on<caret>foo]", "Remove attribute [onfoo]", AngularInsecureBindingToEventInspection.class,
            "binding-to-event.html", "component.ts");
   }
 
@@ -47,7 +47,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testMultipleTemplateBindings() {
-    doTest(1, "*some<caret>thing", "Remove '*something' attribute", AngularMultipleStructuralDirectivesInspection.class,
+    doTest(1, "*some<caret>thing", "Remove attribute *something", AngularMultipleStructuralDirectivesInspection.class,
            "multiple-template-bindings.html");
   }
 
@@ -62,12 +62,12 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
   }
 
   public void testTemplateReferenceVariable() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", AngularInvalidTemplateReferenceVariableInspection.class,
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
            "template-reference-variable.html", "component.ts");
   }
 
   public void testTemplateReferenceVariableWithModule() {
-    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", AngularInvalidTemplateReferenceVariableInspection.class,
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
            "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts");
   }
 

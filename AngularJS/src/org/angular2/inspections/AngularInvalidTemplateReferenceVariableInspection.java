@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
+import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -14,7 +15,6 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
-import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
@@ -44,7 +44,7 @@ public class AngularInvalidTemplateReferenceVariableInspection extends AngularHt
           if (proximity != Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE) {
             Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes);
           }
-          quickFixes.add(new RemoveAttributeQuickFix(attribute.getName()));
+          quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
           holder.registerProblem(attribute.getNameElement(),
                                  Angular2Bundle.message("angular.inspection.template.ref-var-unbound", exportName),
                                  scope.isFullyResolved()

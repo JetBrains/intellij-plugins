@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
+import com.intellij.codeInsight.daemon.impl.analysis.RemoveAttributeIntentionFix;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -16,7 +17,6 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
-import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -75,7 +75,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     if (proximity != NOT_REACHABLE) {
       Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes);
     }
-    quickFixes.add(new RemoveAttributeQuickFix(attribute.getName()));
+    quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
     ProblemHighlightType severity;
     // TODO take into account 'CUSTOM_ELEMENTS_SCHEMA' and 'NO_ERRORS_SCHEMA' value of '@NgModule.schemas'
     severity = scope.isFullyResolved()
