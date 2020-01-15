@@ -82,6 +82,18 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
   }
 
   @Override
+  public String getType() {
+    // todo: figure out how to get the type
+    return null;
+  }
+
+  @Override
+  public String getDefault() {
+    // todo: figure out how to get the default
+    return null;
+  }
+
+  @Override
   public CfmlComponent getComponent() {
     return PsiTreeUtil.getParentOfType(this, CfmlComponent.class);
   }

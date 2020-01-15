@@ -28,6 +28,10 @@ public interface CfmlProperty extends CfmlPsiElement, CfmlVariable {
 
   boolean hasSetter();
 
+  String getType();
+
+  String getDefault();
+    
   @Nullable
   CfmlComponent getComponent();
 }

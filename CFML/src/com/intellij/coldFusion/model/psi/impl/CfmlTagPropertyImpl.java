@@ -16,7 +16,9 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
@@ -80,8 +82,20 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
   }
 
   @Override
+  public String getType() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "type");
+  }
+
+  @Override
+  public String getDefault() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "default");
+  }
+
+  @Override
   public PsiType getPsiType() {
-    return null;
+    final String returnTypeString = this.getType();
+    return returnTypeString != null ?
+           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull

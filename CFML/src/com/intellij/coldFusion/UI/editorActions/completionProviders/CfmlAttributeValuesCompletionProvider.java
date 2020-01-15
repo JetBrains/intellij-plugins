@@ -40,7 +40,7 @@ class CfmlAttributeValuesCompletionProvider extends CompletionProvider<Completio
     String[] attributeValue = CfmlUtil.getAttributeValues(tagName, attributeName, parameters.getPosition().getProject());
 
     if ("type".equalsIgnoreCase(attributeName) && "cfargument".equalsIgnoreCase(tagName) ||
-        "type".equalsIgnoreCase(attributeName) && "cfparam".equalsIgnoreCase(tagName) ||
+        "type".equalsIgnoreCase(attributeName) && "cfproperty".equalsIgnoreCase(tagName) ||
         "returntype".equalsIgnoreCase(attributeName) && "cffunction".equalsIgnoreCase(tagName)
        ) {
       Object[] objects =

@@ -4,7 +4,6 @@ package com.intellij.coldFusion.model.psi.impl;
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.psi.CfmlComponentType;
-import com.intellij.coldFusion.model.psi.CfmlParameter;
 import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.lang.ASTNode;
