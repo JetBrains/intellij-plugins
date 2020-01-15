@@ -21,6 +21,16 @@ object GrammarChecker {
 
   private fun determineTextShifts(root: PsiElement, text: StringBuilder, strategy: GrammarCheckingStrategy,
                                   shifts: List<ElementShift>) = ArrayList<ShiftInText>().apply {
+    fun addShift(position: Int, length: Int, totalDeleted: Int) {
+      if (isNotEmpty() && last().start == position) {
+        val last = removeAt(size - 1)
+        // combine shifts from same position
+        add(ShiftInText(position, last.length + length, last.totalDeleted + length))
+      } else {
+        add(ShiftInText(position, length, totalDeleted))
+      }
+    }
+
     var stealthed = 0 // count of newly removed characters from text after getResultedShifts()
     var total = 0     // total deleted chars from text
     val iterator = shifts.listIterator()
@@ -32,14 +42,7 @@ object GrammarChecker {
       var deleted = 0
       for ((position, length) in iterator) {
         if (position < range.start) {   // shift before range (remains the same, just add)
-          val start = position - stealthed
-          if (isNotEmpty() && last().start == start) {
-            val last = removeAt(size - 1)
-            // combine shifts from same position
-            add(ShiftInText(start, last.length + length, last.totalDeleted + length))
-          } else {
-            add(ShiftInText(start, length, total + length))
-          }
+          addShift(position - stealthed, length, total + length)
         } else if (position in range) { // shift inside range (combine in one)
           deleted += length
         } else {                        // shift after range - need a step back
@@ -54,14 +57,14 @@ object GrammarChecker {
       text.delete(range.start - stealthed, range.endInclusive + 1 - stealthed)
 
       total += range.length
-      add(ShiftInText(range.start - stealthed, deleted + range.length, total))
+      addShift(range.start - stealthed, deleted + range.length, total)
       stealthed += range.length
     }
 
     // after processing all ranges there still can be shifts after them
     for ((position, length) in iterator) {
       total += length
-      add(ShiftInText(position, length, total))
+      addShift(position, length, total)
     }
   }
 
@@ -75,8 +78,8 @@ object GrammarChecker {
     return check(root, text, textShifts, offset, tokens, strategy)
   }
 
-  private fun findPositionInsideRoot(position: Int, isStart: Boolean, shifts: List<ShiftInText>): Int {
-    val index = shifts.binarySearch { it.start.compareTo(position + if (isStart) 1 else 0) }
+  private fun findPositionInsideRoot(position: Int, shifts: List<ShiftInText>): Int {
+    val index = shifts.binarySearch { it.start.compareTo(position) }
     return when {
       index >= 0 -> shifts[index].totalDeleted
       -(index + 1) > 0 -> shifts[-(index + 1) - 1].totalDeleted
@@ -96,7 +99,7 @@ object GrammarChecker {
 
   private fun findTokensInTypoPatternRange(tokens: Collection<TokenInfo>, patternRangeInRoot: IntRange): List<TokenInfo> {
     return tokens.filter { it.range.endInclusive >= patternRangeInRoot.start && it.range.start <= patternRangeInRoot.endInclusive }.also {
-      check(it.isNotEmpty()) { "No tokens for range in typo" }
+      check(it.isNotEmpty()) { "No tokens for range in typo: $patternRangeInRoot in ${tokens.map { it.range }}" }
     }
   }
 
@@ -125,6 +128,6 @@ object GrammarChecker {
     }.toSet()
 
   private fun IntRange.convertToRangeInRoot(shifts: List<ShiftInText>): IntRange {
-    return IntRange(findPositionInsideRoot(start, true, shifts), findPositionInsideRoot(endInclusive, false, shifts))
+    return IntRange(findPositionInsideRoot(start, shifts), findPositionInsideRoot(endInclusive, shifts))
   }
 }
