@@ -5,6 +5,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.grazie.GrazieBundle
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.openapi.project.Project
@@ -41,5 +42,5 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = grazie.buildVisitor(holder, isOnTheFly)
 
-  override fun getDisplayName() = "Grazie proofreading inspection for VCS"
+  override fun getDisplayName() = GrazieBundle.message("inspection.GrazieCommitInspection.display.name")
 }
