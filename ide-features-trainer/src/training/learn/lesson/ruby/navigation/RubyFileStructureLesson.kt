@@ -2,22 +2,16 @@
 package training.learn.lesson.ruby.navigation
 
 import com.intellij.ide.dnd.aware.DnDAwareTree
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
+import com.intellij.ui.speedSearch.SpeedSearchSupply
 import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import java.util.concurrent.CompletableFuture
-import javax.swing.event.TreeModelEvent
-import javax.swing.event.TreeModelListener
-import javax.swing.tree.TreeModel
 
 class RubyFileStructureLesson(module: Module) : KLesson("File structure", module, "ruby") {
-  private val LOG = Logger.getInstance(this.javaClass)
-
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       caret(0)
@@ -27,9 +21,8 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
         "Use ${action(it)} to see the file structure."
       }
       task("ch") {
-        val listener = StructureLessonListener(it)
         text("Type <code>$it</code> to see elements that contain the word <strong>$it</strong>.")
-        listener.complete = stateCheck { checkWordInSearch(listener) }
+        stateCheck { checkWordInSearch(it) }
         test {
           ideFrame {
             waitComponent(DnDAwareTree::class.java, "FileStructurePopup")
@@ -49,83 +42,15 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
       }
     }
 
-  private fun TaskContext.checkWordInSearch(listener: StructureLessonListener): Boolean {
+  private fun TaskContext.checkWordInSearch(expected: String): Boolean {
     val focusOwner = focusOwner
     if (focusOwner is DnDAwareTree && focusOwner.javaClass.name.contains("FileStructurePopup")) {
-      val model = focusOwner.model
-      if (listener.model != model) {
-        listener.model = model
-        model.addTreeModelListener(listener)
-      }
+      val supply = SpeedSearchSupply.getSupply(focusOwner)
+      return supply?.enteredPrefix == expected
     }
     return false
   }
 
   override val existedFile: String
     get() = "lib/active_support/core_ext/date/calculations.rb"
-
-  private inner class StructureLessonListener(val expected: String) : TreeModelListener {
-    @Volatile
-    var model: TreeModel? = null
-    @Volatile
-    var complete: CompletableFuture<Boolean>? = null
-
-    override fun treeNodesInserted(event: TreeModelEvent?) {
-      checkCompleteness()
-    }
-
-    override fun treeStructureChanged(event: TreeModelEvent?) {
-      checkCompleteness()
-    }
-
-    override fun treeNodesChanged(event: TreeModelEvent?) {
-      checkCompleteness()
-    }
-
-    override fun treeNodesRemoved(event: TreeModelEvent?) {
-      checkCompleteness()
-    }
-
-    private fun checkCompleteness() {
-      try {
-        model?.let {
-          val filter = getLastFilter(it)
-          if (expected == filter) {
-            complete?.complete(true)
-          }
-        }
-      }
-      catch (e: NoSuchFieldException) {
-        exceptionCase(e)
-      }
-      catch (e: SecurityException) {
-        exceptionCase(e)
-      }
-    }
-
-    private fun exceptionCase(e: Exception) {
-      LOG.warn("${e.javaClass} : ${e.message}")
-      complete?.complete(true)
-    }
-  }
-
-  companion object {
-    // A very dark magic implementation!
-    private fun getLastFilter(model: TreeModel): String? {
-      //m.model.structure.myFilter.myLastFilter
-      val f = model.javaClass.getDeclaredField("model")
-      f.isAccessible = true
-      val modelField = f.get(model)
-      val f2 = modelField.javaClass.getDeclaredField("structure")
-      f2.isAccessible = true
-      val structure = f2.get(modelField)
-      val f3 = structure.javaClass.getDeclaredField("myFilter")
-      f3.isAccessible = true
-      val myFilter = f3.get(structure)
-      val f4 = myFilter.javaClass.getDeclaredField("myLastFilter")
-      f4.isAccessible = true
-      val myLastFilter = f4.get(myFilter)
-      return myLastFilter as String?
-    }
-  }
 }
