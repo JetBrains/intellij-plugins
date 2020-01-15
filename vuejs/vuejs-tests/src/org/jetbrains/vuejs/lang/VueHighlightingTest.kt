@@ -726,7 +726,8 @@ Vue.component('global-comp-literal', {
   }
 
   fun testCustomDirectives() {
-    directivesTestCase(myFixture)
+    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     myFixture.checkHighlighting(true, false, true)
   }
 

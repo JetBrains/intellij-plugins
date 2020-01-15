@@ -610,7 +610,20 @@ export default {
   }
 
   fun testCustomDirectivesInCompletion() {
-    directivesTestCase(myFixture)
+    myFixture.copyDirectoryToProject("customDirectives", ".")
+    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
+    val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)
+    TestCase.assertNotNull(attribute)
+    myFixture.editor.caretModel.moveToOffset(attribute.textOffset - 1)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "v-focus", "v-local-directive", "v-some-other-directive",
+                           "v-imported-directive")
+  }
+
+  fun testCustomDirectivesLinkedFilesInCompletion() {
+    myFixture.copyDirectoryToProject("customDirectivesLinkedFiles", ".")
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureFromTempProjectFile("CustomDirectives.html")
     val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset - 1)

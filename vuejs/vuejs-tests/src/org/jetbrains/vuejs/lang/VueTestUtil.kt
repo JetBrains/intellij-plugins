@@ -13,55 +13,6 @@ import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
 
-fun directivesTestCase(myFixture: CodeInsightTestFixture) {
-  myFixture.configureByText("CustomDirectives.js", """
-Vue.directive('focus', {
-    inserted: function (el) {
-        el.focus()
-    }
-});
-Vue.directive('click-outside', {
-inserted: function (el) {
-        el.focus()
-    }
-});
-""")
-  myFixture.configureByText("importedDirective.js", """
-export default {
-    inserted: {}
-}
-""")
-  myFixture.configureByText("CustomDirectives.vue", """
-<template>
-    <label>
-        <input v-focus v-local-directive v-some-other-directive v-click-outside/>
-    </label>
-    <client-comp v-imported-directive></client-comp>
-    <div    style=""></div>
-</template>
-
-<script>
-    import importedDirective from './importedDirective'
-    let someOtherDirective = {
-
-    };
-    export default {
-        name: "client-comp",
-        directives: {
-            localDirective: {
-                // directive definition
-                inserted: function (el) {
-                    el.focus()
-                }
-            },
-            someOtherDirective,
-            importedDirective
-        }
-    }
-</script>
-""")
-}
-
 fun getVueTestDataPath() = PathManager.getHomePath() + vueRelativeTestDataPath()
 
 fun vueRelativeTestDataPath() = "/contrib/vuejs/vuejs-tests/testData"

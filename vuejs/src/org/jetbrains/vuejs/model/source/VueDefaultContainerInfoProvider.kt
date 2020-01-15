@@ -16,7 +16,10 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
+import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import java.util.*
@@ -77,19 +80,18 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
   private class DirectivesAccessor : MapAccessor<VueDirective>() {
     override fun build(declaration: JSObjectLiteralExpression): Map<String, VueDirective> {
-      val directives = declaration.findProperty(DIRECTIVES_PROP)
-      val fileScope = createContainingFileScope(directives)
-      return if (directives != null && fileScope != null) {
-        StreamEx.of(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY))
-          .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
-          .mapToEntry({ it.name }, { VueSourceDirective(it.name, it.parent) as VueDirective })
-          // TODO properly support multiple directives with the same name
-          .distinctKeys()
-          .into(mutableMapOf<String, VueDirective>())
-      }
-      else {
-        emptyMap()
-      }
+      return StreamEx.of(ContainerMember.Directives.readMembers(declaration))
+        .mapToEntry({ it.first }, {
+          (VueComponents.meaningfulExpression(it.second) ?: it.second)
+            .let { meaningfulElement ->
+              VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
+              ?: meaningfulElement
+            }.let { initializer ->
+              VueSourceDirective(it.first, initializer) as VueDirective
+            }
+        })
+        .distinctKeys()
+        .into(mutableMapOf<String, VueDirective>())
     }
   }
 
@@ -108,7 +110,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
             ?.let { VueModelManager.getComponent(it) }
           ?: VueUnresolvedComponent()
         }
-        // TODO properly support multiple components with the same name
         .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
     }
@@ -122,7 +123,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         .map {
           Pair(it.first, VueSourceFilter(it.first, VueComponents.meaningfulExpression(it.second) ?: it.second))
         }
-        // TODO properly support multiple filters with the same name
         .distinctBy { it.first }
         .toMap(TreeMap())
     }
@@ -200,16 +200,16 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                 override val source: PsiElement?) : VueMethod
 
   private enum class ContainerMember(val propertyName: String,
-                                     val isFunctions: Boolean,
                                      private val canBeArray: Boolean) {
-    Props("props", false, true),
-    Computed("computed", true, false),
-    Methods("methods", true, false),
-    Components("components", false, false),
-    Filters("filters", false, false),
-    Delimiters("delimiters", false, true),
-    Model("model", false, false),
-    Data("data", false, false) {
+    Props("props", true),
+    Computed("computed", false),
+    Methods("methods", false),
+    Directives("directives", false),
+    Components("components", false),
+    Filters("filters", false),
+    Delimiters("delimiters", true),
+    Model("model", false),
+    Data("data", false) {
       override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = findReturnedObjectLiteral(resolved)
 
       override fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? {

@@ -1338,7 +1338,8 @@ const props = {seeMe: {}}
   }
 
   fun testResolveGlobalCustomDirective() {
-    directivesTestCase(myFixture)
+    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     val attribute = myFixture.findElementByText("v-focus", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
     myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
@@ -1353,17 +1354,36 @@ const props = {seeMe: {}}
   }
 
   fun testResolveLocalCustomDirective() {
-    directivesTestCase(myFixture)
-    val names = mapOf(Pair("v-local-directive", "localDirective"),
-                      Pair("v-some-other-directive", "someOtherDirective"),
-                      Pair("v-click-outside", "click-outside"),
-                      Pair("v-imported-directive", "importedDirective"))
-    names.forEach {
-      val attribute = myFixture.findElementByText(it.key, XmlAttribute::class.java)
-      TestCase.assertNotNull(attribute)
-      myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
-      doTestResolveIntoDirective(it.value, if (it.value == "click-outside") "CustomDirectives.js" else "CustomDirectives.vue")
-    }
+    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.configureFromTempProjectFile("CustomDirectives.vue")
+
+    arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.vue"),
+            Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.vue"),
+            Trinity("v-click-outside", "click-outside", "CustomDirectives.js"),
+            Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
+      .forEach {
+        val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
+        TestCase.assertNotNull(attribute)
+        myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+        doTestResolveIntoDirective(it.second, it.third)
+      }
+  }
+
+  fun testResolveLocalCustomDirectiveLinkedFiles() {
+    myFixture.copyDirectoryToProject("../completion/customDirectivesLinkedFiles", ".")
+    createPackageJsonWithVueDependency(myFixture, "")
+    myFixture.configureFromTempProjectFile("CustomDirectives.html")
+
+    arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.js"),
+            Trinity("v-some-other-directive", "someOtherDirective", "CustomDirectives.js"),
+            Trinity("v-click-outside", "click-outside", "GlobalCustomDirectives.js"),
+            Trinity("v-imported-directive", "importedDirective", "importedDirective.js"))
+      .forEach {
+        val attribute = myFixture.findElementByText(it.first, XmlAttribute::class.java)
+        TestCase.assertNotNull(attribute)
+        myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
+        doTestResolveIntoDirective(it.second, it.third)
+      }
   }
 
   private fun doTestResolveIntoDirective(directive: String, fileName: String) {
@@ -1373,15 +1393,19 @@ const props = {seeMe: {}}
     TestCase.assertNotNull(directive, property)
     when (property) {
       is JSProperty -> {
-        TestCase.assertEquals(directive, property.name)
-        TestCase.assertEquals(fileName, property.containingFile.name)
+        TestCase.assertEquals(directive, directive, property.name)
+        TestCase.assertEquals(directive, fileName, property.containingFile.name)
       }
       is JSCallExpression -> {
-        TestCase.assertNotNull(property.text)
-        TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
-        TestCase.assertEquals(fileName, property.containingFile.name)
+        TestCase.assertNotNull(directive, property.text)
+        TestCase.assertEquals(directive, directive, (property.arguments[0] as JSLiteralExpression).stringValue)
+        TestCase.assertEquals(directive, fileName, property.containingFile.name)
       }
-      else -> TestCase.assertTrue(false)
+      is JSObjectLiteralExpression -> {
+        TestCase.assertNotNull(directive, property.text)
+        TestCase.assertEquals(directive, fileName, property.containingFile.name)
+      }
+      else -> TestCase.assertTrue("$directive class: ${property?.javaClass?.name}", false)
     }
   }
 
@@ -1903,7 +1927,7 @@ export default class UsageComponent extends Vue {
 
   fun testFilters() {
     createPackageJsonWithVueDependency(myFixture, "\"some_lib\":\"0.0.0\"")
-    myFixture.copyDirectoryToProject("filters/",".")
+    myFixture.copyDirectoryToProject("filters/", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     for ((filterName, resolvedItemText) in listOf(
       Pair("localFilter", "localFilter: function (arg1, arg2, arg3) { return true }"),

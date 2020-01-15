@@ -75,7 +75,6 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueUrlIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueIdIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>

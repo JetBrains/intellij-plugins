@@ -54,7 +54,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueComponentsIndex.KEY),
     record(VueExtendsBindingIndex.KEY),
     record(VueGlobalDirectivesIndex.KEY),
-    record(VueLocalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
     record(VueOptionsIndex.KEY),
     record(VueUrlIndex.KEY),
@@ -182,18 +181,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     else if (EXTENDS_PROP == name && property.value is JSReferenceExpression) {
       recordExtends(out, property, property.value)
     }
-    else if (DIRECTIVES_PROP == name) {
-      (property.value as? JSObjectLiteralExpression)?.properties?.forEach { directive ->
-        if (!directive.name.isNullOrBlank()) {
-          if (directive.value is JSReferenceExpression) {
-            recordDirective(out, directive, directive.name!!, directive.value, false)
-          }
-          else if (directive.value is JSObjectLiteralExpression || directive.value is JSFunction) {
-            recordDirective(out, directive, directive.name!!, null, false)
-          }
-        }
-      }
-    }
     //Vuetify typescript components
     else if (NAME_PROP == name && property.value is JSLiteralExpression) {
       val componentName = (property.value as JSLiteralExpression).stringValue
@@ -318,7 +305,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     else if (VueStaticMethod.Directive.matches(reference)) {
       val directiveName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && !directiveName.isNullOrBlank()) {
-        recordDirective(outData, callExpression, directiveName, arguments[1], true)
+        recordDirective(outData, callExpression, directiveName, arguments[1])
       }
     }
     else if (VueStaticMethod.Filter.matches(reference)) {
@@ -334,10 +321,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun recordDirective(outData: JSElementIndexingData,
                               provider: JSImplicitElementProvider,
                               directiveName: String,
-                              descriptorRef: PsiElement?,
-                              isGlobal: Boolean) {
-    val index = if (isGlobal) VueGlobalDirectivesIndex.JS_KEY else VueLocalDirectivesIndex.JS_KEY
-    outData.addImplicitElement(createImplicitElement(directiveName, provider, index, null, descriptorRef, isGlobal))
+                              descriptorRef: PsiElement?) {
+    outData.addImplicitElement(createImplicitElement(directiveName, provider, VueGlobalDirectivesIndex.JS_KEY,
+                                                     null, descriptorRef, true))
   }
 
   private fun recordMixin(outData: JSElementIndexingData,
