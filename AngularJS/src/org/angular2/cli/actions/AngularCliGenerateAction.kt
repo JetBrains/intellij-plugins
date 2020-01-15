@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
+import com.intellij.ui.scale.JBUIScale
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.Function
 import com.intellij.util.ui.EmptyIcon
@@ -75,7 +76,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
         if (!selected && index % 2 == 0) {
           background = UIUtil.getDecoratedRowColor()
         }
-        icon = JBUI.scale(EmptyIcon.create(5) as JBScalableIcon)
+        icon = JBUIScale.scaleIcon(EmptyIcon.create(5) as JBScalableIcon)
         if (value.error != null) {
           append(value.name!!, SimpleTextAttributes.ERROR_ATTRIBUTES, true)
           append(" - Error: " + value.error!!.decapitalize(), SimpleTextAttributes.GRAY_ATTRIBUTES, false)
