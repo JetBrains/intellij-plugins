@@ -52,7 +52,7 @@ public class PlatformioLauncher extends CLionLauncher {
 
   public PlatformioLauncher(@NotNull ExecutionEnvironment executionEnvironment,
                             @NotNull PlatformioBaseConfiguration configuration,
-                            @Nullable String[] cliParameters) {
+                            String @Nullable [] cliParameters) {
     super(executionEnvironment, configuration);
     this.cliParameters = cliParameters;
   }

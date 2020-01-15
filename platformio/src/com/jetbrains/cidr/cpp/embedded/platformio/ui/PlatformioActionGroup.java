@@ -35,9 +35,8 @@ public class PlatformioActionGroup extends ActionGroup {
     super("PlatformIO", "PlatformIO Support", ClionEmbeddedPlatformioIcons.Platformio);
   }
 
-  @NotNull
   @Override
-  public AnAction[] getChildren(@Nullable AnActionEvent e) {
+  public AnAction @NotNull [] getChildren(@Nullable AnActionEvent e) {
     return ourActions;
   }
 

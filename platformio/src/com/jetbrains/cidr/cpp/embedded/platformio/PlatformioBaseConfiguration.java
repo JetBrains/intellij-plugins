@@ -40,7 +40,7 @@ public class PlatformioBaseConfiguration extends CMakeAppRunConfiguration implem
   private CPPToolchains.Toolchain myToolchain;
 
   public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName, @NotNull String name, @Nullable String[] cliParameters) {
+                                     @NotNull String myBuildTargetName, @NotNull String name, String @Nullable [] cliParameters) {
     super(project, configurationFactory, name);
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;
