@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.execution.runners.ExecutionUtil;
@@ -41,7 +41,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
    * Use {code {@link #getToolwindowId()}} instead
    */
   @Deprecated
-  public static final String TOOLWINDOW_ID = "Dart Analysis";
+  public static final String TOOLWINDOW_ID = getToolwindowId();
 
   private static final NotificationGroup NOTIFICATION_GROUP =
     NotificationGroup.toolWindowGroup(getToolwindowId(), getToolwindowId(), false);

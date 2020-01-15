@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -51,7 +51,7 @@ public class DartAnalysisToolWindowFactory implements ToolWindowFactory, DumbAwa
 
     @Override
     public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-      ToolWindow toolWindow = toolWindowManager.getToolWindow(DartProblemsView.TOOLWINDOW_ID);
+      ToolWindow toolWindow = toolWindowManager.getToolWindow(DartProblemsView.getToolwindowId());
       if (toolWindow != null) {
         PropertiesComponent.getInstance(myProject).setValue(TOOL_WINDOW_VISIBLE_PROPERTY, toolWindow.isVisible(), true);
       }
