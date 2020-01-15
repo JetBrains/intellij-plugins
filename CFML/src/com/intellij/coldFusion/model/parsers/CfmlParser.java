@@ -222,7 +222,6 @@ public class CfmlParser implements PsiParser {
         */
         if (builder.getTokenType() != ASSIGN) {
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
-          builder.error(CfmlBundle.message("cfml.parsing.no.value"));
           continue;
         }
         builder.advanceLexer();
