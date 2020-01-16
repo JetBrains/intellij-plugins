@@ -13,6 +13,7 @@ import com.intellij.javascript.nodejs.PackageJsonData
 import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
+import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -108,6 +109,24 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     .expireAfterAccess(30, TimeUnit.MINUTES)
     .build(CacheLoader.from(this::buildPackageWebTypes))
 
+  private val bundledWebTypes: Map<String, SortedMap<SemVer, String>> by lazy {
+    val result: MutableMap<String, SortedMap<SemVer, String>> = mutableMapOf()
+    JSLanguageServiceUtil.getPluginDirectory(VueWebTypesRegistry::class.java, "web-types")
+      ?.listFiles { _, name -> name.endsWith(".json") }
+      ?.asSequence()
+      ?.filter { it.name.contains('@') }
+      ?.forEach { file ->
+        val packageName = file.name.takeWhile { it != '@' }
+        val versionStr = file.name.substringAfter('@')
+                           .removeSuffix(".web-types.json") + "-1"
+        SemVer.parseFromText(versionStr)
+          ?.let { version ->
+            result.computeIfAbsent(packageName) { TreeMap() }[version] = file.toURI().toString()
+          }
+      }
+    result
+  }
+
   override fun getState(): Element {
     synchronized(myState) {
       return myState.toElement()
@@ -131,56 +150,65 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
                                 packageJson: PackageJsonData,
                                 owner: VuePlugin): Result<VuePlugin>? {
     return processState { state, tracker ->
-      val webTypesPackageName = (packageJson.name ?: return@processState null)
-        .replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
-      val versions = state.availableVersions["@web-types/$webTypesPackageName"]
-      if (versions == null || versions.isEmpty()) return@processState null
-
-      val pkgVersion = packageJson.version
-
-      var webTypesVersionEntry = versions.entries.find {
-        pkgVersion == null || it.key <= pkgVersion
-      } ?: return@processState null
-
-      if (webTypesVersionEntry.key.preRelease?.contains(LETTERS_PATTERN) == true) {
-        // `2.0.0-beta.1` version is higher than `2.0.0-1`, so we need to manually find if there
-        // is a non-alpha/beta/rc version available in such a case.
-        versions.entries.find {
-          it.key.major == webTypesVersionEntry.key.major
-          && it.key.minor == webTypesVersionEntry.key.minor
-          && it.key.patch == webTypesVersionEntry.key.patch
-          && it.key.preRelease?.contains(NON_LETTERS_PATTERN) == true
-        }
-          ?.let { webTypesVersionEntry = it }
-      }
-
-      return@processState loadPackageWebTypes(webTypesVersionEntry.value)
+      val webTypesPackageName = normalizePackageName(packageJson)
+      val url = getWebTypesUrl(state.availableVersions["@web-types/$webTypesPackageName"], packageJson.version)
+                  ?.let { loadPackageWebTypes(it) }
+                ?: getWebTypesUrl(bundledWebTypes[webTypesPackageName], packageJson.version)
+                  ?.let { loadPackageWebTypes(it) }
+      return@processState url
         ?.let { VueWebTypesPlugin(project, packageJsonFile, it, owner) }
         ?.let { Result.create(it, tracker, packageJsonFile) }
     }
   }
 
-  private fun loadPackageWebTypes(tarballUrl: String): WebTypes? {
+  private fun normalizePackageName(packageJson: PackageJsonData): String? {
+    return packageJson.name?.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+  }
+
+  private fun getWebTypesUrl(versions: SortedMap<SemVer, String>?,
+                             pkgVersion: SemVer?): String? {
+    if (versions == null || versions.isEmpty()) {
+      return null
+    }
+    var webTypesVersionEntry = versions.entries.find {
+      pkgVersion == null || it.key <= pkgVersion
+    } ?: return null
+
+    if (webTypesVersionEntry.key.preRelease?.contains(LETTERS_PATTERN) == true) {
+      // `2.0.0-beta.1` version is higher than `2.0.0-1`, so we need to manually find if there
+      // is a non-alpha/beta/rc version available in such a case.
+      versions.entries.find {
+        it.key.major == webTypesVersionEntry.key.major
+        && it.key.minor == webTypesVersionEntry.key.minor
+        && it.key.patch == webTypesVersionEntry.key.patch
+        && it.key.preRelease?.contains(NON_LETTERS_PATTERN) == true
+      }
+        ?.let { webTypesVersionEntry = it }
+    }
+    return webTypesVersionEntry.value
+  }
+
+  private fun loadPackageWebTypes(fileUrl: String): WebTypes? {
     synchronized(myPluginLoadMap) {
-      myPluginCache.getIfPresent(tarballUrl)?.let { return it }
-      myPluginLoadMap.computeIfAbsent(tarballUrl) {
+      myPluginCache.getIfPresent(fileUrl)?.let { return it }
+      myPluginLoadMap.computeIfAbsent(fileUrl) {
         FutureResultProvider(Callable {
-          myPluginCache.get(tarballUrl)
+          myPluginCache.get(fileUrl)
         })
       }
     }.result
       ?.let {
         synchronized(myPluginLoadMap) {
-          myPluginLoadMap.remove(tarballUrl)
+          myPluginLoadMap.remove(fileUrl)
         }
         return it
       }
     ?: return null
   }
 
-  private fun buildPackageWebTypes(tarballUrl: String?): WebTypes? {
-    tarballUrl ?: return null
-    val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(tarballUrl), WebTypes::class.java)
+  private fun buildPackageWebTypes(fileUrl: String?): WebTypes? {
+    fileUrl ?: return null
+    val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(fileUrl), WebTypes::class.java)
     incStateVersion()
     return webTypesJson
   }

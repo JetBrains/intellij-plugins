@@ -1,0 +1,228 @@
+{
+  "$schema": "../../schema/web-types.json",
+  "framework": "vue",
+  "name": "vue",
+  "version": "1.0.0",
+  "contributions": {
+    "html": {
+      "types-syntax": "typescript",
+      "description-markup": "markdown",
+      "tags": [
+        {
+          "name": "Component",
+          "doc-url": "https://v1.vuejs.org/api/#component",
+          "description": "Alternative syntax for invoking components. Primarily used for dynamic components with the `is` attribute.",
+          "attributes": [
+            {
+              "name": "is"
+            },
+            {
+              "name": "keep-alive",
+              "value": {
+                "kind": "expression",
+                "type": "boolean"
+              },
+              "type": "boolean"
+            },
+            {
+              "name": "transition-mode"
+            }
+          ]
+        },
+        {
+          "name": "Slot",
+          "doc-url": "https://v1.vuejs.org/api/#slot",
+          "description": "`<slot>` elements serve as content distribution outlets in component templates. The slot element itself will be replaced.\nA slot with the `name` attribute is called a named slot. A named slot will distribute content with a `slot` attribute that matches its name.",
+          "attributes": [
+            {
+              "name": "name",
+              "value": {
+                "kind": "expression",
+                "type": "string"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Partial",
+          "doc-url": "https://v1.vuejs.org/api/#partial",
+          "description": "`<partial>` elements serve as outlets for registered template partials. Partial contents are also compiled by Vue when inserted. The `<partial>` element itself will be replaced. It requires a `name` attribute which will be used to resolve the partial’s content.",
+          "attributes": [
+            {
+              "name": "name",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "attributes": [
+        {
+          "name": "v-text",
+          "description": "Updates the element’s `textContent`.\n\nInternally, `{{ Mustache }}` interpolations are also compiled as a `v-text` directive on a textNode. The directive form requires a wrapper element, but offers slightly better performance and avoids FOUC (Flash of Uncompiled Content).",
+          "doc-url": "https://v1.vuejs.org/api/#v-text",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-html",
+          "description": "Updates the element’s `innerHTML`. The contents are inserted as plain HTML - data bindings are ignored. If you need to reuse template pieces, you should use partials.\n\nInternally, `{{{ Mustache }}}` interpolations are also compiled as a `v-html` directive using anchor nodes. The directive form requires a wrapper element, but offers slightly better performance and avoids FOUC (Flash of Uncompiled Content).",
+          "doc-url": "https://v1.vuejs.org/api/#v-html",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-if",
+          "description": "Conditionally render the element based on the truthy-ness of the expression value. The element and its contained data bindings / components are destroyed and re-constructed during toggles. If the element is a `<template>` element, its content will be extracted as the conditional block.",
+          "doc-url": "https://v1.vuejs.org/api/#v-if",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-show",
+          "description": "Toggle’s the element’s `display` CSS property based on the truthy-ness of the expression value. Triggers transitions if present.",
+          "doc-url": "https://v1.vuejs.org/api/#v-show",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-else",
+          "description": "Denote the “else block” for `v-if` and `v-show`.",
+          "doc-url": "https://v1.vuejs.org/api/#v-else",
+          "value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "v-for",
+          "description": "Render the element or template block multiple times based on the source data. The directive’s value must use the special syntax `alias (in|of)` expression to provide an alias for the current element being iterated on.",
+          "doc-url": "https://v1.vuejs.org/api/#v-for",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-on",
+          "description": "Attaches an event listener to the element. The event type is denoted by the argument. The expression can either be a method name or an inline statement, or simply omitted when there are modifiers present.\n\nWhen used on a normal element, it listens to **native DOM events** only. When used on a custom element component, it also listens to **custom events** emitted on that child component.\n\nWhen listening to native DOM events, the method receives the native event as the only argument. If using inline statement, the statement has access to the special `$event` property: `v-on:click=\"handle('ok', $event)\"`.\n\n**1.0.11+** When listening the custom events, inline statements have access to the special `$arguments` property, which is an array of the additional arguments passed to the child components’ `$emit` call.",
+          "doc-url": "https://v1.vuejs.org/api/#v-on",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          },
+          "vue-argument": {
+            "description": "Event name",
+            "pattern": ".*",
+            "required": true
+          },
+          "vue-modifiers": [
+            {
+              "name": "stop",
+              "description": "Call `event.stopPropagation()`."
+            },
+            {
+              "name": "prevent",
+              "description": "Call `event.preventDefault()`."
+            },
+            {
+              "name": "capture",
+              "description": "Add event listener in capture mode."
+            },
+            {
+              "name": "self",
+              "description": "Only trigger handler if event was dispatched from this element."
+            },
+            {
+              "name": "{keyCode | keyAlias}",
+              "pattern": ".*",
+              "description": "Only trigger handler on certain keys."
+            }
+          ]
+        },
+        {
+          "name": "v-bind",
+          "description": "Dynamically bind one or more attributes, or a component prop to an expression.\n\nWhen used to bind the `class` or `style` attribute, it supports additional value types such as Array or Objects. See linked guide section below for more details.\n\nWhen used for prop binding, the prop must be properly declared in the child component. Prop bindings can specify a different binding type using one of the modifiers.\n\nWhen used without an argument, can be used to bind an object containing attribute name-value pairs. Note in this mode `class` and `style` does not support Array or Objects.",
+          "doc-url": "https://v1.vuejs.org/api/#v-bind",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          },
+          "vue-argument": {
+            "description": "Attribute or property name",
+            "pattern": ".*"
+          },
+          "vue-modifiers": [
+            {
+              "name": "sync",
+              "description": "Make the binding two-way. Only respected for prop bindings."
+            },
+            {
+              "name": "once",
+              "description": "Make the binding one-time. Only respected for prop bindings."
+            },
+            {
+              "name": "camel",
+              "description": "Convert the attribute name to camelCase when setting it. Only respected for normal attributes. Used for binding camelCase SVG attributes."
+            }
+          ]
+        },
+        {
+          "name": "v-model",
+          "description": "Create a two-way binding on a form input element. For detailed usage, see guide section linked below.",
+          "doc-url": "https://v1.vuejs.org/api/#v-model",
+          "value": {
+            "kind": "expression",
+            "type": "any"
+          }
+        },
+        {
+          "name": "v-ref",
+          "description": "Register a reference to a child component on its parent for direct access. Does not expect an expression. Must provide an argument as the id to register with. The component instance will be accessible on its parent’s `$refs` object.\n\nWhen used on a component together with `v-for`, the registered value will be an Array containing all the child component instances corresponding to the Array they are bound to. If the data source for `v-for` is an Object, the registered value will be an Object containing key-instance pairs mirroring the source Object.",
+          "doc-url": "https://v1.vuejs.org/api/#v-ref",
+          "value": {
+            "kind": "no-value"
+          },
+          "vue-argument": {
+            "description": "id of the Reference",
+            "pattern": ".*"
+          }
+        },
+        {
+          "name": "v-el",
+          "description": "Register a reference to a DOM element on its owner Vue instance’s `$els` object for easier access.",
+          "doc-url": "https://v1.vuejs.org/api/#v-el",
+          "value": {
+            "kind": "no-value"
+          },
+          "vue-argument": {
+            "description": "id of the Reference",
+            "pattern": ".*"
+          }
+        },
+        {
+          "name": "v-pre",
+          "description": "Skip compilation for this element and all its children. You can use this for displaying raw mustache tags. Skipping large numbers of nodes with no directives on them can also speed up compilation.",
+          "doc-url": "https://v1.vuejs.org/api/#v-pre",
+          "value": {
+            "kind": "no-value"
+          }
+        },
+        {
+          "name": "v-cloak",
+          "description": "This directive will remain on the element until the associated Vue instance finishes compilation. Combined with CSS rules such as `[v-cloak] { display: none }`, this directive can be used to hide un-compiled mustache bindings until the Vue instance is ready.",
+          "doc-url": "https://v1.vuejs.org/api/#v-cloak",
+          "value": {
+            "kind": "no-value"
+          }
+        }
+      ]
+    }
+  }
+}
