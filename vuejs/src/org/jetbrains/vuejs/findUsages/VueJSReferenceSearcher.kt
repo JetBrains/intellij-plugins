@@ -2,16 +2,28 @@
 package org.jetbrains.vuejs.findUsages
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.psi.JSField
+import com.intellij.lang.javascript.psi.JSFunction
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
+import com.intellij.lang.javascript.psi.util.JSUtils
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.QuerySearchRequest
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.refactoring.VueRefactoringUtils
 
 class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
@@ -33,6 +45,25 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
       for (name in names) {
         queryParameters.optimizer.searchWord(name, queryParameters.effectiveSearchScope, false,
                                              component)
+      }
+    }
+
+    if (element is JSQualifiedNamedElement
+        && element.accessType === JSAttributeList.AccessType.PRIVATE
+        && (element is JSField
+            || element is JSFunction
+            || (element is JSParameter && PsiTreeUtil.getContextOfType(element, JSFunction::class.java)?.isConstructor == true))) {
+      val name = element.name
+      if (name != null && isVueContext(element)) {
+        JSUtils.getMemberContainingClass(element)
+          ?.let { VueModelManager.getComponent(it) }
+          ?.castSafelyTo<VueRegularComponent>()
+          ?.template
+          ?.source
+          ?.let {
+            val searchScope = LocalSearchScope(arrayOf(it), "template", false)
+            queryParameters.optimizer.searchWord(name, searchScope, true, element)
+          }
       }
     }
   }
