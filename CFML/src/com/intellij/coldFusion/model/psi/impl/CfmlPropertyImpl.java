@@ -16,9 +16,7 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
-import com.intellij.coldFusion.model.psi.CfmlComponent;
-import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
-import com.intellij.coldFusion.model.psi.CfmlProperty;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
@@ -26,6 +24,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 /**
  * @author vnikolaenko
@@ -71,26 +71,56 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
     throw new IncorrectOperationException();
   }
 
+  private boolean checkAccessorAttribute(String accessorName) {
+    CfmlAttributeImpl attributeValue = getNamedAttribute(accessorName);
+    if (attributeValue != null) {
+      if ("true".equalsIgnoreCase(attributeValue.getPureAttributeValue())) {
+        return true;
+      }
+      return false;
+    }
+
+    CfmlComponent component = getComponent();
+    return component != null && component.hasImplicitAccessors();
+  }
+
   @Override
   public boolean hasGetter() {
-    return false;
+    return checkAccessorAttribute("getter");
   }
 
   @Override
   public boolean hasSetter() {
-    return false;
+    return checkAccessorAttribute("setter");
+  }
+
+  private CfmlAttributeImpl getNamedAttribute(String attributeName) {
+    Collection<CfmlAttributeImpl> namedAttribute = PsiTreeUtil.findChildrenOfType(this, CfmlAttributeImpl.class);
+    for (CfmlAttributeImpl attribute : namedAttribute) {
+      if (attributeName.equals(attribute.getName())) {
+        return attribute;
+      }
+    }
+    return null;
+  }
+  public CfmlAttributeImpl getTypeIdentifier() {
+    return getNamedAttribute("type");
   }
 
   @Override
   public String getType() {
-    // todo: figure out how to get the type
-    return null;
+    CfmlAttributeImpl identifier = getTypeIdentifier();
+    return identifier != null ? identifier.getPureAttributeValue() : null;
   }
 
+  public CfmlAttributeImpl getDefaultIdentifier() {
+    return getNamedAttribute("default");
+  }
+  
   @Override
   public String getDefault() {
-    // todo: figure out how to get the default
-    return null;
+    CfmlAttributeImpl identifier = getDefaultIdentifier();
+    return identifier != null ? identifier.getPureAttributeValue() : null;
   }
 
   @Override
@@ -100,7 +130,9 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
 
   @Override
   public PsiType getPsiType() {
-    return null;
+    final String returnTypeString = this.getType();
+    return returnTypeString != null ?
+           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull
