@@ -87,7 +87,7 @@ class CfmlSqlInjectionCompletionDatasourceTest : BasePlatformTestCase() {
                                count: Int,
                                contains: Boolean,
                                vararg variants: String) {
-    val dialect = SqlDialects.findDialectById("SQL92")
+    val dialect = SqlDialects.findDialectById("SQLite")
     SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
     val file = myFixture.file
     println(javaClass.simpleName + "." + getTestName(true) + ": " + dialect.getID())
