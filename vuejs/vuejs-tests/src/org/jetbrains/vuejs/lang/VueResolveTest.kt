@@ -1338,7 +1338,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveGlobalCustomDirective() {
-    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     val attribute = myFixture.findElementByText("v-focus", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
@@ -1354,7 +1354,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveLocalCustomDirective() {
-    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
 
     arrayOf(Trinity("v-local-directive", "localDirective", "CustomDirectives.vue"),
@@ -1370,7 +1370,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveLocalCustomDirectiveLinkedFiles() {
-    myFixture.copyDirectoryToProject("../completion/customDirectivesLinkedFiles", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
     createPackageJsonWithVueDependency(myFixture, "")
     myFixture.configureFromTempProjectFile("CustomDirectives.html")
 

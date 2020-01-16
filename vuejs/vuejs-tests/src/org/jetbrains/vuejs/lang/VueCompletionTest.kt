@@ -610,7 +610,7 @@ export default {
   }
 
   fun testCustomDirectivesInCompletion() {
-    myFixture.copyDirectoryToProject("customDirectives", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)
     TestCase.assertNotNull(attribute)
@@ -621,7 +621,7 @@ export default {
   }
 
   fun testCustomDirectivesLinkedFilesInCompletion() {
-    myFixture.copyDirectoryToProject("customDirectivesLinkedFiles", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectivesLinkedFiles", ".")
     createPackageJsonWithVueDependency(myFixture)
     myFixture.configureFromTempProjectFile("CustomDirectives.html")
     val attribute = myFixture.findElementByText("style", XmlAttribute::class.java)

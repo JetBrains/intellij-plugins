@@ -726,7 +726,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testCustomDirectives() {
-    myFixture.copyDirectoryToProject("../completion/customDirectives", ".")
+    myFixture.copyDirectoryToProject("../common/customDirectives", ".")
     myFixture.configureFromTempProjectFile("CustomDirectives.vue")
     myFixture.checkHighlighting(true, false, true)
   }
@@ -1496,6 +1496,14 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
       |</style  >""".trimMargin())
     myFixture.checkHighlighting()
   }
+
+  fun testPrivateMembersHighlighting() {
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java,
+                                JSUnusedLocalSymbolsInspection::class.java)
+    myFixture.configureByFile("privateFields.vue")
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
