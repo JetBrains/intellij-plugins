@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
   VueTypedHandlerTest.class,
   VueAttributeNameParserTest.class,
   VueResolveTest.class,
+  VueFindUsagesTest.class,
   VueRenameTest.class,
   VueParameterInfoTest.class,
   VueOptimizeImportTest.class,
