@@ -97,7 +97,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
 
     private fun getType(type: String): JSType? {
       // TODO support other types here
-      if (type == "boolean") {
+      if (type == "boolean" || type == "Boolean") {
         return BOOLEAN_TYPE
       }
       return null
