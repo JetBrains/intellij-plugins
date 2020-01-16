@@ -1,19 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.IElementType
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 
-abstract class SingleLineCommentLesson(module: Module, lang: String) :
+class SingleLineCommentLesson(module: Module, lang: String, private val sample: LessonSample) :
   KLesson("Comment Line", module, lang) {
-
-  abstract val commentElementType: IElementType
-  abstract val sample: LessonSample
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
@@ -39,7 +36,7 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
 
   private fun calculateComments(psiElement: PsiElement): Int {
     return when {
-      psiElement.node.elementType === commentElementType -> 1
+      psiElement is PsiComment -> 1
       psiElement.children.isEmpty() -> 0
       else -> {
         var result = 0
