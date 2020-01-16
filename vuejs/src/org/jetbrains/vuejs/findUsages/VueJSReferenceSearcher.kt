@@ -6,8 +6,10 @@ import com.intellij.lang.javascript.psi.JSField
 import com.intellij.lang.javascript.psi.JSFunction
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement
 import com.intellij.lang.javascript.psi.util.JSUtils
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
@@ -15,7 +17,6 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.QuerySearchRequest
 import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
 import com.intellij.util.castSafelyTo
@@ -51,8 +52,8 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
     if (element is JSQualifiedNamedElement
         && element.accessType === JSAttributeList.AccessType.PRIVATE
         && (element is JSField
-            || element is JSFunction
-            || (element is JSParameter && PsiTreeUtil.getContextOfType(element, JSFunction::class.java)?.isConstructor == true))) {
+            || (element is JSFunction && element.context is JSClass)
+            || (element is JSParameter && TypeScriptPsiUtil.isFieldParameter(element)))) {
       val name = element.name
       if (name != null && isVueContext(element)) {
         JSUtils.getMemberContainingClass(element)

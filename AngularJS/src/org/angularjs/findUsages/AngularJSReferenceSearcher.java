@@ -13,15 +13,16 @@
 // limitations under the License.
 package org.angularjs.findUsages;
 
-import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.typescript.psi.TypeScriptPsiUtil;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,8 +37,6 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AngularJSReferenceSearcher() {
@@ -66,11 +65,9 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
       }
     }
     else if (element instanceof TypeScriptField
-             || element instanceof TypeScriptFunction
+             || (element instanceof TypeScriptFunction && element.getContext() instanceof JSClass)
              || (element instanceof JSParameter
-                 && Optional.ofNullable(PsiTreeUtil.getContextOfType(element, TypeScriptFunction.class))
-                   .map(JSFunction::isConstructor)
-                   .orElse(false))) {
+                 && TypeScriptPsiUtil.isFieldParameter((JSParameter)element))) {
       String name = ((JSAttributeListOwner)element).getName();
       if (name != null && ((JSQualifiedNamedElement)element).getAccessType() == JSAttributeList.AccessType.PRIVATE) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(PsiTreeUtil.getContextOfType(element, TypeScriptClass.class));
