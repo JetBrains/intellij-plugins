@@ -84,10 +84,6 @@ fun createAnAction(icon: Icon, action: (AnActionEvent) -> Unit): AnAction {
 
 fun clearTrainingProgress() {
   LessonStateManager.resetPassedStatus()
-  LangManager.getInstance().supportedLanguagesExtensions
-    .flatMap { CourseManager.instance.getModulesByLanguage(it.instance) }
-    .flatMap { module -> module.lessons }
-    .forEach { lesson -> lesson.passed = false }
   UiManager.setLanguageChooserView()
 }
 

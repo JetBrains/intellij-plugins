@@ -207,11 +207,6 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       action = object : AbstractAction() {
         override fun actionPerformed(actionEvent: ActionEvent) {
           LessonStateManager.resetPassedStatus()
-          modules.forEach { module ->
-            module.lessons.forEach { lesson ->
-              lesson.passed = false
-            }
-          }
           val project = guessCurrentProject(modulesPanel)
           val firstLesson = modules.first().lessons.first()
           CourseManager.instance.openLesson(project, firstLesson)

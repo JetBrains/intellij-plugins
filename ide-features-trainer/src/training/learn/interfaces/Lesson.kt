@@ -2,6 +2,7 @@
 package training.learn.interfaces
 
 import training.learn.lesson.LessonListener
+import training.learn.lesson.LessonState
 import training.learn.lesson.LessonStateManager
 import training.util.findLanguageByID
 
@@ -20,7 +21,8 @@ interface Lesson {
   val classLoader: ClassLoader
     get() = module.classLoader
 
-  var passed: Boolean
+  val passed: Boolean
+    get() = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
 
   var isOpen: Boolean
 
@@ -49,7 +51,6 @@ interface Lesson {
   }
 
   fun pass() {
-    passed = true
     LessonStateManager.setPassed(this)
     onPass()
   }

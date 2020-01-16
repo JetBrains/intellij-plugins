@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException
 data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module) : Lesson {
 
   override val lessonListeners: MutableList<LessonListener> = mutableListOf()
-  override var passed: Boolean = false
   override var isOpen: Boolean = false
   override val name: String = scenario.name
   override val id: String = scenario.id
@@ -26,10 +25,6 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
 
   /*Log lesson metrics*/
   private val lessonLog: LessonLog = LessonLog(this)
-
-  init {
-    passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
-  }
 
   @Throws(NoProjectException::class, BadLessonException::class, ExecutionException::class, LessonIsOpenedException::class,
           IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class)
