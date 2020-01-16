@@ -11,11 +11,12 @@ import training.learn.exceptons.NoSdkException
  * @author Sergey Karashevich
  */
 interface LangSupport {
-
   val primaryLanguage: String
   val defaultProjectName: String
   val filename: String
     get() = "Learning"
+  val langCourseFeedback: String?
+    get() = null
 
   companion object {
     const val EP_NAME = "training.TrainingLangExtension"

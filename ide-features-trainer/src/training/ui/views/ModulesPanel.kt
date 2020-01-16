@@ -2,6 +2,7 @@
 package training.ui.views
 
 import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.ActionToolbar.NAVBAR_MINIMUM_BUTTON_SIZE
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.impl.ActionButton
@@ -9,6 +10,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
@@ -17,6 +19,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
 import training.commands.kotlin.TaskContext
+import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
@@ -105,16 +108,34 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       val moduleName = createModuleNameLinkLabel(module)
       val moduleHeader = createModuleHeader(module, moduleName, JBColor.BLACK).apply { border = UISettings.instance.checkmarkShiftBorder }
 
-      val descriptionPane = createDescriptionPane(module)
-      descriptionPane.border = UISettings.instance.checkmarkShiftBorder
-      descriptionPane.addMouseListener(delegateToLinkLabel(descriptionPane, moduleName))
+      val feedbackPane = createDescriptionPane(module)
+      feedbackPane.border = UISettings.instance.checkmarkShiftBorder
+      feedbackPane.addMouseListener(delegateToLinkLabel(feedbackPane, moduleName))
 
       modulesPanel.add(moduleHeader)
       modulesPanel.add(Box.createVerticalStrut(UISettings.instance.headerGap))
-      modulesPanel.add(descriptionPane)
+      modulesPanel.add(feedbackPane)
       modulesPanel.add(Box.createVerticalStrut(UISettings.instance.moduleGap))
     }
+    val feedback = LangManager.getInstance().getLangSupport()?.langCourseFeedback
+    if (feedback != null) {
+      createFeedbackPanel(feedback)
+    }
     modulesPanel.add(Box.createVerticalGlue())
+  }
+
+  private fun createFeedbackPanel(description: String) {
+    modulesPanel.add(Box.createVerticalStrut(UISettings.instance.descriptionGap))
+    val descriptionPane = createDescriptionPane("")
+    descriptionPane.border = UISettings.instance.checkmarkShiftBorder
+    val htmlEditorKit = UIUtil.getHTMLEditorKit()
+    htmlEditorKit.styleSheet.addRule(
+      "p { font-face: \"${UISettings.instance.fontFace}\";color: #${ColorUtil.toHex(UISettings.instance.descriptionColor)};}")
+    htmlEditorKit.styleSheet.addRule("a { color: #${ColorUtil.toHex(JBUI.CurrentTheme.Link.linkPressedColor())};}")
+    descriptionPane.editorKit = htmlEditorKit
+    descriptionPane.addHyperlinkListener { e -> BrowserUtil.browse(e.url) }
+    descriptionPane.text = "<html><p>$description"
+    modulesPanel.add(descriptionPane)
   }
 
   private fun createModuleNameLinkLabel(module: Module): LinkLabel<*> {
@@ -328,14 +349,17 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
     }
 
     fun createDescriptionPane(module: Module): ModuleDescriptionPane {
+      return createDescriptionPane(module.description)
+    }
+
+    private fun createDescriptionPane(description: String?): ModuleDescriptionPane {
       val descriptionPane = ModuleDescriptionPane(UISettings.instance.width)
       descriptionPane.name = "descriptionPane"
       descriptionPane.isEditable = false
       descriptionPane.isOpaque = false
       descriptionPane.setParagraphAttributes(PARAGRAPH_STYLE, true)
       try {
-        val descriptionStr = module.description
-        descriptionPane.document.insertString(0, descriptionStr, REGULAR)
+        descriptionPane.document.insertString(0, description, REGULAR)
       }
       catch (e: BadLocationException) {
         LOG.warn(e)
