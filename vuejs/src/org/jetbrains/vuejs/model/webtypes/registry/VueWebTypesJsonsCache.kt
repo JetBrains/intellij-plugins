@@ -9,17 +9,21 @@ import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import java.io.*
+import java.net.URI
 
 class VueWebTypesJsonsCache {
 
   companion object {
 
-    fun getWebTypesJson(tarball: String): InputStream {
+    fun getWebTypesJson(url: String): InputStream {
+      if (url.endsWith("json") && url.startsWith("file:")) {
+        return FileInputStream(File(URI(url)))
+      }
       val downloadedJson = File(PathManager.getSystemPath(),
-                                "web-types/" + File(tarball).nameWithoutExtension + ".web-types.json")
+                                "web-types/" + File(url).nameWithoutExtension + ".web-types.json")
       if (!downloadedJson.exists()) {
         downloadedJson.parentFile.mkdirs()
-        val content = downloadWebTypesJson(tarball)
+        val content = downloadWebTypesJson(url)
         val mapper = ObjectMapper()
         val webTypesJson = mapper.readTree(content)
         mapper.writer().writeValue(downloadedJson, webTypesJson)
