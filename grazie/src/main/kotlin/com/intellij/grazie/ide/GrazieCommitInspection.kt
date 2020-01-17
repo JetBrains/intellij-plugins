@@ -20,12 +20,16 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
 
     override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
       if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
-      ProjectManager.getInstance().openProjects.forEach(this::runActivity)
+      ProjectManager.getInstance().openProjects.forEach { project ->
+        updateInspectionState(project, newState)
+      }
     }
 
-    override fun runActivity(project: Project) {
+    override fun runActivity(project: Project) = updateInspectionState(project)
+
+    private fun updateInspectionState(project: Project, state: GrazieConfig.State = GrazieConfig.get()) {
       with(CommitMessageInspectionProfile.getInstance(project)) {
-        if (GrazieConfig.get().enabledCommitIntegration) {
+        if (state.enabledCommitIntegration) {
           addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), emptyMap())
           setToolEnabled("GrazieCommit", true, project)
         } else {
