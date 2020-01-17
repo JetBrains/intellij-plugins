@@ -8,9 +8,6 @@ import com.intellij.packaging.ui.PackagingSourceItem;
 import com.intellij.packaging.ui.PackagingSourceItemFilter;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author nik
- */
 public class FlashPackagingSourceItemFilter extends PackagingSourceItemFilter {
   @Override
   public boolean isAvailable(@NotNull PackagingSourceItem item, @NotNull ArtifactEditorContext context) {

@@ -36,9 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * @author nik
- */
 public class FlexStackFrame extends XStackFrame {
   private static final String ANONYMOUS = "<anonymous>";
 

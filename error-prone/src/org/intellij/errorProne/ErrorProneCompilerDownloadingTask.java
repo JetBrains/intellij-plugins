@@ -16,9 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ErrorProneCompilerDownloadingTask implements CompileTask {
   private static final Logger LOG = Logger.getInstance(ErrorProneCompilerDownloadingTask.class);
 

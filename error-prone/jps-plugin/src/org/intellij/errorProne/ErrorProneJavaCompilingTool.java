@@ -14,9 +14,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * @author nik
- */
 public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
   private static final Logger LOG = Logger.getInstance(ErrorProneJavaCompilingTool.class);
   public static final String COMPILER_ID = "error-prone";//duplicates ErrorProneJavaBackendCompiler.COMPILER_ID from IDE part
