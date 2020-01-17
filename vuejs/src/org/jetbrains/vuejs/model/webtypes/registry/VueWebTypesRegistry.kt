@@ -53,6 +53,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     private val NON_LETTERS_PATTERN = Regex("^[^a-zA-Z]+\$")
 
     const val PACKAGE_PREFIX = "@web-types"
+    const val WEB_TYPES_FILE_SUFFIX = ".web-types.json"
 
     internal val STATE_UPDATE_INTERVAL = TimeUnit.MINUTES.toNanos(10)
 
@@ -118,7 +119,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
       ?.forEach { file ->
         val packageName = file.name.takeWhile { it != '@' }
         val versionStr = file.name.substringAfter('@')
-                           .removeSuffix(".web-types.json") + "-1"
+                           .removeSuffix(WEB_TYPES_FILE_SUFFIX) + "-1"
         SemVer.parseFromText(versionStr)
           ?.let { version ->
             result.computeIfAbsent(packageName) { TreeMap() }[version] = file.toURI().toString()
