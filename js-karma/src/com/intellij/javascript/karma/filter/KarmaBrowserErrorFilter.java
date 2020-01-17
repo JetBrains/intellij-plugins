@@ -25,7 +25,7 @@ public class KarmaBrowserErrorFilter extends PatternBasedFileHyperlinkFilter {
     }
   );
 
-  public KarmaBrowserErrorFilter(@NotNull Project project, @NotNull KarmaConfig config) {
-    super(project, config.getBasePath(), FINDER);
+  public KarmaBrowserErrorFilter(@NotNull Project project, @NotNull String basePath) {
+    super(project, basePath, FINDER);
   }
 }

@@ -4,6 +4,7 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.*;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
@@ -87,6 +88,11 @@ public class KarmaExecutionSession {
       myProject, myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent())
     );
     KarmaConsoleView consoleView = new KarmaConsoleView(consoleProperties, myKarmaServer, myExecutionType, myProcessHandler);
+    for (Filter filter : consoleProperties.getStackTrackFilters()) {
+      if (!(filter instanceof NodeStackTraceFilter)) {
+        consoleView.addMessageFilter(filter);
+      }
+    }
     SMTestRunnerConnectionUtil.initConsoleView(consoleView, consoleProperties.getTestFrameworkName());
     return consoleView;
   }
