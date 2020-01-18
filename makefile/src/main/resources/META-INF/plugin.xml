@@ -9,12 +9,12 @@ Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-Regular maintenance, bugfix, and performance update.
+Scripts in recipes are now highlighted with a help from bundled Shell Support plugin.
+Improved parsing resolves many reported highlighting issues.
+Eliminated many deprecated IntelliJ API usages.
 ]]></change-notes>
 
   <idea-version since-build="192.0"/>
-
-  <depends>com.intellij.modules.lang</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNames="Makefile" fileNamesCaseInsensitive="GNUmakefile" patterns="Makefile.*"/>
