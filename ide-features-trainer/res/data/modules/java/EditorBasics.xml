@@ -6,5 +6,6 @@
   <lesson-kt sample="04.Duplicate.java.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="JAVA"/>
   <lesson-kt sample="05.Move.java.sample" implementationClass="training.learn.lesson.general.MoveLesson" lang="JAVA"/>
   <lesson-kt sample="06.Collapse.java.sample" implementationClass="training.learn.lesson.general.CollapseLesson" lang="JAVA"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.basic.JavaSurroundAndUnwrapLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.general.MultipleSelectionHtmlLesson"/>
 </module>

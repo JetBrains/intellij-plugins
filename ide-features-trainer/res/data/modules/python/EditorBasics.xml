@@ -6,5 +6,6 @@
   <lesson-kt sample="Duplicate.py.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="Python"/>
   <lesson-kt sample="Move.py.sample" implementationClass="training.learn.lesson.general.MoveLesson" lang="Python"/>
   <lesson-kt sample="Collapse.py.sample" implementationClass="training.learn.lesson.general.CollapseLesson" lang="Python"/>
+  <lesson-kt implementationClass="training.learn.lesson.python.basic.PythonSurroundAndUnwrapLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.general.MultipleSelectionHtmlLesson"/>
 </module>
