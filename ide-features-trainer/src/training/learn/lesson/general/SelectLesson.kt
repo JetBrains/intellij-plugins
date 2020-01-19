@@ -32,8 +32,5 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
       actionTask("EditorUnSelectWord") {
         "${action(it)} shrinks selection. Try pressing it."
       }
-      actionTask("\$SelectAll") {
-        "Now select the whole file instantly with ${action(it)}."
-      }
     }
 }
