@@ -16,6 +16,8 @@ Eliminated many deprecated IntelliJ API usages.
 
   <idea-version since-build="192.0"/>
 
+  <depends>com.intellij.modules.lang</depends>
+
   <extensions defaultExtensionNs="com.intellij">
     <fileType name="Makefile" language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileFileType" fieldName="INSTANCE" extensions="mk" fileNames="Makefile" fileNamesCaseInsensitive="GNUmakefile" patterns="Makefile.*"/>
     <lang.parserDefinition language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileParserDefinition"/>
