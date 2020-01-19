@@ -8,6 +8,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -413,8 +414,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
               "OS X targets are not yet supported.<br>" +
               "</html>");
 
-      myInjectCheckBox = new JBCheckBox("Inject Reveal library on launch");
-      myInstallCheckBox = new JBCheckBox("Upload Reveal library on the device if necessary");
+      myInjectCheckBox = new JBCheckBox(IdeBundle.message("checkbox.inject.reveal.library.on.launch"));
+      myInstallCheckBox = new JBCheckBox(IdeBundle.message("checkbox.upload.reveal.library.on.the.device.if.necessary"));
 
       myInjectHint = new JBLabel(UIUtil.ComponentStyle.SMALL);
       myInstallHint = new JBLabel(UIUtil.ComponentStyle.SMALL);

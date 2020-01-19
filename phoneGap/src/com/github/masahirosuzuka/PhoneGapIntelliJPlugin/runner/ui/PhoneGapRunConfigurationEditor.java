@@ -148,7 +148,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
     myEnvComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
     myEnvComponent.setPassParentEnvs(true);
 
-    myHasTarget = new JBCheckBox("Specify target");
+    myHasTarget = new JBCheckBox(PhoneGapBundle.message("checkbox.specify.target"));
     myTarget = new PhoneGapTargetsPanel();
     myExtraArgsTextField = new JBTextField(15);
     myCommand.setMinimumAndPreferredWidth(200);
