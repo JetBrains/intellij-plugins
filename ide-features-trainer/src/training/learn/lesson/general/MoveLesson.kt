@@ -32,6 +32,9 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
         })
         test { actions("EditorUp", it) }
       }
+      actionTask("MoveStatementDown") {
+        "And move it down with ${action(it)}."
+      }
     }
 }
 
