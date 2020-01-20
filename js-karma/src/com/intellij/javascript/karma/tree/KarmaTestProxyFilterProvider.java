@@ -26,7 +26,7 @@ public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
   @Override
   public Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
     if ("browser".equals(nodeType)) {
-      String baseDir = getBasePath();
+      String baseDir = myKarmaServer == null ? null : myKarmaServer.getServerSettings().getWorkingDirectorySystemDependent();
       AbstractFileHyperlinkFilter browserFilter = BrowserStacktraceFilters.createFilter(nodeName, myProject, baseDir);
       if (browserFilter != null) {
         return new KarmaSourceMapStacktraceFilter(myProject, baseDir, browserFilter);
