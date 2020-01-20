@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.*
 import javax.swing.border.EmptyBorder
+import javax.swing.event.HyperlinkEvent
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
@@ -133,7 +134,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       "p { font-face: \"${UISettings.instance.fontFace}\";color: #${ColorUtil.toHex(UISettings.instance.descriptionColor)};}")
     htmlEditorKit.styleSheet.addRule("a { color: #${ColorUtil.toHex(JBUI.CurrentTheme.Link.linkPressedColor())};}")
     descriptionPane.editorKit = htmlEditorKit
-    descriptionPane.addHyperlinkListener { e -> BrowserUtil.browse(e.url) }
+    descriptionPane.addHyperlinkListener { e -> if (e.eventType == HyperlinkEvent.EventType.ACTIVATED) BrowserUtil.browse (e.url) }
     descriptionPane.text = "<html><p>$description"
     modulesPanel.add(descriptionPane)
   }
