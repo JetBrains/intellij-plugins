@@ -97,7 +97,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
 
         task {
           text("""
-            Now that we have the right value for the expected result, we can rerun our test. Let’s do it in a different way this time. See the <strong>Shield</strong> <icon>AllIcons.RunConfigurations.TestState.Red2</icon> on the left of the test in the editor? This icon not only shows you the test status for the tests you’ve run recently, but also lets you quickly run and debug a specific test.
+            Now that we have the right value for the expected result, we can rerun our test. Let’s do it in a different way this time. See the <icon>AllIcons.RunConfigurations.TestState.Red2</icon> icon on the left of the test in the editor? This icon not only shows you the test status for the tests you’ve run recently, but also lets you quickly run and debug a specific test.
             Let’s click it and select <strong>Run adds 1 + 2 to equal 3</strong>.
           """.trimIndent())
           stateCheck {
@@ -108,7 +108,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
         task("Coverage") {
           text("""
             Great job! Our test has successfully passed. 
-            Let’s take a look at another handy tool. Click the <icon>AllIcons.General.RunWithCoverage</icon> located next to the run/debug configurations menu.
+            Let’s take a look at another handy tool. Click the <icon>AllIcons.General.RunWithCoverage</icon> icon located next to the run/debug configurations menu.
           """.trimIndent())
           trigger(it)
         }
@@ -123,7 +123,7 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
         task("Escape") {
          text("""
            Congratulations! You’ve made it to the end of this module. Most of what we’ve learned also applies to the other test runners that WebStorm supports (except for code coverage and the watch mode). 
-           For mode tips and tricks about testing apps with Jest, please take a look at <a href="https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/">this</a> blog post. If you use other test runners, you may want to explore our <a href="https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html">web help</a>.
+           For more tips and tricks about testing apps with Jest, please take a look at <a href="https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/">this</a> blog post. If you use other test runners, you may want to explore our <a href="https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html">web help</a>.
          """.trimIndent())
           trigger(it)
         }
