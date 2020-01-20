@@ -23,14 +23,14 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
         import {Pet} from './pet';
         
         export class Dog extends Pet {
-          constructor(name, ownerName, breed) {
-            super(name, ownerName);
-            this.breed = breed;
-          }
+            constructor(name, ownerName, breed) {
+                super(name, ownerName);
+                this.breed = breed;
+            }
         
-          giveTreat(favoriteTreat) {
-            console.log(`$thisOwnerName gives $thisName $favoriteTreat`)
-          }
+            giveTreat(favoriteTreat) {
+                console.log(`$thisOwnerName gives $thisName $favoriteTreat`)
+            }
         }
         
         let snoopy = new Dog('Snoopy', 'Charlie', 'Beagle');
