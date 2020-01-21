@@ -40,6 +40,14 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
           ?.let { CachedValueProvider.Result.create(VueFileTemplate(it), clazz, it) }
         ?: CachedValueProvider.Result.create(null as VueFileTemplate?, clazz, VFS_STRUCTURE_MODIFICATIONS)
       }
+
+    override fun equals(other: Any?): Boolean {
+      return (other as? TemplateLoaderClassInfo)?.clazz == clazz
+    }
+
+    override fun hashCode(): Int {
+      return clazz.hashCode()
+    }
   }
 
   private class TemplateLoaderInitializerInfo(private val initializer: JSObjectLiteralExpression) : VueContainerInfo {
@@ -57,6 +65,14 @@ class TemplateLoaderComponentInfoProvider : VueContainerInfoProvider {
           ?.let { CachedValueProvider.Result.create(VueFileTemplate(it), initializer, it) }
         ?: CachedValueProvider.Result.create(null as VueFileTemplate?, initializer, VFS_STRUCTURE_MODIFICATIONS)
       }
+
+    override fun equals(other: Any?): Boolean {
+      return (other as? TemplateLoaderInitializerInfo)?.initializer == initializer
+    }
+
+    override fun hashCode(): Int {
+      return initializer.hashCode()
+    }
   }
 
   companion object {
