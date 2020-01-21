@@ -3,7 +3,7 @@
  */
 package training.lang
 
-import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchUtil
 import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -115,7 +115,7 @@ class RubyLangSupport : AbstractLangSupport() {
     private val fileListener = object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         val project = source.project
-        if (ScratchFileService.isInScratchRoot(file)) {
+        if (ScratchUtil.isScratch(file)) {
           return
         }
         if (file.path == project.basePath + VfsUtilCore.VFS_SEPARATOR_CHAR + sandboxFile) {
