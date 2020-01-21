@@ -14,7 +14,6 @@ import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
-import training.ui.Message
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
@@ -31,7 +30,8 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   fun text(@Language("HTML") text: String) {
     val wrappedText = "<root><text>$text</text></root>"
     val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-    LessonManager.instance.addMessages(Message.convert(textAsElement)) //support old format
+                        ?: throw IllegalStateException("Can't parse as XML:\n$text")
+    LessonManager.instance.addMessages(textAsElement)
   }
 
   /** Simply wait until an user perform particular action */

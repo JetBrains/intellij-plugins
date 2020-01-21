@@ -13,6 +13,7 @@ import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
+import org.jdom.Element
 import training.editor.MouseListenerHolder
 import training.editor.actions.BlockCaretAction
 import training.editor.actions.LearnActions
@@ -113,8 +114,8 @@ class LessonManager {
       UiManager.setButtonSkipActionOnLearnPanels(null, null, false)
   }
 
-  fun addMessages(messages: Array<Message>) {
-    UiManager.addMessagesToLearnPanels(messages)
+  fun addMessages(element: Element) {
+    UiManager.addMessagesToLearnPanels(Message.convert(element))
     UiManager.updateToolWindowScrollPane()
   }
 

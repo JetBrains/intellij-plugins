@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
-import training.ui.Message
 import java.util.concurrent.CompletableFuture
 import kotlin.concurrent.thread
 
@@ -23,7 +22,7 @@ class TryCommand : Command(CommandType.TRY) {
     var checkFuture: CompletableFuture<Boolean>? = null
     var triggerFuture: CompletableFuture<Boolean>? = null
 
-    LessonManager.instance.addMessages(Message.convert(element))
+    LessonManager.instance.addMessages(element)
 
     val recorder = ActionsRecorder(editor.project!!, editor.document)
     LessonManager.instance.registerActionsRecorder(recorder)
