@@ -229,17 +229,17 @@
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitSuiteWithNoRunnerInspection"/>
 
-    <localInspection language="ECMA Script Level 4" groupPath="JavaScript" shortName="JSUntypedDeclaration"
+    <localInspection language="ECMA Script Level 4" groupPath="JavaScript and TypeScript" shortName="JSUntypedDeclaration"
                      bundle="messages.FlexBundle"
                      key="js.untyped.declaration.inspection.name" groupKey="js.actionscript.specific.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.actionscript.JSUntypedDeclarationInspection"/>
 
-    <localInspection language="ECMA Script Level 4" groupPath="JavaScript" shortName="JSImplicitlyInternalDeclaration"
+    <localInspection language="ECMA Script Level 4" groupPath="JavaScript and TypeScript" shortName="JSImplicitlyInternalDeclaration"
                      bundle="messages.FlexBundle"
                      key="js.implicitly.internal.declaration.inspection.name" groupKey="js.actionscript.specific.group.name" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.inspections.actionscript.JSImplicitlyInternalDeclarationInspection"/>
-    <localInspection language="ECMA Script Level 4" groupPath="JavaScript" shortName="JSFieldCanBeLocal"  key="js.field.can.be.local.name"
+    <localInspection language="ECMA Script Level 4" groupPath="JavaScript and TypeScript" shortName="JSFieldCanBeLocal"  key="js.field.can.be.local.name"
                      bundle="messages.FlexBundle"
                      groupKey="js.actionscript.specific.group.name" enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.inspections.actionscript.JSFieldCanBeLocalInspection"/>
