@@ -118,11 +118,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
           ApplicationManager.getApplication().invokeLater {
             // So better to exit from all callbacks and then clear all related data
             Disposer.dispose(recorder)
-            currentRecorder = null
-            LessonManager.instance.passExercise()
-
-            processNextTask()
           }
+          currentRecorder = null
+          LessonManager.instance.passExercise()
+          processNextTask()
         }
       }
     }

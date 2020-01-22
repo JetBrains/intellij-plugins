@@ -257,14 +257,7 @@ class ActionsRecorder(private val project: Project,
 
   private fun registerActionListener(processAction: (actionId: String, project: Project) -> Unit): AnActionListener {
     val actionListener = object : AnActionListener {
-
-      private var projectAvailable: Boolean = false
-
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        projectAvailable = event.project != null
-      }
-
-      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         processAction(getActionId(action), project)
       }
     }
