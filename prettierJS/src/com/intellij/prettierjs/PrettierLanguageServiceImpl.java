@@ -3,11 +3,14 @@ package com.intellij.prettierjs;
 import com.google.gson.JsonObject;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.library.yarn.YarnPnpNodePackage;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
@@ -135,6 +138,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
     public final LocalFilePath path;
     public final LocalFilePath prettierPath;
+    @Nullable public final LocalFilePath packageJsonPath;
     @Nullable public final String ignoreFilePath;
     public final String content;
     public Integer start;
@@ -149,7 +153,9 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
                         @Nullable TextRange range,
                         boolean flushConfigCache) {
       this.path = LocalFilePath.create(filePath);
-      this.prettierPath = createPackagePath(project, prettierPackage);
+      Pair<LocalFilePath, LocalFilePath> pair = createPackagePath(project, prettierPackage);
+      this.prettierPath = pair.first;
+      this.packageJsonPath = pair.second;
       this.ignoreFilePath = ignoreFilePath;
       this.content = content;
       this.flushConfigCache = flushConfigCache;
@@ -160,13 +166,24 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
 
     @NotNull
-    private static LocalFilePath createPackagePath(@NotNull Project project, @NotNull NodePackage prettierPackage) {
-      String packagePathToRequire = prettierPackage.getAbsolutePackagePathToRequire(project);
-      if (packagePathToRequire == null) {
-        LOGGER.warn("Cannot find absolute package path to require. " + prettierPackage + " of " + prettierPackage.getClass());
-        packagePathToRequire = prettierPackage.getName();
+    private static Pair<LocalFilePath, LocalFilePath> createPackagePath(@NotNull Project project,
+                                                                        @NotNull NodePackage prettierPackage) {
+      String packagePath;
+      String packageJsonPath;
+      if (prettierPackage instanceof YarnPnpNodePackage) {
+        YarnPnpNodePackage pnpPkg = (YarnPnpNodePackage)prettierPackage;
+        packagePath = pnpPkg.getName();
+        packageJsonPath = pnpPkg.getPackageJsonPath(project);
+        if (packageJsonPath == null) {
+          throw new IllegalStateException("Cannot find package.json for " + pnpPkg);
+        }
+        packageJsonPath = FileUtil.toSystemDependentName(packageJsonPath);
       }
-      return LocalFilePath.create(packagePathToRequire);
+      else {
+        packagePath = prettierPackage.getSystemDependentPath();
+        packageJsonPath = null;
+      }
+      return Pair.create(LocalFilePath.create(packagePath), LocalFilePath.create(packageJsonPath));
     }
 
     @NotNull

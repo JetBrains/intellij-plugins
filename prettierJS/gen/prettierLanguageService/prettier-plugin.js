@@ -22,7 +22,7 @@ var PrettierPlugin = /** @class */ (function () {
         writer.write(JSON.stringify(response));
     };
     PrettierPlugin.prototype.handleReformatCommand = function (args) {
-        var prettierApi = this.requirePrettierApi(args.prettierPath);
+        var prettierApi = this.requirePrettierApi(args.prettierPath, args.packageJsonPath);
         var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
         if (prettierApi.getFileInfo) {
             var fileInfo = prettierApi.getFileInfo.sync(args.path, options);
@@ -35,12 +35,16 @@ var PrettierPlugin = /** @class */ (function () {
         }
         return performFormat(prettierApi, args);
     };
-    PrettierPlugin.prototype.requirePrettierApi = function (path) {
-        if (this._prettierApi != null && this._prettierApi.path == path) {
+    PrettierPlugin.prototype.requirePrettierApi = function (prettierPath, packageJsonPath) {
+        if (this._prettierApi != null
+            && this._prettierApi.prettierPath == prettierPath
+            && this._prettierApi.packageJsonPath == packageJsonPath) {
             return this._prettierApi;
         }
-        var prettier = require(path);
-        prettier.path = path;
+        var prettier = requireInContext(prettierPath, packageJsonPath);
+        prettier.prettierPath = prettierPath;
+        prettier.packageJsonPath = packageJsonPath;
+        this._prettierApi = prettier;
         return prettier;
     };
     return PrettierPlugin;
@@ -60,4 +64,19 @@ function performFormat(api, args) {
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
     return { formatted: api.format(args.content, config) };
+}
+function requireInContext(modulePathToRequire, contextPath) {
+    var contextRequire = getContextRequire(modulePathToRequire, contextPath);
+    return contextRequire(modulePathToRequire);
+}
+function getContextRequire(modulePathToRequire, contextPath) {
+    if (contextPath != null) {
+        var m = require('module');
+        if (typeof m.createRequire === 'function') {
+            // https://nodejs.org/api/modules.html#modules_module_createrequire_filename
+            // Also, implemented for Yarn Pnp: https://next.yarnpkg.com/advanced/pnpapi/#requiremodule
+            return m.createRequire(contextPath);
+        }
+    }
+    return require;
 }
