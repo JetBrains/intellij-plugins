@@ -40,7 +40,8 @@ class SingleLineCommentLesson(module: Module, lang: String, private val sample: 
       psiElement.children.isEmpty() -> 0
       else -> {
         var result = 0
-        for (psiChild in psiElement.children) {
+        for (astChild in psiElement.node.getChildren(null)) {
+          val psiChild = astChild.psi
           result += calculateComments(psiChild)
         }
         result
