@@ -4,10 +4,12 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
@@ -20,7 +22,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result.create
@@ -36,6 +37,7 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.source.VueComponents
 import java.util.concurrent.ConcurrentHashMap
 
 const val LANG_ATTRIBUTE_NAME = "lang"
@@ -111,6 +113,26 @@ private val vueTypesMap = mapOf(
   Pair("Array", JSArrayTypeImpl(null, JSTypeSource.EXPLICITLY_DECLARED))
 )
 
+fun resolveObjectLiteralExprFromPropertyValue(property: JSProperty): JSObjectLiteralExpression? {
+  property.objectLiteralExpressionInitializer?.let { return it }
+  val initializerReference = JSPsiImplUtils.getInitializerReference(property)
+  if (initializerReference != null) {
+    var resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
+    if (resolved is ES6ImportExportDeclarationPart) {
+      resolved = VueComponents.meaningfulExpression(resolved)
+    }
+    if (resolved is JSObjectLiteralExpression) {
+      return resolved
+    }
+    else if (resolved != null) {
+      return JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
+        .find { it.context == resolved }
+    }
+  }
+  return null
+}
+
+
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
   return when (expression) {
     is JSReferenceExpression -> getJSTypeFromVueType(expression)
@@ -147,12 +169,6 @@ fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
              it.isBooleanLiteral && "true" == it.significantValue
            }
          ?: false
-}
-
-fun createContainingFileScope(directives: JSProperty?): GlobalSearchScope? {
-  directives ?: return null
-  val file = getContainingXmlFile(directives) ?: return null
-  return GlobalSearchScope.fileScope(file.originalFile)
 }
 
 fun <T : JSExpression> findExpressionInAttributeValue(attribute: XmlAttribute,

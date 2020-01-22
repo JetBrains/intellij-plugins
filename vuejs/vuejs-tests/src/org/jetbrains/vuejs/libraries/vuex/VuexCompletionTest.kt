@@ -69,7 +69,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
                                           "                mutation1_inside: \"uno\",\n" +
                                           "                mutation2_inside: \"duos\"\n" +
                                           "            }\n" +
-                                          "        }\n" +
+                                          "        }\n," +
+                                          "        mutation2(state, payload) {}" +
                                           "    },\n" +
                                           "    actions: {\n" +
                                           "        action1: function ({commit}, payload) {\n" +

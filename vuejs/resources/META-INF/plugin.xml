@@ -81,7 +81,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueUrlIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueIdIndex"/>
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalFiltersIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.VuexStoreIndex"/>
+    <stubIndex implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex"/>
 
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.parser.VueJSStubElementTypes"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.html.parser.VueStubElementTypes"/>
@@ -166,10 +166,10 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.componentDecorator.VueDecoratedComponentInfoProvider"
                                  id="decoratedComponent"
                                  order="after default"/>
-    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.VuexBasicComponentInfoProvider"
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.model.component.VuexBasicComponentInfoProvider"
                                  id="vuexBasic"
                                  order="after decoratedComponent"/>
-    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.VuexDecoratedComponentInfoProvider"
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuex.model.component.VuexDecoratedComponentInfoProvider"
                                  id="vuexDecoratedComponent"
                                  order="after decoratedComponent"/>
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderComponentInfoProvider"
@@ -195,7 +195,7 @@ Vue components defined using separate .html, .js, and .css files are not support
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
 
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="5"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.VuexFrameworkHandler" version="1"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.vuex.index.VuexFrameworkHandler" version="2"/>
     <frameworkIndexingHandler implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderFrameworkHandler" version="1"/>
 
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
@@ -204,8 +204,11 @@ Vue components defined using separate .html, .js, and .css files are not support
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <frameworkSpecificHandlersFactory language="JavaScript"
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
+    <frameworkSpecificHandlersFactory language="JavaScript"
+                                      implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexFrameworkSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.inspections.VueAnalysisHandlersFactory" language="VueJS"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
+    <!--suppress PluginXmlValidity -->
     <languageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
   </extensions>
 </idea-plugin>

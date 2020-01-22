@@ -3,11 +3,9 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -18,11 +16,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
-import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
-import java.util.*
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -44,11 +40,45 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   }
 
   companion object {
+
+    private val ContainerMember = object {
+      val Props: MemberReader = MemberReader("props", true)
+      val Computed = MemberReader("computed")
+      val Methods = MemberReader("methods")
+      val Directives = MemberReader("directives")
+      val Components = MemberReader("components")
+      val Filters = MemberReader("filters")
+      val Delimiters = MemberReader("delimiters", true, false)
+      val Model = MemberReader("model")
+      val Data = object : MemberReader("data") {
+        override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? =
+          findReturnedObjectLiteral(resolved)
+
+        override fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? {
+          val function = property.tryGetFunctionInitializer() ?: return null
+          return findReturnedObjectLiteral(function)
+        }
+      }
+
+      private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
+        if (resolved !is JSFunction) return null
+        return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
+          resolved, TokenSet.create(
+          JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
+          .find {
+            it.context == resolved ||
+            it.context is JSParenthesizedExpression && it.context?.context == resolved ||
+            it.context is JSReturnStatement
+          }
+      }
+
+    }
+
     private val EXTENDS = MixinsAccessor(EXTENDS_PROP, VueExtendsBindingIndex.KEY)
     private val MIXINS = MixinsAccessor(MIXINS_PROP, VueMixinBindingIndex.KEY)
     private val DIRECTIVES = DirectivesAccessor()
     private val COMPONENTS = ComponentsAccessor()
-    private val FILTERS = FiltersAccessor()
+    private val FILTERS = SimpleMemberMapAccessor(ContainerMember.Filters, ::VueSourceFilter)
     private val DELIMITERS = DelimitersAccessor()
 
     private val PROPS = SimpleMemberAccessor(ContainerMember.Props, ::VueSourceInputProperty)
@@ -87,6 +117,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
               VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
               ?: meaningfulElement
             }.let { initializer ->
+              @Suppress("USELESS_CAST")
               VueSourceDirective(it.first, initializer) as VueDirective
             }
         })
@@ -112,29 +143,6 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         }
         .distinctKeys()
         .into(mutableMapOf<String, VueComponent>())
-    }
-  }
-
-  private class FiltersAccessor : MapAccessor<VueFilter>() {
-
-    override fun build(declaration: JSObjectLiteralExpression): Map<String, VueFilter> {
-      return ContainerMember.Filters.readMembers(declaration)
-        .asSequence()
-        .map {
-          Pair(it.first, VueSourceFilter(it.first, VueComponents.meaningfulExpression(it.second) ?: it.second))
-        }
-        .distinctBy { it.first }
-        .toMap(TreeMap())
-    }
-
-  }
-
-  private class SimpleMemberAccessor<T : VueNamedSymbol>(val member: ContainerMember,
-                                                         val provider: (String, JSElement) -> T)
-    : ListAccessor<T>() {
-
-    override fun build(declaration: JSObjectLiteralExpression): List<T> {
-      return member.readMembers(declaration).map { (name, element) -> provider(name, element) }
     }
   }
 
@@ -199,77 +207,4 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   private class VueSourceMethod(override val name: String,
                                 override val source: PsiElement?) : VueMethod
 
-  private enum class ContainerMember(val propertyName: String,
-                                     private val canBeArray: Boolean) {
-    Props("props", true),
-    Computed("computed", false),
-    Methods("methods", false),
-    Directives("directives", false),
-    Components("components", false),
-    Filters("filters", false),
-    Delimiters("delimiters", true),
-    Model("model", false),
-    Data("data", false) {
-      override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = findReturnedObjectLiteral(resolved)
-
-      override fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? {
-        val function = property.tryGetFunctionInitializer() ?: return null
-        return findReturnedObjectLiteral(function)
-      }
-    };
-
-    fun readMembers(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
-      val property = descriptor.findProperty(propertyName) ?: return emptyList()
-
-      var propsObject = property.objectLiteralExpressionInitializer ?: getObjectLiteral(property)
-      val initializerReference = JSPsiImplUtils.getInitializerReference(property)
-      if (propsObject == null && initializerReference != null) {
-        var resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
-        if (resolved is ES6ImportExportDeclarationPart) {
-          resolved = VueComponents.meaningfulExpression(resolved)
-        }
-        if (resolved is JSObjectLiteralExpression) {
-          propsObject = resolved
-        }
-        else if (resolved != null) {
-          propsObject = JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
-                          .find { it.context == resolved } ?: getObjectLiteralFromResolved(resolved)
-          if ((propsObject == null && canBeArray) || this === Delimiters) {
-            return readPropsFromArray(resolved)
-          }
-        }
-      }
-      if (propsObject != null && this !== Delimiters) {
-        return filteredObjectProperties(propsObject)
-      }
-      return if (canBeArray) readPropsFromArray(property) else return emptyList()
-    }
-
-    protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
-    protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null
-
-    private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression) =
-      propsObject.properties.filter {
-        val propName = it.name
-        propName != null
-      }.map { Pair(it.name!!, it) }
-
-    private fun readPropsFromArray(holder: PsiElement): List<Pair<String, JSElement>> =
-      getStringLiteralsFromInitializerArray(holder)
-        .map { Pair(getTextIfLiteral(it) ?: "", it) }
-
-    companion object {
-      private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
-        if (resolved !is JSFunction) return null
-        return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
-          resolved, TokenSet.create(
-          JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
-          .find {
-            it.context == resolved ||
-            it.context is JSParenthesizedExpression && it.context?.context == resolved ||
-            it.context is JSReturnStatement
-          }
-      }
-    }
-  }
 }

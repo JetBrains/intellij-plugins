@@ -3,18 +3,15 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
-import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.function.Function
+import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.DecoratedContainerInfoProvider
+import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
+import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
-interface VueContainerInfoProvider {
+interface VueContainerInfoProvider : EntityContainerInfoProvider<VueContainerInfo> {
 
-  fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo?
+  override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo?
 
   interface VueContainerInfo {
     val components: Map<String, VueComponent> get() = emptyMap()
@@ -41,50 +38,14 @@ interface VueContainerInfoProvider {
   }
 
 
-  abstract class VueDecoratedContainerInfoProvider(val createInfo: (clazz: JSClass) -> VueContainerInfo) : VueContainerInfoProvider {
-    final override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? =
-      clazz?.let {
-        val manager = CachedValuesManager.getManager(it.project)
-        manager.getCachedValue(it, manager.getKeyForClass<VueContainerInfo>(this::class.java), {
-          val dependencies = mutableListOf<Any>()
-          JSClassUtils.processClassesInHierarchy(it, true) { aClass, _, _ ->
-            dependencies.add(aClass)
-            dependencies.add(aClass.containingFile)
-            true
-          }
-          CachedValueProvider.Result.create(createInfo(it), dependencies)
-        }, false)
-      }
-  }
+  abstract class VueDecoratedContainerInfoProvider(createInfo: (clazz: JSClass) -> VueContainerInfo)
+    : DecoratedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider
 
-  abstract class VueInitializedContainerInfoProvider(val createInfo: (initializer: JSObjectLiteralExpression) -> VueContainerInfo) : VueContainerInfoProvider {
+  abstract class VueInitializedContainerInfoProvider(createInfo: (initializer: JSObjectLiteralExpression) -> VueContainerInfo)
+    : InitializedContainerInfoProvider<VueContainerInfo>(createInfo), VueContainerInfoProvider {
 
-    final override fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): VueContainerInfo? =
-      initializer?.let {
-        val manager = CachedValuesManager.getManager(it.project)
-        manager.getCachedValue(it, manager.getKeyForClass<VueContainerInfo>(this::class.java), {
-          CachedValueProvider.Result.create(createInfo(it), PsiModificationTracker.MODIFICATION_COUNT)
-        }, false)
-      }
-
-    protected abstract class VueInitializedContainerInfo(val declaration: JSObjectLiteralExpression) : VueContainerInfo {
-      private val values: MutableMap<MemberAccessor<*>, Any?> = ConcurrentHashMap()
-
-      protected fun <T> get(accessor: MemberAccessor<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        return values.computeIfAbsent(accessor, Function { it.build(declaration) }) as T
-      }
-    }
-
-    abstract class MemberAccessor<T> {
-      abstract fun build(declaration: JSObjectLiteralExpression): T
-    }
-
-    abstract class ListAccessor<T> : MemberAccessor<List<T>>()
-
-    abstract class MapAccessor<T> : MemberAccessor<Map<String, T>>()
+    protected abstract class VueInitializedContainerInfo(declaration: JSObjectLiteralExpression)
+      : InitializedContainerInfo(declaration), VueContainerInfo
 
   }
-
-
 }
