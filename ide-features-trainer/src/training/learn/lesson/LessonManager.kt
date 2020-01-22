@@ -139,11 +139,13 @@ class LessonManager {
     else {
       val module = CourseManager.instance.giveNextModule(cLesson)
       if (module == null) {
-        clearLessonPanel()
-        UiManager.setModuleNameOnLearnPanels("")
-        UiManager.setLessonNameOnLearnPanels(LearnBundle.message("learn.ui.course.completed.caption"))
-        UiManager.addMessageToLearnPanels(LearnBundle.message("learn.ui.course.completed.description"))
-        UiManager.hideNextButtonOnLearnPanels()
+        UiManager.setButtonNextActionOnLearnPanels(Runnable {
+          clearLessonPanel()
+          UiManager.setModuleNameOnLearnPanels("")
+          UiManager.setLessonNameOnLearnPanels(LearnBundle.message("learn.ui.course.completed.caption"))
+          UiManager.addMessageToLearnPanels(LearnBundle.message("learn.ui.course.completed.description"))
+          UiManager.hideNextButtonOnLearnPanels()
+        }, null, LearnBundle.message("learn.ui.course.completed.caption"))
       }
       else {
         var lesson = module.giveNotPassedLesson()

@@ -13,7 +13,10 @@ import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
-import training.ui.*
+import training.ui.LessonMessagePane
+import training.ui.Message
+import training.ui.UISettings
+import training.ui.UiManager
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.net.URI
@@ -229,16 +232,14 @@ class LearnPanel : JPanel() {
     buttonAction.isEnabled = true
     button.action = buttonAction
     val keyStroke = getNextLessonKeyStrokeText()
-    if (notPassedLesson != null) {
-      if (text != null) {
-        button.text = "$text ($keyStroke)"
-      }
-      else {
-        button.text = "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
-      }
+    button.text = if (text != null) {
+      "$text ($keyStroke)"
+    }
+    else if (notPassedLesson != null) {
+      "${LearnBundle.message("learn.ui.button.next.lesson")}: ${notPassedLesson.name} ($keyStroke)"
     }
     else {
-      button.text = LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
+      LearnBundle.message("learn.ui.button.next.lesson") + " ($keyStroke)"
     }
     button.isSelected = true
     rootPane?.defaultButton = button
