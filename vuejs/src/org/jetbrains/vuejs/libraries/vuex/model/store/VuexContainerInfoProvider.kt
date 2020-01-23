@@ -30,46 +30,29 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
       val Modules: MemberReader = MemberReader("module")
     }
 
-    private val STATE = SimpleMemberMapAccessor(
-      ContainerMembers.State, ::VuexStatePropertyImpl)
-    private val ACTIONS = SimpleMemberMapAccessor(
-      ContainerMembers.Actions, ::VuexActionImpl)
-    private val GETTERS = SimpleMemberMapAccessor(
-      ContainerMembers.Getters, ::VuexGetterImpl)
-    private val MUTATIONS = SimpleMemberMapAccessor(
-      ContainerMembers.Mutations, ::VuexMutationImpl)
-    private val MODULES = SimpleMemberMapAccessor(
-      ContainerMembers.Modules, ::VuexModuleImpl)
+    private val STATE = SimpleMemberMapAccessor(ContainerMembers.State, ::VuexStatePropertyImpl)
+    private val ACTIONS = SimpleMemberMapAccessor(ContainerMembers.Actions, ::VuexActionImpl)
+    private val GETTERS = SimpleMemberMapAccessor(ContainerMembers.Getters, ::VuexGetterImpl)
+    private val MUTATIONS = SimpleMemberMapAccessor(ContainerMembers.Mutations, ::VuexMutationImpl)
+    private val MODULES = SimpleMemberMapAccessor(ContainerMembers.Modules, ::VuexModuleImpl)
     private val IS_NAMESPACED = IsNamespacedAccessor()
   }
 
   private class VuexContainerInfoImpl(declaration: JSObjectLiteralExpression)
     : InitializedContainerInfo(declaration), VuexContainerInfo {
 
-    override val state: Map<String, VuexStateProperty>
-      get() = get(
-        STATE)
-    override val actions: Map<String, VuexAction>
-      get() = get(
-        ACTIONS)
-    override val mutations: Map<String, VuexMutation>
-      get() = get(
-        MUTATIONS)
-    override val getters: Map<String, VuexGetter>
-      get() = get(
-        GETTERS)
+    override val state: Map<String, VuexStateProperty> get() = get(STATE)
+    override val actions: Map<String, VuexAction> get() = get(ACTIONS)
+    override val mutations: Map<String, VuexMutation> get() = get(MUTATIONS)
+    override val getters: Map<String, VuexGetter> get() = get(GETTERS)
 
-    override val modules: Map<String, VuexModule>
-      get() = get(
-        MODULES)
-    override val isNamespaced: Boolean
-      get() = get(
-        IS_NAMESPACED)
+    override val modules: Map<String, VuexModule> get() = get(MODULES)
+    override val isNamespaced: Boolean get() = get(IS_NAMESPACED)
   }
 
   private class IsNamespacedAccessor : MemberAccessor<Boolean>() {
     override fun build(declaration: JSObjectLiteralExpression): Boolean {
-      return declaration.findProperty("isNamespaced")
+      return declaration.findProperty("namespaced")
         ?.jsType
         ?.typeText == "true"
     }

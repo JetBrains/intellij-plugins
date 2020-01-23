@@ -3,13 +3,14 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSElement
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -131,20 +132,6 @@ interface EntityContainerInfoProvider<T> {
       private fun readPropsFromArray(holder: PsiElement): List<Pair<String, JSElement>> =
         getStringLiteralsFromInitializerArray(holder)
           .map { Pair(getTextIfLiteral(it) ?: "", it) }
-
-      companion object {
-        private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
-          if (resolved !is JSFunction) return null
-          return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
-            resolved, TokenSet.create(
-            JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))
-            .find {
-              it.context == resolved ||
-              it.context is JSParenthesizedExpression && it.context?.context == resolved ||
-              it.context is JSReturnStatement
-            }
-        }
-      }
     }
 
   }

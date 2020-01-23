@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -37,8 +36,9 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.source.VueComponents
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.HashSet
 
 const val LANG_ATTRIBUTE_NAME = "lang"
 const val ATTR_DIRECTIVE_PREFIX = "v-"
@@ -113,25 +113,41 @@ private val vueTypesMap = mapOf(
   Pair("Array", JSArrayTypeImpl(null, JSTypeSource.EXPLICITLY_DECLARED))
 )
 
-fun resolveObjectLiteralExprFromPropertyValue(property: JSProperty): JSObjectLiteralExpression? {
-  property.objectLiteralExpressionInitializer?.let { return it }
-  val initializerReference = JSPsiImplUtils.getInitializerReference(property)
-  if (initializerReference != null) {
-    var resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
-    if (resolved is ES6ImportExportDeclarationPart) {
-      resolved = VueComponents.meaningfulExpression(resolved)
-    }
-    if (resolved is JSObjectLiteralExpression) {
-      return resolved
-    }
-    else if (resolved != null) {
-      return JSStubBasedPsiTreeUtil.findDescendants(resolved, JSStubElementTypes.OBJECT_LITERAL_EXPRESSION)
-        .find { it.context == resolved }
+fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
+  val queue = ArrayDeque<PsiElement>()
+  queue.add(element ?: return null)
+  val visited = HashSet<PsiElement>()
+  loop@ while (!queue.isEmpty()) {
+    val cur = queue.removeFirst()
+    if (visited.add(cur)) {
+      when (cur) {
+        is JSObjectLiteralExpression -> return cur
+        is JSInitializerOwner -> {
+          when (cur) {
+            is JSProperty -> cur.objectLiteralExpressionInitializer?.let { return it }
+            is JSVariable -> {
+              val initializer = cur.initializerOrStub
+              if (initializer != null) {
+                queue.addLast(initializer)
+                continue@loop
+              }
+            }
+          }
+          JSPsiImplUtils.getInitializerReference(cur)
+            ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
+            ?.let { queue.addLast(it) }
+        }
+        is JSVariable -> cur.initializerOrStub?.let { queue.addLast(it) }
+        is JSReferenceExpression -> cur.multiResolve(false)
+          .mapNotNull { if (it.isValidResult) it.element else null }
+          .toCollection(queue)
+        else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
+          .toCollection(queue)
+      }
     }
   }
   return null
 }
-
 
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
   return when (expression) {

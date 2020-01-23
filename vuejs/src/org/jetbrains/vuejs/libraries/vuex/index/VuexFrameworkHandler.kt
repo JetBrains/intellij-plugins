@@ -17,16 +17,12 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
-import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
-import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
-import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
-import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_NAMESPACE
 
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
-
-  private val VUEX_COMPONENT_FUNCTIONS = setOf(MAP_STATE, MAP_GETTERS, MAP_MUTATIONS, MAP_ACTIONS)
 
   private val VUEX_INDEXES = mapOf(
     VueFrameworkHandler.record(VuexStoreIndex.KEY)
@@ -34,14 +30,15 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun shouldCreateStubForCallExpression(node: ASTNode?): Boolean {
     if (node?.elementType === JSElementTypes.CALL_EXPRESSION) {
-      // map* call
-      return node?.let { JSCallExpressionImpl.getMethodExpression(it) }
-        ?.takeIf {
-          it.elementType === JSElementTypes.REFERENCE_EXPRESSION &&
-          JSReferenceExpressionImpl.getQualifierNode(it) == null
-        }
-        ?.let { JSReferenceExpressionImpl.getReferenceName(it) }
-        ?.let { VUEX_COMPONENT_FUNCTIONS.contains(it) } == true
+      val reference = node?.let { JSCallExpressionImpl.getMethodExpression(it) }
+                        ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
+                      ?: return false
+      val refName = JSReferenceExpressionImpl.getReferenceName(reference) ?: return false
+      if (JSReferenceExpressionImpl.getQualifierNode(reference) == null) {
+        return VUEX_MAPPERS.contains(refName)
+      } else {
+        return refName == REGISTER_MODULE
+      }
     }
     else {
       // new Vuex.Store call
@@ -71,12 +68,19 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
-    val reference = callExpression.castSafelyTo<JSNewExpression>()
-      ?.methodExpression
+    val reference = callExpression.methodExpression
       ?.castSafelyTo<JSReferenceExpression>()
-    if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
+    if (callExpression is JSNewExpression
+        && JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(STORE, callExpression)
+          .setUserString(VuexStoreIndex.JS_KEY)
+          .setType(JSImplicitElement.Type.Variable)
+          .forbidAstAccess()
+          .toImplicitElement())
+    } else if (reference?.referenceName == REGISTER_MODULE) {
+      outData.addImplicitElement(
+        JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
           .setUserString(VuexStoreIndex.JS_KEY)
           .setType(JSImplicitElement.Type.Variable)
           .forbidAstAccess()

@@ -2,8 +2,10 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 object VuexUtils {
+
   const val VUEX_NAMESPACE = "Vuex"
   const val STORE = "Store"
+  const val REGISTER_MODULE = "registerModule"
 
   const val MAP_STATE = "mapState"
   const val MAP_GETTERS = "mapGetters"
@@ -14,4 +16,5 @@ object VuexUtils {
   const val COMMIT = "commit"
   const val GETTERS = "getters"
 
+  val VUEX_MAPPERS = setOf(MAP_STATE, MAP_GETTERS, MAP_MUTATIONS, MAP_ACTIONS)
 }

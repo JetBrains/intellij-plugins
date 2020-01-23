@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
+import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.DISPATCH
@@ -17,10 +18,8 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStore
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
+import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 class VuexFrameworkSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
 
@@ -37,36 +36,78 @@ class VuexFrameworkSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory 
       if (VUEX_FUNCTIONS_WITH_STRINGS.contains(functionName)
           && isVueContext(parent)) {
         val stores = VuexModelManager.getAllVuexStores(parent.project)
-        if (stores.isEmpty()) return null
-        val result = mutableListOf<JSStringLiteralTypeImpl>()
-        val typeSource = JSTypeSource(parent.containingFile, parent, JSTypeSource.SourceLanguage.JS, false)
-        when (functionName) {
-          MAP_ACTIONS, DISPATCH -> collectNames(stores, typeSource, result, VuexContainer::actions)
-          MAP_MUTATIONS, COMMIT -> collectNames(stores, typeSource, result, VuexContainer::mutations)
-          MAP_GETTERS, GETTERS -> collectNames(stores, typeSource, result, VuexContainer::getters)
-          MAP_STATE -> collectNames(stores, typeSource, result, VuexContainer::state)
+        val modules = VuexModelManager.getRegisteredModules(parent.project)
+        if (stores.isEmpty() && modules.isEmpty()) return null
+        val result = mutableSetOf<String>()
+
+        if (!VUEX_MAPPERS.contains(functionName) || parent.parent is JSArrayLiteralExpression) {
+          // TODO: Take into account mapper binding to namespace
+          val namespace = if (VUEX_MAPPERS.contains(functionName))
+            PsiTreeUtil.getParentOfType(parent, JSArgumentList::class.java)
+              ?.arguments?.getOrNull(0)?.let { getTextIfLiteral(it) }
+            ?: ""
+          else ""
+
+          val accessor = when (functionName) {
+            MAP_ACTIONS, DISPATCH -> VuexContainer::actions
+            MAP_MUTATIONS, COMMIT -> VuexContainer::mutations
+            MAP_GETTERS, GETTERS -> VuexContainer::getters
+            MAP_STATE -> VuexContainer::state
+            else -> return null
+          }
+
+          collectNames(namespace, stores, modules, result, accessor)
+        }
+        else if (parent.parent is JSArgumentList) {
+          collectNamespaces(stores, modules, result)
         }
         if (result.isEmpty()) return null
-        return JSCompositeTypeFactory.createUnionType(typeSource, result)
+        val typeSource = JSTypeSource(parent.containingFile, parent, JSTypeSource.SourceLanguage.JS, false)
+        return JSCompositeTypeFactory.createUnionType(typeSource, result.map {
+          JSStringLiteralTypeImpl(it, false, typeSource)
+        })
       }
     }
     return null
   }
 
-  private fun collectNames(stores: List<VuexStore>,
-                           typeSource: JSTypeSource,
-                           result: MutableList<JSStringLiteralTypeImpl>,
+  private fun collectNamespaces(stores: List<VuexStore>,
+                                modules: List<VuexModule>,
+                                result: MutableSet<String>) {
+    visit(stores, modules) { namespace, _ ->
+      if (namespace.isNotBlank()) {
+        result.add(namespace)
+      }
+    }
+  }
+
+  private fun collectNames(sourceNamespace: String,
+                           stores: List<VuexStore>,
+                           modules: List<VuexModule>,
+                           result: MutableSet<String>,
                            accessor: (VuexContainer) -> Map<String, VuexNamedSymbol>) {
+    val namespacePrefix = if (sourceNamespace.isEmpty()) "" else "$sourceNamespace/"
+    visit(stores, modules) { namespace, container ->
+      accessor(container).keys.asSequence()
+        .map { appendSegment(namespace, it) }
+        .filter { it.startsWith(namespacePrefix) }
+        .mapTo(result) { it.substring(namespacePrefix.length) }
+    }
+  }
+
+  private fun visit(stores: List<VuexStore>,
+                    modules: List<VuexModule>,
+                    visitor: (String, VuexContainer) -> Unit) {
     val containers = Stack<Pair<String, VuexContainer>>()
     stores.asSequence().mapTo(containers) { "" to it }
+    modules.asSequence().mapTo(containers) { (if (it.isNamespaced) it.name else "") to it }
+
     while (!containers.empty()) {
       val (namespace, container) = containers.pop()
       container.modules.values.asSequence().mapTo(containers) {
         (if (it.isNamespaced) appendSegment(namespace, it.name) else namespace) to it
       }
-      accessor(container).keys.asSequence()
-        .map { appendSegment(namespace, it) }
-        .mapTo(result) { JSStringLiteralTypeImpl(it, false, typeSource) }
+      visitor(namespace, container)
     }
   }
 

@@ -13,6 +13,7 @@ import com.intellij.util.castSafelyTo
 import com.intellij.util.containers.putValue
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
@@ -85,13 +86,7 @@ class VueComponentsCalculation {
                      JSStubBasedPsiTreeUtil.resolveLocally(it.referenceName, resolved!!) ?: return null
                    }
                  ?: resolved
-      if (resolved !is JSVariable) {
-        resolved = VueComponents.meaningfulExpression(resolved)
-      }
-      if (resolved is JSVariable) {
-        resolved = resolved.initializerOrStub
-      }
-      return VueComponents.literalFor(resolved)
+      return objectLiteralFor(resolved)
         ?.let { Pair(it, indexedAccessUsed) }
     }
 
@@ -133,13 +128,6 @@ class VueComponentsCalculation {
     private fun getNameFromDescriptor(descriptor: JSObjectLiteralExpression): String? =
       (descriptor.findProperty("name")?.jsType as? JSStringLiteralTypeImpl)?.literal
 
-    fun getObjectLiteralFromResolve(result: Collection<PsiElement>): JSObjectLiteralExpression? {
-      return result.mapNotNull(fun(it: PsiElement): JSObjectLiteralExpression? {
-        val element: PsiElement? = (it as? JSVariable)?.initializerOrStub ?: it
-        return VueComponents.literalFor(element)
-      }).firstOrNull()
-    }
-
     private fun processComponentGroupRegistration(objLiteral: JSObjectLiteralExpression,
                                                   libCompResolveMap: MutableMap<String, String>,
                                                   componentData: MutableMap<String, MutableList<Pair<PsiElement, Boolean>>>) {
@@ -154,25 +142,14 @@ class VueComponentsCalculation {
 
         when (element) {
           is JSSpreadExpression -> {
-            val spreadExpression = element.expression
-            if (spreadExpression is JSReferenceExpression) {
-              val literal = getObjectLiteralFromResolve(resolveToValid(spreadExpression))
-              if (literal != null) queue.addAll(literal.propertiesIncludingSpreads)
-            }
-            else if (spreadExpression is JSObjectLiteralExpression) {
-              queue.addAll(spreadExpression.propertiesIncludingSpreads)
-            }
+            objectLiteralFor(element.expression)
+              ?.let { queue.addAll(it.propertiesIncludingSpreads) }
           }
           is JSProperty -> {
             val propName = element.name
-            val candidate = element.value
+            val descriptor = objectLiteralFor(element)
 
-            // TODO make this part stub safe
-            if (propName != null && candidate != null) {
-              var descriptor = VueComponents.literalFor(candidate)
-              if (descriptor == null && candidate is JSReferenceExpression) {
-                descriptor = getObjectLiteralFromResolve(resolveToValid(candidate))
-              }
+            if (propName != null) {
               val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty("name")?.value) ?: propName
               // name used in call Vue.component() overrides what was set in descriptor itself
               val normalizedName = fromAsset(propName)
@@ -184,9 +161,6 @@ class VueComponentsCalculation {
         }
       }
     }
-
-    private fun resolveToValid(reference: JSReferenceExpression) =
-      reference.multiResolve(false).mapNotNull { if (it.isValidResult) it.element else null }.toList()
 
     private fun selectComponentDefinition(list: List<Pair<PsiElement, Boolean>>): Pair<PsiElement, Boolean> {
       var selected: Pair<PsiElement, Boolean>? = null

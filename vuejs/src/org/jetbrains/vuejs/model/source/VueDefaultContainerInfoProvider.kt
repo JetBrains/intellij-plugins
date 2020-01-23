@@ -17,6 +17,7 @@ import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 
@@ -114,7 +115,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         .mapToEntry({ it.first }, {
           (VueComponents.meaningfulExpression(it.second) ?: it.second)
             .let { meaningfulElement ->
-              VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
+              objectLiteralFor(meaningfulElement)
               ?: meaningfulElement
             }.let { initializer ->
               @Suppress("USELESS_CAST")
@@ -133,7 +134,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         .mapValues { element ->
           (VueComponents.meaningfulExpression(element) ?: element)
             .let { meaningfulElement ->
-              VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
+              objectLiteralFor(meaningfulElement)
               ?: (meaningfulElement.parent as? ES6ExportDefaultAssignment)
                 ?.let { VueComponents.getExportedDescriptor(it) }
                 ?.let { it.obj ?: it.clazz }

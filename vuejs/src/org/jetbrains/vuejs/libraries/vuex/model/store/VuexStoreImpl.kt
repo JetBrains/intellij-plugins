@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.vuejs.codeInsight.resolveObjectLiteralExprFromPropertyValue
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 
 abstract class VuexContainerImpl : VuexContainer {
 
@@ -56,10 +56,10 @@ class VuexModuleImpl(override val name: String, override val sourceElement: PsiE
 
   override val initializer: JSObjectLiteralExpression?
     get() {
+      (sourceElement as? JSObjectLiteralExpression)?.let { return it }
       val sourceElement = (this.sourceElement as? JSProperty) ?: return null
       return CachedValuesManager.getCachedValue(sourceElement) {
-        resolveObjectLiteralExprFromPropertyValue(sourceElement)
-          ?.let { create(it, sourceElement, it) }
+        objectLiteralFor(sourceElement)?.let { create(it, sourceElement, it) }
         ?: create(null as JSObjectLiteralExpression?, sourceElement, VFS_STRUCTURE_MODIFICATIONS)
       }
     }

@@ -7,8 +7,7 @@ import org.jetbrains.vuejs.index.VueIndexBase
 
 class VuexStoreIndex : VueIndexBase<JSImplicitElementProvider>(KEY, JS_KEY) {
   companion object {
-    val KEY: StubIndexKey<String, JSImplicitElementProvider> =
-      StubIndexKey.createIndexKey<String, JSImplicitElementProvider>("vuex.store.index")
+    val KEY: StubIndexKey<String, JSImplicitElementProvider> = StubIndexKey.createIndexKey("vuex.store.index")
     val JS_KEY: String = createJSKey(KEY)
   }
 }

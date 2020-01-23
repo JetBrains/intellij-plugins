@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 
@@ -31,17 +32,8 @@ class VueComponents {
       return elements.filter(this::isNotInLibrary)
     }
 
-    fun literalFor(element: PsiElement?): JSObjectLiteralExpression? {
-      if (element is JSObjectLiteralExpression) return element
-      if (element == null) return null
-      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
-        .mapNotNull { it as? JSObjectLiteralExpression }
-        .firstOrNull()
-    }
-
     fun meaningfulExpression(element: PsiElement?): PsiElement? {
       if (element == null) return element
-
       return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
         .firstOrNull { it !is JSEmbeddedContent }
     }
@@ -97,7 +89,7 @@ class VueComponents {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
-        val objLiteral = literalFor(element!!) ?: return null
+        val objLiteral = objectLiteralFor(element!!) ?: return null
         return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
@@ -119,8 +111,7 @@ class VueComponents {
         is JSObjectLiteralExpression -> return VueComponentDescriptor(exportedElement)
 
         // export default MyComponent;  const MyComponent = {...}
-        is JSReferenceExpression -> exportedElement.resolve()
-          ?.let { VueComponentsCalculation.getObjectLiteralFromResolve(listOf(it)) }
+        is JSReferenceExpression -> objectLiteralFor(exportedElement)
           ?.let { return VueComponentDescriptor(it) }
 
         // export default Vue.extend({...})
