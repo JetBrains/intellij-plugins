@@ -12,6 +12,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
+import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.openapi.Disposable;
@@ -30,6 +31,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.EmptyIcon;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class KarmaServerLogComponent implements ComponentWithActions {
 
-  public static final String KARMA_SERVER_CONTENT_ID = "KarmaServer";
+  @NonNls public static final String KARMA_SERVER_CONTENT_ID = "KarmaServer";
   private final ConsoleView myConsole;
   private final KarmaServer myServer;
   private ActionGroup myActionGroup;
@@ -55,7 +57,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       return myActionGroup;
     }
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new StopProcessAction("Stop Karma Server", null, myServer.getProcessHandler()));
+    group.add(new StopProcessAction(KarmaBundle.message("karma.server.stop.action.name"), null, myServer.getProcessHandler()));
 
     final AnAction[] actions = myConsole.createConsoleActions();
     for (AnAction action : actions) {
@@ -116,7 +118,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     Icon emptyIcon = EmptyIcon.create(JBUIScale.scale(4));
     final Content content = ui.createContent(KARMA_SERVER_CONTENT_ID,
                                              component,
-                                             "Karma Server",
+                                             KarmaBundle.message("karma.server.tab.title"),
                                              ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
@@ -179,7 +181,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
             alarm.addRequest(this, timeoutMillis + 100, ModalityState.any());
           }
           else {
-            myConsole.print("Waiting for a captured browser... To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+            myConsole.print(KarmaBundle.message("waiting.for.captured.browser.text") + " ", ConsoleViewContentType.SYSTEM_OUTPUT);
             String url = myServer.formatUrl("/");
             myConsole.printHyperlink(url, new OpenUrlHyperlinkInfo(url));
             myConsole.print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -197,7 +199,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     });
   }
 
-  private static boolean startsWithMessage(@NotNull String line, @NotNull String message) {
+  private static boolean startsWithMessage(@NotNull String line, @NonNls @NotNull String message) {
     int ind = line.indexOf(message);
     if (ind == -1) {
       return false;

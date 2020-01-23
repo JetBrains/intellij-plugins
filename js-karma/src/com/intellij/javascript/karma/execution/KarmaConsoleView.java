@@ -226,11 +226,10 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       registerKarmaServerTab(ui);
       // Overwrite "initFocusContent(DebuggerContentInfo.CONSOLE_CONTENT, LayoutViewOptions.STARTUP, ...)
       // from com.intellij.xdebugger.impl.ui.DebuggerSessionTabBase()
-      ui.getDefaults().initFocusContent(myServer.areBrowsersReady() ? ExecutionConsole.CONSOLE_CONTENT_ID
-                                                                    : KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID,
-                                        LayoutViewOptions.STARTUP,
-                                        new LayoutAttractionPolicy.FocusOnce(false));
-      // to be replaced in 181 with ui.getDefaults().clearFocusContent(LayoutViewOptions.STARTUP);
+      ui.getDefaults().initContentAttraction(myServer.areBrowsersReady() ? ExecutionConsole.CONSOLE_CONTENT_ID
+                                                                         : KarmaServerLogComponent.KARMA_SERVER_CONTENT_ID,
+                                             LayoutViewOptions.STARTUP,
+                                             new LayoutAttractionPolicy.FocusOnce(false));
     }
   }
 }
