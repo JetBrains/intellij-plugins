@@ -4,6 +4,7 @@ package org.angular2;
 import org.angular2.cli.AngularConfigTest;
 import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
+import org.angular2.codeInsight.template.Angular2LiveTemplateTest;
 import org.angular2.css.CssClassTest;
 import org.angular2.css.CssCompletionTest;
 import org.angular2.css.CssInspectionsTest;
@@ -86,7 +87,8 @@ import org.junit.runners.Suite;
   CssCompletionTest.class,
   CssInspectionsTest.class,
   Angular2ReSharperTestSuite.class,
-  AngularConfigTest.class
+  AngularConfigTest.class,
+  Angular2LiveTemplateTest.class
 })
 public class Angular2TestSuite {
 }
