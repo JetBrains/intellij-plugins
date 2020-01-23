@@ -27,9 +27,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -267,13 +265,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase<RunConfigu
 
   @Override
   public boolean isPreferredOver(@NotNull RunConfiguration otherRc, @NotNull PsiElement sourceElement) {
-    PsiFile psiFile = ObjectUtils.tryCast(sourceElement, PsiFile.class);
-    if (psiFile != null) {
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile != null) {
-        return KarmaUtil.isKarmaConfigFile(virtualFile.getNameSequence(), true);
-      }
-    }
-    return false;
+    return true;
   }
 }
