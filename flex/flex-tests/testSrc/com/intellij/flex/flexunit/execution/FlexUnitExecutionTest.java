@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.flexunit.execution;
 
 import com.intellij.codeInsight.JavaCodeInsightTestCase;
@@ -322,7 +322,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     final Ref<ExecutionConsole> executionConsole = new Ref<>();
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
-        runner.execute(env, new ProgramRunner.Callback() {
+        runner.execute(env.withCallback(new ProgramRunner.Callback() {
           @Override
           public void processStarted(RunContentDescriptor descriptor) {
             compilation.up();
@@ -330,7 +330,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
             descriptor.getProcessHandler().addProcessListener(listener);
             executionConsole.set(descriptor.getExecutionConsole());
           }
-        });
+        }));
       }
       catch (Throwable t) {
         t.printStackTrace();
