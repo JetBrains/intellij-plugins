@@ -3,10 +3,10 @@ package training.learn.lesson.listeners
 
 import com.intellij.openapi.project.Project
 import training.learn.interfaces.Lesson
-import training.learn.lesson.LessonListenerAdapter
+import training.learn.lesson.LessonListener
 import training.statistic.StatisticBase
 
-class StatisticLessonListener(val project: Project) : LessonListenerAdapter() {
+class StatisticLessonListener(val project: Project) : LessonListener {
 
   override fun lessonStarted(lesson: Lesson) {
     StatisticBase.instance.onStartLesson(lesson)

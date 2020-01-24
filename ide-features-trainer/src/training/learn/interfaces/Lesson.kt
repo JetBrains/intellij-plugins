@@ -42,12 +42,13 @@ interface Lesson {
     lessonListeners.forEach { it.lessonStarted(this) }
   }
 
-  fun onClose() {
-    lessonListeners.clear()
-  }
-
   fun onPass() {
     lessonListeners.forEach { it.lessonPassed(this) }
+  }
+
+  @JvmDefault
+  fun onStop() {
+    lessonListeners.forEach { it.lessonStopped(this) }
   }
 
   fun pass() {

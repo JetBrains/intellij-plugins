@@ -12,14 +12,13 @@ import java.util.concurrent.ExecutionException
 
 interface LessonListener : EventListener {
 
-  fun lessonStarted(lesson: Lesson)
+  fun lessonStarted(lesson: Lesson) {}
 
-  fun lessonPassed(lesson: Lesson)
+  fun lessonPassed(lesson: Lesson) {}
 
-  fun lessonClosed(lesson: Lesson)
+  fun lessonStopped(lesson: Lesson) {}
 
   @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class,
           BadModuleException::class, LessonIsOpenedException::class)
-  fun lessonNext(lesson: Lesson)
-
+  fun lessonNext(lesson: Lesson) {}
 }

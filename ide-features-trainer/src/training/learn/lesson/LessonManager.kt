@@ -54,6 +54,8 @@ class LessonManager {
 
   internal fun stopLesson() {
     currentLessonExecutor?.stopLesson()
+    currentLessonExecutor?.lesson?.onStop()
+    LessonProcessor.currentExecutionList?.lesson?.onStop()
     clearAllListeners()
   }
 

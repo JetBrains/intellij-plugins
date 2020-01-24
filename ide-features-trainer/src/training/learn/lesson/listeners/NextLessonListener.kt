@@ -7,12 +7,12 @@ import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.exceptons.LessonIsOpenedException
 import training.learn.interfaces.Lesson
-import training.learn.lesson.LessonListenerAdapter
+import training.learn.lesson.LessonListener
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 
-class NextLessonListener(val project: Project) : LessonListenerAdapter() {
+class NextLessonListener(val project: Project) : LessonListener {
 
   @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class,
           BadModuleException::class, LessonIsOpenedException::class)
