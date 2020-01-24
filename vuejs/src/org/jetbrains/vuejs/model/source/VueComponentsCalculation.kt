@@ -82,7 +82,7 @@ class VueComponentsCalculation {
                    ?.qualifierType?.castSafelyTo<JSReferenceType>()
                    ?.let {
                      indexedAccessUsed = true
-                     JSStubBasedPsiTreeUtil.resolveLocally(it.referencedName, resolved!!) ?: return null
+                     JSStubBasedPsiTreeUtil.resolveLocally(it.referenceName, resolved!!) ?: return null
                    }
                  ?: resolved
       if (resolved !is JSVariable) {
