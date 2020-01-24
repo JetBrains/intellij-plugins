@@ -221,6 +221,22 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       isOpaque = false
       text = "Change language"
     })
+
+    modulesPanel.add(JButton().apply {
+      action = object : AbstractAction() {
+        override fun actionPerformed(actionEvent: ActionEvent) {
+          LessonStateManager.resetPassedStatus()
+          LearningLessonsAutoExecutor.runLessons(guessCurrentProject(modulesPanel))
+        }
+      }
+      margin = JBUI.emptyInsets()
+      isFocusable = true
+      isVisible = true
+      isSelected = true
+      isEnabled = true
+      isOpaque = false
+      text = "Run all lessons"
+    })
   }
 
   private fun addResetButton() {
