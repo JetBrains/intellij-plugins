@@ -34,6 +34,7 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -108,7 +109,7 @@ public class LibraryBundlingEditorComponent {
             updateFields();
           }
         })
-        .addExtraAction(new AnActionButton("Copy", PlatformIcons.COPY_ICON) {
+        .addExtraAction(new AnActionButton(() -> OsmorcBundle.message("action.AnActionButton.text.copy"), PlatformIcons.COPY_ICON) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             updateCurrentRule();
