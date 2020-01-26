@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CopyProvider;
+import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.WriteAction;
@@ -210,7 +211,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     if (url == null) return;
 
     group.addSeparator();
-    group.add(new DumbAwareAction("Open Documentation", "Open detailed problem description in browser", AllIcons.Ide.External_link_arrow) {
+    group.add(new DumbAwareAction(() -> IdeBundle.message("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
+                                  () -> IdeBundle.message("action.DumbAware.DartProblemsViewPanel.description.open.detailed.problem.description.in.browser"),
+                                  AllIcons.Ide.External_link_arrow) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         BrowserUtil.browse(url);
