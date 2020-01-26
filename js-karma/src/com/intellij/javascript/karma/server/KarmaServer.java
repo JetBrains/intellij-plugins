@@ -199,7 +199,7 @@ public class KarmaServer {
     boolean angularCli = KarmaUtil.isAngularCliPkg(pkg);
     if (angularCli) {
       if (pkg instanceof YarnPnpNodePackage) {
-        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter());
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter(), null);
       }
       else {
         commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "ng");
@@ -233,7 +233,7 @@ public class KarmaServer {
     }
     else {
       if (pkg instanceof YarnPnpNodePackage) {
-        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter());
+        ((YarnPnpNodePackage)pkg).addYarnRunToCommandLine(commandLine, project, serverSettings.getNodeInterpreter(), null);
       }
       else {
         commandLine.addParameter(pkg.getSystemDependentPath() + File.separator + "bin" + File.separator + "karma");
