@@ -14,8 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ReanalyzeDartSourcesAction extends AnAction implements DumbAware {
   public ReanalyzeDartSourcesAction() {
-    super(DartBundle.message("dart.reanalyze.action.name"),
-          DartBundle.message("dart.reanalyze.action.description"),
+    super(() -> DartBundle.message("dart.reanalyze.action.name"), () -> DartBundle.message("dart.reanalyze.action.description"),
           AllIcons.Actions.Restart);
   }
 
