@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -67,6 +67,7 @@ import gnu.trove.THashSet;
 import gnu.trove.TObjectIntHashMap;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +110,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long ANALYSIS_IN_TESTS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long TESTS_TIMEOUT_COEFF = 10;
 
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.DartAnalysisServerService");
+  private static final Logger LOG = Logger.getInstance(DartAnalysisServerService.class);
 
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
@@ -311,9 +312,9 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void serverError(boolean isFatal, @Nullable String message, @Nullable String stackTrace) {
+    public void serverError(boolean isFatal, @Nullable String message, @NonNls @Nullable String stackTrace) {
       if (message == null) {
-        message = "an issue occurred with the analysis server";
+        message = DartBundle.message("issue.occurred.with.analysis.server");
       }
       if (!isFatal &&
           stackTrace != null &&
@@ -845,7 +846,7 @@ public class DartAnalysisServerService implements Disposable {
   public static boolean isFileNameRespectedByAnalysisServer(@NotNull String _fileName) {
     // see https://github.com/dart-lang/sdk/blob/master/pkg/analyzer/lib/src/generated/engine.dart (class AnalysisEngine)
     // and AbstractAnalysisServer.analyzableFilePatterns
-    String fileName = _fileName.toLowerCase(Locale.US);
+    @NonNls String fileName = _fileName.toLowerCase(Locale.US);
     return fileName.endsWith(".dart") ||
            fileName.endsWith(".htm") ||
            fileName.endsWith(".html") ||
@@ -1253,7 +1254,7 @@ public class DartAnalysisServerService implements Disposable {
     final AnalysisServer server = myServer;
     if (server == null) {
       consumer.onError(new RequestError(ExtendedRequestErrorCode.INVALID_SERVER_RESPONSE,
-                                        "The analysis server is not running.", null));
+                                        DartBundle.message("analysis.server.not.running"), null));
     }
     else {
       server.diagnostic_getServerPort(consumer);
@@ -1576,7 +1577,7 @@ public class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        if (!"GET_IMPORTED_ELEMENTS_INVALID_FILE".equals(error.getCode())) {
+        if (!RequestErrorCode.GET_IMPORTED_ELEMENTS_INVALID_FILE.equals(error.getCode())) {
           logError("analysis_getImportedElements()", filePath, error);
         }
 
@@ -1615,7 +1616,7 @@ public class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(final RequestError error) {
-        if (!"IMPORT_ELEMENTS_INVALID_FILE".equals(error.getCode())) {
+        if (!RequestErrorCode.IMPORT_ELEMENTS_INVALID_FILE.equals(error.getCode())) {
           logError("edit_importElements()", filePath, error);
         }
 
@@ -1923,23 +1924,25 @@ public class DartAnalysisServerService implements Disposable {
 
       final String runtimePath = FileUtil.toSystemDependentName(DartSdkUtil.getDartExePath(sdk));
 
+      //noinspection HardCodedStringLiteral
       String analysisServerPath = FileUtil.toSystemDependentName(mySdkHome + "/bin/snapshots/analysis_server.dart.snapshot");
+      //noinspection HardCodedStringLiteral
       analysisServerPath = System.getProperty("dart.server.path", analysisServerPath);
 
       String dasStartupErrorMessage = "";
       final File runtimePathFile = new File(runtimePath);
       final File dasSnapshotFile = new File(analysisServerPath);
       if (!runtimePathFile.exists()) {
-        dasStartupErrorMessage = "the Dart VM file does not exist at location: " + runtimePath;
+        dasStartupErrorMessage = DartBundle.message("dart.vm.file.does.not.exist.at.0", runtimePath);
       }
       else if (!dasSnapshotFile.exists()) {
-        dasStartupErrorMessage = "the Dart Analysis Server snapshot file does not exist at location: " + analysisServerPath;
+        dasStartupErrorMessage = DartBundle.message("analysis.server.snapshot.file.does.not.exist.at.0", analysisServerPath);
       }
       else if (!runtimePathFile.canExecute()) {
-        dasStartupErrorMessage = "the Dart VM file is not executable at location: " + runtimePath;
+        dasStartupErrorMessage = DartBundle.message("dart.vm.file.is.not.executable.at.0", runtimePath);
       }
       else if (!dasSnapshotFile.canRead()) {
-        dasStartupErrorMessage = "the Dart Analysis Server snapshot file is not readable at location: " + analysisServerPath;
+        dasStartupErrorMessage = DartBundle.message("analysis.server.snapshot.file.is.not.readable.at.0", analysisServerPath);
       }
       if (!dasStartupErrorMessage.isEmpty()) {
         LOG.warn("Failed to start Dart analysis server: " + dasStartupErrorMessage);
@@ -1970,7 +1973,7 @@ public class DartAnalysisServerService implements Disposable {
         vmArgsRaw = "";
       }
 
-      String serverArgsRaw = "";
+      @NonNls String serverArgsRaw = "";
       serverArgsRaw += " --useAnalysisHighlight2";
       //serverArgsRaw += " --file-read-mode=normalize-eol-always";
       try {
@@ -2026,7 +2029,7 @@ public class DartAnalysisServerService implements Disposable {
                 ApplicationManager.getApplication().invokeLater(
                   () -> {
                     final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
-                    problemsView.showErrorNotificationTerse("Analysis server has terminated");
+                    problemsView.showErrorNotificationTerse(DartBundle.message("analysis.server.terminated"));
                   },
                   ModalityState.NON_MODAL,
                   myProject.getDisposed()
@@ -2218,15 +2221,16 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
-  private void logError(@NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
+  private void logError(@NonNls @NotNull final String methodName, @Nullable final String filePath, @NotNull final RequestError error) {
     final String trace = error.getStackTrace();
     final String partialTrace = trace == null || trace.isEmpty() ? "" : trace.substring(0, Math.min(trace.length(), 1000));
     final String message = getShortErrorMessage(methodName, filePath, error) + "\n" + partialTrace + "...";
     LOG.error(message);
   }
 
+  @NonNls
   @NotNull
-  private String getShortErrorMessage(@NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
+  private String getShortErrorMessage(@NonNls @NotNull String methodName, @Nullable String filePath, @NotNull RequestError error) {
     return "Error from " + methodName +
            (filePath == null ? "" : (", file = " + filePath)) +
            ", SDK version = " + mySdkVersion +
@@ -2234,8 +2238,8 @@ public class DartAnalysisServerService implements Disposable {
            ", error code = " + error.getCode() + ": " + error.getMessage();
   }
 
-  private void logTookTooLongMessage(@NotNull final String methodName, final long timeout, @Nullable String filePath) {
-    StringBuilder builder = new StringBuilder();
+  private void logTookTooLongMessage(@NonNls @NotNull final String methodName, final long timeout, @Nullable String filePath) {
+    @NonNls StringBuilder builder = new StringBuilder();
     builder.append(methodName).append("() took longer than ").append(timeout).append("ms");
     if (filePath != null) {
       builder.append(", for file ").append(filePath);
