@@ -310,10 +310,6 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       }
 
       @Override
-      public void processWillTerminate(@NotNull ProcessEvent event, boolean willBeDestroyed) {
-      }
-
-      @Override
       public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
         System.out.println("FlexUnit: " + event.getText());
       }
@@ -322,7 +318,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
     final Ref<ExecutionConsole> executionConsole = new Ref<>();
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
-        runner.execute(env.withCallback(new ProgramRunner.Callback() {
+        env.setCallback(new ProgramRunner.Callback() {
           @Override
           public void processStarted(RunContentDescriptor descriptor) {
             compilation.up();
@@ -330,7 +326,8 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
             descriptor.getProcessHandler().addProcessListener(listener);
             executionConsole.set(descriptor.getExecutionConsole());
           }
-        }));
+        });
+        runner.execute(env);
       }
       catch (Throwable t) {
         t.printStackTrace();
