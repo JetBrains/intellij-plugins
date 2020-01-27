@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.psi.PsiElement
 
@@ -21,6 +22,7 @@ interface VuexContainer {
   val modules: Map<String, VuexModule>
 
   val source: PsiElement
+  val initializer: JSObjectLiteralExpression?
 }
 
 interface VuexStore : VuexContainer {

@@ -3,7 +3,10 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSNewExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.PsiElement
@@ -12,13 +15,6 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 
 abstract class VuexContainerImpl : VuexContainer {
-
-  protected abstract val sourceElement: PsiElement
-
-  protected abstract val initializer: JSObjectLiteralExpression?
-
-  override val source: PsiElement
-    get() = initializer ?: sourceElement
 
   override val actions: Map<String, VuexAction>
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::actions)
@@ -49,26 +45,31 @@ abstract class VuexContainerImpl : VuexContainer {
 
 }
 
-class VuexModuleImpl(override val name: String, override val sourceElement: PsiElement) : VuexContainerImpl(), VuexModule {
+class VuexModuleImpl(override val name: String,
+                     private val initializerElement: PsiElement,
+                     nameElement: PsiElement) : VuexContainerImpl(), VuexModule {
+
+  constructor(name: String, element: PsiElement) : this(name, element, element)
+
+  override val source = nameElement
 
   override val isNamespaced: Boolean
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
 
   override val initializer: JSObjectLiteralExpression?
     get() {
-      (sourceElement as? JSObjectLiteralExpression)?.let { return it }
-      val sourceElement = (this.sourceElement as? JSProperty) ?: return null
-      return CachedValuesManager.getCachedValue(sourceElement) {
-        objectLiteralFor(sourceElement)?.let { create(it, sourceElement, it) }
-        ?: create(null as JSObjectLiteralExpression?, sourceElement, VFS_STRUCTURE_MODIFICATIONS)
+      (initializerElement as? JSObjectLiteralExpression)?.let { return it }
+      return CachedValuesManager.getCachedValue(initializerElement) {
+        objectLiteralFor(initializerElement)?.let { create(it, initializerElement, it) }
+        ?: create(null as JSObjectLiteralExpression?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)
       }
     }
 }
 
-class VuexStoreImpl(override val sourceElement: JSNewExpression) : VuexContainerImpl(), VuexStore {
+class VuexStoreImpl(override val source: JSNewExpression) : VuexContainerImpl(), VuexStore {
   override val initializer: JSObjectLiteralExpression?
     get() {
-      val storeCreationCall = this.sourceElement
+      val storeCreationCall = this.source
       return CachedValuesManager.getCachedValue(storeCreationCall) {
         readLiteralFromParams(storeCreationCall)
           ?.let { create(it, storeCreationCall, it) }

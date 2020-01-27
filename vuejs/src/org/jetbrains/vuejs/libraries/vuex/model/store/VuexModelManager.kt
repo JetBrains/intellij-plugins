@@ -5,28 +5,29 @@ import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSNewExpression
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex
 
 object VuexModelManager {
 
-  //fun getVuexContainer(element: PsiElement): VuexContainer? {
-  //
-  //}
-  //
-  //fun getVuexStore(vueContainer: VueContainer): VuexStore? {
-  //
-  //}
+  fun getVuexStoreContext(element: PsiElement): VuexStoreContext? {
+    val stores = getAllVuexStores(element.project)
+    val registeredModules = getRegisteredModules(element.project)
+    return if (stores.isNotEmpty() || registeredModules.isNotEmpty())
+      VuexStoreContextImpl(stores, registeredModules, element)
+    else
+      null
+  }
 
-  fun getAllVuexStores(project: Project): List<VuexStore> {
+  private fun getAllVuexStores(project: Project): List<VuexStore> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       CachedValueProvider.Result.create(
         StubIndex.getElements(VuexStoreIndex.KEY, STORE, project,
@@ -40,7 +41,7 @@ object VuexModelManager {
     }
   }
 
-  fun getRegisteredModules(project: Project): List<VuexModule> {
+  private fun getRegisteredModules(project: Project): List<VuexModule> {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
       CachedValueProvider.Result.create(
         StubIndex.getElements(VuexStoreIndex.KEY, REGISTER_MODULE, project,
@@ -57,14 +58,17 @@ object VuexModelManager {
   private fun createRegisteredModule(call: JSCallExpression): VuexModule? {
     // TODO make stub safe
     val arguments = call.arguments
-    val path = arguments.getOrNull(0)
-                 ?.let { getTextIfLiteral(it) }
-               ?: return null
-
-    val initializer = arguments.getOrNull(1)
-                        ?.let { objectLiteralFor(it) }
+    val nameElement = arguments.getOrNull(0)
                       ?: return null
-    return VuexModuleImpl(path, initializer)
+    val path = getTextIfLiteral(nameElement)
+               ?: return null
+    val initializer = arguments.getOrNull(1)
+                      ?: return null
+    return VuexModuleImpl(path, initializer, nameElement)
   }
+
+  private class VuexStoreContextImpl(override val rootStores: List<VuexStore>,
+                                     override val registeredModules: List<VuexModule>,
+                                     override val element: PsiElement) : VuexStoreContext
 
 }

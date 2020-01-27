@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.vuex.index
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.JSElementTypes
+import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.JSCallExpression
@@ -36,14 +37,16 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       val refName = JSReferenceExpressionImpl.getReferenceName(reference) ?: return false
       if (JSReferenceExpressionImpl.getQualifierNode(reference) == null) {
         return VUEX_MAPPERS.contains(refName)
-      } else {
-        return refName == REGISTER_MODULE
+      }
+      else {
+        return REGISTER_MODULE == refName
       }
     }
     else {
       // new Vuex.Store call
       return node
-        ?.takeIf { it.elementType === JSElementTypes.NEW_EXPRESSION }
+        ?.takeIf { it.elementType === JSElementTypes.NEW_EXPRESSION
+                   || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION }
         ?.let { JSCallExpressionImpl.getMethodExpression(it) }
         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
         ?.let { reference ->
@@ -54,31 +57,41 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     }
   }
 
+  override fun shouldCreateStubForArrayLiteral(node: ASTNode?): Boolean {
+    return shouldCreateStubForCallExpression(node?.treeParent?.treeParent)
+  }
+
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
-    var callExpr = node
-    var withinInitializer = false
-    while (callExpr?.treeParent != null
-           && callExpr.treeParent.elementType != JSElementTypes.CALL_EXPRESSION) {
-      callExpr = callExpr.treeParent
-      withinInitializer = withinInitializer
-                          || callExpr.elementType === JSElementTypes.ARRAY_LITERAL_EXPRESSION
-                          || callExpr.elementType === JSElementTypes.OBJECT_LITERAL_EXPRESSION
+    if (node?.text?.getOrNull(0)
+        ?.let { it == '\'' || it == '"' || it == '`' } == true) {
+      val parent = node.treeParent
+      when (parent?.elementType) {
+        JSElementTypes.ARGUMENT_LIST -> {
+          return shouldCreateStubForCallExpression(parent?.treeParent)
+        }
+        JSElementTypes.ARRAY_LITERAL_EXPRESSION -> {
+          return shouldCreateStubForArrayLiteral(parent)
+        }
+      }
     }
-    return callExpr != null && withinInitializer && shouldCreateStubForCallExpression(callExpr)
+    return false
   }
 
   override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
     val reference = callExpression.methodExpression
       ?.castSafelyTo<JSReferenceExpression>()
-    if (callExpression is JSNewExpression
-        && JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
-      outData.addImplicitElement(
-        JSImplicitElementImpl.Builder(STORE, callExpression)
-          .setUserString(VuexStoreIndex.JS_KEY)
-          .setType(JSImplicitElement.Type.Variable)
-          .forbidAstAccess()
-          .toImplicitElement())
-    } else if (reference?.referenceName == REGISTER_MODULE) {
+    val referenceName = reference?.referenceName ?: return
+    if (callExpression is JSNewExpression) {
+      if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUEX_NAMESPACE, STORE)) {
+        outData.addImplicitElement(
+          JSImplicitElementImpl.Builder(STORE, callExpression)
+            .setUserString(VuexStoreIndex.JS_KEY)
+            .setType(JSImplicitElement.Type.Variable)
+            .forbidAstAccess()
+            .toImplicitElement())
+      }
+    }
+    else if (referenceName == REGISTER_MODULE) {
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
           .setUserString(VuexStoreIndex.JS_KEY)

@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
+import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -14,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil.isStubBased
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
@@ -147,6 +149,19 @@ fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
     }
   }
   return null
+}
+
+fun getStubSafeCallArguments(call: JSCallExpression): List<PsiElement> {
+  if (isStubBased(call)) {
+    (call as StubBasedPsiElementBase<*>).stub?.let { stub ->
+      val methodExpr = call.stubSafeMethodExpression
+      return stub.childrenStubs.map { it.psi }
+        .filter { it !== methodExpr }
+        .toList()
+    }
+    return call.arguments.filter { isStubBased(it) }.toList()
+  }
+  return emptyList()
 }
 
 fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
