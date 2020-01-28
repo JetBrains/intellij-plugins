@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -26,7 +26,7 @@ public class DartWebdevConfigurationType extends ConfigurationTypeBase implement
     super("DartWebdevConfigurationType",
           DartBundle.message("webdev.debug.configuration.name"),
           DartBundle.message("webdev.debug.configuration.description"),
-          NotNullLazyValue.createValue(() -> DartIcons.Dart_16));
+          NotNullLazyValue.createValue(() -> DartIcons.DartWeb));
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
