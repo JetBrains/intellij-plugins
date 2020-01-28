@@ -8,7 +8,11 @@ import com.intellij.execution.junit.TestInClassConfigurationProducer;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.PlatformTestUtil;
 
-public class CucumberJavaWithJUnitRunnerIntegrationTest extends JavaTestFrameworkIntegrationTest {
+/**
+ * abstract not to run in on buildserver
+ */
+@SuppressWarnings("unused")
+public abstract class CucumberJavaWithJUnitRunnerIntegrationTest extends JavaTestFrameworkIntegrationTest {
   private static final String EXPECTED_TREE_OF_TESTS =
     "-[root]\n" +
     " -test\n" +

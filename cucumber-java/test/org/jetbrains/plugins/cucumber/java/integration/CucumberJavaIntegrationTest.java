@@ -7,7 +7,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.plugins.cucumber.java.run.CucumberJavaFeatureRunConfigurationProducer;
 
-public class CucumberJavaIntegrationTest extends JavaTestFrameworkIntegrationTest {
+/**
+ * abstract not to run in on buildserver
+ */
+@SuppressWarnings("unused")
+public abstract class CucumberJavaIntegrationTest extends JavaTestFrameworkIntegrationTest {
   private static final String EXPECTED_TREE_OF_TESTS =
     "-[root]\n" +
     " -Feature: test\n" +
