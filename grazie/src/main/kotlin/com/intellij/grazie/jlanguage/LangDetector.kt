@@ -4,44 +4,42 @@ package com.intellij.grazie.jlanguage
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
-import tanvd.grazi.langdetect.detector.LanguageDetector
-import tanvd.grazi.langdetect.detector.LanguageDetectorBuilder
-import tanvd.grazi.langdetect.ngram.NgramExtractor
-import tanvd.grazi.langdetect.profiles.LanguageProfileReader
+import tanvd.grazie.langdetect.ngram.LanguageDetectorBuilder
+import tanvd.grazie.langdetect.ngram.impl.ngram.NgramExtractor
+import tanvd.grazie.langdetect.ngram.impl.profiles.LanguageProfileReader
 
 object LangDetector : GrazieStateLifecycle {
-  private const val charsForLangDetection = 1_000
-  private lateinit var languages: Set<Lang>
+  private var available: Set<Lang> = emptySet()
 
-  @Volatile
-  private var detector: LanguageDetector? = null
-    get() {
-      if (field == null) {
-        synchronized(this) {
-          if (field == null) {
-            init(GrazieConfig.get())
-          }
-        }
-      }
-
-      return field
-    }
-
-  fun getLang(text: String) = detector?.getProbabilities(text.take(charsForLangDetection))
-    ?.maxBy { it.probability }
-    ?.let { detectedLanguage -> languages.find { it.shortCode == detectedLanguage.locale.language } }
-    .also { GrazieFUCounterCollector.languageDetected(it) }
-
-  override fun init(state: GrazieConfig.State) {
-    languages = state.availableLanguages
-    val profiles = LanguageProfileReader().read(languages.filter { it.shortCode != "zh" }.map { it.shortCode } + "zh-CN").toSet()
-
-    detector = LanguageDetectorBuilder.create(NgramExtractor.standard)
+  private val detector by lazy {
+    LanguageDetectorBuilder(NgramExtractor.standard)
       .probabilityThreshold(0.90)
+      .minimalConfidence(0.90)
       .prefixFactor(1.5)
       .suffixFactor(2.0)
-      .withProfiles(profiles)
+      .withProfiles(LanguageProfileReader.readAllBuiltIn())
       .build()
+  }
+
+  /**
+   * Get natural language of text.
+   *
+   * It will perform NGram and Rule-based search for possible languages.
+   *
+   * @return Language that is detected.
+   */
+  fun getLanguage(text: String) = detector.detect(text.take(1_000)).preferred
+    .also { GrazieFUCounterCollector.languageDetected(it) }
+
+  /**
+   * Get natural language of text, if it is enabled in Grazie
+   *
+   * @return Lang that is detected and enabled in grazie
+   */
+  fun getAvailableLang(text: String) = getLanguage(text).let { available.find { lang -> lang.equalsTo(it)  } }
+
+  override fun init(state: GrazieConfig.State) {
+    available = state.availableLanguages
   }
 
   override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {

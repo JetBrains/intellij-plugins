@@ -10,31 +10,23 @@ import com.intellij.grazie.utils.toLinkedSet
 import org.languagetool.JLanguageTool
 import org.languagetool.rules.spelling.SpellingCheckRule
 import org.slf4j.LoggerFactory
+import tanvd.grazie.langdetect.heuristics.rule.RuleFilter
 
 object GrazieSpellchecker : GrazieStateLifecycle {
   private const val MAX_SUGGESTIONS_COUNT = 3
 
+  private val filter by lazy { RuleFilter.withAllBuiltIn() }
+  private fun filterCheckers(word: String): Set<SpellerTool> {
+    val myLangs = filter.filter(listOf(word)).preferred.map { it.iso.toString() }.toSet()
+    return checkers.filter { it.lang.shortCode in myLangs }.toSet()
+  }
+
   private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
   private val logger = LoggerFactory.getLogger(GrazieSpellchecker::class.java)
 
-  data class SpellerTool(val tool: JLanguageTool, val speller: SpellingCheckRule, val suggestLimit: Int) {
-    fun isMyDomain(word: String): Boolean {
-      val domain = Lang[tool.language]!!.unicodeBlock.blocks
-
-      var offset = 0
-      while (offset < word.length) {
-        val codepoint = Character.codePointAt(word, offset)
-
-        if (Character.UnicodeBlock.of(codepoint) in domain) return true
-
-        offset += Character.charCount(codepoint)
-      }
-
-      return false
-    }
-
+  data class SpellerTool(val tool: JLanguageTool, val lang: Lang, val speller: SpellingCheckRule, val suggestLimit: Int) {
     fun check(word: String): Boolean = synchronized(speller) {
-      !(speller.isMisspelled(word) && speller.isMisspelled(word.capitalize()))
+      !speller.isMisspelled(word) || !speller.isMisspelled(word.capitalize())
     }
 
     fun suggest(text: String): Set<String> = synchronized(speller) {
@@ -52,7 +44,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
               val tool = LangTool.getTool(BASE_SPELLCHECKER_LANGUAGE)
               val rule = LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE)
               require(rule != null) { "Base spellchecker must contain spelling rule" }
-              add(SpellerTool(tool, rule, MAX_SUGGESTIONS_COUNT))
+              add(SpellerTool(tool, BASE_SPELLCHECKER_LANGUAGE, rule, MAX_SUGGESTIONS_COUNT))
             }
           }
         }
@@ -65,7 +57,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     checkers = state.availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
       val tool = LangTool.getTool(lang, state)
       val rule = LangTool.getSpeller(lang)
-      rule?.let { SpellerTool(tool, rule, MAX_SUGGESTIONS_COUNT) }
+      rule?.let { SpellerTool(tool, lang, rule, MAX_SUGGESTIONS_COUNT) }
     }.toLinkedSet()
   }
 
@@ -73,11 +65,16 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     init(newState)
   }
 
-  fun isCorrect(word: String) = checkers.filter { it.isMyDomain(word) }.let {
-    if (it.isEmpty()) true else it.any { speller ->
+  fun isCorrect(word: String): Boolean {
+    val myCheckers = filterCheckers(word)
+
+    if (myCheckers.isEmpty()) return true
+
+    return myCheckers.any { speller ->
       try {
         speller.check(word)
-      } catch (t: Throwable) {
+      }
+      catch (t: Throwable) {
         logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
         false
       }
@@ -87,12 +84,17 @@ object GrazieSpellchecker : GrazieStateLifecycle {
   /**
    * Checks text for spelling mistakes.
    */
-  fun getSuggestions(word: String) = checkers.filter { it.isMyDomain(word) }.mapNotNull { speller ->
-    try {
-      speller.suggest(word)
-    } catch (t: Throwable) {
-      logger.warn("Got exception during suggest for spelling mistakes by LanguageTool with word: $word", t)
-      null
-    }
-  }.flatten().toLinkedSet()
+  fun getSuggestions(word: String): LinkedSet<String> {
+    val myCheckers = filterCheckers(word)
+
+    return myCheckers.mapNotNull { speller ->
+      try {
+        speller.suggest(word)
+      }
+      catch (t: Throwable) {
+        logger.warn("Got exception during suggest for spelling mistakes by LanguageTool with word: $word", t)
+        null
+      }
+    }.flatten().toLinkedSet()
+  }
 }

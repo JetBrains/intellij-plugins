@@ -56,7 +56,7 @@ object GrammarEngine {
     ProgressManager.checkCanceled()
     if (str.length < minChars) return emptySet()
 
-    val lang = LangDetector.getLang(str) ?: return emptySet()
+    val lang = LangDetector.getAvailableLang(str) ?: return emptySet()
 
     return try {
       LangTool.getTool(lang).check(str)

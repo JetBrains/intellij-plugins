@@ -2,13 +2,13 @@
 package com.intellij.grazie.ide.fus
 
 import com.intellij.grazie.grammar.Typo
-import com.intellij.grazie.jlanguage.Lang
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
+import tanvd.grazie.langdetect.model.Language
 
 object GrazieFUCounterCollector {
-  fun languageDetected(lang: Lang?) = log("language.detected") {
-    addData("language", lang?.shortCode ?: "")
+  fun languageDetected(lang: Language?) = log("language.detected") {
+    addData("language", lang?.iso?.toString() ?: "")
   }
 
   fun typoFound(typo: Typo) = log("typo.found") {
