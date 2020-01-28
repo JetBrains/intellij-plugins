@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package icons;
 
 import com.intellij.ui.IconManager;
@@ -19,6 +19,7 @@ public final class DartIcons {
   /** 16x16 */ public static final Icon Dart_file = load("/icons/dart_file.svg");
   /** 16x16 */ public static final Icon Dart_remote = load("/icons/dart_remote.svg");
   /** 16x16 */ public static final Icon Dart_test = load("/icons/dart_test.svg");
+  /** 16x16 */ public static final Icon DartWeb = load("/icons/dartWeb.svg");
   /** 16x16 */ public static final Icon Observatory = load("/icons/observatory.svg");
   /** 13x13 */ public static final Icon PubServeToolWindow = load("/icons/pubServeToolWindow.svg");
   /** 6x6 */ public static final Icon Warning_point = load("/icons/warning_point.svg");

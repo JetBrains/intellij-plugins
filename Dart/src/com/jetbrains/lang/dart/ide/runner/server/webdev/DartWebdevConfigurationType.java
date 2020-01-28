@@ -26,7 +26,7 @@ public class DartWebdevConfigurationType extends ConfigurationTypeBase implement
     super("DartWebdevConfigurationType",
           DartBundle.message("webdev.debug.configuration.name"),
           DartBundle.message("webdev.debug.configuration.description"),
-          NotNullLazyValue.createValue(() -> DartIcons.Dart_16));
+          NotNullLazyValue.createValue(() -> DartIcons.DartWeb));
     addFactory(new ConfigurationFactory(this) {
       @NotNull
       @Override
