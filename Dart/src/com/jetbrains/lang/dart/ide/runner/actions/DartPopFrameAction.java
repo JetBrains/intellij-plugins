@@ -20,7 +20,7 @@ public class DartPopFrameAction extends AnAction implements DumbAware {
   public DartPopFrameAction() {
     Presentation presentation = getTemplatePresentation();
     presentation.setText(() -> DartBundle.message("dart.pop.frame.action.text"));
-    presentation.setDescription(DartBundle.message("dart.pop.frame.action.description"));
+    presentation.setDescription(() -> DartBundle.message("dart.pop.frame.action.description"));
     presentation.setIcon(AllIcons.Actions.PopFrame);
   }
 
