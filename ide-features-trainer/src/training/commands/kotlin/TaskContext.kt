@@ -5,6 +5,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
@@ -19,10 +20,16 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
-                  private val recorder: ActionsRecorder) {
+                  private val recorder: ActionsRecorder,
+                  private val restoreContent: Ref<() -> Boolean>) {
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
   val testActions: MutableList<Runnable> = mutableListOf()
+
+  fun restoreState(checkState: () -> Boolean) {
+    if (!restoreContent.isNull) throw IllegalStateException("Only one restore context per task is allowed")
+    restoreContent.set(checkState)
+  }
 
   /**
    * Write a text to the learn panel (panel with a learning tasks).

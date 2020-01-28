@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
 import com.intellij.util.DocumentUtil
@@ -21,18 +22,24 @@ import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
+  private data class TaskInfo(val content: (Int) -> Unit, var restoreIndex: Int = 0, var messagesNumberBeforeStart: Int = 0)
+
   private var isUnderTaskProcessing = false
-  private val taskActions: MutableList<() -> Unit> = ArrayList()
+  private val taskActions: MutableList<TaskInfo> = ArrayList()
 
   private var currentRecorder: ActionsRecorder? = null
+
+  private fun addTaskAction(content: (Int) -> Unit) {
+    taskActions.add(TaskInfo(content, taskActions.size - 1))
+  }
 
   fun waitBeforeContinue(delayMillis: Int) {
     if (isUnderTaskProcessing) {
       throw IllegalStateException("Delay should be specified between tasks!")
     }
 
-    taskActions.add {
-      Alarm().addRequest({ processNextTask() }, delayMillis)
+    addTaskAction { taskIndex ->
+      Alarm().addRequest({ processNextTask(taskIndex + 1) }, delayMillis)
     }
   }
 
@@ -42,7 +49,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       throw IllegalStateException("Nested tasks are not permitted!")
     }
 
-    taskActions.add { processTask(taskContent) }
+    addTaskAction { processTask(taskContent, it) }
   }
 
   fun stopLesson() {
@@ -73,62 +80,102 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
-  fun processNextTask() {
+  fun processNextTask(taskIndex: Int) {
     assert(ApplicationManager.getApplication().isDispatchThread)
-    if (taskActions.size == 0) {
+    if (taskIndex == taskActions.size) {
       lesson.pass()
       LessonManager.instance.passLesson(project, lesson)
       return
     }
-    val content = taskActions[0]
-    taskActions.removeAt(0)
-    content()
+    val taskInfo = taskActions[taskIndex]
+    taskInfo.messagesNumberBeforeStart = LessonManager.instance.messagesNumber()
+    taskInfo.content(taskIndex)
   }
 
-  private fun processTask(taskContent: TaskContext.() -> Unit) {
+  private fun processTask(taskContent: TaskContext.() -> Unit, taskIndex: Int) {
     assert(ApplicationManager.getApplication().isDispatchThread)
     val recorder = ActionsRecorder(project, editor.document)
     currentRecorder = recorder
-    val taskContext = TaskContext(lesson, editor, project, recorder)
+    val restoreContentRef = Ref<() -> Boolean>()
+    val taskContext = TaskContext(lesson, editor, project, recorder, restoreContentRef)
     isUnderTaskProcessing = true
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false
 
     if (taskContext.steps.isEmpty()) {
-      processNextTask()
+      processNextTask(taskIndex + 1)
       return
     }
 
-    chainNextTask(taskContext, recorder)
+    chainNextTask(taskContext, taskIndex, recorder, restoreContentRef.get())
 
     processTestActions(taskContext)
   }
 
-  private fun chainNextTask(taskContext: TaskContext, recorder: ActionsRecorder) {
+  private fun checkForRestore(taskContext: TaskContext,
+                              taskIndex: Int,
+                              stepsRecorder: ActionsRecorder,
+                              restoreContent: (() -> Boolean)?): () -> Unit {
+    restoreContent ?: return {}
+    val restoreRecorder = ActionsRecorder(project, editor.document)
+    val restoreStep = restoreRecorder.futureCheck { restoreContent() }
+    val clearRestore = {
+      // We can be now inside some listener registered by recorder
+      disposeRecorderLater(restoreRecorder)
+      if (!restoreStep.isDone) {
+        restoreStep.cancel(true)
+      }
+    }
+    restoreStep.thenAccept {
+      if (!isTaskCompleted(taskContext)) {
+        clearRestore()
+        disposeRecorderLater(stepsRecorder)
+        taskContext.steps.forEach { it.cancel(true) }
+        val restoreIndex = taskActions[taskIndex].restoreIndex
+        LessonManager.instance.resetMessagesNumber(taskActions[restoreIndex].messagesNumberBeforeStart)
+        processNextTask(restoreIndex)
+      }
+    }
+    return clearRestore
+  }
+
+  private fun chainNextTask(taskContext: TaskContext,
+                            taskIndex: Int,
+                            recorder: ActionsRecorder,
+                            restoreContent: (() -> Boolean)?) {
+    val clearRestore = checkForRestore(taskContext, taskIndex, recorder, restoreContent)
+
     taskContext.steps.forEach { step ->
       step.thenAccept {
         assert(ApplicationManager.getApplication().isDispatchThread)
-        val taskHasBeenDone = taskContext.steps.all { it.isDone }
+        val taskHasBeenDone = isTaskCompleted(taskContext)
         if (taskHasBeenDone) {
-          // Now we are inside some listener registered by recorder
-          ApplicationManager.getApplication().invokeLater {
-            // So better to exit from all callbacks and then clear all related data
-            Disposer.dispose(recorder)
-          }
+          disposeRecorderLater(recorder)
+          clearRestore()
           currentRecorder = null
           LessonManager.instance.passExercise()
-          processNextTask()
+          processNextTask(taskIndex + 1)
         }
       }
     }
   }
 
+  private fun disposeRecorderLater(recorder: ActionsRecorder) {
+    // Now we are inside some listener registered by recorder
+    ApplicationManager.getApplication().invokeLater {
+      // So better to exit from all callbacks and then clear all related data
+      Disposer.dispose(recorder)
+    }
+  }
+
+  private fun isTaskCompleted(taskContext: TaskContext) = taskContext.steps.all { it.isDone && it.get() }
+
   private fun addSimpleTaskAction(taskAction: () -> Unit) {
     assert(ApplicationManager.getApplication().isDispatchThread)
     if (!isUnderTaskProcessing) {
-      taskActions.add {
+      addTaskAction { taskIndex ->
         taskAction()
-        processNextTask()
+        processNextTask(taskIndex + 1)
       }
     }
     else {
@@ -144,6 +191,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       }
     }
   }
+
   private fun setSample(sample: LessonSample) {
     setDocumentCode(sample.text)
     sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }

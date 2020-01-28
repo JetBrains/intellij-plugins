@@ -226,7 +226,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson, executor)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
     lesson.lessonContent(lessonContext)
-    executor.processNextTask()
+    executor.processNextTask(0)
   }
 
   private fun hideOtherViews(project: Project) {
