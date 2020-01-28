@@ -1,6 +1,7 @@
 <idea-plugin>
   <id>cucumber-java</id>
   <name>Cucumber for Java</name>
+  <category>Test Tools</category>
   <description>
       <![CDATA[
   Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Java.

@@ -1,6 +1,7 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <id>AngularJS</id>
   <name>Angular and AngularJS</name>
+  <category>Web Development</category>
   <description><![CDATA[
 <p>Support for <a href="https://angular.io/">Angular</a> and <a href="https://angularjs.org/">AngularJS</a> projects.</p>
 <h2>Getting started</h2>

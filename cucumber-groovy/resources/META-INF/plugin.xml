@@ -1,6 +1,7 @@
 <idea-plugin>
   <id>cucumber-groovy</id>
   <name>Cucumber for Groovy</name>
+  <category>Test Tools</category>
   <description>
       <![CDATA[
 Adds support for <a href="http://cukes.info/">Cucumber</a> testing tools with step definitions written in Groovy.

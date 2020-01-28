@@ -22,7 +22,7 @@
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
 
-  <category>Web/JavaEE Technologies</category>
+  <category>JVM Frameworks</category>
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>

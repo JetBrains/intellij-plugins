@@ -43,7 +43,7 @@
       to the OSGi container and start/stop bundles.
     </p>
   ]]></description>
-  <category>Framework integration</category>
+  <category>JVM Frameworks</category>
   <vendor>JetBrains</vendor>
 
   <depends>com.intellij.modules.java</depends>
