@@ -183,6 +183,10 @@ class LearnPanel : JPanel() {
     }
 
     lessonMessagePane.addMessage(messages)
+    adjustMessagesArea()
+  }
+
+  private fun adjustMessagesArea() {
     //invoke #getPreferredSize explicitly to update actual size of LessonMessagePane
     lessonMessagePane.preferredSize
 
@@ -192,6 +196,13 @@ class LearnPanel : JPanel() {
     lessonPanelBoxLayout.invalidateLayout(lessonPanel)
     lessonPanelBoxLayout.layoutContainer(lessonPanel)
   }
+
+  fun resetMessagesNumber(number: Int) {
+    lessonMessagePane.resetMessagesNumber(number)
+    adjustMessagesArea()
+  }
+
+  fun messagesNumber(): Int = lessonMessagePane.messagesNumber()
 
   fun setPreviousMessagesPassed() {
     try {

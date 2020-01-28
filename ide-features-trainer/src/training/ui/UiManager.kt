@@ -65,6 +65,13 @@ object UiManager {
     LOG.debug("addMessagesToLearnPanels: $messages")
   }
 
+  fun resetMessagesNumber(number: Int) {
+    learnPanelPerProject.values.forEach { it.resetMessagesNumber(number) }
+    LOG.debug("resetMessagesNumber: $number")
+  }
+
+  fun messagesNumber(): Int = learnPanelPerProject.values.map { it.messagesNumber() }.max() ?: 0
+
   fun clearLearnPanels() {
     learnPanelPerProject.values.forEach { it.clear() }
     LOG.debug("clearLearnPanels")

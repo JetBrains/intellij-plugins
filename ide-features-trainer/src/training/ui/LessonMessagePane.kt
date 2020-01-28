@@ -74,6 +74,20 @@ class LessonMessagePane : JTextPane() {
     this.setParagraphAttributes(PARAGRAPH_STYLE, true)
   }
 
+  fun messagesNumber(): Int = lessonMessages.size
+
+  fun resetMessagesNumber(number: Int) {
+    if (number == 0) {
+      clear()
+      return
+    }
+    val end = lessonMessages[number - 1].end
+    document.remove(end, document.length - end)
+    while (number < lessonMessages.size) {
+      lessonMessages.removeAt(lessonMessages.size - 1)
+    }
+  }
+
   fun addMessage(text: String) {
     try {
       val start = document.length

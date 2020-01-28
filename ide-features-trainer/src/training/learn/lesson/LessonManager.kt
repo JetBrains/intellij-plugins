@@ -121,6 +121,12 @@ class LessonManager {
     UiManager.updateToolWindowScrollPane()
   }
 
+  fun resetMessagesNumber(number: Int) {
+    UiManager.resetMessagesNumber(number)
+  }
+
+  fun messagesNumber(): Int = UiManager.messagesNumber()
+
   fun passExercise() {
     UiManager.setPreviousMessagePassedOnLearnPanels()
   }
