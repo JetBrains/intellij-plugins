@@ -44,12 +44,12 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
   constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
     Location(match.toIntRange(offset), IntRange(match.patternStartPos, match.patternEndPos - 1).withOffset(offset)),
     Info(lang, match.rule, match.shortMessage, match.message),
-    LinkedSet(match.suggestedReplacements)
+    LinkedSet(match.getSuggestedReplacements())
   )
 
   val category: Category?
     get() {
-      val category = info.rule.category.id.toString()
+      val category = info.rule.category.getCategoryId().id
       return Category.values().find { it.name == category }
     }
 

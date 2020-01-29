@@ -13,13 +13,11 @@ import java.util.concurrent.ConcurrentHashMap
 
 object LangTool : GrazieStateLifecycle {
   private val langs: MutableMap<Lang, JLanguageTool> = ConcurrentHashMap()
-  private val spellers: MutableMap<Lang, SpellingCheckRule?> = ConcurrentHashMap()
-
   private val rulesToLanguages = HashMap<String, MutableSet<Lang>>()
 
   init {
-    JLanguageTool.setDataBroker(GrazieDynamicDataBroker)
-    JLanguageTool.setClassBroker(GrazieDynamicClassBroker)
+    JLanguageTool.dataBroker = GrazieDynamicDataBroker
+    JLanguageTool.classBroker = GrazieDynamicClassBroker
   }
 
   val allRules: Set<String>
@@ -37,15 +35,12 @@ object LangTool : GrazieStateLifecycle {
 
         allRules.distinctBy { it.id }.onEach { rule ->
           rulesToLanguages.getOrPut(rule.id, ::HashSet).add(lang)
-        }.filter { rule -> rule.isDictionaryBasedSpellingRule }.forEach {
-          disableRule(it.id)
-          spellers[lang] = it as SpellingCheckRule
         }
       }
     }
   }
 
-  fun getSpeller(lang: Lang): SpellingCheckRule? = spellers[lang]
+  fun getSpeller(lang: Lang): SpellingCheckRule? = getTool(lang).spellingCheckRule
 
   override fun init(state: GrazieConfig.State) {
     // Creating LanguageTool for each language
@@ -54,7 +49,6 @@ object LangTool : GrazieStateLifecycle {
 
   override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
     langs.clear()
-    spellers.clear()
     rulesToLanguages.clear()
 
     init(newState)

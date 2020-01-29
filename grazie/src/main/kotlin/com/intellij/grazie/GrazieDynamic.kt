@@ -46,9 +46,8 @@ object GrazieDynamic {
 
   fun loadClass(className: String): Class<*>? = forClassLoader {
     try {
-      Class.forName(className, true, it)
-    }
-    catch (e: ClassNotFoundException) {
+    Class.forName(className, true, it)
+    } catch (e: ClassNotFoundException) {
       null
     }
   }
@@ -64,11 +63,10 @@ object GrazieDynamic {
   fun getResourceBundle(baseName: String, locale: Locale) = forClassLoader {
     try {
       ResourceBundle.getBundle(baseName, locale, it).takeIf { bundle -> bundle.locale.language == locale.language }
-    }
-    catch (e: MissingResourceException) {
+    } catch (e: MissingResourceException) {
       null
     }
-  }
+  } ?: throw MissingResourceException("Missing resource bundle for $baseName with locale $locale", GrazieDynamic.javaClass.name, baseName)
 
   private fun <T : Any> forClassLoader(body: (ClassLoader) -> T?): T? = body(GraziePlugin.classLoader) ?: dynClassLoaders
     .asSequence()

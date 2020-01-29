@@ -30,7 +30,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     }
 
     fun suggest(text: String): Set<String> = synchronized(speller) {
-      speller.match(tool.getRawAnalyzedSentence(text)).flatMap { it.suggestedReplacements }.take(suggestLimit).toSet()
+      speller.match(tool.getRawAnalyzedSentence(text)).flatMap { it.getSuggestedReplacements() }.take(suggestLimit).toSet()
     }
   }
 
@@ -42,7 +42,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
           if (field.isEmpty()) {
             field = LinkedSet<SpellerTool>().apply {
               val tool = LangTool.getTool(BASE_SPELLCHECKER_LANGUAGE)
-              val rule = LangTool.getSpeller(BASE_SPELLCHECKER_LANGUAGE)
+              val rule = tool.spellingCheckRule
               require(rule != null) { "Base spellchecker must contain spelling rule" }
               add(SpellerTool(tool, BASE_SPELLCHECKER_LANGUAGE, rule, MAX_SUGGESTIONS_COUNT))
             }
@@ -56,8 +56,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
   override fun init(state: GrazieConfig.State) {
     checkers = state.availableLanguages.plus(BASE_SPELLCHECKER_LANGUAGE).mapNotNull { lang ->
       val tool = LangTool.getTool(lang, state)
-      val rule = LangTool.getSpeller(lang)
-      rule?.let { SpellerTool(tool, lang, rule, MAX_SUGGESTIONS_COUNT) }
+      tool.spellingCheckRule?.let { SpellerTool(tool, lang, it, MAX_SUGGESTIONS_COUNT) }
     }.toLinkedSet()
   }
 
@@ -73,8 +72,7 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     return myCheckers.any { speller ->
       try {
         speller.check(word)
-      }
-      catch (t: Throwable) {
+      } catch (t: Throwable) {
         logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
         false
       }
@@ -85,13 +83,10 @@ object GrazieSpellchecker : GrazieStateLifecycle {
    * Checks text for spelling mistakes.
    */
   fun getSuggestions(word: String): LinkedSet<String> {
-    val myCheckers = filterCheckers(word)
-
-    return myCheckers.mapNotNull { speller ->
+    return filterCheckers(word).mapNotNull { speller ->
       try {
         speller.suggest(word)
-      }
-      catch (t: Throwable) {
+      } catch (t: Throwable) {
         logger.warn("Got exception during suggest for spelling mistakes by LanguageTool with word: $word", t)
         null
       }

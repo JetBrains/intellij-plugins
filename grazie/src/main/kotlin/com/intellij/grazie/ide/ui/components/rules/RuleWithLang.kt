@@ -30,11 +30,10 @@ data class RuleWithLang(val rule: Rule, val lang: Lang, val enabled: Boolean, va
   }
 }
 
-// IDEA-228902 need to be replaced with Enum inside LanguageTool
-data class ComparableCategory(val category: Category) : Comparable<ComparableCategory> {
-  val name: String = category.name
+typealias RulesMap = Map<Lang, Map<ComparableCategory, SortedSet<RuleWithLang>>>
 
-  override fun compareTo(other: ComparableCategory) = name.compareTo(other.name)
+class ComparableCategory(val category: Category, val lang: Lang) : Comparable<ComparableCategory> {
+  override fun compareTo(other: ComparableCategory) = category.getName(lang.jLanguage).compareTo(other.category.getName(lang.jLanguage))
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
@@ -42,17 +41,15 @@ data class ComparableCategory(val category: Category) : Comparable<ComparableCat
 
     other as ComparableCategory
 
-    if (category.name != other.category.name) return false
+    if (category != other.category) return false
 
     return true
   }
 
   override fun hashCode(): Int {
-    return category.name.hashCode()
+    return category.hashCode()
   }
 }
-
-typealias RulesMap = Map<Lang, Map<ComparableCategory, SortedSet<RuleWithLang>>>
 
 fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
   val state = GrazieConfig.get()
@@ -69,7 +66,7 @@ fun LangTool.allRulesWithLangs(langs: Collection<Lang>): RulesMap {
 
       allRules.distinctBy { it.id }.forEach {
         if (!it.isDictionaryBasedSpellingRule) {
-          categories.getOrPut(ComparableCategory(it.category), ::TreeSet).add(
+          categories.getOrPut(ComparableCategory(it.category, lang), ::TreeSet).add(
             RuleWithLang(it, lang, enabled = it.isActive(), enabledInTree = it.isActive()))
         }
       }

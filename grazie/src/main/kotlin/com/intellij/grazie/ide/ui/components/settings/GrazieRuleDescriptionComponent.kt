@@ -74,7 +74,7 @@ class GrazieRuleDescriptionComponent {
         unsafe { +msg("grazie.ui.settings.rules.language.template", it.displayName) }
       }
       it is ComparableCategory -> html {
-        unsafe { +msg("grazie.ui.settings.rules.category.template", it.name) }
+        unsafe { +msg("grazie.ui.settings.rules.category.template", it.category.getName()) }
       }
       it is RuleWithLang && hasDescription(it.rule) -> {
         html {

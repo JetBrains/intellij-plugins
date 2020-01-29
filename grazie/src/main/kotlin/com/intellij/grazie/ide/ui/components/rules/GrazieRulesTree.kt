@@ -52,7 +52,7 @@ class GrazieRulesTree(renderer: CheckboxTreeCellRenderer) : CheckboxTree(rendere
       reset(LangTool.allRulesWithLangs(langs).asSequence().map { (lang, categories) ->
         if (lang.displayName.contains(filterString, true)) lang to categories
         else lang to categories.map { (category, rules) ->
-          if (category.name.contains(filterString, true)) category to rules
+          if (category.category.getName(lang.jLanguage).contains(filterString, true)) category to rules
           else category to TreeSet(rules.filter { it.rule.description.contains(filterString, true) })
         }.toMap().filterValues { it.isNotEmpty() }
       }.toMap().filterValues { it.isNotEmpty() })

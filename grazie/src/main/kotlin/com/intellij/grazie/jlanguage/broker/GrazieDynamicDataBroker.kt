@@ -14,42 +14,36 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
 
   override fun getResourceBundle(baseName: String, locale: Locale) = GrazieDynamic.getResourceBundle(baseName, locale)
 
-  override fun getFromResourceDirAsStream(path: String): InputStream? {
+  override fun getFromResourceDirAsStream(path: String): InputStream {
     val completePath = getCompleteResourceUrl(path)
     val resourceAsStream = getAsStream(completePath)
-    assertNotNull(resourceAsStream, path, completePath)
+    require(resourceAsStream != null) { "Path $path not found in class path at $completePath" }
     return resourceAsStream
   }
 
 
-  override fun getFromResourceDirAsUrl(path: String): URL? {
+  override fun getFromResourceDirAsUrl(path: String): URL {
     val completePath = getCompleteResourceUrl(path)
     val resource = getAsURL(completePath)
-    assertNotNull(resource, path, completePath)
+    require(resource != null) { "Path $path not found in class path at $completePath" }
     return resource
   }
 
   private fun getCompleteResourceUrl(path: String) = appendPath(resourceDir, path)
 
-  override fun getFromRulesDirAsStream(path: String): InputStream? {
+  override fun getFromRulesDirAsStream(path: String): InputStream {
     val completePath = getCompleteRulesUrl(path)
     val resourceAsStream = getAsStream(completePath)
-    assertNotNull(resourceAsStream, path, completePath)
+    require(resourceAsStream != null) { "Path $path not found in class path at $completePath" }
     return resourceAsStream
   }
 
 
-  override fun getFromRulesDirAsUrl(path: String): URL? {
+  override fun getFromRulesDirAsUrl(path: String): URL {
     val completePath = getCompleteRulesUrl(path)
     val resource = getAsURL(completePath)
-    assertNotNull(resource, path, completePath)
+    require(resource != null) { "Path $path not found in class path at $completePath" }
     return resource
-  }
-
-  private fun assertNotNull(`object`: Any?, path: String, completePath: String) {
-    if (`object` == null) {
-      throw RuntimeException("Path $path not found in class path at $completePath")
-    }
   }
 
   private fun getCompleteRulesUrl(path: String): String = appendPath(rulesDir, path)
@@ -72,7 +66,9 @@ object GrazieDynamicDataBroker : ResourceDataBroker {
 
   override fun ruleFileExists(path: String) = getAsURL(getCompleteRulesUrl(path)) != null
 
-  override fun getResourceDir() = ResourceDataBroker.RESOURCE_DIR
+  override val resourceDir: String
+    get() = ResourceDataBroker.RESOURCE_DIR
 
-  override fun getRulesDir() = ResourceDataBroker.RULES_DIR
+  override val rulesDir: String
+    get() = ResourceDataBroker.RULES_DIR
 }
