@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.lang
 
 import com.intellij.openapi.project.Project
@@ -7,9 +7,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 
-/**
- * @author Sergey Karashevich
- */
 interface LangSupport {
   val primaryLanguage: String
   val defaultProjectName: String
@@ -57,6 +54,6 @@ interface LangSupport {
 
   fun createProject(projectName: String, projectToClose: Project?): Project?
 
-  /** This method is called from ProjectLifecycleListener and the projcet could be initialized only partly */
+  // This method is called from ProjectLifecycleListener and the project could be initialized only partly
   fun setProjectListeners(project: Project) {}
 }
