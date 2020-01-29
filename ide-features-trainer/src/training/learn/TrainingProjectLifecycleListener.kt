@@ -4,13 +4,16 @@ package training.learn
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.impl.ProjectLifecycleListener
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.concurrency.NonUrgentExecutor
 import training.lang.LangManager
 
 internal class TrainingProjectLifecycleListener : ProjectLifecycleListener {
   override fun projectComponentsInitialized(project: Project) {
-    val langSupport = LangManager.getInstance().getLangSupport() ?: return
-    if (FileUtil.pathsEqual(project.basePath, NewLearnProjectUtil.projectFilePath(langSupport))) {
-      langSupport.setProjectListeners(project)
+    NonUrgentExecutor.getInstance().execute {
+      val langSupport = LangManager.getInstance().getLangSupport() ?: return@execute
+      if (FileUtil.pathsEqual(project.basePath, NewLearnProjectUtil.projectFilePath(langSupport))) {
+        langSupport.setProjectListeners(project)
+      }
     }
   }
 }
