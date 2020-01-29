@@ -29,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 
 @SuppressWarnings("WeakerAccess")
-public class PlatformioBaseConfiguration extends CMakeAppRunConfiguration implements
-                                                                          CidrExecutableDataHolder, TargetAwareRunProfile {
+public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfiguration
+  implements CidrExecutableDataHolder, TargetAwareRunProfile {
 
   private final String myBuildTargetName;
   private final String mySuggestedName;
@@ -135,4 +135,7 @@ public class PlatformioBaseConfiguration extends CMakeAppRunConfiguration implem
     }
     return null;
   }
+
+  @NotNull
+  public abstract String getCmakeBuildTarget();
 }

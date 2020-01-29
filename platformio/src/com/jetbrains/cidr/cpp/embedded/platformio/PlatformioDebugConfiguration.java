@@ -12,4 +12,10 @@ public class PlatformioDebugConfiguration extends PlatformioBaseConfiguration
   public PlatformioDebugConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory) {
     super(project, configurationFactory, "Debug", "PlatformIO Debug", null);
   }
+
+  @NotNull
+  @Override
+  public String getCmakeBuildTarget() {
+    return "Debug";
+  }
 }
