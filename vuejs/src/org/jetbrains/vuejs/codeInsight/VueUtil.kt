@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiPolyVariantReference
 import com.intellij.psi.StubBasedPsiElement
 import com.intellij.psi.impl.source.resolve.FileContextUtil
 import com.intellij.psi.tree.TokenSet
@@ -140,9 +141,8 @@ fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
             ?.let { queue.addLast(it) }
         }
         is JSVariable -> cur.initializerOrStub?.let { queue.addLast(it) }
-        is JSReferenceExpression -> cur.multiResolve(false)
-          .mapNotNull { if (it.isValidResult) it.element else null }
-          .toCollection(queue)
+        is PsiPolyVariantReference -> cur.multiResolve(false)
+          .mapTo(queue) { if (it.isValidResult) it.element else null }
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }

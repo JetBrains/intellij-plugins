@@ -45,8 +45,10 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     else {
       // new Vuex.Store call
       return node
-        ?.takeIf { it.elementType === JSElementTypes.NEW_EXPRESSION
-                   || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION }
+        ?.takeIf {
+          it.elementType === JSElementTypes.NEW_EXPRESSION
+          || it.elementType === JSStubElementTypes.TYPESCRIPT_NEW_EXPRESSION
+        }
         ?.let { JSCallExpressionImpl.getMethodExpression(it) }
         ?.takeIf { it.elementType === JSElementTypes.REFERENCE_EXPRESSION }
         ?.let { reference ->

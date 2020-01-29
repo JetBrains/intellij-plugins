@@ -19,6 +19,7 @@ class VuexJSRefExprReferenceProvider : PsiReferenceProvider() {
       //STATE, ROOT_STATE -> VuexContainer::state
       else -> null
     }
+
     @Suppress("USELESS_CAST")
     val range = (element as JSReferenceExpression).referenceNameElement?.textRangeInParent
     val name = element.referenceName

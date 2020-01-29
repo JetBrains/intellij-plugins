@@ -19,7 +19,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   VuexMappersTest.class,
-  VuexCompletionTest.class
+  VuexCompletionTest.class,
+  VuexResolveTest.class
 })
 public class VuexTestSuite {
 }

@@ -59,6 +59,7 @@ class VuexModuleImpl(override val name: String,
   override val initializer: JSObjectLiteralExpression?
     get() {
       (initializerElement as? JSObjectLiteralExpression)?.let { return it }
+      val initializerElement = initializerElement
       return CachedValuesManager.getCachedValue(initializerElement) {
         objectLiteralFor(initializerElement)?.let { create(it, initializerElement, it) }
         ?: create(null as JSObjectLiteralExpression?, initializerElement, VFS_STRUCTURE_MODIFICATIONS)

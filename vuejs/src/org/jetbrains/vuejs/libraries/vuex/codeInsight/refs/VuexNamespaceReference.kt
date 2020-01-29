@@ -38,11 +38,12 @@ class VuexNamespaceReference(element: PsiElement,
 
   override fun getVariants(): Array<Any> {
     val result = mutableListOf<String>()
-    val namespaceBase = VuexStoreContext.appendSegment(namespaceResolver(element), "")
+    val prefix = VuexStoreContext.appendSegment(namespaceResolver(element),
+                                                fullName.dropLastWhile { it != '/' })
     VuexModelManager.getVuexStoreContext(element)
       ?.visit { namespace, _ ->
-        if (namespace.startsWith(namespaceBase))
-          result.add(namespace)
+        if (namespace.startsWith(prefix))
+          result.add(namespace.substring(prefix.length))
       }
     return result.toTypedArray()
   }

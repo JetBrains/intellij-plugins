@@ -43,11 +43,12 @@ class VuexEntityReference(element: PsiElement,
 
   override fun getVariants(): Array<Any> {
     val result = mutableListOf<String>()
-    val namespaceBase = VuexStoreContext.appendSegment(namespaceResolver(element), "")
+    val prefix = VuexStoreContext.appendSegment(namespaceResolver(element),
+                                                fullName.dropLastWhile { it != '/' })
     VuexModelManager.getVuexStoreContext(element)
       ?.visitSymbols(accessor) { fullName, _ ->
-        if (fullName.startsWith(namespaceBase))
-          result.add(fullName)
+        if (fullName.startsWith(prefix))
+          result.add(fullName.substring(prefix.length))
       }
     return result.toTypedArray()
   }

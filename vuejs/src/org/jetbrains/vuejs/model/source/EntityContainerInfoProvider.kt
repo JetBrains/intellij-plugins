@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.JSSpreadExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSClassUtils
@@ -16,6 +17,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
@@ -85,7 +87,7 @@ interface EntityContainerInfoProvider<T> {
         return memberReader.readMembers(declaration)
           .asSequence()
           .map {
-            Pair(it.first, provider(it.first, (VueComponents.meaningfulExpression(it.second) ?: it.second) as JSElement))
+            Pair(it.first, provider(it.first, it.second))
           }
           .distinctBy { it.first }
           .toMap(TreeMap())
@@ -126,8 +128,28 @@ interface EntityContainerInfoProvider<T> {
       protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
       protected open fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? = null
 
-      private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression) =
-        propsObject.properties.filter { it.name != null }.map { Pair(it.name!!, it) }
+      private fun filteredObjectProperties(propsObject: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
+        val result = mutableListOf<Pair<String, JSElement>>()
+        val initialPropsList = propsObject.propertiesIncludingSpreads
+        val queue = ArrayDeque<JSElement>(initialPropsList.size)
+        queue.addAll(initialPropsList)
+        while (queue.isNotEmpty()) {
+          when(val property = queue.pollLast()) {
+            is JSSpreadExpression -> {
+              objectLiteralFor(property.expression)
+                ?.propertiesIncludingSpreads
+                ?.toCollection(queue)
+            }
+            is JSProperty -> {
+              if (property.name != null) {
+                result.add(Pair(property.name!!, property))
+              }
+            }
+          }
+        }
+        return result
+      }
+
 
       private fun readPropsFromArray(holder: PsiElement): List<Pair<String, JSElement>> =
         getStringLiteralsFromInitializerArray(holder)
