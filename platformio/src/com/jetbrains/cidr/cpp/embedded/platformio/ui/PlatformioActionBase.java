@@ -12,6 +12,7 @@ import com.intellij.tools.Tool;
 import com.jetbrains.cidr.cpp.cmake.CMakeSettings;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
+import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
@@ -71,6 +72,7 @@ public class PlatformioActionBase extends DumbAwareAction {
         project);
       return null;
     }
+    //todo try default profile
     String argumentsToPass = myArguments;
     StringBuilder tabTitle = new StringBuilder("PlatformIO ").append(myText);
     if (myAppendEnvironmentKey && project != null) {
@@ -91,37 +93,9 @@ public class PlatformioActionBase extends DumbAwareAction {
       }
     }
 
-    Tool tool = new MyTool(tabTitle);
+    Tool tool = new CustomTool(tabTitle);
     tool.setProgram(platformioPath);
     tool.setParameters(argumentsToPass);
     return tool;
-  }
-
-  private static class MyTool extends Tool {
-    private final StringBuilder tabTitle;
-
-    MyTool(StringBuilder tabTitle) {
-      this.tabTitle = tabTitle;
-    }
-
-    @Override
-    public boolean isUseConsole() {
-      return true;
-    }
-
-    @Override
-    public boolean isShowConsoleOnStdOut() {
-      return true;
-    }
-
-    @Override
-    public boolean isShowConsoleOnStdErr() {
-      return true;
-    }
-
-    @Override
-    public String getName() {
-      return tabTitle.toString();
-    }
   }
 }

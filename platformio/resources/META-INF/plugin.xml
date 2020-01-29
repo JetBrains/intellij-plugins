@@ -17,7 +17,10 @@
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
+    <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
+                               id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
   </extensions>
+
   <actions>
     <group id="platformio-group" text="PlatformIO"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">

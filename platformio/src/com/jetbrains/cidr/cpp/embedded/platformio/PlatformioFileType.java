@@ -49,7 +49,7 @@ public class PlatformioFileType implements FileType {
 
   @Override
   public @Nullable
-  String getCharset(@NotNull VirtualFile virtualFile, byte @NotNull [] bytes) {
+  String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
     return null;
   }
 }
