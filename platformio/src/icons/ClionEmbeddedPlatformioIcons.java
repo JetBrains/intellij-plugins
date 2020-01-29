@@ -13,5 +13,5 @@ public final class ClionEmbeddedPlatformioIcons {
     return IconManager.getInstance().getIcon(path, ClionEmbeddedPlatformioIcons.class);
   }
 
-  /** 12x12 */ public static final Icon Platformio = load("/icons/platformio.svg");
+  /** 16x16 */ public static final Icon Platformio = load("/icons/platformio.svg");
 }
