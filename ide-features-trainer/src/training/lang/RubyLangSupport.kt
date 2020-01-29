@@ -74,21 +74,23 @@ class RubyLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "ruby"
 
-  override fun applyToProjectAfterConfigure(): (Project) -> Unit = { project ->
-    val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
-    val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
-    val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
-    FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(bundler))
+  override fun applyToProjectAfterConfigure(): (Project) -> Unit {
+    return { project ->
+      val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
+      val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")
+      val bundler = RubyLangSupport::class.java.getResourceAsStream("/learnProjects/ruby/gems/bundler-2.0.1.gem")
+      FileUtil.writeToFile(bundlerGem, FileUtil.loadBytes(bundler))
 
-    val sdk = ProjectRootManager.getInstance(project).projectSdk!!
-    val module = project.module
+      val sdk = ProjectRootManager.getInstance(project).projectSdk!!
+      val module = project.module
 
-    GemInstallUtil.installGemsRequirements(sdk,
-                                           module,
-                                           listOf(GemDependency.any(bundlerGem.absolutePath)),
-                                           false, false, false, false, true, null, mutableMapOf())
+      GemInstallUtil.installGemsRequirements(sdk,
+                                             module,
+                                             listOf(GemDependency.any(bundlerGem.absolutePath)),
+                                             false, false, false, false, true, null, mutableMapOf())
 
-    GemRunner.bundle(module, sdk, "install", null, null, null, "--local")
+      GemRunner.bundle(module, sdk, "install", null, null, null, "--local")
+    }
   }
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
