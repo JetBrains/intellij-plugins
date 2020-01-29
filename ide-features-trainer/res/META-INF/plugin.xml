@@ -8,17 +8,16 @@
 
         <p>Found a bug or have a feature to suggest? Welcome to the tracker: <a href="https://youtrack.jetbrains.com/newIssue?project=IFT&description=**Description%3A**%20_Write%20description%20here_%0A%0A**Plugin%20version%3A**%20_Write%20plugin%20version%20here_">https://youtrack.jetbrains.com/issues/IFT</a></p>
     ]]></description>
-  <application-components>
-    <component>
-      <implementation-class>training.learn.TrainingProjectLifecycleListener</implementation-class>
-    </component>
-  </application-components>
 
   <depends optional="true" config-file="java-deps.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="ruby-deps.xml">com.intellij.modules.ruby</depends>
   <depends optional="true" config-file="python-deps.xml">com.intellij.modules.python</depends>
   <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
+
+  <applicationListeners>
+    <listener class="training.learn.TrainingProjectLifecycleListener" topic="com.intellij.openapi.project.impl.ProjectLifecycleListener"/>
+  </applicationListeners>
 
   <extensionPoints>
     <extensionPoint name="TrainingLangExtension"
@@ -30,7 +29,6 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
-
     <actionPromoter implementation="training.editor.actions.LearnActionPromoter"/>
     <!-- groupId should be same to StatisticBase.GROUP_ID and version to StatisticBase.VERSION -->
     <statistics.counterUsagesCollector groupId="ideFeaturesTrainer" version="4"/>
