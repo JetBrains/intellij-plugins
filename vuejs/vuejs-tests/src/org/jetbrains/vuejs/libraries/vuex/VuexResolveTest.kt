@@ -235,6 +235,23 @@ class VuexResolveTest : BasePlatformTestCase() {
                               "@cartModule.Mutation('bread<caret>crumbs/set')" to "cart/index.ts:838:JSProperty")
   }
 
+  fun testRootNamespacedAction() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByFiles("root-namespaced-module.ts")
+    doTest("'root<caret>Action'" to "src/root-namespaced-module.ts:164:JSProperty",
+           "'inner<caret>RootAction'" to "src/root-namespaced-module.ts:439:JSProperty",
+           "'namespaced<caret>Action'" to null,
+           "'foo/namespaced<caret>Action'" to "src/root-namespaced-module.ts:124:TypeScriptFunctionProperty",
+           "'foo/root<caret>Action'" to null,
+           "'fo<caret>o/rootAction'" to "src/root-namespaced-module.ts:78:JSLiteralExpression",
+           "'foo/inner<caret>RootAction'" to null,
+           "'foo/inner/namespaced<caret>Action'" to "src/root-namespaced-module.ts:326:JSProperty",
+           "'foo/in<caret>ner/namespacedAction'" to "src/root-namespaced-module.ts:266:JSProperty",
+           "'fo<caret>o/inner/namespacedAction'" to "src/root-namespaced-module.ts:78:JSLiteralExpression",
+           "'foo/inner/inner<caret>RootAction'" to null,
+           "'foo/inner/root<caret>Action'" to null)
+  }
+
   private fun doStorefrontNamespacedTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-namespaced-component.ts", *args)
   }
@@ -251,6 +268,10 @@ class VuexResolveTest : BasePlatformTestCase() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
     myFixture.copyDirectoryToProject("../stores/vue-storefront", "store")
     myFixture.configureByFiles(mainFile)
+    doTest(*args)
+  }
+
+  private fun doTest(vararg args: Pair<String, String?>) {
     for ((signature, output) in args) {
       try {
         if (output == null) {

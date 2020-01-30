@@ -15,7 +15,11 @@ interface VuexStoreContext {
                                          consumer: (fullName: String, symbol: T) -> Unit) {
     visit { namespace, container ->
       for (entry in symbolAccessor(container)) {
-        consumer(appendSegment(namespace, entry.key), entry.value)
+        if ((entry.value as? VuexAction)?.isRoot == true) {
+          consumer(entry.key, entry.value)
+        } else {
+          consumer(appendSegment(namespace, entry.key), entry.value)
+        }
       }
     }
   }

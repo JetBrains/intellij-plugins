@@ -95,6 +95,14 @@ interface EntityContainerInfoProvider<T> {
 
     }
 
+    class BooleanValueAccessor(private val propertyName: String) : MemberAccessor<Boolean>() {
+      override fun build(declaration: JSObjectLiteralExpression): Boolean {
+        return declaration.findProperty(propertyName)
+          ?.jsType
+          ?.typeText == "true"
+      }
+    }
+
     open class MemberReader(private val propertyName: String,
                             private val canBeArray: Boolean = false,
                             private val canBeObject: Boolean = true) {

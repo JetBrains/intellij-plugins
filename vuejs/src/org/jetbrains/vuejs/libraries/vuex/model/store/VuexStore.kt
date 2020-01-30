@@ -44,7 +44,9 @@ interface VuexStateProperty : VuexNamedSymbol {
   val jsType: JSType?
 }
 
-interface VuexAction : VuexNamedSymbol
+interface VuexAction : VuexNamedSymbol {
+  val isRoot: Boolean
+}
 
 interface VuexGetter : VuexNamedSymbol {
   val jsType: JSType?

@@ -35,7 +35,7 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
     private val GETTERS = SimpleMemberMapAccessor(ContainerMembers.Getters, ::VuexGetterImpl)
     private val MUTATIONS = SimpleMemberMapAccessor(ContainerMembers.Mutations, ::VuexMutationImpl)
     private val MODULES = SimpleMemberMapAccessor(ContainerMembers.Modules, ::VuexModuleImpl)
-    private val IS_NAMESPACED = IsNamespacedAccessor()
+    private val IS_NAMESPACED = BooleanValueAccessor("namespaced")
   }
 
   private class VuexContainerInfoImpl(declaration: JSObjectLiteralExpression)
@@ -48,14 +48,6 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
 
     override val modules: Map<String, VuexModule> get() = get(MODULES)
     override val isNamespaced: Boolean get() = get(IS_NAMESPACED)
-  }
-
-  private class IsNamespacedAccessor : MemberAccessor<Boolean>() {
-    override fun build(declaration: JSObjectLiteralExpression): Boolean {
-      return declaration.findProperty("namespaced")
-        ?.jsType
-        ?.typeText == "true"
-    }
   }
 
 }

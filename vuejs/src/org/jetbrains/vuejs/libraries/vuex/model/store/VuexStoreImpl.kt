@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
+import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
 
 abstract class VuexContainerImpl : VuexContainer {
 
@@ -101,7 +102,22 @@ class VuexStatePropertyImpl(name: String, source: PsiElement)
 }
 
 class VuexActionImpl(name: String, source: PsiElement)
-  : VuexNamedSymbolImpl(name, source), VuexAction
+  : VuexNamedSymbolImpl(name, source), VuexAction {
+
+  override val isRoot: Boolean get() = initializer?.let { IS_ROOT.build(it) } == true
+
+  private val initializer: JSObjectLiteralExpression? get() {
+    val initializerHolder = source
+    return CachedValuesManager.getCachedValue(initializerHolder) {
+      objectLiteralFor(initializerHolder)?.let { create(it, initializerHolder, it) }
+      ?: create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
+    }
+  }
+
+  companion object {
+    private val IS_ROOT = BooleanValueAccessor("root")
+  }
+}
 
 class VuexGetterImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexGetter {
