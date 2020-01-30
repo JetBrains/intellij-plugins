@@ -13,7 +13,6 @@ object LangDetector : GrazieStateLifecycle {
 
   private val detector by lazy {
     LanguageDetectorBuilder(NgramExtractor.standard)
-      .probabilityThreshold(0.90)
       .minimalConfidence(0.90)
       .prefixFactor(1.5)
       .suffixFactor(2.0)
