@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
@@ -44,7 +44,6 @@ import jetbrains.communicator.idea.history.ShowHistoryDialog;
 import jetbrains.communicator.idea.sendMessage.IncomingLocalMessage;
 import jetbrains.communicator.idea.sendMessage.IncomingStacktraceMessage;
 import jetbrains.communicator.idea.viewFiles.ViewFilesDialog;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,7 +88,7 @@ public class IDEAFacade implements IDEFacade {
 
   @Override
   public File getConfigDir() {
-    @NonNls File file = new File(PathManager.getConfigPath(), "ideTalk");
+    File file = PathManager.getConfigDir().resolve("ideTalk").toFile();
     file.mkdir();
     return file;
   }
