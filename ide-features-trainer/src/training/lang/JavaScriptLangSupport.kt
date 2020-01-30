@@ -15,6 +15,8 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = lang
 
+  override val defaultProductName: String = "WebStorm"
+
   override val langCourseFeedback: String?
     get() = """Have an idea how to make the training experience better? Then please complete <a href="https://forms.gle/EhBiJmN5R638htFv9">this</a> short survey so we can improve the training for you and other WebStorm users."""
 

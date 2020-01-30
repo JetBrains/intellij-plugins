@@ -27,6 +27,8 @@ class JavaLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "java"
 
+  override val defaultProductName: String = "IDEA"
+
   override fun applyProjectSdk(sdk: Sdk, project: Project) {
     val applySdkAction = {
       ApplicationManager.getApplication().runWriteAction { NewProjectUtil.applyJdkToProject(project, sdk) }

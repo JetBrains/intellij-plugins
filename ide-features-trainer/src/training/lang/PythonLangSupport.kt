@@ -31,6 +31,7 @@ class PythonLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "python"
 
+  override val defaultProductName: String = "PyCharm"
 
   override fun getSdkForProject(project: Project): Sdk {
     //find registered python SDKs

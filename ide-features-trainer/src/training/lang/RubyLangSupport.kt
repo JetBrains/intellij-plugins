@@ -74,6 +74,8 @@ class RubyLangSupport : AbstractLangSupport() {
   override val primaryLanguage: String
     get() = "ruby"
 
+  override val defaultProductName: String = "RubyMine"
+
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { project ->
     val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
     val bundlerGem = File(tempDirectory, "bundler-2.0.1.gem")

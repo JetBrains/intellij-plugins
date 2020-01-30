@@ -12,6 +12,7 @@ import training.learn.exceptons.NoSdkException
  */
 interface LangSupport {
   val primaryLanguage: String
+  val defaultProductName: String
   val defaultProjectName: String
   val filename: String
     get() = "Learning"
