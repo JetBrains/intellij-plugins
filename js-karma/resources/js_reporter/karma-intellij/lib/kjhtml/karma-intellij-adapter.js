@@ -40,7 +40,7 @@
    */
   var setJasmineSpecFilter = function (config, jasmineEnv) {
     var grepOption = getGrepOption((config || {}).args);
-    var filterPattern = grepOption ? new RegExp(grepOption) : null;
+    var filterPattern = grepOption ? createRegExp(grepOption) : null;
     var specFilter = function (spec) {
       return filterPattern == null || filterPattern.test(spec.getFullName());
     };
@@ -61,8 +61,21 @@
   function setMochaSpecFilter(config, mocha) {
     var grepOption = getGrepOption((config || {}).args);
     if (grepOption) {
-      mocha.grep(new RegExp(grepOption));
+      mocha.grep(createRegExp(grepOption));
     }
+  }
+
+  function createRegExp(filter) {
+    filter = filter || ''
+    if (filter === '') {
+      return new RegExp() // to match all
+    }
+    var regExp = /^[/](.*)[/]$/ // pattern to check whether the string is RegExp pattern
+    var parts = regExp.exec(filter)
+    if (parts === null) {
+      return new RegExp(filter)
+    }
+    return new RegExp(parts[1])
   }
 
   function indexOf(collection, find, i /* opt*/) {
