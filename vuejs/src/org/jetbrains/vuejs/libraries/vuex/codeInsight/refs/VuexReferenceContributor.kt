@@ -10,6 +10,7 @@ import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CREATE_NAMESPACED_HELPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.DISPATCH
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
@@ -40,7 +41,8 @@ class VuexReferenceContributor : PsiReferenceContributor() {
 
   companion object {
     private val CALL_WITH_PLAIN_ARG = PlatformPatterns.psiElement(JSCallExpression::class.java).withFirstChild(
-      JSPatterns.jsReferenceExpression().withReferenceNames(MAP_GETTERS, MAP_STATE, MAP_ACTIONS, MAP_MUTATIONS, COMMIT, DISPATCH))
+      JSPatterns.jsReferenceExpression().withReferenceNames(MAP_GETTERS, MAP_STATE, MAP_ACTIONS, MAP_MUTATIONS, COMMIT, DISPATCH,
+                                                            CREATE_NAMESPACED_HELPERS))
 
     private val MAPPER_CALL = PlatformPatterns.psiElement(JSCallExpression::class.java).withFirstChild(
       JSPatterns.jsReferenceExpression().withReferenceNames(MAP_GETTERS, MAP_STATE, MAP_ACTIONS, MAP_MUTATIONS))

@@ -65,8 +65,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     doStorefrontTest("['get<caret>CartItems'," to "cart/getters.ts:1278:JSProperty",
                      "'foo<caret>bar'," to null,
                      "mapGetters('c<caret>art'" to "store/index.ts:1265:JSLiteralExpression",
-                     "'bread<caret>crumbs/getBreadcrumbsRoutes'" to "cart/index.ts:838:JSProperty",
-                     "'breadcrumbs/getBreadcrumbs<caret>Routes'" to "breadcrumbs/index.ts:333:JSProperty")
+                     "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:838:JSProperty",
+                     "'breadcrumbs/getBreadcrumbs<caret>Routes'])" to "breadcrumbs/index.ts:333:JSProperty")
   }
 
   fun testStorefrontMappedStatePlainStringDictionary() {
@@ -132,10 +132,71 @@ class VuexResolveTest : BasePlatformTestCase() {
     doStorefrontTest("commit => commit('s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty")
   }
 
+  fun testStorefrontNamespacedMappedGettersArray() {
+    doStorefrontNamespacedTest("['get<caret>CartItems'," to "cart/getters.ts:1278:JSProperty",
+                               "'foo<caret>bar'," to null,
+                               "createNamespacedHelpers('c<caret>art'" to "store/index.ts:1265:JSLiteralExpression",
+                               "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:838:JSProperty",
+                               "'breadcrumbs/getBreadcrumbs<caret>Routes'])" to "breadcrumbs/index.ts:333:JSProperty",
+                               "'getLast<caret>TotalsSyncDate'" to null,
+                               "'cart/getLast<caret>TotalsSyncDate'" to null,
+                               "'getCategory<caret>Products'" to "category/getters.ts:1455:JSProperty",
+                               "'getCategoryProducts', 'f<caret>oo'" to null)
+  }
+
+  fun testStorefrontNamespacedMappedGettersDictionary() {
+    doStorefrontNamespacedTest("isVirtualCart: 'is<caret>VirtualCart'" to "cart/getters.ts:2359:JSProperty",
+                               "routes: 'bread<caret>crumbs/getBreadcrumbsRoutes'" to "cart/index.ts:838:JSProperty",
+                               "routes: 'breadcrumbs/get<caret>BreadcrumbsRoutes'" to "breadcrumbs/index.ts:333:JSProperty",
+                               "foo: 'ca<caret>rt/foo'" to null)
+  }
+
+  fun testStorefrontNamespacedMappedStateStringDictionary() {
+    doStorefrontNamespacedTest("micro2: 'isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
+                               "foo3: 'fo<caret>o'" to null,
+                               "ship2: 'ship<caret>ping'" to "cart/index.ts:544:JSProperty")
+  }
+
+  fun testStorefrontNamespacedMappedStateArray() {
+    doStorefrontNamespacedTest("['isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
+                               "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:544:JSProperty")
+  }
+
+  fun _testStorefrontNamespacedMappedStateFunctionDictionary() {
+    // TODO properly support references with nested modules
+  }
+
+  fun testStorefrontNamespacedMappedActionsArray() {
+    doStorefrontNamespacedTest(
+      "...mapActions(['breadcrumbs/s<caret>et', 'configureItem'])" to "breadcrumbs/index.ts:248:TypeScriptFunctionProperty",
+      "...mapActions(['breadcrumbs/set', 'configure<caret>Item'])" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
+  }
+
+  fun testStorefrontNamespacedMappedActionsFunctionDictionary() {
+    doStorefrontNamespacedTest("(dispatch) => dispatch('configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
+  }
+
+  fun testStorefrontNamespacedMappedMutationsArray() {
+    doStorefrontNamespacedTest("'breadcrumbs/s<caret>et'])" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty")
+  }
+
+  fun testStorefrontNamespacedMappedMutationsFunctionDictionary() {
+    doStorefrontNamespacedTest("commit('breadcrumbs/s<caret>et') //1" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+                               "commit('breadcrumbs/s<caret>et') //2" to null)
+  }
+
+  private fun doStorefrontNamespacedTest(vararg args: Pair<String, String?>) {
+    doStorefrontTest("storefront-namespaced-component.ts", *args)
+  }
+
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
+    doStorefrontTest("storefront-component.ts", *args)
+  }
+
+  private fun doStorefrontTest(mainFile: String, vararg args: Pair<String, String?>) {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
     myFixture.copyDirectoryToProject("../stores/vue-storefront", "store")
-    myFixture.configureByFiles("storefront-component.ts")
+    myFixture.configureByFiles(mainFile)
     for ((signature, output) in args) {
       try {
         if (output == null) {
