@@ -55,4 +55,16 @@ class VuexNamespaceReference(element: PsiElement,
   override fun getUnresolvedReferenceSeverity(): HighlightSeverity {
     return HighlightSeverity.WEAK_WARNING
   }
+
+  override fun equals(other: Any?): Boolean {
+    return super.equals(other)
+           && other is VuexNamespaceReference
+           && other.fullName == this.fullName
+  }
+
+  override fun hashCode(): Int {
+    var result = super.hashCode()
+    result = 31 * result + fullName.hashCode()
+    return result
+  }
 }

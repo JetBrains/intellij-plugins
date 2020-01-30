@@ -6,22 +6,28 @@ import com.intellij.lang.javascript.psi.JSArrayLiteralExpression
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSIndexedPropertyAccessExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiReferenceContributor
 import com.intellij.psi.PsiReferenceRegistrar
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ACTION_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.CREATE_NAMESPACED_HELPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.DISPATCH
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTER_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MUTATION_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE_DEC
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_CALL_ARGUMENT_REF_PROVIDER
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_CALL_ARRAY_OBJECT_ITEM_REF_PROVIDER
+import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_DECORATOR_ARGUMENT_REF_PROVIDER
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_INDEXED_ACCESS_REF_PROVIDER
 
 class VuexReferenceContributor : PsiReferenceContributor() {
@@ -35,6 +41,8 @@ class VuexReferenceContributor : PsiReferenceContributor() {
                                         VUEX_CALL_ARRAY_OBJECT_ITEM_REF_PROVIDER)
     registrar.registerReferenceProvider(VUEX_INDEXED_ACCESS,
                                         VUEX_INDEXED_ACCESS_REF_PROVIDER)
+    registrar.registerReferenceProvider(VUEX_DECORATOR_ARGUMENT,
+                                        VUEX_DECORATOR_ARGUMENT_REF_PROVIDER)
     registrar.registerReferenceProvider(VUEX_REFERENCE,
                                         VuexJSRefExprReferenceProvider())
   }
@@ -47,8 +55,15 @@ class VuexReferenceContributor : PsiReferenceContributor() {
     private val MAPPER_CALL = PlatformPatterns.psiElement(JSCallExpression::class.java).withFirstChild(
       JSPatterns.jsReferenceExpression().withReferenceNames(MAP_GETTERS, MAP_STATE, MAP_ACTIONS, MAP_MUTATIONS))
 
+    private val DECORATOR_CALL = PlatformPatterns.psiElement(JSCallExpression::class.java).withFirstChild(
+      JSPatterns.jsReferenceExpression().withReferenceNames(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC))
+      .withParent(PlatformPatterns.psiElement(ES6Decorator::class.java))
+
     private val VUEX_CALL_ARGUMENT = JSPatterns.jsLiteralExpression()
       .withAncestor(2, CALL_WITH_PLAIN_ARG)
+
+    private val VUEX_DECORATOR_ARGUMENT = JSPatterns.jsLiteralExpression()
+      .withAncestor(2, DECORATOR_CALL)
 
     private val VUEX_CALL_ARRAY_ITEM = JSPatterns.jsLiteralExpression()
       .withParent(JSArrayLiteralExpression::class.java)

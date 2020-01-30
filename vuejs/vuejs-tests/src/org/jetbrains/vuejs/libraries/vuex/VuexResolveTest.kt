@@ -185,8 +185,62 @@ class VuexResolveTest : BasePlatformTestCase() {
                                "commit('breadcrumbs/s<caret>et') //2" to null)
   }
 
+  fun testStorefrontDecoratedGetterMapper() {
+    doStorefrontDecoratedTest("@Getter('cart/isVirtual<caret>Cart')" to "cart/getters.ts:2359:JSProperty",
+                              "@Getter('isVirtual<caret>Cart')" to null)
+  }
+
+  fun testStorefrontDecoratedModuleGetterMapper() {
+    doStorefrontDecoratedTest("@cartModule.Getter('get<caret>CartItems')" to "cart/getters.ts:1278:JSProperty",
+                              "@cartModule.Getter('foo<caret>bar')" to null,
+                              "@cartModule.Getter('breadcrumbs/getBreadcrumbs<caret>Routes')" to "breadcrumbs/index.ts:333:JSProperty",
+                              "@cartModule.Getter('bread<caret>crumbs/getBreadcrumbsRoutes')" to "cart/index.ts:838:JSProperty")
+  }
+
+  fun testStorefrontDecoratedStateMapper() {
+    doStorefrontDecoratedTest("@State('cart/isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
+                              "@State('ship<caret>ping') shipping1" to "store/index.ts:529:JSProperty",
+                              "@State('foo<caret>bar') foobar2" to null
+      // TODO support Vuex store identifiers resolution
+      //"@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1265:JSLiteralExpression",
+      //"@State(state => state.cart.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:333:JSProperty"
+    )
+  }
+
+  fun testStorefrontDecoratedModuleStateMapper() {
+    doStorefrontDecoratedTest("@cartModule.State('isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
+                              "@cartModule.State('ship<caret>ping')" to "cart/index.ts:544:JSProperty"
+      // TODO support Vuex store identifiers resolution
+      //"@cartModule.State(state => state.bread<caret>crumbs.routes)" to "cart/index.ts:838:JSProperty",
+      //"@cartModule.State(state => state.breadcrumbs.rou<caret>tes)" to ""
+    )
+  }
+
+  fun testStorefrontDecoratedActionMapper() {
+    doStorefrontDecoratedTest("@Action('cart/configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
+  }
+
+  fun testStorefrontDecoratedModuleActionMapper() {
+    doStorefrontDecoratedTest("@cartModule.Action('breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:248:TypeScriptFunctionProperty")
+  }
+
+  fun testStorefrontDecoratedMutationMapper() {
+    doStorefrontDecoratedTest("@Mutation('cart/breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+                              "@Mutation('cart/bread<caret>crumbs/set')" to "cart/index.ts:838:JSProperty",
+                              "@Mutation('ca<caret>rt/breadcrumbs/set')" to "store/index.ts:1265:JSLiteralExpression")
+  }
+
+  fun testStorefrontDecoratedModuleMutationMapper() {
+    doStorefrontDecoratedTest("@cartModule.Mutation('breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+                              "@cartModule.Mutation('bread<caret>crumbs/set')" to "cart/index.ts:838:JSProperty")
+  }
+
   private fun doStorefrontNamespacedTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-namespaced-component.ts", *args)
+  }
+
+  private fun doStorefrontDecoratedTest(vararg args: Pair<String, String?>) {
+    doStorefrontTest("storefront-decorated-component.ts", *args)
   }
 
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {

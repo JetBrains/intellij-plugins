@@ -25,6 +25,12 @@ object VuexUtils {
   const val MAP_ACTIONS = "mapActions"
   const val CREATE_NAMESPACED_HELPERS = "createNamespacedHelpers"
 
+  const val GETTER_DEC = "Getter"
+  const val STATE_DEC = "State"
+  const val ACTION_DEC = "Action"
+  const val MUTATION_DEC = "Mutation"
+  private const val CREATE_NAMESPACED_DECS = "namespace"
+
   const val DISPATCH = "dispatch"
   const val COMMIT = "commit"
   const val GETTERS = "getters"
@@ -34,7 +40,7 @@ object VuexUtils {
 
   val VUEX_MAPPERS = setOf(MAP_STATE, MAP_GETTERS, MAP_MUTATIONS, MAP_ACTIONS)
 
-  fun getNamespaceFromMapper(element: PsiElement): String {
+  fun getNamespaceFromMapper(element: PsiElement, decorator: Boolean): String {
     val call = PsiTreeUtil.getContextOfType(element, JSCallExpression::class.java)
     val functionRef = call?.methodExpression?.castSafelyTo<JSReferenceExpression>()
                       ?: return ""
@@ -42,12 +48,12 @@ object VuexUtils {
       functionRef.qualifier.castSafelyTo<JSReferenceExpression>()
         ?.resolve()
         ?.castSafelyTo<JSVariable>()
-        ?.let { getNamespaceFromHelpersVar(it) }
+        ?.let { getNamespaceFromHelpersVar(it, decorator) }
     else {
       val functionName = functionRef.referenceName ?: return ""
       val location = JSStubBasedPsiTreeUtil.resolveLocally(functionName, functionRef)
       if (location is JSVariable)
-        getNamespaceFromHelpersVar(location)
+        getNamespaceFromHelpersVar(location, decorator)
       else
         getStubSafeCallArguments(call)
           .getOrNull(0)
@@ -56,13 +62,13 @@ object VuexUtils {
     }) ?: ""
   }
 
-  private fun getNamespaceFromHelpersVar(variable: JSVariable): String? {
+  private fun getNamespaceFromHelpersVar(variable: JSVariable, decorator: Boolean): String? {
     return (variable.initializer
             ?: JSDestructuringUtil.getNearestDestructuringInitializer(variable))
       ?.castSafelyTo<JSCallExpression>()
       ?.takeIf {
         it.methodExpression?.castSafelyTo<JSReferenceExpression>()
-          ?.referenceName == CREATE_NAMESPACED_HELPERS
+          ?.referenceName == if (decorator) CREATE_NAMESPACED_DECS else CREATE_NAMESPACED_HELPERS
       }
       ?.arguments
       ?.getOrNull(0)
