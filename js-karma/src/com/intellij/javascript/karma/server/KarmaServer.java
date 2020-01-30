@@ -103,8 +103,7 @@ public class KarmaServer {
         LOG.info("Processing Karma event " + eventType + " " + eventBody);
         JsonElement jsonElement;
         try {
-          JsonParser jsonParser = new JsonParser();
-          jsonElement = jsonParser.parse(eventBody);
+          jsonElement = JsonParser.parseString(eventBody);
         }
         catch (Exception e) {
           LOG.warn("Cannot parse message from karma server:" +

@@ -18,6 +18,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -194,7 +195,7 @@ public class KarmaCoverageEngine extends CoverageEngine {
       public AbstractTreeNode createRootNode() {
         VirtualFile rootDir = findRootDir(project, suiteBundle);
         if (rootDir == null) {
-          rootDir = myProject.getBaseDir();
+          rootDir = ProjectUtil.guessProjectDir(myProject);
         }
         PsiDirectory psiRootDir = PsiManager.getInstance(myProject).findDirectory(rootDir);
         return new CoverageListRootNode(myProject, psiRootDir, mySuitesBundle, myStateBean);
