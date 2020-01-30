@@ -19,7 +19,9 @@ import org.jetbrains.annotations.Nullable;
 class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
 
   @Override
-  protected String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element, @NotNull PsiElement originalElement) {
+  public String getQuickNavigateInfoForNavigationElement(@NotNull PsiElement element,
+                                                         @NotNull PsiElement originalElement,
+                                                         boolean jsDoc) {
     if (element instanceof JSNamespaceDeclaration) {
       return createQuickNavigateForNamespace((JSNamespaceDeclaration)element);
     }
@@ -27,7 +29,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
       return createQuickNavigateForAnnotationDerived(element, originalElement);
     }
 
-    return super.getQuickNavigateInfoForNavigationElement(element, originalElement);
+    return super.getQuickNavigateInfoForNavigationElement(element, originalElement, jsDoc);
   }
 
   @Nullable
