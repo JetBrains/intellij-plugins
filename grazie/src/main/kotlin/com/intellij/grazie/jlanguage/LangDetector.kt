@@ -9,7 +9,7 @@ import tanvd.grazie.langdetect.ngram.impl.ngram.NgramExtractor
 import tanvd.grazie.langdetect.ngram.impl.profiles.LanguageProfileReader
 
 object LangDetector : GrazieStateLifecycle {
-  private var available: Set<Lang> = emptySet()
+  private var available: Set<Lang>? = null
 
   private val detector by lazy {
     LanguageDetectorBuilder(NgramExtractor.standard)
@@ -36,7 +36,12 @@ object LangDetector : GrazieStateLifecycle {
    *
    * @return Lang that is detected and enabled in grazie
    */
-  fun getAvailableLang(text: String) = getLanguage(text).let { available.find { lang -> lang.equalsTo(it)  } }
+  fun getAvailableLang(text: String) = getLanguage(text).let {
+    //Required for Inspection Integration Tests and possibly other tests
+    if (available == null) init(GrazieConfig.get())
+
+    available!!.find { lang -> lang.equalsTo(it) }
+  }
 
   override fun init(state: GrazieConfig.State) {
     available = state.availableLanguages
