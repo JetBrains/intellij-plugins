@@ -1,7 +1,7 @@
 <idea-plugin>
   <name>PostCSS</name>
   <id>org.intellij.plugins.postcss</id>
-  <category>HTML/JavaScript Development</category>
+  <category>Style Sheets</category>
   <vendor>JetBrains</vendor>
   <description>
     <![CDATA[

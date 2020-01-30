@@ -10,7 +10,7 @@
   Integration with <a href="http://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
   ]]></description>
   <vendor>JetBrains</vendor>
-  <category>HTML/JavaScript Development</category>
+  <category>JavaScript Frameworks and Tools</category>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>

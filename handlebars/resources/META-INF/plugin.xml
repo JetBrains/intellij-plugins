@@ -2,7 +2,7 @@
 <idea-plugin url="https://github.com/dmarcotte/idea-handlebars">
   <id>com.dmarcotte.handlebars</id>
   <name>Handlebars/Mustache</name>
-  <category>HTML/JavaScript Development</category>
+  <category>Template Languages</category>
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[

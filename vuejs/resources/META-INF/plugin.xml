@@ -31,6 +31,7 @@ Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/w
 Vue components defined using separate .html, .js, and .css files are not supported: <a href="https://youtrack.jetbrains.com/issue/WEB-32274">WEB-32274</a>.
   ]]></description>
   <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>

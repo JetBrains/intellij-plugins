@@ -14,6 +14,7 @@
 <p>Find more information on <a href="https://www.jetbrains.com/help/webstorm/dart.html">getting started with Dart in the IDE</a> in our docs.</p>
   ]]></description>
   <vendor>JetBrains</vendor>
+  <category>Languages</category>
   <depends>com.intellij.modules.xml</depends>
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>

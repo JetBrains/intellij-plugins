@@ -2,7 +2,7 @@
   <id>com.github.masahirosuzuka.PhoneGapIntelliJPlugin</id>
   <name>PhoneGap/Cordova</name>
   <vendor>JetBrains</vendor>
-
+  <category>JavaScript Frameworks and Tools</category>
   <resource-bundle>messages.PhoneGapBundle</resource-bundle>
 
   <description><![CDATA[

@@ -22,6 +22,7 @@ This plugin is compatible with the IDE versions starting from 2018.1.
 Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/WEB">issue tracker</a>.
 ]]></description>
   <vendor>JetBrains</vendor>
+  <category>JavaScript Frameworks and Tools</category>
 
   <depends>JavaScript</depends>
   <depends>com.intellij.modules.platform</depends>

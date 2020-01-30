@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>com.intellij.flex</id>
   <name>Flash/Flex</name>
-  <category>Web Development</category>
+  <category>Languages</category>
   <vendor>JetBrains</vendor>
 
   <description>

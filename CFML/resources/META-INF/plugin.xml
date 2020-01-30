@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>CFML Support</id>
   <name>CFML</name>
-  <category>Web Development</category>
+  <category>Template Languages</category>
   <description>
     <![CDATA[
     Adds support for ColdFusion Markup Language (CFML).
