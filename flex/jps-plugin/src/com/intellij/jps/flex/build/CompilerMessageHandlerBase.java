@@ -1,10 +1,10 @@
 package com.intellij.jps.flex.build;
 
-import com.intellij.CommonBundle;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.Nullable;
@@ -157,9 +157,10 @@ public abstract class CompilerMessageHandlerBase {
     myPreviousUnreportedInfoMessage = text;
 
     if (text.contains(FlexCommonUtils.OUT_OF_MEMORY) || text.contains(FlexCommonUtils.JAVA_HEAP_SPACE)) {
+      String settingsPath = SystemInfo.isMac ? FlexCommonBundle.message("action.settings.path.mac")
+                                             : FlexCommonBundle.message("action.settings.path");
       myContext.processMessage(
-        new CompilerMessage(myCompilerName, BuildMessage.Kind.ERROR,
-                            FlexCommonBundle.message("increase.flex.compiler.heap", CommonBundle.settingsActionPath())));
+        new CompilerMessage(myCompilerName, BuildMessage.Kind.ERROR, FlexCommonBundle.message("increase.flex.compiler.heap", settingsPath)));
       myCompilationFailed = true;
     }
   }
