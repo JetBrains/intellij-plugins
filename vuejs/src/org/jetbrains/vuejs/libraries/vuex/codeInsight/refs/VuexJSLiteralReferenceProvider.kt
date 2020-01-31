@@ -27,7 +27,6 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MUTATION_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.getNamespaceFromMapper
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 
 abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
@@ -46,7 +45,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
         return object : ReferenceProviderSettings {
           override val symbolAccessor = accessor
-          override val baseNamespaceProvider: (PsiElement) -> String = { "" }
+          override val baseNamespaceProvider: NamespaceProvider = { "" }
           override val isSoft: Boolean = true
         }
       }
@@ -65,7 +64,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
         return object : ReferenceProviderSettings {
           override val symbolAccessor = accessor
-          override val baseNamespaceProvider: (PsiElement) -> String = {
+          override val baseNamespaceProvider: NamespaceProvider = {
             getNamespaceFromMapper(it, true)
           }
           override val isSoft: Boolean = false
@@ -91,7 +90,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
         return object : ReferenceProviderSettings {
           override val symbolAccessor = accessor
-          override val baseNamespaceProvider: (PsiElement) -> String = {
+          override val baseNamespaceProvider: NamespaceProvider = {
             getNamespaceFromMapper(it, false)
           }
           override val isSoft: Boolean = false
@@ -108,7 +107,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           COMMIT -> VuexContainer::mutations
           else -> null
         }
-        val namespaceProvider: (PsiElement) -> String
+        val namespaceProvider: NamespaceProvider
         if (accessor !== null && functionRef.qualifier === null) {
           // Ensure we are within a correct context
           val mapperName = JSStubBasedPsiTreeUtil.resolveLocally(functionName, functionRef)
@@ -134,23 +133,24 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         }
         return object : ReferenceProviderSettings {
           override val symbolAccessor = accessor
-          override val baseNamespaceProvider: (PsiElement) -> String = namespaceProvider
+          override val baseNamespaceProvider: NamespaceProvider = namespaceProvider
           override val isSoft: Boolean = true
         }
       }
+    }
+
+    fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
+      return callContext?.let {
+          if (it is JSArgumentList) it.context else it
+        }
+        ?.castSafelyTo<JSCallExpression>()
+        ?.methodExpression
+        ?.castSafelyTo<JSReferenceExpression>()
     }
   }
 
   protected abstract fun getSettings(element: PsiElement): ReferenceProviderSettings?
 
-  protected fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
-    return callContext?.let {
-        if (it is JSArgumentList) it.context else it
-      }
-      ?.castSafelyTo<JSCallExpression>()
-      ?.methodExpression
-      ?.castSafelyTo<JSReferenceExpression>()
-  }
 
   override fun getReferencesByElement(element: PsiElement, processingContext: ProcessingContext): Array<PsiReference> {
     if (element is JSLiteralExpression) {
@@ -184,8 +184,8 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
 
   protected interface ReferenceProviderSettings {
-    val symbolAccessor: ((VuexContainer) -> Map<String, VuexNamedSymbol>)?
-    val baseNamespaceProvider: (PsiElement) -> String
+    val symbolAccessor: VuexSymbolAccessor?
+    val baseNamespaceProvider: NamespaceProvider
     val isSoft: Boolean
   }
 

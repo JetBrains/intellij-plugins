@@ -15,7 +15,7 @@ import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
 class VuexNamespaceReference(element: PsiElement,
                              rangeInElement: TextRange,
                              private val fullName: String,
-                             private val namespaceResolver: (PsiElement) -> String,
+                             private val namespaceResolver: NamespaceProvider,
                              soft: Boolean)
   : CachingPolyReferenceBase<PsiElement>(element, rangeInElement.shiftRight(1)),
     EmptyResolveMessageProvider, HighlightSeverityHolder {

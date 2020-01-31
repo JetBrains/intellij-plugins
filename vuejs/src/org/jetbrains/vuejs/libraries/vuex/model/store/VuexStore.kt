@@ -3,11 +3,14 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 
 interface VuexNamedSymbol {
   val name: String
   val source: PsiElement
+  val resolveTarget: PsiElement
 }
 
 interface VuexContainer {
@@ -42,14 +45,25 @@ interface VuexModule : VuexContainer, VuexNamedSymbol {
 
 interface VuexStateProperty : VuexNamedSymbol {
   val jsType: JSType?
+  override val resolveTarget: PsiElement
+    get() = JSLocalImplicitElementImpl(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
 interface VuexAction : VuexNamedSymbol {
   val isRoot: Boolean
+  // TODO provide proper resolve target
+  override val resolveTarget: PsiElement
+    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Property)
 }
 
 interface VuexGetter : VuexNamedSymbol {
   val jsType: JSType?
+  override val resolveTarget: PsiElement
+    get() = JSLocalImplicitElementImpl(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
-interface VuexMutation : VuexNamedSymbol
+interface VuexMutation : VuexNamedSymbol {
+  // TODO provide proper resolve target
+  override val resolveTarget: PsiElement
+    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Property)
+}

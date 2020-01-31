@@ -14,19 +14,29 @@ class VuexResolveTest : BasePlatformTestCase() {
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/resolve"
 
-  fun testStorefrontDirectGetter() {
+  fun testStorefrontDirectIndexedGetter() {
     doStorefrontTest("this.\$store.getters['cart/get<caret>Coupon']" to "cart/getters.ts:2139:JSProperty",
                      "this.\$store.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1265:JSLiteralExpression",
                      "rootStore.getters['cart/get<caret>Coupon']" to "cart/getters.ts:2139:JSProperty",
                      "rootStore.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1265:JSLiteralExpression")
   }
 
-  fun _testStorefrontDirectState() {
-    // TODO properly support references with nested modules
-    doStorefrontTest("this.\$store.state.category.categories<caret>Map" to "",
-                     "this.\$store.s<caret>tate.category" to "",
-                     "rootStore.state.category.categories<caret>Map" to "",
-                     "rootStore.s<caret>tate.category" to "")
+  fun testStorefrontDirectReferencedGetter() {
+    doStorefrontTest("this.\$store.getters.getCurrent<caret>StoreView" to "store/getters.ts:148:JSProperty")
+  }
+
+  fun testStorefrontDirectState() {
+    doStorefrontTest("this.\$store.state.category.categories<caret>Map" to "category/index.ts:335:JSProperty",
+                     "this.\$store.state.cate<caret>gory.categoriesMap" to "store/index.ts:1180:JSProperty")
+  }
+
+  fun testStorefrontDirectReferencedGetterJS() {
+    doStorefrontTest("this.\$store.getters.getCurrent<caret>StoreView" to "store/getters.ts:148:JSProperty")
+  }
+
+  fun testStorefrontDirectStateJS() {
+    doStorefrontTest("this.\$store.state.category.categories<caret>Map" to "category/index.ts:335:JSProperty",
+                     "this.\$store.state.cate<caret>gory.categoriesMap" to "store/index.ts:1180:JSProperty")
   }
 
   fun testStorefrontDirectDispatch() {
@@ -91,12 +101,27 @@ class VuexResolveTest : BasePlatformTestCase() {
                      "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:544:JSProperty")
   }
 
-  fun _testStorefrontMappedStatePlainFunctionDictionary() {
-    // TODO properly support references with nested modules
+  fun testStorefrontMappedStatePlainFunctionDictionary() {
+    doStorefrontTest("routes: state => state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1265:JSLiteralExpression",
+                     "routes: state => state.cart.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+                     "routes: state => state.cart.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
+                     "return state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1265:JSLiteralExpression",
+                     "return state.cart.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+                     "return state.cart.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
+                     "foo: state => state.ca<caret>rt.breadcrumbs.foo" to "store/index.ts:1265:JSLiteralExpression",
+                     "foo: state => state.cart.breadcrumbs.fo<caret>o" to null,
+                     "ship: state => state.ship<caret>ping" to "store/index.ts:529:JSProperty")
   }
 
-  fun _testStorefrontMappedStateNamespacedFunctionDictionary() {
-    // TODO properly support references with nested modules
+  fun testStorefrontMappedStateNamespacedFunctionDictionary() {
+    doStorefrontTest("routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+                     "routes2: state => state.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
+                     "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:838:JSProperty",
+                     "foo2: state => state.breadcrumbs.fo<caret>o" to null,
+                     "ship2: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
+                     "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:305:JSProperty",
+                     "shippingMethod: (state, getters) => getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty",
+                     "return getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty")
   }
 
   fun testStorefrontMappedActionsPlainArray() {
@@ -162,8 +187,15 @@ class VuexResolveTest : BasePlatformTestCase() {
                                "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:544:JSProperty")
   }
 
-  fun _testStorefrontNamespacedMappedStateFunctionDictionary() {
-    // TODO properly support references with nested modules
+  fun testStorefrontNamespacedMappedStateFunctionDictionary() {
+    doStorefrontTest("routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+                     "routes2: state => state.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
+                     "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:838:JSProperty",
+                     "foo2: state => state.breadcrumbs.fo<caret>o" to null,
+                     "ship2: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
+                     "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:305:JSProperty",
+                     "shippingMethod: (state, getters) => getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty",
+                     "return getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty")
   }
 
   fun testStorefrontNamespacedMappedActionsArray() {
@@ -200,19 +232,17 @@ class VuexResolveTest : BasePlatformTestCase() {
   fun testStorefrontDecoratedStateMapper() {
     doStorefrontDecoratedTest("@State('cart/isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
                               "@State('ship<caret>ping') shipping1" to "store/index.ts:529:JSProperty",
-                              "@State('foo<caret>bar') foobar2" to null
-      // TODO support Vuex store identifiers resolution
-      //"@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1265:JSLiteralExpression",
-      //"@State(state => state.cart.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:333:JSProperty"
+                              "@State('foo<caret>bar') foobar2" to null,
+                              "@State(state => state.cart.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:69:JSProperty",
+                              "@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1265:JSLiteralExpression"
     )
   }
 
   fun testStorefrontDecoratedModuleStateMapper() {
     doStorefrontDecoratedTest("@cartModule.State('isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
-                              "@cartModule.State('ship<caret>ping')" to "cart/index.ts:544:JSProperty"
-      // TODO support Vuex store identifiers resolution
-      //"@cartModule.State(state => state.bread<caret>crumbs.routes)" to "cart/index.ts:838:JSProperty",
-      //"@cartModule.State(state => state.breadcrumbs.rou<caret>tes)" to ""
+                              "@cartModule.State('ship<caret>ping')" to "cart/index.ts:544:JSProperty",
+                              "@cartModule.State(state => state.bread<caret>crumbs.routes)" to "cart/index.ts:838:JSProperty",
+                              "@cartModule.State(state => state.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:69:JSProperty"
     )
   }
 
@@ -238,7 +268,8 @@ class VuexResolveTest : BasePlatformTestCase() {
   fun testRootNamespacedAction() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
     myFixture.configureByFiles("root-namespaced-module.ts")
-    doTest("'root<caret>Action'" to "src/root-namespaced-module.ts:164:JSProperty",
+    doTest(false,
+           "'root<caret>Action'" to "src/root-namespaced-module.ts:164:JSProperty",
            "'inner<caret>RootAction'" to "src/root-namespaced-module.ts:439:JSProperty",
            "'namespaced<caret>Action'" to null,
            "'foo/namespaced<caret>Action'" to "src/root-namespaced-module.ts:124:TypeScriptFunctionProperty",
@@ -266,16 +297,27 @@ class VuexResolveTest : BasePlatformTestCase() {
 
   private fun doStorefrontTest(mainFile: String, vararg args: Pair<String, String?>) {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
+    myFixture.copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
     myFixture.copyDirectoryToProject("../stores/vue-storefront", "store")
     myFixture.configureByFiles(mainFile)
-    doTest(*args)
+    doTest(false, *args)
+    // Check the same with JavaScript file
+    myFixture.configureByText(mainFile.removeSuffix(".ts") + ".js", myFixture.file.text)
+    doTest(true, *args)
   }
 
-  private fun doTest(vararg args: Pair<String, String?>) {
+  private fun doTest(js: Boolean = false, vararg args: Pair<String, String?>) {
     for ((signature, output) in args) {
       try {
         if (output == null) {
-          myFixture.assertUnresolvedReference(signature)
+          try {
+            myFixture.assertUnresolvedReference(signature)
+          } catch (e: AssertionError) {
+            if (!js) {
+              throw e
+            }
+          }
         }
         else {
           var result = myFixture.resolveReference(signature)

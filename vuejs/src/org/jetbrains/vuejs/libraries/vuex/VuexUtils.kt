@@ -15,6 +15,7 @@ import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 
 object VuexUtils {
 
+  const val VUEX_PACKAGE = "vuex"
   const val VUEX_NAMESPACE = "Vuex"
   const val STORE = "Store"
   const val REGISTER_MODULE = "registerModule"
@@ -39,6 +40,7 @@ object VuexUtils {
   const val ROOT_STATE = "rootState"
 
   val VUEX_MAPPERS = setOf(MAP_STATE, MAP_GETTERS, MAP_MUTATIONS, MAP_ACTIONS)
+  val VUEX_DEC_MAPPERS = setOf(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC)
 
   fun getNamespaceFromMapper(element: PsiElement, decorator: Boolean): String {
     val call = PsiTreeUtil.getContextOfType(element, JSCallExpression::class.java)

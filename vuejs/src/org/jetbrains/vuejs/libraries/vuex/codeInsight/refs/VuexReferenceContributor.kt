@@ -43,8 +43,6 @@ class VuexReferenceContributor : PsiReferenceContributor() {
                                         VUEX_INDEXED_ACCESS_REF_PROVIDER)
     registrar.registerReferenceProvider(VUEX_DECORATOR_ARGUMENT,
                                         VUEX_DECORATOR_ARGUMENT_REF_PROVIDER)
-    registrar.registerReferenceProvider(VUEX_REFERENCE,
-                                        VuexJSRefExprReferenceProvider())
   }
 
   companion object {
@@ -76,11 +74,5 @@ class VuexReferenceContributor : PsiReferenceContributor() {
     private val VUEX_INDEXED_ACCESS = JSPatterns.jsLiteralExpression()
       .withParent(PlatformPatterns.psiElement(JSIndexedPropertyAccessExpression::class.java).withFirstChild(
         JSPatterns.jsReferenceExpression().withReferenceNames(GETTERS, ROOT_GETTERS, STATE, ROOT_STATE)))
-
-    private val VUEX_REFERENCE = JSPatterns.jsReferenceExpression().withFirstChild(
-      JSPatterns.jsReferenceExpression().withReferenceNames(GETTERS, ROOT_GETTERS, STATE, ROOT_STATE)
-    )
   }
-
-
 }

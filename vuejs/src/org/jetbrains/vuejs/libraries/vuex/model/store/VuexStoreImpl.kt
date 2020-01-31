@@ -54,6 +54,8 @@ class VuexModuleImpl(override val name: String,
 
   override val source = nameElement
 
+  override val resolveTarget: PsiElement = nameElement
+
   override val isNamespaced: Boolean
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
 

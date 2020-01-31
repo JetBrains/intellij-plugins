@@ -17,7 +17,8 @@ interface VuexStoreContext {
       for (entry in symbolAccessor(container)) {
         if ((entry.value as? VuexAction)?.isRoot == true) {
           consumer(entry.key, entry.value)
-        } else {
+        }
+        else {
           consumer(appendSegment(namespace, entry.key), entry.value)
         }
       }

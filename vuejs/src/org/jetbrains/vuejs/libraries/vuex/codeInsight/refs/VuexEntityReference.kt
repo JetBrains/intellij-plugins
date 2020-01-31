@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries.vuex.codeInsight.refs
 
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -10,16 +9,14 @@ import com.intellij.lang.javascript.validation.HighlightSeverityHolder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
 
 class VuexEntityReference(element: PsiElement,
                           rangeInElement: TextRange,
-                          private val accessor: (VuexContainer) -> Map<String, VuexNamedSymbol>,
+                          private val accessor: VuexSymbolAccessor,
                           private val fullName: String,
-                          private val namespaceResolver: (PsiElement) -> String,
+                          private val namespaceResolver: NamespaceProvider,
                           soft: Boolean)
   : CachingPolyReferenceBase<PsiElement>(element, rangeInElement.shiftRight(1)),
     HighlightSeverityHolder {
@@ -34,8 +31,7 @@ class VuexEntityReference(element: PsiElement,
     VuexModelManager.getVuexStoreContext(element)
       ?.visitSymbols(accessor) { fullName, symbol ->
         if (fullName == name) {
-          result.add(JSResolveResult(JSLocalImplicitElementImpl(symbol.name, null,
-                                                                symbol.source, JSImplicitElement.Type.Property)))
+          result.add(JSResolveResult(symbol.resolveTarget))
         }
       }
     return result.toTypedArray()

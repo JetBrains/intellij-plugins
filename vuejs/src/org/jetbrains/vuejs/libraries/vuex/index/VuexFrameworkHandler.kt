@@ -11,10 +11,13 @@ import com.intellij.lang.javascript.psi.JSNewExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
+import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
@@ -22,6 +25,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_NAMESPACE
+import org.jetbrains.vuejs.libraries.vuex.types.VuexStoreTypeProvider
 
 class VuexFrameworkHandler : FrameworkIndexingHandler() {
 
@@ -111,4 +115,7 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
+  override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator, context: JSEvaluateContext, result: PsiElement): Boolean {
+    return VuexStoreTypeProvider.addTypeFromResolveResult(evaluator, result)
+  }
 }

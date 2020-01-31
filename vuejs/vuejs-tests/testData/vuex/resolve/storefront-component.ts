@@ -10,11 +10,11 @@ export default {
     appliedCoupon2(): false {
       return rootStore.getters['cart/getCoupon']
     },
+    getCurrentStoreView(): false {
+      return this.$store.getters.getCurrentStoreView
+    },
     aMap(): void {
       return this.$store.state.category.categoriesMap
-    },
-    filtersMap(): void {
-      return rootStore.state.category.filtersMap
     },
     ...mapGetters('category', {
       getCategories: 'getCategories',
@@ -53,11 +53,11 @@ export default {
     ...mapState('cart', {
       routes2: state => state.breadcrumbs.routes,
       foo2: state => state.breadcrumbs.foo,
-      ship: state => state.shipping,
+      ship2: state => state.shipping,
       micro: state => state.isMicrocartOpen,
-      shippingMethod: (state, getter) => getter.getShippingMethod,
-      shippingMethod2(state, getter) {
-        return getter.getShippingMethod
+      shippingMethod: (state, getters) => getters.getShippingMethod,
+      shippingMethod2(state, getters) {
+        return getters.getShippingMethod
       }
     })
   },
