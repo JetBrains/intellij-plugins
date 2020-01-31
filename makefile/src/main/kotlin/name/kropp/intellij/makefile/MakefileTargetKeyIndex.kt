@@ -15,7 +15,7 @@ object MakefileTargetIndex : StringStubIndexExtension<MakefileTarget>() {
   fun allTargets(project: Project): List<MakefileTarget> {
     val allTargets = mutableSetOf<String>()
     processAllKeys(project, CommonProcessors.CollectProcessor(allTargets))
-    return allTargets.flatMap { get(it, project, GlobalSearchScope.allScope(project)) }
+    return allTargets.flatMap { get(it, project, GlobalSearchScope.projectScope(project)) }
   }
 
   override fun getKey(): StubIndexKey<String, MakefileTarget> = TARGET_INDEX_KEY
