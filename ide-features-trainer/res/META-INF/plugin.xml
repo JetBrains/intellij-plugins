@@ -15,9 +15,10 @@
   <depends optional="true" config-file="swift-deps.xml">com.intellij.modules.cidr.lang</depends>
   <depends optional="true" config-file="javascript-deps.xml">JavaScript</depends>
 
-  <applicationListeners>
-    <listener class="training.learn.TrainingProjectLifecycleListener" topic="com.intellij.openapi.project.impl.ProjectLifecycleListener"/>
-  </applicationListeners>
+  <projectListeners>
+    <listener class="training.editor.LearnProjectFileEditorListener"
+              topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+  </projectListeners>
 
   <extensionPoints>
     <extensionPoint name="TrainingLangExtension"

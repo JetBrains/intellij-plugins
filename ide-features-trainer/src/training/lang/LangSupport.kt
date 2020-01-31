@@ -3,6 +3,7 @@ package training.lang
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
@@ -56,6 +57,10 @@ interface LangSupport {
 
   fun createProject(projectName: String, projectToClose: Project?): Project?
 
-  // This method is called from ProjectLifecycleListener and the project could be initialized only partly
+  @Deprecated("It is not called from anywhere, just API watcher binary compatibility problem")
   fun setProjectListeners(project: Project) {}
+
+  /** true means block source code modification in demo learning projects (scratches can be modified anyway)*/
+  @JvmDefault
+  fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean = false
 }

@@ -1,12 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.lang
 
-import com.intellij.ide.scratch.ScratchUtil
-import com.intellij.openapi.editor.EditorModificationUtil
-import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -23,7 +17,6 @@ import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
-import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import training.project.ProjectUtils
@@ -99,8 +92,8 @@ class RubyLangSupport : AbstractLangSupport() {
     return ProjectUtils.importOrOpenProject("/learnProjects/ruby/$rubyProjectName", projectName, javaClass.classLoader)
   }
 
-  override fun setProjectListeners(project: Project) {
-    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileListener)
+  override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
+    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}$sandboxFile"
   }
 
   private val Project.module: Module
@@ -112,23 +105,5 @@ class RubyLangSupport : AbstractLangSupport() {
 
   companion object {
     const val sandboxFile = "app/sandbox.rb"
-
-    private val fileListener = object : FileEditorManagerListener {
-      override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        val project = source.project
-        if (ScratchUtil.isScratch(file)) {
-          return
-        }
-        if (file.path == "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}$sandboxFile") {
-          return
-        }
-        source.getAllEditors(file).forEach {
-          ((it as? TextEditor)?.editor as? EditorEx)?.let { editorEx ->
-            EditorModificationUtil.setReadOnlyHint(editorEx, LearnBundle.message("learn.project.read.only.hint"))
-            editorEx.isViewer = true
-          }
-        }
-      }
-    }
   }
 }
