@@ -13,6 +13,16 @@ import com.intellij.util.xmlb.annotations.Property
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                    @Property val nativeLanguage: Lang = enabledLanguages.first(),
+                   @Property val enabledProgrammingLanguages: Set<String> = hashSetOf(
+                     "AsciiDoc", "Latex", "Markdown",
+                     "JAVA",
+                     "JavaScript", "JavaScript 1.5", "JavaScript 1.8",
+                     "JSX Harmony", "ECMAScript 6",
+                     "JSON", "JSON5", "HTML", "XML", "yaml",
+                     "Python",
+                     "Properties", "TEXT",
+                     "go", "rust"
+                   ),
                    @Property val enabledCommitIntegration: Boolean = false,
                    @Property val userWords: Set<String> = HashSet(),
                    @Property val userDisabledRules: Set<String> = HashSet(),
@@ -22,10 +32,11 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
 
     val missedLanguages: Set<Lang>
       get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +
-        (setOf(nativeLanguage).takeIf { nativeLanguage.jLanguage == null } ?: emptySet())
+              (setOf(nativeLanguage).takeIf { nativeLanguage.jLanguage == null } ?: emptySet())
 
     fun clone() = State(
       enabledLanguages = HashSet(enabledLanguages), nativeLanguage = nativeLanguage,
+      enabledProgrammingLanguages = HashSet(enabledProgrammingLanguages),
       enabledCommitIntegration = enabledCommitIntegration, userWords = HashSet(userWords), userDisabledRules = HashSet(userDisabledRules),
       userEnabledRules = HashSet(userEnabledRules), lastSeenVersion = lastSeenVersion, availableLanguages = availableLanguages)
 
@@ -33,12 +44,14 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
 
     fun update(enabledLanguages: Set<Lang> = this.enabledLanguages,
                nativeLanguage: Lang = this.nativeLanguage,
+               enabledProgrammingLanguages: Set<String> = this.enabledProgrammingLanguages,
                enabledCommitIntegration: Boolean = this.enabledCommitIntegration,
                userWords: Set<String> = this.userWords,
                userDisabledRules: Set<String> = this.userDisabledRules,
                userEnabledRules: Set<String> = this.userEnabledRules,
-               lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledCommitIntegration,
-                                                                        userWords, userDisabledRules, userEnabledRules, lastSeenVersion,
+               lastSeenVersion: String? = this.lastSeenVersion) = State(enabledLanguages, nativeLanguage, enabledProgrammingLanguages,
+                                                                        enabledCommitIntegration, userWords, userDisabledRules,
+                                                                        userEnabledRules, lastSeenVersion,
                                                                         enabledLanguages.filter { it.jLanguage != null }.toSet())
   }
 

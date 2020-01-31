@@ -16,7 +16,20 @@ import com.intellij.psi.PsiElementVisitor
 
 class GrazieInspection : LocalInspectionTool() {
   companion object : GrazieStateLifecycle {
+    private var enabledProgrammingLanguagesIDs: Set<String>? = null
+      get() {
+        //Required for Inspection Integration Tests and possibly other tests
+        if (field == null) init(GrazieConfig.get())
+        return field
+      }
+
+    override fun init(state: GrazieConfig.State) {
+      enabledProgrammingLanguagesIDs = state.enabledProgrammingLanguages
+    }
+
     override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
+      enabledProgrammingLanguagesIDs = newState.enabledProgrammingLanguages
+
       ProjectManager.getInstance().openProjects.forEach {
         DaemonCodeAnalyzer.getInstance(it).restart()
       }
@@ -27,6 +40,8 @@ class GrazieInspection : LocalInspectionTool() {
     return object : PsiElementVisitor() {
       override fun visitElement(element: PsiElement) {
         if (element.isInjectedFragment()) return
+
+        if (element.language.id !in enabledProgrammingLanguagesIDs!!) return
 
         val typos = HashSet<Typo>()
         for (strategy in LanguageGrammarChecking.allForLanguageOrAny(element.language).filter { it.isMyContextRoot(element) }) {

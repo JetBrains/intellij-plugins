@@ -10,6 +10,11 @@ import tanvd.grazie.langdetect.ngram.impl.profiles.LanguageProfileReader
 
 object LangDetector : GrazieStateLifecycle {
   private var available: Set<Lang>? = null
+    get() {
+      //Required for Inspection Integration Tests and possibly other tests
+      if (field == null) init(GrazieConfig.get())
+      return field
+    }
 
   private val detector by lazy {
     LanguageDetectorBuilder(NgramExtractor.standard)
@@ -36,9 +41,6 @@ object LangDetector : GrazieStateLifecycle {
    * @return Lang that is detected and enabled in grazie
    */
   fun getAvailableLang(text: String) = getLanguage(text).let {
-    //Required for Inspection Integration Tests and possibly other tests
-    if (available == null) init(GrazieConfig.get())
-
     available!!.find { lang -> lang.equalsTo(it) }
   }
 
