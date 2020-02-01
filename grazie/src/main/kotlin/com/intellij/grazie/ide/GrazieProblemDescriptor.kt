@@ -24,7 +24,6 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
   fix.toSelectionRange(), true, isOnTheFly
 ) {
   companion object {
-
     private val interner: WeakStringInterner = WeakStringInterner()
 
     private fun Typo.toFixes(isOnTheFly: Boolean) = buildList<LocalQuickFix> {

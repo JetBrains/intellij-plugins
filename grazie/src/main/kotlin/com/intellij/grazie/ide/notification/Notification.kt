@@ -4,6 +4,7 @@ package com.intellij.grazie.ide.notification
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.GraziePlugin
 import com.intellij.grazie.ide.ui.components.dsl.msg
+import com.intellij.grazie.ide.ui.components.dsl.pluginOnlyMsg
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.remote.GrazieRemote
 import com.intellij.grazie.utils.joinToStringWithOxfordComma
@@ -20,32 +21,45 @@ object Notification {
 
   private val shownNotifications = ConcurrentMultiMap<Group, WeakReference<Notification>>()
 
-  private val NOTIFICATION_GROUP_INSTALL = NotificationGroup(msg("grazie.install.group"),
-                                                             NotificationDisplayType.STICKY_BALLOON, true)
-  private val NOTIFICATION_GROUP_UPDATE = NotificationGroup(msg("grazie.update.group"),
-                                                            NotificationDisplayType.STICKY_BALLOON, true)
+  private val NOTIFICATION_GROUP_INSTALL = NotificationGroup(pluginOnlyMsg("grazie.install.group"), NotificationDisplayType.STICKY_BALLOON,
+                                                             true)
+    .takeUnless { GraziePlugin.isBundled }
+
+  private val NOTIFICATION_GROUP_UPDATE = NotificationGroup(pluginOnlyMsg("grazie.update.group"), NotificationDisplayType.STICKY_BALLOON,
+                                                            true)
+    .takeUnless { GraziePlugin.isBundled }
+
+
   private val NOTIFICATION_GROUP_LANGUAGES = NotificationGroup(msg("grazie.languages.group"),
                                                                NotificationDisplayType.STICKY_BALLOON, true)
 
-  fun showInstallationMessage(project: Project) = NOTIFICATION_GROUP_INSTALL
-    .createNotification(
-      msg("grazie.install.title"), msg("grazie.install.body", ShowSettingsUtil.getSettingsMenuName()),
-      NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
-    .addAction(object : NotificationAction("Open ${ShowSettingsUtil.getSettingsMenuName()}") {
-      override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, msg("grazie.name"))
-        notification.expire()
-      }
-    })
-    .expireAll(Group.UPDATE)
-    .notify(project)
+  fun showInstallationMessage(project: Project): Unit? {
+    require(!GraziePlugin.isBundled) { "Trying to show installation message in bundled plugin!" }
 
-  fun showUpdateMessage(project: Project) = NOTIFICATION_GROUP_UPDATE
-    .createNotification(
-      msg("grazie.update.title", GraziePlugin.version), msg("grazie.update.body"),
-      NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
-    .expireAll(Group.UPDATE)
-    .notify(project)
+    return NOTIFICATION_GROUP_INSTALL
+      ?.createNotification(
+        pluginOnlyMsg("grazie.install.title"), pluginOnlyMsg("grazie.install.body", ShowSettingsUtil.getSettingsMenuName()),
+        NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+      ?.addAction(object : NotificationAction(pluginOnlyMsg("grazie.install.action.text", ShowSettingsUtil.getSettingsMenuName())) {
+        override fun actionPerformed(e: AnActionEvent, notification: Notification) {
+          ShowSettingsUtil.getInstance().showSettingsDialog(project, msg("grazie.name"))
+          notification.expire()
+        }
+      })
+      ?.expireAll(Group.UPDATE)
+      ?.notify(project)
+  }
+
+  fun showUpdateMessage(project: Project): Unit? {
+    require(!GraziePlugin.isBundled) { "Trying to show update message in bundled plugin!" }
+
+    return NOTIFICATION_GROUP_UPDATE
+      ?.createNotification(
+        pluginOnlyMsg("grazie.update.title", GraziePlugin.version), pluginOnlyMsg("grazie.update.body"),
+        NotificationType.INFORMATION, NotificationListener.URL_OPENING_LISTENER)
+      ?.expireAll(Group.UPDATE)
+      ?.notify(project)
+  }
 
   fun showLanguagesMessage(project: Project) {
     val langs = GrazieConfig.get().missedLanguages

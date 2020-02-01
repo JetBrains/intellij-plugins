@@ -4,6 +4,7 @@ package com.intellij.grazie.ide
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.grazie.GrazieBundle
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.grammar.GrammarChecker
 import com.intellij.grazie.grammar.Typo
@@ -57,4 +58,5 @@ class GrazieInspection : LocalInspectionTool() {
     }
   }
 
+  override fun getDisplayName() = GrazieBundle.message("grazie.inspection.text")
 }

@@ -7,11 +7,13 @@ import org.jetbrains.annotations.PropertyKey
 import java.util.*
 
 object GrazieBundle {
-  const val bundleName = "messages.GrazieBundle"
+  const val DEFAULT_BUNDLE_NAME = "messages.GrazieBundle"
+  const val PLUGIN_BUNDLE_NAME = "messages.GraziePluginBundle"
 
-  private val bundle by lazy { ResourceBundle.getBundle(bundleName) }
+  private val defaultBundle by lazy { ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME) }
+  private val pluginBundle by lazy { ResourceBundle.getBundle(PLUGIN_BUNDLE_NAME) }
 
-  fun message(@PropertyKey(resourceBundle = bundleName) key: String, vararg params: String): String {
-    return AbstractBundle.message(bundle, key, *params)
+  fun message(@PropertyKey(resourceBundle = DEFAULT_BUNDLE_NAME) key: String, vararg params: String): String {
+    return AbstractBundle.message(if (!GraziePlugin.isBundled && pluginBundle.containsKey(key)) pluginBundle else defaultBundle, key, *params)
   }
 }

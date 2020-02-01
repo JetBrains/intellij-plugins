@@ -15,6 +15,9 @@ internal object GraziePlugin {
   private val descriptor: IdeaPluginDescriptor
     get() = PluginManagerCore.getPlugin(PluginId.getId(id))!!
 
+  val name: String
+    get() = GrazieBundle.message("grazie.name")
+
   val isBundled: Boolean
     get() = descriptor.isBundled
 

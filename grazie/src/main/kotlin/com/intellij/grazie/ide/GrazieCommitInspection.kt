@@ -32,7 +32,8 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
         if (state.enabledCommitIntegration) {
           addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), emptyMap())
           setToolEnabled("GrazieCommit", true, project)
-        } else {
+        }
+        else {
           if (getToolsOrNull("GrazieCommit", project) != null) setToolEnabled("GrazieCommit", false, project)
           //TODO-tanvd how to remove tool?
         }
@@ -46,5 +47,5 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = grazie.buildVisitor(holder, isOnTheFly)
 
-  override fun getDisplayName() = GrazieBundle.message("inspection.GrazieCommitInspection.display.name")
+  override fun getDisplayName() = GrazieBundle.message("grazie.inspection.commit.text")
 }
