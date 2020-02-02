@@ -50,8 +50,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   companion object {
     private val defaultEnabledProgrammingLanguages by lazy {
       when {
-        ApplicationManager.getApplication()?.isUnitTestMode ?: false -> setOf("AsciiDoc", "Latex", "Markdown", "JAVA")
-        GraziePlugin.isBundled -> setOf("AsciiDoc", "Latex", "Markdown")
+        GraziePlugin.isBundled && (ApplicationManager.getApplication()?.isUnitTestMode?.not() ?: true) -> setOf("AsciiDoc", "Latex", "Markdown")
         else -> setOf(
           "AsciiDoc", "Latex", "Markdown",
           "JAVA",
