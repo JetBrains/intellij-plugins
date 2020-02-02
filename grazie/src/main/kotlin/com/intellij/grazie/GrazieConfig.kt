@@ -3,6 +3,7 @@ package com.intellij.grazie
 
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
@@ -13,16 +14,7 @@ import com.intellij.util.xmlb.annotations.Property
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                    @Property val nativeLanguage: Lang = enabledLanguages.first(),
-                   @Property val enabledProgrammingLanguages: Set<String> = hashSetOf(
-                     "AsciiDoc", "Latex", "Markdown",
-                     "JAVA",
-                     "JavaScript", "JavaScript 1.5", "JavaScript 1.8",
-                     "JSX Harmony", "ECMAScript 6",
-                     "JSON", "JSON5", "HTML", "XML", "yaml",
-                     "Python",
-                     "Properties", "TEXT",
-                     "go", "rust"
-                   ),
+                   @Property val enabledProgrammingLanguages: Set<String> = defaultEnabledProgrammingLanguages,
                    @Property val enabledCommitIntegration: Boolean = false,
                    @Property val userWords: Set<String> = HashSet(),
                    @Property val userDisabledRules: Set<String> = HashSet(),
@@ -56,6 +48,23 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   }
 
   companion object {
+    private val defaultEnabledProgrammingLanguages by lazy {
+      when {
+        ApplicationManager.getApplication()?.isUnitTestMode ?: false -> setOf("AsciiDoc", "Latex", "Markdown", "JAVA")
+        GraziePlugin.isBundled -> setOf("AsciiDoc", "Latex", "Markdown")
+        else -> setOf(
+          "AsciiDoc", "Latex", "Markdown",
+          "JAVA",
+          "JavaScript", "JavaScript 1.5", "JavaScript 1.8",
+          "JSX Harmony", "ECMAScript 6",
+          "JSON", "JSON5", "HTML", "XML", "yaml",
+          "Python",
+          "Properties", "TEXT",
+          "go", "rust"
+        )
+      }
+    }
+
     private val instance: GrazieConfig by lazy { ServiceManager.getService(GrazieConfig::class.java) }
 
     /**
