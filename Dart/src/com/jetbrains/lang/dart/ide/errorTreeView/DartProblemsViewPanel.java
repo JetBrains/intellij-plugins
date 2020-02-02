@@ -211,8 +211,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     if (url == null) return;
 
     group.addSeparator();
-    group.add(new DumbAwareAction(() -> IdeBundle.message("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
-                                  () -> IdeBundle.message("action.DumbAware.DartProblemsViewPanel.description.open.detailed.problem.description.in.browser"),
+    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
+                                  IdeBundle.lazyMessage("action.DumbAware.DartProblemsViewPanel.description.open.detailed.problem.description.in.browser"),
                                   AllIcons.Ide.External_link_arrow) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
