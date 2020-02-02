@@ -34,6 +34,8 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
+import java.util.function.Supplier;
+
 /**
  * Internationalization bundle for Osmorc.
  *
@@ -49,6 +51,11 @@ public class OsmorcBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return INSTANCE.getMessage(key, params);
+  }
+
+  @NotNull
+  public static Supplier<String> lazyMessage(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+    return INSTANCE.getLazyMessage(key, params);
   }
 
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup(message("notification.group"), NotificationDisplayType.BALLOON, true);

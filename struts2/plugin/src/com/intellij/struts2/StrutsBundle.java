@@ -18,6 +18,8 @@ import com.intellij.DynamicBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
+import java.util.function.Supplier;
+
 /**
  * MessageResource provider.
  *
@@ -27,6 +29,11 @@ public class StrutsBundle extends DynamicBundle {
 
   public static String message(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getMessage(key, params);
+  }
+
+  @NotNull
+  public static Supplier<String> lazyMessage(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+    return ourInstance.getLazyMessage(key, params);
   }
 
   private static final String PATH_TO_BUNDLE = "messages.Struts2Bundle";
