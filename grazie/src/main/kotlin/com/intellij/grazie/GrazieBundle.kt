@@ -5,6 +5,7 @@ import com.intellij.AbstractBundle
 import com.intellij.CommonBundle
 import org.jetbrains.annotations.PropertyKey
 import java.util.*
+import java.util.function.Supplier
 
 object GrazieBundle {
   const val DEFAULT_BUNDLE_NAME = "messages.GrazieBundle"
@@ -15,5 +16,10 @@ object GrazieBundle {
 
   fun message(@PropertyKey(resourceBundle = DEFAULT_BUNDLE_NAME) key: String, vararg params: String): String {
     return AbstractBundle.message(if (!GraziePlugin.isBundled && pluginBundle.containsKey(key)) pluginBundle else defaultBundle, key, *params)
+  }
+
+  @JvmStatic
+  fun lazyMessage(@PropertyKey(resourceBundle = bundleName) key: String, vararg params: String): Supplier<String> = Supplier {
+    message(key, *params)
   }
 }
