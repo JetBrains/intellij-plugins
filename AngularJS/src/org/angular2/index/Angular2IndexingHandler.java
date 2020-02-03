@@ -96,10 +96,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   public static boolean isPipe(@NotNull JSImplicitElement element) {
-    return PIPE_TYPE.equals(element.getTypeString());
+    return element instanceof JSImplicitElementImpl
+           && PIPE_TYPE.equals(element.getTypeString());
   }
 
   public static boolean isDirective(@NotNull JSImplicitElement element) {
+    if (!(element instanceof JSImplicitElementImpl)) {
+      return false;
+    }
     String type = element.getTypeString();
     if (type == null) {
       return false;
@@ -108,7 +112,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   public static boolean isModule(@NotNull JSImplicitElement element) {
-    return MODULE_TYPE.equals(element.getTypeString());
+    return element instanceof JSImplicitElementImpl
+           && MODULE_TYPE.equals(element.getTypeString());
   }
 
   @Override
