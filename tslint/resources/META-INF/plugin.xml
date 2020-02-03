@@ -1,9 +1,15 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/tslint">
-  <name>tslint</name>
+  <id>tslint</id>
+  <name>TSLint</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-  Integrates <a href="https://palantir.github.io/tslint/">tslint</a>, a static analysis tool for TypeScript
-  ]]></description>
+<p>Provides integration with <a href="https://palantir.github.io/tslint/">TSLint</a>, a linter for TypeScript.</p>
+<ul>
+<li>Shows errors reported by TSLint in the editor</li>
+<li>Provides a quick fix (Alt-Enter) and an action ("Fix TSLint Problems") to fix errors and warnings using TSLint</li>
+<li>Imports matching code style rules defined in the TSLint configuration to the IDE code style settings</li>
+</ul>
+]]></description>
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>
