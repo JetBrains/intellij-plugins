@@ -283,6 +283,24 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/inner/root<caret>Action'" to null)
   }
 
+  fun testRootNamespacedActionJS() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByFiles("root-namespaced-module.js")
+    doTest(false,
+           "'root<caret>Action'" to "src/root-namespaced-module.js:164:JSProperty",
+           "'inner<caret>RootAction'" to "src/root-namespaced-module.js:439:JSProperty",
+           "'namespaced<caret>Action'" to null,
+           "'foo/namespaced<caret>Action'" to "src/root-namespaced-module.js:124:ES6FunctionProperty",
+           "'foo/root<caret>Action'" to null,
+           "'fo<caret>o/rootAction'" to "src/root-namespaced-module.js:78:JSLiteralExpression",
+           "'foo/inner<caret>RootAction'" to null,
+           "'foo/inner/namespaced<caret>Action'" to "src/root-namespaced-module.js:326:JSProperty",
+           "'foo/in<caret>ner/namespacedAction'" to "src/root-namespaced-module.js:266:JSProperty",
+           "'fo<caret>o/inner/namespacedAction'" to "src/root-namespaced-module.js:78:JSLiteralExpression",
+           "'foo/inner/inner<caret>RootAction'" to null,
+           "'foo/inner/root<caret>Action'" to null)
+  }
+
   private fun doStorefrontNamespacedTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-namespaced-component.ts", *args)
   }
@@ -296,10 +314,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   private fun doStorefrontTest(mainFile: String, vararg args: Pair<String, String?>) {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
-    myFixture.copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
-    myFixture.copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
-    myFixture.copyDirectoryToProject("../stores/vue-storefront", "store")
+    myFixture.configureStorefront()
     myFixture.configureByFiles(mainFile)
     doTest(false, *args)
     // Check the same with JavaScript file

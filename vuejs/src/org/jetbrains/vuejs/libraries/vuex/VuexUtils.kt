@@ -32,6 +32,9 @@ object VuexUtils {
   const val MUTATION_DEC = "Mutation"
   private const val CREATE_NAMESPACED_DECS = "namespace"
 
+  const val PROP_NAMESPACED = "namespaced"
+  const val PROP_ROOT = "root"
+
   const val DISPATCH = "dispatch"
   const val COMMIT = "commit"
   const val GETTERS = "getters"

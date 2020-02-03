@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainerInfoProvider.VuexContainerInfo
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider
 
@@ -35,7 +36,7 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
     private val GETTERS = SimpleMemberMapAccessor(ContainerMembers.Getters, ::VuexGetterImpl)
     private val MUTATIONS = SimpleMemberMapAccessor(ContainerMembers.Mutations, ::VuexMutationImpl)
     private val MODULES = SimpleMemberMapAccessor(ContainerMembers.Modules, ::VuexModuleImpl)
-    private val IS_NAMESPACED = BooleanValueAccessor("namespaced")
+    private val IS_NAMESPACED = BooleanValueAccessor(VuexUtils.PROP_NAMESPACED)
   }
 
   private class VuexContainerInfoImpl(declaration: JSObjectLiteralExpression)

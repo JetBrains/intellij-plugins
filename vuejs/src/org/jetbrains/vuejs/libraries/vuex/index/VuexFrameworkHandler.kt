@@ -4,12 +4,10 @@ package org.jetbrains.vuejs.libraries.vuex.index
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSNewExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
@@ -22,6 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.index.VueFrameworkHandler
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_NAMESPACED
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_ROOT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.VUEX_MAPPERS
@@ -69,7 +69,14 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun shouldCreateStubForLiteral(node: ASTNode?): Boolean {
-    if (node?.text?.getOrNull(0)
+    if (node == null) return false
+    if (node.firstChildNode?.elementType === JSTokenTypes.TRUE_KEYWORD) {
+      return node.treeParent?.psi
+        ?.castSafelyTo<JSProperty>()
+        ?.name
+        ?.let { it == PROP_NAMESPACED || it == PROP_ROOT } == true
+    }
+    if (node.text.getOrNull(0)
         ?.let { it == '\'' || it == '"' || it == '`' } == true) {
       val parent = node.treeParent
       when (parent?.elementType) {

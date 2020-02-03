@@ -2,11 +2,10 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
+import com.intellij.lang.javascript.JSKeywordElementType
 import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.psi.JSElement
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.lang.javascript.psi.JSSpreadExpression
+import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.util.JSClassUtils
@@ -15,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
@@ -98,8 +98,8 @@ interface EntityContainerInfoProvider<T> {
     class BooleanValueAccessor(private val propertyName: String) : MemberAccessor<Boolean>() {
       override fun build(declaration: JSObjectLiteralExpression): Boolean {
         return declaration.findProperty(propertyName)
-          ?.jsType
-          ?.typeText == "true"
+          ?.initializerOrStub?.castSafelyTo<JSLiteralExpression>()
+          ?.significantValue == (JSTokenTypes.TRUE_KEYWORD as JSKeywordElementType).keyword
       }
     }
 
