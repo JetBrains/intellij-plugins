@@ -3,16 +3,17 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSNewExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
 import com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
+import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
 
 abstract class VuexContainerImpl : VuexContainer {
@@ -54,7 +55,8 @@ class VuexModuleImpl(override val name: String,
 
   override val source = nameElement
 
-  override val resolveTarget: PsiElement = nameElement
+  override val resolveTarget: PsiElement
+    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Variable)
 
   override val isNamespaced: Boolean
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
@@ -100,7 +102,7 @@ abstract class VuexNamedSymbolImpl(override val name: String,
 
 class VuexStatePropertyImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexStateProperty {
-  override val jsType: JSType? = null
+  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 class VuexActionImpl(name: String, source: PsiElement)
@@ -108,13 +110,14 @@ class VuexActionImpl(name: String, source: PsiElement)
 
   override val isRoot: Boolean get() = initializer?.let { IS_ROOT.build(it) } == true
 
-  private val initializer: JSObjectLiteralExpression? get() {
-    val initializerHolder = source
-    return CachedValuesManager.getCachedValue(initializerHolder) {
-      objectLiteralFor(initializerHolder)?.let { create(it, initializerHolder, it) }
-      ?: create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
+  private val initializer: JSObjectLiteralExpression?
+    get() {
+      val initializerHolder = source
+      return CachedValuesManager.getCachedValue(initializerHolder) {
+        objectLiteralFor(initializerHolder)?.let { create(it, initializerHolder, it) }
+        ?: create(null as JSObjectLiteralExpression?, initializerHolder, VFS_STRUCTURE_MODIFICATIONS)
+      }
     }
-  }
 
   companion object {
     private val IS_ROOT = BooleanValueAccessor("root")
@@ -123,7 +126,11 @@ class VuexActionImpl(name: String, source: PsiElement)
 
 class VuexGetterImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexGetter {
-  override val jsType: JSType? = null
+  override val jsType: JSType?
+    get() {
+      return (source as? JSTypeOwner)
+               ?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(it, false), it) }
+    }
 }
 
 class VuexMutationImpl(name: String, source: PsiElement)

@@ -151,7 +151,6 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
   protected abstract fun getSettings(element: PsiElement): ReferenceProviderSettings?
 
-
   override fun getReferencesByElement(element: PsiElement, processingContext: ProcessingContext): Array<PsiReference> {
     if (element is JSLiteralExpression) {
       val settings = getSettings(element)
@@ -160,22 +159,16 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         var lastIndex = 0
         var index = text.indexOf('/')
         val result = mutableListOf<PsiReference>()
+        val accessor = settings.symbolAccessor
         while (index > 0) {
-          result.add(VuexNamespaceReference(element, TextRange(lastIndex, index), text.substring(0, index),
-                                            settings.baseNamespaceProvider, soft = settings.isSoft))
+          result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, index), accessor, text.substring(0, index),
+                                                    false, settings.baseNamespaceProvider, soft = settings.isSoft))
           lastIndex = index + 1
           index = text.indexOf('/', lastIndex)
         }
 
-        val accessor = settings.symbolAccessor
-        if (accessor == null) {
-          result.add(VuexNamespaceReference(element, TextRange(lastIndex, text.length), text,
-                                            settings.baseNamespaceProvider, soft = settings.isSoft))
-        }
-        else {
-          result.add(VuexEntityReference(element, TextRange(lastIndex, text.length), accessor, text,
-                                         settings.baseNamespaceProvider, soft = settings.isSoft))
-        }
+        result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, text.length), accessor, text,
+                                                  true, settings.baseNamespaceProvider, settings.isSoft))
         return result.toTypedArray()
       }
     }

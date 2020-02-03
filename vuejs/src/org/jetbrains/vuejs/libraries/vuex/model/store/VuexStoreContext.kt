@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
+import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexSymbolAccessor
 
 interface VuexStoreContext {
 
@@ -22,6 +23,16 @@ interface VuexStoreContext {
           consumer(appendSegment(namespace, entry.key), entry.value)
         }
       }
+    }
+  }
+
+  fun visit(symbolAccessor: VuexSymbolAccessor?,
+            consumer: (namespace: String, symbol: Any) -> Unit) {
+    if (symbolAccessor == null) {
+      visit(consumer)
+    }
+    else {
+      visitSymbols(symbolAccessor, consumer)
     }
   }
 
