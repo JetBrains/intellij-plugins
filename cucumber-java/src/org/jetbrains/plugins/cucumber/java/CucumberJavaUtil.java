@@ -77,6 +77,8 @@ public class CucumberJavaUtil {
     JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
   }
 
+  public static final MapParameterTypeManager JAVA_DEFAULT_PARAMETER_TYPE_MANAGER = new MapParameterTypeManager(STANDARD_PARAMETER_TYPES);
+
   /**
    * Checks if expression should be considered as a CucumberExpression or as a RegEx
    * @see <a href="http://google.com">https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc</a>
