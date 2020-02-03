@@ -4,6 +4,9 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 import com.intellij.lang.javascript.psi.JSCallExpression
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.lang.javascript.psi.JSNewExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -11,6 +14,8 @@ import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
@@ -49,22 +54,31 @@ object VuexModelManager {
                               JSImplicitElementProvider::class.java)
           .asSequence()
           .filterIsInstance<JSCallExpression>()
-          .filter { call -> call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY } != null }
           .mapNotNull { createRegisteredModule(it) }
           .toList(), PsiModificationTracker.MODIFICATION_COUNT)
     }
   }
 
   private fun createRegisteredModule(call: JSCallExpression): VuexModule? {
-    // TODO make stub safe
-    val arguments = call.arguments
+    val implicitElement = call.indexingData?.implicitElements?.find { it.userString == VuexStoreIndex.JS_KEY }
+                          ?: return null
+
+    val arguments = getStubSafeCallArguments(call)
     val nameElement = arguments.getOrNull(0)
                       ?: return null
     val path = getTextIfLiteral(nameElement)
                ?: return null
+
     val initializer = arguments.getOrNull(1)
+                        ?.castSafelyTo<JSObjectLiteralExpression>()
+                      ?: resolveFromImplicitElement(implicitElement)
                       ?: return null
     return VuexModuleImpl(path, initializer, nameElement)
+  }
+
+  private fun resolveFromImplicitElement(implicitElement: JSImplicitElement): PsiElement? {
+    return JSStubBasedPsiTreeUtil.resolveLocally(implicitElement.typeString ?: return null,
+                                                 implicitElement.context ?: return null)
   }
 
   private class VuexStoreContextImpl(override val rootStores: List<VuexStore>,

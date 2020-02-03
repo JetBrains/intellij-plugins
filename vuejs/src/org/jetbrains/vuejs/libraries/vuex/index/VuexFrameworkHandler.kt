@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.JSCallExpression
+import com.intellij.lang.javascript.psi.JSLiteralExpression
 import com.intellij.lang.javascript.psi.JSNewExpression
 import com.intellij.lang.javascript.psi.JSReferenceExpression
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl
@@ -83,6 +84,10 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
     return false
   }
 
+  override fun hasSignificantValue(expression: JSLiteralExpression): Boolean {
+    return shouldCreateStubForLiteral(expression.node)
+  }
+
   override fun processCallExpression(callExpression: JSCallExpression, outData: JSElementIndexingData) {
     val reference = callExpression.methodExpression
       ?.castSafelyTo<JSReferenceExpression>()
@@ -98,10 +103,12 @@ class VuexFrameworkHandler : FrameworkIndexingHandler() {
       }
     }
     else if (referenceName == REGISTER_MODULE) {
+      val type = callExpression.arguments.getOrNull(1).castSafelyTo<JSReferenceExpression>()
+        ?.referenceName
       outData.addImplicitElement(
         JSImplicitElementImpl.Builder(REGISTER_MODULE, callExpression)
           .setUserString(VuexStoreIndex.JS_KEY)
-          .setType(JSImplicitElement.Type.Variable)
+          .setTypeString(type)
           .forbidAstAccess()
           .toImplicitElement())
     }
