@@ -46,7 +46,6 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
-    <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierConfiguration$ProjectConfigurator"/>
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
   </extensions>
   <actions>
