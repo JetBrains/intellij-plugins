@@ -176,6 +176,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       val data = PackageJsonUtil.getOrCreateData(it)
       return data.name == "vue"
              || data.containsOneOfDependencyOfAnyType("vue-loader", "vue-latest", "vue", "vue-template-compiler")
+             || data.webTypes != null
     }
 
   }

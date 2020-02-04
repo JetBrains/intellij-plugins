@@ -91,8 +91,10 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         packageJsonFile.parent?.findFileByRelativePath(it)
       }
       return webTypesFile?.inputStream?.let {
-        Pair(createObjectMapper().readValue(it, WebTypes::class.java), webTypesFile)
-      }
+          createObjectMapper().readValue(it, WebTypes::class.java)
+        }
+        ?.takeIf { it.framework == WebTypes.Framework.VUE }
+        ?.let { Pair(it, webTypesFile) }
     }
 
     private fun createObjectMapper() = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -210,8 +212,11 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   }
 
   private fun buildPackageWebTypes(fileUrl: String?): WebTypes? {
-    fileUrl ?: return null
-    val webTypesJson = createObjectMapper().readValue(VueWebTypesJsonsCache.getWebTypesJson(fileUrl), WebTypes::class.java)
+    val webTypesJson = createObjectMapper().readValue(
+      VueWebTypesJsonsCache.getWebTypesJson(fileUrl ?: return null), WebTypes::class.java)
+    if (webTypesJson.framework != WebTypes.Framework.VUE) {
+      return null
+    }
     incStateVersion()
     return webTypesJson
   }
