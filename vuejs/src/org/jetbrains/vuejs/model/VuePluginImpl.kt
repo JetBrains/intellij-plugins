@@ -6,8 +6,6 @@ import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
@@ -20,14 +18,10 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
   override val source: PsiElement? = null
   override val parents get() = VueGlobalImpl.getParents(this)
 
-  override val delegate
-    get() = packageJsonPsi?.let { psiFile ->
-      CachedValuesManager.getCachedValue(psiFile) {
-        buildPlugin()
-      }
-    } ?: EMPTY_PLUGIN
-
-  private val packageJsonPsi: PsiFile? get() = PsiManager.getInstance(project).findFile(packageJson)
+  override val delegate: VuePlugin
+    get() = CachedValuesManager.getManager(project).getCachedValue(this) {
+      buildPlugin()
+    }
 
   private fun buildPlugin(): Result<VuePlugin>? {
     return VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
