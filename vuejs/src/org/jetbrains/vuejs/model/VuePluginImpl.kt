@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.model.source.VueSourcePlugin
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 
@@ -32,15 +31,8 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
 
   private fun buildPlugin(): Result<VuePlugin>? {
     return VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
-           ?: VueSourcePlugin.create(project, packageJson)?.let {
-             Result.create(it as VuePlugin, packageJson,
-                           NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-                           PsiModificationTracker.MODIFICATION_COUNT,
-                           VueWebTypesRegistry.MODIFICATION_TRACKER)
-           }
-           ?: Result.create(null as VuePlugin?, packageJson,
+           ?: Result.create(VueSourcePlugin(project, packageJson) as VuePlugin, packageJson,
                             NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
-                            PsiModificationTracker.MODIFICATION_COUNT,
                             VueWebTypesRegistry.MODIFICATION_TRACKER)
   }
 
