@@ -38,9 +38,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   override val unregistered: VueEntitiesContainer get() = delegate.unregistered
 
   private val mySourceGlobal = VueSourceGlobal(project, packageJsonUrl)
-  private val packageJson
-    get() = VirtualFileManager.getInstance().findFileByUrl(packageJsonUrl)
-      ?.takeIf { it.isValid }
+  private val packageJson: VirtualFile? get() = findFileByUrl(packageJsonUrl)
 
   override val delegate
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
@@ -137,6 +135,15 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   }
 
   companion object {
+
+    fun findFileByUrl(packageJsonUrl: String?): VirtualFile? {
+      return if (packageJsonUrl != null)
+      // TODO consider refresh if not valid
+        VirtualFileManager.getInstance().findFileByUrl(packageJsonUrl)
+          ?.takeIf { it.isValid }
+      else null
+    }
+
     fun getParents(scopeElement: VueScopeElement): List<VueEntitiesContainer> {
       return (scopeElement.global as? VueGlobalImpl)
                ?.getElementToParentMap()

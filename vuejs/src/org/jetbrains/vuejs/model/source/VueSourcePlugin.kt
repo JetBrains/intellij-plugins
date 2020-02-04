@@ -66,7 +66,6 @@ class VueSourcePlugin constructor(private val project: Project,
   override fun hashCode(): Int {
     var result = project.hashCode()
     result = 31 * result + packageJsonFile.hashCode()
-    result = 31 * result + project.hashCode()
     return result
   }
 

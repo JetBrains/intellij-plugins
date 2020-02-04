@@ -46,6 +46,7 @@ const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
 fun fromAsset(name: String): String {
+  // TODO ensure that this conversion conforms to Vue.js rules
   val result = StringBuilder()
   for (ch in name) {
     when {
@@ -55,9 +56,7 @@ fun fromAsset(name: String): String {
         }
         result.append(StringUtil.toLowerCase(ch))
       }
-      else -> {
-        result.append(ch)
-      }
+      else ->  result.append(ch)
     }
   }
   return result.toString()
