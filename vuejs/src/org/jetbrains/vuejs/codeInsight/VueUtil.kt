@@ -45,20 +45,38 @@ const val ATTR_SLOT_SHORTHAND = '#'
 const val ATTR_ARGUMENT_PREFIX = ':'
 const val ATTR_MODIFIER_PREFIX = '.'
 
-fun fromAsset(text: String): String {
-  val split = es6Unquote(text).split("(?=[A-Z])".toRegex()).filter { !StringUtil.isEmpty(it) }.toTypedArray()
-  for (i in split.indices) {
-    split[i] = StringUtil.decapitalize(split[i])
+fun fromAsset(name: String): String {
+  val result = StringBuilder()
+  for (ch in name) {
+    when {
+      ch.isUpperCase() -> {
+        if (result.isNotEmpty()) {
+          result.append('-')
+        }
+        result.append(StringUtil.toLowerCase(ch))
+      }
+      else -> {
+        result.append(ch)
+      }
+    }
   }
-  return StringUtil.join(split, "-")
+  return result.toString()
 }
 
 fun toAsset(name: String): String {
-  val words = name.split("-".toRegex()).dropLastWhile(String::isEmpty).toTypedArray()
-  for (i in 1 until words.size) {
-    words[i] = StringUtil.capitalize(words[i])
+  val result = StringBuilder()
+  var nextCapitalized = false
+  for (ch in name) {
+    when {
+      ch == '-' -> nextCapitalized = true
+      nextCapitalized -> {
+        result.append(StringUtil.toUpperCase(ch))
+        nextCapitalized = false
+      }
+      else -> result.append(ch)
+    }
   }
-  return StringUtil.join(*words)
+  return result.toString()
 }
 
 private val QUOTES = setOf('\'', '"', '`')
