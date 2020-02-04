@@ -50,6 +50,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     private const val WEB_TYPES_ENABLED_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/web-types/master/packages/registry.json"
     private val LETTERS_PATTERN = Regex("[a-zA-Z]")
     private val NON_LETTERS_PATTERN = Regex("^[^a-zA-Z]+\$")
+    private val WEB_TYPES_PKG_NAME_REPLACE_PATTERN = Regex("^@(.*)/(.*)$")
 
     const val PACKAGE_PREFIX = "@web-types"
 
@@ -97,6 +98,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   private var myStateLock = Object()
   private var myState = State(emptySortedMap(), emptySet())
+
   @Volatile
   private var myStateVersion = 0
   private var myStateTimestamp = 0L
@@ -132,7 +134,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
                                 owner: VuePlugin): Result<VuePlugin>? {
     return processState { state, tracker ->
       val webTypesPackageName = (packageJson.name ?: return@processState null)
-        .replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+        .replace(WEB_TYPES_PKG_NAME_REPLACE_PATTERN, "at-$1-$2")
       val versions = state.availableVersions["@web-types/$webTypesPackageName"]
       if (versions == null || versions.isEmpty()) return@processState null
 
