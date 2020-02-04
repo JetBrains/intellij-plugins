@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.model.*
 import java.util.*
 
-class VueSourceGlobal(override val project: Project, private val packageJson: VirtualFile?) : VueGlobal {
+class VueSourceGlobal(override val project: Project, private val packageJsonUrl: String?) : VueGlobal {
 
   override val global: VueGlobal = this
   override val plugins: List<VuePlugin> = emptyList()
@@ -54,12 +54,12 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
 
   override fun equals(other: Any?): Boolean {
     return (other as? VueSourceGlobal)?.let {
-      it.project == project && it.packageJson == packageJson
+      it.project == project && it.packageJsonUrl == packageJsonUrl
     } ?: false
   }
 
   override fun hashCode(): Int {
-    return (project.hashCode()) * 31 + packageJson.hashCode()
+    return (project.hashCode()) * 31 + packageJsonUrl.hashCode()
   }
 
   private fun getComponents(global: Boolean): Map<String, VueComponent> {
@@ -95,9 +95,10 @@ class VueSourceGlobal(override val project: Project, private val packageJson: Vi
   }
 
   private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
-    val psiFile: PsiFile? = packageJson?.let {
-      PsiManager.getInstance(project).findFile(it)
-    }
+    val psiFile: PsiFile? = packageJsonUrl
+      ?.let { VirtualFileManager.getInstance().findFileByUrl(it) }
+      ?.takeIf { it.isValid }
+      ?.let { PsiManager.getInstance(project).findFile(it) }
     val searchScope = psiFile?.parent
                         ?.let {
                           GlobalSearchScopesCore.directoryScope(it, true)
