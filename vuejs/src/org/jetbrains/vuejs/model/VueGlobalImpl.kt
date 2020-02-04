@@ -1,18 +1,20 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model
 
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES
 import com.intellij.lang.javascript.modules.NodeModuleUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScopesCore
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -20,8 +22,9 @@ import com.intellij.util.containers.MultiMap
 import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.model.source.VueSourceGlobal
 import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
+import java.util.concurrent.ConcurrentHashMap
 
-internal class VueGlobalImpl(override val project: Project, private val packageJson: VirtualFile)
+internal class VueGlobalImpl(override val project: Project, private val packageJsonUrl: String)
   : VueDelegatedEntitiesContainer<VueGlobal>(), VueGlobal {
 
   override val source: PsiElement? = null
@@ -29,35 +32,29 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   override val global: VueGlobal? get() = this
 
   override val plugins: List<VuePlugin>
-    get() = packageJsonPsi?.let { psiFile ->
-      CachedValuesManager.getCachedValue(psiFile, this::buildPluginsList)
-    } ?: emptyList()
+    get() = CachedValuesManager.getManager(project).getCachedValue(this, this::buildPluginsList)
 
   override val apps: List<VueApp> get() = delegate.apps
   override val unregistered: VueEntitiesContainer get() = delegate.unregistered
 
-  private val packageJsonPsi: PsiFile? get() = PsiManager.getInstance(project).findFile(packageJson)
-
-  private val mySourceGlobal = VueSourceGlobal(project, packageJson)
+  private val mySourceGlobal = VueSourceGlobal(project, packageJsonUrl)
+  private val packageJson
+    get() = VirtualFileManager.getInstance().findFileByUrl(packageJsonUrl)
+      ?.takeIf { it.isValid }
 
   override val delegate
-    get() = packageJsonPsi?.let { psiFile ->
-      CachedValuesManager.getCachedValue(psiFile) {
-        VueWebTypesRegistry.createWebTypesGlobal(project, packageJson, this)
-        ?: Result.create(null as VueGlobal?, packageJson)
-      }
+    get() = CachedValuesManager.getManager(project).getCachedValue(this) {
+      packageJson?.let { packageJson -> VueWebTypesRegistry.createWebTypesGlobal(project, packageJson, this) }
+      ?: Result.create(null as VueGlobal?, packageJson)
     } ?: mySourceGlobal
 
-  private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> {
-    return packageJsonPsi?.let { psiFile ->
-      CachedValuesManager.getCachedValue(psiFile) {
-        Result.create(buildElementToParentMap(),
-                      PsiModificationTracker.MODIFICATION_COUNT,
-                      VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
-                      VueWebTypesRegistry.MODIFICATION_TRACKER)
-      }
+  private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> =
+    CachedValuesManager.getManager(project).getCachedValue(this) {
+      Result.create(buildElementToParentMap(),
+                    PsiModificationTracker.MODIFICATION_COUNT,
+                    VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
+                    VueWebTypesRegistry.MODIFICATION_TRACKER)
     } ?: MultiMap.empty()
-  }
 
   private fun buildPluginsList(): Result<List<VuePlugin>> {
     val result = mutableListOf<VuePlugin>()
@@ -72,10 +69,13 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       .toSet()
     dependencies.add(VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     dependencies.add(enabledPackagesResult.dependencyItems)
-    PackageJsonUtil.processUpPackageJsonFilesInAllScope(packageJson) { candidate ->
-      result.addAll(getPlugins(candidate, enabledPackages))
-      dependencies.add(candidate)
-      true
+    dependencies.add(NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
+    packageJson?.let {
+      PackageJsonUtil.processUpPackageJsonFilesInAllScope(it) { candidate ->
+        result.addAll(getPlugins(candidate, enabledPackages))
+        dependencies.add(candidate)
+        true
+      }
     }
     return Result.create(result, *dependencies.toTypedArray())
   }
@@ -128,12 +128,12 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
 
   override fun equals(other: Any?): Boolean {
     return (other as? VueGlobalImpl)?.let {
-      it.project == project && it.packageJson == packageJson
+      it.project == project && it.packageJsonUrl == packageJsonUrl
     } ?: false
   }
 
   override fun hashCode(): Int {
-    return (project.hashCode()) * 31 + packageJson.hashCode()
+    return (project.hashCode()) * 31 + packageJsonUrl.hashCode()
   }
 
   companion object {
@@ -149,9 +149,19 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
       return psiFile?.originalFile
                ?.virtualFile
                ?.let { locatePackageJson(it) }
-               ?.let { VueGlobalImpl(context.project, it) }
+               ?.let {
+                 getGlobalsMap(context.project)
+                   .computeIfAbsent(it.url) { url -> VueGlobalImpl(context.project, url) }
+               }
              ?: VueSourceGlobal(context.project, null)
     }
+
+    private val GLOBALS_CACHE_KEY = Key<CachedValue<MutableMap<String, VueGlobalImpl>>>("vue.globals")
+
+    private fun getGlobalsMap(project: Project): MutableMap<String, VueGlobalImpl> =
+      CachedValuesManager.getManager(project).getCachedValue(project, GLOBALS_CACHE_KEY, {
+        Result.create(ConcurrentHashMap(), ModificationTracker.NEVER_CHANGED)
+      }, false)
 
     private fun locatePackageJson(context: VirtualFile): VirtualFile? {
       var result: VirtualFile? = null
