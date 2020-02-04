@@ -51,6 +51,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     private const val WEB_TYPES_ENABLED_PACKAGES_URL = "https://raw.githubusercontent.com/JetBrains/web-types/master/packages/registry.json"
     private val LETTERS_PATTERN = Regex("[a-zA-Z]")
     private val NON_LETTERS_PATTERN = Regex("^[^a-zA-Z]+\$")
+    private val WEB_TYPES_PKG_NAME_REPLACE_PATTERN = Regex("^@(.*)/(.*)$")
 
     const val PACKAGE_PREFIX = "@web-types"
     const val WEB_TYPES_FILE_SUFFIX = ".web-types.json"
@@ -99,6 +100,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
   private var myStateLock = Object()
   private var myState = State(emptySortedMap(), emptySet())
+
   @Volatile
   private var myStateVersion = 0
   private var myStateTimestamp = 0L
@@ -163,7 +165,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
   }
 
   private fun normalizePackageName(packageJson: PackageJsonData): String? {
-    return packageJson.name?.replace(Regex("^@(.*)/(.*)$"), "at-$1-$2")
+    return packageJson.name?.replace(WEB_TYPES_PKG_NAME_REPLACE_PATTERN, "at-$1-$2")
   }
 
   private fun getWebTypesUrl(versions: SortedMap<SemVer, String>?,
