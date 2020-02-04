@@ -27,6 +27,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+  VueTestCommons.class,
   VueJSParserTest.class,
   VueLexerTest.class,
   VueHighlightingLexerTest.class,

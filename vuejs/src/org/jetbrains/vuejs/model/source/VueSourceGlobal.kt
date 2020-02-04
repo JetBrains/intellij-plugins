@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -95,9 +94,7 @@ class VueSourceGlobal(override val project: Project, private val packageJsonUrl:
   }
 
   private fun <T> getCachedValue(provider: (GlobalSearchScope) -> T): T {
-    val psiFile: PsiFile? = packageJsonUrl
-      ?.let { VirtualFileManager.getInstance().findFileByUrl(it) }
-      ?.takeIf { it.isValid }
+    val psiFile: PsiFile? = VueGlobalImpl.findFileByUrl(packageJsonUrl)
       ?.let { PsiManager.getInstance(project).findFile(it) }
     val searchScope = psiFile?.parent
                         ?.let {
