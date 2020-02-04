@@ -44,7 +44,7 @@ public class CucumberJavaReferenceProvider extends PsiReferenceProvider {
     }
 
     List<CucumberJavaParameterTypeReference> result = new ArrayList<>();
-    CucumberUtil.processParameterTypesInCucumberExpression(cucumberExpression, range -> {
+    CucumberUtil.processParameterTypesInCucumberExpression(literalExpression.getValue().toString(), range -> {
       // Skip " in the begin of the String Literal
       range = range.shiftRight(StringLiteralManipulator.getValueRange(literalExpression).getStartOffset());
       result.add(new CucumberJavaParameterTypeReference(element, range));
