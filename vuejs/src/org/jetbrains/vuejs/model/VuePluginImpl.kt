@@ -31,11 +31,9 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
 
   private fun buildPlugin(): Result<VuePlugin>? {
     return VueWebTypesRegistry.createWebTypesPlugin(project, packageJson, this)
-           ?: VueSourcePlugin.create(project, packageJson)?.let {
-             Result.create(it as VuePlugin, packageJson,
-                           NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker)
-           }
-           ?: Result.create(null as VuePlugin?, packageJson, VueWebTypesRegistry.MODIFICATION_TRACKER)
+           ?: Result.create(VueSourcePlugin(project, packageJson) as VuePlugin, packageJson,
+                            NodeModulesDirectoryManager.getInstance(project).nodeModulesDirChangeTracker,
+                            VueWebTypesRegistry.MODIFICATION_TRACKER)
   }
 
   override fun toString(): String {
