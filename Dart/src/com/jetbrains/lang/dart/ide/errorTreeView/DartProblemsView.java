@@ -38,7 +38,7 @@ import java.util.Map;
 )
 public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
   /**
-   * Use {code {@link #getToolwindowId()}} instead
+   * @deprecated Use {@link #getToolwindowId()} instead
    */
   @Deprecated
   public static final String TOOLWINDOW_ID = getToolwindowId();
