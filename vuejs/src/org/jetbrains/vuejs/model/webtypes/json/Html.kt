@@ -42,14 +42,17 @@ class Html {
   @get:JsonProperty("description-markup")
   @set:JsonProperty("description-markup")
   var descriptionMarkup = DescriptionMarkup.fromValue("none")
+
   @JsonProperty("tags")
   @get:JsonProperty("tags")
   @set:JsonProperty("tags")
   var tags: List<Tag> = ArrayList()
+
   @JsonProperty("attributes")
   @get:JsonProperty("attributes")
   @set:JsonProperty("attributes")
   var attributes: List<Attribute_> = ArrayList()
+
   @JsonProperty("vue-filters")
   @get:JsonProperty("vue-filters")
   @set:JsonProperty("vue-filters")

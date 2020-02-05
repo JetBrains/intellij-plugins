@@ -81,6 +81,7 @@ class Argument_ : DocumentedItem {
   @get:JsonProperty("type")
   @set:JsonProperty("type")
   var type: Any? = null
+
   @JsonProperty("optional")
   @get:JsonProperty("optional")
   @set:JsonProperty("optional")

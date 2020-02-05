@@ -50,7 +50,7 @@ fun isVueContext(context: VirtualFile, project: Project): Boolean {
   return isVueContext(psiDir)
 }
 
-private fun isVueContext(directory: PsiDirectory):Boolean {
+private fun isVueContext(directory: PsiDirectory): Boolean {
   return CachedValuesManager.getCachedValue(directory, VUE_CONTEXT_KEY) {
     isVueContextFromProviders(directory)
   }

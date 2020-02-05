@@ -49,7 +49,7 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
         override fun getHighlightingLexer(): Lexer? = VueHighlightingLexer(languageLevel, null)
       }
     }
-    val moduleType =  JSElementTypes.toModuleContentType(elementType)
+    val moduleType = JSElementTypes.toModuleContentType(elementType)
     if (elementType == moduleType) return provider
     return object : HtmlScriptContentProvider {
       override fun getScriptElementType(): IElementType = moduleType

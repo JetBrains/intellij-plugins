@@ -129,7 +129,7 @@ class VuexGetterImpl(name: String, source: PsiElement)
   override val jsType: JSType?
     get() {
       return (source as? JSTypeOwner)
-               ?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(it, false), it) }
+        ?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(it, false), it) }
     }
 }
 

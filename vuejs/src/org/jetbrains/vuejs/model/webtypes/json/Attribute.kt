@@ -63,14 +63,17 @@ class Attribute : DocumentedItem {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   override var docUrl: String? = null
+
   @JsonProperty("default")
   @get:JsonProperty("default")
   @set:JsonProperty("default")
   var default: String? = null
+
   @JsonProperty("required")
   @get:JsonProperty("required")
   @set:JsonProperty("required")
   var required: Boolean? = null
+
   @JsonProperty("value")
   @get:JsonProperty("value")
   @set:JsonProperty("value")

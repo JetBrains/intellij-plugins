@@ -37,7 +37,8 @@ class VuexGetterType(source: JSTypeSource,
       ?.returnType
     if (returnType != null) {
       returnType.buildTypeText(format, builder)
-    } else {
+    }
+    else {
       JSAnyType.get(source).buildTypeText(format, builder)
     }
   }

@@ -142,7 +142,7 @@ interface EntityContainerInfoProvider<T> {
         val queue = ArrayDeque<JSElement>(initialPropsList.size)
         queue.addAll(initialPropsList)
         while (queue.isNotEmpty()) {
-          when(val property = queue.pollLast()) {
+          when (val property = queue.pollLast()) {
             is JSSpreadExpression -> {
               objectLiteralFor(property.expression)
                 ?.propertiesIncludingSpreads

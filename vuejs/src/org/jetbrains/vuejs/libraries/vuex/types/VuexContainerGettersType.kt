@@ -79,7 +79,8 @@ class VuexContainerGettersType private constructor(source: JSTypeSource,
       if (fullName.startsWith(baseNamespace)) {
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
           fullName.substring(baseNamespace.length), symbol.jsType, false, false,
-          JSLocalImplicitElementImpl(fullName.substring(baseNamespace.length), symbol.jsType, symbol.source, JSImplicitElement.Type.Property)))
+          JSLocalImplicitElementImpl(fullName.substring(baseNamespace.length), symbol.jsType, symbol.source,
+                                     JSImplicitElement.Type.Property)))
       }
     }
     return JSSimpleRecordTypeImpl(source, result)

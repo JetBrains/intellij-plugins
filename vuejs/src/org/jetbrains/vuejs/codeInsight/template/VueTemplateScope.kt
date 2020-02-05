@@ -19,10 +19,6 @@ protected constructor(val parent: VueTemplateScope?) {
     parent?.add(this)
   }
 
-  fun getChildren(): List<VueTemplateScope> {
-    return Collections.unmodifiableList(children)
-  }
-
   private fun add(scope: VueTemplateScope) {
     this.children.add(scope)
   }

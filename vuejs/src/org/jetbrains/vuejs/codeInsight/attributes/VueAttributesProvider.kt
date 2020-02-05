@@ -52,7 +52,10 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
         && it.directiveName != null
         && contributedDirectives.add(it.directiveName!!)
       }
-      .map { VueAttributeDescriptor(context, ATTR_DIRECTIVE_PREFIX + it.directiveName!!, acceptsNoValue = !it.requiresValue, priority = LOW) }
+      .map {
+        VueAttributeDescriptor(context, ATTR_DIRECTIVE_PREFIX + it.directiveName!!,
+                               acceptsNoValue = !it.requiresValue, priority = LOW)
+      }
       .forEach { result.add(it) }
 
     return result.toTypedArray()
@@ -83,7 +86,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                    info.arguments?.let { eventName ->
                      val event = (context.descriptor as? VueElementDescriptor)
                        ?.getEmitCalls()
-                       ?.find { it.name == eventName}
+                       ?.find { it.name == eventName }
                        ?.let { VueAttributeDescriptor(context, it.name, it.source, listOf(it), false) }
                      event ?: HtmlNSDescriptorImpl.getCommonAttributeDescriptor("on$eventName", context)
                    }

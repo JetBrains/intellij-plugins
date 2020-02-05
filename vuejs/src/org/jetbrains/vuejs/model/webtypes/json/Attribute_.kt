@@ -64,14 +64,17 @@ class Attribute_ : SourceEntity {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   override var docUrl: String? = null
+
   @JsonProperty("default")
   @get:JsonProperty("default")
   @set:JsonProperty("default")
   var default: String? = null
+
   @JsonProperty("required")
   @get:JsonProperty("required")
   @set:JsonProperty("required")
   var required: Boolean? = null
+
   @JsonProperty("value")
   @get:JsonProperty("value")
   @set:JsonProperty("value")
@@ -93,10 +96,12 @@ class Attribute_ : SourceEntity {
   @get:JsonProperty("source")
   @set:JsonProperty("source")
   override var source: Source? = null
+
   @JsonProperty("vue-argument")
   @get:JsonProperty("vue-argument")
   @set:JsonProperty("vue-argument")
   var vueArgument: VueArgument? = null
+
   @JsonProperty("vue-modifiers")
   @get:JsonProperty("vue-modifiers")
   @set:JsonProperty("vue-modifiers")

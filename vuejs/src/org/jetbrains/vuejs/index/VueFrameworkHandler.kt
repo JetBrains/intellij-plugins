@@ -84,7 +84,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
                                                   "mixins", "components", "directives", "filters")
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
-    
+
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression, exclude: String? = null): Boolean =
       obj.properties.any { it.name != exclude && COMPONENT_INDICATOR_PROPS.contains(it.name) }
 
@@ -147,9 +147,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS))
     val dataFunction = (parent.findProperty(DATA) as? ES6FunctionProperty)
     val dataStream = JSTypeUtils.getFunctionType(
-      JSResolveUtil.getElementJSType(dataFunction),
-      false,
-      context)
+        JSResolveUtil.getElementJSType(dataFunction),
+        false,
+        context)
       .filter { it is JSFunctionType }.findFirst()
     val dataPropertyType = if (dataStream.isPresent) (dataStream.get() as? JSFunctionType)?.returnType
     else null ?: JSTypeCastUtil.NO_RECORD_TYPE
@@ -218,7 +218,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
       }
     }
-    
+
     return true
   }
 
@@ -254,7 +254,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
     }
-    
+
     return out
   }
 

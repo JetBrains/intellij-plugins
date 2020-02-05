@@ -95,6 +95,7 @@ class WebTypes {
   @get:JsonProperty("contributions")
   @set:JsonProperty("contributions")
   var contributions: Contributions? = null
+
   @JsonIgnore
   private val additionalProperties = HashMap<String, Any>()
 

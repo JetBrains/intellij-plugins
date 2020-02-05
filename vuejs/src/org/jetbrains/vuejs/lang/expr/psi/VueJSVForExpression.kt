@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.JSVarStatement
 import com.intellij.psi.PsiElement
 
-interface VueJSVForExpression: JSExpression {
+interface VueJSVForExpression : JSExpression {
   fun getVarStatement(): JSVarStatement?
   fun getReferenceExpression(): PsiElement?
   fun getCollectionExpression(): JSExpression?

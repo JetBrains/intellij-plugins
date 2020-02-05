@@ -27,7 +27,8 @@ class DataFunctionInspection : LocalInspectionTool() {
             if (node.value is JSObjectLiteralExpression)
               arrayOf(WrapWithFunctionFix(node.value!!))
             else emptyArray()
-          holder.registerProblem(node.nameIdentifier!!, VueBundle.message("vue.inspection.message.data.property.should.be.function"), *quickFixes)
+          holder.registerProblem(node.nameIdentifier!!, VueBundle.message("vue.inspection.message.data.property.should.be.function"),
+                                 *quickFixes)
         }
       }
 

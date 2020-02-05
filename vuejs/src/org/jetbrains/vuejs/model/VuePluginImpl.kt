@@ -41,16 +41,4 @@ class VuePluginImpl(private val project: Project, private val packageJson: Virtu
 
   override fun hashCode() = (project.hashCode()) * 31 + packageJson.hashCode()
 
-  companion object {
-    private val EMPTY_PLUGIN = object : VuePlugin {
-      override val moduleName: String? = null
-      override val components: Map<String, VueComponent> = emptyMap()
-      override val directives: Map<String, VueDirective> = emptyMap()
-      override val filters: Map<String, VueFilter> = emptyMap()
-      override val mixins: List<VueMixin> = emptyList()
-      override val source: PsiElement? = null
-      override val parents get() = VueGlobalImpl.getParents(this)
-    }
-  }
-
 }

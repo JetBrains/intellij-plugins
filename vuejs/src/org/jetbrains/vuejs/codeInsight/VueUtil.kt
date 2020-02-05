@@ -61,7 +61,7 @@ fun fromAsset(name: String): String {
         }
         result.append(StringUtil.toLowerCase(ch))
       }
-      else ->  result.append(ch)
+      else -> result.append(ch)
     }
   }
   return result.toString()

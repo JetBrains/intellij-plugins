@@ -51,6 +51,7 @@ interface VuexStateProperty : VuexNamedSymbol {
 
 interface VuexAction : VuexNamedSymbol {
   val isRoot: Boolean
+
   // TODO provide proper resolve target type
   override val resolveTarget: PsiElement
     get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Function)

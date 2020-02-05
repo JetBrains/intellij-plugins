@@ -64,6 +64,7 @@ class Tag : SourceEntity {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   override var docUrl: String? = null
+
   @JsonProperty("attributes")
   @get:JsonProperty("attributes")
   @set:JsonProperty("attributes")
@@ -102,6 +103,7 @@ class Tag : SourceEntity {
   @get:JsonProperty("events")
   @set:JsonProperty("events")
   var events: List<Event> = ArrayList()
+
   @JsonProperty("slots")
   @get:JsonProperty("slots")
   @set:JsonProperty("slots")
@@ -124,6 +126,7 @@ class Tag : SourceEntity {
   @get:JsonProperty("vue-scoped-slots")
   @set:JsonProperty("vue-scoped-slots")
   var vueScopedSlots: List<Slot> = ArrayList()
+
   @JsonProperty("vue-model")
   @get:JsonProperty("vue-model")
   @set:JsonProperty("vue-model")

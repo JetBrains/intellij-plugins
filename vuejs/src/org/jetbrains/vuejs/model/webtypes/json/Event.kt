@@ -64,6 +64,7 @@ class Event : DocumentedItem {
   @get:JsonProperty("doc-url")
   @set:JsonProperty("doc-url")
   override var docUrl: String? = null
+
   @JsonProperty("arguments")
   @get:JsonProperty("arguments")
   @set:JsonProperty("arguments")

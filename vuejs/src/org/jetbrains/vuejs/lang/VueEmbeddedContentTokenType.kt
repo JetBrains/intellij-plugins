@@ -15,11 +15,8 @@ import com.intellij.psi.tree.ILazyParseableElementTypeBase
 import com.intellij.util.CharTable
 import org.jetbrains.annotations.NonNls
 
-abstract class VueEmbeddedContentTokenType : IElementType, EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase {
-
-  protected constructor(@NonNls debugName: String, language: Language?) : super(debugName, language)
-
-  protected constructor(@NonNls debugName: String, language: Language?, register: Boolean) : super(debugName, language, register)
+abstract class VueEmbeddedContentTokenType protected constructor(@NonNls debugName: String, language: Language?, register: Boolean)
+  : IElementType(debugName, language, register), EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase {
 
   override fun parse(text: CharSequence, table: CharTable): ASTNode {
     return LazyParseableElement(this, text)
@@ -30,7 +27,7 @@ abstract class VueEmbeddedContentTokenType : IElementType, EmbeddingElementType,
     return builder.treeBuilt.firstChildNode
   }
 
-  protected fun doParseContents(chameleon: ASTNode): PsiBuilder {
+  private fun doParseContents(chameleon: ASTNode): PsiBuilder {
     val project: Project
     val psi = chameleon.psi
     project = psi.project

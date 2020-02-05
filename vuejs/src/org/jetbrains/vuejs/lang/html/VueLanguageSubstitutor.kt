@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.LanguageSubstitutor
 import org.jetbrains.vuejs.context.isVueContext
 
-class VueLanguageSubstitutor: LanguageSubstitutor() {
+class VueLanguageSubstitutor : LanguageSubstitutor() {
   override fun getLanguage(file: VirtualFile, project: Project): Language? {
     if (isVueContext(file, project)) {
       return VueLanguage.INSTANCE

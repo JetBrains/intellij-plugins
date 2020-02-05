@@ -30,18 +30,24 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
   companion object {
     // https://vuejs.org/v2/guide/events.html#Key-Modifiers
     private val KEY_MODIFIERS = arrayOf("enter", "tab", "delete", "esc", "space", "up", "down", "left", "right")
+
     // KEY_MODIFIERS are applicable only for the KEY_EVENTS
     private val KEY_EVENTS = arrayOf("keydown", "keypress", "keyup")
+
     // https://vuejs.org/v2/guide/events.html#Mouse-Button-Modifiers
     private val MOUSE_BUTTON_MODIFIERS = arrayOf("left", "right", "middle")
+
     // MOUSE_BUTTON_MODIFIERS are applicable only for the MOUSE_BUTTON_EVENTS
     private val MOUSE_BUTTON_EVENTS = arrayOf("click", "dblclick", "mousedown", "mouseup")
+
     // https://vuejs.org/v2/guide/events.html#System-Modifier-Keys
     private val SYSTEM_MODIFIERS = arrayOf("ctrl", "alt", "shift", "meta", "exact")
+
     // SYSTEM_MODIFIERS are applicable only for the KEY_EVENTS and all MOUSE_EVENTS
     private val MOUSE_EVENTS = arrayOf("click", "contextmenu", "dblclick", "mousedown", "mouseenter", "mouseleave", "mousemove", "mouseout",
                                        "mouseover", "mouseup", "show", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart",
                                        "drop")
+
     // https://vuejs.org/v2/guide/events.html#Event-Modifiers
     private val EVENT_MODIFIERS = arrayOf("stop", "prevent", "capture", "self", "once", "passive", "native")
 
@@ -111,7 +117,8 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
             val argumentPrefix = getPatternCompletablePrefix(argument?.pattern)
             if (attrInfo.arguments != null && argumentPrefix.isNotBlank()) {
               val prefix = result.prefixMatcher.prefix
-              val newResult = if (prefix == ATTR_DIRECTIVE_PREFIX + attrInfo.name + ATTR_ARGUMENT_PREFIX) result.withPrefixMatcher("") else result
+              val newResult = if (prefix == ATTR_DIRECTIVE_PREFIX + attrInfo.name + ATTR_ARGUMENT_PREFIX) result.withPrefixMatcher("")
+              else result
               newResult.addElement(lookupElement(argumentPrefix, argument,
                                                  typeText = argument!!.pattern?.toString(), insertHandler = null))
             }

@@ -13,6 +13,7 @@ class VueModel {
   @get:JsonProperty("prop")
   @set:JsonProperty("prop")
   var prop = "value"
+
   @JsonProperty("event")
   @get:JsonProperty("event")
   @set:JsonProperty("event")

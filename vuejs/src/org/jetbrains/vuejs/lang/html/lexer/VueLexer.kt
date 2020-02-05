@@ -112,10 +112,6 @@ class VueLexer(private val languageLevel: JSLanguageLevel, private val interpola
       private val TOKENS_TO_MERGE = TokenSet.create(XML_COMMENT_CHARACTERS, XML_WHITE_SPACE, XML_REAL_WHITE_SPACE,
                                                     XML_ATTRIBUTE_VALUE_TOKEN, XML_DATA_CHARACTERS, XML_TAG_CHARACTERS)
 
-      fun isLexerWithinInterpolation(state: Int): Boolean {
-        return getBaseLexerState(state) == _VueLexer.INTERPOLATION
-      }
-
       fun isLexerWithinUnterminatedInterpolation(state: Int): Boolean {
         return getBaseLexerState(state) == _VueLexer.UNTERMINATED_INTERPOLATION
       }

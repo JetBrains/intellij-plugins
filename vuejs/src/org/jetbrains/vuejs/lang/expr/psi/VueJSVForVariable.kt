@@ -3,4 +3,4 @@ package org.jetbrains.vuejs.lang.expr.psi
 
 import com.intellij.lang.javascript.psi.JSVariable
 
-interface VueJSVForVariable: JSVariable
+interface VueJSVForVariable : JSVariable
