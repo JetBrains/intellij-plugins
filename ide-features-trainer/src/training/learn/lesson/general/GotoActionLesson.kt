@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general
 
+import com.intellij.ide.actions.AboutPopup
 import com.intellij.ide.actions.searcheverywhere.SearchEverywhereUI
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -36,7 +37,11 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
       }
       task {
         text("Hit ${action("EditorEscape")} to return to the editor.")
-        stateCheck { focusOwner is EditorComponentImpl }
+        var aboutHasBeenFocused = false
+        stateCheck {
+          aboutHasBeenFocused = aboutHasBeenFocused || focusOwner is AboutPopup.PopupPanel
+          aboutHasBeenFocused && focusOwner is EditorComponentImpl
+        }
         test {
           ideFrame {
             waitComponent(JPanel::class.java, "InfoSurface")
