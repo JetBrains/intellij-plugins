@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.util
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.DumbService
@@ -20,6 +21,8 @@ import training.learn.lesson.kimpl.KLesson
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
+private val LOG: Logger = Logger.getInstance(LearningLessonsAutoExecutor::class.java)
+
 class LearningLessonsAutoExecutor(val project: Project, private val progress: ProgressIndicator) {
   fun execute() {
     with(TaskTestContext.guiTestCase) {
@@ -36,16 +39,14 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
         linkAtLearnPanel { linkLabel(module.name).click() }
         for (lesson in module.lessons) {
           if (lesson !is KLesson) continue
-          for (i in 1..2) {
-            try {
-              executeLesson(lesson, this)
-              break
-            }
-            catch (e: TimeoutException) {
-            }
+          try {
+            executeLesson(lesson, this)
+          }
+          catch (e: TimeoutException) {
+            // Check lesson state later
           }
           if (!lesson.passed) {
-            throw IllegalStateException("Can't pass lesson " + lesson.name)
+            LOG.error("Can't pass lesson " + lesson.name)
           }
         }
         linkAtLearnPanel { linkLabel("All Topics").click() }
@@ -63,12 +64,13 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     progress.checkCanceled()
     TaskContext.inTestMode = true
     linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
-    //testActionsExecutor.run()
     val passedStatus = lessonPromise.blockingGet(4, TimeUnit.SECONDS)
     if (passedStatus == null || !passedStatus) {
-      throw IllegalStateException("Can't pass lesson " + lesson.name)
+      LOG.error("Can't pass lesson " + lesson.name)
     }
-    System.err.println("Passed " + lesson.name)
+    else {
+      System.err.println("Passed " + lesson.name)
+    }
     TaskContext.inTestMode = false
   }
 
