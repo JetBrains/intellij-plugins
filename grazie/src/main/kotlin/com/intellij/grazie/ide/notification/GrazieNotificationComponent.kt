@@ -6,7 +6,7 @@ import com.intellij.grazie.GraziePlugin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
-open class GrazieNotificationComponent : StartupActivity.Background {
+private class GrazieNotificationComponent : StartupActivity.Background {
   override fun runActivity(project: Project) {
     GrazieConfig.update {
       if (!GraziePlugin.isBundled) {
@@ -16,7 +16,9 @@ open class GrazieNotificationComponent : StartupActivity.Background {
         }
       }
 
-      if (it.hasMissedLanguages()) Notification.showLanguagesMessage(project)
+      if (it.hasMissedLanguages()) {
+        Notification.showLanguagesMessage(project)
+      }
 
       it.update(lastSeenVersion = GraziePlugin.version)
     }
