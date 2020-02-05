@@ -7,9 +7,13 @@ import name.kropp.intellij.makefile.psi.*
 
 private val PAIRS = arrayOf(
     BracePair(MakefileTypes.KEYWORD_IFDEF, MakefileTypes.KEYWORD_ENDIF, true),
+    BracePair(MakefileTypes.KEYWORD_IFDEF, MakefileTypes.KEYWORD_ELSE, true),
     BracePair(MakefileTypes.KEYWORD_IFNDEF, MakefileTypes.KEYWORD_ENDIF, true),
+    BracePair(MakefileTypes.KEYWORD_IFNDEF, MakefileTypes.KEYWORD_ELSE, true),
     BracePair(MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_ENDIF, true),
+    BracePair(MakefileTypes.KEYWORD_IFEQ, MakefileTypes.KEYWORD_ELSE, true),
     BracePair(MakefileTypes.KEYWORD_IFNEQ, MakefileTypes.KEYWORD_ENDIF, true),
+    BracePair(MakefileTypes.KEYWORD_IFNEQ, MakefileTypes.KEYWORD_ELSE, true),
     BracePair(MakefileTypes.FUNCTION_START, MakefileTypes.FUNCTION_END, true),
     BracePair(MakefileTypes.OPEN_BRACE, MakefileTypes.FUNCTION_END, true)
 )
