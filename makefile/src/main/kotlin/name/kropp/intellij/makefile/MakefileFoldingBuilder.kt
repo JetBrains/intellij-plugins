@@ -1,25 +1,27 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.lang.ASTNode
-import com.intellij.lang.folding.FoldingBuilderEx
-import com.intellij.lang.folding.FoldingDescriptor
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.project.DumbAware
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import name.kropp.intellij.makefile.psi.MakefileDefine
-import name.kropp.intellij.makefile.psi.MakefileRule
-import name.kropp.intellij.makefile.psi.MakefileVariableAssignment
+import com.intellij.lang.*
+import com.intellij.lang.folding.*
+import com.intellij.openapi.editor.*
+import com.intellij.openapi.project.*
+import com.intellij.openapi.util.*
+import com.intellij.psi.*
+import com.intellij.psi.util.*
+import name.kropp.intellij.makefile.psi.*
 
 class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean) =
-      PsiTreeUtil.findChildrenOfAnyType(root, MakefileRule::class.java, MakefileVariableAssignment::class.java, MakefileDefine::class.java)
+      PsiTreeUtil.findChildrenOfAnyType(root,
+          MakefileRule::class.java,
+          MakefileVariableAssignment::class.java,
+          MakefileDefine::class.java,
+          MakefileConditional::class.java)
       .mapNotNull {
         when (it) {
           is MakefileRule -> MakefileRuleFoldingDescriptor(it)
           is MakefileVariableAssignment -> MakefileVariableFoldingDescriptor(it)
           is MakefileDefine -> MakefileDefineFoldingDescriptor(it)
+          is MakefileConditional -> MakefileConditionalFoldingDescriptor(it)
           else -> null
         }
       }.toTypedArray()
@@ -40,6 +42,8 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
     }
 
     fun PsiElement.trimmedTextRange() = TextRange.create(textRange.startOffset, textRange.startOffset + text.indexOfLast { !it.isWhitespace() } + 1)
+    fun PsiElement.withoutFirstNode() = TextRange.create(firstChild.nextNonWhiteSpaceSibling().textRange.startOffset, textRange.endOffset)
+    private tailrec fun PsiElement.nextNonWhiteSpaceSibling(): PsiElement = if (nextSibling !is PsiWhiteSpace) nextSibling else nextSibling.nextNonWhiteSpaceSibling()
   }
 
   class MakefileRuleFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.trimmedTextRange()) {
@@ -50,5 +54,8 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   }
   class MakefileDefineFoldingDescriptor(private val define: MakefileDefine) : FoldingDescriptor(define, define.trimmedTextRange()) {
     override fun getPlaceholderText() = "${define.variable?.text}${define.assignment?.text ?: "="}${cutValue(define.value)}"
+  }
+  class MakefileConditionalFoldingDescriptor(private val conditional: MakefileConditional) : FoldingDescriptor(conditional, conditional.withoutFirstNode()) {
+    override fun getPlaceholderText() = cutValue(conditional.condition?.text)
   }
 }
