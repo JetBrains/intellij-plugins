@@ -18,7 +18,7 @@ class VueWebTypesJsonsCache {
   companion object {
 
     fun getWebTypesJson(url: String): InputStream {
-      if (url.endsWith("json") && url.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+      if (url.endsWith("json") && url.startsWith(StandardFileSystems.FILE_PROTOCOL + ":")) {
         return FileInputStream(File(URI(url)))
       }
       val downloadedJson = File(PathManager.getSystemPath(),
