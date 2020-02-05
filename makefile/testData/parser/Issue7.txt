@@ -17,7 +17,7 @@ Makefile
         PsiElement(text)(' -t ')
         PsiElement(split)('\\n\t    ')
         PsiElement(text)('-aa="h"')
-      PsiElement(EOL)('\n')
+        PsiElement(EOL)('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

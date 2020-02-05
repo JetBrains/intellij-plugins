@@ -25,7 +25,7 @@ Makefile
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
         PsiElement(text)('echo "build lib"')
-      PsiElement(EOL)('\n\n')
+        PsiElement(EOL)('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

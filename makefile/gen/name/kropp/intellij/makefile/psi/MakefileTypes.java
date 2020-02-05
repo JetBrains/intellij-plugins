@@ -14,11 +14,11 @@ public interface MakefileTypes {
   IElementType COMMENT = new MakefileElementType("COMMENT");
   IElementType CONDITION = new MakefileElementType("CONDITION");
   IElementType CONDITIONAL = new MakefileElementType("CONDITIONAL");
+  IElementType CONDITIONAL_ELSE = new MakefileElementType("CONDITIONAL_ELSE");
   IElementType DEFINE = new MakefileElementType("DEFINE");
   IElementType DIRECTIVE = new MakefileElementType("DIRECTIVE");
   IElementType DIRECTORY = new MakefileElementType("DIRECTORY");
   IElementType DOC_COMMENT = new MakefileElementType("DOC_COMMENT");
-  IElementType EMPTY_COMMAND = new MakefileElementType("EMPTY_COMMAND");
   IElementType EXPORT = new MakefileElementType("EXPORT");
   IElementType FILENAME = new MakefileElementType("FILENAME");
   IElementType FUNCTION = new MakefileElementType("FUNCTION");
@@ -98,6 +98,9 @@ public interface MakefileTypes {
       else if (type == CONDITIONAL) {
         return new MakefileConditionalImpl(node);
       }
+      else if (type == CONDITIONAL_ELSE) {
+        return new MakefileConditionalElseImpl(node);
+      }
       else if (type == DEFINE) {
         return new MakefileDefineImpl(node);
       }
@@ -109,9 +112,6 @@ public interface MakefileTypes {
       }
       else if (type == DOC_COMMENT) {
         return new MakefileDocCommentImpl(node);
-      }
-      else if (type == EMPTY_COMMAND) {
-        return new MakefileEmptyCommandImpl(node);
       }
       else if (type == EXPORT) {
         return new MakefileExportImpl(node);

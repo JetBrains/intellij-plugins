@@ -18,9 +18,6 @@ public interface MakefileBlock extends PsiElement {
   List<MakefileDirective> getDirectiveList();
 
   @NotNull
-  List<MakefileEmptyCommand> getEmptyCommandList();
-
-  @NotNull
   List<MakefileFunction> getFunctionList();
 
   @NotNull

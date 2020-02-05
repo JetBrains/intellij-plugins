@@ -28,6 +28,10 @@ public class MakefileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitConditionalElse(@NotNull MakefileConditionalElse o) {
+    visitPsiElement(o);
+  }
+
   public void visitDefine(@NotNull MakefileDefine o) {
     visitPsiElement(o);
   }
@@ -41,10 +45,6 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitDocComment(@NotNull MakefileDocComment o) {
-    visitPsiElement(o);
-  }
-
-  public void visitEmptyCommand(@NotNull MakefileEmptyCommand o) {
     visitPsiElement(o);
   }
 

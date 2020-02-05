@@ -30,5 +30,5 @@ Makefile
           MakefileCommandImpl(COMMAND)
             PsiElement(\t)('\t')
             PsiElement(text)('x')
-          PsiElement(EOL)('\n')
+            PsiElement(EOL)('\n')
         PsiElement(endif)('endif')

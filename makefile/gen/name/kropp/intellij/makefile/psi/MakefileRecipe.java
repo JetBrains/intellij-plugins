@@ -14,9 +14,6 @@ public interface MakefileRecipe extends PsiLanguageInjectionHost {
   @NotNull
   List<MakefileConditional> getConditionalList();
 
-  @NotNull
-  List<MakefileEmptyCommand> getEmptyCommandList();
-
   boolean isEmpty();
 
 }

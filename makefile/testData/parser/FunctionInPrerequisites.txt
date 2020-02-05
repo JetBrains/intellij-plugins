@@ -34,7 +34,7 @@ Makefile
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
         PsiElement(text)('$(MAKE) docker-build')
-      PsiElement(EOL)('\n')
+        PsiElement(EOL)('\n')
       MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
         PsiElement(text)('touch var/docker_lock')

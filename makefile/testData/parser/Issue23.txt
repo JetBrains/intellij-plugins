@@ -12,7 +12,7 @@ Makefile
             PsiElement(identifier)('b')
       PsiElement(EOL)('\n')
     MakefileRecipeImpl(RECIPE)
-      MakefileEmptyCommandImpl(EMPTY_COMMAND)
+      MakefileCommandImpl(COMMAND)
         PsiElement(\t)('\t')
         PsiComment(COMMENT)('#comment')
         PsiElement(EOL)('\n\n')

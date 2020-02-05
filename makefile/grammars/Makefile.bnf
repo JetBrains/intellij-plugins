@@ -46,15 +46,16 @@ makefile ::= any*
 
 private any ::= (conditional|rule|command|variable-assignment|directive|function|macro|EOL)
 
+private recover ::= !(EOL | split)
+
 directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe? {methods=[getTargets]}
-recipe ::= (command|conditional|empty_command)+ (command|conditional|empty_command|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
-command ::= '\t'+ multiline
+recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
+command ::= '\t'+ multiline? EOL? {pin=1}
 inline_command ::= multiline
 private multiline ::= split* line (split line?)*
-private line ::= (variable-usage|text)+
-empty_command ::= '\t'+ EOL?
+private line ::= (variable-usage|text)+ {recoverWhile=recover}
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -67,11 +68,13 @@ normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= identifier|variable-usage|function {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
+private condition-recover ::= !'endif'
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
-conditional ::= conditional-keyword condition EOL block ('else' (conditional-keyword condition block | EOL? block))* 'endif'
+conditional ::= conditional-keyword condition EOL block conditional-else* 'endif' {pin=1}
+conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
 condition ::= ('(' (condition-body|',')* ')') | condition-body
 private condition-body ::= identifier|variable-usage|function|string
-block ::= any+|empty_command*
+block ::= any*
 
 meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
@@ -91,12 +94,13 @@ vpath ::= 'vpath' (pattern directory*)? EOL? {pin=1}
 pattern ::= identifier
 directory ::= identifier|'include' {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
+private function_recover ::= !(')'|EOL)
 function ::= '$(' function-name function-param* ')' EOL? {pin=2}
 function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'pathsubst'|'strip'|'findstring'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
-meta function-param ::= string|function-param-text|variable-usage|variable-usage-curly|identifier|':'|','|function-name|function
+meta function-param ::= string|function-param-text|variable-usage|variable-usage-curly|identifier|':'|','|function-name|function {recoverWhile=#auto}
 
 variable-usage ::= '$(' ((variable assignment text)|identifier) ')'
 

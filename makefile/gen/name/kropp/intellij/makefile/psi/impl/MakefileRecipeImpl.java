@@ -37,12 +37,6 @@ public class MakefileRecipeImpl extends MakefileRecipeElementImpl implements Mak
   }
 
   @Override
-  @NotNull
-  public List<MakefileEmptyCommand> getEmptyCommandList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileEmptyCommand.class);
-  }
-
-  @Override
   public boolean isEmpty() {
     return MakefilePsiImplUtil.isEmpty(this);
   }

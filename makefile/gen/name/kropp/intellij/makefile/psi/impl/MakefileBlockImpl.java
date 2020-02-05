@@ -45,12 +45,6 @@ public class MakefileBlockImpl extends ASTWrapperPsiElement implements MakefileB
 
   @Override
   @NotNull
-  public List<MakefileEmptyCommand> getEmptyCommandList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileEmptyCommand.class);
-  }
-
-  @Override
-  @NotNull
   public List<MakefileFunction> getFunctionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
   }

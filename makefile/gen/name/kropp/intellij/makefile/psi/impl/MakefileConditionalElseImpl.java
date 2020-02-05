@@ -5,20 +5,21 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.*;
+import name.kropp.intellij.makefile.psi.MakefileBlock;
+import name.kropp.intellij.makefile.psi.MakefileCondition;
+import name.kropp.intellij.makefile.psi.MakefileConditionalElse;
+import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class MakefileConditionalElseImpl extends ASTWrapperPsiElement implements MakefileConditionalElse {
 
-public class MakefileConditionalImpl extends ASTWrapperPsiElement implements MakefileConditional {
-
-  public MakefileConditionalImpl(@NotNull ASTNode node) {
+  public MakefileConditionalElseImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitConditional(this);
+    visitor.visitConditionalElse(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -36,12 +37,6 @@ public class MakefileConditionalImpl extends ASTWrapperPsiElement implements Mak
   @Nullable
   public MakefileCondition getCondition() {
     return PsiTreeUtil.getChildOfType(this, MakefileCondition.class);
-  }
-
-  @Override
-  @NotNull
-  public List<MakefileConditionalElse> getConditionalElseList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileConditionalElse.class);
   }
 
 }

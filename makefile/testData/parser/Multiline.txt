@@ -73,7 +73,7 @@ Makefile
         PsiElement(text)('-e q ')
         PsiElement(split)('\\n             ')
         PsiElement(text)('version.c`.shar.Z')
-      PsiElement(EOL)('\n\n')
+        PsiElement(EOL)('\n\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
