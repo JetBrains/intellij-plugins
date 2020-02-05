@@ -47,7 +47,7 @@ interface VuexStoreContext {
         (if (it.isNamespaced) appendSegment(namespace, it.name) else namespace) to it
       }
       // TODO properly resolve local context of the element
-      if (PsiTreeUtil.isAncestor(container.initializer, element, false)) {
+      if (PsiTreeUtil.isContextAncestor(container.initializer, element, false)) {
         consumer("", container)
       }
       consumer(namespace, container)

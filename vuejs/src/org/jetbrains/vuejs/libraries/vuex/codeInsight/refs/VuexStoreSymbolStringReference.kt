@@ -29,7 +29,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
                                      private val terminal: Boolean,
                                      private val namespaceResolver: NamespaceProvider,
                                      soft: Boolean)
-  : CachingPolyReferenceBase<PsiElement>(element, rangeInElement.shiftRight(1)),
+  : CachingPolyReferenceBase<PsiElement>(element, rangeInElement),
     EmptyResolveMessageProvider, HighlightSeverityHolder {
 
   init {
