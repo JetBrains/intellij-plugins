@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Computable
 import com.intellij.pom.java.LanguageLevel
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
-import training.project.ProjectUtils
 import training.util.JdkSetupUtil
 
 /**
@@ -102,13 +101,8 @@ class JavaLangSupport : AbstractLangSupport() {
 
   private fun isCompatibleJdk(projectJdk: Sdk, type: SdkType?) = (type == null || projectJdk.sdkType === type)
 
-  override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/java/LearnProject", "LearnProject", javaClass.classLoader)
-  }
-
   companion object {
     @JvmStatic
     val lang: String = "JAVA"
   }
-
 }

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.SystemDependent
 import training.lang.LangSupport
 import training.learn.exceptons.NoSdkException
+import training.project.ProjectUtils
 
 object NewLearnProjectUtil {
 
@@ -17,7 +18,10 @@ object NewLearnProjectUtil {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
 
     val newProject: Project =
-      langSupport.createProject(langSupport.defaultProjectName, projectToClose)
+      ProjectUtils.importOrOpenProject(langSupport.projectResourcePath,
+                                       langSupport.defaultProjectName,
+                                       langSupport.javaClass.classLoader,
+                                       projectToClose)
       ?: error("Could not create project for " + langSupport.primaryLanguage)
 
     try {
@@ -32,10 +36,6 @@ object NewLearnProjectUtil {
 
     if (!unitTestMode) newProject.save()
 
-    //close previous project if needed
-    if (newProject !== projectToClose && !unitTestMode && projectToClose != null) {
-      ProjectUtil.closeAndDispose(projectToClose)
-    }
     newProject.save()
     return newProject
 

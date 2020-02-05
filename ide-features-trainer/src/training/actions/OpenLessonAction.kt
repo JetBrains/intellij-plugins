@@ -81,6 +81,9 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
 
       val vf: VirtualFile?
       var learnProject = CourseManager.instance.learnProject
+      if (learnProject != null && langSupport.defaultProjectName != learnProject.name) {
+        learnProject = null // We are in the project from another course
+      }
       LOG.debug("${projectWhereToStartLesson.name}: trying to get cached LearnProject ${learnProject != null}")
       if (learnProject == null) learnProject = findLearnProjectInOpenedProjects(langSupport)
       LOG.debug("${projectWhereToStartLesson.name}: trying to find LearnProject in opened projects ${learnProject != null}")
@@ -404,8 +407,10 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     }
     catch (e: IOException) {
       LOG.error(e)
+      return null
     }
-    langSupport.applyToProjectAfterConfigure().invoke(myLearnProject!!)
+
+    langSupport.applyToProjectAfterConfigure().invoke(myLearnProject)
 
     CourseManager.instance.learnProject = myLearnProject
 

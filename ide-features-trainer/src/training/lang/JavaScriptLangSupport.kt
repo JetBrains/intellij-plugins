@@ -3,7 +3,6 @@ package training.lang
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import training.project.ProjectUtils
 
 class JavaScriptLangSupport : AbstractLangSupport() {
 
@@ -14,6 +13,8 @@ class JavaScriptLangSupport : AbstractLangSupport() {
 
   override val primaryLanguage: String
     get() = lang
+
+  override val defaultProjectName: String = "LearnJavaScriptProject"
 
   override val defaultProductName: String = "WebStorm"
 
@@ -30,12 +31,4 @@ class JavaScriptLangSupport : AbstractLangSupport() {
   }
 
   override fun checkSdk(sdk: Sdk?, project: Project) {}
-
-  override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject(
-      "/learnProjects/javascript/LearnJavaScriptProject",
-      "LearnJavaScriptProject",
-      javaClass.classLoader
-    )
-  }
 }

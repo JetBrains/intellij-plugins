@@ -3,12 +3,9 @@ package training.project
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.WizardContext
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
-import com.intellij.openapi.vfs.VirtualFile
 import training.util.featureTrainerVersion
 import java.io.File
 import java.io.PrintWriter
@@ -24,13 +21,22 @@ object ProjectUtils {
     return@lazy ideaProjectsPath
   }
 
+  @Deprecated("Use method below", ReplaceWith("importOrOpenProject(projectPath, projectName, classLoader, null)"))
+  fun importOrOpenProject(projectPath: String,
+                          projectName: String,
+                          classLoader: ClassLoader): Project? {
+    return importOrOpenProject(projectPath, projectName, classLoader, null)
+  }
   /**
    * For example:
    * @projectPath = "/learnProjects/SimpleProject"
    * @projectName = "SimpleProject"
    *
    */
-  fun importOrOpenProject(projectPath: String, projectName: String, classLoader: ClassLoader): Project? {
+  fun importOrOpenProject(projectPath: String,
+                          projectName: String,
+                          classLoader: ClassLoader,
+                          projectToClose: Project?): Project? {
     val dest = File(ideProjectsBasePath, projectName)
 
     if (!isSameVersion(dest)) {
@@ -44,7 +50,7 @@ object ProjectUtils {
       }
     }
     val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
-    return doImportOrOpenProject(toSelect)
+    return ProjectUtil.openOrImport(toSelect.path, projectToClose, false)
   }
 
   private fun isSameVersion(dest: File): Boolean {
@@ -63,14 +69,6 @@ object ProjectUtils {
   }
 
   private fun versionFile(dest: File) = File(dest, "feature-trainer-version.txt")
-
-  private fun doImportOrOpenProject(projectDir: VirtualFile): Project? {
-    val projectRef = Ref<Project>()
-    TransactionGuard.getInstance().submitTransactionAndWait {
-      projectRef.set(ProjectUtil.openOrImport(projectDir.path, null, false))
-    }
-    return projectRef.get()
-  }
 
 
   fun closeAllEditorsInProject(project: Project) {

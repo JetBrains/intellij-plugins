@@ -18,6 +18,11 @@ interface LangSupport {
   val langCourseFeedback: String?
     get() = null
 
+  /** Relative path inside plugin resources */
+  @JvmDefault
+  val projectResourcePath: String
+  get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
+
   companion object {
     const val EP_NAME = "training.TrainingLangExtension"
   }
@@ -55,7 +60,8 @@ interface LangSupport {
   //let's replace with importOrOpenLearnProject()
   fun importLearnProject(): Project?
 
-  fun createProject(projectName: String, projectToClose: Project?): Project?
+  @Deprecated("This method will be removed, just define projectResourcePath to customize your project deirectory")
+  fun createProject(projectName: String, projectToClose: Project?): Project? = null
 
   @Deprecated("It is not called from anywhere, just API watcher binary compatibility problem")
   fun setProjectListeners(project: Project) {}

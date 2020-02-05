@@ -20,10 +20,6 @@ import training.learn.exceptons.NoSdkException
  */
 class PythonLangSupport : AbstractLangSupport() {
 
-  override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
   override fun importLearnProject(): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }

@@ -19,7 +19,6 @@ import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
-import training.project.ProjectUtils
 import java.io.File
 
 class RubyLangSupport : AbstractLangSupport() {
@@ -86,10 +85,6 @@ class RubyLangSupport : AbstractLangSupport() {
 
       GemRunner.bundle(module, sdk, "install", null, null, null, "--local")
     }
-  }
-
-  override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/ruby/$rubyProjectName", projectName, javaClass.classLoader)
   }
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
