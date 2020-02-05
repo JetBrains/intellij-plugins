@@ -38,7 +38,7 @@ Makefile
     MakefileFunctionNameImpl(FUNCTION_NAME)
       PsiElement(FUNCTION_NAME)('eval')
     PsiElement())(')')
-    PsiElement(EOL)('\n\n')
+  PsiElement(EOL)('\n\n')
   PsiComment(COMMENT)('# This assignment is shown as error')
   PsiElement(EOL)('\n')
   MakefileVariableAssignmentImpl(VARIABLE_ASSIGNMENT)

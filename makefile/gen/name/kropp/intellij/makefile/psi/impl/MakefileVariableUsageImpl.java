@@ -5,6 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import name.kropp.intellij.makefile.psi.MakefileFunctionName;
 import name.kropp.intellij.makefile.psi.MakefileVariable;
 import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
@@ -24,6 +25,12 @@ public class MakefileVariableUsageImpl extends ASTWrapperPsiElement implements M
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof MakefileVisitor) accept((MakefileVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @Nullable
+  public MakefileFunctionName getFunctionName() {
+    return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
   }
 
   @Override

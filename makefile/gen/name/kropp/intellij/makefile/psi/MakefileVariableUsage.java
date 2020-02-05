@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 public interface MakefileVariableUsage extends PsiElement {
 
   @Nullable
+  MakefileFunctionName getFunctionName();
+
+  @Nullable
   MakefileVariable getVariable();
 
 }

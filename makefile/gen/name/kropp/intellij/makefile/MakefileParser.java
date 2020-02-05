@@ -453,7 +453,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '$(' function-name function-param* ')' EOL?
+  // '$(' function-name function-param* ')'
   public static boolean function(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function")) return false;
     if (!nextTokenIs(b, FUNCTION_START)) return false;
@@ -463,8 +463,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = r && function_name(b, l + 1);
     p = r; // pin = 2
     r = r && report_error_(b, function_2(b, l + 1));
-    r = p && report_error_(b, consumeToken(b, FUNCTION_END)) && r;
-    r = p && function_4(b, l + 1) && r;
+    r = p && consumeToken(b, FUNCTION_END) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
@@ -477,13 +476,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
       if (!function_param(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "function_2", c)) break;
     }
-    return true;
-  }
-
-  // EOL?
-  private static boolean function_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "function_4")) return false;
-    consumeToken(b, EOL);
     return true;
   }
 
@@ -538,7 +530,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // string|function-param-text|variable-usage|variable-usage-curly|identifier|':'|','|function-name|function
+  // string|function-param-text|variable-usage|identifier|':'|','|function-name|function
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
     boolean r;
@@ -546,7 +538,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = consumeToken(b, STRING);
     if (!r) r = consumeToken(b, FUNCTION_PARAM_TEXT);
     if (!r) r = variable_usage(b, l + 1);
-    if (!r) r = consumeToken(b, VARIABLE_USAGE_CURLY);
     if (!r) r = consumeToken(b, IDENTIFIER);
     if (!r) r = consumeToken(b, COLON);
     if (!r) r = consumeToken(b, COMMA);
@@ -887,7 +878,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   // identifier|variable-usage|function
   public static boolean prerequisite(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prerequisite")) return false;
-    if (!nextTokenIs(b, "<prerequisite>", FUNCTION_START, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREREQUISITE, "<prerequisite>");
     r = consumeToken(b, IDENTIFIER);
@@ -1038,13 +1028,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier|function-name|variable-usage
+  // identifier|function-name|function|variable-usage
   public static boolean target(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGET, "<target>");
     r = consumeToken(b, IDENTIFIER);
     if (!r) r = function_name(b, l + 1);
+    if (!r) r = function(b, l + 1);
     if (!r) r = variable_usage(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1248,36 +1239,94 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '$(' ((variable assignment text)|identifier) ')'
+  // ('$(' ((variable assignment text)|identifier) ')') | ('${' ((variable|function-name assignment text)|identifier|function-name) '}')
   public static boolean variable_usage(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_usage")) return false;
-    if (!nextTokenIs(b, FUNCTION_START)) return false;
+    if (!nextTokenIs(b, "<variable usage>", FUNCTION_START, VARIABLE_START)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, VARIABLE_USAGE, "<variable usage>");
+    r = variable_usage_0(b, l + 1);
+    if (!r) r = variable_usage_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // '$(' ((variable assignment text)|identifier) ')'
+  private static boolean variable_usage_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, FUNCTION_START);
-    r = r && variable_usage_1(b, l + 1);
+    r = r && variable_usage_0_1(b, l + 1);
     r = r && consumeToken(b, FUNCTION_END);
-    exit_section_(b, m, VARIABLE_USAGE, r);
+    exit_section_(b, m, null, r);
     return r;
   }
 
   // (variable assignment text)|identifier
-  private static boolean variable_usage_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_usage_1")) return false;
+  private static boolean variable_usage_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_0_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = variable_usage_1_0(b, l + 1);
+    r = variable_usage_0_1_0(b, l + 1);
     if (!r) r = consumeToken(b, IDENTIFIER);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // variable assignment text
-  private static boolean variable_usage_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "variable_usage_1_0")) return false;
+  private static boolean variable_usage_0_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_0_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = variable(b, l + 1);
+    r = r && assignment(b, l + 1);
+    r = r && consumeToken(b, TEXT);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '${' ((variable|function-name assignment text)|identifier|function-name) '}'
+  private static boolean variable_usage_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, VARIABLE_START);
+    r = r && variable_usage_1_1(b, l + 1);
+    r = r && consumeToken(b, VARIABLE_END);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (variable|function-name assignment text)|identifier|function-name
+  private static boolean variable_usage_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable_usage_1_1_0(b, l + 1);
+    if (!r) r = consumeToken(b, IDENTIFIER);
+    if (!r) r = function_name(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // variable|function-name assignment text
+  private static boolean variable_usage_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = variable(b, l + 1);
+    if (!r) r = variable_usage_1_1_0_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function-name assignment text
+  private static boolean variable_usage_1_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_1_1_0_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = function_name(b, l + 1);
     r = r && assignment(b, l + 1);
     r = r && consumeToken(b, TEXT);
     exit_section_(b, m, null, r);

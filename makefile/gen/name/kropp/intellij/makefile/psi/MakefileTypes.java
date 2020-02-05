@@ -77,7 +77,8 @@ public interface MakefileTypes {
   IElementType STRING = new MakefileTokenType("string");
   IElementType TAB = new MakefileTokenType("\\t");
   IElementType TEXT = new MakefileTokenType("text");
-  IElementType VARIABLE_USAGE_CURLY = new MakefileTokenType("variable-usage-curly");
+  IElementType VARIABLE_END = new MakefileTokenType("}");
+  IElementType VARIABLE_START = new MakefileTokenType("${");
   IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {

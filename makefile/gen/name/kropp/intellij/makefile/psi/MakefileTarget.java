@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public interface MakefileTarget extends MakefileNamedElement, NavigationItem, StubBasedPsiElement<MakefileTargetStubElement> {
 
   @Nullable
+  MakefileFunction getFunction();
+
+  @Nullable
   MakefileFunctionName getFunctionName();
 
   @Nullable

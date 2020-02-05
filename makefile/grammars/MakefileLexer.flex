@@ -34,7 +34,6 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"pathsubst"|"strip"|"findstr
   "basename"|"addsuffix"|"addprefix"|"join"|"wildcard"|"realpath"|"abspath"|"if"|"or"|"and"|
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")
 MACRO="@"[^@ \r\n]+"@"
-VARIABLE_VALUE=[^\r\n)#]*[^\\\r\n)#]
 SOURCE_CODE=[^\r\n#]*[^\\\r\n#]
 COLON=":"
 DOUBLECOLON="::"
@@ -44,9 +43,8 @@ PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 VARIABLE_USAGE_EXPR="$("[^ $)]*")"
-VARIABLE_USAGE_CURLY_EXPR="${"[^ $}]*"}"
 STRING="\""[^\"]*"\""
-FILENAME=[^:=!?#$\",()\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#)\ \r\n\t])*
+FILENAME=[^:=!?#$\",()}\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#$)}\ \r\n\t])*
 CONDITION_CHARACTER=[^#\r\n]
 
 %state INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
@@ -94,11 +92,12 @@ CONDITION_CHARACTER=[^#\r\n]
     "export"           { yybegin(EXPORT); return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
     "$("               { return FUNCTION_START; }
+    "${"               { return VARIABLE_START; }
     {FUNCTIONS}        { return FUNCTION_NAME; }
     "("                { return OPEN_BRACE; }
     ")"                { return FUNCTION_END; }
+    "}"                { return VARIABLE_END; }
     {STRING}           { return STRING; }
-    {VARIABLE_USAGE_CURLY_EXPR}   { return VARIABLE_USAGE_CURLY; }
     {FILENAME}         { return IDENTIFIER; }
     "!"                { return IDENTIFIER; }
 }
