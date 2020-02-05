@@ -61,7 +61,7 @@ public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   @Override
   public PsiReference[] getReferences() {
     PsiElement valueNode = getAttributeValueElement("taglib");
-    if (valueNode != null) {
+    if (valueNode == null) {
       valueNode = getAttributeValueElement("path");
     }
     if (valueNode != null) {
