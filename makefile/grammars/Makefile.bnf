@@ -98,7 +98,7 @@ directory ::= identifier|'include' {mixin="name.kropp.intellij.makefile.psi.impl
 
 private function_recover ::= !(')'|EOL)
 function ::= '$(' function-name function-param* ')' {pin=2}
-function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'pathsubst'|'strip'|'findstring'|
+function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')

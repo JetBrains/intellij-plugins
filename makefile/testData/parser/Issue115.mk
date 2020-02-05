@@ -1,0 +1,1 @@
+$(patsubst %.C,build/%.O2.o,$(wildcard *.C))

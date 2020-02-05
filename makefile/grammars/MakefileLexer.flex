@@ -29,7 +29,7 @@ BACKSLASHCRLF="\\"(\r|\n|\r\n)(" "|\t)*
 DOCCOMMENT="##"[^\r\n]*
 COMMENT="#"[^\r\n]*
 MULTILINECOMMENT="#"[^\r\n\\]*("\\"\r?\n[^\r\n\\]*)+
-FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"pathsubst"|"strip"|"findstring"|
+FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstring"|
   "filter"|"filter-out"|"sort"|"word"|"wordlist"|"words"|"firstword"|"lastword"|"dir"|"notdir"|"suffix"|
   "basename"|"addsuffix"|"addprefix"|"join"|"wildcard"|"realpath"|"abspath"|"if"|"or"|"and"|
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")

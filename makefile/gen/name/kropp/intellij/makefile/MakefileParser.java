@@ -480,7 +480,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'error'|'warning'|'info'|'shell'|'subst'|'pathsubst'|'strip'|'findstring'|
+  // 'error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
   //                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
   //                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
   //                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile'
@@ -493,7 +493,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, "info");
     if (!r) r = consumeToken(b, "shell");
     if (!r) r = consumeToken(b, "subst");
-    if (!r) r = consumeToken(b, "pathsubst");
+    if (!r) r = consumeToken(b, "patsubst");
     if (!r) r = consumeToken(b, "strip");
     if (!r) r = consumeToken(b, "findstring");
     if (!r) r = consumeToken(b, "filter");
