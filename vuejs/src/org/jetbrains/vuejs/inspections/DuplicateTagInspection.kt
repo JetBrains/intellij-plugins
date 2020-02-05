@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.TEMPLATE_TAG_NAME
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class DuplicateTagInspection : LocalInspectionTool() {
@@ -24,17 +25,17 @@ class DuplicateTagInspection : LocalInspectionTool() {
         if (tag?.language != VueLanguage.INSTANCE) return
         if (TEMPLATE_TAG_NAME != tag.name && !HtmlUtil.isScriptTag(tag)) return
         val parent = tag.parent as? XmlDocument ?: return
-        PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java)!!
-          .filter { it != tag && it.name == tag.name }
-          .forEach { holder.registerProblem(tag, "Duplicate ${tag.name} tag", DeleteTagFix(tag)) }
+        if (PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java).any { it != tag && it.name == tag.name }) {
+          holder.registerProblem(tag, VueBundle.message("vue.inspection.message.duplicate.tag", tag.name), DeleteTagFix(tag))
+        }
       }
     }
   }
 }
 
 class DeleteTagFix(tag: XmlTag, private val tagName: String = tag.name) : LocalQuickFixOnPsiElement(tag) {
-  override fun getFamilyName(): String = "Remove Tag"
-  override fun getText(): String = "Remove ${tagName} Tag"
+  override fun getFamilyName(): String = VueBundle.message("vue.quickfix.delete.tag.family")
+  override fun getText(): String = VueBundle.message("vue.quickfix.delete.tag.text", tagName)
 
   override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
     startElement.delete()

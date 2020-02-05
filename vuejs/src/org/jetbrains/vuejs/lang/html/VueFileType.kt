@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.lang.html
 
 import com.intellij.openapi.fileTypes.LanguageFileType
 import icons.VuejsIcons
+import org.jetbrains.vuejs.VueBundle
 import javax.swing.Icon
 
 class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
@@ -12,11 +13,11 @@ class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   }
 
   override fun getName(): String {
-    return "Vue.js"
+    return VueBundle.message("vue.file.type.name")
   }
 
   override fun getDescription(): String {
-    return "Vue.js template"
+    return VueBundle.message("vue.file.type.description")
   }
 
   override fun getDefaultExtension(): String {

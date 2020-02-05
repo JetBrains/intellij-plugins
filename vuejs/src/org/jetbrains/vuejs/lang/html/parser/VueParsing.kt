@@ -8,6 +8,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil.*
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeKind.*
 import org.jetbrains.vuejs.lang.expr.parser.VueJSEmbeddedExprTokenType
@@ -51,7 +52,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         interpolation.drop()
       }
       else {
-        interpolation.error("Unterminated interpolation")
+        interpolation.error(VueBundle.message("vue.parser.message.unterminated.interpolation"))
       }
     }
     return result

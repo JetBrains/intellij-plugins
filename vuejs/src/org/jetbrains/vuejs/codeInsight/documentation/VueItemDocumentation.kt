@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight.documentation
 
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.model.*
 
 interface VueItemDocumentation {
@@ -36,22 +37,23 @@ interface VueItemDocumentation {
   val customSections: Map<String, String> get() = emptyMap()
 
   companion object {
+
     fun typeOf(item: VueDocumentedItem): String =
       when (item) {
-        is VueFunctionComponent -> "functional component"
-        is VueComponent -> "component"
-        is VueDirective -> "directive"
-        is VueFilter -> "filter"
-        is VueMethod -> "component method"
-        is VueEmitCall -> "component event"
-        is VueSlot -> "slot"
-        is VueInputProperty -> "component property"
-        is VueComputedProperty -> "component computed property"
-        is VueDataProperty -> "component data property"
-        is VueDirectiveModifier -> "directive modifier"
-        is VueDirectiveArgument -> "directive argument"
+        is VueFunctionComponent -> "vue.documentation.type.functional.component"
+        is VueComponent -> "vue.documentation.type.component"
+        is VueDirective -> "vue.documentation.type.directive"
+        is VueFilter -> "vue.documentation.type.filter"
+        is VueMethod -> "vue.documentation.type.component.method"
+        is VueEmitCall -> "vue.documentation.type.component.event"
+        is VueSlot -> "vue.documentation.type.slot"
+        is VueInputProperty -> "vue.documentation.type.component.property"
+        is VueComputedProperty -> "vue.documentation.type.component.computed.property"
+        is VueDataProperty -> "vue.documentation.type.component.data.property"
+        is VueDirectiveModifier -> "vue.documentation.type.directive.modifier"
+        is VueDirectiveArgument -> "vue.documentation.type.directive.argument"
         else -> throw IncorrectOperationException(item.javaClass.name)
-      }
+      }.let { VueBundle.message(it) }
 
     fun nameOf(item: VueDocumentedItem): String? =
       when (item) {
@@ -65,30 +67,32 @@ interface VueItemDocumentation {
       val sections = LinkedHashMap<String, String>()
       when (item) {
         is VueDirective -> {
-          item.argument?.documentation?.description?.let { sections["Argument:"] = it }
+          item.argument?.documentation?.description?.let { sections["vue.documentation.section.argument"] = it }
         }
         is VueDirectiveArgument -> {
           if (item.required) {
-            sections["Required"] = ""
+            sections["vue.documentation.section.required"] = ""
           }
-          item.pattern?.let { sections["Pattern:"] = it.toString() }
+          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
         }
         is VueDirectiveModifier -> {
-          item.pattern?.let { sections["Pattern:"] = it.toString() }
+          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
         }
         is VueSlot -> {
-          item.pattern?.let { sections["Pattern:"] = it.toString() }
+          item.pattern?.let { sections["vue.documentation.section.pattern"] = it.toString() }
         }
         is VueInputProperty -> {
           if (item.required) {
-            sections["Required"] = ""
+            sections["vue.documentation.section.required"] = ""
           }
           item.defaultValue
             ?.takeIf { it != "null" }
-            ?.let { sections["Default:"] = it }
+            ?.let { sections["vue.documentation.section.default"] = it }
         }
       }
       return sections
+        .map { (key, value) -> Pair(VueBundle.message(key), value) }
+        .toMap()
     }
   }
 }

@@ -14,6 +14,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.castSafelyTo
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.ATTR_MODIFIER_PREFIX
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
@@ -99,7 +100,7 @@ class VueDocumentationProvider : DocumentationProvider {
     val result = StringBuilder().append(DEFINITION_START)
     val name = item.defaultName ?: ""
     if (name.isBlank()) {
-      result.append("Vue ").append(item.type)
+      result.append(VueBundle.message("vue.documentation.vue") + " ").append(item.type)
     }
     else {
       result.append(name)
@@ -108,7 +109,7 @@ class VueDocumentationProvider : DocumentationProvider {
     item.description?.let { result.append(CONTENT_START).append(it).append(CONTENT_END) }
 
     val details = LinkedHashMap(item.customSections)
-    item.library?.let { details["Library:"] = "<p>${if (it == "vue") "Vue" else it}" }
+    item.library?.let { details[VueBundle.message("vue.documentation.section.library")] = "<p>${if (it == "vue") "Vue" else it}" }
 
     if (details.isNotEmpty()) {
       result.append(SECTIONS_START)
@@ -160,7 +161,7 @@ class VueDocumentationProvider : DocumentationProvider {
   private class PsiWrappedVueDocumentedItem(val item: VueItemDocumentation,
                                             private val source: PsiElement) : FakePsiElement(), PsiNamedElement {
     override fun getParent(): PsiElement? = source
-    override fun getName(): String? = item.defaultName ?: "Vue " + item.type
+    override fun getName(): String? = item.defaultName ?: VueBundle.message("vue.documentation.vue") + " " + item.type
   }
 
 }

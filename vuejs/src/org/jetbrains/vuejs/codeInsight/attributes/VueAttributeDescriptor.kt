@@ -9,6 +9,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ArrayUtil
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.VueAttributeInfo
 import org.jetbrains.vuejs.codeInsight.documentation.VueDocumentedItem
@@ -44,7 +45,7 @@ open class VueAttributeDescriptor(protected val tag: XmlTag,
 
   override fun validateValue(context: XmlElement?, value: String?): String? {
     if (value != null && !acceptsValue) {
-      return "$name does not accept any value."
+      return VueBundle.message("vue.inspection.message.attribute.does.not.accept.value", name)
     }
     return null
   }

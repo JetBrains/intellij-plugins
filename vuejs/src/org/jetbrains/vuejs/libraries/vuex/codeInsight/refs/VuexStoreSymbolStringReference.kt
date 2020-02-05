@@ -17,6 +17,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
@@ -62,7 +63,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
   }
 
   override fun getUnresolvedMessagePattern(): String {
-    return if (!terminal || accessor === null) "Unknown module namespace ${value}" else ""
+    return if (!terminal || accessor === null) VueBundle.message("vuex.inspection.message.unresolved.namespace", value) else ""
   }
 
   override fun getUnresolvedReferenceSeverity(): HighlightSeverity {

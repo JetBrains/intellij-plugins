@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.psi.css.impl.CssElementTypes.KEYWORDS
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.vuejs.VueBundle.message
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_ARGUMENTS_LIST
 import org.jetbrains.vuejs.lang.expr.parser.VueJSElementTypes.FILTER_EXPRESSION
@@ -105,7 +106,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         marker.error(JSBundle.message("javascript.parser.message.expected.identifier"))
       }
       if (builder.tokenType !== JSTokenTypes.IN_KEYWORD && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
-        builder.error("'in' or 'of' expected")
+        builder.error(message("vue.parser.message.expected.in.or.of"))
       }
       else {
         builder.advanceLexer()
@@ -117,7 +118,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
     fun parseSlotPropsExpression() {
       val slotPropsExpression = builder.mark()
       if (builder.eof()) {
-        builder.mark().error("Expected slot props variable declaration")
+        builder.mark().error(message("vue.parser.message.expected.slot.props.var"))
       }
       else {
         parseVariableStatement(VueJSStubElementTypes.SLOT_PROPS_VARIABLE)
@@ -126,7 +127,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
           while (!builder.eof()) {
             builder.advanceLexer()
           }
-          mark.error("Unexpected tokens in slot props variable declaration")
+          mark.error(message("vue.parser.message.unexpected.tokens.slot.props.var"))
         }
       }
       slotPropsExpression.done(VueJSElementTypes.SLOT_PROPS_EXPRESSION)
@@ -138,13 +139,13 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         if (builder.tokenType === JSTokenTypes.SEMICOLON) {
           val mark = builder.mark()
           builder.advanceLexer()
-          mark.error("Statements are not allowed in Vue expressions")
+          mark.error(message("vue.parser.message.statements.not.allowed"))
           reported = true
         }
         else {
           var justReported = false
           if (!reported) {
-            builder.error("Expected end of expression")
+            builder.error(message("vue.parser.message.expected.end.of.expression"))
             reported = true
             justReported = true
           }
@@ -253,7 +254,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
           pipeName.done(FILTER_REFERENCE_EXPRESSION)
         }
         else {
-          builder.error("Expected identifier or string")
+          builder.error(message("vue.parser.message.expected.identifier.or.string"))
         }
         if (builder.tokenType === JSTokenTypes.LPAR) {
           val params = builder.mark()
@@ -263,7 +264,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
           if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
             val err = builder.mark()
             builder.advanceLexer()
-            err.error("Expected | or end of expression")
+            err.error(message("vue.parser.message.expected.pipe.or.end.of.expression"))
             while (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
               builder.advanceLexer()
             }
@@ -272,7 +273,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         else if (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
           val err = builder.mark()
           builder.advanceLexer()
-          err.error("Expected (, | or end of expression")
+          err.error(message("vue.parser.message.expected.lparen.pipe.or.end.of.expression"))
           while (builder.tokenType !== JSTokenTypes.OR && !builder.eof()) {
             builder.advanceLexer()
           }

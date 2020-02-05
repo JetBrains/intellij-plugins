@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.validation.*
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.Trinity
 import com.intellij.psi.ResolveResult
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterReferenceExpression
 
@@ -40,13 +41,13 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
           }
 
           if (min == 0 && max == 0) {
-            registerProblem(node, "Incorrect filter function signature. The function should accept at least one argument",
+            registerProblem(node, VueBundle.message("vue.inspection.message.filter.function.with.no.args"),
                             *fixes.toTypedArray())
           }
           else {
             val s = "${if (min == 0) 0 else min - 1}" +
                     if (minMaxParameters.third) " or more" else if (min != max) "..${max - 1}" else ""
-            registerProblem(node, "Invalid number of filter arguments, expected ${s}", *fixes.toTypedArray())
+            registerProblem(node, VueBundle.message("vue.inspection.message.filter.invalid.number.of.arguments", s), *fixes.toTypedArray())
           }
           return false
         }
@@ -86,7 +87,7 @@ class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
       override fun createUnresolvedCallReferenceMessage(methodExpression: JSReferenceExpression,
                                                         isNewExpression: Boolean): Ref<String> {
         return if (methodExpression is VueJSFilterReferenceExpression) {
-          Ref.create<String>("Unresolved filter ${methodExpression.referenceName!!}")
+          Ref.create<String>(VueBundle.message("vue.inspection.message.unresolved.filter", methodExpression.referenceName!!))
         }
         else super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression)
       }
