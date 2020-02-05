@@ -68,7 +68,7 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
     }
 
     CfmlComponent component = getComponent();
-    return component != null ? component.hasImplicitAccessors() : false;
+    return component != null && component.hasImplicitAccessors();
   }
 
   @Override
@@ -89,13 +89,6 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
   @Override
   public String getDefault() {
     return CfmlPsiUtil.getPureAttributeValue(this, "default");
-  }
-
-  @Override
-  public PsiType getPsiType() {
-    final String returnTypeString = this.getType();
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull

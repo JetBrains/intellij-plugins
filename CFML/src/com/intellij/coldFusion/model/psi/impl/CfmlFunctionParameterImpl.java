@@ -5,10 +5,7 @@ package com.intellij.coldFusion.model.psi.impl;
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.coldFusion.model.psi.CfmlComponentType;
-import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
-import com.intellij.coldFusion.model.psi.CfmlParameter;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
@@ -20,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author vnikolaenko
  */
-public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlVariable {
+public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlTypedVariable {
   public static final CfmlFunctionParameterImpl[] EMPTY_ARRAY = new CfmlFunctionParameterImpl[0];
 
   public CfmlFunctionParameterImpl(@NotNull ASTNode node) {
@@ -30,13 +27,6 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
   @Override
   public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
     throw new IncorrectOperationException();
-  }
-
-  @Override
-  public PsiType getPsiType() {
-    final String returnTypeString = this.getType();
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull
@@ -69,7 +59,7 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     }
     return null;
   }
-  
+
   public String getDefault() {
     final PsiElement defaultElement = findChildByType(CfmlElementTypes.VALUE);
     if (defaultElement != null) {

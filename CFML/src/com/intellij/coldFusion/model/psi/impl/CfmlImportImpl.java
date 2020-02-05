@@ -15,12 +15,16 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
+import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlImport;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author vnikolaenko
@@ -29,12 +33,6 @@ import org.jetbrains.annotations.NotNull;
 public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   public CfmlImportImpl(ASTNode astNode) {
     super(astNode);
-  }
-
-  @Override
-  public boolean isImported(String componentName) {
-    String importString = getImportString();
-    return importString != null ? importString.endsWith(componentName) : false;
   }
 
   @Override

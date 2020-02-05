@@ -2,10 +2,7 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
-import com.intellij.coldFusion.model.psi.CfmlComponentType;
-import com.intellij.coldFusion.model.psi.CfmlParameter;
-import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -18,7 +15,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlParameter, CfmlVariable {
+public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlParameter, CfmlTypedVariable {
   public final static String TAG_NAME = "cfargument";
 
   public CfmlTagFunctionParameterImpl(ASTNode astNode) {
@@ -106,13 +103,6 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
                                      PsiElement lastParent,
                                      @NotNull PsiElement place) {
     return processor.execute(this, state);
-  }
-
-  @Override
-  public PsiType getPsiType() {
-    final String returnTypeString = this.getType();
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @Override

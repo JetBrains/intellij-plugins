@@ -19,7 +19,6 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -126,13 +125,6 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
   @Override
   public CfmlComponent getComponent() {
     return PsiTreeUtil.getParentOfType(this, CfmlComponent.class);
-  }
-
-  @Override
-  public PsiType getPsiType() {
-    final String returnTypeString = this.getType();
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
 
   @NotNull

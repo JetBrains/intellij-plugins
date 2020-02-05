@@ -36,31 +36,6 @@ public class CfmlScriptImportImpl extends CfmlCompositeElement implements CfmlIm
   }
 
   @Override
-  public boolean isImported(String componentName) {
-    String importString = getImportString();
-    if (importString == null) return false;
-    if (importString.endsWith(componentName)) return true;
-    if (importString.endsWith("*")) {
-      PsiReference[] references = getReferences();
-      for (PsiReference reference : references) {
-        if (!(reference instanceof CfmlComponentReference)) {
-          continue;
-        }
-        ResolveResult[] results = ((CfmlComponentReference)reference).multiResolve(false);
-        for (ResolveResult result : results) {
-          PsiElement element = result.getElement();
-          if (element instanceof CfmlComponent) {
-            if (Objects.equals(((CfmlComponent)element).getName(), componentName)) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  @Override
   @Nullable
   public String getImportString() {
     CfmlComponentReference referenceChild = findChildByType(CfmlElementTypes.COMPONENT_REFERENCE);
