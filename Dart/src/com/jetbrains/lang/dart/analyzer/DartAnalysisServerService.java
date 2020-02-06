@@ -2077,14 +2077,6 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
-  /**
-   * @deprecated Use {@link #serverReadyForRequest()}. TODO: remove when Flutter plugin doesn't need it.
-   */
-  @Deprecated
-  public boolean serverReadyForRequest(@NotNull final Project project) {
-    return serverReadyForRequest();
-  }
-
   public boolean serverReadyForRequest() {
     final DartSdk sdk = DartSdk.getDartSdk(myProject);
     if (sdk == null || !isDartSdkVersionSufficient(sdk)) {
