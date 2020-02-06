@@ -94,18 +94,14 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false
 
-    if (TaskContext.inTestMode) {
-      LessonManager.instance.testActionsExecutor.execute {
-        taskContext.testActions.forEach { it.run() }
-      }
-    }
-
     if (taskContext.steps.isEmpty()) {
       processNextTask()
       return
     }
 
     chainNextTask(taskContext, recorder)
+
+    processTestActions(taskContext)
   }
 
   private fun chainNextTask(taskContext: TaskContext, recorder: ActionsRecorder) {
@@ -141,6 +137,13 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
+  private fun processTestActions(taskContext: TaskContext) {
+    if (TaskContext.inTestMode) {
+      LessonManager.instance.testActionsExecutor.execute {
+        taskContext.testActions.forEach { it.run() }
+      }
+    }
+  }
   private fun setSample(sample: LessonSample) {
     setDocumentCode(sample.text)
     sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
