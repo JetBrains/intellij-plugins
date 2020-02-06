@@ -17,12 +17,18 @@ import com.intellij.util.xmlb.annotations.Property
   Storage("grazie_global.xml")
 ])
 class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
-  data class State(@Property val enabledLanguages: Set<Lang> = setOf(Lang.AMERICAN_ENGLISH),
+  /**
+   * State of Grazie plugin
+   *
+   * Note, that all serialized values should be MUTABLE.
+   * Immutable values (like emptySet()) as default may lead to deserialization failure
+   */
+  data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                    @Property val nativeLanguage: Lang = enabledLanguages.first(),
                    @Property val enabledProgrammingLanguages: Set<String> = defaultEnabledProgrammingLanguages,
                    @Property val enabledCommitIntegration: Boolean = false,
-                   @Property val userDisabledRules: Set<String> = emptySet(),
-                   @Property val userEnabledRules: Set<String> = emptySet(),
+                   @Property val userDisabledRules: Set<String> = HashSet(),
+                   @Property val userEnabledRules: Set<String> = HashSet(),
                    @Property val suppressionContext: SuppressionContext = SuppressionContext(),
                    @Property val lastSeenVersion: String? = null) {
     /**
@@ -56,7 +62,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
           "Properties", "TEXT",
           "go", "rust"
         )
-      }
+      }.toHashSet()
     }
 
     private val instance: GrazieConfig by lazy { ServiceManager.getService(GrazieConfig::class.java) }

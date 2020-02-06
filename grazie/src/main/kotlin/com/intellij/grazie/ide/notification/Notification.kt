@@ -21,13 +21,13 @@ object Notification {
 
   private val shownNotifications = ConcurrentMultiMap<Group, WeakReference<Notification>>()
 
-  private val NOTIFICATION_GROUP_INSTALL = NotificationGroup(pluginOnlyMsg("grazie.install.group"), NotificationDisplayType.STICKY_BALLOON,
-                                                             true)
-    .takeUnless { GraziePlugin.isBundled }
+  private val NOTIFICATION_GROUP_INSTALL = if (!GraziePlugin.isBundled) {
+    NotificationGroup(pluginOnlyMsg("grazie.install.group"), NotificationDisplayType.STICKY_BALLOON, true)
+  } else null
 
-  private val NOTIFICATION_GROUP_UPDATE = NotificationGroup(pluginOnlyMsg("grazie.update.group"), NotificationDisplayType.STICKY_BALLOON,
-                                                            true)
-    .takeUnless { GraziePlugin.isBundled }
+  private val NOTIFICATION_GROUP_UPDATE = if (!GraziePlugin.isBundled) {
+    NotificationGroup(pluginOnlyMsg("grazie.update.group"), NotificationDisplayType.STICKY_BALLOON, true)
+  } else null
 
 
   private val NOTIFICATION_GROUP_LANGUAGES = NotificationGroup(msg("grazie.languages.group"),

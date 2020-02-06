@@ -3,7 +3,7 @@ package com.intellij.grazie.grammar.suppress
 import com.intellij.grazie.grammar.Typo
 import com.intellij.util.xmlb.annotations.XMap
 
-data class SuppressionContext(@XMap val rules: Map<String, Set<Int>> = emptyMap()) {
+data class SuppressionContext(@XMap val rules: Map<String, Set<Int>> = HashMap()) {
   companion object {
     private val whitespace = Regex("\\s+")
 
