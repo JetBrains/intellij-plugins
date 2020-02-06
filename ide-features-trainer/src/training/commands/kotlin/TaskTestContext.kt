@@ -7,11 +7,13 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.testGuiFramework.fixtures.ComponentFixture
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.framework.Timeouts
 import com.intellij.testGuiFramework.impl.GuiTestCase
 import com.intellij.testGuiFramework.impl.waitUntilFound
+import org.fest.swing.core.Robot
 import java.awt.Component
 
 class TaskTestContext(val task: TaskContext) {
@@ -45,6 +47,12 @@ class TaskTestContext(val task: TaskContext) {
     waitUntilFound(null, componentClass, Timeouts.seconds02) {
       it.javaClass.name.contains(partOfName) && it.isShowing
     }
+  }
+
+  class SimpleComponentFixture(robot: Robot, target: Component): ComponentFixture<SimpleComponentFixture, Component>(SimpleComponentFixture::class.java, robot, target)
+
+  fun IdeFrameFixture.jComponent(target: Component): SimpleComponentFixture {
+    return SimpleComponentFixture(robot(), target)
   }
 
   companion object {

@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.commands.kotlin
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -9,19 +11,31 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
+import org.fest.swing.exception.ComponentLookupException
+import org.fest.swing.exception.WaitTimedOutError
+import org.fest.swing.timing.Timeout
 import org.intellij.lang.annotations.Language
 import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonExecutor
+import training.ui.LearningUiHighlightingManager
+import training.ui.LearningUiUtil
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
+import javax.swing.JList
 
-class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
+class TaskContext(private val lessonExecutor: LessonExecutor,
                   private val recorder: ActionsRecorder,
                   private val restoreContent: Ref<() -> Boolean>) {
+  val lesson: KLesson = lessonExecutor.lesson
+  val editor: Editor = lessonExecutor.editor
+  val project: Project = lessonExecutor.project
+
   val steps: MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
   val testActions: MutableList<Runnable> = mutableListOf()
@@ -132,6 +146,68 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
       DumbService.getInstance(project).waitForSmartMode()
       TaskTestContext(this).action()
     })
+  }
+
+  fun triggerByListItem(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
+    triggerByFoundListItem(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
+      for (i in 0 until ui.model.size) {
+        val elementAt = ui.model.getElementAt(i)
+        if (checkList(elementAt)) {
+          return@triggerByFoundListItem i
+        }
+      }
+      -1
+    }
+  }
+
+  // This method later can be converted to the public (But I'm not sure it will be ever needed in a such form
+  private fun triggerByFoundListItem(options: LearningUiHighlightingManager.HighlightingOptions, checkList: (list: JList<*>) -> Int) {
+    @Suppress("DEPRECATION")
+    triggerByUiComponentAndHighlight {
+      val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
+      val list = LearningUiUtil.findComponentWithTimeout(null, JList::class.java, delay) {
+        checkList(it) != -1
+      }
+      LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)
+    }
+  }
+
+  inline fun <reified ComponentType : Component> triggerByUiComponentAndHighlight(
+    highlightBorder: Boolean = true, highlightInside: Boolean = true, crossinline finderFunction: (ComponentType) -> Boolean
+  ) {
+    @Suppress("DEPRECATION")
+    triggerByUiComponentAndHighlight {
+      val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
+      val component = LearningUiUtil.findComponentWithTimeout(null, ComponentType::class.java, delay) {
+        finderFunction(it)
+      }
+      LearningUiHighlightingManager.highlightComponent(component, LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside))
+    }
+  }
+
+  @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
+  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> Unit) {
+    val step = CompletableFuture<Boolean>()
+    ApplicationManager.getApplication().executeOnPooledThread {
+      while (true) {
+        if (lessonExecutor.hasBeenStopped) {
+          step.complete(false)
+          break
+        }
+        try {
+          findAndHighlight()
+        }
+        catch (e: WaitTimedOutError) {
+          continue
+        }
+        catch (e: ComponentLookupException) {
+          continue
+        }
+        invokeLater { step.complete(true) }
+        break
+      }
+    }
+    steps.add(step)
   }
 
   fun action(id: String): String {

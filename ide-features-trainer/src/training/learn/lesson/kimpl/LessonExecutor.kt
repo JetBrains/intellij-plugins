@@ -29,6 +29,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   private var currentRecorder: ActionsRecorder? = null
 
+  @Volatile
+  var hasBeenStopped = false
+    private set
+
   private fun addTaskAction(content: (Int) -> Unit) {
     taskActions.add(TaskInfo(content, taskActions.size - 1))
   }
@@ -55,6 +59,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   fun stopLesson() {
     assert(ApplicationManager.getApplication().isDispatchThread)
     currentRecorder?.let { Disposer.dispose(it) }
+    hasBeenStopped = true
+    taskActions.clear()
+    currentRecorder = null
   }
 
   fun prepareSample(sample: LessonSample) {
@@ -97,7 +104,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     val recorder = ActionsRecorder(project, editor.document)
     currentRecorder = recorder
     val restoreContentRef = Ref<() -> Boolean>()
-    val taskContext = TaskContext(lesson, editor, project, recorder, restoreContentRef)
+    val taskContext = TaskContext(this, recorder, restoreContentRef)
     isUnderTaskProcessing = true
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false

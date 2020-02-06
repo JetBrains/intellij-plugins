@@ -22,6 +22,7 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
 import training.learn.lesson.kimpl.LessonExecutor
+import training.ui.LearningUiHighlightingManager
 import training.ui.Message
 import training.ui.UiManager
 import training.util.createBalloon
@@ -56,6 +57,7 @@ class LessonManager {
     currentLessonExecutor?.stopLesson()
     currentLessonExecutor?.lesson?.onStop()
     LessonProcessor.currentExecutionList?.lesson?.onStop()
+    LearningUiHighlightingManager.clearHighlights()
     clearAllListeners()
   }
 
