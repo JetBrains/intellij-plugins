@@ -6,8 +6,10 @@ import com.intellij.grazie.grammar.strategy.BaseGrammarCheckingStrategy
 import com.intellij.grazie.grammar.strategy.StrategyUtils
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup
-import com.intellij.psi.*
 import com.intellij.psi.JavaDocTokenType.*
+import com.intellij.psi.JavaTokenType
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.javadoc.PsiDocComment
@@ -32,5 +34,5 @@ class JavaGrammarCheckingStrategy : BaseGrammarCheckingStrategy {
 
   override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
 
-  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = StrategyUtils.indentIndexes(text, setOf(' '))
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = StrategyUtils.indentIndexes(text, setOf(' ', '\t'))
 }

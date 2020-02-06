@@ -12,5 +12,5 @@ class CommentGrammarCheckingStrategy : GrammarCheckingStrategy {
 
   override fun getReplaceCharRules(root: PsiElement) = emptyList<ReplaceCharRule>()
 
-  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = StrategyUtils.indentIndexes(text, setOf(' ', '*', '/', '#'))
+  override fun getStealthyRanges(root: PsiElement, text: CharSequence) = StrategyUtils.indentIndexes(text, setOf(' ', '\t', ';', '*', '/', '#'))
 }
