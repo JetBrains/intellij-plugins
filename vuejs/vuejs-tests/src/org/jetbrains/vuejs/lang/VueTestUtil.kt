@@ -18,8 +18,8 @@ fun getVueTestDataPath() = PathManager.getHomePath() + vueRelativeTestDataPath()
 fun vueRelativeTestDataPath() = "/contrib/vuejs/vuejs-tests/testData"
 
 // TODO remove duplication with AngularTestUtil
-fun renderLookupItems(fixture: CodeInsightTestFixture, renderPriority: Boolean, renderTypeText: Boolean): List<String> {
-  return ContainerUtil.mapNotNull<LookupElement, String>(fixture.lookupElements!!) { el ->
+fun CodeInsightTestFixture.renderLookupItems(renderPriority: Boolean, renderTypeText: Boolean): List<String> {
+  return ContainerUtil.mapNotNull<LookupElement, String>(lookupElements!!) { el ->
     val result = StringBuilder()
     val presentation = TestLookupElementPresentation.renderReal(el)
     if (renderPriority && presentation.isItemTextBold) {

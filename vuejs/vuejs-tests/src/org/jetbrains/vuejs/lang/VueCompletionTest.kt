@@ -1372,7 +1372,7 @@ $script""")
                         "VBottomSheet#vuetify#80", "VBottomSheetTransition#vuetify#80", "VCheckbox#vuetify#80", "VChip#vuetify#80",
                         "VDatePickerHeader#vuetify#80", "VDatePickerMonthTable#vuetify#80", "VHover#vuetify#80",
                         "VStepperHeader#vuetify#80", "VSubheader#vuetify#80", "VSwitch#vuetify#80"),
-                 renderLookupItems(myFixture, renderPriority = true, renderTypeText = true)
+                 myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
                    .filter { !it.contains("html") }
                    .sorted())
   }
@@ -1388,7 +1388,7 @@ $script""")
     myFixture.completeBasic()
     assertEquals(listOf("Component#vue#80", "KeepAlive#vue#80", "Slot#vue#80", "Transition#vue#80", "TransitionGroup#vue#80",
                         "component#vue#80", "keep-alive#vue#80", "slot#vue#80", "transition#vue#80", "transition-group#vue#80"),
-                 renderLookupItems(myFixture, renderPriority = true, renderTypeText = true)
+                 myFixture.renderLookupItems(renderPriority = true, renderTypeText = true)
                    .filter { !it.contains("http://www.w3.org") }
                    .sorted())
   }
@@ -1442,7 +1442,7 @@ $script""")
              "itemref#25", "itemscope#25", "itemtype#25", "key#25", "lang#25", "nonce#25", "prefix#25", "property#25", "rel#25",
              "resource#25", "rev#25", "role#25", "slot#25", "spellcheck#25", "style#25", "tabindex#25", "title#25",
              "translate#25", "typeof#25", "vocab#25"),
-      renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
+      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false)
         .filter { !it.contains("aria-") }
         .sorted())
   }
@@ -1485,7 +1485,7 @@ $script""")
              "v-bind:#25", "v-cloak#25", "v-else#25", "v-else-if#25", "v-for#25", "v-html#25", "v-if#25", "v-model#25",
              "v-on:#25", "v-once#25", "v-pre#25", "v-show#25", "v-slot#25", "v-slot:#25", "v-text#25", "vocab#0", "xml:base#0",
              "xml:lang#0", "xml:space#0"),
-      renderLookupItems(myFixture, renderPriority = true, renderTypeText = false)
+      myFixture.renderLookupItems(renderPriority = true, renderTypeText = false)
         .filter { !it.contains("aria-") && !it.startsWith("on") }
         .sorted())
   }
@@ -1629,7 +1629,7 @@ $script""")
 
   fun testTopLevelTags() {
     createPackageJsonWithVueDependency(myFixture)
-    for((tag, list) in listOf(
+    for ((tag, list) in listOf(
       Pair("template", listOf("lang", "src", "functional")),
       Pair("script", listOf("lang", "id", "src")),
       Pair("style", listOf("lang", "src", "module", "scoped"))
@@ -1645,7 +1645,7 @@ $script""")
     myFixture.copyDirectoryToProject("modifiers", ".")
     myFixture.configureFromTempProjectFile("App.vue")
     myFixture.completeBasic()
-    assertEquals(listOf("ba","foo"), myFixture.lookupElementStrings!!)
+    assertEquals(listOf("ba", "foo"), myFixture.lookupElementStrings!!)
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {
