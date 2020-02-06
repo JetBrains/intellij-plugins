@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -307,15 +308,37 @@ class VueModelManager {
 
     fun getFilter(it: JSImplicitElement): VueFilter? {
       if (it.userString == VueGlobalFiltersIndex.JS_KEY) {
-        val call = it.context
+        val call = it.context ?: return null
         var filterMethod: PsiElement = it
-        if (call is JSCallExpression) {
-          call.arguments.getOrNull(1)
+        val data = getVueIndexData(it)
+        if (!data.nameRef.isNullOrBlank()) {
+          resolveFilterReference(call, data.nameRef)
             ?.let { filterMethod = it }
+        }
+        else if (call is JSCallExpression) {
+          val stub = (call as? StubBasedPsiElement<*>)?.stub
+          if (stub != null) {
+            stub.childrenStubs.asSequence()
+              .filter { it.stubType !== JSStubElementTypes.LITERAL_EXPRESSION }
+              .firstOrNull()
+              ?.let { filterMethod = it.psi }
+          }
+          else {
+            call.arguments.getOrNull(1)
+              ?.let { filterMethod = it }
+          }
         }
         return VueSourceFilter(toAsset(it.name), filterMethod)
       }
       return null
+    }
+
+    private fun resolveFilterReference(context: PsiElement, refName: String): PsiElement? {
+      val localRes = JSStubBasedPsiTreeUtil.resolveLocally(refName, context)
+                     ?: return null
+      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(localRes)
+               .firstOrNull()
+             ?: localRes
     }
 
     fun getApp(appDeclaration: JSObjectLiteralExpression): VueApp {
