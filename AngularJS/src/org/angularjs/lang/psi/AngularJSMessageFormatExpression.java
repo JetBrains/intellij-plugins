@@ -21,7 +21,7 @@ import java.util.List;
  * @author Irina.Chernushina on 12/2/2015.
  */
 public class AngularJSMessageFormatExpression extends JSExpressionImpl {
-  private static final Logger LOG = Logger.getInstance("#org.angularjs.lang.psi.AngularJSMessageFormatExpression");
+  private static final Logger LOG = Logger.getInstance(AngularJSMessageFormatExpression.class);
 
   public AngularJSMessageFormatExpression(IElementType elementType) {
     super(elementType);

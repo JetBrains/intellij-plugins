@@ -16,9 +16,10 @@ import org.angularjs.lang.parser.AngularJSElementTypes;
 import org.angularjs.lang.parser.AngularJSMessageFormatParser;
 import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static org.angularjs.AngularJSBundle.message;
 
 /**
  * @author Irina.Chernushina on 12/7/2015.
@@ -51,7 +52,7 @@ public class AngularMessageFormatCompletion {
     }
   };
   public static final LookupElementWeigher MESSAGE_FORMAT_KEYWORD_WEIGHER = new LookupElementWeigher("angular.message.format") {
-    @Nullable
+
     @Override
     public Comparable weigh(@NotNull LookupElement element) {
       if (element.getObject() instanceof AngularJSPluralCategories) {
@@ -121,9 +122,10 @@ public class AngularMessageFormatCompletion {
       for (AngularJSPluralCategories category : values) {
         LookupElementBuilder element = LookupElementBuilder.create(category).withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER);
         if (AngularJSPluralCategories.other.equals(category)) {
-          element = element.withTypeText("Default selection keyword", true);
-        } else {
-          element = element.withTypeText("Plural category", true);
+          element = element.withTypeText(message("angularjs.completion.type.default.selection.keyword"), true);
+        }
+        else {
+          element = element.withTypeText(message("angularjs.completion.type.plural.category"), true);
         }
         set.addElement(element);
       }
@@ -131,8 +133,11 @@ public class AngularMessageFormatCompletion {
         final LookupElementBuilder element = LookupElementBuilder.create("=" + i).withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER);
         set.addElement(element);
       }
-    } else {
-      set.addElement(LookupElementBuilder.create("other").setTypeText("Default selection keyword", true).withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER));
+    }
+    else {
+      set.addElement(LookupElementBuilder.create("other")
+                       .withTypeText(message("angularjs.completion.type.default.selection.keyword"), true)
+                       .withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER));
     }
     set.stopHere();
   }
@@ -140,7 +145,7 @@ public class AngularMessageFormatCompletion {
   private static void messageFormatExtensions(CompletionResultSet result) {
     for (AngularJSMessageFormatParser.ExtensionType type : AngularJSMessageFormatParser.ExtensionType.values()) {
       final LookupElementBuilder elementBuilder = LookupElementBuilder.create(type.name())
-        .setTypeText("Message format extension", true);
+        .withTypeText(message("angularjs.completion.type.message.format.extension"), true);
       result.consume(elementBuilder);
     }
     result.stopHere();

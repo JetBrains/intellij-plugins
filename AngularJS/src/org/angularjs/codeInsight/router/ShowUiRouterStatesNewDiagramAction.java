@@ -22,12 +22,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.angularjs.AngularJSBundle.message;
+
 /**
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   public static final String USAGE_KEY = "angular.js.ui.router.show.diagram";
-  public static final String DESCRIPTION = "Show AngularJS ui-router State Diagram";
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
@@ -55,7 +56,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
                                             entry.getKey());
           graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
         }
-      }), "Building " + diagramProvider.getPresentableName() + " diagram", false, project);
+      }), message("angularjs.ui.router.diagram.action.new.diagram.progress", diagramProvider.getPresentableName()), false, project);
 
     final AngularUiRouterProviderContext routerProviderContext = AngularUiRouterProviderContext.getInstance(project);
     routerProviderContext.reset();
@@ -70,7 +71,10 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
       }
     };
     if (graphBuilders.isEmpty()) {
-      Messages.showInfoMessage(project, "No router states found.", DESCRIPTION);
+      //noinspection DialogTitleCapitalization
+      Messages.showInfoMessage(project,
+                               message("angularjs.ui.router.diagram.action.new.diagram.info.no.router.states.found"),
+                               message("angularjs.ui.router.diagram.action.new.diagram.name"));
       return;
     }
     if (graphBuilders.size() == 1) consumer.consume(graphBuilders.get(0).getSecond());
@@ -86,7 +90,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     }
     list.setListData(ArrayUtil.toObjectArray(data));
     JBPopupFactory.getInstance().createListPopupBuilder(list)
-      .setTitle("Select Main Template File")
+      .setTitle(message("angularjs.ui.router.diagram.action.new.diagram.select.main.file"))
       .setItemChoosenCallback(() -> {
         final int index = list.getSelectedIndex();
         if (index >= 0) {
@@ -101,8 +105,9 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     final Project project = e.getProject();
     e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project));
 
-    e.getPresentation().setText(DESCRIPTION);
-    e.getPresentation().setDescription(DESCRIPTION);
+    //noinspection DialogTitleCapitalization
+    e.getPresentation().setText(message("angularjs.ui.router.diagram.action.new.diagram.name"));
+    e.getPresentation().setDescription(message("angularjs.ui.router.diagram.action.new.diagram.description"));
     e.getPresentation().setIcon(AngularJSIcons.AngularJS);
   }
 }

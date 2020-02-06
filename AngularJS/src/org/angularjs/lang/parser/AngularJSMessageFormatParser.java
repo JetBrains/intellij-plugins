@@ -1,6 +1,7 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
@@ -12,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.angularjs.AngularJSBundle.message;
 
 /**
  * @author Irina.Chernushina on 11/30/2015.
@@ -87,12 +90,12 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
             }
           }
           else {
-            builder.error("expected {{");
+            builder.error(message("angularjs.parser.message.expected.double.lbrace"));
             mark.drop();
             return false;
           }
         }
-        else if (JSTokenTypes.RBRACE == type) {
+        else {
           mark.done(AngularJSElementTypes.MESSAGE_FORMAT_MESSAGE);
           builder.advanceLexer();
           return true;
@@ -109,7 +112,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
 
   private boolean expectDoubleRBrace(boolean advance) {
     if (!isRBraceOrNull(builder.getTokenType()) || !isRBraceOrNull(builder.lookAhead(1))) {
-      builder.error("expected }}");
+      builder.error(message("angularjs.parser.message.expected.double.rbrace"));
       return false;
     }
     if (advance) {
@@ -132,14 +135,14 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
       if (builder.lookAhead(1) != JSTokenTypes.COLON) {
         builder.advanceLexer();
-        builder.error("expected colon");
+        builder.error(JSBundle.message("javascript.parser.message.expected.colon"));
         return false;
       }
       final IElementType value = builder.lookAhead(2);
       if (!JSTokenTypes.LITERALS.contains(value) && JSTokenTypes.IDENTIFIER != value) {
         builder.advanceLexer();
         builder.advanceLexer();
-        builder.error("expected offset option value");
+        builder.error(message("angularjs.parser.message.expected.offset.option"));
         return false;
       }
       final PsiBuilder.Marker mark = builder.mark();
@@ -160,7 +163,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           expectDoubleRBrace(false);
           return;
         } else if (JSTokenTypes.LBRACE == type) {
-          builder.error("expected selection keyword");
+          builder.error(message("angularjs.parser.message.expected.selection.keyword"));
           return;
         } else {
           final PsiBuilder.Marker mark = builder.mark();
@@ -177,7 +180,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           if (!parseInnerMessage()) return;  //+-
           key = true;
         } else {
-          builder.error("expected message in {} delimiters");
+          builder.error(message("angularjs.parser.message.expected.message.in.brace.delimiters"));
           return;
         }
       }

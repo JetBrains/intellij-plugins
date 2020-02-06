@@ -15,7 +15,7 @@ public class AngularJSProjectGenerator extends AbstractGithubTagDownloadedProjec
   @NotNull
   @Override
   protected String getDisplayName() {
-    return "AngularJS";
+    return AngularJSBundle.message("angularjs.new.project.name");
   }
 
   @NotNull
@@ -33,8 +33,7 @@ public class AngularJSProjectGenerator extends AbstractGithubTagDownloadedProjec
   @Nullable
   @Override
   public String getDescription() {
-    return "<html>This project is an application skeleton for a typical <a href=\"https://angularjs.org\">AngularJS</a> web app.<br>" +
-           "Don't forget to install dependencies by running<pre>npm install</pre></html>";
+    return AngularJSBundle.message("angularjs.new.project.description");
   }
 
   @Override

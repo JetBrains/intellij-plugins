@@ -33,6 +33,7 @@ import com.intellij.uml.core.renderers.DefaultUmlRenderer;
 import com.intellij.uml.presentation.DiagramPresentationModelImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBUI;
+import org.angularjs.AngularJSBundle;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -110,7 +111,6 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return element instanceof DiagramObject;
       }
 
-      @Nullable
       @Override
       public String getElementTitle(DiagramObject element) {
         return element.getName();
@@ -220,7 +220,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
   @Override
   public String getPresentableName() {
-    return "AngularJS ui-router states and views";
+    return AngularJSBundle.message("angularjs.ui.router.diagram.provider.name");
   }
 
   @Override
@@ -281,7 +281,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       public EdgeLabel[] getEdgeLabels(DiagramEdge umlEdge, String label) {
         if (!(umlEdge instanceof AngularUiRouterEdge)) return super.getEdgeLabels(umlEdge, label);
         AngularUiRouterEdge angularEdge = (AngularUiRouterEdge)umlEdge;
-        if (!isShowEdgeLabels() || umlEdge == null || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
+        if (!isShowEdgeLabels() || StringUtil.isEmptyOrSpaces(angularEdge.getLabel())) {
           return EMPTY_LABELS;
         }
         //if (!myVisibleEdges.contains(umlEdge)) return EMPTY_LABELS;
@@ -561,7 +561,9 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     private final AnAction myAction;
 
     MyEditSourceAction() {
-      super("Jump To...", "Jump To...", AllIcons.Actions.EditSource);
+      super(AngularJSBundle.message("angularjs.ui.router.diagram.action.edit.source.name"),
+            AngularJSBundle.message("angularjs.ui.router.diagram.action.edit.source.description"),
+            AllIcons.Actions.EditSource);
       myAction = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE);
     }
 

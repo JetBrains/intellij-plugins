@@ -5,6 +5,7 @@ import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.psi.tree.IElementType;
+import org.angularjs.AngularJSBundle;
 import org.angularjs.lang.lexer.AngularJSTokenTypes;
 
 /**
@@ -141,7 +142,7 @@ public class AngularJSParser
       if (tokenType == JSTokenTypes.OR) {
         builder.advanceLexer();
         if (!parseFilter()) {
-          builder.error("expected filter");
+          builder.error(AngularJSBundle.message("angularjs.parser.message.expected.filter"));
         }
         return true;
       }
