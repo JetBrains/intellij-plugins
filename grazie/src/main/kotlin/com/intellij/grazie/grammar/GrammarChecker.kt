@@ -99,7 +99,7 @@ object GrammarChecker {
 
   private fun findTokensInTypoPatternRange(tokens: Collection<TokenInfo>, patternRangeInRoot: IntRange): List<TokenInfo> {
     return tokens.filter { it.range.endInclusive >= patternRangeInRoot.start && it.range.start <= patternRangeInRoot.endInclusive }.also {
-      check(it.isNotEmpty()) { "No tokens for range in typo: $patternRangeInRoot in ${tokens.map { it.range }}" }
+      check(it.isNotEmpty()) { "No tokens for range in typo: $patternRangeInRoot in ${tokens.map { token -> token.range }}" }
     }
   }
 

@@ -2,7 +2,6 @@
 package com.intellij.grazie
 
 import com.intellij.AbstractBundle
-import com.intellij.CommonBundle
 import org.jetbrains.annotations.PropertyKey
 import java.util.*
 import java.util.function.Supplier

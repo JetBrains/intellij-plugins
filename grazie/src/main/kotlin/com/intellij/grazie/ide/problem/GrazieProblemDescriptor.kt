@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.ide
+package com.intellij.grazie.ide.problem
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptorBase
@@ -7,8 +7,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
-import com.intellij.grazie.ide.quickfix.supress.GrazieDisableCategoryQuickFix
-import com.intellij.grazie.ide.quickfix.supress.GrazieDisableRuleQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
@@ -17,25 +15,38 @@ import com.intellij.util.containers.toArray
 import kotlinx.html.*
 
 class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
-  fix.location.element!!, fix.location.element!!,
+  fix.location.element!!,
+  fix.location.element!!,
   fix.toDescriptionTemplate(isOnTheFly),
   fix.toFixes(isOnTheFly).toArray(LocalQuickFix.EMPTY_ARRAY),
-  ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false,
-  fix.toSelectionRange(), true, isOnTheFly
+  ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+  false,
+  fix.toSelectionRange(),
+  true,
+  isOnTheFly
 ) {
+
+  init {
+    //Do not add problem group if running unit tests -- it is not detected by checkHighlight
+    if (ApplicationManager.getApplication().isUnitTestMode.not()) {
+      problemGroup = GrazieProblemGroup(fix)
+    }
+  }
+
   companion object {
     private val interner: WeakStringInterner = WeakStringInterner()
 
-    private fun Typo.toFixes(isOnTheFly: Boolean) = buildList<LocalQuickFix> {
-      if (isOnTheFly && !ApplicationManager.getApplication().isUnitTestMode) {
-        if (fixes.isNotEmpty()) {
-          GrazieFUCounterCollector.typoFound(this@toFixes)
-          add(GrazieReplaceTypoQuickFix(this@toFixes))
-        }
+    private fun Typo.toFixes(isOnTheFly: Boolean): List<LocalQuickFix> {
+      val fixes = ArrayList<LocalQuickFix>()
 
-        add(GrazieDisableRuleQuickFix(this@toFixes.info.rule))
-        add(GrazieDisableCategoryQuickFix(this@toFixes.info.lang, this@toFixes.info.rule.category))
+      if (isOnTheFly && !ApplicationManager.getApplication().isUnitTestMode) {
+        if (this.fixes.isNotEmpty()) {
+          GrazieFUCounterCollector.typoFound(this@toFixes)
+          fixes.add(GrazieReplaceTypoQuickFix(this@toFixes))
+        }
       }
+
+      return fixes
     }
 
     private fun Typo.toDescriptionTemplate(isOnTheFly: Boolean): String {

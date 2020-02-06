@@ -20,7 +20,7 @@ private class GrazieNotificationComponent : StartupActivity.Background {
         Notification.showLanguagesMessage(project)
       }
 
-      it.update(lastSeenVersion = GraziePlugin.version)
+      it.copy(lastSeenVersion = GraziePlugin.version)
     }
   }
 }

@@ -77,7 +77,7 @@ object Notification {
       .addAction(object : NotificationAction(msg("grazie.languages.action.disable", s)) {
         override fun actionPerformed(e: AnActionEvent, notification: Notification) {
           GrazieConfig.update { state ->
-            state.update(enabledLanguages = state.enabledLanguages - state.missedLanguages,
+            state.copy(enabledLanguages = state.enabledLanguages - state.missedLanguages,
                          nativeLanguage = if (state.nativeLanguage.jLanguage == null) Lang.AMERICAN_ENGLISH else state.nativeLanguage)
           }
           notification.expire()

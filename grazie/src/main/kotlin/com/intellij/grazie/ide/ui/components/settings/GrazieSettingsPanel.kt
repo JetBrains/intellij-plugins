@@ -73,7 +73,7 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
         userEnabledRules.remove(id)
       }
 
-      state.update(
+      state.copy(
         enabledLanguages = enabledLanguages,
         enabledProgrammingLanguages = strategies.enabledProgrammingLanguagesIDs,
         userEnabledRules = userEnabledRules,

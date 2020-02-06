@@ -4,17 +4,13 @@ package com.intellij.grazie.jlanguage
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.grazie.utils.lazyConfig
 import tanvd.grazie.langdetect.ngram.LanguageDetectorBuilder
 import tanvd.grazie.langdetect.ngram.impl.ngram.NgramExtractor
 import tanvd.grazie.langdetect.ngram.impl.profiles.LanguageProfileReader
 
 object LangDetector : GrazieStateLifecycle {
-  private var available: Set<Lang>? = null
-    get() {
-      //Required for Inspection Integration Tests and possibly other tests
-      if (field == null) init(GrazieConfig.get())
-      return field
-    }
+  private var available: Set<Lang> by lazyConfig(this::init)
 
   private val detector by lazy {
     LanguageDetectorBuilder(NgramExtractor.standard)
@@ -32,6 +28,7 @@ object LangDetector : GrazieStateLifecycle {
    *
    * @return Language that is detected.
    */
+  @Suppress("MemberVisibilityCanBePrivate")
   fun getLanguage(text: String) = detector.detect(text.take(1_000)).preferred
     .also { GrazieFUCounterCollector.languageDetected(it) }
 
@@ -41,7 +38,7 @@ object LangDetector : GrazieStateLifecycle {
    * @return Lang that is detected and enabled in grazie
    */
   fun getAvailableLang(text: String) = getLanguage(text).let {
-    available!!.find { lang -> lang.equalsTo(it) }
+    available.find { lang -> lang.equalsTo(it) }
   }
 
   override fun init(state: GrazieConfig.State) {

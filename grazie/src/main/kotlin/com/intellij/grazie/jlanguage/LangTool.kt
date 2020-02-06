@@ -6,9 +6,7 @@ import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.broker.GrazieDynamicClassBroker
 import com.intellij.grazie.jlanguage.broker.GrazieDynamicDataBroker
 import org.languagetool.JLanguageTool
-import org.languagetool.config.UserConfig
 import org.languagetool.rules.UppercaseMatchFilter
-import org.languagetool.rules.spelling.SpellingCheckRule
 import java.util.concurrent.ConcurrentHashMap
 
 object LangTool : GrazieStateLifecycle {
@@ -27,7 +25,7 @@ object LangTool : GrazieStateLifecycle {
     require(lang.jLanguage != null) { "Trying to get LangTool for not available language" }
 
     return langs.computeIfAbsent(lang) {
-      JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage, UserConfig(state.userWords.toList())).apply {
+      JLanguageTool(lang.jLanguage!!, state.nativeLanguage.jLanguage).apply {
         addMatchFilter(UppercaseMatchFilter())
 
         state.userDisabledRules.forEach { id -> disableRule(id) }
@@ -40,14 +38,19 @@ object LangTool : GrazieStateLifecycle {
     }
   }
 
-  fun getSpeller(lang: Lang): SpellingCheckRule? = getTool(lang).spellingCheckRule
-
   override fun init(state: GrazieConfig.State) {
     // Creating LanguageTool for each language
     state.availableLanguages.forEach { getTool(it, state) }
   }
 
   override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
+    if (
+      prevState.availableLanguages == newState.availableLanguages
+      && prevState.nativeLanguage == newState.nativeLanguage
+      && prevState.userDisabledRules == newState.userDisabledRules
+      && prevState.userEnabledRules == newState.userEnabledRules
+    ) return
+
     langs.clear()
     rulesToLanguages.clear()
 

@@ -15,6 +15,7 @@ data class RuleGroup(val rules: LinkedSet<String>) {
     val EMPTY = RuleGroup()
 
     /** Rule for checking double whitespaces */
+    @Deprecated("Use getStealthyRanges() in GrammarCheckingStrategy and StrategyUtils.indentIndexes()")
     val WHITESPACES = RuleGroup("WHITESPACE_RULE")
 
     /** Rules that are usually disabled for literal strings */

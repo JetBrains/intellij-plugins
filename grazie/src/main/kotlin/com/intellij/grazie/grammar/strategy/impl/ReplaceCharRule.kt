@@ -21,6 +21,7 @@ object ReplaceNewLines : ReplaceCharRule() {
 /**
  * Rule for replacing slashes with whitespaces
  */
+@Deprecated("Use getStealthyRanges() in GrammarCheckingStrategy")
 object ReplaceSlashes : ReplaceCharRule() {
   override fun replace(prefix: CharSequence, current: Char) = if (current == '/') ' ' else current
 }
@@ -28,6 +29,7 @@ object ReplaceSlashes : ReplaceCharRule() {
 /**
  * Rule for replacing asterisks with whitespaces
  */
+@Deprecated("Use getStealthyRanges() in GrammarCheckingStrategy")
 object ReplaceAsterisk : ReplaceCharRule() {
   override fun replace(prefix: CharSequence, current: Char) = if (current == '*') ' ' else current
 }

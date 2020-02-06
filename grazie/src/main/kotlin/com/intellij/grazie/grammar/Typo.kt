@@ -2,10 +2,7 @@
 package com.intellij.grazie.grammar
 
 import com.intellij.grazie.jlanguage.Lang
-import com.intellij.grazie.utils.LinkedSet
-import com.intellij.grazie.utils.PsiPointer
-import com.intellij.grazie.utils.toIntRange
-import com.intellij.grazie.utils.withOffset
+import com.intellij.grazie.utils.*
 import com.intellij.psi.PsiElement
 import org.languagetool.rules.IncorrectExample
 import org.languagetool.rules.Rule
@@ -30,10 +27,20 @@ data class Typo(val location: Location, val info: Info, val fixes: LinkedSet<Str
       throw t
     }
 
-    fun withOffset(offset: Int) = copy(errorRange = IntRange(errorRange.start + offset, errorRange.endInclusive + offset))
+    val patternText = try {
+      pointer?.element?.text?.subSequence(patternRange)?.toString()
+    }
+    catch (t: Throwable) {
+      logger.warn("Got an exception during getting pattern text:\n${pointer?.element!!.text}")
+      throw t
+    }
   }
 
-  data class Info(val lang: Lang, val rule: Rule, val shortMessage: String, val message: String) {
+  data class Info(val lang: Lang, val rule: Rule, private val myShortMessage: String, val message: String) {
+    val shortMessage: String by lazy {
+      myShortMessage.trimToNull() ?: rule.description.trimToNull() ?: rule.category.getName(lang.jLanguage)
+    }
+
     val incorrectExample: IncorrectExample? by lazy {
       val withCorrections = rule.incorrectExamples.filter { it.corrections.isNotEmpty() }.takeIf { it.isNotEmpty() }
       (withCorrections ?: rule.incorrectExamples).minBy { it.example.length }

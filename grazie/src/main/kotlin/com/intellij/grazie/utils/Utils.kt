@@ -28,18 +28,6 @@ else {
 
 fun String.trimToNull(): String? = takeIf(String::isNotBlank)
 
-fun <T> buildList(body: MutableList<T>.() -> Unit): List<T> {
-  val result = ArrayList<T>()
-  result.body()
-  return result
-}
-
-fun <T> buildSet(body: MutableSet<T>.() -> Unit): Set<T> {
-  val result = LinkedSet<T>()
-  result.body()
-  return result
-}
-
 fun <T> Collection<T>.toLinkedSet() = LinkedSet<T>(this)
 
 typealias LinkedSet<T> = LinkedHashSet<T>

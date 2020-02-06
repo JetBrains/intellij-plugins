@@ -30,7 +30,7 @@ object LangDownloader {
 
       GrazieDynamic.addDynClassLoader(classLoader)
 
-      GrazieConfig.update { state -> state.update() }
+      GrazieConfig.update { state -> state.copy() }
       return true
     }
 

@@ -24,7 +24,7 @@ abstract class GrazieTestBase : BasePlatformTestCase() {
 
     if (GrazieConfig.get().enabledLanguages != enabledLanguages) {
       GrazieConfig.update { state ->
-        state.update(enabledLanguages = enabledLanguages)
+        state.copy(enabledLanguages = enabledLanguages)
       }
 
       PlatformTestUtil.dispatchAllEventsInIdeEventQueue()

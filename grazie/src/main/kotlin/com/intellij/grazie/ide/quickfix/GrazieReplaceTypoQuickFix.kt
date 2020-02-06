@@ -8,7 +8,6 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.ui.components.dsl.msg
-import com.intellij.grazie.utils.trimToNull
 import com.intellij.ide.DataManager
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.lang.injection.InjectedLanguageManager
@@ -25,8 +24,7 @@ import kotlin.math.min
 class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
   override fun getFamilyName() = msg("grazie.quickfix.replace.typo.family")
 
-  override fun getName() = msg("grazie.quickfix.replace.typo.text", (typo.info.shortMessage.trimToNull()
-    ?: typo.info.rule.category.getName(typo.info.lang.jLanguage)))
+  override fun getName() = msg("grazie.quickfix.replace.typo.text", typo.info.shortMessage)
 
   override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 

@@ -25,24 +25,3 @@ object Text {
   }
 }
 
-/** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
-fun String.splitWithRanges(vararg separators: Char, consumer: (IntRange, String) -> Unit) = splitWithRanges(
-  separators.toList(), consumer = consumer)
-
-/** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
-fun String.splitWithRanges(separators: List<Char>, consumer: (IntRange, String) -> Unit) {
-  val word = StringBuilder()
-  for ((index, char) in this@splitWithRanges.withIndex()) {
-    word.append(char)
-    if (char in separators) {
-      consumer(IntRange(index - (word.length - 1), index), word.toString())
-      word.clear()
-    }
-  }
-  if (word.isNotEmpty()) {
-    consumer(IntRange(this@splitWithRanges.length - word.length, this@splitWithRanges.length - 1), word.toString())
-  }
-}
-
-fun Regex.matches(char: Char) = this.matches(char.toString())
-

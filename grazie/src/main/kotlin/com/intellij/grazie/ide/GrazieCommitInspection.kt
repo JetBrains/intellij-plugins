@@ -20,6 +20,7 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
 
     override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
       if (prevState.enabledCommitIntegration == newState.enabledCommitIntegration) return
+
       ProjectManager.getInstance().openProjects.forEach { project ->
         updateInspectionState(project, newState)
       }
