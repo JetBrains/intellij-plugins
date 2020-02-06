@@ -2,7 +2,9 @@
 package training.learn.lesson.ruby.navigation
 
 import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.openapi.actionSystem.impl.ActionMenuItem
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.wm.impl.content.BaseLabel
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -48,15 +50,43 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
           }
         }
       }
-      actionTask("FindUsages") {
-        "Use ${action(it)} to see a more detailed view of usages. You can invoke ${action(it)} on either a declaration or usage."
+
+      task("FindUsages") {
+        text("Use ${action(it)} to see a more detailed view of usages. You can invoke ${action(it)} on either a declaration or usage.")
+
+        triggerByUiComponentAndHighlight { ui: BaseLabel ->
+          ui.text?.contains("Usages of") ?: false
+        }
+        test {
+          actions(it)
+        }
       }
 
-      actionTask("PinToolwindowTab") {
-        "From the <strong>Find view</strong> you can navigate to both usages and declarations. " +
-        "The next search will override these results in the <strong>Find view</strong> window. " +
-        "To prevent it, pin the results by right clicking the tab title, <strong>Usages of</strong>," +
-        "and selecting <strong>Pin tab</strong>."
+      task {
+        test {
+          ideFrame {
+            previous.ui?.let { usagesTab -> jComponent(usagesTab).rightClick() }
+          }
+        }
+        triggerByUiComponentAndHighlight(highlightInside = false) { ui: ActionMenuItem ->
+          ui.text?.contains("Pin Tab") ?: false
+        }
+        restoreByUi()
+        text("From the <strong>Find view</strong> you can navigate to both usages and declarations. " +
+             "The next search will override these results in the <strong>Find view</strong> window. " +
+             "To prevent it, pin the results: ")
+        text("Right click the tab title, <strong>Usages of</strong>.")
+      }
+
+      task("PinToolwindowTab") {
+        trigger(it)
+        restoreByUi()
+        text("Select <strong>Pin tab</strong>.")
+        test {
+          ideFrame {
+            jComponent(previous.ui!!).click()
+          }
+        }
       }
 
       actionTask("HideActiveWindow") {
