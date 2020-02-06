@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.Disposable;
@@ -20,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import org.dartlang.analysis.server.protocol.ClosingLabel;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class DartClosingLabelManager {
                   @Override
                   public void closingLabelPreferenceChanged() {
                     if (!getShowClosingLabels()) {
-                      UIUtil.invokeLaterIfNeeded(() -> clearAllInlays());
+                      clearAllInlays();
                     }
                   }
                 },
