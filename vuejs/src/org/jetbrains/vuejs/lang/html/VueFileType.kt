@@ -13,7 +13,7 @@ class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   }
 
   override fun getName(): String {
-    return VueBundle.message("vue.file.type.name")
+    return "Vue.js"
   }
 
   override fun getDescription(): String {
