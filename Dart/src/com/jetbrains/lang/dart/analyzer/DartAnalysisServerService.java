@@ -44,10 +44,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.ui.GuiUtils;
 import com.intellij.util.Consumer;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
@@ -791,11 +791,9 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   void updateCurrentFile() {
-    UIUtil.invokeLaterIfNeeded(() -> {
-      if (myProject.isDisposed()) return;
-
-      DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile());
-    });
+    GuiUtils.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
+                                 ModalityState.NON_MODAL,
+                                 myProject.getDisposed());
   }
 
   public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {

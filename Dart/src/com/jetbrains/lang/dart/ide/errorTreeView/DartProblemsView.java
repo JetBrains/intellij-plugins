@@ -15,9 +15,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.GuiUtils;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerMessages;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -98,13 +98,13 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         @Override
         public void analysisStarted() {
           myAnalysisIsBusy = true;
-          UIUtil.invokeLaterIfNeeded(() -> updateIcon());
+          GuiUtils.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
         }
 
         @Override
         public void analysisFinished() {
           myAnalysisIsBusy = false;
-          UIUtil.invokeLaterIfNeeded(() -> updateIcon());
+          GuiUtils.invokeLaterIfNeeded(() -> updateIcon(), ModalityState.NON_MODAL, myProject.getDisposed());
         }
       }
     );
