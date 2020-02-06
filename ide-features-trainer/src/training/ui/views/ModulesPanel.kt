@@ -18,7 +18,6 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import icons.FeaturesTrainerIcons
-import training.commands.kotlin.TaskContext
 import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.LearnBundle
@@ -196,17 +195,6 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
   }
 
   private fun addDevelopmentTools() {
-    modulesPanel.add(JCheckBox().apply {
-      addItemListener { e -> TaskContext.inTestMode = e.stateChange == 1 }
-      isFocusable = true
-      isVisible = true
-      isSelected = true
-      isEnabled = true
-      isOpaque = false
-      model.isSelected = false
-      text = "Run in test mode"
-    })
-
     modulesPanel.add(JButton().apply {
       action = object : AbstractAction() {
         override fun actionPerformed(actionEvent: ActionEvent) {
@@ -226,7 +214,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
       action = object : AbstractAction() {
         override fun actionPerformed(actionEvent: ActionEvent) {
           LessonStateManager.resetPassedStatus()
-          LearningLessonsAutoExecutor.runLessons(guessCurrentProject(modulesPanel))
+          LearningLessonsAutoExecutor.runAllLessons(guessCurrentProject(modulesPanel))
         }
       }
       margin = JBUI.emptyInsets()

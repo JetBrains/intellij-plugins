@@ -24,9 +24,17 @@ import java.util.concurrent.TimeoutException
 private val LOG: Logger = Logger.getInstance(LearningLessonsAutoExecutor::class.java)
 
 class LearningLessonsAutoExecutor(val project: Project, private val progress: ProgressIndicator) {
-  fun execute() {
+  private fun runAllLessons() {
     with(TaskTestContext.guiTestCase) {
       runAllModules()
+    }
+  }
+
+  private fun runSingleLesson(lesson: Lesson) {
+    with(TaskTestContext.guiTestCase) {
+      ideFrame {
+        executeLesson(lesson, this)
+      }
     }
   }
 
@@ -63,15 +71,19 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     })
     progress.checkCanceled()
     TaskContext.inTestMode = true
-    linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
-    val passedStatus = lessonPromise.blockingGet(4, TimeUnit.SECONDS)
-    if (passedStatus == null || !passedStatus) {
-      LOG.error("Can't pass lesson " + lesson.name)
+    try {
+      linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
+      val passedStatus = lessonPromise.blockingGet(4, TimeUnit.SECONDS)
+      if (passedStatus == null || !passedStatus) {
+        LOG.error("Can't pass lesson " + lesson.name)
+      }
+      else {
+        System.err.println("Passed " + lesson.name)
+      }
     }
-    else {
-      System.err.println("Passed " + lesson.name)
+    finally {
+      TaskContext.inTestMode = false
     }
-    TaskContext.inTestMode = false
   }
 
   private fun GuiTestCase.linkAtLearnPanel(link: () -> ComponentFixture<*, *>) {
@@ -86,11 +98,23 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
   }
 
   companion object {
-    fun runLessons(project: Project) {
+    fun runAllLessons(project: Project) {
       runBackgroundableTask("Run all lessons", project) {
         try {
           val learningLessonsAutoExecutor = LearningLessonsAutoExecutor(project, it)
-          learningLessonsAutoExecutor.execute()
+          learningLessonsAutoExecutor.runAllLessons()
+        }
+        finally {
+          TaskContext.inTestMode = false
+        }
+      }
+    }
+
+    fun runSingleLesson(project: Project, lesson: Lesson) {
+      runBackgroundableTask("Run lesson", project) {
+        try {
+          val learningLessonsAutoExecutor = LearningLessonsAutoExecutor(project, it)
+          learningLessonsAutoExecutor.runSingleLesson(lesson)
         }
         finally {
           TaskContext.inTestMode = false

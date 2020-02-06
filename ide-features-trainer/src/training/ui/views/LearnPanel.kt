@@ -13,10 +13,14 @@ import training.keymap.KeymapUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
+import training.learn.lesson.kimpl.KLesson
 import training.ui.LessonMessagePane
 import training.ui.Message
 import training.ui.UISettings
 import training.ui.UiManager
+import training.util.LearningLessonsAutoExecutor
+import training.util.TrainingMode
+import training.util.featureTrainerMode
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.net.URI
@@ -319,6 +323,23 @@ class LearnPanel : JPanel() {
       moduleNamePanel.add(Box.createHorizontalStrut(20))
       moduleNamePanel.add(Box.createHorizontalGlue())
       moduleNamePanel.add(allTopicsLabel)
+
+      if (featureTrainerMode == TrainingMode.DEVELOPMENT && lesson is KLesson) {
+        moduleNamePanel.add(JButton().apply {
+          action = object : AbstractAction() {
+            override fun actionPerformed(actionEvent: ActionEvent) {
+              LearningLessonsAutoExecutor.runSingleLesson(guessCurrentProject(moduleNamePanel), lesson)
+            }
+          }
+          margin = JBUI.emptyInsets()
+          isFocusable = false
+          isVisible = true
+          isSelected = false
+          isEnabled = true
+          isOpaque = false
+          text = "Run"
+        })
+      }
 
       moduleLessons.text = lesson.module.name
       moduleLessons.font = UISettings.instance.boldFont
