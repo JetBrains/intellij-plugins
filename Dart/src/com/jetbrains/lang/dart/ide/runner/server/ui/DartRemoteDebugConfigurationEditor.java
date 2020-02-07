@@ -18,7 +18,9 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import com.intellij.ui.*;
+import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
@@ -28,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.SortedSet;
@@ -41,22 +42,11 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   private JPanel myMainPanel;
   private JTextArea myVMArgsArea;
   private FixedSizeButton myCopyButton;
-  private JTextField myHostField;
-  private PortField myPortField;
   private ComboboxWithBrowseButton myDartProjectCombo;
 
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
-    myHostField.getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
-      protected void textChanged(@NotNull DocumentEvent e) {
-        updateVmArgs();
-      }
-    });
-
-    myPortField.addChangeListener(e -> updateVmArgs());
-
     initCopyToClipboardActions();
     initDartProjectsCombo(project);
   }
@@ -103,7 +93,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
     }
 
-    myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel(myComboItems.toArray()));
+    myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel<>(myComboItems.toArray()));
 
     myDartProjectCombo.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                new TextComponentAccessor<JComboBox>() {
@@ -126,19 +116,10 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     return myMainPanel;
   }
 
-  private void updateVmArgs() {
-    final String host = myHostField.getText().trim();
-    final boolean localhost = "localhost".equals(host) || "127.0.0.1".equals(host);
-    myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + (localhost ? "" : "/0.0.0.0") + " --pause_isolates_on_start");
-  }
-
   @Override
   protected void resetEditorFrom(@NotNull final DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
-    myHostField.setText(params.getHost());
-    myPortField.setNumber(params.getPort());
     setSelectedProjectPath(params.getDartProjectPath());
-    updateVmArgs();
   }
 
   private void setSelectedProjectPath(@NotNull final String projectPath) {
@@ -159,9 +140,6 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   @Override
   protected void applyEditorTo(@NotNull final DartRemoteDebugConfiguration config) throws ConfigurationException {
     final DartRemoteDebugParameters params = config.getParameters();
-    params.setHost(myHostField.getText().trim());
-    params.setPort(myPortField.getNumber());
-
     final Object selectedItem = myDartProjectCombo.getComboBox().getSelectedItem();
     params.setDartProjectPath(selectedItem instanceof NameAndPath ? ((NameAndPath)selectedItem).myPath : "");
   }
