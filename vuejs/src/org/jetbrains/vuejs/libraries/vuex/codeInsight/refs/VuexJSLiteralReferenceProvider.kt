@@ -72,7 +72,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       }
     }
 
-    val VUEX_CALL_ARRAY_OBJECT_ITEM_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
+    val VUEX_ARRAY_ITEM_OR_OBJECT_PROP_VALUE_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
       override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
         val functionName = when (val context = element.context) {
           is JSProperty -> context.context?.context
@@ -113,8 +113,9 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           val mapperName = JSStubBasedPsiTreeUtil.resolveLocally(functionName, functionRef)
             ?.castSafelyTo<JSParameter>()
             ?.contextOfType(JSFunction::class)
-            ?.context
-            ?.castSafelyTo<JSProperty>()
+            ?.let {
+              it as? JSProperty ?: it.context as? JSProperty
+            }
             ?.context?.context
             ?.let { getFunctionReference(it) }
             ?.referenceName

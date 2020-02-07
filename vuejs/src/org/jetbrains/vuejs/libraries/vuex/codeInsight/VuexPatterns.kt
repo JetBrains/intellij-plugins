@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.vuex.codeInsight
 
 import com.intellij.lang.javascript.patterns.JSElementPattern
 import com.intellij.lang.javascript.patterns.JSPatterns
-import com.intellij.lang.javascript.patterns.JSReferenceExpressionPattern
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.patterns.PlatformPatterns
@@ -24,6 +23,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE_DEC
+import kotlin.reflect.KClass
 
 object VuexPatterns {
   private val CALL_WITH_PLAIN_ARG: PsiElementPattern.Capture<JSCallExpression> =
@@ -41,25 +41,21 @@ object VuexPatterns {
       .withFirstChild(JSPatterns.jsReferenceExpression().withReferenceNames(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC))
       .withParent(PlatformPatterns.psiElement(ES6Decorator::class.java))
 
-  val VUEX_CALL_LITERAL_ARGUMENT: JSElementPattern.Capture<JSLiteralExpression> =
-    JSPatterns.jsLiteralExpression()
+  fun <T: JSElement> vuexCallArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+    PlatformPatterns.psiElement(elementClass.java)
       .withAncestor(2, CALL_WITH_PLAIN_ARG)
 
-  val VUEX_CALL_REFERENCE_ARGUMENT: JSReferenceExpressionPattern =
-    JSPatterns.jsReferenceExpression()
-      .withAncestor(2, CALL_WITH_PLAIN_ARG)
-
-  val VUEX_DECORATOR_LITERAL_ARGUMENT: JSElementPattern.Capture<JSLiteralExpression> =
-    JSPatterns.jsLiteralExpression()
+  fun <T: JSElement> vuexDecoratorArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+    PlatformPatterns.psiElement(elementClass.java)
       .withAncestor(2, DECORATOR_CALL)
 
-  val VUEX_CALL_ARRAY_ITEM_LITERAL: JSElementPattern.Capture<JSLiteralExpression> =
-    JSPatterns.jsLiteralExpression()
+  fun <T: JSElement> vuexArrayItemPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+    PlatformPatterns.psiElement(elementClass.java)
       .withParent(JSArrayLiteralExpression::class.java)
       .withAncestor(3, MAPPER_CALL)
 
-  val VUEX_CALL_OBJECT_PROPERTY_LITERAL: JSElementPattern.Capture<JSLiteralExpression> =
-    JSPatterns.jsLiteralExpression()
+  fun <T: JSElement> vuexObjectPropertyValuePattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+    PlatformPatterns.psiElement(elementClass.java)
       .withParent(JSProperty::class.java)
       .withAncestor(4, MAPPER_CALL)
 
