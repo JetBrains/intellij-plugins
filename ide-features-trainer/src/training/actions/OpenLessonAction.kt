@@ -27,7 +27,6 @@ import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.NewLearnProjectUtil
-import training.learn.dialogs.AskToSwitchToLearnProjectBackDialog
 import training.learn.exceptons.*
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.ModuleType
@@ -333,8 +332,9 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
   }
 
   private fun askSwitchToLearnProjectBack(learnProject: Project, currentProject: Project) {
-    val dialog = AskToSwitchToLearnProjectBackDialog(learnProject, currentProject)
-    dialog.show()
+    Messages.showInfoMessage(currentProject,
+                             LearnBundle.message("dialog.askToSwitchToLearnProject.message", learnProject.name),
+                             LearnBundle.message("dialog.askToSwitchToLearnProject.title"))
   }
 
   @Throws(IOException::class)
