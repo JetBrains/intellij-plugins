@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.ui.welcomeScreen.recentProjects
 
 import com.intellij.ide.ProjectGroupActionGroup
@@ -41,7 +41,6 @@ import javax.swing.event.ListDataEvent
 import javax.swing.event.ListDataListener
 
 class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
-
   override fun createList(recentProjectActions: Array<out AnAction>?, size: Dimension?): JBList<*> {
     val list = ActionList(IFTRecentProjectListActionProvider.instance.getIFTActions().toTypedArray(), this)
     //restore non-project actions after RecentProjectsWelcomeScreenActionBase#rebuildRecentProjectDataModel
@@ -136,8 +135,8 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
   }
 
 
-  override fun createRenderer(pathShortener: UniqueNameBuilder<ReopenProjectAction>?): ListCellRenderer<*> {
-    return object : RecentProjectPanel.RecentProjectItemRenderer(myPathShortener) {
+  override fun createRenderer(pathShortener: UniqueNameBuilder<ReopenProjectAction>?): ListCellRenderer<AnAction> {
+    return object : RecentProjectPanel.RecentProjectItemRenderer() {
       private var nameCell: GridBagConstraints? = null
       private var pathCell: GridBagConstraints? = null
       private var closeButtonCell: GridBagConstraints? = null
@@ -192,17 +191,13 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
         add(myPath, pathCell)
       }
 
-      override fun getListCellRendererComponent(list: JList<*>,
-                                                value: Any?,
-                                                index: Int,
-                                                isSelected: Boolean,
-                                                cellHasFocus: Boolean): Component {
-        val fore = getListForeground(isSelected, list.hasFocus())
-        val back = getListBackground(isSelected, list.hasFocus())
+      override fun getListCellRendererComponent(list: JList<out AnAction>, value: AnAction?, index: Int, selected: Boolean, focused: Boolean): Component {
+        val fore = getListForeground(selected, list.hasFocus())
+        val back = getListBackground(selected, list.hasFocus())
         val name = JLabel()
         val path = JLabel()
         name.foreground = fore
-        path.foreground = if (isSelected) fore else UIUtil.getInactiveTextColor()
+        path.foreground = if (selected) fore else UIUtil.getInactiveTextColor()
 
         background = back
 
@@ -369,6 +364,4 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
       }
     }
   }
-
-
 }
