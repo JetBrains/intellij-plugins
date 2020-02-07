@@ -126,6 +126,9 @@ Vue components defined using separate .html, .js, and .css files are not support
                             implementationClass="org.jetbrains.vuejs.codeInsight.VueCompletionContributor"
                             id="VueCompletionContributor"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
+    <completion.contributor language="JavaScript"
+                            implementationClass="org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexCompletionContributor"
+                            id="VuexCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
     <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
 

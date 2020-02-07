@@ -9,6 +9,7 @@ import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.javascript.completion.JSCompletionUtil
 import com.intellij.lang.javascript.completion.JSLookupElementRenderer
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult
 import com.intellij.lang.javascript.validation.HighlightSeverityHolder
@@ -52,14 +53,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     val pathPrefix = fullName.lastIndexOf('/').let {
       if (it < 0) "" else fullName.substring(0, it + 1)
     }
-    val prefix = VuexStoreContext.appendSegment(namespaceResolver(element), pathPrefix)
-    val result = mutableListOf<Any>()
-    VuexModelManager.getVuexStoreContext(element)
-      ?.visit(accessor) { name: String, symbol: Any ->
-        if (name.startsWith(prefix) && name.length > prefix.length && symbol is VuexNamedSymbol)
-          result.add(createLookupItem(symbol.resolveTarget, name.substring(prefix.length)))
-      }
-    return result.toTypedArray()
+    return getLookupItems(element, namespaceResolver, accessor, pathPrefix, false).toTypedArray()
   }
 
   override fun getUnresolvedMessagePattern(): String {
@@ -84,23 +78,41 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     return result
   }
 
-  private fun createLookupItem(value: PsiElement, name: String): LookupElement {
-    ProgressManager.checkCanceled()
-    val priority = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY
-    var builder = LookupElementBuilder.createWithSmartPointer(name, value)
-    builder = builder
-      .withRenderer(JSLookupElementRenderer(name, value, priority, false, null))
-      .withInsertHandler { context, _ ->
-        if (context.completionChar == REPLACE_SELECT_CHAR) {
-          PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-          val elementAtOffset = context.file.findElementAt(context.startOffset)
-                                ?: return@withInsertHandler
-          context.document.deleteString(context.editor.caretModel.offset, elementAtOffset.textRange.endOffset - 1)
-          context.commitDocument()
-        }
-      }
+  companion object {
 
-    return JSCompletionUtil.withJSLookupPriority(builder, priority)
+    fun getLookupItems(element: PsiElement, namespaceResolver: NamespaceProvider,
+                       accessor: VuexSymbolAccessor?, pathPrefix: String,
+                       wrapWithQuotes: Boolean): List<LookupElement> {
+      val prefix = VuexStoreContext.appendSegment(namespaceResolver(element), pathPrefix)
+      val result = mutableListOf<LookupElement>()
+      val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
+      VuexModelManager.getVuexStoreContext(element)
+        ?.visit(accessor) { name: String, symbol: Any ->
+          if (name.startsWith(prefix) && name.length > prefix.length && symbol is VuexNamedSymbol)
+            result.add(createLookupItem(symbol.resolveTarget, quote + name.substring(prefix.length) + quote))
+        }
+      return result
+    }
+
+    private fun createLookupItem(value: PsiElement, name: String): LookupElement {
+      ProgressManager.checkCanceled()
+      val priority = JSLookupPriority.SMART_PRIORITY
+      var builder = LookupElementBuilder.createWithSmartPointer(name, value)
+      builder = builder
+        .withRenderer(JSLookupElementRenderer(name, value, priority, false, null))
+        .withInsertHandler { context, _ ->
+          if (context.completionChar == REPLACE_SELECT_CHAR) {
+            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+            val elementAtOffset = context.file.findElementAt(context.startOffset)
+                                  ?: return@withInsertHandler
+            context.document.deleteString(context.editor.caretModel.offset, elementAtOffset.textRange.endOffset - 1)
+            context.commitDocument()
+          }
+        }
+
+      return JSCompletionUtil.withJSLookupPriority(builder, priority)
+    }
+
   }
 
 }

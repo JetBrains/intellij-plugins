@@ -76,6 +76,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(0, "foo() { this.store.dispatch('<caret>cart/applyCoupon', code) }", false)
     doItemsTest(1, "foo() { this.\$store.dispatch('cart/a<caret>', code) }", false)
     doItemsTest(1, "foo() { this.store.dispatch('cart/a<caret>', code) }", false)
+    doItemsTest(2, "foo() { this.\$store.dispatch(<caret>, code) }", false, strict = false, renderPriority = true)
+    doItemsTest(2, "foo() { this.store.dispatch(<caret>, code) }", false, strict = false, renderPriority = true)
 
     doTypingTest("foo() { return this.\$store.dispatch('<caret>foo/bar', code)", false,
                  "cartCoupon\t", "('cart/applyCoupon', code)")
@@ -89,6 +91,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(0, "foo() { this.store.commit('<caret>cart/breadcrumbs/set', code) }", false)
     doItemsTest(1, "foo() { this.\$store.commit('cart/<caret>', code) }", false)
     doItemsTest(1, "foo() { this.store.commit('cart/<caret>', code) }", false)
+    doItemsTest(2, "foo() { this.\$store.commit(<caret>, code) }", false, strict = false, renderPriority = true)
+    doItemsTest(2, "foo() { this.store.commit(<caret>, code) }", false, strict = false, renderPriority = true)
 
     doTypingTest("foo() { return this.\$store.commit('<caret>foo/bar', code)", false,
                  "cartset\n", "('cart/breadcrumbs/setfoo/bar', code)")

@@ -149,7 +149,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
     }
   }
 
-  protected abstract fun getSettings(element: PsiElement): ReferenceProviderSettings?
+  abstract fun getSettings(element: PsiElement): ReferenceProviderSettings?
 
   override fun getReferencesByElement(element: PsiElement, processingContext: ProcessingContext): Array<PsiReference> {
     if (element is JSLiteralExpression) {
@@ -176,7 +176,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
   }
 
 
-  protected interface ReferenceProviderSettings {
+  interface ReferenceProviderSettings {
     val symbolAccessor: VuexSymbolAccessor?
     val baseNamespaceProvider: NamespaceProvider
     val isSoft: Boolean
