@@ -15,7 +15,6 @@ import training.actions.OpenLessonAction
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.exceptons.InvalidSdkException
-import training.learn.exceptons.NoJavaModuleException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 
@@ -79,7 +78,7 @@ class CourseManager internal constructor() {
    * *
    * @throws InvalidSdkException - if project SDK is not suitable for module
    */
-  @Throws(InvalidSdkException::class, NoJavaModuleException::class)
+  @Throws(InvalidSdkException::class)
   fun checkEnvironment(project: Project) {
     val sdk = ProjectRootManager.getInstance(project).projectSdk
     LangManager.getInstance().getLangSupport()?.checkSdk(sdk, project) ?: throw Exception("Language for learning plugin is not defined")

@@ -28,7 +28,6 @@ import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.NewLearnProjectUtil
 import training.learn.dialogs.AskToSwitchToLearnProjectBackDialog
-import training.learn.dialogs.SdkModuleProblemDialog
 import training.learn.exceptons.*
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.ModuleType
@@ -217,9 +216,6 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson,
                                                                                                               lesson)
     }
-    catch (noJavaModuleException: NoJavaModuleException) {
-      showModuleProblemDialog(projectWhereToStartLesson)
-    }
     catch (e: Exception) {
       LOG.error(e)
     }
@@ -334,11 +330,6 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       CourseManager.instance.registerVirtualFile(lesson.module, vf!!)
     }
     return vf
-  }
-
-  private fun showModuleProblemDialog(project: Project) {
-    val dialog = SdkModuleProblemDialog(project)
-    dialog.show()
   }
 
   private fun askSwitchToLearnProjectBack(learnProject: Project, currentProject: Project) {
