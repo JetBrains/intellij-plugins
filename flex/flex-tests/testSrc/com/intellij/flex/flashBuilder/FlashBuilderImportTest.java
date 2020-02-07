@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.flashBuilder;
 
 import com.intellij.flex.model.bc.ComponentSet;
@@ -707,7 +708,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
   public void testPathVariables() throws Exception {
     final PathMacros pathMacros = PathMacros.getInstance();
     if (pathMacros.getValue("FLASH_BUILDER_PATH_VARIABLE") != null) {
-      pathMacros.removeMacro("FLASH_BUILDER_PATH_VARIABLE");
+      pathMacros.setMacro("FLASH_BUILDER_PATH_VARIABLE", null);
     }
 
     final VirtualFile settingsDir = VfsUtil.createDirectories(
@@ -747,7 +748,7 @@ public class FlashBuilderImportTest extends HeavyPlatformTestCase {
     assertEquals("en_US\nja_JP", bc.getCompilerOptions().getOption("compiler.locale"));
 
     assertEquals(someAbsoluteFolderPath, pathMacros.getValue("FLASH_BUILDER_PATH_VARIABLE"));
-    pathMacros.removeMacro("FLASH_BUILDER_PATH_VARIABLE");
+    pathMacros.setMacro("FLASH_BUILDER_PATH_VARIABLE", null);
   }
 
   private static VirtualFile addFileWithContent(String name, String content, VirtualFile settingsDir) throws IOException {
