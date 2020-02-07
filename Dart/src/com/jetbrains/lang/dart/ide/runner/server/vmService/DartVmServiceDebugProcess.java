@@ -165,6 +165,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
     });
 
     if (DebugType.REMOTE == myDebugType) {
+      // Accepted inputs:
+      // - http://127.0.0.1:<port>/
+      // - http://127.0.0.1:<port>/<auth-code>
+      // - https://127.0.0.1:<port>/<auth-code>
+      // - ws://127.0.0.1:<port>/<auth-code>/ws
+      // - vm@ws://127.0.0.1:<port>/<auth-code>/ws
+      //
+      // All of the above are then parsed/ morphed into the form "ws://127.0.0.1:<port>/<auth-code>/ws"
       String debugUrl = Messages.showInputDialog(getSession().getProject(),
                                                  DartBundle.message("enter.url.to.running.dart.app"),
                                                  DartBundle.message("connect.to.running.app.title"),
@@ -174,7 +182,8 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                                    @Override
                                                    public boolean checkInput(String inputString) {
                                                      inputString = inputString.trim();
-                                                     return inputString.startsWith("http://") && inputString.endsWith("/") ||
+                                                     return inputString.startsWith("http://") ||
+                                                            inputString.startsWith("https://") ||
                                                             inputString.startsWith("ws://") && inputString.endsWith("/ws") ||
                                                             inputString.startsWith("vm@ws://") && inputString.endsWith("/ws");
                                                    }
@@ -194,8 +203,14 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
 
       final String wsToConnect;
       if (debugUrl.startsWith("http://")) {
-        // Convert the dialog entry of some "http://127.0.0.1:PORT/AUTH_CODE=/" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
-        wsToConnect = "ws" + StringUtil.trimStart(debugUrl, "http") + "ws";
+        // Convert the dialog entry of some "http://127.0.0.1:PORT/AUTH_CODE=" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        // The end of the URL may or may not have a slash, but multiple slashes won't be connected to:
+        wsToConnect = "ws" + StringUtil.trimStart(debugUrl, "http") + (debugUrl.endsWith("/") ? "" : "/") + "ws";
+      }
+      else if (debugUrl.startsWith("https://")) {
+        // Convert the dialog entry of some "https://127.0.0.1:PORT/AUTH_CODE=" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
+        // The end of the URL may or may not have a slash, but multiple slashes won't be connected to:
+        wsToConnect = "ws" + StringUtil.trimStart(debugUrl, "https") + (debugUrl.endsWith("/") ? "" : "/") + "ws";
       }
       else if (debugUrl.startsWith("vm@ws://")) {
         // Convert the dialog entry of some "vm@ws://127.0.0.1:PORT/AUTH_CODE=/ws" to "ws://127.0.0.1:PORT/AUTH_CODE=/ws"
