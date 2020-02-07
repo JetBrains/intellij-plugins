@@ -67,8 +67,8 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
 
-  public DartProblemsViewPanel(@NotNull final Project project,
-                               @NotNull final DartProblemsPresentationHelper presentationHelper) {
+  DartProblemsViewPanel(@NotNull final Project project,
+                        @NotNull final DartProblemsPresentationHelper presentationHelper) {
     super(false, true);
     myProject = project;
     myPresentationHelper = presentationHelper;
@@ -101,7 +101,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     });
 
     //noinspection unchecked
-    ((DefaultRowSorter)table.getRowSorter()).setRowFilter(myPresentationHelper.getRowFilter());
+    ((DefaultRowSorter<DartProblemsTableModel, Integer>)table.getRowSorter()).setRowFilter(myPresentationHelper.getRowFilter());
 
     table.getRowSorter().addRowSorterListener(e -> {
       final List<? extends RowSorter.SortKey> sortKeys = myTable.getRowSorter().getSortKeys();
@@ -325,12 +325,9 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final DartAnalysisServerSettingsForm serverSettingsForm = new DartAnalysisServerSettingsForm(myProject);
     serverSettingsForm.reset(myPresentationHelper);
 
-    serverSettingsForm.addListener(new DartAnalysisServerSettingsForm.ServerSettingsListener() {
-      @Override
-      public void settingsChanged() {
-        myPresentationHelper.updateFromServerSettingsUI(serverSettingsForm);
-        DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
-      }
+    serverSettingsForm.addListener(() -> {
+      myPresentationHelper.updateFromServerSettingsUI(serverSettingsForm);
+      DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
     });
 
     createAndShowPopup(DartBundle.message("analysis.server.settings.title"), serverSettingsForm.getMainPanel());
@@ -409,7 +406,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     }
   }
 
-  public void setErrors(@NotNull final Map<String, List<AnalysisError>> filePathToErrors) {
+  public void setErrors(@NotNull final Map<String, List<? extends AnalysisError>> filePathToErrors) {
     final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
     final DartProblem oldSelectedProblem = myTable.getSelectedObject();
 
@@ -422,7 +419,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     updateStatusDescription();
   }
 
-  public void clearAll() {
+  void clearAll() {
     ((DartProblemsTableModel)myTable.getModel()).removeAll();
     updateStatusDescription();
   }

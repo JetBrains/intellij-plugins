@@ -18,15 +18,15 @@ import javax.swing.*;
 public class DartProblemsPresentationHelper {
 
   @NotNull private final Project myProject;
-  @NotNull DartProblemsViewSettings mySettings;
+  @NotNull private DartProblemsViewSettings mySettings;
 
   @Nullable private VirtualFile myCurrentFile;
-  private boolean myDartPackageRootUpToDate = false;
+  private boolean myDartPackageRootUpToDate;
   @Nullable private VirtualFile myCurrentDartPackageRoot;
-  private boolean myContentRootUpToDate = false;
+  private boolean myContentRootUpToDate;
   @Nullable private VirtualFile myCurrentContentRoot;
 
-  public DartProblemsPresentationHelper(@NotNull final Project project) {
+  DartProblemsPresentationHelper(@NotNull final Project project) {
     myProject = project;
     mySettings = new DartProblemsViewSettings(); // Start with default settings. Once actual settings are loaded `setSettings()` is called.
   }
@@ -40,7 +40,7 @@ public class DartProblemsPresentationHelper {
     return mySettings;
   }
 
-  public RowFilter<DartProblemsTableModel, Integer> getRowFilter() {
+  RowFilter<DartProblemsTableModel, Integer> getRowFilter() {
     return new RowFilter<DartProblemsTableModel, Integer>() {
       @Override
       public boolean include(@NotNull final Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
@@ -49,27 +49,27 @@ public class DartProblemsPresentationHelper {
     };
   }
 
-  public void resetAllFilters() {
+  void resetAllFilters() {
     mySettings.showErrors = DartProblemsViewSettings.SHOW_ERRORS_DEFAULT;
     mySettings.showWarnings = DartProblemsViewSettings.SHOW_WARNINGS_DEFAULT;
     mySettings.showHints = DartProblemsViewSettings.SHOW_ERRORS_DEFAULT;
     mySettings.fileFilterMode = DartProblemsViewSettings.FILE_FILTER_MODE_DEFAULT;
 
-    assert (!areFiltersApplied());
+    assert !areFiltersApplied();
   }
 
-  public void updateFromFilterSettingsUI(@NotNull final DartProblemsFilterForm form) {
+  void updateFromFilterSettingsUI(@NotNull final DartProblemsFilterForm form) {
     mySettings.showErrors = form.isShowErrors();
     mySettings.showWarnings = form.isShowWarnings();
     mySettings.showHints = form.isShowHints();
     mySettings.fileFilterMode = form.getFileFilterMode();
   }
 
-  public void updateFromServerSettingsUI(@NotNull final DartAnalysisServerSettingsForm form) {
+  void updateFromServerSettingsUI(@NotNull final DartAnalysisServerSettingsForm form) {
     mySettings.scopedAnalysisMode = form.getScopeAnalysisMode();
   }
 
-  public boolean areFiltersApplied() {
+  boolean areFiltersApplied() {
     if (mySettings.showErrors != DartProblemsViewSettings.SHOW_ERRORS_DEFAULT) return true;
     if (mySettings.showWarnings != DartProblemsViewSettings.SHOW_WARNINGS_DEFAULT) return true;
     if (mySettings.showHints != DartProblemsViewSettings.SHOW_HINTS_DEFAULT) return true;
@@ -78,7 +78,7 @@ public class DartProblemsPresentationHelper {
     return false;
   }
 
-  public boolean setCurrentFile(@Nullable final VirtualFile file) {
+  boolean setCurrentFile(@Nullable final VirtualFile file) {
     if (Comparing.equal(myCurrentFile, file)) {
       return false;
     }
@@ -90,35 +90,35 @@ public class DartProblemsPresentationHelper {
     }
   }
 
-  public boolean isAutoScrollToSource() {
+  boolean isAutoScrollToSource() {
     return mySettings.autoScrollToSource;
   }
 
-  public void setAutoScrollToSource(final boolean autoScroll) {
+  void setAutoScrollToSource(final boolean autoScroll) {
     mySettings.autoScrollToSource = autoScroll;
   }
 
-  public boolean isGroupBySeverity() {
+  boolean isGroupBySeverity() {
     return mySettings.groupBySeverity;
   }
 
-  public void setGroupBySeverity(final boolean groupBySeverity) {
+  void setGroupBySeverity(final boolean groupBySeverity) {
     mySettings.groupBySeverity = groupBySeverity;
   }
 
-  public boolean isShowErrors() {
+  boolean isShowErrors() {
     return mySettings.showErrors;
   }
 
-  public boolean isShowWarnings() {
+  boolean isShowWarnings() {
     return mySettings.showWarnings;
   }
 
-  public boolean isShowHints() {
+  boolean isShowHints() {
     return mySettings.showHints;
   }
 
-  public DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
+  DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
     return mySettings.fileFilterMode;
   }
 
@@ -131,7 +131,7 @@ public class DartProblemsPresentationHelper {
     return myCurrentFile;
   }
 
-  public boolean shouldShowProblem(@NotNull final DartProblem problem) {
+  boolean shouldShowProblem(@NotNull final DartProblem problem) {
     if (!isShowErrors() && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!isShowWarnings() && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
     if (!isShowHints() && AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) return false;

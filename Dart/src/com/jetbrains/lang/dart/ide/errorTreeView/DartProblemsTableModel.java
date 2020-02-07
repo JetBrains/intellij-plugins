@@ -28,7 +28,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private static final TableCellRenderer MESSAGE_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public JLabel getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      // Do not emphasize focused cell, drawing the whole row as selected is enough
+      // Do not emphasize a focused cell, drawing the whole row as selected is enough
       final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
 
       final DartProblem problem = (DartProblem)value;
@@ -51,7 +51,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      // Do not emphasize focused cell, drawing the whole row as selected is enough
+      // Do not emphasize a focused cell, drawing the whole row as selected is enough
       return super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
     }
   };
@@ -59,19 +59,19 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Project myProject;
   @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
 
-  // Kind of hack to keep a reference to the live collection used in a super class, but it allows to improve performance greatly.
+  // Kind of hack to keep a reference to the live collection used in a super class, but it allows improving performance greatly.
   // Having it in hand we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
   private final List<DartProblem> myItems;
 
   private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
 
-  private int myErrorCount = 0;
-  private int myWarningCount = 0;
-  private int myHintCount = 0;
+  private int myErrorCount;
+  private int myWarningCount;
+  private int myHintCount;
 
-  private int myErrorCountAfterFilter = 0;
-  private int myWarningCountAfterFilter = 0;
-  private int myHintCountAfterFilter = 0;
+  private int myErrorCountAfterFilter;
+  private int myWarningCountAfterFilter;
+  private int myHintCountAfterFilter;
 
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
@@ -151,7 +151,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     return false;
   }
 
-  public void removeRows(final int firstRow, final int lastRow) {
+  private void removeRows(final int firstRow, final int lastRow) {
     assert lastRow >= firstRow;
 
     for (int i = lastRow; i >= firstRow; i--) {
@@ -166,7 +166,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     fireTableRowsDeleted(firstRow, lastRow);
   }
 
-  public void removeAll() {
+  void removeAll() {
     final int rowCount = getRowCount();
     if (rowCount > 0) {
       myItems.clear();
@@ -186,8 +186,8 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
    * so that the caller could update selected row in the table
    */
   @Nullable
-  public DartProblem setErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
-                                                               @Nullable final DartProblem selectedProblem) {
+  DartProblem setErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<? extends AnalysisError>> filePathToErrors,
+                                                        @Nullable final DartProblem selectedProblem) {
     final boolean selectedProblemRemoved = removeRowsForFilesInSet(filePathToErrors.keySet(), selectedProblem);
     return addErrorsAndReturnReplacementForSelection(filePathToErrors, selectedProblemRemoved ? selectedProblem : null);
   }
@@ -260,18 +260,18 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   @Nullable
-  private DartProblem addErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
+  private DartProblem addErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<? extends AnalysisError>> filePathToErrors,
                                                                 @Nullable final DartProblem oldSelectedProblem) {
     DartProblem newSelectedProblem = null;
     final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = myPresentationHelper.getScopedAnalysisMode();
 
     final List<DartProblem> problemsToAdd = new ArrayList<>();
-    for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
+    for (Map.Entry<String, List<? extends AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
       final boolean fileOk = vFile != null && (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
                                                ProjectFileIndex.getInstance(myProject).isInContent(vFile));
-      final List<AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
+      List<? extends AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
 
       for (AnalysisError analysisError : errors) {
         if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {
@@ -325,11 +325,11 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     }
   }
 
-  public void setSortKey(@NotNull final RowSorter.SortKey sortKey) {
+  void setSortKey(@NotNull final RowSorter.SortKey sortKey) {
     mySortKey = sortKey;
   }
 
-  public void onFilterChanged() {
+  void onFilterChanged() {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (myPresentationHelper.areFiltersApplied()) {
       myErrorCountAfterFilter = 0;
@@ -355,7 +355,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   }
 
   @NotNull
-  public String getStatusText() {
+  String getStatusText() {
     final StringBuilder b = new StringBuilder();
     final List<String> summary = new ArrayList<>();
 

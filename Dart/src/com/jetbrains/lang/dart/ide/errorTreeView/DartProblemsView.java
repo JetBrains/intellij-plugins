@@ -52,7 +52,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final DartProblemsPresentationHelper myPresentationHelper;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
-  private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
+  private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
 
   private Icon myCurrentIcon;
@@ -60,7 +60,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   private int myFilesWithErrorsHash;
   private Notification myNotification;
-  private boolean myDisabledForSession = false;
+  private boolean myDisabledForSession;
 
   private final Runnable myUpdateRunnable = new Runnable() {
     @Override
@@ -74,7 +74,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
         }
       }
 
-      final Map<String, List<AnalysisError>> filePathToErrors;
+      final Map<String, List<? extends AnalysisError>> filePathToErrors;
       synchronized (myLock) {
         filePathToErrors = new THashMap<>(myScheduledFilePathToErrors);
         myScheduledFilePathToErrors.clear();
@@ -277,7 +277,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
-  public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {
+  public void updateErrorsForFile(@NotNull final String filePath, @NotNull List<? extends AnalysisError> errors) {
     synchronized (myLock) {
       if (myScheduledFilePathToErrors.isEmpty()) {
         myAlarm.addRequest(myUpdateRunnable, TABLE_REFRESH_PERIOD, ModalityState.NON_MODAL);
@@ -303,7 +303,8 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
-  public static String getToolwindowId() {
+  @NotNull
+  static String getToolwindowId() {
     return DartBundle.message("dart.analysis.tool.window");
   }
 }
