@@ -60,7 +60,7 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
           "JSON", "JSON5", "HTML", "XML", "yaml",
           "Python",
           "Properties", "TEXT",
-          "go", "rust"
+          "go", "Rust"
         )
       }.toHashSet()
     }
