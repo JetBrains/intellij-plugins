@@ -55,7 +55,7 @@
                 <constraints/>
                 <properties>
                   <editable value="false"/>
-                  <text value="--debug:5858 --pause_isolates_on_start"/>
+                  <text value="--enable-vm-service --pause_isolates_on_start"/>
                   <wrapStyleWord value="true"/>
                 </properties>
               </component>
