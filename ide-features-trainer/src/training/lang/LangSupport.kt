@@ -57,8 +57,10 @@ interface LangSupport {
 
   fun getToolWindowAnchor(): ToolWindowAnchor = ToolWindowAnchor.LEFT
 
-  //let's replace with importOrOpenLearnProject()
-  fun importLearnProject(): Project?
+  @Deprecated("It is useless method now")
+  fun importLearnProject(): Project? {
+    return null
+  }
 
   @Deprecated("This method will be removed, just define projectResourcePath to customize your project deirectory")
   fun createProject(projectName: String, projectToClose: Project?): Project? = null

@@ -56,10 +56,6 @@ class RubyLangSupport : AbstractLangSupport() {
     RModuleUtil.getInstance().changeModuleSdk(sdk, project.module)
   }
 
-  override fun importLearnProject(): Project? {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
   override val defaultProjectName: String
     get() = rubyProjectName
 
