@@ -7,7 +7,6 @@ import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.ide.ui.components.dsl.pluginOnlyMsg
 import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.remote.GrazieRemote
-import com.intellij.grazie.utils.joinToStringWithOxfordComma
 import com.intellij.notification.*
 import com.intellij.notification.Notification
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -66,7 +65,7 @@ object Notification {
     val s = if (langs.size > 1) "s" else ""
     NOTIFICATION_GROUP_LANGUAGES
       .createNotification(msg("grazie.languages.title", s),
-                          msg("grazie.languages.body", langs.toList().joinToStringWithOxfordComma()),
+                          msg("grazie.languages.body", langs.joinToString()),
                           NotificationType.WARNING, null)
       .addAction(object : NotificationAction(msg("grazie.languages.action.download", s)) {
         override fun actionPerformed(e: AnActionEvent, notification: Notification) {

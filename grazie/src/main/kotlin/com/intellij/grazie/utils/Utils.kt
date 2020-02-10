@@ -7,15 +7,6 @@ fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + o
 
 fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + offset)
 
-fun Iterable<*>.joinToStringWithOxfordComma(separator: String = ", ") = with(toList()) {
-  if (size > 1) {
-    dropLast(1).joinToString(separator, postfix = ", ") + "and ${last()}"
-  }
-  else {
-    last().toString()
-  }
-}
-
 fun Boolean?.orTrue() = this ?: true
 fun Boolean?.orFalse() = this ?: false
 
