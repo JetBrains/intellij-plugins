@@ -91,7 +91,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
     try {
       initByComponent();
-      doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+      doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES_AND_PROLOG, getElementTagName()));
     }
     finally {
       manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
@@ -270,4 +270,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
       "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
 
   static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES = mergeArrays(CORE_5_1_0_5_TAG_NAMES, HTML_TAG_NAMES);
+
+  static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES_AND_PROLOG =
+    mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, "?xml version=\"1.0\" encoding=\"\" ?>");
 }
