@@ -19,20 +19,21 @@ import training.learn.exceptons.NoSdkException
  * @author Sergey Karashevich
  */
 class PythonLangSupport : AbstractLangSupport() {
+  override val defaultProjectName = "PyCharmLearningProject"
 
   override val primaryLanguage: String
     get() = "python"
 
   override val defaultProductName: String = "PyCharm"
 
-  override fun getSdkForProject(project: Project): Sdk {
+  override fun getSdkForProject(project: Project): Sdk? {
     //find registered python SDKs
     var pySdk: Sdk? = ProjectJdkTable.getInstance().allJdks.find { sdk -> sdk.sdkType is PythonSdkType && isNoOlderThan27(sdk) }
 
     //register first detected SDK
     if (pySdk == null) {
       val sdkList: List<Sdk> = detectPySdks()
-      pySdk = sdkList.firstOrNull() ?: throw NoSdkException("Python")
+      pySdk = sdkList.firstOrNull() ?: return null
       ApplicationManager.getApplication().runWriteAction { ProjectJdkTable.getInstance().addJdk(pySdk) }
     }
     return pySdk
@@ -41,9 +42,11 @@ class PythonLangSupport : AbstractLangSupport() {
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
+    if (true) return
+
     if (sdk?.sdkType is PythonSdkType) {
       if (!isNoOlderThan27(sdk)) {
-        throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
+        throw InvalidSdkException("Please use at least Python 2.7")
       }
     }
     else {
