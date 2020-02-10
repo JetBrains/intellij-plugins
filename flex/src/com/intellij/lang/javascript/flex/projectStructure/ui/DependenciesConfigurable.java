@@ -25,7 +25,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -58,6 +57,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.projectModel.ProjectModelBundle;
 import com.intellij.ui.*;
 import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.Place;
@@ -1054,7 +1054,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       @NotNull
       @Override
       public String getDescription() {
-        return ProjectBundle.message("libraries.node.text.module");
+        return ProjectModelBundle.message("libraries.node.text.module");
       }
 
       @NotNull
