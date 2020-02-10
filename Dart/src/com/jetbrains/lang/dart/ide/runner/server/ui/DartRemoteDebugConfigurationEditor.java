@@ -30,8 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -40,42 +38,12 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemoteDebugConfiguration> {
 
   private JPanel myMainPanel;
-  private JTextArea myVMArgsArea;
-  private FixedSizeButton myCopyButton;
   private ComboboxWithBrowseButton myDartProjectCombo;
 
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
-    initCopyToClipboardActions();
     initDartProjectsCombo(project);
-  }
-
-  public void initCopyToClipboardActions() {
-    final DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new AnAction("Copy") {
-      {
-        ActionUtil.copyFrom(this, IdeActions.ACTION_COPY);
-      }
-
-      @Override
-      public void actionPerformed(@NotNull final AnActionEvent e) {
-        CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim()));
-      }
-    });
-
-    myVMArgsArea.addMouseListener(
-      new PopupHandler() {
-        @Override
-        public void invokePopup(final Component comp, final int x, final int y) {
-          ActionManager.getInstance().createActionPopupMenu(ActionPlaces.UNKNOWN, group).getComponent().show(comp, x, y);
-        }
-      }
-    );
-
-    myCopyButton.setSize(ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
-    myCopyButton.setIcon(PlatformIcons.COPY_ICON);
-    myCopyButton.addActionListener(e -> CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim())));
   }
 
   private void initDartProjectsCombo(@NotNull final Project project) {
