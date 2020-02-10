@@ -18,10 +18,6 @@ class SwiftSupport : AbstractLangSupport() {
   override val projectResourcePath: String =
     "/learnProjects/" + ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift"
 
-  override fun importLearnProject(): Project? {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
   }
 

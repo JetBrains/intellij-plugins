@@ -18,11 +18,6 @@ import training.util.JdkSetupUtil
  * @author Sergey Karashevich
  */
 class JavaLangSupport : AbstractLangSupport() {
-
-  override fun importLearnProject(): Project? {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
   override val primaryLanguage: String
     get() = "java"
 
