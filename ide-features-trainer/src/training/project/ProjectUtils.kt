@@ -6,6 +6,7 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
+import training.lang.LangSupport
 import training.util.featureTrainerVersion
 import java.io.File
 import java.io.PrintWriter
@@ -21,29 +22,31 @@ object ProjectUtils {
     return@lazy ideaProjectsPath
   }
 
-  @Deprecated("Use method below", ReplaceWith("importOrOpenProject(projectPath, projectName, classLoader, null)"))
+  @Deprecated("Use method below", ReplaceWith("importOrOpenProject(langSupport, null)"))
   fun importOrOpenProject(projectPath: String,
                           projectName: String,
                           classLoader: ClassLoader): Project? {
-    return importOrOpenProject(projectPath, projectName, classLoader, null)
+    throw IllegalStateException("This method should not be called at all")
   }
+
   /**
    * For example:
    * @projectPath = "/learnProjects/SimpleProject"
    * @projectName = "SimpleProject"
    *
    */
-  fun importOrOpenProject(projectPath: String,
-                          projectName: String,
-                          classLoader: ClassLoader,
-                          projectToClose: Project?): Project? {
-    val dest = File(ideProjectsBasePath, projectName)
+  fun importOrOpenProject(langSupport: LangSupport, projectToClose: Project?): Project? {
+    val dest = File(ideProjectsBasePath, langSupport.defaultProjectName)
 
     if (!isSameVersion(dest)) {
       if (dest.exists()) {
         dest.deleteRecursively()
       }
-      val inputUrl: URL = classLoader.getResource(projectPath)!!
+
+      val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath) ?: throw IllegalArgumentException(
+        "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course"
+      )
+
       FileUtils.copyResourcesRecursively(inputUrl, dest)
       PrintWriter(versionFile(dest), "UTF-8").use {
         it.println(featureTrainerVersion)
