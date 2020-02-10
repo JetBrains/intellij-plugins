@@ -18,10 +18,7 @@ object NewLearnProjectUtil {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
 
     val newProject: Project =
-      ProjectUtils.importOrOpenProject(langSupport.projectResourcePath,
-                                       langSupport.defaultProjectName,
-                                       langSupport.javaClass.classLoader,
-                                       projectToClose)
+      ProjectUtils.importOrOpenProject(langSupport, projectToClose)
       ?: error("Could not create project for " + langSupport.primaryLanguage)
 
     try {
