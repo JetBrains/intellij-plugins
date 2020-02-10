@@ -55,7 +55,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
 
-  private Icon myCurrentIcon;
+  private Icon myCurrentIcon = DartIcons.Dart_13;
   private boolean myAnalysisIsBusy;
 
   private int myFilesWithErrorsHash;
@@ -91,7 +91,6 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     myProject = project;
     myPresentationHelper = new DartProblemsPresentationHelper(project);
     myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
-    myCurrentIcon = DartIcons.Dart_13;
 
     project.getMessageBus().connect().subscribe(
       DartAnalysisServerMessages.DART_ANALYSIS_TOPIC, new DartAnalysisServerMessages.DartAnalysisNotifier() {
@@ -109,8 +108,8 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       }
     );
   }
-
   DartProblemsPresentationHelper getPresentationHelper() {
+
     return myPresentationHelper;
   }
 

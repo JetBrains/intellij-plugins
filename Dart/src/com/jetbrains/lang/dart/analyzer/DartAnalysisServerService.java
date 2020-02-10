@@ -115,11 +115,11 @@ public class DartAnalysisServerService implements Disposable {
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
 
-  private static boolean ourIntentionsRegistered = false;
+  private static boolean ourIntentionsRegistered;
 
   @NotNull private final Project myProject;
-  private boolean myInitializationOnServerStartupDone = false;
-  private boolean mySubscribeToServerLog = false;
+  private boolean myInitializationOnServerStartupDone;
+  private boolean mySubscribeToServerLog;
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
@@ -129,7 +129,7 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull private String myServerVersion = "";
   @NotNull private String mySdkVersion = "";
   //private boolean myDoEnableMLBasedCodeCompletion = false;
-  @Nullable private String mySdkHome = null;
+  @Nullable private String mySdkHome;
 
   private final DartServerRootsHandler myRootsHandler;
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
@@ -943,9 +943,9 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void onErrorsUpdated(@NotNull final String filePath,
-                               @NotNull final List<AnalysisError> errors,
-                               final boolean hasSevereProblems,
-                               final int errorsHash) {
+                               @NotNull List<? extends AnalysisError> errors,
+                               boolean hasSevereProblems,
+                               int errorsHash) {
     updateFilesWithErrorsSet(filePath, hasSevereProblems, errorsHash);
     DartProblemsView.getInstance(myProject).updateErrorsForFile(filePath, errors);
   }
@@ -1462,12 +1462,12 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public List<SourceFileEdit> edit_dartfixNNBD(@NotNull final List<VirtualFile> files) {
+  public List<SourceFileEdit> edit_dartfixNNBD(final @NotNull List<? extends VirtualFile> files) {
     return edit_dartfix(files, Collections.singletonList(DART_FIX_INFO_NON_NULLABLE));
   }
 
   @Nullable
-  private List<SourceFileEdit> edit_dartfix(@NotNull final List<VirtualFile> files, @NotNull final List<String> includedFixes) {
+  private List<SourceFileEdit> edit_dartfix(final @NotNull List<? extends VirtualFile> files, @NotNull final List<String> includedFixes) {
     final AnalysisServer server = myServer;
     if (server == null) {
       return null;

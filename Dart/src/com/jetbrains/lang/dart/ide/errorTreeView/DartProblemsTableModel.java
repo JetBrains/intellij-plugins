@@ -61,7 +61,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
   // Kind of hack to keep a reference to the live collection used in a super class, but it allows improving performance greatly.
   // Having it in hand we can do bulk rows removal with a single fireTableRowsDeleted() call afterwards
-  private final List<DartProblem> myItems;
+  private final List<DartProblem> myItems = new ArrayList<>();
 
   private RowSorter.SortKey mySortKey = new RowSorter.SortKey(1, SortOrder.ASCENDING);
 
@@ -79,7 +79,6 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
     myProject = project;
     myPresentationHelper = presentationHelper;
-    myItems = new ArrayList<>();
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
     setSortable(true);

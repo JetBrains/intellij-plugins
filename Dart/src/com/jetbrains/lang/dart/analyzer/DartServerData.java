@@ -61,7 +61,7 @@ public class DartServerData {
    * @return {@code true} if {@code errors} were processes, {@code false} if ignored;
    * errors are ignored if the file has been edited and new contents has not yet been sent to the server.
    */
-  boolean computedErrors(@NotNull final String filePath, @NotNull final List<AnalysisError> errors, final boolean restartHighlighting) {
+  boolean computedErrors(@NotNull final String filePath, final @NotNull List<? extends AnalysisError> errors, final boolean restartHighlighting) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return false;
 
     final List<DartError> newErrors = new ArrayList<>(errors.size());
@@ -89,7 +89,7 @@ public class DartServerData {
     DartClosingLabelManager.getInstance().computedClosingLabels(myService.getProject(), FileUtil.toSystemIndependentName(filePath), labels);
   }
 
-  void computedHighlights(@NotNull final String filePath, @NotNull final List<HighlightRegion> regions) {
+  void computedHighlights(@NotNull final String filePath, final @NotNull List<? extends HighlightRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartHighlightRegion> newRegions = new ArrayList<>(regions.size());
@@ -107,7 +107,7 @@ public class DartServerData {
     forceFileAnnotation(file, false);
   }
 
-  void computedNavigation(@NotNull final String filePath, @NotNull final List<NavigationRegion> regions) {
+  void computedNavigation(@NotNull final String filePath, final @NotNull List<? extends NavigationRegion> regions) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartNavigationRegion> newRegions = new ArrayList<>(regions.size());
@@ -133,7 +133,7 @@ public class DartServerData {
                                                     myService.getProject().getDisposed());
   }
 
-  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed, final int @NotNull [] removed) {
+  void computedAvailableSuggestions(final @NotNull List<? extends AvailableSuggestionSet> changed, final int @NotNull [] removed) {
     for (int id : removed) {
       myAvailableSuggestionSetMap.remove(id);
     }
@@ -164,7 +164,7 @@ public class DartServerData {
     return new DartNavigationRegion(offset, length, targets);
   }
 
-  void computedOverrides(@NotNull final String filePath, @NotNull final List<OverrideMember> overrides) {
+  void computedOverrides(@NotNull final String filePath, final @NotNull List<? extends OverrideMember> overrides) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final List<DartOverrideMember> newOverrides = new ArrayList<>(overrides.size());
@@ -183,8 +183,8 @@ public class DartServerData {
   }
 
   void computedImplemented(@NotNull final String filePath,
-                           @NotNull final List<ImplementedClass> implementedClasses,
-                           @NotNull final List<ImplementedMember> implementedMembers) {
+                           final @NotNull List<? extends ImplementedClass> implementedClasses,
+                           final @NotNull List<? extends ImplementedMember> implementedMembers) {
     if (myFilePathsWithUnsentChanges.contains(filePath)) return;
 
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
@@ -352,7 +352,7 @@ public class DartServerData {
     removeAllFromMap(myOutlineData, filePaths);
   }
 
-  private static <T> void removeAllFromMap(@NotNull Map<T, ?> map, @NotNull List<T> keys) {
+  private static <T> void removeAllFromMap(@NotNull Map<T, ?> map, @NotNull List<? extends T> keys) {
     if (map.isEmpty()) return;
 
     for (T key : keys) {
