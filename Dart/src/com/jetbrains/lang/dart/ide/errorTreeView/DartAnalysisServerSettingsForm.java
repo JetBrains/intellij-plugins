@@ -63,6 +63,7 @@ public class DartAnalysisServerSettingsForm {
     return myMainPanel;
   }
 
+  @NotNull
   public DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
     if (packageScopedAnalysisCheckbox.isSelected()) {
       return DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;

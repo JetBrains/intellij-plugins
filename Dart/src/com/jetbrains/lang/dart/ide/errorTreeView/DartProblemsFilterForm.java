@@ -102,6 +102,7 @@ public class DartProblemsFilterForm {
     return myHintsCheckBox.isSelected();
   }
 
+  @NotNull
   public DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
     if (myCurrentFileRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.File;
     if (myCurrentDirectoryRadioButton.isSelected()) return DartProblemsViewSettings.FileFilterMode.Directory;
