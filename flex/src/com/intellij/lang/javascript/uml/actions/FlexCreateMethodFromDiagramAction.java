@@ -9,7 +9,7 @@ import com.intellij.util.PlatformIcons;
  */
 public class FlexCreateMethodFromDiagramAction extends JSCreateMethodActionBase {
   public FlexCreateMethodFromDiagramAction() {
-    super(JSBundle.message("new.method.action.text"), JSBundle.message("new.method.action.description"), PlatformIcons.METHOD_ICON);
+    super(JSBundle.lazyMessage("new.method.action.text"), JSBundle.lazyMessage("new.method.action.description"), PlatformIcons.METHOD_ICON);
   }
 
   @Override

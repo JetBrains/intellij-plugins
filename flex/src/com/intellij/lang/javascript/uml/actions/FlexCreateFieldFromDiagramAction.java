@@ -21,7 +21,7 @@ import com.intellij.util.PlatformIcons;
  */
 public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
   public FlexCreateFieldFromDiagramAction() {
-    super(JSBundle.message("new.field.action.text"), JSBundle.message("new.field.action.description"), PlatformIcons.FIELD_ICON);
+    super(JSBundle.lazyMessage("new.field.action.text"), JSBundle.lazyMessage("new.field.action.description"), PlatformIcons.FIELD_ICON);
   }
 
   @Override

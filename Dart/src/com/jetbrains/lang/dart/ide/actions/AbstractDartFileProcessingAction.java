@@ -34,13 +34,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * An abstract {@link AnAction} for processing a single Dart file open in the editor,
  * or a group of selected Dart files.
  */
 public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware {
-  public AbstractDartFileProcessingAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+  public AbstractDartFileProcessingAction(@NotNull Supplier<String> text, @NotNull Supplier<String> description, @Nullable Icon icon) {
     super(text, description, icon);
   }
 

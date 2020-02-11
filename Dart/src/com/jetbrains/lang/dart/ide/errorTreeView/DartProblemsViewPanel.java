@@ -426,7 +426,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
     FilterProblemsAction() {
-      super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
+      super(DartBundle.lazyMessage("filter.problems"), DartBundle.lazyMessage("filter.problems.description"), AllIcons.General.Filter);
     }
 
     @Override
@@ -443,7 +443,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private class AnalysisServerSettingsAction extends DumbAwareAction implements Toggleable {
     AnalysisServerSettingsAction() {
-      super(DartBundle.message("analysis.server.settings"), DartBundle.message("analysis.server.settings.description"),
+      super(DartBundle.lazyMessage("analysis.server.settings"), DartBundle.lazyMessage("analysis.server.settings.description"),
             AllIcons.General.GearPlain);
     }
 

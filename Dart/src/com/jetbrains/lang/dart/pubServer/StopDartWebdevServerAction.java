@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class StopDartWebdevServerAction extends DumbAwareAction {
 
   public StopDartWebdevServerAction() {
-    super(DartBundle.message("stop.dart.webdev.server"), DartBundle.message("stop.dart.webdev.server"), AllIcons.Actions.Suspend);
+    super(DartBundle.lazyMessage("stop.dart.webdev.server"), DartBundle.lazyMessage("stop.dart.webdev.server"), AllIcons.Actions.Suspend);
   }
 
   @Override

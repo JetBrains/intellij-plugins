@@ -33,7 +33,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartSortMembersAction.class.getName());
 
   public DartSortMembersAction() {
-    super(DartBundle.message("dart.sort.members.action.name"), DartBundle.message("dart.sort.members.action.description"), null);
+    super(DartBundle.lazyMessage("dart.sort.members.action.name"), DartBundle.lazyMessage("dart.sort.members.action.description"), null);
   }
 
   @NotNull

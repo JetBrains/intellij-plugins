@@ -13,13 +13,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.IncorrectOperationException;
-import java.util.HashMap;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
 
 public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
   public NewActionScriptClassUmlAction() {
-    super(JSBundle.message("new.actionscript.class.uml.action.text"), JSBundle.message("new.actionscript.class.action.description"),
+    super(JSBundle.lazyMessage("new.actionscript.class.uml.action.text"), JSBundle.lazyMessage("new.actionscript.class.action.description"),
           JSIconProvider.AS_INSTANCE.getClassIcon());
   }
 

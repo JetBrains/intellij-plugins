@@ -32,10 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAction<Object, CreateClassParameters> {
-
-  protected NewJSClassUmlActionBase(String name, String description, Icon icon) {
+  protected NewJSClassUmlActionBase(@NotNull Supplier<String> name, @NotNull Supplier<String> description, Icon icon) {
     super(name, description, icon);
   }
 
