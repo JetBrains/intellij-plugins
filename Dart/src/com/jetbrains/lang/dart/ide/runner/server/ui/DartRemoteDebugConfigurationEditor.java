@@ -1,15 +1,11 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -18,8 +14,9 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopesCore;
-import com.intellij.ui.*;
-import com.intellij.util.PlatformIcons;
+import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.SimpleListCellRenderer;
+import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugParameters;
@@ -28,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -39,53 +33,14 @@ import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemoteDebugConfiguration> {
 
   private JPanel myMainPanel;
-  private JTextArea myVMArgsArea;
-  private FixedSizeButton myCopyButton;
-  private JTextField myHostField;
-  private PortField myPortField;
   private ComboboxWithBrowseButton myDartProjectCombo;
+  private JBLabel myHintLabel;
 
   private final SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
-    myHostField.getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
-      protected void textChanged(@NotNull DocumentEvent e) {
-        updateVmArgs();
-      }
-    });
-
-    myPortField.addChangeListener(e -> updateVmArgs());
-
-    initCopyToClipboardActions();
     initDartProjectsCombo(project);
-  }
-
-  public void initCopyToClipboardActions() {
-    final DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new AnAction("Copy") {
-      {
-        ActionUtil.copyFrom(this, IdeActions.ACTION_COPY);
-      }
-
-      @Override
-      public void actionPerformed(@NotNull final AnActionEvent e) {
-        CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim()));
-      }
-    });
-
-    myVMArgsArea.addMouseListener(
-      new PopupHandler() {
-        @Override
-        public void invokePopup(final Component comp, final int x, final int y) {
-          ActionManager.getInstance().createActionPopupMenu(ActionPlaces.UNKNOWN, group).getComponent().show(comp, x, y);
-        }
-      }
-    );
-
-    myCopyButton.setSize(ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
-    myCopyButton.setIcon(PlatformIcons.COPY_ICON);
-    myCopyButton.addActionListener(e -> CopyPasteManager.getInstance().setContents(new StringSelection(myVMArgsArea.getText().trim())));
+    myHintLabel.setCopyable(true);
   }
 
   private void initDartProjectsCombo(@NotNull final Project project) {
@@ -103,7 +58,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
       }
     }
 
-    myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel(myComboItems.toArray()));
+    myDartProjectCombo.getComboBox().setModel(new DefaultComboBoxModel<>(myComboItems.toArray()));
 
     myDartProjectCombo.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                new TextComponentAccessor<JComboBox>() {
@@ -126,19 +81,10 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     return myMainPanel;
   }
 
-  private void updateVmArgs() {
-    final String host = myHostField.getText().trim();
-    final boolean localhost = "localhost".equals(host) || "127.0.0.1".equals(host);
-    myVMArgsArea.setText("--enable-vm-service:" + myPortField.getNumber() + (localhost ? "" : "/0.0.0.0") + " --pause_isolates_on_start");
-  }
-
   @Override
   protected void resetEditorFrom(@NotNull final DartRemoteDebugConfiguration config) {
     final DartRemoteDebugParameters params = config.getParameters();
-    myHostField.setText(params.getHost());
-    myPortField.setNumber(params.getPort());
     setSelectedProjectPath(params.getDartProjectPath());
-    updateVmArgs();
   }
 
   private void setSelectedProjectPath(@NotNull final String projectPath) {
@@ -159,9 +105,6 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   @Override
   protected void applyEditorTo(@NotNull final DartRemoteDebugConfiguration config) throws ConfigurationException {
     final DartRemoteDebugParameters params = config.getParameters();
-    params.setHost(myHostField.getText().trim());
-    params.setPort(myPortField.getNumber());
-
     final Object selectedItem = myDartProjectCombo.getComboBox().getSelectedItem();
     params.setDartProjectPath(selectedItem instanceof NameAndPath ? ((NameAndPath)selectedItem).myPath : "");
   }

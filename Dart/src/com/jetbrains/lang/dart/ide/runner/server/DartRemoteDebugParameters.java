@@ -1,31 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import org.jetbrains.annotations.NotNull;
 
 public class DartRemoteDebugParameters implements Cloneable {
-  private static final String DEFAULT_DART_DEBUG_HOST = "localhost";
-  private static final int DEFAULT_DART_DEBUG_PORT = 5858;
-
-  @NotNull private String myHost = DEFAULT_DART_DEBUG_HOST;
-  private int myPort = DEFAULT_DART_DEBUG_PORT;
   @NotNull private String myDartProjectPath = "";
-
-  @NotNull
-  public String getHost() {
-    return myHost;
-  }
-
-  public void setHost(@NotNull final String host) {
-    myHost = host.isEmpty() ? DEFAULT_DART_DEBUG_HOST : host;
-  }
-
-  public int getPort() {
-    return myPort;
-  }
-
-  public void setPort(final int port) {
-    myPort = port;
-  }
 
   @NotNull
   public String getDartProjectPath() {
