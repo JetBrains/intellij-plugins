@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -18,7 +19,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ObjectUtils;
 import cucumber.runtime.groovy.GroovySnippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
@@ -38,6 +38,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.params.GrParameter;
 import org.jetbrains.plugins.groovy.lang.psi.util.PsiUtil;
 
 import java.util.Collections;
+import java.util.Objects;
 
 /**
  * @author Max Medvedev
@@ -65,7 +66,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     if (!(file instanceof GroovyFile)) return false;
 
     final Project project = file.getProject();
-    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
+    final VirtualFile vFile = Objects.requireNonNull(file.getVirtualFile());
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
     FileEditorManager.getInstance(project).getAllEditors(vFile);
     FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
@@ -194,7 +195,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   @Override
   public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
     final PsiFile featureFile = step.getContainingFile();
-    return ObjectUtils.assertNotNull(featureFile.getParent());
+    return Objects.requireNonNull(featureFile.getParent());
   }
 
   @NotNull

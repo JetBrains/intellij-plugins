@@ -6,13 +6,13 @@ import com.intellij.psi.css.descriptor.BrowserVersion;
 import com.intellij.psi.css.descriptor.CssContextType;
 import com.intellij.psi.css.descriptor.CssNavigableDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
-import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescriptor, CssNavigableDescriptor {
   @NotNull private final PostCssCustomSelector mySelector;
@@ -102,7 +102,7 @@ public class PostCssCustomSelectorDescriptor implements CssPseudoSelectorDescrip
   @Nullable
   @Override
   public Icon getIcon() {
-    final ItemPresentation presentation = ObjectUtils.notNull(mySelector.getPresentation());
+    final ItemPresentation presentation = Objects.requireNonNull(mySelector.getPresentation());
     return presentation.getIcon(false);
   }
 }

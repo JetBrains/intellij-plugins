@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
@@ -47,8 +47,6 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.intellij.util.ObjectUtils.notNull;
 
 /**
  * @author Irina.Chernushina on 3/23/2016.
@@ -192,7 +190,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             return LightColors.SLIGHTLY_GREEN;
           }
         }
-        return notNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
+        return Objects.requireNonNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
       }
     };
   }

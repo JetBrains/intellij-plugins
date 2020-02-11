@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.codeInsight.template.Template;
@@ -15,7 +16,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
@@ -23,6 +23,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
   @Override
@@ -98,7 +99,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
 
   protected void closeActiveTemplateBuilders(PsiFile file) {
     final Project project = file.getProject();
-    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
+    final VirtualFile vFile = Objects.requireNonNull(file.getVirtualFile());
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
     FileEditorManager.getInstance(project).getAllEditors(vFile);
     FileEditorManager.getInstance(project).openTextEditor(descriptor, true);

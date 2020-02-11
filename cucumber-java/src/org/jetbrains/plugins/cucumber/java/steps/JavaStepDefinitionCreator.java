@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
@@ -27,7 +28,6 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.psi.util.CreateClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ObjectUtils;
 import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
@@ -43,6 +43,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotation;
 
@@ -226,7 +227,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     }
 
     assert featureFile != null;
-    return ObjectUtils.assertNotNull(featureFile.getParent());
+    return Objects.requireNonNull(featureFile.getParent());
   }
 
   @NotNull

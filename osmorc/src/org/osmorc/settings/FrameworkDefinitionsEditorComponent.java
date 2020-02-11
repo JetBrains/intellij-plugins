@@ -52,6 +52,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -89,13 +90,12 @@ public class FrameworkDefinitionsEditorComponent {
 
     myFrameworkInstancesPanel.add(
       ToolbarDecorator.createDecorator(myFrameworkInstances)
-        .setAddAction((b) ->
-          JBPopupFactory.getInstance().createActionGroupPopup(
-            OsmorcBundle.message("frameworks.add.title"),
-            new DefaultActionGroup(addActions),
-            DataManager.getInstance().getDataContext(b.getContextComponent()),
-            false, false, false, null, -1, null
-          ).show(ObjectUtils.notNull(b.getPreferredPopupPoint()))
+        .setAddAction((b) -> JBPopupFactory.getInstance().createActionGroupPopup(
+          OsmorcBundle.message("frameworks.add.title"),
+          new DefaultActionGroup(addActions),
+          DataManager.getInstance().getDataContext(b.getContextComponent()),
+          false, false, false, null, -1, null
+        ).show(Objects.requireNonNull(b.getPreferredPopupPoint()))
         )
         .setRemoveAction((b) -> removeFrameworkInstance())
         .setEditAction((b) -> editFrameworkInstance())

@@ -16,7 +16,6 @@ import com.intellij.psi.css.impl.util.completion.provider.PseudoSelectorsComplet
 import com.intellij.psi.css.util.CssCompletionUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssPsiUtil;
 import org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex;
@@ -24,6 +23,7 @@ import org.intellij.plugins.postcss.references.PostCssCustomMediaReference;
 import org.intellij.plugins.postcss.references.PostCssCustomSelectorReference;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -72,10 +72,10 @@ public class PostCssCompletionContributor extends CompletionContributor {
     int priority = CssCompletionUtil.CSS_PSEUDO_SELECTOR_PRIORITY +
                    (importedFiles.contains(element.getContainingFile().getVirtualFile()) ? 1 : 0);
 
-    ItemPresentation itemPresentation = ObjectUtils.notNull(element.getPresentation());
+    ItemPresentation itemPresentation = Objects.requireNonNull(element.getPresentation());
     return PrioritizedLookupElement.withPriority(
       LookupElementBuilder.createWithSmartPointer("--" + element.getName(), element)
-        .withPresentableText(ObjectUtils.notNull(itemPresentation.getPresentableText()))
+        .withPresentableText(Objects.requireNonNull(itemPresentation.getPresentableText()))
         .withIcon(itemPresentation.getIcon(false))
         .withTypeText(itemPresentation.getLocationString(), true), priority);
   }
