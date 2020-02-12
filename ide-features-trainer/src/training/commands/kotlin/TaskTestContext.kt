@@ -7,14 +7,22 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.testGuiFramework.cellReader.ExtendedJListCellReader
 import com.intellij.testGuiFramework.fixtures.ComponentFixture
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.framework.Timeouts
 import com.intellij.testGuiFramework.impl.GuiTestCase
+import com.intellij.testGuiFramework.impl.findComponentWithTimeout
 import com.intellij.testGuiFramework.impl.waitUntilFound
+import com.intellij.testGuiFramework.util.step
 import org.fest.swing.core.Robot
+import org.fest.swing.fixture.ContainerFixture
+import org.fest.swing.fixture.JListFixture
+import org.fest.swing.timing.Timeout
 import java.awt.Component
+import java.awt.Container
+import javax.swing.JList
 
 class TaskTestContext(val task: TaskContext) {
 
@@ -48,6 +56,24 @@ class TaskTestContext(val task: TaskContext) {
       it.javaClass.name.contains(partOfName) && it.isShowing
     }
   }
+
+  // Modified copy-paste
+  fun <C : Container> ContainerFixture<C>.jListContains(partOfItem: String? = null, timeout: Timeout = Timeouts.seconds02): JListFixture {
+    return step("search '$partOfItem' in list") {
+      val extCellReader = ExtendedJListCellReader()
+      val myJList: JList<*> = findComponentWithTimeout(timeout) { jList: JList<*> ->
+        if (partOfItem == null) true //if were searching for any jList()
+        else {
+          val elements = (0 until jList.model.size).map { it: Int -> extCellReader.valueAt(jList, it) }
+          elements.any { it.toString().contains(partOfItem) } && jList.isShowing
+        }
+      }
+      val jListFixture = JListFixture(robot(), myJList)
+      jListFixture.replaceCellReader(extCellReader)
+      return@step jListFixture
+    }
+  }
+
 
   class SimpleComponentFixture(robot: Robot, target: Component): ComponentFixture<SimpleComponentFixture, Component>(SimpleComponentFixture::class.java, robot, target)
 
