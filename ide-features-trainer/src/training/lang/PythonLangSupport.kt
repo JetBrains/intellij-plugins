@@ -7,6 +7,8 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
@@ -70,4 +72,11 @@ class PythonLangSupport : AbstractLangSupport() {
 
   private fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)
 
+  override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
+    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${sandboxFile}"
+  }
+
+  companion object {
+    const val sandboxFile: String = "sandbox.py"
+  }
 }
