@@ -17,6 +17,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.REGISTER_MODULE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STORE
 import org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex
@@ -24,6 +25,7 @@ import org.jetbrains.vuejs.libraries.vuex.index.VuexStoreIndex
 object VuexModelManager {
 
   fun getVuexStoreContext(element: PsiElement): VuexStoreContext? {
+    if (!isVueContext(element)) return null
     val stores = getAllVuexStores(element.project)
     val registeredModules = getRegisteredModules(element.project)
     return if (stores.isNotEmpty() || registeredModules.isNotEmpty())

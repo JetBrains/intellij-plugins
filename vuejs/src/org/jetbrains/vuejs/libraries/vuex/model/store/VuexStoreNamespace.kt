@@ -72,7 +72,8 @@ open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexSto
   }
 
   override fun equals(other: Any?): Boolean {
-    return (other as? VuexHelpersContextNamespace)?.decorator == decorator
+    return (other?.javaClass == javaClass)
+           && (other as? VuexHelpersContextNamespace)?.decorator == decorator
   }
 
   override fun hashCode(): Int {
@@ -93,6 +94,15 @@ open class VuexStoreContextNamespace(private val accessor: (VuexContainer) -> Co
     }
     return result
   }
+
+  override fun equals(other: Any?): Boolean {
+    return (other as? VuexStoreContextNamespace)?.accessor?.javaClass == accessor.javaClass
+  }
+
+  override fun hashCode(): Int {
+    return accessor.javaClass.hashCode()
+  }
+
 }
 
 

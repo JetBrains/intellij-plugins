@@ -218,17 +218,16 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     private fun isRootCall(functionName: @Nullable String,
                            element: PsiElement): Boolean =
-      functionName == COMMIT
-      || (functionName == DISPATCH
-          && element.contextOfType(JSCallExpression::class)
-            ?.arguments
-            ?.getOrNull(2)
-            ?.castSafelyTo<JSObjectLiteralExpression>()
-            ?.findProperty(PROP_ROOT)
-            ?.value
-            ?.castSafelyTo<JSLiteralExpression>()
-            ?.firstChild
-            ?.elementType == JSTokenTypes.TRUE_KEYWORD)
+      (functionName == DISPATCH || functionName == COMMIT)
+      && element.contextOfType(JSCallExpression::class)
+        ?.arguments
+        ?.getOrNull(2)
+        ?.castSafelyTo<JSObjectLiteralExpression>()
+        ?.findProperty(PROP_ROOT)
+        ?.value
+        ?.castSafelyTo<JSLiteralExpression>()
+        ?.firstChild
+        ?.elementType == JSTokenTypes.TRUE_KEYWORD
 
     fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
       return callContext?.let {

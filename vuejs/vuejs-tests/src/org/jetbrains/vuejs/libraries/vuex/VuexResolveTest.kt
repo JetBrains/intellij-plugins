@@ -291,8 +291,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       // enclosing module action
            "dispatch('load<caret>CategoryFilters'" to "category/actions.ts:9165:TypeScriptFunctionProperty",
            "dispatch('load<caret>CategoryFilter'" to null,
-           "context.dispatch('change<caret>RouterFilterParameters', currentQuery" to "category/actions.ts:11702:TypeScriptFunctionProperty",
-           "dispatch('change<caret>RouterFilterParameters', {foo:12}" to "category/actions.ts:11702:TypeScriptFunctionProperty",
+           "context.dispatch('change<caret>RouterFilterParameters', currentQuery" to "category/actions.ts:11716:TypeScriptFunctionProperty",
+           "dispatch('change<caret>RouterFilterParameters', {foo:12}" to "category/actions.ts:11716:TypeScriptFunctionProperty",
 
       // action with root argument
            "await dispatch('cart/configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
@@ -307,7 +307,7 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // mutation commit
            "context.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-           "commit('cart/breadcrumbs/se<caret>t', {foo:12})" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty"
+           "commit('cart/breadcrumbs/se<caret>t', {foo:12})" to null
 
     )
   }
@@ -332,6 +332,24 @@ class VuexResolveTest : BasePlatformTestCase() {
     doTest(false,
            "state.rou<caret>tes = " to "breadcrumbs/index.ts:69:JSProperty"
     )
+  }
+
+  fun testShoppingCartResolution() {
+    myFixture.configureShoppingCartStore()
+    myFixture.configureFromTempProjectFile("store/modules/cart.js")
+    doTest(false,
+           "return state.ite<caret>ms.m" to "modules/cart.js:99:JSProperty",
+           "rootState.products.a<caret>ll.f" to "modules/products.js:70:JSProperty",
+           "return getters.cart<caret>Products" to "modules/cart.js:167:JSProperty",
+           "[...state.it<caret>ems]" to "modules/cart.js:99:JSProperty",
+           "commit('set<caret>CheckoutStatus', null)" to "modules/cart.js:1956:ES6FunctionProperty",
+           "commit('set<caret>CartItems', { items: [] })" to "modules/cart.js:1890:ES6FunctionProperty",
+           "state.it<caret>ems.push({" to "modules/cart.js:99:JSProperty"
+    )
+    myFixture.configureFromTempProjectFile("store/modules/products.js")
+    doTest(false,
+           "commit('set<caret>Products'" to "modules/products.js:295:ES6FunctionProperty",
+           "state.al<caret>l" to "modules/products.js:70:JSProperty")
   }
 
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {

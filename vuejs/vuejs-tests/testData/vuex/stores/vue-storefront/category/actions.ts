@@ -191,7 +191,7 @@ const actions: ActionTree<CategoryState, RootState> = {
     context.rootGetters['isCartHashChanged']
     context.rootGetters.isCartHashChanged
     context.rootGetters.getCurrentStoreView
-    context.commit('cart/breadcrumbs/set', {})
+    context.commit('cart/breadcrumbs/set', {}, {root: true})
     let resultFilters = aggregationFilters
     const filtersKeys = Object.keys(filters)
     if (categoryMappedFilters && filtersKeys.length) {
