@@ -34,7 +34,7 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
     c.<caret><name> = teams
 
     puts c.<name>
-  """.trimIndent()
+  """.trimIndent() + '\n'
 
   private val sample = parseLessonSample(template.replace("<name>", "teams"))
 
