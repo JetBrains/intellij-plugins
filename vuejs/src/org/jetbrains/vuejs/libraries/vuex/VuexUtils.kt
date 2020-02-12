@@ -1,17 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex
 
-import com.intellij.lang.javascript.psi.JSCallExpression
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSVariable
-import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
+import com.intellij.lang.javascript.psi.JSFunctionItem
+import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.castSafelyTo
-import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
-import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
+import com.intellij.psi.util.contextOfType
 
 object VuexUtils {
 
@@ -30,7 +23,7 @@ object VuexUtils {
   const val STATE_DEC = "State"
   const val ACTION_DEC = "Action"
   const val MUTATION_DEC = "Mutation"
-  private const val CREATE_NAMESPACED_DECS = "namespace"
+  const val CREATE_NAMESPACED_DECS = "namespace"
 
   const val PROP_NAMESPACED = "namespaced"
   const val PROP_ROOT = "root"
@@ -41,42 +34,14 @@ object VuexUtils {
   const val STATE = "state"
   const val ROOT_GETTERS = "rootGetters"
   const val ROOT_STATE = "rootState"
+  const val CONTEXT = "context"
 
   val VUEX_MAPPERS = setOf(MAP_STATE, MAP_GETTERS, MAP_MUTATIONS, MAP_ACTIONS)
   val VUEX_DEC_MAPPERS = setOf(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC)
 
-  fun getNamespaceFromMapper(element: PsiElement, decorator: Boolean): String {
-    val call = PsiTreeUtil.getContextOfType(element, JSCallExpression::class.java)
-    val functionRef = call?.methodExpression?.castSafelyTo<JSReferenceExpression>()
-                      ?: return ""
-    return (if (functionRef.qualifier !== null)
-      functionRef.qualifier.castSafelyTo<JSReferenceExpression>()
-        ?.resolve()
-        ?.castSafelyTo<JSVariable>()
-        ?.let { getNamespaceFromHelpersVar(it, decorator) }
-    else {
-      val functionName = functionRef.referenceName ?: return ""
-      val location = JSStubBasedPsiTreeUtil.resolveLocally(functionName, functionRef)
-      if (location is JSVariable)
-        getNamespaceFromHelpersVar(location, decorator)
-      else
-        getStubSafeCallArguments(call)
-          .getOrNull(0)
-          ?.castSafelyTo<JSLiteralExpression>()
-          ?.let { getTextIfLiteral(it) }
-    }) ?: ""
+  fun isActionContextParameter(parameter: PsiElement?): Boolean {
+    return (parameter as? JSParameter)?.name == CONTEXT
+           && parameter.contextOfType(JSFunctionItem::class)?.parameters?.getOrNull(0) == parameter
   }
 
-  private fun getNamespaceFromHelpersVar(variable: JSVariable, decorator: Boolean): String? {
-    return (variable.initializer
-            ?: JSDestructuringUtil.getNearestDestructuringInitializer(variable))
-      ?.castSafelyTo<JSCallExpression>()
-      ?.takeIf {
-        it.methodExpression?.castSafelyTo<JSReferenceExpression>()
-          ?.referenceName == if (decorator) CREATE_NAMESPACED_DECS else CREATE_NAMESPACED_HELPERS
-      }
-      ?.arguments
-      ?.getOrNull(0)
-      ?.let { getTextIfLiteral(it) }
-  }
 }

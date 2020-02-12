@@ -41,20 +41,20 @@ object VuexPatterns {
       .withFirstChild(JSPatterns.jsReferenceExpression().withReferenceNames(GETTER_DEC, STATE_DEC, ACTION_DEC, MUTATION_DEC))
       .withParent(PlatformPatterns.psiElement(ES6Decorator::class.java))
 
-  fun <T: JSElement> vuexCallArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+  fun <T : JSElement> vuexCallArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
     PlatformPatterns.psiElement(elementClass.java)
       .withAncestor(2, CALL_WITH_PLAIN_ARG)
 
-  fun <T: JSElement> vuexDecoratorArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+  fun <T : JSElement> vuexDecoratorArgumentPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
     PlatformPatterns.psiElement(elementClass.java)
       .withAncestor(2, DECORATOR_CALL)
 
-  fun <T: JSElement> vuexArrayItemPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+  fun <T : JSElement> vuexArrayItemPattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
     PlatformPatterns.psiElement(elementClass.java)
       .withParent(JSArrayLiteralExpression::class.java)
       .withAncestor(3, MAPPER_CALL)
 
-  fun <T: JSElement> vuexObjectPropertyValuePattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
+  fun <T : JSElement> vuexObjectPropertyValuePattern(elementClass: KClass<T>): PsiElementPattern.Capture<T> =
     PlatformPatterns.psiElement(elementClass.java)
       .withParent(JSProperty::class.java)
       .withAncestor(4, MAPPER_CALL)

@@ -18,11 +18,13 @@ cart/getLastTotalsSyncDate#null
 cart/getPaymentMethod#null
 cart/getPaymentMethodCode#null
 cart/getShippingMethod#null
+cart/getShippingMethod2#null
 cart/getShippingMethodCode#null
 cart/getTotals#null
 cart/isCartConnected#null
 cart/isCartEmpty#null
 cart/isCartHashChanged#null
+cart/isCartHashChanged2#null
 cart/isCartHashEmptyOrChanged#null
 cart/isCartSyncEnabled#null
 cart/isSyncRequired#null

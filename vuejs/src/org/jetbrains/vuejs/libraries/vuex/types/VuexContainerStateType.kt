@@ -9,14 +9,12 @@ import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModule
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
-class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: String)
+class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
 
-  constructor(element: PsiElement, baseNamespace: String)
+  constructor(element: PsiElement, baseNamespace: VuexStoreNamespace)
     : this(JSTypeSource(element.containingFile, element, JSTypeSource.SourceLanguage.TS, true), element, baseNamespace)
 
   override val kind: String = "state"
@@ -34,7 +32,7 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
           && namespace.length > baseNamespace.length
           && namespace.indexOf('/', prefixLength + 1) < 0) {
         val name = namespace.substring(prefixLength)
-        val type = VuexContainerStateType(source, element, namespace)
+        val type = VuexContainerStateType(source, element, VuexStaticNamespace(namespace))
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
           name, type, false, true,
           JSLocalImplicitElementImpl(name, type, container.source, JSImplicitElement.Type.Property)))

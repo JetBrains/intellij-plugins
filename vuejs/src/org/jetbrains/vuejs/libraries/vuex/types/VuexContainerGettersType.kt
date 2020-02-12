@@ -11,11 +11,12 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 
-class VuexContainerGettersType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: String)
+class VuexContainerGettersType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
 
-  constructor(element: PsiElement, baseNamespace: String)
+  constructor(element: PsiElement, baseNamespace: VuexStoreNamespace)
     : this(JSTypeSource(element.containingFile, element, JSTypeSource.SourceLanguage.TS, true), element, baseNamespace)
 
   override val kind: String = "getters"

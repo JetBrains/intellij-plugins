@@ -11,5 +11,4 @@ loadCategoryProducts#null
 loadMoreCategoryProducts#null
 processCategoryProducts#null
 registerCategoryProductsMapping#null
-resetSearchFilters#null
 switchSearchFilters#null

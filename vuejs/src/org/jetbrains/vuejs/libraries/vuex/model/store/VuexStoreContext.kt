@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexSymbolAccessor
 
@@ -45,10 +44,6 @@ interface VuexStoreContext {
       val (namespace, container) = containers.pop()
       container.modules.values.asSequence().mapTo(containers) {
         (if (it.isNamespaced) appendSegment(namespace, it.name) else namespace) to it
-      }
-      // TODO properly resolve local context of the element
-      if (PsiTreeUtil.isContextAncestor(container.initializer, element, false)) {
-        consumer("", container)
       }
       consumer(namespace, container)
     }

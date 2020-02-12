@@ -53,6 +53,6 @@
 !"category/loadMoreCategoryProducts"#null#103
 !"category/processCategoryProducts"#null#103
 !"category/registerCategoryProductsMapping"#null#103
-!"category/resetSearchFilters"#null#103
 !"category/switchSearchFilters"#null#103
+!"resetSearchFilters"#null#103
 !"resetUserInvalidateLock"#null#103

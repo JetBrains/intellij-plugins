@@ -15,12 +15,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 import java.util.*
 import java.util.function.Function
 
 abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
                                              protected val element: PsiElement,
-                                             protected val baseNamespace: String)
+                                             protected val baseNamespace: VuexStoreNamespace)
   : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
 
@@ -36,23 +37,27 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
 
   abstract val kind: String
 
+  private val resolvedNamespace: String by lazy {
+    baseNamespace.get(element)
+  }
+
   private fun appendPseudoType(builder: JSTypeTextBuilder, withNamespace: Boolean = true) {
     builder.append("/* Vuex ")
-    if (baseNamespace.isEmpty())
+    if (resolvedNamespace.isEmpty())
       builder.append("store ${kind} */")
     else {
       builder.append("module ${kind}")
       if (withNamespace) {
-        builder.append(" ['").append(baseNamespace).append("']")
+        builder.append(" ['").append(resolvedNamespace).append("']")
       }
       builder.append(" */")
     }
   }
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
-    appendPseudoType(builder)
     if (format != JSType.TypeTextFormat.SIMPLE) {
-      val el = substituteCompletely()
+      appendPseudoType(builder)
+      val el = substitute()
       if (el is JSRecordType) {
         builder.append(" {\n")
         val useTypeScriptRecordTypeFormat = format == JSType.TypeTextFormat.CODE && isTypeScript
@@ -86,13 +91,17 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
         el.buildTypeText(format, builder)
       }
     }
+    else {
+      builder.append("${javaClass.simpleName} : ${baseNamespace} on element ${element}")
+    }
   }
 
   override fun substituteCompletely(): JSType {
     return VuexModelManager.getVuexStoreContext(element)
-             ?.let { createStateRecord(it, VuexStoreContext.appendSegment(baseNamespace, "")) }
+             ?.let { createStateRecord(it, VuexStoreContext.appendSegment(resolvedNamespace, "")) }
            ?: JSAnyType.getWithLanguage(source.language, false)
   }
 
   abstract fun createStateRecord(context: VuexStoreContext, baseNamespace: String): JSRecordType?
+
 }

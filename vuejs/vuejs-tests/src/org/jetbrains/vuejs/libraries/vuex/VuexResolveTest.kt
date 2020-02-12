@@ -264,6 +264,76 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'foo/inner/root<caret>Action'" to null)
   }
 
+  fun testStorefrontStoreActionsContext() {
+    myFixture.configureStorefront()
+    myFixture.configureFromTempProjectFile("store/category/actions.ts")
+    doTest(false,
+      // enclosing module getter
+           "category || getters.getCategory<caret>From(route.path)" to "category/getters.ts:1553:JSProperty",
+           "getters.get<caret>FiltersMap[searchCategory.id]" to "category/getters.ts:5084:JSProperty",
+           "getters.getCurrent<caret>CartHash" to null,
+           "context.getters.getFilters<caret>Map" to "category/getters.ts:5084:JSProperty",
+           "context.getters.getCurrent<caret>CartHash" to null,
+           "getters['getCurrentSearch<caret>Query']" to "category/getters.ts:5584:JSProperty",
+           "getters['category/getCurrentSearch<caret>Query']" to null,
+
+      // root getter
+           "context.rootGetters['cart/isCart<caret>HashChanged']" to "cart/getters.ts:864:JSProperty",
+           "context.rootGetters['isCart<caret>HashChanged']" to null,
+           "context.rootGetters.isCart<caret>HashChanged" to null,
+           "context.rootGetters.getCurrent<caret>StoreView" to "store/getters.ts:148:JSProperty",
+           "rootGetters['getCurrentSearch<caret>Query']" to null,
+           "rootGetters['category/getCurrentSearch<caret>Query']" to "category/getters.ts:5584:JSProperty",
+           "rootGetters['getCurrent<caret>StoreView']" to "store/getters.ts:148:JSProperty",
+           "rootGetters.isCart<caret>HashChanged" to null,
+           "rootGetters.getCurrent<caret>StoreView" to "store/getters.ts:148:JSProperty",
+
+      // enclosing module action
+           "dispatch('load<caret>CategoryFilters'" to "category/actions.ts:9165:TypeScriptFunctionProperty",
+           "dispatch('load<caret>CategoryFilter'" to null,
+           "context.dispatch('change<caret>RouterFilterParameters', currentQuery" to "category/actions.ts:11702:TypeScriptFunctionProperty",
+           "dispatch('change<caret>RouterFilterParameters', {foo:12}" to "category/actions.ts:11702:TypeScriptFunctionProperty",
+
+      // action with root argument
+           "await dispatch('cart/configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
+           "await dispatch('ca<caret>rt/configureItem'" to "store/index.ts:1265:JSLiteralExpression",
+           "await context.dispatch('changeRouter<caret>FilterParameters', {}, {root: true})" to null,
+
+      // state
+           "rootState.sto<caret>ck.cache" to "store/index.ts:838:JSProperty",
+           "context.state.searchProducts<caret>Stats" to "category/index.ts:425:JSProperty",
+           "context.rootState.categories<caret>Map" to null,
+           "context.rootState.category.categories<caret>Map" to "category/index.ts:335:JSProperty",
+
+      // mutation commit
+           "context.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+           "commit('cart/breadcrumbs/se<caret>t', {foo:12})" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty"
+
+    )
+  }
+
+  fun testStorefrontStoreGettersContext() {
+    myFixture.configureStorefront()
+    myFixture.configureFromTempProjectFile("store/cart/getters.ts")
+    doTest(false,
+      // state
+           "getShippingMethod: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
+           "getShippingMethod2: (state, getters, rootState) => rootState.ship<caret>ping" to "store/index.ts:529:JSProperty",
+
+      // getters
+           "calculateTotals(getters.getFirst<caret>ShippingMethod" to "cart/getters.ts:1562:JSProperty",
+           "rootGetters['cart/getCurrent<caret>CartHash']" to "cart/getters.ts:778:JSProperty"
+    )
+  }
+
+  fun testStorefrontStoreMutationsContext() {
+    myFixture.configureStorefront()
+    myFixture.configureFromTempProjectFile("store/cart/breadcrumbs/index.ts")
+    doTest(false,
+           "state.rou<caret>tes = " to "breadcrumbs/index.ts:69:JSProperty"
+    )
+  }
+
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-component.ts", *args)
   }

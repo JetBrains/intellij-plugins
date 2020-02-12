@@ -43,7 +43,7 @@ class VuexCompletionContributor : CompletionContributor() {
       if (ref is JSReferenceExpression && isVueContext(ref)) {
         val settings = provider.getSettings(ref) ?: return
         result.addAllElements(VuexStoreSymbolStringReference.getLookupItems(
-          ref, settings.baseNamespaceProvider, settings.symbolAccessor, "", true))
+          ref, settings.baseNamespace, settings.symbolAccessor, "", true))
       }
     }
   }

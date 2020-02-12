@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.types.JSCodeBasedType
 import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.util.ProcessingContext
-import com.intellij.util.castSafelyTo
 
 class VuexGetterType(source: JSTypeSource,
                      private val element: JSTypeOwner)
@@ -31,16 +30,7 @@ class VuexGetterType(source: JSTypeSource,
       builder.append("#$javaClass")
       return
     }
-    val returnType = element.jsType
-      ?.substitute()
-      ?.castSafelyTo<JSFunctionType>()
-      ?.returnType
-    if (returnType != null) {
-      returnType.buildTypeText(format, builder)
-    }
-    else {
-      JSAnyType.get(source).buildTypeText(format, builder)
-    }
+    substitute().buildTypeText(format, builder)
   }
 
   override fun substituteCompletely(): JSType {

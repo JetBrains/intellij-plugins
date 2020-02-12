@@ -53,6 +53,6 @@ category/loadCategoryProducts#null
 category/loadMoreCategoryProducts#null
 category/processCategoryProducts#null
 category/registerCategoryProductsMapping#null
-category/resetSearchFilters#null
 category/switchSearchFilters#null
+resetSearchFilters#null
 resetUserInvalidateLock#null

@@ -11,5 +11,4 @@
 !"loadMoreCategoryProducts"#null#103
 !"processCategoryProducts"#null#103
 !"registerCategoryProductsMapping"#null#103
-!"resetSearchFilters"#null#103
 !"switchSearchFilters"#null#103

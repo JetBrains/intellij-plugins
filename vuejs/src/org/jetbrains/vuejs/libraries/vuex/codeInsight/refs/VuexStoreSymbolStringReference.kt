@@ -22,13 +22,14 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
+import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
 
 class VuexStoreSymbolStringReference(element: PsiElement,
                                      rangeInElement: TextRange,
                                      private val accessor: VuexSymbolAccessor?,
                                      private val fullName: String,
                                      private val terminal: Boolean,
-                                     private val namespaceResolver: NamespaceProvider,
+                                     private val namespace: VuexStoreNamespace,
                                      soft: Boolean)
   : CachingPolyReferenceBase<PsiElement>(element, rangeInElement),
     EmptyResolveMessageProvider, HighlightSeverityHolder {
@@ -38,7 +39,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
   }
 
   override fun resolveInner(): Array<ResolveResult> {
-    val name = VuexStoreContext.appendSegment(namespaceResolver(element), fullName)
+    val name = VuexStoreContext.appendSegment(namespace.get(element), fullName)
     val result = arrayListOf<ResolveResult>()
     VuexModelManager.getVuexStoreContext(element)
       ?.visit(if (terminal) accessor else null) { symbolName: String, symbol: Any ->
@@ -53,7 +54,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     val pathPrefix = fullName.lastIndexOf('/').let {
       if (it < 0) "" else fullName.substring(0, it + 1)
     }
-    return getLookupItems(element, namespaceResolver, accessor, pathPrefix, false).toTypedArray()
+    return getLookupItems(element, namespace, accessor, pathPrefix, false).toTypedArray()
   }
 
   override fun getUnresolvedMessagePattern(): String {
@@ -80,10 +81,10 @@ class VuexStoreSymbolStringReference(element: PsiElement,
 
   companion object {
 
-    fun getLookupItems(element: PsiElement, namespaceResolver: NamespaceProvider,
+    fun getLookupItems(element: PsiElement, namespace: VuexStoreNamespace,
                        accessor: VuexSymbolAccessor?, pathPrefix: String,
                        wrapWithQuotes: Boolean): List<LookupElement> {
-      val prefix = VuexStoreContext.appendSegment(namespaceResolver(element), pathPrefix)
+      val prefix = VuexStoreContext.appendSegment(namespace.get(element), pathPrefix)
       val result = mutableListOf<LookupElement>()
       val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
       VuexModelManager.getVuexStoreContext(element)
