@@ -8,7 +8,8 @@ data class LessonSample(val text: String,
                         val selection: Pair<Int, Int>? = null)
 
 // Current implementation can be generalized much better
-fun parseLessonSample(text: String): LessonSample {
+fun parseLessonSample(rowText: String): LessonSample {
+  val text = if (rowText.last() == '\n') rowText else rowText + '\n'
   return trySelectionSample(text)
          ?: tryCaretSample(text)
          ?: LessonSample(text)
