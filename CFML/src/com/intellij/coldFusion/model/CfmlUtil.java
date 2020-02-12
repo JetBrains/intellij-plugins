@@ -8,10 +8,7 @@ import com.intellij.coldFusion.model.info.CfmlTagDescription;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlKeywords;
-import com.intellij.coldFusion.model.psi.CfmlComponent;
-import com.intellij.coldFusion.model.psi.CfmlFunction;
-import com.intellij.coldFusion.model.psi.CfmlImport;
-import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
@@ -175,6 +172,10 @@ public class CfmlUtil {
 
   public static String getFunctionDescription(CfmlFunction function, Project project) {
     return CfmlDocUtil.functionDescription(function, project);
+  }
+
+  public static String getPropertyDescription(CfmlProperty property, Project project) {
+    return CfmlDocUtil.propertyDescription(property, project);
   }
 
   public static String getTagDescription(String tagName, Project project) {

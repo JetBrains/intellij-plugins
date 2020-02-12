@@ -15,6 +15,8 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
+import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
+import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
 import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.coldFusion.model.psi.CfmlComponentType;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
@@ -56,6 +58,18 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
   @Nullable
   public CfmlComponent getComponent() {
     return PsiTreeUtil.findChildOfType(this, CfmlComponent.class);
+  }
+
+  @Nullable
+  @Override
+  public String getDescription() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "hint");
+  }
+
+  @NotNull
+  @Override
+  public CfmlPropertyDescription getPropertyInfo() {
+    return CfmlLookUpItemUtil.getPropertyDescription(this);
   }
 
   private boolean checkBooleanAttribute(String attributeName) {

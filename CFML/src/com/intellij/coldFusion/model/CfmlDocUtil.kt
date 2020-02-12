@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model
 
+import com.intellij.coldFusion.model.CfmlDocUtil.bold
 import com.intellij.coldFusion.model.CfmlUtil.getCfmlLangInfo
 import com.intellij.coldFusion.model.info.CfmlAttributeDescription
 import com.intellij.coldFusion.model.info.CfmlLangInfo
@@ -8,6 +9,7 @@ import com.intellij.coldFusion.model.info.CfmlTagDescription
 import com.intellij.coldFusion.model.info.CfmlTypesInfo
 import com.intellij.coldFusion.model.psi.CfmlComponent
 import com.intellij.coldFusion.model.psi.CfmlFunction
+import com.intellij.coldFusion.model.psi.CfmlProperty
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.xml.util.XmlStringUtil
@@ -164,4 +166,13 @@ object CfmlDocUtil {
     }
   }
 
+  @JvmStatic
+  fun propertyDescription(property: CfmlProperty, project: Project): String {
+    val info = property.propertyInfo
+    return p {
+      info.name.trim().bold() + " : " + (info.type ?: "any")
+    } + p {
+      info.description?.trim() ?: ""
+    }
+  }
 }

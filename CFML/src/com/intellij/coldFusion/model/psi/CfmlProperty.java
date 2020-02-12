@@ -15,6 +15,8 @@
  */
 package com.intellij.coldFusion.model.psi;
 
+import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,7 +31,17 @@ public interface CfmlProperty extends CfmlPsiElement, CfmlTypedVariable {
   boolean hasSetter();
 
   String getDefault();
-    
+
   @Nullable
   CfmlComponent getComponent();
+
+  @Nullable
+  String getDescription();
+
+  @Override
+  @NotNull
+  String getName();
+
+  @NotNull
+  CfmlPropertyDescription getPropertyInfo();
 }

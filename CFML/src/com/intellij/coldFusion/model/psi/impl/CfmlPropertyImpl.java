@@ -15,6 +15,8 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
+import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
+import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
@@ -23,6 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -44,6 +47,12 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
   public String getName() {
     PsiElement nameIdentifier = getNameIdentifier();
     return nameIdentifier != null ? nameIdentifier.getText() : "";
+  }
+
+  @NotNull
+  @Override
+  public CfmlPropertyDescription getPropertyInfo() {
+    return CfmlLookUpItemUtil.getPropertyDescription(this);
   }
 
   @Override
@@ -125,6 +134,12 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
   @Override
   public CfmlComponent getComponent() {
     return PsiTreeUtil.getParentOfType(this, CfmlComponent.class);
+  }
+
+  @Nullable
+  @Override
+  public String getDescription() {
+    return null;
   }
 
   @NotNull
