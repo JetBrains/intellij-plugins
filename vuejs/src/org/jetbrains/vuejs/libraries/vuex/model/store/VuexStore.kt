@@ -3,9 +3,9 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.model.VueImplicitElement
 
 interface VuexNamedSymbol {
   val name: String
@@ -46,7 +46,7 @@ interface VuexModule : VuexContainer, VuexNamedSymbol {
 interface VuexStateProperty : VuexNamedSymbol {
   val jsType: JSType?
   override val resolveTarget: PsiElement
-    get() = JSLocalImplicitElementImpl(name, jsType, source, JSImplicitElement.Type.Property)
+    get() = VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
 interface VuexAction : VuexNamedSymbol {
@@ -54,17 +54,17 @@ interface VuexAction : VuexNamedSymbol {
 
   // TODO provide proper resolve target type
   override val resolveTarget: PsiElement
-    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Function)
+    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Function)
 }
 
 interface VuexGetter : VuexNamedSymbol {
   val jsType: JSType?
   override val resolveTarget: PsiElement
-    get() = JSLocalImplicitElementImpl(name, jsType, source, JSImplicitElement.Type.Property)
+    get() = VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
 interface VuexMutation : VuexNamedSymbol {
   // TODO provide proper resolve target type
   override val resolveTarget: PsiElement
-    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Function)
+    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Function)
 }

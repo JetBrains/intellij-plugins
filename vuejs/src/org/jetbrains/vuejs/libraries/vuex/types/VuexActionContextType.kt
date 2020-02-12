@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiElement
@@ -18,6 +17,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStaticNamespace
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreActionContextNamespace
+import org.jetbrains.vuejs.model.VueImplicitElement
 import java.util.*
 
 class VuexActionContextType private constructor(source: JSTypeSource,
@@ -53,7 +53,7 @@ class VuexActionContextType private constructor(source: JSTypeSource,
     fun addProperty(name: String, type: JSType) {
       result.add(JSRecordTypeImpl.PropertySignatureImpl(
         name, type, false, true,
-        JSLocalImplicitElementImpl(name, type, element, JSImplicitElement.Type.Property)))
+        VueImplicitElement(name, type, element, JSImplicitElement.Type.Property)))
     }
 
     addProperty(STATE, VuexContainerStateType(element, VuexStoreActionContextNamespace()))

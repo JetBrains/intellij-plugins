@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -179,11 +178,11 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
 
   private class VueSourceInputProperty(override val name: String,
-                                       sourceElement: PsiElement?) : VueInputProperty {
+                                       sourceElement: PsiElement) : VueInputProperty {
 
-    override val source: JSLocalImplicitElementImpl =
-      JSLocalImplicitElementImpl(name, getJSTypeFromPropOptions((sourceElement as? JSProperty)?.value),
-                                 sourceElement, JSImplicitElement.Type.Property)
+    override val source: VueImplicitElement =
+      VueImplicitElement(name, getJSTypeFromPropOptions((sourceElement as? JSProperty)?.value),
+                         sourceElement, JSImplicitElement.Type.Property)
     override val jsType: JSType? = source.jsType
     override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
   }
@@ -192,14 +191,14 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
                                       override val source: PsiElement?) : VueDataProperty
 
   private class VueSourceComputedProperty(override val name: String,
-                                          sourceElement: PsiElement?) : VueComputedProperty {
-    override val source: JSLocalImplicitElementImpl
+                                          sourceElement: PsiElement) : VueComputedProperty {
+    override val source: VueImplicitElement
     override val jsType: JSType?
 
     init {
       val functionSource = (sourceElement as? JSProperty)?.tryGetFunctionInitializer() ?: sourceElement
-      source = JSLocalImplicitElementImpl(name, (functionSource as? JSFunctionItem)?.returnType,
-                                          functionSource, JSImplicitElement.Type.Property)
+      source = VueImplicitElement(name, (functionSource as? JSFunctionItem)?.returnType,
+                                  functionSource, JSImplicitElement.Type.Property)
       jsType = source.jsType
     }
 

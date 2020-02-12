@@ -3,13 +3,13 @@ package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
+import org.jetbrains.vuejs.model.VueImplicitElement
 
 class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
@@ -35,7 +35,7 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
         val type = VuexContainerStateType(source, element, VuexStaticNamespace(namespace))
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
           name, type, false, true,
-          JSLocalImplicitElementImpl(name, type, container.source, JSImplicitElement.Type.Property)))
+          VueImplicitElement(name, type, container.source, JSImplicitElement.Type.Property)))
       }
     }
     context.visitSymbols(VuexContainer::state) { fullName, symbol ->

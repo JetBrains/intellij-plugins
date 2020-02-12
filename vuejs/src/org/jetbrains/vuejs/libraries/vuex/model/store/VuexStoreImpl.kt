@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -14,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
 import org.jetbrains.vuejs.libraries.vuex.types.VuexGetterType
+import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.source.EntityContainerInfoProvider.InitializedContainerInfoProvider.BooleanValueAccessor
 
 abstract class VuexContainerImpl : VuexContainer {
@@ -56,7 +56,7 @@ class VuexModuleImpl(override val name: String,
   override val source = nameElement
 
   override val resolveTarget: PsiElement
-    get() = JSLocalImplicitElementImpl(name, null, source, JSImplicitElement.Type.Variable)
+    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Variable)
 
   override val isNamespaced: Boolean
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)

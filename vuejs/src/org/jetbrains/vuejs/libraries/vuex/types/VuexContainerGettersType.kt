@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
@@ -12,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexContainer
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
+import org.jetbrains.vuejs.model.VueImplicitElement
 
 class VuexContainerGettersType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
@@ -31,8 +31,8 @@ class VuexContainerGettersType private constructor(source: JSTypeSource, element
       if (fullName.startsWith(baseNamespace)) {
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
           fullName.substring(baseNamespace.length), symbol.jsType, false, false,
-          JSLocalImplicitElementImpl(fullName.substring(baseNamespace.length), symbol.jsType, symbol.source,
-                                     JSImplicitElement.Type.Property)))
+          VueImplicitElement(fullName.substring(baseNamespace.length), symbol.jsType, symbol.source,
+                             JSImplicitElement.Type.Property)))
       }
     }
     return JSSimpleRecordTypeImpl(source, result)
