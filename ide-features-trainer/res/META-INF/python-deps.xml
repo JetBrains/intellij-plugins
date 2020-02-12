@@ -4,6 +4,7 @@
     <TrainingLangExtension language="Python" implementationClass="training.lang.PythonLangSupport"/>
     <TrainingModules language="Python">
       <module path="modules/python/EditorBasics.xml"/>
+      <module path="modules/python/Completions.xml"/>
     </TrainingModules>
   </extensions>
 </idea-plugin>
