@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang
 
+import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.JavaScriptFormatterTest
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
@@ -70,6 +71,12 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
 
   fun testSimpleJSConfig() {
     doTestWithCopyDirectory()
+    checkAfterFile(extension)
+  }
+
+  @JSTestOptions(selectLookupItem = 0)
+  fun testEnumImport() {
+    doTestWithCopyDirectory(1, true, extension)
     checkAfterFile(extension)
   }
 }
