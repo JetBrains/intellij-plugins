@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlLikeFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +51,13 @@ public final class DartWebdevConfigurationProducer extends LazyRunConfigurationP
     if (project == null || !DartAnalysisServerService.getInstance(project).serverReadyForRequest()) {
       return null;
     }
+
+    // Check the version of the Dart SDK
+    final DartSdk sdk = DartSdk.getDartSdk(project);
+    if (sdk != null && !DartAnalysisServerService.isDartSdkVersionSufficientForWebdev(sdk)) {
+      return null;
+    }
+
     return getHtmlFileFromContext(context);
   }
 
