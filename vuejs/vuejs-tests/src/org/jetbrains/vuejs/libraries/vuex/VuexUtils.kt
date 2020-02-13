@@ -5,6 +5,10 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 
+fun CodeInsightTestFixture.configureCounterHotStore() {
+  configureStore("counter-hot")
+}
+
 fun CodeInsightTestFixture.configureShoppingCartStore() {
   configureStore("shopping-cart")
 }

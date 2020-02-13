@@ -352,6 +352,35 @@ class VuexResolveTest : BasePlatformTestCase() {
            "state.al<caret>l" to "modules/products.js:70:JSProperty")
   }
 
+  fun testCounterHotResolution() {
+    myFixture.configureCounterHotStore()
+    myFixture.configureFromTempProjectFile("store/actions.js")
+    doTest(false,
+           "commit('inc<caret>rement')\n  }, 1000)" to "store/mutations.js:13:JSVariable",
+           "(state.co<caret>unt + 1)" to "store/index.js:195:JSProperty",
+           "commit('dec<caret>rement')" to "store/mutations.js:102:JSVariable")
+    myFixture.configureFromTempProjectFile("store/getters.js")
+    doTest(false,
+           "state.co<caret>unt" to "store/index.js:195:JSProperty",
+           "state.his<caret>tory" to "store/index.js:207:JSProperty")
+    myFixture.configureFromTempProjectFile("store/mutations.js")
+    doTest(false,
+           "state.co<caret>unt" to "store/index.js:195:JSProperty",
+           "state.his<caret>tory" to "store/index.js:207:JSProperty")
+    myFixture.configureByText("test.vue", """
+      <script>
+        import { mapGetters, mapActions } from 'vuex'
+        export default {
+          computed: mapGetters(['recentHistory']),
+          methods: mapActions(['increment'])
+        }
+      </script>
+    """.trimIndent())
+    doTest(false,
+           "'recent<caret>History'" to "store/getters.js:73:JSVariable",
+           "'inc<caret>rement'" to "store/actions.js:13:JSVariable")
+  }
+
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-component.ts", *args)
   }
@@ -365,7 +394,7 @@ class VuexResolveTest : BasePlatformTestCase() {
     doTest(true, *args)
   }
 
-  private fun doTest(js: Boolean = false, vararg args: Pair<String, String?>) {
+  private fun doTest(permissive: Boolean = false, vararg args: Pair<String, String?>) {
     for ((signature, output) in args) {
       try {
         if (output == null) {
@@ -373,7 +402,7 @@ class VuexResolveTest : BasePlatformTestCase() {
             myFixture.assertUnresolvedReference(signature)
           }
           catch (e: AssertionError) {
-            if (!js) {
+            if (!permissive) {
               throw e
             }
           }

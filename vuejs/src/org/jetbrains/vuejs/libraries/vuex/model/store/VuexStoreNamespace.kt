@@ -3,6 +3,7 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.util.JSDestructuringUtil
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -105,11 +106,15 @@ open class VuexStoreContextNamespace(private val accessor: (VuexContainer) -> Co
 
 }
 
-
 fun isPossiblyStoreContext(element: PsiElement): Boolean {
-  return element.contextOfType<JSFunction>()?.let {
-    it is JSProperty || it.context is JSProperty
-  } == true
+  return element.contextOfType<JSFunction>()
+    ?.let {
+      it is JSProperty
+      || it.context is JSProperty
+      || it.context?.castSafelyTo<JSVariable>()
+        ?.context?.castSafelyTo<JSVarStatement>()
+        ?.attributeList?.hasModifier(JSAttributeList.ModifierType.EXPORT) == true
+    } == true
 }
 
 fun isPossiblyStoreActionContextParam(element: JSParameter): Boolean {

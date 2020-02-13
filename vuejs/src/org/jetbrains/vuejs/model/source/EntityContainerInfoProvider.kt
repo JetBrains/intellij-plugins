@@ -2,12 +2,14 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclarationPart
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.javascript.JSKeywordElementType
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.util.JSClassUtils
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
@@ -113,7 +115,10 @@ interface EntityContainerInfoProvider<T> {
         val initializerReference = JSPsiImplUtils.getInitializerReference(property)
         if (propsObject == null && initializerReference != null) {
           var resolved = JSStubBasedPsiTreeUtil.resolveLocally(initializerReference, property)
-          if (resolved is ES6ImportExportDeclarationPart) {
+          if (resolved is ES6ImportedBinding && resolved.isNamespaceImport) {
+            return processJSTypeMembers(JSResolveUtil.getElementJSType(resolved))
+          }
+          else if (resolved is ES6ImportExportDeclarationPart) {
             resolved = VueComponents.meaningfulExpression(resolved)
           }
           if (resolved is JSObjectLiteralExpression) {
@@ -131,6 +136,19 @@ interface EntityContainerInfoProvider<T> {
           return filteredObjectProperties(propsObject)
         }
         return if (canBeArray) readPropsFromArray(property) else return emptyList()
+      }
+
+      private fun processJSTypeMembers(type: JSType?): List<Pair<String, JSElement>> {
+        return type?.asRecordType()
+                 ?.properties
+                 ?.mapNotNull { prop ->
+                   prop.takeIf { it.hasValidName() }
+                     ?.memberSource
+                     ?.singleElement
+                     ?.castSafelyTo<JSElement>()
+                     ?.let { Pair(prop.memberName, it) }
+                 }
+               ?: emptyList()
       }
 
       protected open fun getObjectLiteral(property: JSProperty): JSObjectLiteralExpression? = null
