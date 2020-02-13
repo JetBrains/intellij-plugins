@@ -24,4 +24,3 @@ object Text {
     fun distance(str1: CharSequence?, str2: CharSequence?): Int = levenshtein.apply(str1, str2)
   }
 }
-

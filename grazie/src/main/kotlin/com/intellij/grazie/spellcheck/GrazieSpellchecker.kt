@@ -17,8 +17,8 @@ object GrazieSpellchecker : GrazieStateLifecycle {
 
   private val filter by lazy { RuleFilter.withAllBuiltIn() }
   private fun filterCheckers(word: String): Set<SpellerTool> {
-    val myLangs = filter.filter(listOf(word)).preferred.map { it.iso.toString() }.toSet()
-    return checkers.filter { it.lang.shortCode in myLangs }.toSet()
+    val preferred = filter.filter(listOf(word)).preferred
+    return checkers.filter { checker -> preferred.any { checker.lang.equalsTo(it) } }.toSet()
   }
 
   private val BASE_SPELLCHECKER_LANGUAGE = Lang.AMERICAN_ENGLISH
@@ -30,7 +30,9 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     }
 
     fun suggest(text: String): Set<String> = synchronized(speller) {
-      speller.match(tool.getRawAnalyzedSentence(text)).flatMap { it.getSuggestedReplacements() }.take(suggestLimit).toSet()
+      speller.match(tool.getRawAnalyzedSentence(text))
+        .flatMap { it.getSuggestedReplacements() }
+        .take(suggestLimit).toSet()
     }
   }
 
