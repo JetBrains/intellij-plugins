@@ -184,7 +184,7 @@ public class FlexProjectConfigTest extends JavaModuleTestCase {
         return false;
       }
 
-      return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
+      return libraryId.equals(((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId());
     });
   }
 
