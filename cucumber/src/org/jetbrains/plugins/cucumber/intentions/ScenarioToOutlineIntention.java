@@ -152,7 +152,7 @@ public class ScenarioToOutlineIntention implements IntentionAction {
 
   private static String uniqueName(String name, Map<String, String> examples, String group) {
     String candidate = name;
-    if (name.equals(ARGUMENT)) {
+    if (examples.containsKey(candidate)) {
       int i = 1;
       while (examples.containsKey(candidate)) {
         candidate = name + i++;

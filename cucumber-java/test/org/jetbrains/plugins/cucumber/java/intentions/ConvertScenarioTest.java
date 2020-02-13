@@ -13,6 +13,10 @@ public class ConvertScenarioTest extends BaseCucumberJavaResolveTest {
     doTest();
   }
 
+  public void testTheSameParameterNamesInDifferentSteps() {
+    doTest();
+  }
+
   private void doTest() {
     String projectDirectory = getTestName(true);
     myFixture.copyDirectoryToProject(projectDirectory, "");
