@@ -60,6 +60,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           override val symbolAccessor = accessor
           override val baseNamespace: VuexStoreNamespace = namespace
           override val isSoft: Boolean = true
+          override val includeMembers: Boolean = referenceName != STATE && referenceName != ROOT_STATE
         }
       }
 
@@ -247,18 +248,18 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       val settings = getSettings(element)
       if (settings != null && isVueContext(element)) {
         var lastIndex = 0
-        var index = text.indexOf('/')
+        var index = if (settings.includeMembers) text.indexOf('/') else -1
         val result = mutableListOf<PsiReference>()
         val accessor = settings.symbolAccessor
         while (index > 0) {
           result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, index).shiftRight(1), accessor, text.substring(0, index),
-                                                    false, settings.baseNamespace, soft = settings.isSoft))
+                                                    false, settings.baseNamespace, settings.isSoft, settings.includeMembers))
           lastIndex = index + 1
           index = text.indexOf('/', lastIndex)
         }
 
         result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, text.length).shiftRight(1), accessor, text,
-                                                  true, settings.baseNamespace, settings.isSoft))
+                                                  true, settings.baseNamespace, settings.isSoft, settings.includeMembers))
         return result.toTypedArray()
       }
     }
@@ -270,6 +271,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
     val symbolAccessor: VuexSymbolAccessor?
     val baseNamespace: VuexStoreNamespace
     val isSoft: Boolean
+    val includeMembers: Boolean get() = true
   }
 
 }

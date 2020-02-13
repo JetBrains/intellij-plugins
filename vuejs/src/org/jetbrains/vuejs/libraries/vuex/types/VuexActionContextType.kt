@@ -5,10 +5,12 @@ import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptInterface
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.*
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
+import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.COMMIT
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.DISPATCH
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.GETTERS
@@ -50,7 +52,7 @@ class VuexActionContextType private constructor(source: JSTypeSource,
   override fun substituteCompletely(): JSType {
     val result = mutableListOf<JSRecordType.TypeMember>()
 
-    fun addProperty(name: String, type: JSType) {
+    fun addProperty(name: String, type: JSType?) {
       result.add(JSRecordTypeImpl.PropertySignatureImpl(
         name, type, false, true,
         VueImplicitElement(name, type, element, JSImplicitElement.Type.Property)))
@@ -60,12 +62,10 @@ class VuexActionContextType private constructor(source: JSTypeSource,
     addProperty(ROOT_STATE, VuexContainerStateType(element, VuexStaticNamespace("")))
     addProperty(GETTERS, VuexContainerGettersType(element, VuexStoreActionContextNamespace()))
     addProperty(ROOT_GETTERS, VuexContainerGettersType(element, VuexStaticNamespace("")))
-
-    result.add(JSRecordTypeImpl.PropertySignatureImpl(
-      DISPATCH, null, false, true))
-    result.add(JSRecordTypeImpl.PropertySignatureImpl(
-      COMMIT, null, false, true))
-
+    addProperty(DISPATCH, resolveSymbolFromNodeModule(
+      element, "vuex", "Dispatch", TypeScriptInterface::class.java)?.jsType)
+    addProperty(COMMIT, resolveSymbolFromNodeModule(
+      element, "vuex", "Commit", TypeScriptInterface::class.java)?.jsType)
     return JSSimpleRecordTypeImpl(source, result)
   }
 }

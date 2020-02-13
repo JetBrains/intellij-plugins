@@ -2,12 +2,15 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.findOffsetBySignature
 import org.jetbrains.vuejs.lang.renderLookupItems
 import java.io.File
 
@@ -144,7 +147,8 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(5, "@cartModule.Getter('<caret>')",
                 additionalContent = namespacedDecoratorsCode)
 
-    doItemsTest(8,"...mapState({foo(state, getters) { return getters.<caret> }", section = "computed", strict = false, renderPriority = true)
+    doItemsTest(8, "...mapState({foo(state, getters) { return getters.<caret> }", section = "computed", strict = false,
+                renderPriority = true)
   }
 
   fun testStorefrontMapState() {
@@ -162,12 +166,12 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(4, "...mapState('cart',{foo: <caret>", section = "computed", strict = false, renderPriority = true)
     doItemsTest(5, "...mapState('cart',{foo: '<caret>'", section = "computed")
 
-    doItemsTest(6,"...mapState({foo: state => state.<caret>", section = "computed", strict = false, renderPriority = true)
-    doItemsTest(7,"...mapState({foo(state) { return state.cart.<caret> }", section = "computed", strict = false, renderPriority = true)
+    doItemsTest(6, "...mapState({foo: state => state.<caret>", section = "computed", strict = false, renderPriority = true)
+    doItemsTest(7, "...mapState({foo(state) { return state.cart.<caret> }", section = "computed", strict = false, renderPriority = true)
 
-    doItemsTest(7,"...mapState('cart',{foo: state => state.<caret>",
+    doItemsTest(7, "...mapState('cart',{foo: state => state.<caret>",
                 section = "computed", strict = false, renderPriority = true)
-    doItemsTest(8,"...mapState('cart',{foo(state) { return state.breadcrumbs.<caret> }",
+    doItemsTest(8, "...mapState('cart',{foo(state) { return state.breadcrumbs.<caret> }",
                 section = "computed", strict = false, renderPriority = true)
 
     doItemsTest(4, "...mapState([<caret>",
@@ -180,9 +184,9 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(5, "...mapState({foo: '<caret>'", section = "computed",
                 additionalContent = namespacedHandlersCode)
 
-    doItemsTest(7,"...mapState({foo: state => state.<caret>", section = "computed",
+    doItemsTest(7, "...mapState({foo: state => state.<caret>", section = "computed",
                 additionalContent = namespacedHandlersCode, strict = false, renderPriority = true)
-    doItemsTest(8,"...mapState({foo(state) { return state.breadcrumbs.<caret> }", section = "computed",
+    doItemsTest(8, "...mapState({foo(state) { return state.breadcrumbs.<caret> }", section = "computed",
                 additionalContent = namespacedHandlersCode, strict = false, renderPriority = true)
 
     doItemsTest(9, "...categoryModule.mapState([<caret>", section = "computed",
@@ -195,7 +199,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(10, "...categoryModule.mapState({foo: '<caret>'", section = "computed",
                 additionalContent = namespacedHandlersCode)
 
-    doItemsTest(11,"...categoryModule.mapState({foo: state => state.<caret>", section = "computed",
+    doItemsTest(11, "...categoryModule.mapState({foo: state => state.<caret>", section = "computed",
                 additionalContent = namespacedHandlersCode, strict = false, renderPriority = true)
 
     doItemsTest(2, "@State(<caret>)", strict = false, renderPriority = true)
@@ -222,11 +226,11 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(4, "...mapActions('cart',[<caret>", section = "methods", strict = false, renderPriority = true)
     doItemsTest(5, "...mapActions('cart',['<caret>'", section = "methods")
 
-    doItemsTest(2,"...mapActions({foo(dispatch) { dispatch(<caret>) }", section = "methods", strict = false, renderPriority = true)
-    doItemsTest(3,"...mapActions({foo: dispatch => dispatch('<caret>'", section = "methods")
-    doItemsTest(4,"...mapActions('cart',{foo(dispatch) { dispatch(<caret> } }",
+    doItemsTest(2, "...mapActions({foo(dispatch) { dispatch(<caret>) }", section = "methods", strict = false, renderPriority = true)
+    doItemsTest(3, "...mapActions({foo: dispatch => dispatch('<caret>'", section = "methods")
+    doItemsTest(4, "...mapActions('cart',{foo(dispatch) { dispatch(<caret> } }",
                 section = "methods", strict = false, renderPriority = true)
-    doItemsTest(5,"...mapActions('cart',{foo: dispatch => dispatch('<caret>'",
+    doItemsTest(5, "...mapActions('cart',{foo: dispatch => dispatch('<caret>'",
                 section = "methods")
 
     doItemsTest(4, "...mapActions([<caret>",
@@ -234,9 +238,9 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(5, "...mapActions(['<caret>'",
                 additionalContent = namespacedHandlersCode, section = "methods")
 
-    doItemsTest(4,"...mapActions({foo(dispatch) { dispatch(<caret> }", section = "methods",
+    doItemsTest(4, "...mapActions({foo(dispatch) { dispatch(<caret> }", section = "methods",
                 additionalContent = namespacedHandlersCode, strict = false, renderPriority = true)
-    doItemsTest(5,"...mapActions({foo: dispatch => dispatch('<caret>'", section = "methods",
+    doItemsTest(5, "...mapActions({foo: dispatch => dispatch('<caret>'", section = "methods",
                 additionalContent = namespacedHandlersCode)
 
     doItemsTest(6, "...categoryModule.mapActions([<caret>", section = "methods",
@@ -258,7 +262,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(5, "@cartModule.Action('<caret>')",
                 additionalContent = namespacedDecoratorsCode)
   }
-  
+
   fun testStorefrontMapMutations() {
     myFixture.configureStorefront()
     doItemsTest(0, "...mapMutations(<caret>", section = "methods", strict = false, renderPriority = true)
@@ -269,11 +273,11 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(4, "...mapMutations('cart',[<caret>", section = "methods", strict = false, renderPriority = true)
     doItemsTest(5, "...mapMutations('cart',['<caret>'", section = "methods")
 
-    doItemsTest(2,"...mapMutations({foo(commit) { commit(<caret>) }", section = "methods", strict = false, renderPriority = true)
-    doItemsTest(3,"...mapMutations({foo: commit => commit('<caret>'", section = "methods")
-    doItemsTest(4,"...mapMutations('cart',{foo(commit) { commit(<caret> } }",
+    doItemsTest(2, "...mapMutations({foo(commit) { commit(<caret>) }", section = "methods", strict = false, renderPriority = true)
+    doItemsTest(3, "...mapMutations({foo: commit => commit('<caret>'", section = "methods")
+    doItemsTest(4, "...mapMutations('cart',{foo(commit) { commit(<caret> } }",
                 section = "methods", strict = false, renderPriority = true)
-    doItemsTest(5,"...mapMutations('cart',{foo: commit => commit('<caret>'",
+    doItemsTest(5, "...mapMutations('cart',{foo: commit => commit('<caret>'",
                 section = "methods")
 
     doItemsTest(4, "...mapMutations([<caret>",
@@ -281,9 +285,9 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(5, "...mapMutations(['<caret>'",
                 additionalContent = namespacedHandlersCode, section = "methods")
 
-    doItemsTest(4,"...mapMutations({foo(commit) { commit(<caret> }", section = "methods",
+    doItemsTest(4, "...mapMutations({foo(commit) { commit(<caret> }", section = "methods",
                 additionalContent = namespacedHandlersCode, strict = false, renderPriority = true)
-    doItemsTest(5,"...mapMutations({foo: commit => commit('<caret>'", section = "methods",
+    doItemsTest(5, "...mapMutations({foo: commit => commit('<caret>'", section = "methods",
                 additionalContent = namespacedHandlersCode)
 
     doItemsTest(6, "...categoryModule.mapMutations([<caret>", section = "methods",
@@ -304,6 +308,99 @@ class VuexCompletionTest : BasePlatformTestCase() {
                 additionalContent = namespacedDecoratorsCode, strict = false, renderPriority = true)
     doItemsTest(5, "@cartModule.Mutation('<caret>')",
                 additionalContent = namespacedDecoratorsCode)
+  }
+
+  fun testStorefrontStoreActionContext() {
+    myFixture.configureStorefront()
+    val categoryActions = "store/category/actions.ts"
+    //context
+    doStoreItemsTest(0, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.<caret> ", strict = false)
+
+    // { state }
+    doStoreItemsTest(1, categoryActions, "<caret>async loadCategoryProducts",
+                     additionalContent = "test({state}){ state.<caret>}", strict = false)
+    doStoreItemsTest(2, categoryActions, "<caret>async loadCategoryProducts",
+                     additionalContent = "test({state}){ state['<caret>']}")
+
+    // { rootState }
+    doStoreItemsTest(1, categoryActions, "<caret>const searchCategory",
+                     additionalContent = "rootState.category.<caret>", strict = false)
+    doStoreItemsTest(2, categoryActions, "<caret>const searchCategory",
+                     additionalContent = "rootState.category['<caret>']", strict = false, renderPriority = false)
+    doStoreItemsTest(3, categoryActions, "<caret>const searchCategory",
+                     additionalContent = "rootState.<caret>", strict = false, renderPriority = false)
+    doStoreItemsTest(3, categoryActions, "<caret>const searchCategory",
+                     additionalContent = "rootState['<caret>']")
+
+    // context.state
+    doStoreItemsTest(1, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.state.<caret> ", strict = false)
+    doStoreItemsTest(2, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.state['<caret>'] ")
+
+    // context.rootState
+    doStoreItemsTest(1, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootState.category.<caret> ", strict = false)
+    doStoreItemsTest(2, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootState.category['<caret>'] ", strict = false, renderPriority = false)
+
+    doStoreItemsTest(3, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootState.<caret> ", strict = false, renderPriority = false)
+    doStoreItemsTest(3, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootState['<caret>'] ")
+
+
+    // { getters }
+    doStoreItemsTest(4, categoryActions, "category || getters.<caret>", strict = false)
+    doStoreItemsTest(5, categoryActions, "<caret>const searchCategory",
+                     additionalContent = "getters['<caret>'] ")
+
+    // { rootGetters }
+    doStoreItemsTest(6, categoryActions, "rootGetters.<caret>", strict = false)
+    doStoreItemsTest(7, categoryActions, "rootGetters['<caret>")
+
+    // context.getters
+    doStoreItemsTest(4, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.getters.<caret> ", strict = false)
+    doStoreItemsTest(5, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.getters['<caret>'] ")
+
+    // context.rootGetters
+    doStoreItemsTest(6, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootGetters.<caret> ", strict = false)
+    doStoreItemsTest(7, categoryActions, "<caret>return CategoryService",
+                     additionalContent = "context.rootGetters['<caret>'] ")
+
+    // { dispatch }
+    doStoreItemsTest(8, categoryActions, "await dispatch('<caret>loadCategoryFilters'")
+    doStoreItemsTest(8, categoryActions, "await dispatch('<caret>changeRouterFilterParameters', {foo:12})")
+    doStoreItemsTest(9, categoryActions, "await dispatch('<caret>tax/calculateTaxes'") // {root:true}
+    doStoreItemsTest(10, categoryActions, "await dispatch(<caret>'loadCategoryFilters'", strict = false)
+    doStoreItemsTest(11, categoryActions, "await dispatch(<caret>'tax/calculateTaxes'", strict = false) // {root:true}
+
+    // context.dispatch
+    doStoreItemsTest(8, categoryActions, "context.dispatch('<caret>changeRouterFilterParameters', currentQuery)")
+    doStoreItemsTest(9, categoryActions, "context.dispatch('<caret>changeRouterFilterParameters', {}, {root: true})")
+    doStoreItemsTest(10, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', currentQuery)", strict = false)
+    doStoreItemsTest(11, categoryActions, "context.dispatch(<caret>'changeRouterFilterParameters', {}, {root: true})", strict = false)
+
+    // { commit }
+    doStoreItemsTest(12, "store/cart/breadcrumbs/index.ts", "commit('<caret>set'")
+    doStoreItemsTest(13, categoryActions, "commit(<caret>'cart/breadcrumbs/set', {foo:12})",
+                     additionalContent = "'<caret>',{},{root:true})")
+    doStoreItemsTest(14, "store/cart/breadcrumbs/index.ts", "commit(<caret>'set'", strict = false)
+    doStoreItemsTest(15, categoryActions, "commit(<caret>'cart/breadcrumbs/set', {foo:12})",
+                     additionalContent = "<caret>,{},{root:true})", strict = false)
+
+    // context.commit
+    doStoreItemsTest(12, "store/cart/breadcrumbs/index.ts", "<caret>set ({ commit }",
+                     additionalContent = "test(context){context.commit('<caret>'}")
+    doStoreItemsTest(13, categoryActions, "context.commit('<caret>cart/breadcrumbs/set', {}, {root: true})")
+    doStoreItemsTest(14, "store/cart/breadcrumbs/index.ts", "<caret>set ({ commit }",
+                     additionalContent = "test(context){context.commit(<caret>}", strict = false)
+    doStoreItemsTest(15, categoryActions, "context.commit(<caret>'cart/breadcrumbs/set', {}, {root: true})",
+                     additionalContent = "<caret>,{},{root:true})", strict = false)
   }
 
   private val namespacedHandlersCode = """
@@ -328,6 +425,33 @@ class VuexCompletionTest : BasePlatformTestCase() {
     myFixture.type(toType)
     PsiDocumentManager.getInstance(project).commitAllDocuments()
     TestCase.assertEquals(expectedContents, myFixture.file.findElementAt(myFixture.caretOffset)?.context?.context?.text)
+  }
+
+  private fun doStoreItemsTest(id: Int, file: String, location: String, additionalContent: String = "<caret>",
+                               strict: Boolean = true, renderType: Boolean = true, renderPriority: Boolean = !strict) {
+    doTestInFile(file, location, additionalContent) {
+      checkItems(id, strict, renderType, renderPriority)
+    }
+  }
+
+  private fun doTestInFile(file: String, location: String, additionalContent: String, test: () -> Unit) {
+    myFixture.configureFromTempProjectFile(file)
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
+    val insertionOffset = myFixture.file.findOffsetBySignature(location)
+    val document = myFixture.getDocument(myFixture.file)
+    val contentOffset = additionalContent.indexOf("<caret>")
+    assert(contentOffset >= 0) { additionalContent }
+    WriteCommandAction.runWriteCommandAction(project) {
+      document.insertString(insertionOffset, additionalContent.replace("<caret>", ""))
+    }
+    PsiDocumentManager.getInstance(project).commitDocument(document)
+    myFixture.editor.caretModel.moveToOffset(insertionOffset + contentOffset)
+    try {
+      test()
+    }
+    finally {
+      FileDocumentManager.getInstance().reloadFromDisk(document)
+    }
   }
 
   private fun doItemsTest(id: Int, content: String, section: String? = null, strict: Boolean = true, renderType: Boolean = true,
@@ -360,7 +484,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     var checkFileName: String
     checkFileName = "gold/${myFixture.file.name}.${id}.txt"
     if (!File("$testDataPath/$checkFileName").exists()) {
-      checkFileName = "gold/${FileUtil.getNameWithoutExtension(myFixture.file.name)}.${id}.txt"
+      checkFileName = "gold/${getTestName(true)}.${id}.txt"
       FileUtil.createIfDoesntExist(File("$testDataPath/$checkFileName"))
     }
     myFixture.renderLookupItems(renderPriority, renderType)
