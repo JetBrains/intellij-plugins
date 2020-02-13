@@ -5,6 +5,8 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.LazyRunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -58,7 +60,13 @@ public final class DartWebdevConfigurationProducer extends LazyRunConfigurationP
       return null;
     }
 
-    return getHtmlFileFromContext(context);
+    final VirtualFile htmlVirtualFile = getHtmlFileFromContext(context);
+    if (htmlVirtualFile == null) {
+      return null;
+    }
+
+    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    return projectFileIndex.isInContent(htmlVirtualFile) ? htmlVirtualFile : null;
   }
 
   @Nullable
