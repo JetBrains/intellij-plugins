@@ -91,7 +91,7 @@ public class DartFileReference implements PsiPolyVariantReference {
       final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(((PsiFile)element));
       final Project project = myUriElement.getProject();
       final DartSdk dartSdk = DartSdk.getDartSdk(project);
-      if (dartSdk != null && !DartAnalysisServerService.isDartSdkVersionForMoveFileRefactoring(dartSdk)) {
+      if (dartSdk != null && !DartAnalysisServerService.isDartSdkVersionSufficientForMoveFileRefactoring(dartSdk)) {
         if (contextFile != null && targetFile != null) {
           final String newUri = DartUrlResolver.getInstance(myUriElement.getProject(), contextFile).getDartUrlForFile(targetFile);
           if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {

@@ -35,7 +35,7 @@ public class DartServerMoveDartFileHandler extends MoveFileHandler {
     }
     final Project project = psiFile.getProject();
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
-    if (dartSdk == null || !DartAnalysisServerService.isDartSdkVersionForMoveFileRefactoring(dartSdk)) {
+    if (dartSdk == null || !DartAnalysisServerService.isDartSdkVersionSufficientForMoveFileRefactoring(dartSdk)) {
       return false;
     }
     return DartAnalysisServerService.getInstance(project).isInIncludedRoots(psiFile.getVirtualFile());
