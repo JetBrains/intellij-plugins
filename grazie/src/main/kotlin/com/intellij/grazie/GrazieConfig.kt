@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.grazie
 
+import com.intellij.grazie.detection.DetectionContext
 import com.intellij.grazie.grammar.suppress.SuppressionContext
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
 import com.intellij.grazie.jlanguage.Lang
@@ -30,16 +31,19 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
                    @Property val userDisabledRules: Set<String> = HashSet(),
                    @Property val userEnabledRules: Set<String> = HashSet(),
                    @Property val suppressionContext: SuppressionContext = SuppressionContext(),
+                   @Property val detectionContext: DetectionContext.State = DetectionContext.State(),
                    @Property val lastSeenVersion: String? = null) {
     /**
      * Available languages set depends on current loaded LanguageTool modules.
      *
      * Note, that after loading of new module this field will not change. It will
-     * remain equal to the moment state was changed last time.
+     * remain equal to the moment field was accessed first time.
+     *
+     * Lazy is used, because deserialized properties are updated during initial deserialization
      *
      * *NOTE: By default availableLanguages are not included into equals. Check for it manually.*
      */
-    val availableLanguages: Set<Lang> = enabledLanguages.filter { it.jLanguage != null }.toSet()
+    val availableLanguages: Set<Lang> by lazy { enabledLanguages.filter { it.jLanguage != null }.toSet() }
 
     val missedLanguages: Set<Lang>
       get() = enabledLanguages.filter { it.jLanguage == null }.toSet() +

@@ -46,7 +46,8 @@ fun PsiElementProcessor<in PsiElement>.processElements(element: PsiElement?) {
       processElements(child)
     }
 
-  } else {
+  }
+  else {
     element.accept(object : PsiRecursiveElementWalkingVisitor() {
       override fun visitElement(element: PsiElement) {
         if (execute(element)) {

@@ -1,25 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.jlanguage
+package com.intellij.grazie.detection
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
 import com.intellij.grazie.ide.msg.GrazieStateLifecycle
+import com.intellij.grazie.jlanguage.Lang
 import com.intellij.grazie.utils.lazyConfig
-import tanvd.grazie.langdetect.ngram.LanguageDetectorBuilder
-import tanvd.grazie.langdetect.ngram.impl.ngram.NgramExtractor
-import tanvd.grazie.langdetect.ngram.impl.profiles.LanguageProfileReader
+import tanvd.grazie.langdetect.chain.ChainDetectorBuilder
+import tanvd.grazie.langdetect.model.Language
 
 object LangDetector : GrazieStateLifecycle {
   private var available: Set<Lang> by lazyConfig(this::init)
 
-  private val detector by lazy {
-    LanguageDetectorBuilder(NgramExtractor.standard)
-      .minimalConfidence(0.90)
-      .prefixFactor(1.5)
-      .suffixFactor(2.0)
-      .withProfiles(LanguageProfileReader.readAllBuiltIn())
-      .build()
-  }
+  private val detector by lazy { ChainDetectorBuilder.standard() }
 
   /**
    * Get natural language of text.
@@ -29,16 +22,31 @@ object LangDetector : GrazieStateLifecycle {
    * @return Language that is detected.
    */
   @Suppress("MemberVisibilityCanBePrivate")
-  fun getLanguage(text: String) = detector.detect(text.take(1_000)).preferred
-    .also { GrazieFUCounterCollector.languageDetected(it) }
+  fun getLanguage(text: String): Language? {
+    val detected = detector.detect(text.take(1_000))
+
+    if (detected.preferred == Language.UNKNOWN) return null
+
+    GrazieFUCounterCollector.languageDetected(detected.preferred)
+
+    return detected.preferred
+  }
 
   /**
    * Get natural language of text, if it is enabled in Grazie
    *
    * @return Lang that is detected and enabled in grazie
    */
-  fun getAvailableLang(text: String) = getLanguage(text).let {
+  fun getLang(text: String) = getLanguage(text)?.let {
     available.find { lang -> lang.equalsTo(it) }
+  }
+
+  /**
+   * Update local detection context from text
+   */
+  fun updateContext(text: CharSequence, context: DetectionContext.Local) {
+    val details = detector.detectWithDetails(text.take(1_000))
+    context.update(text.length, details)
   }
 
   override fun init(state: GrazieConfig.State) {
@@ -46,6 +54,8 @@ object LangDetector : GrazieStateLifecycle {
   }
 
   override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
-    if (prevState.availableLanguages != newState.availableLanguages) init(newState)
+    if (prevState.availableLanguages != newState.availableLanguages) {
+      init(newState)
+    }
   }
 }

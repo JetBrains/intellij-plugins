@@ -26,7 +26,8 @@ object GrammarChecker {
         val last = removeAt(size - 1)
         // combine shifts from same position
         add(ShiftInText(position, last.length + length, last.totalDeleted + length))
-      } else {
+      }
+      else {
         add(ShiftInText(position, length, totalDeleted))
       }
     }
@@ -43,9 +44,11 @@ object GrammarChecker {
       for ((position, length) in iterator) {
         if (position < range.start) {   // shift before range (remains the same, just add)
           addShift(position - stealthed, length, total + length)
-        } else if (position in range) { // shift inside range (combine in one)
+        }
+        else if (position in range) { // shift inside range (combine in one)
           deleted += length
-        } else {                        // shift after range - need a step back
+        }
+        else {                        // shift after range - need a step back
           iterator.previous()
           break
         }
@@ -81,10 +84,10 @@ object GrammarChecker {
   private fun findPositionInsideRoot(position: Int, shifts: List<ShiftInText>): Int {
     val index = shifts.binarySearch { it.start.compareTo(position) }
     return when {
-      index >= 0 -> shifts[index].totalDeleted
-      -(index + 1) > 0 -> shifts[-(index + 1) - 1].totalDeleted
-      else -> 0
-    } + position
+             index >= 0 -> shifts[index].totalDeleted
+             -(index + 1) > 0 -> shifts[-(index + 1) - 1].totalDeleted
+             else -> 0
+           } + position
   }
 
   private fun findTextRangesToDelete(rangeInRoot: IntRange, rangeInText: IntRange, shifts: List<ShiftInText>) = ArrayList<IntRange>().apply {
@@ -119,11 +122,13 @@ object GrammarChecker {
         !strategy.isTypoAccepted(root, rangeInRoot, patternRangeInRoot) -> null   // typo not accepted by strategy
         tokensInTypoPatternRange.any { token ->
           token.behavior == GrammarCheckingStrategy.ElementBehavior.ABSORB ||     // typo pattern in absorb element
-            category in token.ignoredCategories ||                                // typo rule in ignored category
-            typo.info.rule.id in token.ignoredGroup.rules                         // typo rule in ignored group
+          category in token.ignoredCategories ||                                // typo rule in ignored category
+          typo.info.rule.id in token.ignoredGroup.rules                         // typo rule in ignored group
         } -> null
 
-        else -> typo.copy(location = typo.location.copy(errorRange = rangeInRoot, textRanges = textRangesToDelete, pointer = root.toPointer()))
+        else -> typo.copy(
+          location = typo.location.copy(errorRange = rangeInRoot, textRanges = textRangesToDelete, pointer = root.toPointer())
+        )
       }
     }.toSet()
 

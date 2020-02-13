@@ -1,12 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.ide.problem
+package com.intellij.grazie.ide.inspection.grammar.problem
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.grazie.grammar.Typo
 import com.intellij.grazie.ide.fus.GrazieFUCounterCollector
-import com.intellij.grazie.ide.quickfix.GrazieReplaceTypoQuickFix
+import com.intellij.grazie.ide.inspection.grammar.quickfix.GrazieReplaceTypoQuickFix
 import com.intellij.grazie.ide.ui.components.dsl.msg
 import com.intellij.grazie.utils.*
 import com.intellij.openapi.application.ApplicationManager
@@ -14,7 +14,7 @@ import com.intellij.util.containers.WeakStringInterner
 import com.intellij.util.containers.toArray
 import kotlinx.html.*
 
-class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
+class GrazieProblemDescriptor(id: String, fix: Typo, isOnTheFly: Boolean) : ProblemDescriptorBase(
   fix.location.element!!,
   fix.location.element!!,
   fix.toDescriptionTemplate(isOnTheFly),
@@ -27,10 +27,7 @@ class GrazieProblemDescriptor(fix: Typo, isOnTheFly: Boolean) : ProblemDescripto
 ) {
 
   init {
-    //Do not add problem group if running unit tests -- it is not detected by checkHighlight
-    if (ApplicationManager.getApplication().isUnitTestMode.not()) {
-      problemGroup = GrazieProblemGroup(fix)
-    }
+    problemGroup = GrazieProblemGroup(id, fix)
   }
 
   companion object {

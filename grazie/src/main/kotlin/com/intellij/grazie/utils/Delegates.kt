@@ -4,7 +4,7 @@ import com.intellij.grazie.GrazieConfig
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal class LazyGrazieConfig<R, T> (val init: (GrazieConfig.State) -> Unit) : ReadWriteProperty<R, T> {
+internal class LazyGrazieConfig<R, T>(val init: (GrazieConfig.State) -> Unit) : ReadWriteProperty<R, T> {
   private var value: T? = null
 
   override fun getValue(thisRef: R, property: KProperty<*>): T {

@@ -10,7 +10,7 @@ import org.jetbrains.yaml.psi.YAMLScalarText
 
 class YamlGrammarCheckingStrategy : BaseGrammarCheckingStrategy {
   override fun isMyContextRoot(element: PsiElement) = element is YAMLScalarText || element is YAMLScalarList ||
-    element.node.elementType in setOf(SCALAR_KEY, TEXT, SCALAR_STRING, SCALAR_DSTRING)
+                                                      element.node.elementType in setOf(SCALAR_KEY, TEXT, SCALAR_STRING, SCALAR_DSTRING)
 
   override fun isStealth(element: PsiElement) = when (element.node.elementType) {
     INDENT -> true

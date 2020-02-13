@@ -46,8 +46,9 @@ object GrazieDynamic {
 
   fun loadClass(className: String): Class<*>? = forClassLoader {
     try {
-    Class.forName(className, true, it)
-    } catch (e: ClassNotFoundException) {
+      Class.forName(className, true, it)
+    }
+    catch (e: ClassNotFoundException) {
       null
     }
   }

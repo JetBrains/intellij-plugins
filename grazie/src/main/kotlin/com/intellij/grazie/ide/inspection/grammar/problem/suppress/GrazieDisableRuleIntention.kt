@@ -1,4 +1,4 @@
-package com.intellij.grazie.ide.problem.suppress
+package com.intellij.grazie.ide.inspection.grammar.problem.suppress
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.grammar.Typo
@@ -9,17 +9,21 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 
-class GrazieDisableContextIntention(val typo: Typo) : GrazieDisableIntention() {
-  override fun getText() = msg("grazie.quickfix.suppress.sentence.text", typo.info.shortMessage)
+class GrazieDisableRuleIntention(typo: Typo) : GrazieDisableIntention() {
+  private val rule = typo.info.rule
+  private val shortMessage = typo.info.shortMessage
 
-  override fun getFamilyName(): String = msg("grazie.quickfix.suppress.sentence.family")
+  override fun getText() = msg("grazie.grammar.quickfix.suppress.rule.text", shortMessage)
+
+  override fun getFamilyName(): String = msg("grazie.grammar.quickfix.suppress.rule.family")
 
   override fun invoke(project: Project, editor: Editor, element: PsiElement) {
     val action = object : BasicUndoableAction(element.containingFile?.virtualFile) {
       override fun redo() {
         GrazieConfig.update { state ->
           state.copy(
-            suppressionContext = state.suppressionContext.suppress(typo)
+            userEnabledRules = state.userEnabledRules - rule.id,
+            userDisabledRules = state.userDisabledRules + rule.id
           )
         }
       }
@@ -27,7 +31,8 @@ class GrazieDisableContextIntention(val typo: Typo) : GrazieDisableIntention() {
       override fun undo() {
         GrazieConfig.update { state ->
           state.copy(
-            suppressionContext = state.suppressionContext.unsuppress(typo)
+            userEnabledRules = state.userEnabledRules + rule.id,
+            userDisabledRules = state.userDisabledRules - rule.id
           )
         }
       }

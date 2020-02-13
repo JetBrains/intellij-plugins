@@ -56,7 +56,8 @@ class GrazieSettingsPanel : ConfigurableUi<GrazieConfig>, Disposable {
       Lang.values().forEach {
         if (chosenEnabledLanguages.contains(it)) {
           enabledLanguages.add(it)
-        } else {
+        }
+        else {
           enabledLanguages.remove(it)
         }
       }

@@ -55,7 +55,7 @@ Moreover, Grazie supports *native language based* inspections. It means that if 
 
 ## Dev versions
 
-You can subscribe to development channel of Grazie plugin to get the latest updates (may be a bit unstable) automatically.
+You can subscribe to development channel of Grazie plugin to get the latest updates (maybe a bit unstable) automatically.
 
 Just add `dev` channel (https://plugins.jetbrains.com/plugins/dev/list) in accordance with [documentation](https://www.jetbrains.com/help/idea/managing-plugins.html)
 

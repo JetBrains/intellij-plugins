@@ -2,7 +2,6 @@
 package com.intellij.grazie.ide.ui.components.dsl
 
 import com.intellij.grazie.GrazieBundle
-import com.intellij.grazie.GraziePlugin
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.ui.IdeBorderFactory
@@ -31,13 +30,9 @@ fun wrapWithComment(component: JComponent, comment: String) = ComponentPanelBuil
 
 fun wrapWithLabel(component: JComponent, label: String) = ComponentPanelBuilder(component).withLabel(label).resizeY(true).createPanel()
 
-fun pluginOnlyMsg(@PropertyKey(resourceBundle = GrazieBundle.PLUGIN_BUNDLE_NAME) key: String, vararg params: String): String {
-  require(!GraziePlugin.isBundled) { "Requested non-bundled message from bundled plugin!" }
+fun msg(@PropertyKey(resourceBundle = GrazieBundle.DEFAULT_BUNDLE_NAME) key: String, vararg params: String): String {
   return GrazieBundle.message(key, *params)
 }
-
-fun msg(@PropertyKey(resourceBundle = GrazieBundle.DEFAULT_BUNDLE_NAME) key: String,
-        vararg params: String): String = GrazieBundle.message(key, *params)
 
 fun pane() = JEditorPane().apply {
   editorKit = UIUtil.getHTMLEditorKit()

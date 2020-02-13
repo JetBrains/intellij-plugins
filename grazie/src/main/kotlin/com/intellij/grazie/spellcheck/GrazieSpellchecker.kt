@@ -72,7 +72,8 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     return myCheckers.any { speller ->
       try {
         speller.check(word)
-      } catch (t: Throwable) {
+      }
+      catch (t: Throwable) {
         logger.warn("Got exception during check for spelling mistakes by LanguageTool with word: $word", t)
         false
       }
@@ -86,7 +87,8 @@ object GrazieSpellchecker : GrazieStateLifecycle {
     return filterCheckers(word).mapNotNull { speller ->
       try {
         speller.suggest(word)
-      } catch (t: Throwable) {
+      }
+      catch (t: Throwable) {
         logger.warn("Got exception during suggest for spelling mistakes by LanguageTool with word: $word", t)
         null
       }

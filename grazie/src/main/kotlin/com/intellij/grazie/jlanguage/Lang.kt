@@ -2,6 +2,7 @@
 package com.intellij.grazie.jlanguage
 
 import com.intellij.grazie.GrazieDynamic
+import com.intellij.grazie.remote.GrazieRemote
 import com.intellij.grazie.remote.RemoteLangDescriptor
 import org.languagetool.language.Language
 
@@ -30,6 +31,7 @@ enum class Lang(val displayName: String, val className: String, val remote: Remo
 
   companion object {
     operator fun get(lang: Language): Lang? = values().find { lang.name == it.displayName }
+
     // NOTE: dialects have same short code
     operator fun get(code: String): Lang? = values().find { it.shortCode == code }
 
@@ -44,6 +46,8 @@ enum class Lang(val displayName: String, val className: String, val remote: Remo
     get() = _jLanguage ?: GrazieDynamic.loadLang(this)?.also {
       _jLanguage = it
     }
+
+  fun isAvailable() = GrazieRemote.isAvailableLocally(this)
 
   fun isEnglish() = shortCode == "en"
 

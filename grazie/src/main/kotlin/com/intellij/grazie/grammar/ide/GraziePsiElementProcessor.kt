@@ -29,7 +29,11 @@ class GraziePsiElementProcessor<T : PsiElement>(private val root: PsiElement, pr
                        val behavior: GrammarCheckingStrategy.ElementBehavior,
                        val ignoredGroup: RuleGroup,
                        val ignoredCategories: Set<Typo.Category>) {
-    constructor(root: PsiElement, element: PsiElement, behavior: GrammarCheckingStrategy.ElementBehavior, ignoredGroup: RuleGroup, ignoredCategories: Set<Typo.Category>) :
+    constructor(root: PsiElement,
+                element: PsiElement,
+                behavior: GrammarCheckingStrategy.ElementBehavior,
+                ignoredGroup: RuleGroup,
+                ignoredCategories: Set<Typo.Category>) :
       this(IntRange(element.textOffset - root.textOffset, element.textOffset - root.textOffset + element.textLength - 1), behavior, ignoredGroup, ignoredCategories)
   }
 
@@ -43,7 +47,8 @@ class GraziePsiElementProcessor<T : PsiElement>(private val root: PsiElement, pr
   private fun StringBuilder.appendElementText(element: PsiElement) {
     if (replaces.isEmpty()) {
       append(element.text)
-    } else {
+    }
+    else {
       element.text.forEach {
         append(replaces.fold(it) { char, rule -> rule(this, char) })
       }

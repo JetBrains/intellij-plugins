@@ -19,7 +19,8 @@ class GrazieProgrammingLanguagesComponent : CheckBoxListListener {
 
     if (selected) {
       enabledProgrammingLanguagesIDs.add(lang.id)
-    } else {
+    }
+    else {
       enabledProgrammingLanguagesIDs.remove(lang.id)
     }
   }

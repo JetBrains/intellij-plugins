@@ -57,7 +57,8 @@ object StrategyUtils {
       if ((Text.isNewline(char) || (index == 0 && char in chars)) && from == -1) {
         // for first line without \n
         from = index + if (Text.isNewline(char)) 1 else 0
-      } else {
+      }
+      else {
         if (from != -1) {
           if (char !in chars) {
             if (index > from) result.add(IntRange(from, index - 1))

@@ -1,4 +1,4 @@
-package com.intellij.grazie.ide.problem.suppress
+package com.intellij.grazie.ide.inspection.grammar.problem.suppress
 
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.grammar.Typo
@@ -14,9 +14,9 @@ class GrazieDisableCategoryIntention(typo: Typo) : GrazieDisableIntention() {
   private val lang = typo.info.lang
   private val category = typo.info.rule.category
 
-  override fun getText() = msg("grazie.quickfix.suppress.category.text", category.getName(lang.jLanguage))
+  override fun getText() = msg("grazie.grammar.quickfix.suppress.category.text", category.getName(lang.jLanguage))
 
-  override fun getFamilyName() = msg("grazie.quickfix.suppress.category.family")
+  override fun getFamilyName() = msg("grazie.grammar.quickfix.suppress.category.family")
 
   override fun invoke(project: Project, editor: Editor, element: PsiElement) {
     val action = object : BasicUndoableAction(element.containingFile?.virtualFile) {

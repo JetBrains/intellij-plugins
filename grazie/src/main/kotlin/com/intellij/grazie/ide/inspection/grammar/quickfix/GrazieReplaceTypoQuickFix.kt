@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.grazie.ide.quickfix
+package com.intellij.grazie.ide.inspection.grammar.quickfix
 
 import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.lookup.*
@@ -22,9 +22,9 @@ import javax.swing.Icon
 import kotlin.math.min
 
 class GrazieReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix, Iconable, PriorityAction {
-  override fun getFamilyName() = msg("grazie.quickfix.replace.typo.family")
+  override fun getFamilyName() = msg("grazie.grammar.quickfix.replace.typo.family")
 
-  override fun getName() = msg("grazie.quickfix.replace.typo.text", typo.info.shortMessage)
+  override fun getName() = msg("grazie.grammar.quickfix.replace.typo.text", typo.info.shortMessage)
 
   override fun getIcon(flags: Int): Icon = SpellcheckerIcons.Spellcheck
 
