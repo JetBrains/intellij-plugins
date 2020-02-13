@@ -61,7 +61,7 @@ public class DependenciesTab {
             Object selectedObject = selectedNode.getUserObject();
 
             if (selectedObject instanceof InjectedElement || selectedObject instanceof PresentationLibraryElement || selectedObject instanceof IResource) {
-              DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+              DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "NavigateToGroup");
 
               actions.add(_navigateToElementAction);
               actions.add(_navigateToUsageAction);
@@ -78,7 +78,7 @@ public class DependenciesTab {
 
           // When object it's not selected
           if (selected == null) {
-            DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+            DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "NavigateToGroup");
 
             actions.add(new CollapseAllAction(_dependenciesTree));
             actions.add(new ExpandAllAction(_dependenciesTree));

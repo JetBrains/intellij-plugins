@@ -57,7 +57,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
                 .equals("Tapestry Template")) {
             TemplateNavigate templateNavigate;
 
-            DefaultActionGroup actions = new DefaultActionGroup("TemplatesGroup", true);
+            DefaultActionGroup actions = DefaultActionGroup.createPopupGroup(() -> "TemplatesGroup");
 
             try {
                 PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
