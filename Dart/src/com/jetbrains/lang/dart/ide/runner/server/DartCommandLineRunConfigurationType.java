@@ -29,7 +29,7 @@ public final class DartCommandLineRunConfigurationType extends ConfigurationType
       @NotNull
       @Override
       public String getName() {
-        return "Dart Command Line Application"; // compatibility
+        return "Dart Command Line Application";
       }
 
       @NotNull
@@ -41,6 +41,11 @@ public final class DartCommandLineRunConfigurationType extends ConfigurationType
       @Override
       public boolean isApplicable(@NotNull Project project) {
         return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project));
+      }
+
+      @Override
+      public @NotNull String getId() {
+        return "Dart Command Line Application";
       }
     });
   }

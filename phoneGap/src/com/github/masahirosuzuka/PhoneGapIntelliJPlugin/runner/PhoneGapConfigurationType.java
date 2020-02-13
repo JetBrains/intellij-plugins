@@ -63,5 +63,10 @@ public final class PhoneGapConfigurationType implements ConfigurationType, DumbA
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);
     }
+
+    @Override
+    public @NotNull String getId() {
+      return "PhoneGap/Cordova";
+    }
   }
 }

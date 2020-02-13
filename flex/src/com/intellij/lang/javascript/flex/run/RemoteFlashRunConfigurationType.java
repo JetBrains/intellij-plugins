@@ -33,6 +33,11 @@ public final class RemoteFlashRunConfigurationType implements ConfigurationType,
       public boolean isApplicable(@NotNull Project project) {
         return ModuleUtil.hasModulesOfType(project, FlexModuleType.getInstance());
       }
+
+      @Override
+      public @NotNull String getId() {
+        return "Flash Remote Debug";
+      }
     };
   }
 

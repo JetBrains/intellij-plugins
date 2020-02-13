@@ -39,6 +39,11 @@ public class DartWebdevConfigurationType extends ConfigurationTypeBase implement
         return FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, GlobalSearchScope.projectScope(project)) &&
                FileTypeIndex.containsFileOfType(HtmlFileType.INSTANCE, GlobalSearchScope.projectScope(project));
       }
+
+      @Override
+      public @NotNull String getId() {
+        return "Dart Web";
+      }
     });
   }
 

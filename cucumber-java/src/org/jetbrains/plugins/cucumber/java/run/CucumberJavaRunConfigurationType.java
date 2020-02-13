@@ -33,6 +33,11 @@ public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBas
       public Class<? extends BaseState> getOptionsClass() {
         return CucumberJavaConfigurationOptions.class;
       }
+
+      @Override
+      public @NotNull String getId() {
+        return "Cucumber Java";
+      }
     });
   }
 

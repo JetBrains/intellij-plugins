@@ -10,6 +10,7 @@ import com.jetbrains.cidr.cpp.embedded.platformio.ui.EmptyEditor;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeRunConfigurationType;
 import icons.ClionEmbeddedPlatformioIcons;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class PlatformioConfigurationType extends CMakeRunConfigurationType {
@@ -20,10 +21,10 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   public PlatformioConfigurationType() {
     super(TYPE_ID, PLATFORM_IO_DEBUG_ID, "PlatformIO", "PlatformIO",
           NotNullLazyValue.createValue(() -> ClionEmbeddedPlatformioIcons.Platformio));
-    addFactory(new ToolConfigurationFactory("PlatformIO Test", "-c", "clion", "test"));
-    addFactory(new ToolConfigurationFactory("PlatformIO Upload", "-c", "clion", "run", "--target", "upload"));
-    addFactory(new ToolConfigurationFactory("PlatformIO Program", "-c", "clion", "run", "--target", "program"));
-    addFactory(new ToolConfigurationFactory("PlatformIO Uploadfs", "-c", "clion", "run", "--target", "uploadfs"));
+    addFactory(new ToolConfigurationFactory("PlatformIO Test", "PlatformIO Test", "-c", "clion", "test"));
+    addFactory(new ToolConfigurationFactory("PlatformIO Upload", "PlatformIO Upload", "-c", "clion", "run", "--target", "upload"));
+    addFactory(new ToolConfigurationFactory("PlatformIO Program", "PlatformIO Program", "-c", "clion", "run", "--target", "program"));
+    addFactory(new ToolConfigurationFactory("PlatformIO Uploadfs", "PlatformIO Uploadfs", "-c", "clion", "run", "--target", "uploadfs"));
   }
 
   @NotNull
@@ -71,11 +72,13 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   private class ToolConfigurationFactory extends ConfigurationFactory {
     private final String[] cliParameters;
     private final String name;
+    private final String myId;
 
-    ToolConfigurationFactory(@NotNull String name, String... cliParameters) {
+    ToolConfigurationFactory(@NotNull String name, @NonNls @NotNull String id, String... cliParameters) {
       super(PlatformioConfigurationType.this);
       this.name = name;
       this.cliParameters = cliParameters;
+      myId = id;
     }
 
     @Override
@@ -88,6 +91,11 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
     public @NotNull
     String getName() {
       return name;
+    }
+
+    @Override
+    public @NotNull String getId() {
+      return myId;
     }
   }
 }
