@@ -2,18 +2,13 @@
 package com.intellij.grazie.ide.notification
 
 import com.intellij.grazie.GrazieConfig
-import com.intellij.grazie.GraziePlugin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 
 private class GrazieNotificationComponent : StartupActivity.Background {
   override fun runActivity(project: Project) {
-    GrazieConfig.update {
-      if (it.hasMissedLanguages()) {
-        GrazieToastNotifications.showMissedLanguages(project)
-      }
-
-      it.copy(lastSeenVersion = GraziePlugin.version)
+    if (GrazieConfig.get().hasMissedLanguages()) {
+      GrazieToastNotifications.showMissedLanguages(project)
     }
   }
 }

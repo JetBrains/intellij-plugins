@@ -13,7 +13,7 @@ import tanvd.grazie.langdetect.model.Language
 
 
 object LanguageDetectionProblemDescriptor {
-  fun create(id: String, manager: InspectionManager, file: PsiFile, languages: Set<Language>): ProblemDescriptor {
+  fun create(id: String, manager: InspectionManager, isOnTheFly: Boolean, file: PsiFile, languages: Set<Language>): ProblemDescriptor {
     val langs = languages.map { it.toLang() }
 
     val text = when {
@@ -34,7 +34,7 @@ object LanguageDetectionProblemDescriptor {
       else -> arrayOf(GrazieGoToSettingsQuickFix())
     }
 
-    return manager.createProblemDescriptor(file, text, true, fixes, ProblemHighlightType.WARNING).also {
+    return manager.createProblemDescriptor(file, text, isOnTheFly, fixes, ProblemHighlightType.WARNING).also {
       it.problemGroup = LanguageDetectionProblemGroup(id, languages)
     }
   }

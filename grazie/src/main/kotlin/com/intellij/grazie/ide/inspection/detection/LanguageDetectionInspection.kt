@@ -48,13 +48,13 @@ class LanguageDetectionInspection : LocalInspectionTool() {
     session.getUserData(key)!!.clear()
   }
 
-  override fun inspectionFinished(session: LocalInspectionToolSession, problemsHolder: ProblemsHolder) {
+  override fun inspectionFinished(session: LocalInspectionToolSession, holder: ProblemsHolder) {
     val context = session.getUserData(key)!!
     val languages = context.getToNotify((disabled.disabled + available.map { it.toLanguage() }).toSet())
 
     if (languages.isEmpty()) return
 
-    problemsHolder.registerProblem(LanguageDetectionProblemDescriptor.create(id, problemsHolder.manager, session.file, languages))
+    holder.registerProblem(LanguageDetectionProblemDescriptor.create(id, holder.manager, holder.isOnTheFly, session.file, languages))
   }
 
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {

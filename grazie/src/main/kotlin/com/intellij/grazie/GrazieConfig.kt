@@ -24,15 +24,16 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
    * Note, that all serialized values should be MUTABLE.
    * Immutable values (like emptySet()) as default may lead to deserialization failure
    */
-  data class State(@Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
-                   @Property val nativeLanguage: Lang = enabledLanguages.first(),
-                   @Property val enabledProgrammingLanguages: Set<String> = defaultEnabledProgrammingLanguages,
-                   @Property val enabledCommitIntegration: Boolean = false,
-                   @Property val userDisabledRules: Set<String> = HashSet(),
-                   @Property val userEnabledRules: Set<String> = HashSet(),
-                   @Property val suppressionContext: SuppressionContext = SuppressionContext(),
-                   @Property val detectionContext: DetectionContext.State = DetectionContext.State(),
-                   @Property val lastSeenVersion: String? = null) {
+  data class State(
+    @Property val enabledLanguages: Set<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
+    @Property val nativeLanguage: Lang = enabledLanguages.first(),
+    @Property val enabledProgrammingLanguages: Set<String> = defaultEnabledProgrammingLanguages,
+    @Property val enabledCommitIntegration: Boolean = false,
+    @Property val userDisabledRules: Set<String> = HashSet(),
+    @Property val userEnabledRules: Set<String> = HashSet(),
+    @Property val suppressionContext: SuppressionContext = SuppressionContext(),
+    @Property val detectionContext: DetectionContext.State = DetectionContext.State()
+  ) {
     /**
      * Available languages set depends on current loaded LanguageTool modules.
      *
@@ -55,7 +56,9 @@ class GrazieConfig : PersistentStateComponent<GrazieConfig.State> {
   companion object {
     private val defaultEnabledProgrammingLanguages by lazy {
       when {
-        GraziePlugin.isBundled && ApplicationManager.getApplication()?.isUnitTestMode?.not().orTrue() -> setOf("AsciiDoc", "Latex", "Markdown")
+        GraziePlugin.isBundled && ApplicationManager.getApplication()?.isUnitTestMode?.not().orTrue() -> {
+          setOf("AsciiDoc", "Latex", "Markdown")
+        }
         else -> setOf(
           "AsciiDoc", "Latex", "Markdown",
           "JAVA",
