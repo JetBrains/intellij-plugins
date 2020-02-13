@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;

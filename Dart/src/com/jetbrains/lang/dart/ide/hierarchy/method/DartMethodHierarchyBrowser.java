@@ -2,10 +2,9 @@
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.ide.IdeBundle;
-import com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.newAPI.HierarchyScopeType;
-import com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure;
-import com.intellij.ide.hierarchy.newAPI.MethodHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -41,7 +40,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull Map<HierarchyScopeType, JTree> trees) {
+  protected void createTrees(@NotNull Map<String, JTree> trees) {
     final JTree tree = createTree(false);
     ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
@@ -66,8 +65,8 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
 
   @Nullable
   @Override
-  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull HierarchyScopeType type, @NotNull PsiElement psiElement) {
-    if (getMethodType() != type) {
+  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull String type, @NotNull PsiElement psiElement) {
+    if (!getMethodType().equals(type)) {
       LOG.error("unexpected type: " + type);
       return null;
     }

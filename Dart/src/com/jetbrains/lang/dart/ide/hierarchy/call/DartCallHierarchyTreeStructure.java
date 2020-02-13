@@ -2,9 +2,9 @@
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.ide.hierarchy.newAPI.HierarchyBrowserBaseEx;
-import com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;

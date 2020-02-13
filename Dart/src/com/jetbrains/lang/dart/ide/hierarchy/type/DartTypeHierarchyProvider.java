@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.ide.hierarchy.type;
 
 import com.intellij.ide.hierarchy.HierarchyBrowser;
 import com.intellij.ide.hierarchy.HierarchyProvider;
-import com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;

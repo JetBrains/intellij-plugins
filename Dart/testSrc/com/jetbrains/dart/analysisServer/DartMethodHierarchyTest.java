@@ -1,8 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
-import com.intellij.ide.hierarchy.newAPI.HierarchyBrowserManager;
-import com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.HierarchyBrowserManager;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;

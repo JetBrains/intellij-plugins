@@ -1,10 +1,9 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
-import com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor;
-import com.intellij.ide.hierarchy.newAPI.HierarchyScopeType;
-import com.intellij.ide.hierarchy.newAPI.HierarchyTreeStructure;
-import com.intellij.ide.hierarchy.newAPI.TypeHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
+import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.diagnostic.Logger;
@@ -33,7 +32,7 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected void createTrees(@NotNull final Map<HierarchyScopeType, JTree> trees) {
+  protected void createTrees(@NotNull final Map<String, JTree> trees) {
     createTreeAndSetupCommonActions(trees, IdeActions.GROUP_TYPE_HIERARCHY_POPUP);
   }
 
@@ -66,14 +65,14 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   }
 
   @Override
-  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final HierarchyScopeType typeName, @NotNull final PsiElement psiElement) {
-    if (getSupertypesHierarchyType() == typeName) {
+  protected HierarchyTreeStructure createHierarchyTreeStructure(@NotNull final String typeName, @NotNull final PsiElement psiElement) {
+    if (getSupertypesHierarchyType().equals(typeName)) {
       return new DartServerSupertypesHierarchyTreeStructure(myProject, (DartClass)psiElement);
     }
-    else if (getSubtypesHierarchyType() == typeName) {
+    else if (getSubtypesHierarchyType().equals(typeName)) {
       return new DartServerSubtypesHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
-    else if (getTypeHierarchyType() == typeName) {
+    else if (getTypeHierarchyType().equals(typeName)) {
       return new DartServerTypeHierarchyTreeStructure(myProject, (DartClass)psiElement, getCurrentScopeType());
     }
     else {

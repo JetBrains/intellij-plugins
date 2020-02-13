@@ -2,7 +2,10 @@ package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.ide.hierarchy.newAPI.*;
+import com.intellij.ide.hierarchy.CallHierarchyBrowserBase;
+import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
+import com.intellij.ide.hierarchy.HierarchyBrowserManager;
+import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.lang.javascript.JSHierarchyTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -45,23 +48,23 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  private void doJSTypeHierarchyTest(final HierarchyScopeType hierarchyType, final String classFqn) throws Exception {
+  private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn) throws Exception {
     doJSTypeHierarchyTest(hierarchyType, classFqn, getTestName(false) + ".as");
   }
 
-  private void doJSTypeHierarchyTest(final HierarchyScopeType hierarchyType, final String classFqn, final String... fileNames) throws Exception {
+  private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn, final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
       final JSClass jsClass =
         (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
           .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
-      if (TypeHierarchyBrowserBase.getTypeHierarchyType() == hierarchyType) {
+      if (TypeHierarchyBrowserBase.getTypeHierarchyType().equals(hierarchyType)) {
         return new JSTypeHierarchyTreeStructure(getProject(), jsClass);
       }
-      else if (TypeHierarchyBrowserBase.getSubtypesHierarchyType() == hierarchyType) {
+      else if (TypeHierarchyBrowserBase.getSubtypesHierarchyType().equals(hierarchyType)) {
         return new JSSubtypesHierarchyTreeStructure(getProject(), jsClass);
       }
-      else if (TypeHierarchyBrowserBase.getSupertypesHierarchyType() == hierarchyType) {
+      else if (TypeHierarchyBrowserBase.getSupertypesHierarchyType().equals(hierarchyType)) {
         return new JSSupertypesHierarchyTreeStructure(getProject(), jsClass);
       }
       throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);
@@ -89,7 +92,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = oldState;
   }
 
-  private void doJSCallHierarchyTest(final HierarchyScopeType hierarchyType,
+  private void doJSCallHierarchyTest(final String hierarchyType,
                                      final String classFqn,
                                      final String methodName,
                                      final String scope,
@@ -101,10 +104,10 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
       assert jsFunction != null;
-      if (CallHierarchyBrowserBase.getCalleeType() == hierarchyType) {
+      if (CallHierarchyBrowserBase.getCalleeType().equals(hierarchyType)) {
         return new JSCalleeMethodsTreeStructure(getProject(), jsFunction, scope);
       }
-      else if (CallHierarchyBrowserBase.getCallerType() == hierarchyType) {
+      else if (CallHierarchyBrowserBase.getCallerType().equals(hierarchyType)) {
         return new JSCallerMethodsTreeStructure(getProject(), jsFunction, scope);
       }
       throw new IllegalArgumentException("Wrong hierarchy type: " + hierarchyType);

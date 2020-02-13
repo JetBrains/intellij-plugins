@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
-import com.intellij.ide.hierarchy.newAPI.HierarchyNodeDescriptor;
+import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.util.CompositeAppearance;
