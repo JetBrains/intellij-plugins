@@ -86,7 +86,7 @@ public class DartAnalysisServerService implements Disposable {
   // Webdev works going back to 2.6.0, future minimum version listed in the pubspec.yaml, link below, won't mean that 2.6.0 aren't
   // supported.
   // https://github.com/dart-lang/webdev/blob/master/webdev/pubspec.yaml#L11
-  private static final String MIN_WEBDEV_SDK_VERSION = "2.6.0";
+  public static final String MIN_WEBDEV_SDK_VERSION = "2.6.0";
 
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
