@@ -25,7 +25,7 @@ abstract class VuexContainerImpl : VuexContainer {
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::getters)
 
   override val state: Map<String, VuexStateProperty>
-    get() = mergeState(get(VuexContainerInfoProvider.VuexContainerInfo::state), modules)
+    get() = get(VuexContainerInfoProvider.VuexContainerInfo::state)
 
   override val mutations: Map<String, VuexMutation>
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::mutations)
@@ -43,16 +43,6 @@ abstract class VuexContainerImpl : VuexContainer {
     return VuexContainerInfoProvider.INSTANCE.getInfo(initializer, null)?.let {
       accessor.invoke(it)
     } == true
-  }
-
-  private fun mergeState(definedState: Map<String, VuexStateProperty>, modules: Map<String, VuexModule>): Map<String, VuexStateProperty> {
-    val result = definedState.toMutableMap()
-    modules.entries.forEach { entry ->
-      result.computeIfAbsent(entry.key) {
-        VuexStatePropertyImpl(entry.value.name, entry.value.source)
-      }
-    }
-    return result
   }
 }
 
@@ -109,9 +99,15 @@ class VuexStoreImpl(override val source: JSNewExpression) : VuexContainerImpl(),
 abstract class VuexNamedSymbolImpl(override val name: String,
                                    override val source: PsiElement) : VuexNamedSymbol
 
-class VuexStatePropertyImpl(name: String, source: PsiElement)
+class VuexStatePropertyImpl(name: String, source: PsiElement, resolveTarget: PsiElement?)
   : VuexNamedSymbolImpl(name, source), VuexStateProperty {
-  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
+
+  constructor(name: String, source: PsiElement) : this(name, source, null)
+
+  private val myForcedResolveTarget = resolveTarget
+  override val jsType: JSType? get() = (myForcedResolveTarget as? JSTypeOwner)?.jsType ?: (source as? JSTypeOwner)?.jsType
+  override val resolveTarget: PsiElement
+    get() = myForcedResolveTarget ?: VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
 class VuexActionImpl(name: String, source: PsiElement)

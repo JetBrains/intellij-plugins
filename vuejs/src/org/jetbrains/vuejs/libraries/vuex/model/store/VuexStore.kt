@@ -45,8 +45,6 @@ interface VuexModule : VuexContainer, VuexNamedSymbol {
 
 interface VuexStateProperty : VuexNamedSymbol {
   val jsType: JSType?
-  override val resolveTarget: PsiElement
-    get() = VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
 }
 
 interface VuexAction : VuexNamedSymbol {

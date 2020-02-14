@@ -1,9 +1,12 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.Stack
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexSymbolAccessor
+import org.jetbrains.vuejs.libraries.vuex.types.VuexContainerStateType
+import org.jetbrains.vuejs.model.VueImplicitElement
 
 interface VuexStoreContext {
 
@@ -13,14 +16,24 @@ interface VuexStoreContext {
 
   fun <T : VuexNamedSymbol> visitSymbols(symbolAccessor: (VuexContainer) -> Map<String, T>,
                                          consumer: (fullName: String, symbol: T) -> Unit) {
+    val visited = mutableSetOf<String>()
     visit { namespace, container ->
       for (entry in symbolAccessor(container)) {
-        if ((entry.value as? VuexAction)?.isRoot == true) {
-          consumer(entry.key, entry.value)
+        val name = if ((entry.value as? VuexAction)?.isRoot == true) entry.key else appendSegment(namespace, entry.key)
+        if (visited.add(name)) {
+          consumer(name, entry.value)
         }
-        else {
-          consumer(appendSegment(namespace, entry.key), entry.value)
-        }
+      }
+      if (symbolAccessor == VuexContainer::state
+          && namespace.isNotEmpty()
+          && container is VuexNamedSymbol
+          && visited.add(namespace)) {
+
+        val moduleDefinition = container.source
+        val resolveTarget = VueImplicitElement(namespace, VuexContainerStateType(moduleDefinition, VuexStaticNamespace(namespace)),
+                                               moduleDefinition, JSImplicitElement.Type.Property)
+        @Suppress("UNCHECKED_CAST")
+        consumer(namespace, VuexStatePropertyImpl(container.name, moduleDefinition, resolveTarget) as T)
       }
     }
   }
