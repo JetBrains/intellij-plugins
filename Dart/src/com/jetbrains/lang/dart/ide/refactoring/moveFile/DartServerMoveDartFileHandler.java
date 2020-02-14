@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring.moveFile;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -35,7 +35,7 @@ public class DartServerMoveDartFileHandler extends MoveFileHandler {
     }
     final Project project = psiFile.getProject();
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
-    if (dartSdk == null || !DartAnalysisServerService.isDartSdkVersionForMoveFileRefactoring(dartSdk)) {
+    if (dartSdk == null || !DartAnalysisServerService.isDartSdkVersionSufficientForMoveFileRefactoring(dartSdk)) {
       return false;
     }
     return DartAnalysisServerService.getInstance(project).isInIncludedRoots(psiFile.getVirtualFile());
