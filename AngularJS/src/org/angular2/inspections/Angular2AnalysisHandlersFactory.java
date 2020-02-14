@@ -147,6 +147,11 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       return referenceExpression;
     }
 
+    @Override
+    protected boolean skipParentIfClass() {
+      return false;
+    }
+
     @NotNull
     @Override
     protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
@@ -183,6 +188,11 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                                               @Nullable PsiElement anchor,
                                                               boolean isStaticContext) {
       return referenceExpression;
+    }
+
+    @Override
+    protected boolean skipParentIfClass() {
+      return false;
     }
 
     @NotNull
