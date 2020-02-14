@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
+import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
@@ -9,6 +10,7 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
+import com.intellij.refactoring.suggested.startOffset
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.getStubSafeCallArguments
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -87,13 +89,19 @@ class VuexStoreActionContextNamespace : VuexStoreContextNamespace({ it.actions.v
 open class VuexStoreContextNamespace(private val accessor: (VuexContainer) -> Collection<VuexNamedSymbol>) : VuexStoreNamespace {
 
   override fun get(element: PsiElement): String {
+    val originalElement = getApproxOriginalElement(element) ?: return ""
     var result = ""
-    VuexModelManager.getVuexStoreContext(element)?.visit { fullName, container ->
-      if (accessor(container).any { PsiTreeUtil.isContextAncestor(it.source, element, false) }) {
+    VuexModelManager.getVuexStoreContext(originalElement)?.visit { fullName, container ->
+      if (accessor(container).any { PsiTreeUtil.isContextAncestor(it.source, originalElement, false) }) {
         result = fullName
       }
     }
     return result
+  }
+
+  private fun getApproxOriginalElement(element: PsiElement): PsiElement? {
+    CompletionUtil.getOriginalElement(element)?.let { return it }
+    return element.containingFile.originalFile.findElementAt(element.startOffset)
   }
 
   override fun equals(other: Any?): Boolean {

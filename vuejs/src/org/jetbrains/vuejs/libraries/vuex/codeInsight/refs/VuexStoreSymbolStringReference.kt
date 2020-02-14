@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.codeInsight.refs
 
-import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider
 import com.intellij.codeInsight.lookup.Lookup.REPLACE_SELECT_CHAR
 import com.intellij.codeInsight.lookup.LookupElement
@@ -19,7 +18,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
-import com.intellij.refactoring.suggested.startOffset
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
@@ -89,11 +87,10 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     fun getLookupItems(element: PsiElement, namespace: VuexStoreNamespace,
                        accessor: VuexSymbolAccessor?, pathPrefix: String,
                        wrapWithQuotes: Boolean, includeMembers: Boolean): List<LookupElement> {
-      val originalElement = getApproxOriginalElement(element) ?: return emptyList()
-      val prefix = VuexStoreContext.appendSegment(namespace.get(originalElement), pathPrefix)
+      val prefix = VuexStoreContext.appendSegment(namespace.get(element), pathPrefix)
       val result = mutableListOf<LookupElement>()
-      val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(originalElement) else ""
-      VuexModelManager.getVuexStoreContext(originalElement)
+      val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
+      VuexModelManager.getVuexStoreContext(element)
         ?.visit(accessor) { name: String, symbol: Any ->
           if (name.startsWith(prefix)
               && name.length > prefix.length
@@ -102,11 +99,6 @@ class VuexStoreSymbolStringReference(element: PsiElement,
             result.add(createLookupItem(symbol.resolveTarget, quote + name.substring(prefix.length) + quote))
         }
       return result
-    }
-
-    private fun getApproxOriginalElement(element: PsiElement): PsiElement? {
-      CompletionUtil.getOriginalElement(element)?.let { return it }
-      return element.containingFile.originalFile.findElementAt(element.startOffset)
     }
 
     private fun createLookupItem(value: PsiElement, name: String): LookupElement {

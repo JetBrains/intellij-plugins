@@ -403,6 +403,43 @@ class VuexCompletionTest : BasePlatformTestCase() {
                      additionalContent = "<caret>,{},{root:true})", strict = false)
   }
 
+  fun testStorefrontStoreGettersContext() {
+    myFixture.configureStorefront()
+    val cartGetters = "store/cart/getters.ts"
+
+    //// state
+    doStoreItemsTest(0, cartGetters, "state.<caret>", strict = false)
+    doStoreItemsTest(1, cartGetters, "state.<caret>", additionalContent = "breadcrumbs.<caret>", strict = false)
+    doStoreItemsTest(2, cartGetters, "state<caret>.", additionalContent = "['<caret>']")
+
+    // getters
+    doStoreItemsTest(3, cartGetters, "getters.<caret>", strict = false)
+    doStoreItemsTest(4, cartGetters, "getters<caret>.", additionalContent = "[<caret>]", strict = false)
+    doStoreItemsTest(5, cartGetters, "getters<caret>.", additionalContent = "['<caret>']")
+
+    // rootState
+    doStoreItemsTest(6, cartGetters, "rootState.<caret>", strict = false)
+    doStoreItemsTest(0, cartGetters, "rootState.<caret>", additionalContent = "cart.<caret>", strict = false)
+    doStoreItemsTest(7, cartGetters, "rootState<caret>.", additionalContent = "['<caret>']")
+
+    // rootGetters
+    doStoreItemsTest(8, cartGetters, "rootGetters<caret>[", additionalContent = ".<caret>", strict = false)
+    doStoreItemsTest(9, cartGetters, "rootGetters[<caret>", strict = false)
+    doStoreItemsTest(10, cartGetters, "rootGetters['<caret>")
+    doStoreItemsTest(5, cartGetters, "rootGetters['cart/<caret>")
+
+  }
+
+  fun testStorefrontStoreMutationsContext() {
+    myFixture.configureStorefront()
+    val breadcrumbs = "store/cart/breadcrumbs/index.ts"
+
+    // state
+    doStoreItemsTest(0, breadcrumbs, "state.<caret>routes", strict = false)
+    doStoreItemsTest(1, breadcrumbs, "state<caret>.routes", additionalContent = "[<caret>]", strict = false)
+    doStoreItemsTest(2, breadcrumbs, "state<caret>.routes", additionalContent = "['<caret>']")
+  }
+
   private val namespacedHandlersCode = """
     const {mapState, mapActions, mapGetters, mapMutations} = createNamespacedHelpers('cart')
     const categoryModule = createNamespacedHelpers('category')
