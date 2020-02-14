@@ -209,7 +209,7 @@ public class DartVmServiceDebugProcess extends XDebugProcess {
                                                    public boolean canClose(String inputString) {
                                                      return true;
                                                    }
-                                                 });
+                                                 }, null, DartBundle.message("connect.to.running.app.comment"));
 
       if (debugUrl == null) {
         // Cancel button pressed
