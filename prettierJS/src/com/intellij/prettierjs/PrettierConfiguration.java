@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -16,9 +16,14 @@ import org.jetbrains.annotations.Nullable;
 public final class PrettierConfiguration implements JSNpmLinterState {
   @NotNull
   private final Project myProject;
+
   private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
   private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
   private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
+  private static final String PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
+
+  private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
+
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
 
   public PrettierConfiguration(@NotNull Project project) {
@@ -75,6 +80,15 @@ public final class PrettierConfiguration implements JSNpmLinterState {
 
   public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
     PropertiesComponent.getInstance(myProject).setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
-    PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
+    PropertiesComponent.getInstance(myProject)
+      .setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
+  }
+
+  public boolean isRunOnSave() {
+    return PropertiesComponent.getInstance(myProject).getBoolean(PRETTIER_ON_SAVE_PROPERTY, PRETTIER_ON_SAVE_DEFAULT);
+  }
+
+  public void setRunOnSave(boolean runOnSave) {
+    PropertiesComponent.getInstance(myProject).setValue(PRETTIER_ON_SAVE_PROPERTY, runOnSave, PRETTIER_ON_SAVE_DEFAULT);
   }
 }
