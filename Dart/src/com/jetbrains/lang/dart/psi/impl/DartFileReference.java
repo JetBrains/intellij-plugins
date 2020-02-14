@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.openapi.project.Project;
@@ -91,7 +91,7 @@ public class DartFileReference implements PsiPolyVariantReference {
       final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(((PsiFile)element));
       final Project project = myUriElement.getProject();
       final DartSdk dartSdk = DartSdk.getDartSdk(project);
-      if (dartSdk != null && !DartAnalysisServerService.isDartSdkVersionForMoveFileRefactoring(dartSdk)) {
+      if (dartSdk != null && !DartAnalysisServerService.isDartSdkVersionSufficientForMoveFileRefactoring(dartSdk)) {
         if (contextFile != null && targetFile != null) {
           final String newUri = DartUrlResolver.getInstance(myUriElement.getProject(), contextFile).getDartUrlForFile(targetFile);
           if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
