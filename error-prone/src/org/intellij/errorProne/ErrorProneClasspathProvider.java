@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.errorProne;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -27,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
+public final class ErrorProneClasspathProvider extends BuildProcessParametersProvider {
   private static final Logger LOG = Logger.getInstance(ErrorProneClasspathProvider.class);
   private static final String VERSION_PROPERTY = "idea.error.prone.version";//duplicates ErrorProneJavaCompilingTool.VERSION_PROPERTY
   private static final String COMPILER_PATH_PROPERTY = "idea.error.prone.compiler.path";//duplicates ErrorProneJavaCompilingTool.COMPILER_PATH_PROPERTY

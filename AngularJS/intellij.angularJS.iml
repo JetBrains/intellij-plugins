@@ -58,5 +58,6 @@
     <orderEntry type="library" name="jackson" level="project" />
     <orderEntry type="library" name="jackson-databind" level="project" />
     <orderEntry type="module" module-name="intellij.tslint" />
+    <orderEntry type="library" name="StreamEx" level="project" />
   </component>
 </module>
