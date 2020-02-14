@@ -68,6 +68,12 @@ export default {
     applyCoupon2(code: string): Promise<boolean> {
       return rootStore.dispatch('cart/applyCoupon', code)
     },
+    applyCoupon3(code: string): Promise<boolean> {
+      return this.$store.dispatch({type: 'cart/applyCoupon', code})
+    },
+    applyCoupon4(code: string): Promise<boolean> {
+      return rootStore.dispatch({type: 'cart/applyCoupon', code})
+    },
     deleteItem(code: string): Promise<boolean> {
       return rootStore.commit(CART_DEL_ITEM, code)
     },
@@ -80,14 +86,22 @@ export default {
     setItem2(code: string): Promise<boolean> {
       return this.$store.commit('cart/breadcrumbs/set', code)
     },
+    setItem3(code: string): Promise<boolean> {
+      return rootStore.commit({type: 'cart/breadcrumbs/set', code})
+    },
+    setItem4(code: string): Promise<boolean> {
+      return this.$store.commit({type: 'cart/breadcrumbs/set', code})
+    },
 
     ...mapActions('cart/breadcrumbs', ['set']),
     ...mapActions(['cart/configureItem']),
     ...mapActions({
-      fire: (dispatch) => dispatch('cart/configureItem')
+      fire: (dispatch) => dispatch('cart/configureItem'),
+      fire2: (dispatch) => dispatch({type: 'cart/configureItem'})
     }),
     ...mapActions('cart', {
-      fire: (dispatch) => dispatch('configureItem')
+      fire: (dispatch) => dispatch('configureItem'),
+      fire2: (dispatch) => dispatch({type: 'configureItem'})
     }),
 
     ...mapMutations([
@@ -99,6 +113,7 @@ export default {
     ...mapMutations({
       set: commit => {
         commit('cart/breadcrumbs/set') //1
+        commit({type: 'cart/breadcrumbs/set'}) //1
         {
           let commit = (s: string) => false
           commit('cart/breadcrumbs/set') //2
@@ -106,7 +121,8 @@ export default {
       }
     }),
     ...mapMutations('cart/breadcrumbs', {
-      set: commit => commit('set')
+      set: commit => commit('set'),
+      set2: commit => commit({type: 'set'})
     }),
   }
 }

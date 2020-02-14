@@ -10,11 +10,13 @@ import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexArrayItemPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexCallArgumentPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexDecoratorArgumentPattern
+import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexDispatchCommitObjectArgPattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.VuexPatterns.vuexObjectPropertyValuePattern
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_ARRAY_ITEM_OR_OBJECT_PROP_VALUE_REF_PROVIDER
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_CALL_ARGUMENT_REF_PROVIDER
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_DECORATOR_ARGUMENT_REF_PROVIDER
+import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexJSLiteralReferenceProvider.Companion.VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER
 import org.jetbrains.vuejs.libraries.vuex.codeInsight.refs.VuexStoreSymbolStringReference
 
 class VuexCompletionContributor : CompletionContributor() {
@@ -35,6 +37,10 @@ class VuexCompletionContributor : CompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(JSTokenTypes.IDENTIFIER)
       .inside(vuexDecoratorArgumentPattern(JSReferenceExpression::class)),
            VuexCallReferenceCompletionProvider(VUEX_DECORATOR_ARGUMENT_REF_PROVIDER))
+
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement(JSTokenTypes.IDENTIFIER)
+      .inside(vuexDispatchCommitObjectArgPattern(JSReferenceExpression::class)),
+           VuexCallReferenceCompletionProvider(VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER))
   }
 
   private class VuexCallReferenceCompletionProvider(private val provider: VuexJSLiteralReferenceProvider) : CompletionProvider<CompletionParameters>() {

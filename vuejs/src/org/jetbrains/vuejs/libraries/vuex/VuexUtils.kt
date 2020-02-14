@@ -27,6 +27,7 @@ object VuexUtils {
 
   const val PROP_NAMESPACED = "namespaced"
   const val PROP_ROOT = "root"
+  const val PROP_TYPE = "type"
 
   const val DISPATCH = "dispatch"
   const val COMMIT = "commit"

@@ -40,7 +40,8 @@ export default {
   methods: {
     ...mapActions(['breadcrumbs/set', 'configureItem']),
     ...mapActions({
-      fire: (dispatch) => dispatch('configureItem')
+      fire: (dispatch) => dispatch('configureItem'),
+      fire2: (dispatch) => dispatch({type: 'configureItem'})
     }),
 
     ...mapMutations(['breadcrumbs/set']),
@@ -48,6 +49,7 @@ export default {
     ...mapMutations({
       set: commit => {
         commit('breadcrumbs/set') //1
+        commit({type: 'breadcrumbs/set'})
         {
           let commit = (s: string) => false
           commit('breadcrumbs/set') //2

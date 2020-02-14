@@ -29,6 +29,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MUTATION_DEC
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_ROOT
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.PROP_TYPE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.ROOT_STATE
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.STATE
@@ -75,8 +76,11 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
               ?.let { getNamespaceForGettersOrState(it, referenceName) }
           }
           is JSReferenceExpression -> {
+            if (referenceName == ROOT_STATE || referenceName == ROOT_GETTERS) {
+              return VuexStaticNamespace("")
+            }
             // action context or global namespace
-            return getNamespaceIfActionContextParam(firstQualifier, referenceName)
+            return getNamespaceIfActionContextParam(firstQualifier)
                    ?: VuexStaticNamespace("")
           }
           else -> {
@@ -126,6 +130,15 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           override val baseNamespace: VuexStoreNamespace = VuexHelpersContextNamespace(false)
           override val isSoft: Boolean = false
         }
+      }
+    }
+
+    val VUEX_DISPATCH_COMMIT_OBJECT_ARG_REF_PROVIDER = object : VuexJSLiteralReferenceProvider() {
+      override fun getSettings(element: PsiElement): ReferenceProviderSettings? {
+        return element.context?.castSafelyTo<JSProperty>()
+          ?.takeIf { it.name == PROP_TYPE }
+          ?.context
+          ?.let { VUEX_CALL_ARGUMENT_REF_PROVIDER.getSettings(it) }
       }
     }
 
@@ -188,8 +201,12 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           else {
             return qualifier.castSafelyTo<JSReferenceExpression>()
               ?.let {
-                getNamespaceIfActionContextParam(it, functionName)
-                ?: VuexStaticNamespace("")
+                if (!isRootCall(functionName, element)) {
+                  getNamespaceIfActionContextParam(it) ?: VuexStaticNamespace("")
+                }
+                else {
+                  VuexStaticNamespace("")
+                }
               }
           }
         }
@@ -200,21 +217,14 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       }
     }
 
-    private fun getNamespaceIfActionContextParam(contextReferenceExpression: JSReferenceExpression,
-                                                 referenceName: String): VuexStoreNamespace? =
+    private fun getNamespaceIfActionContextParam(contextReferenceExpression: JSReferenceExpression): VuexStoreNamespace? =
       contextReferenceExpression.takeIf { it.qualifier == null && isPossiblyStoreContext(it) }
         ?.referenceName
         ?.takeIf { it == CONTEXT }
         ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, contextReferenceExpression) }
         ?.takeIf { isActionContextParameter(it) && isPossiblyStoreContext(it) }
         ?.let {
-          if (referenceName == ROOT_STATE || referenceName == ROOT_GETTERS
-              || isRootCall(referenceName, contextReferenceExpression)) {
-            VuexStaticNamespace("")
-          }
-          else {
-            VuexStoreActionContextNamespace()
-          }
+          VuexStoreActionContextNamespace()
         }
 
     private fun isRootCall(functionName: @Nullable String,
@@ -222,7 +232,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       (functionName == DISPATCH || functionName == COMMIT)
       && element.contextOfType(JSCallExpression::class)
         ?.arguments
-        ?.getOrNull(2)
+        ?.getOrNull(if (element is JSObjectLiteralExpression) 1 else 2)
         ?.castSafelyTo<JSObjectLiteralExpression>()
         ?.findProperty(PROP_ROOT)
         ?.value

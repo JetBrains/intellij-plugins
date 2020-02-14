@@ -34,12 +34,16 @@ class VuexResolveTest : BasePlatformTestCase() {
       "this.\$store.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
       "rootStore.dispatch('cart/apply<caret>Coupon'" to "actions/couponActions.ts:354:TypeScriptFunctionProperty",
       "rootStore.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
+      "rootStore.dispatch({type: 'cart/apply<caret>Coupon'" to "actions/couponActions.ts:354:TypeScriptFunctionProperty",
+      "rootStore.dispatch({type: 'ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
 
       // Direct commit
       "this.\$store.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
       "this.\$store.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty",
       "rootStore.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "rootStore.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty")
+      "rootStore.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty",
+      "rootStore.commit({type: 'cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+      "rootStore.commit({type: 'cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty")
   }
 
   fun testStorefrontComponentMappedGetters() {
@@ -119,9 +123,11 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // Plain function dictionary
       "(dispatch) => dispatch('cart/configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
+      "(dispatch) => dispatch({type: 'cart/configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
 
       // Namespaced function dictionary
-      "(dispatch) => dispatch('configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
+      "(dispatch) => dispatch('configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
+      "(dispatch) => dispatch({type: 'configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty")
   }
 
   fun testStorefrontComponentMappedMutations() {
@@ -134,10 +140,12 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // Plain function dictionary
       "commit('cart/breadcrumbs/s<caret>et') //1" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+      "commit({type: 'cart/breadcrumbs/s<caret>et" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
       "commit('cart/breadcrumbs/s<caret>et') //2" to null,
 
       // Namespaced function dictionary
-      "commit => commit('s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty")
+      "commit => commit('s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+      "commit => commit({type: 's<caret>et'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty")
   }
 
   fun testStorefrontComponentNamespacedHelpers() {
@@ -185,12 +193,14 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // Actions function dictionary
       "(dispatch) => dispatch('configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
+      "(dispatch) => dispatch({type: 'configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
 
       // Mutations array
       "'breadcrumbs/s<caret>et'])" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
 
       // Mutations function dictionary
       "commit('breadcrumbs/s<caret>et') //1" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
+      "commit({type: 'breadcrumbs/s<caret>et'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
       "commit('breadcrumbs/s<caret>et') //2" to null)
   }
 
