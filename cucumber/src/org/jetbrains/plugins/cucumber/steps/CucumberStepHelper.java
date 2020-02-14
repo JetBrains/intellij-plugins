@@ -77,7 +77,7 @@ public class CucumberStepHelper {
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
 
     for (AbstractStepDefinition stepDefinition : allSteps) {
-      if (stepDefinition.matches(substitutedName) && stepDefinition.supportsStep(step)) {
+      if (stepDefinition != null && stepDefinition.matches(substitutedName) && stepDefinition.supportsStep(step)) {
         final Pattern currentLongestPattern = getPatternByDefinition(definitionsByClass.get(stepDefinition.getClass()));
         final Pattern newPattern = getPatternByDefinition(stepDefinition);
         final int newPatternLength = ((newPattern != null) ? newPattern.pattern().length() : -1);
