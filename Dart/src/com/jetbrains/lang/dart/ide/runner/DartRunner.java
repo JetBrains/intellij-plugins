@@ -27,7 +27,6 @@ import com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.vmService.DartVmServiceDebugProcess;
 import com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfiguration;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfiguration;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,9 +94,6 @@ public class DartRunner extends GenericProgramRunner {
                                                   final @NotNull ExecutionEnvironment env,
                                                   final @Nullable String dasExecutionContextId) throws RuntimeConfigurationError,
                                                                                                        ExecutionException {
-    final DartSdk sdk = DartSdk.getDartSdk(env.getProject());
-    assert (sdk != null); // already checked
-
     final RunProfile runConfiguration = env.getRunProfile();
     final VirtualFile contextFileOrDir;
     VirtualFile currentWorkingDirectory;
@@ -153,7 +149,7 @@ public class DartRunner extends GenericProgramRunner {
     final XDebugSession debugSession = debuggerManager.startSession(env, new XDebugProcessStarter() {
       @Override
       @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException{
+      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
         final DartUrlResolver dartUrlResolver = getDartUrlResolver(project, contextFileOrDir);
         DartVmServiceDebugProcess debugProcess = new DartVmServiceDebugProcess(session,
                                                                                executionResult,
