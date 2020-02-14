@@ -260,16 +260,22 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         var lastIndex = 0
         var index = if (settings.includeMembers) text.indexOf('/') else -1
         val result = mutableListOf<PsiReference>()
-        val accessor = settings.symbolAccessor
+
+        fun addReference(start: Int, end: Int) {
+          if (start < end) {
+            // The actual range in the text is offset by 1 due to quotes in the quoted literal
+            result.add(VuexStoreSymbolStringReference(
+              element, TextRange(start + 1, end + 1), settings.symbolAccessor, text.substring(0, end),
+              end == text.length, settings.baseNamespace, settings.isSoft, settings.includeMembers))
+          }
+        }
+
         while (index > 0) {
-          result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, index).shiftRight(1), accessor, text.substring(0, index),
-                                                    false, settings.baseNamespace, settings.isSoft, settings.includeMembers))
+          addReference(lastIndex, index)
           lastIndex = index + 1
           index = text.indexOf('/', lastIndex)
         }
-
-        result.add(VuexStoreSymbolStringReference(element, TextRange(lastIndex, text.length).shiftRight(1), accessor, text,
-                                                  true, settings.baseNamespace, settings.isSoft, settings.includeMembers))
+        addReference(lastIndex, text.length)
         return result.toTypedArray()
       }
     }
