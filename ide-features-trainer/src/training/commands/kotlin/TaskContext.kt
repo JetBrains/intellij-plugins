@@ -36,22 +36,22 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
 
   /** Simply wait until an user perform particular action */
   fun trigger(actionId: String) {
-    steps.add(recorder.futureAction(actionId))
+    addStep(recorder.futureAction(actionId))
   }
 
   /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
   fun triggerStart(actionId: String, checkState: () -> Boolean = { true }) {
-    steps.add(recorder.futureActionOnStart(actionId, checkState))
+    addStep(recorder.futureActionOnStart(actionId, checkState))
   }
 
   fun triggers(vararg actionIds: String) {
-    steps.add(recorder.futureListActions(actionIds.toList()))
+    addStep(recorder.futureListActions(actionIds.toList()))
   }
 
   /** An user need to rice an action which leads to necessary state change */
   fun <T : Any?> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
     val check = getCheck(calculateState, checkState)
-    steps.add(recorder.futureActionAndCheckAround(actionId, check))
+    addStep(recorder.futureActionAndCheckAround(actionId, check))
   }
 
   /** An user need to rice an action which leads to appropriate end state */
@@ -65,7 +65,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
    */
   fun stateCheck(checkState: () -> Boolean): CompletableFuture<Boolean> {
     val future = recorder.futureCheck { checkState() }
-    steps.add(future)
+    addStep(future)
     return future
   }
 
@@ -85,8 +85,12 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
         false
       }
     }
-    steps.add(future)
+    addStep(future)
     return result
+  }
+
+  fun addStep(step: CompletableFuture<Boolean>) {
+    steps.add(step)
   }
 
   val focusOwner: Component?
