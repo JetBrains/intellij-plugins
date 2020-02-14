@@ -1,6 +1,7 @@
 __DEMO_MODE__#false
 attribute#null
 cart#null
+cart/breadcrumbs#null
 cart/breadcrumbs/current#null
 cart/breadcrumbs/routes#any[]
 cart/cartIsLoaded#false

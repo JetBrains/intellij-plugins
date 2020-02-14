@@ -208,6 +208,7 @@ class VuexResolveTest : BasePlatformTestCase() {
       "@State('cart/isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
       "@State('ship<caret>ping') shipping1" to "store/index.ts:529:JSProperty",
       "@State('foo<caret>bar') foobar2" to null,
+      "@State('cart/bread<caret>crumbs')" to "cart/index.ts:838:JSProperty",
       "@State(state => state.cart.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:69:JSProperty",
       "@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1265:JSLiteralExpression",
 

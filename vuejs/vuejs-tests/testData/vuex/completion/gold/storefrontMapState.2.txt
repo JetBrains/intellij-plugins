@@ -1,6 +1,7 @@
 !"__DEMO_MODE__"#false#103
 !"attribute"#null#103
 !"cart"#null#103
+!"cart/breadcrumbs"#null#103
 !"cart/breadcrumbs/current"#null#103
 !"cart/breadcrumbs/routes"#any[]#103
 !"cart/cartIsLoaded"#false#103

@@ -25,7 +25,7 @@ abstract class VuexContainerImpl : VuexContainer {
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::getters)
 
   override val state: Map<String, VuexStateProperty>
-    get() = get(VuexContainerInfoProvider.VuexContainerInfo::state)
+    get() = mergeState(get(VuexContainerInfoProvider.VuexContainerInfo::state), modules)
 
   override val mutations: Map<String, VuexMutation>
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::mutations)
@@ -45,6 +45,15 @@ abstract class VuexContainerImpl : VuexContainer {
     } == true
   }
 
+  private fun mergeState(definedState: Map<String, VuexStateProperty>, modules: Map<String, VuexModule>): Map<String, VuexStateProperty> {
+    val result = definedState.toMutableMap()
+    modules.entries.forEach { entry ->
+      result.computeIfAbsent(entry.key) {
+        VuexStatePropertyImpl(entry.value.name, entry.value.source)
+      }
+    }
+    return result
+  }
 }
 
 class VuexModuleImpl(override val name: String,

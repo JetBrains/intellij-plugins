@@ -11,6 +11,7 @@ export class MyComp extends Vue {
   @State('cart/isMicrocartOpen') microcart
   @State('shipping') shipping1
   @State('foobar') foobar2
+  @State('cart/breadcrumbs') foo
   @State(state => state.cart.breadcrumbs.routes) bcRoutes2
   @Action('cart/configureItem') configItem
   @Mutation('cart/breadcrumbs/set') bcSet
