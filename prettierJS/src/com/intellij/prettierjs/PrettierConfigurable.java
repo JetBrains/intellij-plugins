@@ -4,8 +4,6 @@ package com.intellij.prettierjs;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageField;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurableProvider;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -87,25 +85,5 @@ public class PrettierConfigurable implements SearchableConfigurable {
     configuration.update(myNodeInterpreterField.getInterpreterRef(), selectedPackage);
     configuration.setRunOnSave(myRunOnSaveCheckbox.isSelected());
     PrettierLanguageService.getInstance(myProject).terminateStartedProcess(false);
-  }
-
-  public static class Provider extends ConfigurableProvider {
-
-    private final Project myProject;
-
-    public Provider(Project project) {
-      myProject = project;
-    }
-
-    @Override
-    public boolean canCreateConfigurable() {
-      return true;
-    }
-
-    @Nullable
-    @Override
-    public Configurable createConfigurable() {
-      return new PrettierConfigurable(myProject);
-    }
   }
 }

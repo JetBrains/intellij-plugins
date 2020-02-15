@@ -41,8 +41,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
         parentId="Settings.JavaScript"
         id="settings.javascript.prettier"
         displayName="Prettier"
-        instance="com.intellij.prettierjs.PrettierConfigurable"
-        provider="com.intellij.prettierjs.PrettierConfigurable$Provider"/>
+        instance="com.intellij.prettierjs.PrettierConfigurable"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
     <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
