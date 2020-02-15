@@ -40,6 +40,13 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         val runOnSaveCheckBox = checkBox(PrettierBundle.message("run.on.save"),
                                          { prettierConfiguration.isRunOnSave },
                                          { prettierConfiguration.isRunOnSave = it }).component
+
+        val filePatternsLabel = JLabel(PrettierBundle.message("files.pattern"))
+        row(filePatternsLabel) {
+          textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
+            .comment("<html><a href= '$GLOB_SYNTAX_URL'>Glob pattern</a>, for example, <code>**/*.{js,ts}</code></html>")
+            .component.also { filePatternsLabel.labelFor = it }
+        }.enableIf(runOnSaveCheckBox.selected)
       }
     }
   }

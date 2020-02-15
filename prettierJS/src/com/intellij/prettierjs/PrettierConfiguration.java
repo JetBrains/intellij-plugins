@@ -10,19 +10,21 @@ import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public final class PrettierConfiguration implements JSNpmLinterState<PrettierConfiguration> {
-
   @NotNull
   private final Project myProject;
 
-  private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
-  private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
-  private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
-  private static final String PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
+  @NonNls private static final String NODE_INTERPRETER_PROPERTY = "prettierjs.PrettierConfiguration.NodeInterpreter";
+  @NonNls private static final String PACKAGE_PROPERTY = "prettierjs.PrettierConfiguration.Package";
+  @NonNls private static final String OLD_INTERPRETER_PROPERTY = "node.js.path.for.package.prettier";
+  @NonNls private static final String PRETTIER_ON_SAVE_PROPERTY = "run.prettier.on.save";
+  @NonNls private static final String PRETTIER_FILES_PATTERN_PROPERTY = "prettier.files.pattern";
 
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
+  @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "**/*.{js,ts}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
 
@@ -84,5 +86,14 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   public void setRunOnSave(boolean runOnSave) {
     PropertiesComponent.getInstance(myProject).setValue(PRETTIER_ON_SAVE_PROPERTY, runOnSave, PRETTIER_ON_SAVE_DEFAULT);
+  }
+
+  @NotNull
+  public String getFilesPattern() {
+    return PropertiesComponent.getInstance(myProject).getValue(PRETTIER_FILES_PATTERN_PROPERTY, PRETTIER_FILES_PATTERN_DEFAULT);
+  }
+
+  public void setFilesPattern(@NotNull String filePatterns) {
+    PropertiesComponent.getInstance(myProject).setValue(PRETTIER_FILES_PATTERN_PROPERTY, filePatterns, PRETTIER_FILES_PATTERN_DEFAULT);
   }
 }
