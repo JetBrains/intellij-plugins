@@ -16,6 +16,7 @@ import com.intellij.vcs.commit.message.CommitMessageInspectionProfile
 
 class GrazieCommitInspection : BaseCommitMessageInspection() {
   companion object : GrazieStateLifecycle, StartupActivity.Background {
+    private const val TOOL_SHORT_NAME = "GrazieCommit"
     private val grazie: LocalInspectionTool by lazy { GrazieInspection() }
 
     override fun update(prevState: GrazieConfig.State, newState: GrazieConfig.State) {
@@ -31,18 +32,18 @@ class GrazieCommitInspection : BaseCommitMessageInspection() {
     private fun updateInspectionState(project: Project, state: GrazieConfig.State = GrazieConfig.get()) {
       with(CommitMessageInspectionProfile.getInstance(project)) {
         if (state.enabledCommitIntegration) {
-          addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), emptyMap())
-          setToolEnabled("GrazieCommit", true, project)
+          addTool(project, LocalInspectionToolWrapper(GrazieCommitInspection()), null)
+          setToolEnabled(TOOL_SHORT_NAME, true, project)
         }
         else {
-          if (getToolsOrNull("GrazieCommit", project) != null) setToolEnabled("GrazieCommit", false, project)
+          if (getToolsOrNull(TOOL_SHORT_NAME, project) != null) setToolEnabled(TOOL_SHORT_NAME, false, project)
           //TODO-tanvd how to remove tool?
         }
       }
     }
   }
 
-  override fun getShortName() = "GrazieCommit"
+  override fun getShortName() = TOOL_SHORT_NAME
 
   override fun getDefaultLevel(): HighlightDisplayLevel = HighlightDisplayLevel.find("TYPO") ?: HighlightDisplayLevel.WARNING
 
