@@ -32,6 +32,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
@@ -375,7 +376,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void editSettings(@NotNull Project project) {
-    new PrettierConfigurable(project).showEditDialog();
+    ShowSettingsUtil.getInstance().editConfigurable(project, new PrettierConfigurable(project));
   }
 
   /**
