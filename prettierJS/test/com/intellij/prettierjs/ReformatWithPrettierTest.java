@@ -1,5 +1,6 @@
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
 import com.intellij.openapi.editor.Editor;
@@ -26,7 +27,9 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
-    PrettierConfiguration.getInstance(getProject()).update(getNodeInterpreter(), getNodePackage());
+    PrettierConfiguration.getInstance(getProject())
+      .withInterpreterRef(getNodeInterpreter())
+      .withLinterPackage(NodePackageRef.create(getNodePackage()));
   }
 
   public void testWithoutConfig() {

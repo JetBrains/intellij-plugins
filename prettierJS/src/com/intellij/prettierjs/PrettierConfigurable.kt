@@ -28,11 +28,11 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       }
 
       val packageField = NodePackageField(nodeInterpreterField, PrettierUtil.PACKAGE_NAME)
-      row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = nodeInterpreterField }) {
+      row(JLabel(PrettierBundle.message("prettier.package.label")).apply { labelFor = packageField }) {
         packageField().withBinding(
-          { it.selected },
-          { nodePackageField, nodePackage -> nodePackageField.selected = nodePackage },
-          PropertyBinding({ prettierConfiguration.`package` }, { prettierConfiguration.`package` = it })
+          { it.selectedRef },
+          { nodePackageField, nodePackageRef -> nodePackageField.selectedRef = nodePackageRef },
+          PropertyBinding({ prettierConfiguration.nodePackageRef }, { prettierConfiguration.withLinterPackage(it) })
         )
       }
 

@@ -11,9 +11,9 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public final class PrettierConfiguration implements JSNpmLinterState {
+public final class PrettierConfiguration implements JSNpmLinterState<PrettierConfiguration> {
+
   @NotNull
   private final Project myProject;
 
@@ -49,16 +49,16 @@ public final class PrettierConfiguration implements JSNpmLinterState {
   }
 
   @Override
-  public JSNpmLinterState withLinterPackage(@NotNull NodePackageRef nodePackage) {
-    NodePackage newPackage = nodePackage.getConstantPackage();
+  public PrettierConfiguration withLinterPackage(@NotNull NodePackageRef nodePackageRef) {
+    NodePackage newPackage = nodePackageRef.getConstantPackage();
     assert newPackage != null : getClass().getSimpleName() + "does not support non-constant package";
-    update(this.getInterpreterRef(), newPackage);
-    return null;
+    PropertiesComponent.getInstance(myProject).setValue(PACKAGE_PROPERTY, newPackage.getSystemDependentPath());
+    return this;
   }
 
   @Override
-  public JSNpmLinterState withInterpreterRef(NodeJsInterpreterRef ref) {
-    update(ref, this.getPackage());
+  public PrettierConfiguration withInterpreterRef(@NotNull NodeJsInterpreterRef interpreterRef) {
+    PropertiesComponent.getInstance(myProject).setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
     return this;
   }
 
@@ -76,12 +76,6 @@ public final class PrettierConfiguration implements JSNpmLinterState {
       return pkg;
     }
     return PKG_DESC.createPackage("");
-  }
-
-  public void update(@NotNull NodeJsInterpreterRef interpreterRef, @Nullable NodePackage nodePackage) {
-    PropertiesComponent.getInstance(myProject).setValue(NODE_INTERPRETER_PROPERTY, interpreterRef.getReferenceName());
-    PropertiesComponent.getInstance(myProject)
-      .setValue(PACKAGE_PROPERTY, nodePackage != null ? nodePackage.getSystemDependentPath() : null);
   }
 
   public boolean isRunOnSave() {

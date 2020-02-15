@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
@@ -18,7 +19,9 @@ public class ImportCodeStyleWithPrettierIntegrationTest extends JSExternalToolIn
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "import");
-    PrettierConfiguration.getInstance(getProject()).update(getNodeInterpreter(), getNodePackage());
+    PrettierConfiguration.getInstance(getProject())
+      .withInterpreterRef(getNodeInterpreter())
+      .withLinterPackage(NodePackageRef.create(getNodePackage()));
   }
 
   public void testFromJsFile() {

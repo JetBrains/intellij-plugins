@@ -76,7 +76,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   }
 
   @Override
-  public TsLintState withInterpreterRef(NodeJsInterpreterRef ref) {
+  public TsLintState withInterpreterRef(@NotNull NodeJsInterpreterRef ref) {
     return new TsLintState(ref, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
   }
 
