@@ -63,7 +63,8 @@ import org.junit.runners.Suite;
   VueCopyPasteTest.class,
   VueTypeScriptHighlightingTest.class,
   VueTypeScriptDuplicateTest.class,
-  VueTypeScriptLineMarkersTest.class
+  VueTypeScriptLineMarkersTest.class,
+  VueTypeResolveTest.class
 })
 public class VueTestSuite {
 }
