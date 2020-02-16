@@ -12,8 +12,6 @@ import javax.swing.JLabel
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
   PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "procedures.prettier", "settings.javascript.prettier") {
 
-  private val GLOB_SYNTAX_URL = "https://www.npmjs.com/package/glob#glob-primer"
-
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
 
@@ -44,7 +42,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         val filePatternsLabel = JLabel(PrettierBundle.message("files.pattern"))
         row(filePatternsLabel) {
           textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
-            .comment("<html><a href= '$GLOB_SYNTAX_URL'>Glob pattern</a>, for example, <code>**/*.{js,ts}</code></html>")
+            .comment(PrettierBundle.message("files.pattern.comment"))
             .component.also { filePatternsLabel.labelFor = it }
         }.enableIf(runOnSaveCheckBox.selected)
       }
