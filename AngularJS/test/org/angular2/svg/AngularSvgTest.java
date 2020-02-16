@@ -43,7 +43,7 @@ public class AngularSvgTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.moveToOffsetBySignature("{{<caret>item.height}}", myFixture);
     myFixture.completeBasic();
     assertEquals(StreamEx.of(
-      "!$any#*#4", "!height#number#101", "!item#null#101", "!items#null#101"
+      "!$any#any#4", "!height#number#101", "!item#null#101", "!items#null#101"
                  ).sorted().toList(),
                  sorted(renderLookupItems(myFixture, true, true)));
   }

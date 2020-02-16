@@ -204,7 +204,7 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("$any#*#(arg: *)" + getLocationPresentation(null, "overriddenMethods.ts"),
+    assertEquals(newArrayList("$any#any#(arg: any)" + getLocationPresentation(null, "overriddenMethods.ts"),
                               "bar#string#()" ,
                               "bar#string#(test: boolean)",
                               "bar#string#(test: string)",
