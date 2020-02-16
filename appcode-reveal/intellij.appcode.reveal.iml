@@ -10,5 +10,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.appcode" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>

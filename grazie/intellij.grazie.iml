@@ -202,5 +202,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="intellij.python" />
+    <orderEntry type="module" module-name="intellij.platform.statistics" />
   </component>
 </module>
