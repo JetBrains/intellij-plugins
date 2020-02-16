@@ -3,9 +3,10 @@ package com.intellij.grazie.detection
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazie.langdetect.ChainLanguageDetector
 import tanvd.grazie.langdetect.LanguageDetector
+import tanvd.grazie.langdetect.heuristics.list.ListDetector
 import tanvd.grazie.langdetect.model.Language
-import java.util.*
-import kotlin.collections.HashSet
+import tanvd.grazie.langdetect.ngram.NgramDetector
+import java.util.concurrent.ConcurrentHashMap
 
 object DetectionContext {
   data class State(@Property val disabled: Set<Language> = HashSet()) {
@@ -16,26 +17,30 @@ object DetectionContext {
     fun enable(langs: Iterable<Language>) = State(disabled - langs)
   }
 
-  data class Local(val counter: EnumMap<Language, Int> = EnumMap(Language::class.java)) {
+  data class Local(val counter: ConcurrentHashMap<Language, Int> = ConcurrentHashMap()) {
     companion object {
       //Each text gives SIZE / SCORE_SIZE + 1 scores to own language.
       //If LANGUAGE_SCORES / TOTAL_SCORES > NOTIFICATION_PROPORTION_THRESHOLD we suggest language
       const val SCORE_SIZE = 100
 
-      const val NOTIFICATION_PROPORTION_THRESHOLD = 0.10
+      const val NOTIFICATION_PROPORTION_THRESHOLD = 0.20
       const val NOTIFICATION_TOTAL_THRESHOLD = 3
 
       const val NGRAM_CONFIDENCE_THRESHOLD = 0.98
-      const val LIST_CONFIDENCE_THRESHOLD = 0.30
+      //More than half of all seen words are clearly from one language
+      const val LIST_CONFIDENCE_THRESHOLD = 0.51
+
+      //Require not less than 40 chars
       const val TEXT_SIZE_THRESHOLD = 40
+      //Require not less than 4 words for non-hieroglyphic languages
+      const val WORDS_SIZE_THRESHOLD = 4
     }
 
     fun getToNotify(disabled: Set<Language>): Set<Language> {
       val total = counter.values.sum()
 
-      val filtered = counter.asSequence().filter {
-        val myProportion = it.value.toDouble() / total
-        val myTotal = it.value
+      val filtered = counter.asSequence().filter { (_, myTotal) ->
+        val myProportion = myTotal.toDouble() / total
         myTotal > NOTIFICATION_TOTAL_THRESHOLD && myProportion > NOTIFICATION_PROPORTION_THRESHOLD
       }.map { it.key }
 
@@ -46,23 +51,34 @@ object DetectionContext {
 
     fun update(size: Int, details: ChainLanguageDetector.ChainDetectionResult) {
       val result = details.result
+      val language = result.preferred
 
       //Check if not unknown
-      if (result.preferred == Language.UNKNOWN) return
+      if (language == Language.UNKNOWN) return
 
       //Check threshold by text size is not met
       if (size < TEXT_SIZE_THRESHOLD) return
+      //Check threshold by number of words is not met (if language has words at all)
+      if (language.hasWhitespaces && details.info.wordsTotal < WORDS_SIZE_THRESHOLD) return
 
-      //Check if threshold by list detector is not met
-      val maxList = details[LanguageDetector.Type.List]?.detected?.maxBy { it.probability }
-      //Null if rule detector found language. We do believe rule detector and don't check its threshold
-      if (maxList != null && (maxList.probability < LIST_CONFIDENCE_THRESHOLD || maxList.lang != result.preferred)) return
+      if (language in ListDetector.supported) {
+        //Check if threshold by list detector is not met
+        val listResult = details[LanguageDetector.Type.List]?.detected ?: return
+        val maxList = listResult.maxBy { it.probability } ?: return
+        if (maxList.probability < LIST_CONFIDENCE_THRESHOLD || maxList.lang != result.preferred) return
+      }
 
-      //Check if threshold by ngram detector is not met
-      val maxNgram = details[LanguageDetector.Type.Ngram]?.detected?.maxBy { it.probability }
-      if (maxNgram != null && (maxNgram.probability < NGRAM_CONFIDENCE_THRESHOLD || maxNgram.lang != result.preferred)) return
+      if (language in NgramDetector.supported) {
+        //Check if threshold by ngram detector is not met
+        val ngramResult = details[LanguageDetector.Type.Ngram]?.detected
+        //Check ngram only it was used. Otherwise, we believe to list detector
+        if (ngramResult != null) {
+          val maxNgram = ngramResult.maxBy { it.probability } ?: return
+          if (maxNgram.probability < NGRAM_CONFIDENCE_THRESHOLD || maxNgram.lang != result.preferred) return
+        }
+      }
 
-      count(size, result.preferred)
+      count(size, language)
     }
 
     private fun count(size: Int, lang: Language) {
