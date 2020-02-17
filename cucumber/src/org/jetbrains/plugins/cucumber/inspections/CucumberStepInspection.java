@@ -38,10 +38,19 @@ public class CucumberStepInspection extends GherkinInspection {
 
         final PsiElement parent = step.getParent();
         if (parent instanceof GherkinStepsHolder) {
-          final PsiReference[] references = step.getReferences();
-          if (references.length != 1 || !(references[0] instanceof CucumberStepReference)) return;
-
-          CucumberStepReference reference = (CucumberStepReference)references[0];
+          CucumberStepReference reference = null;
+          for (PsiReference ref : step.getReferences()) {
+            if (ref instanceof CucumberStepReference) {
+              if (reference == null) {
+                reference = (CucumberStepReference) ref;
+              } else {
+                return;
+              }
+            }
+          }
+          if (reference == null) {
+            return;
+          }
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
             CucumberCreateStepFix createStepFix = null;
