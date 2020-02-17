@@ -60,7 +60,7 @@ class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspecti
           }
         }
         task("ShowIntentionActions") {
-          text("If you now look at the top right-hand corner of the editor, you’ll see a green checkmark (<icon>AllIcons.General.InspectionsOK</icon>) confirming the file has no more problems. However, there’s still a minor detail that can be optimized to make the code shorter. Place the caret on <strong>function</strong> (line 3) and hold ${action(it)}.")
+          text("If you now look at the top right-hand corner of the editor, you’ll see a green checkmark (<icon>AllIcons.General.InspectionsOK</icon>) confirming the file has no more problems. However, there’s still a minor detail that can be optimized to make the code shorter. Place the caret on <strong>function</strong> (line 3) and press ${action(it)}.")
           stateCheck {
             val line = editor.caretModel.logicalPosition.line
             line == 2 && textAtCaretEqualsTo("function")
