@@ -25,4 +25,13 @@ class VueTagTemplate(override val source: XmlTag) : VueTemplate<XmlTag> {
     }
   }
 
+  override fun equals(other: Any?): Boolean {
+    return other is VueTagTemplate
+           && other.source == source
+  }
+
+  override fun hashCode(): Int {
+    return source.hashCode()
+  }
+
 }
