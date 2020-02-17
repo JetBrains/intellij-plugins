@@ -120,12 +120,11 @@ class Jest(module: Module) : KLesson("Fundamentals of Testing in WebStorm", modu
           trigger(it)
         }
 
-        task("Escape") {
+        task {
          text("""
            Congratulations! You’ve made it to the end of this module. Most of what we’ve learned also applies to the other test runners that WebStorm supports (except for code coverage and the watch mode). 
            For more tips and tricks about testing apps with Jest, please take a look at <a href="https://blog.jetbrains.com/webstorm/2018/10/testing-with-jest-in-webstorm/">this</a> blog post. If you use other test runners, you may want to explore our <a href="https://www.jetbrains.com/help/webstorm/unit-testing-javascript.html">web help</a>.
          """.trimIndent())
-          trigger(it)
         }
       }
     }
