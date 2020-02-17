@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension<List<DartImportOrExportInfo>> {
-  public static final ID<Integer, List<DartImportOrExportInfo>> DART_IMPORT_EXPORT_INDEX = ID.create("DartImportIndex");
+  private static final ID<Integer, List<DartImportOrExportInfo>> DART_IMPORT_EXPORT_INDEX = ID.create("DartImportIndex");
 
   @NotNull
   @Override
