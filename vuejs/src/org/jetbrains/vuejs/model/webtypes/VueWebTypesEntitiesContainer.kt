@@ -11,7 +11,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.vuejs.codeInsight.ATTR_DIRECTIVE_PREFIX
 import org.jetbrains.vuejs.codeInsight.BOOLEAN_TYPE
 import org.jetbrains.vuejs.model.*
@@ -47,8 +48,9 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
         Html.DescriptionMarkup.MARKDOWN -> { doc -> JSMarkdownUtil.toHtml(doc, false) }
         else -> { doc -> "<p>" + StringUtil.escapeXmlEntities(doc).replace(EOL_PATTERN, "<br>") }
       }
-    val psiPackageJson = PsiManager.getInstance(project).findFile(packageJson)
-    val sourceSymbolResolver = WebTypesSourceSymbolResolver(psiPackageJson!!, webTypes.name ?: "unknown")
+
+    val sourceSymbolResolver = PsiManager.getInstance(project).findFile(packageJson)
+      ?.let { WebTypesSourceSymbolResolver(it, webTypes.name ?: "unknown") }
 
     val support = object : WebTypesContext {
       override val project: Project = project
@@ -56,7 +58,10 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
       override val parent: VueEntitiesContainer = owner
 
       override fun getType(webTypesType: Any?): JSType? = typeProvider(webTypesType)
-      override fun resolveSourceSymbol(source: Source): CachedValueProvider.Result<PsiElement?> = sourceSymbolResolver.resolve(source)
+
+      override fun resolveSourceSymbol(source: Source): Result<PsiElement?> =
+        sourceSymbolResolver?.resolve(source) ?: Result.create(null as PsiElement?, PsiModificationTracker.NEVER_CHANGED)
+
       override fun renderDescription(description: String): String? = descriptionRenderer(description)
     }
 
@@ -110,7 +115,7 @@ open class VueWebTypesEntitiesContainer(project: Project, packageJson: VirtualFi
     val parent: VueEntitiesContainer
 
     fun getType(webTypesType: Any?): JSType?
-    fun resolveSourceSymbol(source: Source): CachedValueProvider.Result<PsiElement?>
+    fun resolveSourceSymbol(source: Source): Result<PsiElement?>
     fun renderDescription(description: String): String?
 
     fun createPattern(pattern: Any?): Regex? {
