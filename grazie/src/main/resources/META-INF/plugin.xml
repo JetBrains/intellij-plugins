@@ -41,7 +41,7 @@
 
     <localInspection bundle="messages.GrazieBundle" groupKey="grazie.group.name" enabledByDefault="true" shortName="LanguageDetectionInspection"
                      implementationClass="com.intellij.grazie.ide.inspection.detection.LanguageDetectionInspection"
-                     level="WARNING" displayName="Detection"/>
+                     level="WARNING" displayName="Natural language detection"/>
 
     <applicationConfigurable parentId="proofread" instance="com.intellij.grazie.ide.ui.GrazieConfigurable"
                              id="reference.settingsdialog.project.grazie"/>
