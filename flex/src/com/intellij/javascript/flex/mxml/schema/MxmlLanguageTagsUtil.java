@@ -3,7 +3,6 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
-import com.intellij.codeInsight.daemon.XmlErrorBundle;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
@@ -23,6 +22,7 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlNamespaceHelper;
+import com.intellij.xml.analysis.XmlAnalysisBundle;
 import com.intellij.xml.util.XmlTagUtil;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -149,7 +149,7 @@ public class MxmlLanguageTagsUtil {
     }
 
     if (tag.getAttribute(NAME_ATTRIBUTE) == null) {
-      addErrorMessage(tag, XmlErrorBundle.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
+      addErrorMessage(tag, XmlAnalysisBundle.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
       return;
     }
 
@@ -161,7 +161,7 @@ public class MxmlLanguageTagsUtil {
 
   static void validateFxReparentTag(final XmlTag tag, final Validator.ValidationHost host) {
     if (tag.getAttribute(CodeContext.TARGET_ATTR_NAME) == null) {
-      addErrorMessage(tag, XmlErrorBundle.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
+      addErrorMessage(tag, XmlAnalysisBundle.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
                       host);
       return;
     }
@@ -315,7 +315,7 @@ public class MxmlLanguageTagsUtil {
     @Override
     @NotNull
     public String getFamilyName() {
-      return XmlErrorBundle.message("remove.attribute.quickfix.family");
+      return XmlAnalysisBundle.message("remove.attribute.quickfix.family");
     }
 
     @Override
