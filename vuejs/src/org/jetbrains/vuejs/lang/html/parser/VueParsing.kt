@@ -7,6 +7,7 @@ import com.intellij.lang.html.HtmlParsing
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.xml.psi.XmlPsiBundle
 import com.intellij.xml.util.HtmlUtil.*
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
@@ -107,7 +108,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
           XmlTokenType.XML_BAD_CHARACTER -> {
             val error = mark()
             advance()
-            error.error(XmlErrorBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"))
+            error.error(XmlPsiBundle.message("unescaped.ampersand.or.nonterminated.character.entity.reference"))
           }
           XmlTokenType.XML_ENTITY_REF_TOKEN -> parseReference()
           INTERPOLATION_EXPR -> parseInterpolationExpr()
@@ -119,7 +120,7 @@ class VueParsing(builder: PsiBuilder) : HtmlParsing(builder) {
         advance()
       }
       else {
-        error(XmlErrorBundle.message("xml.parsing.unclosed.attribute.value"))
+        error(XmlPsiBundle.message("xml.parsing.unclosed.attribute.value"))
       }
     }
     else {
