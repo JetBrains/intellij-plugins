@@ -10,7 +10,7 @@ import com.intellij.ui.layout.*
 import javax.swing.JLabel
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
-  PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "procedures.prettier", "settings.javascript.prettier") {
+  PrettierBundle.message("configurable.PrettierConfigurable.display.name"), "reference.settings.prettier", "settings.javascript.prettier") {
 
   override fun createPanel(): DialogPanel {
     val prettierConfiguration = PrettierConfiguration.getInstance(project)
