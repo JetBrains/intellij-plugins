@@ -30,6 +30,7 @@
                      shortName="KarmaConfigFile"
                      enabledByDefault="true"
                      level="WARNING"
+                     language="JavaScript"
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
     <runConfigurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
