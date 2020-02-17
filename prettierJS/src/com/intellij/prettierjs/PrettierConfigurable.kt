@@ -17,7 +17,7 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
 
     return panel {
       val nodeInterpreterField = NodeJsInterpreterField(project, false)
-      row(JLabel(PrettierBundle.message("node.interpreter.label")).apply { labelFor = nodeInterpreterField }) {
+      row(JLabel(NodeJsInterpreterField.getLabelTextForComponent()).apply { labelFor = nodeInterpreterField }) {
         nodeInterpreterField().withBinding(
           { it.interpreterRef },
           { nodeJsInterpreterField, interpreterRef -> nodeJsInterpreterField.interpreterRef = interpreterRef },
