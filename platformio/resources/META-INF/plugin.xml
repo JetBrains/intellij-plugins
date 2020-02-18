@@ -2,6 +2,7 @@
   <id>intellij.clion.embedded.platformio</id>
   <name>PlatformIO for CLion</name>
   <vendor>JetBrains</vendor>
+  <category>Embedded Development</category>
 
   <description>PlatformIO.org plugin for CLion integration</description>
 
