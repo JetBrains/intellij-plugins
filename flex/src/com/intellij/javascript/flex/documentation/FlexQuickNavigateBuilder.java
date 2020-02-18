@@ -133,7 +133,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
   }
 
   @Override
-  protected boolean shouldAppendFunctionKeyword(@NotNull JSFunction function, @Nullable PsiElement parent) {
+  protected boolean shouldAppendFunctionKeyword(@NotNull JSFunctionItem function, @Nullable PsiElement parent) {
     return parent instanceof JSClass || super.shouldAppendFunctionKeyword(function, parent);
   }
 
