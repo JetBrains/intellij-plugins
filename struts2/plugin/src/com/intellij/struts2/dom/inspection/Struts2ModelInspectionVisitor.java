@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -80,7 +79,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
       if (entry.getValue().size() == 1) continue;
 
       for (Result result : entry.getValue()) {
-        holder.createProblem(result.getName(), IdeBundle.message("model.highlighting.identity",
+        holder.createProblem(result.getName(), XmlDomBundle.message("model.highlighting.identity",
                                                                  ElementPresentationManager.getTypeNameForObject(result)));
       }
     }
