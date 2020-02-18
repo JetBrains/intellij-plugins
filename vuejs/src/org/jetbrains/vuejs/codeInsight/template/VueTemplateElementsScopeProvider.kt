@@ -157,8 +157,8 @@ class VueTemplateElementsScopeProvider : VueTemplateScopesProvider() {
 
     private fun addSlotProps(attribute: XmlAttribute) {
       findExpressionInAttributeValue(attribute, VueJSSlotPropsExpression::class.java)
-        ?.getVarStatement()
-        ?.variables
+        ?.getParameterList()
+        ?.parameterVariables
         ?.forEach { addElement(it) }
     }
 

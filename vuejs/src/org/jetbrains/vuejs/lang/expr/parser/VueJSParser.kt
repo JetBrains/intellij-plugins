@@ -12,6 +12,9 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
+import com.intellij.lang.javascript.psi.JSParameter
+import com.intellij.lang.javascript.psi.JSStubElementType
+import com.intellij.lang.javascript.psi.stubs.JSParameterStub
 import com.intellij.psi.css.impl.CssElementTypes.KEYWORDS
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.VueBundle.message
@@ -116,21 +119,41 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
     }
 
     fun parseSlotPropsExpression() {
-      val slotPropsExpression = builder.mark()
-      if (builder.eof()) {
-        builder.mark().error(message("vue.parser.message.expected.slot.props.var"))
-      }
-      else {
-        parseVariableStatement(VueJSStubElementTypes.SLOT_PROPS_VARIABLE)
-        if (!builder.eof()) {
-          val mark = builder.mark()
-          while (!builder.eof()) {
-            builder.advanceLexer()
-          }
-          mark.error(message("vue.parser.message.unexpected.tokens.slot.props.var"))
+      val slotPropsParameterList = builder.mark()
+      val functionParser = object: ES6FunctionParser<VueJSParser>(this@VueJSParser) {
+        override fun getParameterType(): JSStubElementType<JSParameterStub, JSParameter>? {
+          return VueJSStubElementTypes.SLOT_PROPS_PARAMETER
         }
       }
-      slotPropsExpression.done(VueJSElementTypes.SLOT_PROPS_EXPRESSION)
+      var first = true
+      while (!builder.eof()) {
+        if (first) {
+          first = false
+        }
+        else {
+          if (builder.tokenType === JSTokenTypes.COMMA) {
+            builder.advanceLexer()
+          }
+          else {
+            builder.error(message("vue.parser.message.expected.comma.or.eoe"))
+            break
+          }
+        }
+        val parameter = builder.mark()
+        if (builder.tokenType === JSTokenTypes.DOT_DOT_DOT) {
+          builder.advanceLexer()
+        }
+        else if (builder.tokenType === JSTokenTypes.DOT) {
+          // incomplete ...args
+          builder.error(JSBundle.message("javascript.parser.message.expected.parameter.name"))
+          while (builder.tokenType === JSTokenTypes.DOT) {
+            builder.advanceLexer()
+          }
+        }
+        functionParser.parseSingleParameter(parameter)
+      }
+      slotPropsParameterList.done(JSStubElementTypes.PARAMETER_LIST)
+      slotPropsParameterList.precede().done(VueJSElementTypes.SLOT_PROPS_EXPRESSION)
     }
 
     internal fun parseRest(initialReported: Boolean = false) {

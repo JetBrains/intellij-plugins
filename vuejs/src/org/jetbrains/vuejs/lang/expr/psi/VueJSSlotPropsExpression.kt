@@ -2,8 +2,8 @@
 package org.jetbrains.vuejs.lang.expr.psi
 
 import com.intellij.lang.javascript.psi.JSExpression
-import com.intellij.lang.javascript.psi.JSVarStatement
+import com.intellij.lang.javascript.psi.JSParameterList
 
 interface VueJSSlotPropsExpression : JSExpression {
-  fun getVarStatement(): JSVarStatement?
+  fun getParameterList(): JSParameterList?
 }

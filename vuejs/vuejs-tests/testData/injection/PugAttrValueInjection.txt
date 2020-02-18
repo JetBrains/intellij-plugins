@@ -63,20 +63,20 @@ HtmlFile:PugAttrValueInjection.vue
                       JSFile:PugAttrValueInjection.vue.slot-scope.expr
                         VueJSEmbeddedExpression
                           VueJSSlotPropsExpression
-                            JSVarStatement
-                              VueJSSlotPropsVariable
+                            JSParameterList
+                              VueJSSlotPropsParameter
                                 PsiElement(JS:IDENTIFIER)('someSlot')
                     JSFile:PugAttrValueInjection.vue.slot-scope.expr
                       VueJSEmbeddedExpression
                         VueJSSlotPropsExpression
-                          JSVarStatement
-                            VueJSSlotPropsVariable
+                          JSParameterList
+                            VueJSSlotPropsParameter
                               PsiElement(JS:IDENTIFIER)('someSlot')
                   JSFile:PugAttrValueInjection.vue.slot-scope.expr
                     VueJSEmbeddedExpression
                       VueJSSlotPropsExpression
-                        JSVarStatement
-                          VueJSSlotPropsVariable
+                        JSParameterList
+                          VueJSSlotPropsParameter
                             PsiElement(JS:IDENTIFIER)('someSlot')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
@@ -390,34 +390,34 @@ HtmlFile:PugAttrValueInjection.vue
                       JSFile:PugAttrValueInjection.vue.v-slot:header.expr
                         VueJSEmbeddedExpression
                           VueJSSlotPropsExpression
-                            JSVarStatement
-                              JSDestructuringElement
+                            JSParameterList
+                              JSDestructuringParameter
                                 JSDestructuringObject
                                   PsiElement(JS:LBRACE)('{')
                                   JSDestructuringShorthandedProperty
-                                    VueJSVForVariable
+                                    VueJSSlotPropsParameter
                                       PsiElement(JS:IDENTIFIER)('test')
                                   PsiElement(JS:RBRACE)('}')
                     JSFile:PugAttrValueInjection.vue.v-slot:header.expr
                       VueJSEmbeddedExpression
                         VueJSSlotPropsExpression
-                          JSVarStatement
-                            JSDestructuringElement
+                          JSParameterList
+                            JSDestructuringParameter
                               JSDestructuringObject
                                 PsiElement(JS:LBRACE)('{')
                                 JSDestructuringShorthandedProperty
-                                  VueJSVForVariable
+                                  VueJSSlotPropsParameter
                                     PsiElement(JS:IDENTIFIER)('test')
                                 PsiElement(JS:RBRACE)('}')
                   JSFile:PugAttrValueInjection.vue.v-slot:header.expr
                     VueJSEmbeddedExpression
                       VueJSSlotPropsExpression
-                        JSVarStatement
-                          JSDestructuringElement
+                        JSParameterList
+                          JSDestructuringParameter
                             JSDestructuringObject
                               PsiElement(JS:LBRACE)('{')
                               JSDestructuringShorthandedProperty
-                                VueJSVForVariable
+                                VueJSSlotPropsParameter
                                   PsiElement(JS:IDENTIFIER)('test')
                               PsiElement(JS:RBRACE)('}')
               PsiElement(RPAREN)(')')
@@ -437,34 +437,34 @@ HtmlFile:PugAttrValueInjection.vue
                       JSFile:PugAttrValueInjection.vue.#header.expr
                         VueJSEmbeddedExpression
                           VueJSSlotPropsExpression
-                            JSVarStatement
-                              JSDestructuringElement
+                            JSParameterList
+                              JSDestructuringParameter
                                 JSDestructuringObject
                                   PsiElement(JS:LBRACE)('{')
                                   JSDestructuringShorthandedProperty
-                                    VueJSVForVariable
+                                    VueJSSlotPropsParameter
                                       PsiElement(JS:IDENTIFIER)('test')
                                   PsiElement(JS:RBRACE)('}')
                     JSFile:PugAttrValueInjection.vue.#header.expr
                       VueJSEmbeddedExpression
                         VueJSSlotPropsExpression
-                          JSVarStatement
-                            JSDestructuringElement
+                          JSParameterList
+                            JSDestructuringParameter
                               JSDestructuringObject
                                 PsiElement(JS:LBRACE)('{')
                                 JSDestructuringShorthandedProperty
-                                  VueJSVForVariable
+                                  VueJSSlotPropsParameter
                                     PsiElement(JS:IDENTIFIER)('test')
                                 PsiElement(JS:RBRACE)('}')
                   JSFile:PugAttrValueInjection.vue.#header.expr
                     VueJSEmbeddedExpression
                       VueJSSlotPropsExpression
-                        JSVarStatement
-                          JSDestructuringElement
+                        JSParameterList
+                          JSDestructuringParameter
                             JSDestructuringObject
                               PsiElement(JS:LBRACE)('{')
                               JSDestructuringShorthandedProperty
-                                VueJSVForVariable
+                                VueJSSlotPropsParameter
                                   PsiElement(JS:IDENTIFIER)('test')
                               PsiElement(JS:RBRACE)('}')
               PsiElement(RPAREN)(')')

@@ -13,6 +13,8 @@ import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
+import com.intellij.lang.javascript.index.FrameworkIndexingHandler
+import com.intellij.lang.javascript.index.FrameworkIndexingHandlerEP
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.settings.JSRootConfigurationBase
 import com.intellij.lexer.EmbeddedTokenTypesProvider
@@ -62,6 +64,8 @@ class VueParserTest : HtmlParsingTest("", "vue",
     addExplicitExtension<ParserDefinition>(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.dialect, ECMA6ParserDefinition())
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, HTMLLanguage.INSTANCE, TemplateHtmlScriptContentProvider())
+
+    registerExtensionPoint(FrameworkIndexingHandler.EP_NAME, FrameworkIndexingHandlerEP::class.java)
 
     project.registerService(JSRootConfiguration::class.java, MockJSRootConfiguration(project))
   }

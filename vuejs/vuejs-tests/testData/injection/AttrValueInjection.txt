@@ -54,8 +54,8 @@ HtmlFile:AttrValueInjection.vue
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
-                  JSVarStatement
-                    VueJSSlotPropsVariable
+                  JSParameterList
+                    VueJSSlotPropsParameter
                       PsiElement(JS:IDENTIFIER)('someSlotScope')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
@@ -93,8 +93,8 @@ HtmlFile:AttrValueInjection.vue
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
-                  JSVarStatement
-                    VueJSSlotPropsVariable
+                  JSParameterList
+                    VueJSSlotPropsParameter
                       PsiElement(JS:IDENTIFIER)('someSlotScope')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
         XmlToken:XML_TAG_END('>')
@@ -327,12 +327,12 @@ HtmlFile:AttrValueInjection.vue
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
-                  JSVarStatement
-                    JSDestructuringElement
+                  JSParameterList
+                    JSDestructuringParameter
                       JSDestructuringObject
                         PsiElement(JS:LBRACE)('{')
                         JSDestructuringShorthandedProperty
-                          VueJSVForVariable
+                          VueJSSlotPropsParameter
                             PsiElement(JS:IDENTIFIER)('test')
                         PsiElement(JS:RBRACE)('}')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
@@ -354,12 +354,12 @@ HtmlFile:AttrValueInjection.vue
             ASTWrapperPsiElement(VueJS:EMBEDDED_EXPR)
               VueJSEmbeddedExpression
                 VueJSSlotPropsExpression
-                  JSVarStatement
-                    JSDestructuringElement
+                  JSParameterList
+                    JSDestructuringParameter
                       JSDestructuringObject
                         PsiElement(JS:LBRACE)('{')
                         JSDestructuringShorthandedProperty
-                          VueJSVForVariable
+                          VueJSSlotPropsParameter
                             PsiElement(JS:IDENTIFIER)('test')
                         PsiElement(JS:RBRACE)('}')
             XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')

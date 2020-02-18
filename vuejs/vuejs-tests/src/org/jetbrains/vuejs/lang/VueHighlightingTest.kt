@@ -1269,20 +1269,21 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
   }
 
   fun testVSlotSyntax() {
+    // TODO add special inspection for unused slot scope parameters - WEB-43893
     myFixture.configureByText("c-component.vue", """
 <template>
   <div>
     <div v-slot:name="propName">
-        {{ propName }}
+        {{ propName + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning> }}
     </div>
-    <div v-slot:name="{prop1, <warning descr="Unused local variable prop2">prop2</warning>}">
-        {{ prop1 }}
+    <div v-slot:name="{prop1, prop2}">
+        {{ prop1 + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning>}}
     </div>
     <div v-slot:name></div>
-    <div v-slot="<warning descr="Unused local variable propName">propName</warning>"></div>
+    <div v-slot="propName"></div>
     <div v-slot></div>
     
-    <div #name="<warning descr="Unused local variable propName">propName</warning>"></div>
+    <div #name="propName"></div>
     <div #name></div>
     
     <div <warning descr="Attribute v-slots:name is not allowed here">v-slots:name</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
@@ -1290,7 +1291,7 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>="<weak_warning descr="Unresolved variable or type propName">propName</weak_warning>"></div>
     <div <warning descr="Attribute v-slots is not allowed here">v-slots</warning>></div>
     
-    <div <warning descr="Attribute # is not allowed here">#</warning>="<warning descr="Unused local variable propName">propName</warning>"></div>
+    <div <warning descr="Attribute # is not allowed here">#</warning>="propName"></div>
     <div <warning descr="Attribute # is not allowed here">#</warning>></div>
   </div>
 </template>
@@ -1299,20 +1300,21 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
   }
 
   fun testSlotSyntax() {
+    // TODO add special inspection for unused slot scope parameters - WEB-43893
     myFixture.configureByText("c-component.vue", """
 <template>
   <div>
     <div slot="name" slot-scope="propName">
-        {{ propName }}
+        {{ propName + <weak_warning descr="Unresolved variable or type wrongName">wrongName</weak_warning> }}
     </div>
-    <div slot="name" slot-scope="{prop1, <warning descr="Unused local variable prop2">prop2</warning>}">
+    <div slot="name" slot-scope="{prop1, prop2}">
         {{ prop1 }}
     </div>
     <div slot="name"></div>
-    <div slot-scope="<warning descr="Unused local variable propName">propName</warning>"></div>
+    <div slot-scope="propName"></div>
     <div slot <warning descr="Wrong attribute value">slot-scope</warning>></div>
     <div <warning descr="Attribute scope is not allowed here">scope</warning>="foo"></div>
-    <template scope="<warning descr="Unused local variable foo">foo</warning>"></template>
+    <template scope="foo"></template>
   </div>
 </template>
     """)
