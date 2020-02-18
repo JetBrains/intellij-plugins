@@ -11,15 +11,18 @@ import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
 import com.intellij.util.DocumentUtil
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
+import training.ui.IncorrectLearningStateNotificationProvider
 
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
   private data class TaskInfo(val content: (Int) -> Unit, var restoreIndex: Int = 0, var messagesNumberBeforeStart: Int = 0)
@@ -87,7 +90,11 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
   }
 
+  val virtualFile: VirtualFile
+    get() = FileDocumentManager.getInstance().getFile(editor.document) ?: error("No Virtual File")
+
   fun processNextTask(taskIndex: Int) {
+    IncorrectLearningStateNotificationProvider.clearMessage(virtualFile, project)
     assert(ApplicationManager.getApplication().isDispatchThread)
     if (taskIndex == taskActions.size) {
       lesson.pass()

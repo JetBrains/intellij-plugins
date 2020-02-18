@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.ui.EditorNotifications
 import org.fest.swing.exception.ComponentLookupException
 import org.fest.swing.exception.WaitTimedOutError
 import org.fest.swing.timing.Timeout
@@ -21,6 +22,7 @@ import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonExecutor
+import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
 import java.awt.Component
@@ -43,6 +45,39 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   fun restoreState(checkState: () -> Boolean) {
     if (!restoreContent.isNull) throw IllegalStateException("Only one restore context per task is allowed")
     restoreContent.set(checkState)
+  }
+
+
+  enum class RestoreProposal {
+    None,
+    Caret,
+    Modification,
+    Force
+  }
+
+  fun proposeRestore(restoreCheck: () -> RestoreProposal) {
+    val key = IncorrectLearningStateNotificationProvider.INCORRECT_LEARNING_STATE_NOTIFICATION
+    var restoreResult = false
+    restoreState {
+      val file = lessonExecutor.virtualFile
+      val type = restoreCheck()
+      if (type == RestoreProposal.Force) {
+        return@restoreState true
+      }
+      if (type == RestoreProposal.None) {
+        if (file.getUserData(key) != null) {
+          IncorrectLearningStateNotificationProvider.clearMessage(file, project)
+        }
+      }
+      else if (type != file.getUserData(key)?.type) {
+        val proposal = IncorrectLearningStateNotificationProvider.RestoreNotification(type) {
+          restoreResult = true
+        }
+        file.putUserData(key, proposal)
+        EditorNotifications.getInstance(project).updateNotifications(file)
+      }
+      return@restoreState restoreResult
+    }
   }
 
   /**
