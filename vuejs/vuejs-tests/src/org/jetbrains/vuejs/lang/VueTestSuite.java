@@ -55,16 +55,16 @@ import org.junit.runners.Suite;
   VueCopyrightTest.class,
   VueAutoPopupTest.class,
   VueEmmetTest.class,
+  VueTypeResolveTest.class,
   VuexTestSuite.class,
   TemplateLoaderCompletionTest.class,
   PugTemplateTest.class,
   VuePugFoldingTest.class,
   VueModuleImportTest.class,
   VueCopyPasteTest.class,
-  VueTypeScriptHighlightingTest.class,
   VueTypeScriptDuplicateTest.class,
   VueTypeScriptLineMarkersTest.class,
-  VueTypeResolveTest.class
+  VueTypeScriptHighlightingTest.class,
 })
 public class VueTestSuite {
 }

@@ -1,0 +1,4 @@
+<connectActions.ts:(1165,1182):(8,17)>	getters.getCoupon.code
+<connectActions.ts:(1539,1556):(8,17)>	!getters.getCoupon
+<storefront-component.ts:(265,281):(6,15)>	this.$store.getters['cart/getCoupon']
+<storefront-component.ts:(351,367):(6,15)>	rootStore.getters['cart/getCoupon']

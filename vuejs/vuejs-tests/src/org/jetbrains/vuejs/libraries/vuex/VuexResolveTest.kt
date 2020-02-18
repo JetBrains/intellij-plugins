@@ -18,32 +18,32 @@ class VuexResolveTest : BasePlatformTestCase() {
     doStorefrontTest(
       // Direct indexed getter
       "this.\$store.getters['cart/get<caret>Coupon']" to "cart/getters.ts:2139:JSProperty",
-      "this.\$store.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1265:JSLiteralExpression",
+      "this.\$store.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1240:JSLiteralExpression",
       "rootStore.getters['cart/get<caret>Coupon']" to "cart/getters.ts:2139:JSProperty",
-      "rootStore.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1265:JSLiteralExpression",
+      "rootStore.getters['ca<caret>rt/getCoupon']" to "store/index.ts:1240:JSLiteralExpression",
 
       // Direct referenced getter
       "this.\$store.getters.getCurrent<caret>StoreView" to "store/getters.ts:148:JSProperty",
 
       // Direct state
       "this.\$store.state.category.categories<caret>Map" to "category/index.ts:335:JSProperty",
-      "this.\$store.state.cate<caret>gory.categoriesMap" to "store/index.ts:1180:JSProperty",
+      "this.\$store.state.cate<caret>gory.categoriesMap" to "store/index.ts:1155:JSProperty",
 
       // Direct dispatch
       "this.\$store.dispatch('cart/apply<caret>Coupon'" to "actions/couponActions.ts:354:TypeScriptFunctionProperty",
-      "this.\$store.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
+      "this.\$store.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1240:JSLiteralExpression",
       "rootStore.dispatch('cart/apply<caret>Coupon'" to "actions/couponActions.ts:354:TypeScriptFunctionProperty",
-      "rootStore.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
+      "rootStore.dispatch('ca<caret>rt/applyCoupon'" to "store/index.ts:1240:JSLiteralExpression",
       "rootStore.dispatch({type: 'cart/apply<caret>Coupon'" to "actions/couponActions.ts:354:TypeScriptFunctionProperty",
-      "rootStore.dispatch({type: 'ca<caret>rt/applyCoupon'" to "store/index.ts:1265:JSLiteralExpression",
+      "rootStore.dispatch({type: 'ca<caret>rt/applyCoupon'" to "store/index.ts:1240:JSLiteralExpression",
 
       // Direct commit
       "this.\$store.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "this.\$store.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty",
+      "this.\$store.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:831:JSProperty",
       "rootStore.commit('cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "rootStore.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty",
+      "rootStore.commit('cart/bread<caret>crumbs/set'" to "cart/index.ts:831:JSProperty",
       "rootStore.commit({type: 'cart/breadcrumbs/se<caret>t'" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "rootStore.commit({type: 'cart/bread<caret>crumbs/set'" to "cart/index.ts:838:JSProperty")
+      "rootStore.commit({type: 'cart/bread<caret>crumbs/set'" to "cart/index.ts:831:JSProperty")
   }
 
   fun testStorefrontComponentMappedGetters() {
@@ -51,7 +51,7 @@ class VuexResolveTest : BasePlatformTestCase() {
       // Plain dictionary
       "isVirtualCart: 'cart/is<caret>VirtualCart'" to "cart/getters.ts:2359:JSProperty",
       "foo: 'cart/fo<caret>o'" to null,
-      "foo: 'ca<caret>rt/foo'" to "store/index.ts:1265:JSLiteralExpression",
+      "foo: 'ca<caret>rt/foo'" to "store/index.ts:1240:JSLiteralExpression",
 
       // Namespaced dictionary
       "getCategories: 'get<caret>Categories'" to "category/getters.ts:1226:JSProperty",
@@ -61,54 +61,54 @@ class VuexResolveTest : BasePlatformTestCase() {
       // Plain array
       "(['cart/isCart<caret>Connected'" to "cart/getters.ts:1419:JSProperty",
       "'category/b<caret>ar'])" to null,
-      "'cat<caret>egory/bar'])" to "store/index.ts:1180:JSProperty",
+      "'cat<caret>egory/bar'])" to "store/index.ts:1155:JSProperty",
 
       // Namespaced array
       "['get<caret>CartItems'," to "cart/getters.ts:1278:JSProperty",
       "'foo<caret>bar'," to null,
-      "mapGetters('c<caret>art'" to "store/index.ts:1265:JSLiteralExpression",
-      "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:838:JSProperty",
+      "mapGetters('c<caret>art'" to "store/index.ts:1240:JSLiteralExpression",
+      "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:831:JSProperty",
       "'breadcrumbs/getBreadcrumbs<caret>Routes'])" to "breadcrumbs/index.ts:333:JSProperty")
   }
 
   fun testStorefrontComponentMappedState() {
     doStorefrontTest(
       // Plain string dictionary
-      "micro: 'cart/isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
+      "micro: 'cart/isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
       "foo2: 'f<caret>oo'" to null,
-      "ship: 'ship<caret>ping'" to "store/index.ts:529:JSProperty",
+      "ship: 'ship<caret>ping'" to "store/index.ts:504:JSProperty",
 
       // Namespaced string dictionary
-      "micro2: 'isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
+      "micro2: 'isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
       "foo3: 'fo<caret>o'" to null,
-      "ship2: 'ship<caret>ping'" to "cart/index.ts:544:JSProperty",
+      "ship2: 'ship<caret>ping'" to "cart/index.ts:537:JSProperty",
 
       // Plain array
-      "(['cart/isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
-      "['cart/isMicrocartOpen', 'ship<caret>ping']" to "store/index.ts:529:JSProperty",
+      "(['cart/isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
+      "['cart/isMicrocartOpen', 'ship<caret>ping']" to "store/index.ts:504:JSProperty",
 
       // Namespaced array
-      "('cart', ['isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
-      "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:544:JSProperty",
+      "('cart', ['isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
+      "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:537:JSProperty",
 
       // Plain function dictionary
-      "routes: state => state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1265:JSLiteralExpression",
-      "routes: state => state.cart.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+      "routes: state => state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1240:JSLiteralExpression",
+      "routes: state => state.cart.bread<caret>crumbs.routes" to "cart/index.ts:831:JSProperty",
       "routes: state => state.cart.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
-      "return state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1265:JSLiteralExpression",
-      "return state.cart.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+      "return state.ca<caret>rt.breadcrumbs.routes" to "store/index.ts:1240:JSLiteralExpression",
+      "return state.cart.bread<caret>crumbs.routes" to "cart/index.ts:831:JSProperty",
       "return state.cart.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
-      "foo: state => state.ca<caret>rt.breadcrumbs.foo" to "store/index.ts:1265:JSLiteralExpression",
+      "foo: state => state.ca<caret>rt.breadcrumbs.foo" to "store/index.ts:1240:JSLiteralExpression",
       "foo: state => state.cart.breadcrumbs.fo<caret>o" to null,
-      "ship: state => state.ship<caret>ping" to "store/index.ts:529:JSProperty",
+      "ship: state => state.ship<caret>ping" to "store/index.ts:504:JSProperty",
 
       // Namespaced function dictionary
-      "routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+      "routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:831:JSProperty",
       "routes2: state => state.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
-      "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:838:JSProperty",
+      "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:831:JSProperty",
       "foo2: state => state.breadcrumbs.fo<caret>o" to null,
-      "ship2: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
-      "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:305:JSProperty",
+      "ship2: state => state.ship<caret>ping" to "cart/index.ts:537:JSProperty",
+      "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:298:JSProperty",
       "shippingMethod: (state, getters) => getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty",
       "return getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty")
   }
@@ -154,8 +154,8 @@ class VuexResolveTest : BasePlatformTestCase() {
       // Getters array
       "['get<caret>CartItems'," to "cart/getters.ts:1278:JSProperty",
       "'foo<caret>bar'," to null,
-      "createNamespacedHelpers('c<caret>art'" to "store/index.ts:1265:JSLiteralExpression",
-      "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:838:JSProperty",
+      "createNamespacedHelpers('c<caret>art'" to "store/index.ts:1240:JSLiteralExpression",
+      "'bread<caret>crumbs/getBreadcrumbsRoutes'])" to "cart/index.ts:831:JSProperty",
       "'breadcrumbs/getBreadcrumbs<caret>Routes'])" to "breadcrumbs/index.ts:333:JSProperty",
       "'getLast<caret>TotalsSyncDate'" to null,
       "'cart/getLast<caret>TotalsSyncDate'" to null,
@@ -164,26 +164,26 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // Getters dictionary
       "isVirtualCart: 'is<caret>VirtualCart'" to "cart/getters.ts:2359:JSProperty",
-      "routes: 'bread<caret>crumbs/getBreadcrumbsRoutes'" to "cart/index.ts:838:JSProperty",
+      "routes: 'bread<caret>crumbs/getBreadcrumbsRoutes'" to "cart/index.ts:831:JSProperty",
       "routes: 'breadcrumbs/get<caret>BreadcrumbsRoutes'" to "breadcrumbs/index.ts:333:JSProperty",
       "foo: 'ca<caret>rt/foo'" to null,
 
       // State string dictionary
-      "micro2: 'isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
+      "micro2: 'isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
       "foo3: 'fo<caret>o'" to null,
-      "ship2: 'ship<caret>ping'" to "cart/index.ts:544:JSProperty",
+      "ship2: 'ship<caret>ping'" to "cart/index.ts:537:JSProperty",
 
       // State array
-      "['isMicrocart<caret>Open'" to "cart/index.ts:305:JSProperty",
-      "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:544:JSProperty",
+      "['isMicrocart<caret>Open'" to "cart/index.ts:298:JSProperty",
+      "['isMicrocartOpen', 'ship<caret>ping']" to "cart/index.ts:537:JSProperty",
 
       // State function dictionary
-      "routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:838:JSProperty",
+      "routes2: state => state.bread<caret>crumbs.routes" to "cart/index.ts:831:JSProperty",
       "routes2: state => state.breadcrumbs.rou<caret>tes" to "breadcrumbs/index.ts:69:JSProperty",
-      "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:838:JSProperty",
+      "foo2: state => state.bread<caret>crumbs.foo" to "cart/index.ts:831:JSProperty",
       "foo2: state => state.breadcrumbs.fo<caret>o" to null,
-      "ship2: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
-      "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:305:JSProperty",
+      "ship2: state => state.ship<caret>ping" to "cart/index.ts:537:JSProperty",
+      "micro: state => state.isMicrocart<caret>Open" to "cart/index.ts:298:JSProperty",
       "shippingMethod: (state, getters) => getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty",
       "return getters.getShipping<caret>Method" to "cart/getters.ts:639:JSProperty",
 
@@ -213,18 +213,18 @@ class VuexResolveTest : BasePlatformTestCase() {
       "@cartModule.Getter('get<caret>CartItems')" to "cart/getters.ts:1278:JSProperty",
       "@cartModule.Getter('foo<caret>bar')" to null,
       "@cartModule.Getter('breadcrumbs/getBreadcrumbs<caret>Routes')" to "breadcrumbs/index.ts:333:JSProperty",
-      "@cartModule.Getter('bread<caret>crumbs/getBreadcrumbsRoutes')" to "cart/index.ts:838:JSProperty",
+      "@cartModule.Getter('bread<caret>crumbs/getBreadcrumbsRoutes')" to "cart/index.ts:831:JSProperty",
 
-      "@State('cart/isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
-      "@State('ship<caret>ping') shipping1" to "store/index.ts:529:JSProperty",
+      "@State('cart/isMicrocart<caret>Open')" to "cart/index.ts:298:JSProperty",
+      "@State('ship<caret>ping') shipping1" to "store/index.ts:504:JSProperty",
       "@State('foo<caret>bar') foobar2" to null,
-      "@State('cart/bread<caret>crumbs')" to "cart/index.ts:838:JSProperty",
+      "@State('cart/bread<caret>crumbs')" to "cart/index.ts:831:JSProperty",
       "@State(state => state.cart.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:69:JSProperty",
-      "@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1265:JSLiteralExpression",
+      "@State(state => state.ca<caret>rt.breadcrumbs.routes)" to "store/index.ts:1240:JSLiteralExpression",
 
-      "@cartModule.State('isMicrocart<caret>Open')" to "cart/index.ts:305:JSProperty",
-      "@cartModule.State('ship<caret>ping')" to "cart/index.ts:544:JSProperty",
-      "@cartModule.State(state => state.bread<caret>crumbs.routes)" to "cart/index.ts:838:JSProperty",
+      "@cartModule.State('isMicrocart<caret>Open')" to "cart/index.ts:298:JSProperty",
+      "@cartModule.State('ship<caret>ping')" to "cart/index.ts:537:JSProperty",
+      "@cartModule.State(state => state.bread<caret>crumbs.routes)" to "cart/index.ts:831:JSProperty",
       "@cartModule.State(state => state.breadcrumbs.rou<caret>tes)" to "breadcrumbs/index.ts:69:JSProperty",
 
       "@Action('cart/configure<caret>Item')" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
@@ -232,11 +232,11 @@ class VuexResolveTest : BasePlatformTestCase() {
       "@cartModule.Action('breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:248:TypeScriptFunctionProperty",
 
       "@Mutation('cart/breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "@Mutation('cart/bread<caret>crumbs/set')" to "cart/index.ts:838:JSProperty",
-      "@Mutation('ca<caret>rt/breadcrumbs/set')" to "store/index.ts:1265:JSLiteralExpression",
+      "@Mutation('cart/bread<caret>crumbs/set')" to "cart/index.ts:831:JSProperty",
+      "@Mutation('ca<caret>rt/breadcrumbs/set')" to "store/index.ts:1240:JSLiteralExpression",
 
       "@cartModule.Mutation('breadcrumbs/s<caret>et')" to "breadcrumbs/index.ts:123:TypeScriptFunctionProperty",
-      "@cartModule.Mutation('bread<caret>crumbs/set')" to "cart/index.ts:838:JSProperty")
+      "@cartModule.Mutation('bread<caret>crumbs/set')" to "cart/index.ts:831:JSProperty")
   }
 
   fun testRootNamespacedAction() {
@@ -307,11 +307,11 @@ class VuexResolveTest : BasePlatformTestCase() {
 
       // action with root argument
            "await dispatch('cart/configure<caret>Item'" to "actions/itemActions.ts:446:TypeScriptFunctionProperty",
-           "await dispatch('ca<caret>rt/configureItem'" to "store/index.ts:1265:JSLiteralExpression",
+           "await dispatch('ca<caret>rt/configureItem'" to "store/index.ts:1240:JSLiteralExpression",
            "await context.dispatch('changeRouter<caret>FilterParameters', {}, {root: true})" to null,
 
       // state
-           "rootState.sto<caret>ck.cache" to "store/index.ts:838:JSProperty",
+           "rootState.sto<caret>ck.cache" to "store/index.ts:813:JSProperty",
            "context.state.searchProducts<caret>Stats" to "category/index.ts:425:JSProperty",
            "context.rootState.categories<caret>Map" to null,
            "context.rootState.category.categories<caret>Map" to "category/index.ts:335:JSProperty",
@@ -328,8 +328,8 @@ class VuexResolveTest : BasePlatformTestCase() {
     myFixture.configureFromTempProjectFile("store/cart/getters.ts")
     doTest(false,
       // state
-           "getShippingMethod: state => state.ship<caret>ping" to "cart/index.ts:544:JSProperty",
-           "getShippingMethod2: (state, getters, rootState) => rootState.ship<caret>ping" to "store/index.ts:529:JSProperty",
+           "getShippingMethod: state => state.ship<caret>ping" to "cart/index.ts:537:JSProperty",
+           "getShippingMethod2: (state, getters, rootState) => rootState.ship<caret>ping" to "store/index.ts:504:JSProperty",
 
       // getters
            "calculateTotals(getters.getFirst<caret>ShippingMethod" to "cart/getters.ts:1562:JSProperty",

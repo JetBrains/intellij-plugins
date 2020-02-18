@@ -20,7 +20,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   VuexMappersTest.class,
   VuexCompletionTest.class,
-  VuexResolveTest.class
+  VuexResolveTest.class,
+  VuexFindUsagesTest.class
 })
 public class VuexTestSuite {
 }

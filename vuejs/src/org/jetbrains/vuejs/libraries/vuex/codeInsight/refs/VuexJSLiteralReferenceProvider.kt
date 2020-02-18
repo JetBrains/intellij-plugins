@@ -77,11 +77,11 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
           }
           is JSReferenceExpression -> {
             if (referenceName == ROOT_STATE || referenceName == ROOT_GETTERS) {
-              return VuexStaticNamespace("")
+              return VuexStaticNamespace.EMPTY
             }
             // action context or global namespace
             return getNamespaceIfActionContextParam(firstQualifier)
-                   ?: VuexStaticNamespace("")
+                   ?: VuexStaticNamespace.EMPTY
           }
           else -> {
             return null
@@ -173,7 +173,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
             if (param?.context is JSDestructuringShorthandedProperty) {
               if (isPossiblyStoreActionContextParam(param)) {
                 if (isRootCall(functionName, element))
-                  return VuexStaticNamespace("")
+                  return VuexStaticNamespace.EMPTY
                 else
                   return VuexStoreActionContextNamespace()
               }
@@ -202,16 +202,16 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
             return qualifier.castSafelyTo<JSReferenceExpression>()
               ?.let {
                 if (!isRootCall(functionName, element)) {
-                  getNamespaceIfActionContextParam(it) ?: VuexStaticNamespace("")
+                  getNamespaceIfActionContextParam(it) ?: VuexStaticNamespace.EMPTY
                 }
                 else {
-                  VuexStaticNamespace("")
+                  VuexStaticNamespace.EMPTY
                 }
               }
           }
         }
         else {
-          return VuexStaticNamespace("")
+          return VuexStaticNamespace.EMPTY
         }
         return null
       }

@@ -8,7 +8,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import java.util.*
 
-class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, kind: JSImplicitElement.Type)
+class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, kind: JSImplicitElement.Type,
+                         private val equivalentToProvider: Boolean = false)
   : JSLocalImplicitElementImpl(name, jsType, provider, kind) {
 
   override fun getTextRange(): TextRange? {
@@ -23,6 +24,10 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
            && ((other.jsType == null && jsType == null)
                || (other.jsType?.isEquivalentTo(this.jsType, null) == true))
 
+  }
+
+  override fun isEquivalentTo(another: PsiElement?): Boolean {
+    return equivalentToProvider && this.myProvider!! == another
   }
 
   override fun hashCode(): Int {

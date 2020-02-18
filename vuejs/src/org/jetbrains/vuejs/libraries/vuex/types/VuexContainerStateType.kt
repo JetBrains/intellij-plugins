@@ -3,13 +3,11 @@ package org.jetbrains.vuejs.libraries.vuex.types
 
 import com.intellij.lang.javascript.psi.JSRecordType
 import com.intellij.lang.javascript.psi.JSType
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
-import org.jetbrains.vuejs.model.VueImplicitElement
 
 class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
@@ -26,23 +24,23 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
   override fun createStateRecord(context: VuexStoreContext, baseNamespace: String): JSRecordType? {
     val result = mutableListOf<JSRecordType.TypeMember>()
     val prefixLength = baseNamespace.length
-    context.visit { namespace, container ->
+    // TODO merge types from parent namespace states types
+    context.visit { qualifiedName, container ->
       if (container is VuexModule
-          && namespace.startsWith(baseNamespace)
-          && namespace.length > baseNamespace.length
-          && namespace.indexOf('/', prefixLength + 1) < 0) {
-        val name = namespace.substring(prefixLength)
-        val type = VuexContainerStateType(source, element, VuexStaticNamespace(namespace))
+          && qualifiedName.startsWith(baseNamespace)
+          && qualifiedName.length > baseNamespace.length
+          && qualifiedName.indexOf('/', prefixLength + 1) < 0) {
+        val name = qualifiedName.substring(prefixLength)
+        val type = VuexContainerStateType(source, element, VuexStaticNamespace(qualifiedName))
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
-          name, type, false, true,
-          VueImplicitElement(name, type, container.source, JSImplicitElement.Type.Property)))
+          name, type, false, false,
+          VuexStoreStateElement(name, qualifiedName, container.source, type)))
       }
     }
-    context.visitSymbols(VuexContainer::state) { fullName, symbol ->
-      if (fullName.startsWith(baseNamespace)
-          && fullName.indexOf('/', prefixLength + 1) < 0) {
-        result.add(JSRecordTypeImpl.PropertySignatureImpl(
-          symbol.name, symbol.jsType, false, false, symbol.resolveTarget))
+    context.visitSymbols(VuexContainer::state) { qualifiedName, symbol ->
+      if (qualifiedName.startsWith(baseNamespace)
+          && qualifiedName.indexOf('/', prefixLength + 1) < 0) {
+        result.add(symbol.getPropertySignature(baseNamespace, qualifiedName))
       }
     }
     return JSSimpleRecordTypeImpl(source, result)

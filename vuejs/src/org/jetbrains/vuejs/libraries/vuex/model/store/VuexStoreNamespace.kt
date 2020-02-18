@@ -35,6 +35,10 @@ class VuexStaticNamespace(val name: String) : VuexStoreNamespace {
   override fun hashCode(): Int {
     return name.hashCode()
   }
+
+  companion object {
+    val EMPTY = VuexStaticNamespace("")
+  }
 }
 
 open class VuexHelpersContextNamespace(private val decorator: Boolean) : VuexStoreNamespace {
@@ -140,7 +144,7 @@ fun getNamespaceForGettersOrState(element: JSParameter, name: String): VuexStore
     // ensure we recognize store context only where it looks most appropriate
     if (isPossiblyStoreActionContextParam(element)) {
       if (name == ROOT_GETTERS || name == ROOT_STATE) {
-        return VuexStaticNamespace("")
+        return VuexStaticNamespace.EMPTY
       }
       else {
         return VuexStoreActionContextNamespace()
@@ -165,7 +169,7 @@ fun getNamespaceForGettersOrState(element: JSParameter, name: String): VuexStore
           STATE -> return VuexStoreContextNamespace {
             it.mutations.values.asSequence().plus(it.getters.values.asSequence()).toList()
           }
-          ROOT_GETTERS, ROOT_STATE -> return VuexStaticNamespace("")
+          ROOT_GETTERS, ROOT_STATE -> return VuexStaticNamespace.EMPTY
         }
       }
     }

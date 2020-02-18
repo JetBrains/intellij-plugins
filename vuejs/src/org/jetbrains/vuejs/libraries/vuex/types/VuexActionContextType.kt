@@ -59,9 +59,9 @@ class VuexActionContextType private constructor(source: JSTypeSource,
     }
 
     addProperty(STATE, VuexContainerStateType(element, VuexStoreActionContextNamespace()))
-    addProperty(ROOT_STATE, VuexContainerStateType(element, VuexStaticNamespace("")))
+    addProperty(ROOT_STATE, VuexContainerStateType(element, VuexStaticNamespace.EMPTY))
     addProperty(GETTERS, VuexContainerGettersType(element, VuexStoreActionContextNamespace()))
-    addProperty(ROOT_GETTERS, VuexContainerGettersType(element, VuexStaticNamespace("")))
+    addProperty(ROOT_GETTERS, VuexContainerGettersType(element, VuexStaticNamespace.EMPTY))
     addProperty(DISPATCH, resolveSymbolFromNodeModule(
       element, "vuex", "Dispatch", TypeScriptInterface::class.java)?.jsType)
     addProperty(COMMIT, resolveSymbolFromNodeModule(

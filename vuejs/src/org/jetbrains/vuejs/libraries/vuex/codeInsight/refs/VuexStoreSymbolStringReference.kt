@@ -44,9 +44,9 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     val name = VuexStoreContext.appendSegment(namespace.get(element), fullName)
     val result = arrayListOf<ResolveResult>()
     VuexModelManager.getVuexStoreContext(element)
-      ?.visit(if (terminal) accessor else null) { symbolName: String, symbol: Any ->
-        if (symbolName == name && symbol is VuexNamedSymbol) {
-          result.add(JSResolveResult(symbol.resolveTarget))
+      ?.visit(if (terminal) accessor else null) { qualifiedName: String, symbol: Any ->
+        if (qualifiedName == name && symbol is VuexNamedSymbol) {
+          result.add(JSResolveResult(symbol.getResolveTarget("", qualifiedName)))
         }
       }
     return result.toTypedArray()
@@ -87,16 +87,17 @@ class VuexStoreSymbolStringReference(element: PsiElement,
     fun getLookupItems(element: PsiElement, namespace: VuexStoreNamespace,
                        accessor: VuexSymbolAccessor?, pathPrefix: String,
                        wrapWithQuotes: Boolean, includeMembers: Boolean): List<LookupElement> {
-      val prefix = VuexStoreContext.appendSegment(namespace.get(element), pathPrefix)
+      val namePrefix = VuexStoreContext.appendSegment(namespace.get(element), pathPrefix)
       val result = mutableListOf<LookupElement>()
       val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
       VuexModelManager.getVuexStoreContext(element)
-        ?.visit(accessor) { name: String, symbol: Any ->
-          if (name.startsWith(prefix)
-              && name.length > prefix.length
-              && (includeMembers || name.indexOf('/', prefix.length) < 0)
+        ?.visit(accessor) { qualifiedName: String, symbol: Any ->
+          if (qualifiedName.startsWith(namePrefix)
+              && qualifiedName.length > namePrefix.length
+              && (includeMembers || qualifiedName.indexOf('/', namePrefix.length) < 0)
               && symbol is VuexNamedSymbol)
-            result.add(createLookupItem(symbol.resolveTarget, quote + name.substring(prefix.length) + quote))
+            result.add(createLookupItem(symbol.getResolveTarget(namePrefix, qualifiedName),
+                                        quote + qualifiedName.substring(namePrefix.length) + quote))
         }
       return result
     }

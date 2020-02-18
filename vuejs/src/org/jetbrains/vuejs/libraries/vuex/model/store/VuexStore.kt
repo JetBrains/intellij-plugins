@@ -2,15 +2,18 @@
 package org.jetbrains.vuejs.libraries.vuex.model.store
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.JSType
+import com.intellij.lang.javascript.psi.JSRecordType
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.model.VueImplicitElement
 
 interface VuexNamedSymbol {
   val name: String
   val source: PsiElement
-  val resolveTarget: PsiElement
+
+  fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl
 }
 
 interface VuexContainer {
@@ -44,25 +47,34 @@ interface VuexModule : VuexContainer, VuexNamedSymbol {
 }
 
 interface VuexStateProperty : VuexNamedSymbol {
-  val jsType: JSType?
+  fun getPropertySignature(namespace: String, qualifiedName: String): JSRecordType.PropertySignature =
+    getResolveTarget(namespace, qualifiedName).let {
+      JSRecordTypeImpl.PropertySignatureImpl(qualifiedName.substring(namespace.length), it.jsType, false, false, it)
+    }
 }
 
 interface VuexAction : VuexNamedSymbol {
   val isRoot: Boolean
 
-  // TODO provide proper resolve target type
-  override val resolveTarget: PsiElement
-    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Function)
+  override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
+    // TODO provide proper resolve target type
+    return VueImplicitElement(qualifiedName.substring(namespace.length), null, source,
+                              JSImplicitElement.Type.Function, true)
+  }
 }
 
 interface VuexGetter : VuexNamedSymbol {
-  val jsType: JSType?
-  override val resolveTarget: PsiElement
-    get() = VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
+  fun getPropertySignature(namespace: String, qualifiedName: String): JSRecordType.PropertySignature =
+    getResolveTarget(namespace, qualifiedName).let {
+      JSRecordTypeImpl.PropertySignatureImpl(qualifiedName.substring(namespace.length), it.jsType, false, false, it)
+    }
 }
 
 interface VuexMutation : VuexNamedSymbol {
-  // TODO provide proper resolve target type
-  override val resolveTarget: PsiElement
-    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Function)
+
+  override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
+    // TODO provide proper resolve target type
+    return VueImplicitElement(qualifiedName.substring(namespace.length), null, source,
+                              JSImplicitElement.Type.Function, true)
+  }
 }

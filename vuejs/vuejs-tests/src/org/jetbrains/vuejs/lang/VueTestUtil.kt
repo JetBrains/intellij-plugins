@@ -3,15 +3,22 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.findUsages.JSUsageViewElementsListener
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
+import com.intellij.psi.xml.XmlAttribute
+import com.intellij.psi.xml.XmlTag
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.UsefulTestCase.assertEmpty
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
+import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
+import java.io.File
 
 fun getVueTestDataPath() = PathManager.getHomePath() + vueRelativeTestDataPath()
 
@@ -95,4 +102,46 @@ fun CodeInsightTestFixture.assertUnresolvedReference(signature: String) {
   if (ref is PsiPolyVariantReference) {
     assertEmpty(ref.multiResolve(false))
   }
+}
+
+fun CodeInsightTestFixture.checkUsages(signature: String, goldFileName: String, strict: Boolean = true) {
+
+  moveToOffsetBySignature(signature)
+
+  val checkFileName = "gold/${goldFileName}.txt"
+  FileUtil.createIfDoesntExist(File("$testDataPath/$checkFileName"))
+  val target = elementAtCaret
+  findUsages(target).asSequence()
+    // Filter out dynamic references
+    .filter { !JSUsageViewElementsListener.isJavaScriptDynamicUsage(it, listOf(target)) }
+    .map { usage: UsageInfo ->
+      "<" + usage.file!!.name +
+      ":" + usage.element!!.textRange +
+      ":" + usage.rangeInElement +
+      (if (usage.isNonCodeUsage()) ":non-code" else "") +
+      ">\t" + getElementText(usage.element!!)
+    }
+    .sorted()
+    .toList()
+    .let { list ->
+      if (strict) {
+        configureByText("out.txt", list.sorted().joinToString("\n") + "\n")
+        checkResultByFile(checkFileName, true)
+      }
+      else {
+        val items = configureByFile(checkFileName).text.split('\n').filter { !it.isEmpty() }
+        UsefulTestCase.assertContainsElements(list, items)
+      }
+    }
+}
+
+fun getElementText(element: PsiElement): String {
+  if (element is XmlTag) {
+    return element.name
+  }
+  else if (element is XmlAttribute) {
+    return element.getText()
+  }
+  return (element.parent.text.takeIf { it.length < 80 } ?: element.text)
+    .replace("\n", "\\n")
 }

@@ -1,0 +1,4 @@
+<storefront-component.ts:(848,882):(13,33)>	['getCartItems', 'foobar', 'breadcrumbs/getBreadcrumbsRoutes']
+<storefront-decorated-component.ts:(678,712):(13,33)>	('breadcrumbs/getBreadcrumbsRoutes')
+<storefront-namespaced-component.ts:(261,295):(13,33)>	routes: 'breadcrumbs/getBreadcrumbsRoutes'
+<storefront-namespaced-component.ts:(556,590):(13,33)>	['getCartItems', 'foobar', 'breadcrumbs/getBreadcrumbsRoutes']

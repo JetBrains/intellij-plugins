@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex.model.store
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.JSObjectLiteralExpressionStub
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
@@ -54,8 +55,10 @@ class VuexModuleImpl(override val name: String,
 
   override val source = nameElement
 
-  override val resolveTarget: PsiElement
-    get() = VueImplicitElement(name, null, source, JSImplicitElement.Type.Variable)
+  override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
+    return VueImplicitElement(qualifiedName.substring(namespace.length), null, source,
+                              JSImplicitElement.Type.Variable, true)
+  }
 
   override val isNamespaced: Boolean
     get() = get(VuexContainerInfoProvider.VuexContainerInfo::isNamespaced)
@@ -99,15 +102,11 @@ class VuexStoreImpl(override val source: JSNewExpression) : VuexContainerImpl(),
 abstract class VuexNamedSymbolImpl(override val name: String,
                                    override val source: PsiElement) : VuexNamedSymbol
 
-class VuexStatePropertyImpl(name: String, source: PsiElement, resolveTarget: PsiElement?)
+class VuexStatePropertyImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexStateProperty {
-
-  constructor(name: String, source: PsiElement) : this(name, source, null)
-
-  private val myForcedResolveTarget = resolveTarget
-  override val jsType: JSType? get() = (myForcedResolveTarget as? JSTypeOwner)?.jsType ?: (source as? JSTypeOwner)?.jsType
-  override val resolveTarget: PsiElement
-    get() = myForcedResolveTarget ?: VueImplicitElement(name, jsType, source, JSImplicitElement.Type.Property)
+  override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl {
+    return VuexStoreStateElement(qualifiedName.substring(namespace.length), qualifiedName, source, (source as? JSTypeOwner)?.jsType)
+  }
 }
 
 class VuexActionImpl(name: String, source: PsiElement)
@@ -131,11 +130,13 @@ class VuexActionImpl(name: String, source: PsiElement)
 
 class VuexGetterImpl(name: String, source: PsiElement)
   : VuexNamedSymbolImpl(name, source), VuexGetter {
-  override val jsType: JSType?
-    get() {
-      return (source as? JSTypeOwner)
-        ?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(it, false), it) }
-    }
+
+  private val jsType: JSType?
+    get() = (source as? JSTypeOwner)?.let { VuexGetterType(JSTypeSourceFactory.createTypeSource(it, false), it) }
+
+  override fun getResolveTarget(namespace: String, qualifiedName: String): JSLocalImplicitElementImpl =
+    VueImplicitElement(qualifiedName.substring(namespace.length), jsType, source, JSImplicitElement.Type.Property, true)
+
 }
 
 class VuexMutationImpl(name: String, source: PsiElement)

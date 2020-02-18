@@ -2,7 +2,7 @@ import {Module} from 'vuex'
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-import CartState from '../types/CartState'
+import CartState from './CartState'
 import {breadcrumbsStore} from "./breadcrumbs"
 
 export const cartStore: Module<CartState, any> = {
