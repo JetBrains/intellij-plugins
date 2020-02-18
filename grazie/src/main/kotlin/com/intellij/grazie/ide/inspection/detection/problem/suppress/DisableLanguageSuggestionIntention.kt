@@ -3,6 +3,7 @@ package com.intellij.grazie.ide.inspection.detection.problem.suppress
 import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.grazie.GrazieBundle
 import com.intellij.grazie.GrazieConfig
+import com.intellij.grazie.detection.displayName
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.UndoManager
@@ -19,7 +20,7 @@ class DisableLanguageSuggestionIntention(private val languages: Set<Language>) :
   override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = true
 
   override fun getText() = when (languages.size) {
-    1 -> GrazieBundle.message("grazie.detection.intention.disable.one.text")
+    in 1..3 -> GrazieBundle.message("grazie.detection.intention.disable.several.text", languages.joinToString { it.displayName })
     else -> GrazieBundle.message("grazie.detection.intention.disable.many.text")
   }
 
