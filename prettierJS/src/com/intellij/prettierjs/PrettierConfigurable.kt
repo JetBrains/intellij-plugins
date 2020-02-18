@@ -35,16 +35,13 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
       }
 
       row {
-        val runOnSaveCheckBox = checkBox(PrettierBundle.message("run.on.save"),
+        val runOnSaveCheckBox = checkBox(PrettierBundle.message("run.on.save.for.files"),
                                          { prettierConfiguration.isRunOnSave },
-                                         { prettierConfiguration.isRunOnSave = it }).component
+                                         { prettierConfiguration.isRunOnSave = it }).actsAsLabel().component
 
-        val filePatternsLabel = JLabel(PrettierBundle.message("files.pattern"))
-        row(filePatternsLabel) {
-          textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
-            .comment(PrettierBundle.message("files.pattern.comment"))
-            .component.also { filePatternsLabel.labelFor = it }
-        }.enableIf(runOnSaveCheckBox.selected)
+        textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
+          .commentComponent(PrettierBundle.message("files.pattern.comment"))
+          .enableIf(runOnSaveCheckBox.selected)
       }
     }
   }
