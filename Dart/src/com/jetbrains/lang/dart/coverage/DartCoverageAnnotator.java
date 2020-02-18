@@ -15,6 +15,7 @@
  */
 package com.jetbrains.lang.dart.coverage;
 
+import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -43,9 +44,11 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   @Override
   protected String getLinesCoverageInformationString(@NotNull final FileCoverageInfo info) {
     if (info.totalLineCount == 0) return null;
-    if (info.coveredLineCount == 0) return info instanceof DirCoverageInfo ? null : "no lines covered";
-    if (info.coveredLineCount * 100 < info.totalLineCount) return "<1% lines covered";
-    return (int)((double)info.coveredLineCount * 100. / (double)info.totalLineCount) + "% lines covered";
+    if (info.coveredLineCount == 0) return info instanceof DirCoverageInfo ? null :
+                                           CoverageBundle.message("lines.covered.info.no.lines.covered");
+    if (info.coveredLineCount * 100 < info.totalLineCount) return CoverageBundle.message("lines.covered.info.less.than.one.percent");
+    return (int)((double)info.coveredLineCount * 100. / (double)info.totalLineCount) +
+           CoverageBundle.message("lines.covered.info.percent.lines.covered");
     //return super.getLinesCoverageInformationString(info); // "15% lines covered"
   }
 
