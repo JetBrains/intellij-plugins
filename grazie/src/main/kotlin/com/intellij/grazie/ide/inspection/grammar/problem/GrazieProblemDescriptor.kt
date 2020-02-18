@@ -94,6 +94,11 @@ class GrazieProblemDescriptor(id: String, fix: Typo, isOnTheFly: Boolean) : Prob
             }
           }
         }
+
+        p {
+          style = "text-align: right; font-size: x-small; color: gray; padding-bottom: 0px;"
+          +"Powered by LanguageTool"
+        }
       }
       return interner.intern(html)
     }
