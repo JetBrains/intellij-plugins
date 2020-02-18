@@ -31,7 +31,7 @@ public class DartAnalysisToolWindowFactory implements ToolWindowFactory, DumbAwa
     toolWindow.setHelpId("reference.toolWindow.DartAnalysis");
     ((ToolWindowEx)toolWindow).setTitleActions(new AnalysisServerFeedbackAction());
 
-    toolWindow.setAvailable(true, null);
+    toolWindow.setAvailable(true);
 
     if (PropertiesComponent.getInstance(project).getBoolean(TOOL_WINDOW_VISIBLE_PROPERTY, true)) {
       toolWindow.activate(null, false);
