@@ -19,16 +19,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
 import com.intellij.util.DocumentUtil
+import training.commands.kotlin.PreviousTaskInfo
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
+import java.awt.Component
 
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
-  private data class TaskInfo(val content: (Int) -> Unit, var restoreIndex: Int = 0, var messagesNumberBeforeStart: Int = 0)
+  private data class TaskInfo(val content: (Int) -> Unit,
+                              var restoreIndex: Int = 0,
+                              var messagesNumberBeforeStart: Int = 0,
+                              var userVisibleInfo: PreviousTaskInfo? = null)
 
   private var isUnderTaskProcessing = false
   private val taskActions: MutableList<TaskInfo> = ArrayList()
+
+  var foundComponent: Component? = null
 
   private var currentRecorder: ActionsRecorder? = null
 
@@ -38,6 +45,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   private fun addTaskAction(content: (Int) -> Unit) {
     taskActions.add(TaskInfo(content, taskActions.size - 1))
+  }
+
+  fun getUserVisibleInfo(index: Int): PreviousTaskInfo {
+    return taskActions[index].userVisibleInfo ?: throw IllegalArgumentException("No information available for task $index")
   }
 
   fun waitBeforeContinue(delayMillis: Int) {
@@ -103,7 +114,25 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
     val taskInfo = taskActions[taskIndex]
     taskInfo.messagesNumberBeforeStart = LessonManager.instance.messagesNumber()
+    setUserVisibleInfo(taskIndex)
     taskInfo.content(taskIndex)
+  }
+
+  private fun setUserVisibleInfo(taskIndex: Int) {
+    val taskInfo = taskActions[taskIndex]
+    // do not reset information from the previous tasks if it is available already
+    if (taskInfo.userVisibleInfo == null) {
+      taskInfo.userVisibleInfo = object : PreviousTaskInfo {
+        override val text: String = editor.document.text
+        override val position: LogicalPosition = editor.caretModel.currentCaret.logicalPosition
+        override val sample: LessonSample = prepareSampleFromCurrentState(editor)
+        override val ui: Component? = foundComponent
+      }
+    }
+    //Clear user visible information for later tasks
+    for (i in taskIndex + 1 until taskActions.size) {
+      taskActions[i].userVisibleInfo = null
+    }
   }
 
   private fun processTask(taskContent: TaskContext.() -> Unit, taskIndex: Int) {
@@ -111,7 +140,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     val recorder = ActionsRecorder(project, editor.document)
     currentRecorder = recorder
     val restoreContentRef = Ref<() -> Boolean>()
-    val taskContext = TaskContext(this, recorder, restoreContentRef)
+    val taskContext = TaskContext(this, recorder, taskIndex, restoreContentRef)
     isUnderTaskProcessing = true
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false
@@ -132,8 +161,16 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
                               restoreContent: (() -> Boolean)?): () -> Unit {
     restoreContent ?: return {}
     val restoreRecorder = ActionsRecorder(project, editor.document)
-    val restoreStep = restoreRecorder.futureCheck { restoreContent() }
-    val clearRestore = {
+    lateinit var clearRestore: () -> Unit
+    val restoreStep = restoreRecorder.futureCheck {
+      if (hasBeenStopped) {
+        // Strange situation
+        clearRestore()
+        return@futureCheck false
+      }
+      restoreContent()
+    }
+    clearRestore = {
       // We can be now inside some listener registered by recorder
       disposeRecorderLater(restoreRecorder)
       if (!restoreStep.isDone) {

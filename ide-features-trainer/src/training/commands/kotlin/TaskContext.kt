@@ -33,6 +33,7 @@ import javax.swing.JList
 
 class TaskContext(private val lessonExecutor: LessonExecutor,
                   private val recorder: ActionsRecorder,
+                  private val taskIndex: Int,
                   private val restoreContent: Ref<() -> Boolean>) {
   val lesson: KLesson = lessonExecutor.lesson
   val editor: Editor = lessonExecutor.editor
@@ -47,6 +48,15 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     restoreContent.set(checkState)
   }
 
+  /** Shortcut */
+  fun restoreByUi() {
+    restoreState {
+      previous.ui?.isShowing?.not() ?: true
+    }
+  }
+
+  val previous: PreviousTaskInfo
+    get() = lessonExecutor.getUserVisibleInfo(taskIndex)
 
   enum class RestoreProposal {
     None,
@@ -204,6 +214,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         checkList(it) != -1
       }
       LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)
+      list
     }
   }
 
@@ -217,11 +228,12 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         finderFunction(it)
       }
       LearningUiHighlightingManager.highlightComponent(component, LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside))
+      component
     }
   }
 
   @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
-  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> Unit) {
+  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> Component) {
     val step = CompletableFuture<Boolean>()
     ApplicationManager.getApplication().executeOnPooledThread {
       while (true) {
@@ -230,7 +242,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
           break
         }
         try {
-          findAndHighlight()
+          lessonExecutor.foundComponent = findAndHighlight()
         }
         catch (e: WaitTimedOutError) {
           continue
