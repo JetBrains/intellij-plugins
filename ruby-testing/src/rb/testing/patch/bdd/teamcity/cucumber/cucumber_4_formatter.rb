@@ -38,14 +38,6 @@ module Teamcity
         tc_before_features(nil)
       end
 
-      def get_field(object, symbol)
-        if object.is_a?(Hash)
-          object[symbol]
-        else
-          object.send(symbol)
-        end
-      end
-
       def on_test_case_started(event)
         unless is_current_scenario_outline(event.test_case)
           close_scenario_outline
@@ -147,34 +139,34 @@ module Teamcity
 
       def get_rule(test_case)
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
-        feature = get_field(gherkin_document, :feature)
+        feature = gherkin_document.feature
 
-        get_field(get_field(feature, :children).take_while { |child|
-          element = get_field(child, :rule) || get_field(child, :scenario) || get_field(child, :background)
-          get_field(get_field(element, :location), :line) <= test_case.location.lines.min
-        }.first, :rule)
+        feature.children.take_while { |child|
+          element = child.rule || child.scenario || child.background
+          element.location.line <= test_case.location.lines.min
+        }.first.rule
       end
 
       def close_rule
         if @current_rule
-          log_suite_finished(RULE_NODE_PREFIX + get_field(@current_rule, :name))
+          log_suite_finished(RULE_NODE_PREFIX + @current_rule.name)
           @current_rule = nil
         end
       end
 
       def open_rule(rule)
         @current_rule = rule
-        file_colon_line = @current_feature_file + ':' + get_field(get_field(rule, :location), :line).to_s
-        log_suite_started(RULE_NODE_PREFIX + get_field(rule, :name), file_colon_line=file_colon_line)
+        file_colon_line = @current_feature_file + ':' + rule.location.line.to_s
+        log_suite_started(RULE_NODE_PREFIX + rule.name, file_colon_line=file_colon_line)
       end
 
       def current_feature_display_name
-        feature = get_field(@ast_lookup.gherkin_document(@current_feature_file), :feature)
-        FEATURE_NODE_PREFIX + get_field(feature, :name)
+        feature = @ast_lookup.gherkin_document(@current_feature_file).feature
+        FEATURE_NODE_PREFIX + feature.name
       end
 
       def get_feature(feature_file)
-        get_field(@ast_lookup.gherkin_document(feature_file), :feature)
+        @ast_lookup.gherkin_document(feature_file).feature
       end
 
       def close_feature
@@ -184,7 +176,7 @@ module Teamcity
       def open_feature(feature_file)
         @current_feature_file = feature_file
         feature = get_feature(feature_file)
-        feature_line = get_field(get_field(feature, :location), :line)
+        feature_line = feature.location.line
         file_colon_line = feature_file + ":" + feature_line.to_s
         log_suite_started(current_feature_display_name, file_colon_line=file_colon_line)
       end
