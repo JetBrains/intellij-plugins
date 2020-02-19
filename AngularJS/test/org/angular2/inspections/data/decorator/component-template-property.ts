@@ -23,8 +23,8 @@ export class Prop2 {
 
 
 @Component({
-    <error descr="'template' and 'templateUrl' can't be used together">template</error>: "foo",
-    <error descr="'template' and 'templateUrl' can't be used together">templateUrl</error>: "bar"
+    <error descr="'template' and 'templateUrl' cannot be used together">template</error>: "foo",
+    <error descr="'template' and 'templateUrl' cannot be used together">templateUrl</error>: "bar"
 })
 export class PropBoth {
 
