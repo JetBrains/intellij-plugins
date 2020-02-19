@@ -252,8 +252,8 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
               (OBJECT_CLASS_NAME.equals(typeElementText) ||
                ANY_TYPE.equals(typeElementText) ||
                OBJECT_CLASS_NAME.equals(expressionType) && !STRING_CLASS_NAME.equals(typeElementText))) {
-            myReporter.registerProblem(typeElement, JSBundle.message("javascript.incorrect.array.type.in.for-in"),
-                                     ProblemHighlightType.WEAK_WARNING);
+            myReporter.registerProblem(typeElement, null, JSBundle.message("javascript.incorrect.array.type.in.for-in"),
+                                       ProblemHighlightType.WEAK_WARNING);
             continue;
           }
 
@@ -276,15 +276,15 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       checkTypeIs((JSExpression)type, node, typeName, key);
     }
     else if (type != null) {
-      myReporter.registerProblem(node, JSBundle.message(key, typeName, type.getText()),
-                               getHighlightTypeForTypeOrSignatureProblem(node));
+      myReporter.registerProblem(node, null, JSBundle.message(key, typeName, type.getText()),
+                                 getHighlightTypeForTypeOrSignatureProblem(node));
     }
   }
 
   private void checkTypeIs(JSExpression rOperand, PsiElement node, String typeName, String key) {
     String expressionType = ActionScriptResolveUtil.getQualifiedExpressionType(rOperand, rOperand.getContainingFile());
     if (!typeName.equals(expressionType) && !ANY_TYPE.equals(expressionType)) {
-      myReporter.registerProblem(node, JSBundle.message(key, typeName, expressionType),
+      myReporter.registerProblem(node, null, JSBundle.message(key, typeName, expressionType),
                                  getHighlightTypeForTypeOrSignatureProblem(node));
     }
   }
