@@ -33,14 +33,18 @@ class VuexStoreStateElement(name: String, private val qualifiedStoreName: String
       return true
     }
     val candidates = getResolveCandidates()
-    return another != null && candidates.asSequence()
-      .mapNotNull { if (it is JSImplicitElement) it.context else it }
-      .any { it.isEquivalentTo(another) || another.isEquivalentTo(it) }
+    val safeElement = getContextIfStoreStateElement(another)
+    return safeElement != null && candidates.asSequence()
+      .mapNotNull(this::getContextIfStoreStateElement)
+      .any { it.isEquivalentTo(safeElement) || safeElement.isEquivalentTo(it) }
   }
 
   override fun hashCode(): Int {
     return Objects.hash(javaClass, myName, myProvider, myKind)
   }
+
+  private fun getContextIfStoreStateElement(element: PsiElement?): PsiElement? =
+    if (element is VuexStoreStateElement) element.context else element
 
   private fun getResolveCandidates(): Collection<PsiElement> = CachedValuesManager.getCachedValue(this) {
     val result = mutableSetOf<PsiElement>()
@@ -54,7 +58,8 @@ class VuexStoreStateElement(name: String, private val qualifiedStoreName: String
       context.visit { qualifiedName: String, symbol: VuexContainer ->
         if (qualifiedName == this.qualifiedStoreName) {
           result.add(symbol.source)
-        } else {
+        }
+        else {
           val prefix = VuexStoreContext.appendSegment(qualifiedName, "")
           if (qualifiedStoreName.startsWith(prefix)
               && qualifiedStoreName.length > prefix.length) {
