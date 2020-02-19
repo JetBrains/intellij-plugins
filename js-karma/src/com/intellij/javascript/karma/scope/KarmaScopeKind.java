@@ -1,10 +1,11 @@
 package com.intellij.javascript.karma.scope;
 
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public enum KarmaScopeKind {
-  ALL("&All tests") {
+  ALL(JSBundle.message("rc.testRunScope.all")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -12,7 +13,7 @@ public enum KarmaScopeKind {
     }
   },
 
-  TEST_FILE("Test &file") {
+  TEST_FILE(JSBundle.message("rc.testRunScope.testFile")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -20,19 +21,23 @@ public enum KarmaScopeKind {
     }
   },
 
-  SUITE("&Suite") {
+  SUITE(JSBundle.message("rc.testRunScope.suite")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
-      return new KarmaSuiteOrTestScopeView(project, "Edit suite name", "Suite name:");
+      return new KarmaSuiteOrTestScopeView(project,
+                                           JSBundle.message("rc.testOrSuiteScope.suite.title"),
+                                           JSBundle.message("rc.testOrSuiteScope.suite.label"));
     }
   },
 
-  TEST("&Test") {
+  TEST(JSBundle.message("rc.testRunScope.test")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
-      return new KarmaSuiteOrTestScopeView(project, "Edit test name", "Test name:");
+      return new KarmaSuiteOrTestScopeView(project,
+                                           JSBundle.message("rc.testOrSuiteScope.test.title"),
+                                           JSBundle.message("rc.testOrSuiteScope.test.label"));
     }
   };
 
