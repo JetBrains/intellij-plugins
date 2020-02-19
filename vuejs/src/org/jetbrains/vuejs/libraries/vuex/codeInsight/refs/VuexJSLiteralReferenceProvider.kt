@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.vuex.codeInsight.refs
 
-import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -11,7 +10,6 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceProvider
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.contextOfType
-import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import com.intellij.util.castSafelyTo
 import org.jetbrains.annotations.Nullable
@@ -237,8 +235,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         ?.findProperty(PROP_ROOT)
         ?.value
         ?.castSafelyTo<JSLiteralExpression>()
-        ?.firstChild
-        ?.elementType == JSTokenTypes.TRUE_KEYWORD
+        ?.getExpressionKind(false) == JSLiteralExpressionKind.TRUE
 
     fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
       return callContext?.let {
