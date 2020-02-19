@@ -14,7 +14,6 @@ import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Alarm
@@ -25,12 +24,16 @@ import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.IncorrectLearningStateNotificationProvider
 import java.awt.Component
+import java.util.concurrent.CompletableFuture
 
 class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Project) {
   private data class TaskInfo(val content: (Int) -> Unit,
                               var restoreIndex: Int = 0,
                               var messagesNumberBeforeStart: Int = 0,
                               var userVisibleInfo: PreviousTaskInfo? = null)
+
+  data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
+                              var delayMillis: Int = 0)
 
   private var isUnderTaskProcessing = false
   private val taskActions: MutableList<TaskInfo> = ArrayList()
@@ -139,8 +142,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     assert(ApplicationManager.getApplication().isDispatchThread)
     val recorder = ActionsRecorder(project, editor.document)
     currentRecorder = recorder
-    val restoreContentRef = Ref<() -> Boolean>()
-    val taskContext = TaskContext(this, recorder, taskIndex, restoreContentRef)
+    val taskCallbackData = TaskCallbackData()
+    val taskContext = TaskContext(this, recorder, taskIndex, taskCallbackData)
     isUnderTaskProcessing = true
     taskContext.apply(taskContent)
     isUnderTaskProcessing = false
@@ -150,7 +153,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       return
     }
 
-    chainNextTask(taskContext, taskIndex, recorder, restoreContentRef.get())
+    chainNextTask(taskContext, taskIndex, recorder, taskCallbackData)
 
     processTestActions(taskContext)
   }
@@ -158,17 +161,43 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private fun checkForRestore(taskContext: TaskContext,
                               taskIndex: Int,
                               stepsRecorder: ActionsRecorder,
-                              restoreContent: (() -> Boolean)?): () -> Unit {
-    restoreContent ?: return {}
+                              taskCallbackData: TaskCallbackData): () -> Unit {
+    fun clearSteps() {
+      disposeRecorderLater(stepsRecorder)
+      taskContext.steps.forEach { it.cancel(true) }
+      val restoreIndex = taskActions[taskIndex].restoreIndex
+      LessonManager.instance.resetMessagesNumber(taskActions[restoreIndex].messagesNumberBeforeStart)
+      processNextTask(restoreIndex)
+    }
+
+    val restoreCondition = taskCallbackData.restoreCondition ?: return {}
+
+    if (restoreCondition()) {
+      // check restore condition
+      clearSteps()
+      return {}
+    }
+
     val restoreRecorder = ActionsRecorder(project, editor.document)
     lateinit var clearRestore: () -> Unit
-    val restoreStep = restoreRecorder.futureCheck {
+    val checkRestoreCondition = restoreRecorder.futureCheck {
       if (hasBeenStopped) {
         // Strange situation
         clearRestore()
         return@futureCheck false
       }
-      restoreContent()
+      restoreCondition()
+    }
+    val restoreStep = if (taskCallbackData.delayMillis != 0) {
+      val waited = CompletableFuture<Boolean>()
+      // we need to wait some times and only then restore if the task has not been passed
+      checkRestoreCondition.thenAccept {
+        Alarm().addRequest({ waited.complete(true) }, taskCallbackData.delayMillis)
+      }
+      waited
+    }
+    else {
+      checkRestoreCondition
     }
     clearRestore = {
       // We can be now inside some listener registered by recorder
@@ -176,15 +205,14 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       if (!restoreStep.isDone) {
         restoreStep.cancel(true)
       }
+      if (!checkRestoreCondition.isDone && checkRestoreCondition != restoreStep) {
+        restoreStep.cancel(true)
+      }
     }
     restoreStep.thenAccept {
+      clearRestore()
       if (!isTaskCompleted(taskContext)) {
-        clearRestore()
-        disposeRecorderLater(stepsRecorder)
-        taskContext.steps.forEach { it.cancel(true) }
-        val restoreIndex = taskActions[taskIndex].restoreIndex
-        LessonManager.instance.resetMessagesNumber(taskActions[restoreIndex].messagesNumberBeforeStart)
-        processNextTask(restoreIndex)
+        clearSteps()
       }
     }
     return clearRestore
@@ -193,8 +221,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private fun chainNextTask(taskContext: TaskContext,
                             taskIndex: Int,
                             recorder: ActionsRecorder,
-                            restoreContent: (() -> Boolean)?) {
-    val clearRestore = checkForRestore(taskContext, taskIndex, recorder, restoreContent)
+                            taskCallbackData: TaskCallbackData) {
+    val clearRestore = checkForRestore(taskContext, taskIndex, recorder, taskCallbackData)
 
     taskContext.steps.forEach { step ->
       step.thenAccept {

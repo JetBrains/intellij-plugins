@@ -7,7 +7,6 @@ import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
@@ -34,7 +33,7 @@ import javax.swing.JList
 class TaskContext(private val lessonExecutor: LessonExecutor,
                   private val recorder: ActionsRecorder,
                   private val taskIndex: Int,
-                  private val restoreContent: Ref<() -> Boolean>) {
+                  private val callbackData: LessonExecutor.TaskCallbackData) {
   val lesson: KLesson = lessonExecutor.lesson
   val editor: Editor = lessonExecutor.editor
   val project: Project = lessonExecutor.project
@@ -43,14 +42,15 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
 
   val testActions: MutableList<Runnable> = mutableListOf()
 
-  fun restoreState(checkState: () -> Boolean) {
-    if (!restoreContent.isNull) throw IllegalStateException("Only one restore context per task is allowed")
-    restoreContent.set(checkState)
+  fun restoreState(delayMillis: Int = 0, checkState: () -> Boolean) {
+    if (callbackData.restoreCondition != null) throw IllegalStateException("Only one restore context per task is allowed")
+    callbackData.delayMillis = delayMillis
+    callbackData.restoreCondition = checkState
   }
 
   /** Shortcut */
-  fun restoreByUi() {
-    restoreState {
+  fun restoreByUi(delayMillis: Int = 0) {
+    restoreState(delayMillis = delayMillis) {
       previous.ui?.isShowing?.not() ?: true
     }
   }
@@ -227,7 +227,8 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
       val component = LearningUiUtil.findComponentWithTimeout(null, ComponentType::class.java, delay) {
         finderFunction(it)
       }
-      LearningUiHighlightingManager.highlightComponent(component, LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside))
+      LearningUiHighlightingManager.highlightComponent(component,
+                                                       LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside))
       component
     }
   }
