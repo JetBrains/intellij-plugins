@@ -20,7 +20,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.*
 
 private const val LOCAL_PRIORITY = 100.0
@@ -31,7 +30,7 @@ private const val UNREGISTERED_PRIORITY = 50.0
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag?.containingFile?.language != VueLanguage.INSTANCE
+    if (tag == null
         || DumbService.isDumb(tag.project)
         || !isVueContext(tag)) return null
 

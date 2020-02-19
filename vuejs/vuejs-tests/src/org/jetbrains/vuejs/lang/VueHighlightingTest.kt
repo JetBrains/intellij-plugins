@@ -1506,6 +1506,13 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     myFixture.checkHighlighting()
   }
 
+  fun testSimpleVueHtml() {
+    for (suffix in listOf("cdn", "cdn.js", "cdn@", "js")) {
+      myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
+      myFixture.checkHighlighting(true, false, true)
+    }
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
