@@ -135,7 +135,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
             builder.advanceLexer()
           }
           else {
-            builder.error(message("vue.parser.message.expected.comma.or.eoe"))
+            builder.error(message("vue.parser.message.expected.comma.or.end.of.expression"))
             break
           }
         }
