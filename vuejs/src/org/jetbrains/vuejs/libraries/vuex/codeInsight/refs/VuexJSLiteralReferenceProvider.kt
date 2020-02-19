@@ -230,6 +230,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       (functionName == DISPATCH || functionName == COMMIT)
       && element.contextOfType(JSCallExpression::class)
         ?.arguments
+        ?.takeIf { it.getOrNull(0) == element}
         ?.getOrNull(if (element is JSObjectLiteralExpression) 1 else 2)
         ?.castSafelyTo<JSObjectLiteralExpression>()
         ?.findProperty(PROP_ROOT)
