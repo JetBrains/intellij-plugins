@@ -54,7 +54,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final Map<KarmaScopeKind, KarmaScopeView> myScopeKindViewMap = new HashMap<>();
   private final JPanel mySelectedScopeKindPanel;
   private final JPanel myRootComponent;
-  private final int myLongestLabelWidth = new JLabel(KarmaBundle.message("runConfiguration.environment.label")).getPreferredSize().width;
+  private final int myLongestLabelWidth = new JLabel(UIUtil.removeMnemonic(KarmaBundle.message("runConfiguration.environment.label"))).getPreferredSize().width;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;

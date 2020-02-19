@@ -27,13 +27,13 @@ public class KarmaSuiteOrTestScopeView extends KarmaScopeView {
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       myTestFileTextFieldWithBrowseButton,
-      JSBundle.message("rc.testOrSuiteScope.testFile.browseTitle"),
+      JSBundle.message("rc.testRunScope.testFile.browseTitle"),
       FileChooserDescriptorFactory.createSingleFileDescriptor()
     );
     myPanel = new FormBuilder()
       .setAlignLabelOnRight(false)
       .addLabeledComponent(fullTestNameLabel, myTestNameView.getComponent())
-      .addLabeledComponent(JSBundle.message("rc.testOrSuiteScope.testFile.label"), myTestFileTextFieldWithBrowseButton)
+      .addLabeledComponent(JSBundle.message("rc.testRunScope.testFile.label"), myTestFileTextFieldWithBrowseButton)
       .getPanel();
   }
 
