@@ -616,14 +616,14 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
             @Override
             public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
               notification.expire();
-              ShowSettingsUtil.getInstance().showSettingsDialog(project, CompilerBundle.message("compiler.configurable.display.name"));
+              ShowSettingsUtil.getInstance().showSettingsDialog(project, JavaCompilerBundle.message("compiler.configurable.display.name"));
             }
           };
           new Notification(FLASH_COMPILER_GROUP_ID, FlexBundle.message("parallel.compilation.enabled"),
                            FlexBundle.message("see.settings.compiler"), NotificationType.INFORMATION, listener1).notify(project);
         }
         else if ("open".equals(event.getDescription())) {
-          ShowSettingsUtil.getInstance().showSettingsDialog(project, CompilerBundle.message("compiler.configurable.display.name"));
+          ShowSettingsUtil.getInstance().showSettingsDialog(project, JavaCompilerBundle.message("compiler.configurable.display.name"));
         }
       }
     };
