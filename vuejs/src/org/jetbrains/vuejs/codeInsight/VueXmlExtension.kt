@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.html.HTMLLanguage
 import com.intellij.lang.javascript.psi.JSExpression
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.openapi.util.TextRange
@@ -13,6 +14,7 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
+import org.jetbrains.vuejs.context.isSimpleVueHtml
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
@@ -20,7 +22,9 @@ import org.jetbrains.vuejs.model.VueModelDirectiveProperties
 import org.jetbrains.vuejs.model.VueModelManager
 
 class VueXmlExtension : HtmlXmlExtension() {
-  override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
+  override fun isAvailable(file: PsiFile?): Boolean =
+    file?.let { it.language is VueLanguage ||
+                (it.language is HTMLLanguage && isSimpleVueHtml(it)) } == true
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
     if (namespacePrefix != null && (namespacePrefix.startsWith(ATTR_DIRECTIVE_PREFIX)

@@ -56,7 +56,7 @@
                                       order="first"/>
     <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider"/>
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
-    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first" id="AngularJS"/>
+    <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="before html" id="AngularJS"/>
 
     <defaultLiveTemplates file="liveTemplates/AngularJS"/>
 

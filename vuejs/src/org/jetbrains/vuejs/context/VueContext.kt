@@ -8,15 +8,16 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
+import com.intellij.psi.*
+import com.intellij.psi.impl.source.html.HtmlLikeFile
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.xml.XmlTag
 import com.intellij.testFramework.LightVirtualFileBase
+import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -30,7 +31,7 @@ fun isVueContext(context: PsiElement): Boolean {
     return isVueContext(context)
   }
   val psiFile = InjectedLanguageManager.getInstance(context.project).getTopLevelFile(context) ?: return false
-  if (psiFile.language == VueLanguage.INSTANCE) return true
+  if (psiFile.language == VueLanguage.INSTANCE || isSimpleVueHtml(psiFile)) return true
   val file = psiFile.originalFile.virtualFile
   @Suppress("DEPRECATION")
   return isVueContext(if (file != null && file.isInLocalFileSystem) file
@@ -54,6 +55,34 @@ private fun isVueContext(directory: PsiDirectory): Boolean {
   return CachedValuesManager.getCachedValue(directory, VUE_CONTEXT_KEY) {
     isVueContextFromProviders(directory)
   }
+}
+
+fun isSimpleVueHtml(psiFile: PsiFile): Boolean {
+  if (psiFile is HtmlLikeFile) {
+    return CachedValuesManager.getCachedValue(psiFile) {
+      var level = 0
+      var result = false
+      psiFile.acceptChildren(object : XmlRecursiveElementVisitor() {
+        override fun visitXmlTag(tag: XmlTag) {
+          if (HtmlUtil.isScriptTag(tag) && hasVueScriptLink(tag)) {
+            result = true
+          }
+          if (++level < 3) {
+            tag.subTags.forEach { it.accept(this) }
+            level--
+          }
+        }
+
+        private fun hasVueScriptLink(tag: XmlTag): Boolean =
+          tag.getAttribute(HtmlUtil.SRC_ATTRIBUTE_NAME)?.value?.let {
+            it.endsWith("vue.js") || it.endsWith("/vue")
+            || it.contains("/npm/vue@")
+          } == true
+      })
+      CachedValueProvider.Result.create(result, psiFile)
+    }
+  }
+  return false
 }
 
 fun enableVueTSService(project: Project): Boolean {
