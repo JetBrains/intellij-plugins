@@ -8,5 +8,6 @@ class Car:
     def say_state(self):
         print("I'm going {} kph!".format(self.speed))
 
-    <caret>def accelerate(self):
+    def accelerate(self):
+        <caret>print("I will be vary fast!")
         self.speed += 5
