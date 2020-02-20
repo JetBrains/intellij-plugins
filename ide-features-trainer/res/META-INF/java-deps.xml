@@ -3,7 +3,7 @@
   <extensions defaultExtensionNs="training">
     <TrainingLangExtension language="JAVA" implementationClass="training.lang.JavaLangSupport"/>
 
-    <TrainingModules language="java">
+    <TrainingModules language="JAVA">
       <module path="modules/java/EditorBasics.xml"/>
       <module path="modules/java/Completions.xml"/>
       <module path="modules/java/Refactorings.xml"/>

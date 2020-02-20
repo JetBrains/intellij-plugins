@@ -3,7 +3,7 @@
   <extensions defaultExtensionNs="training">
     <TrainingLangExtension language="Swift" implementationClass="training.lang.SwiftSupport"/>
 
-    <TrainingModules language="swift">
+    <TrainingModules language="Swift">
       <module path="modules/swift/Editor.xml"/>
       <module path="modules/swift/Navigation.xml"/>
       <module path="modules/swift/Refactorings.xml"/>
