@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
+import com.intellij.analysis.problemsView.AnalysisProblem;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.*;
@@ -23,7 +24,6 @@ import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixSet;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
-import com.jetbrains.lang.dart.ide.errorTreeView.DartProblem;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -264,7 +264,7 @@ public class DartAnnotator implements Annotator {
     final String severity = error.getSeverity();
     final String message = error.getMessage();
     final ProblemHighlightType specialHighlightType = getSpecialHighlightType(error);
-    final String tooltip = DartProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
+    final String tooltip = AnalysisProblem.generateTooltipText(error.getMessage(), error.getCorrection(), error.getUrl());
     final HighlightSeverity annotationSeverity;
     TextAttributesKey textAttributesKey;
 

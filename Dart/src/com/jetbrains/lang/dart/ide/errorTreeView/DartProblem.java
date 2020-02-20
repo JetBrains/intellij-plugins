@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.analysis.problemsView.AnalysisErrorSeverity;
+import com.intellij.analysis.problemsView.AnalysisProblem;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
@@ -9,7 +11,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.xml.util.XmlStringUtil;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -19,9 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-public class DartProblem {
+public class DartProblem implements AnalysisProblem {
 
   @NotNull private final Project myProject;
   @NotNull private final AnalysisError myAnalysisError;
@@ -38,44 +42,69 @@ public class DartProblem {
     myAnalysisError = error;
   }
 
+  @Override
   @NotNull
   public String getErrorMessage() {
     return myAnalysisError.getMessage();
   }
 
+  @Override
   @Nullable
   public String getCorrectionMessage() {
     return StringUtil.notNullize(myAnalysisError.getCorrection());
   }
 
+  @Override
   @Nullable
   public String getUrl() {
     return myAnalysisError.getUrl();
   }
 
-  @Nullable
-  public List<DiagnosticMessage> getDiagnosticMessages() {
+  @Override
+  public @NotNull List<AnalysisProblem> getSecondaryMessages() {
+    return ContainerUtil.map(ObjectUtils.notNull(myAnalysisError.getContextMessages(), Collections.emptyList()),
+                             dm->new DartProblem(myProject,
+                                                 new AnalysisError(AnalysisErrorSeverity.WARNING,
+                                                                   "context message",
+                                                                   dm.getLocation(),
+                                                                   dm.getMessage(),
+                                                                   "",
+                                                                   "",
+                                                                   dm.getLocation() == null ? null : dm.getLocation().getFile() == null ? null : VfsUtilCore.pathToUrl(dm.getLocation().getFile()),
+                                                                   null,
+                                                                   null)));
+  }
+
+  @Nullable List<DiagnosticMessage> getDiagnosticMessages() {
     return myAnalysisError.getContextMessages();
   }
 
+  @Override
   @NotNull
   public String getCode() {
     return StringUtil.notNullize(myAnalysisError.getCode());
   }
 
+  /**
+   * @see AnalysisErrorSeverity
+   */
+  @Override
   public String getSeverity() {
     return myAnalysisError.getSeverity();
   }
 
+  @Override
   public int getLineNumber() {
     return myAnalysisError.getLocation().getStartLine();
   }
 
+  @Override
   public int getOffset() {
     final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mySystemIndependentPath);
     return DartAnalysisServerService.getInstance(myProject).getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
   }
 
+  @Override
   @NotNull
   public String getSystemIndependentPath() {
     if (mySystemIndependentPath == null) {
@@ -143,45 +172,44 @@ public class DartProblem {
    * If no pubspec.yaml then returns relative part from content root to the file.
    * File path is returned as failover.
    */
+  @Override
   @NotNull
   public String getPresentableLocationWithoutLineNumber() {
     ensureInitialized();
     return myPresentableLocationWithoutLineNumber;
   }
 
+  @Override
   @NotNull
   public String getPresentableLocation() {
     return getPresentableLocationWithoutLineNumber() + ":" + getLineNumber();
   }
 
+  @Override
   @Nullable
   public VirtualFile getFile() {
     ensureInitialized();
     return myFile;
   }
 
+  @Override
   @Nullable
   public VirtualFile getPackageRoot() {
     ensureInitialized();
     return myPackageRoot;
   }
 
+  @Override
   @Nullable
   public VirtualFile getContentRoot() {
     ensureInitialized();
     return myContentRoot;
   }
 
+  @Override
   @NotNull
-  public static String generateTooltipText(@NotNull final String message, @Nullable final String correction, @Nullable final String url) {
-    final StringBuilder tooltip = new StringBuilder("<html>").append(XmlStringUtil.escapeString(message));
-    if (StringUtil.isNotEmpty(correction)) {
-      tooltip.append("<br/><br/>").append(XmlStringUtil.escapeString(correction));
-    }
-    if (StringUtil.isNotEmpty(url)) {
-      tooltip.append("<br/><a href='").append(url).append("'>Open documentation</a>");
-    }
-    tooltip.append("</html>");
-    return tooltip.toString();
+  public String getTooltip() {
+    // Pass null to the url, mouse movement to the hover makes the tooltip go away, see https://youtrack.jetbrains.com/issue/WEB-39449
+    return AnalysisProblem.generateTooltipText(getErrorMessage(), getCorrectionMessage(), null);
   }
 }

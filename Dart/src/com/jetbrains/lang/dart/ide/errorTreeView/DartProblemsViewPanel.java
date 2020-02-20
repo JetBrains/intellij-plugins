@@ -1,54 +1,40 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
+import com.intellij.analysis.problemsView.AnalysisProblem;
+import com.intellij.analysis.problemsView.AnalysisProblemsTableModel;
+import com.intellij.analysis.problemsView.AnalysisProblemsViewPanel;
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.CopyProvider;
-import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.pom.Navigatable;
-import com.intellij.ui.*;
-import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.scale.JBUIScale;
-import com.intellij.ui.table.TableView;
-import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.ui.LayeredIcon;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
+import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
 import icons.DartIcons;
-import org.dartlang.analysis.server.protocol.*;
-import org.jetbrains.annotations.NonNls;
+import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.table.JTableHeader;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
+public class DartProblemsViewPanel extends AnalysisProblemsViewPanel {
   private static final LayeredIcon DART_ERRORS_ICON;
   private static final LayeredIcon DART_WARNINGS_ICON;
 
@@ -62,88 +48,18 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     DART_WARNINGS_ICON.setIcon(DartIcons.Warning_point, 1, SwingConstants.SOUTH_WEST);
   }
 
-  @NotNull private final Project myProject;
-  @NotNull private final TableView<DartProblem> myTable;
-
-  @NotNull private final DartProblemsPresentationHelper myPresentationHelper;
-
   DartProblemsViewPanel(@NotNull final Project project,
                         @NotNull final DartProblemsPresentationHelper presentationHelper) {
-    super(false, true);
-    myProject = project;
-    myPresentationHelper = presentationHelper;
-
-    myTable = createTable();
-    setToolbar(createToolbar());
-    setContent(createCenterPanel());
+    super(project, presentationHelper);
   }
 
-  @NotNull
-  private TableView<DartProblem> createTable() {
-    final TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myPresentationHelper));
-
-    table.addKeyListener(new KeyAdapter() {
-      @Override
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          navigate(false); // as in NewErrorTreeViewPanel
-        }
-      }
-    });
-
-    EditSourceOnDoubleClickHandler.install(table);
-
-    table.addMouseListener(new PopupHandler() {
-      @Override
-      public void invokePopup(Component comp, int x, int y) {
-        popupInvoked(comp, x, y);
-      }
-    });
-
-    //noinspection unchecked
-    ((DefaultRowSorter<DartProblemsTableModel, Integer>)table.getRowSorter()).setRowFilter(myPresentationHelper.getRowFilter());
-
-    table.getRowSorter().addRowSorterListener(e -> {
-      final List<? extends RowSorter.SortKey> sortKeys = myTable.getRowSorter().getSortKeys();
-      assert sortKeys.size() == 1 : sortKeys;
-      ((DartProblemsTableModel)myTable.getModel()).setSortKey(sortKeys.get(0));
-    });
-
-    new TableSpeedSearch(table, object -> object instanceof DartProblem
-                                          ? ((DartProblem)object).getErrorMessage() + " " + ((DartProblem)object).getPresentableLocation()
-                                          : "");
-
-    table.setShowVerticalLines(false);
-    table.setShowHorizontalLines(false);
-    table.setStriped(true);
-    table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
-
-    JTableHeader tableHeader = table.getTableHeader();
-    tableHeader.setPreferredSize(new Dimension(0, table.getRowHeight()));
-
-    return table;
+  @Override
+  protected @NotNull AnalysisProblemsTableModel createTableModel() {
+    return new DartProblemsTableModel(myPresentationHelper);
   }
 
-  private void popupInvoked(final Component component, final int x, final int y) {
-    final DefaultActionGroup group = new DefaultActionGroup();
-    if (getData(CommonDataKeys.NAVIGATABLE.getName()) != null) {
-      group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE));
-    }
-
-    group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
-
-    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
-    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
-
-    addQuickFixActions(group, selectedProblem);
-    addDiagnosticMessageActions(group, selectedProblem);
-    addDocumentationAction(group, selectedProblem);
-
-    final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
-    menu.getComponent().show(component, x, y);
-  }
-
-  private void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable final DartProblem problem) {
+  @Override
+  protected void addQuickFixActions(@NotNull final DefaultActionGroup group, @Nullable final AnalysisProblem problem) {
     final VirtualFile selectedVFile = problem != null ? problem.getFile() : null;
     if (selectedVFile == null) return;
 
@@ -176,79 +92,17 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     }
   }
 
-  private void addDiagnosticMessageActions(@NotNull final DefaultActionGroup group, @Nullable final DartProblem problem) {
-    final List<DiagnosticMessage> diagnosticMessages = problem != null ? problem.getDiagnosticMessages() : null;
-    if (diagnosticMessages == null || diagnosticMessages.isEmpty()) return;
-
-    group.addSeparator();
-    // Reference the icon for "Jump to Source", higher in this menu group, to indicate that the action will have the same behavior
-    final Icon jumpToSourceIcon = ActionManager.getInstance().getAction(IdeActions.ACTION_EDIT_SOURCE).getTemplatePresentation().getIcon();
-    for (DiagnosticMessage diagnosticMessage : diagnosticMessages) {
-      // Reference the message, trim, non-nullize, and remove a trailing period, if one exists
-      String message = StringUtil.notNullize(diagnosticMessage.getMessage());
-      message = StringUtil.trimEnd(StringUtil.trim(message), ".");
-
-      // Reference the Location, compute the VirtualFile
-      final Location location = diagnosticMessage.getLocation();
-      final String filePath = location == null ? null : FileUtil.toSystemIndependentName(location.getFile());
-      final VirtualFile vFile = filePath == null ? null : LocalFileSystem.getInstance().findFileByPath(filePath);
-
-      // Create the action for this DiagnosticMessage
-      if (StringUtil.isNotEmpty(message) && vFile != null) {
-        group.add(new DumbAwareAction(message, null, jumpToSourceIcon) {
-          @Override
-          public void actionPerformed(@NotNull AnActionEvent e) {
-            final int offset = DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, location.getOffset());
-            OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, vFile, offset));
-          }
-        });
-      }
-    }
+  @Override
+  protected int getConvertedOffset(@NotNull VirtualFile vFile, @NotNull AnalysisProblem diagnosticMessage) {
+    return DartAnalysisServerService.getInstance(myProject).getConvertedOffset(vFile, diagnosticMessage.getOffset());
   }
 
-  private static void addDocumentationAction(@NotNull final DefaultActionGroup group, @Nullable DartProblem problem) {
-    final String url = problem != null ? problem.getUrl() : null;
-    if (url == null) return;
-
-    group.addSeparator();
-    group.add(new DumbAwareAction(IdeBundle.lazyMessage("action.DumbAware.DartProblemsViewPanel.text.open.documentation"),
-                                  IdeBundle.lazyMessage("action.DumbAware.DartProblemsViewPanel.description.open.detailed.problem.description.in.browser"),
-                                  AllIcons.Ide.External_link_arrow) {
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-        BrowserUtil.browse(url);
-      }
-    });
-  }
-
-  @NotNull
-  private JComponent createToolbar() {
-    final DefaultActionGroup group = new DefaultActionGroup();
-
-    addReanalyzeActions(group);
-    group.addAction(new AnalysisServerSettingsAction());
-    group.addSeparator();
-
-    addAutoScrollToSourceAction(group);
-    addGroupBySeverityAction(group);
-    group.addAction(new FilterProblemsAction());
-    group.addSeparator();
-
-    return ActionManager.getInstance().createActionToolbar("DartProblemsView", group, false).getComponent();
-  }
-
-  @NotNull
-  private JPanel createCenterPanel() {
-    final JPanel panel = new JPanel(new BorderLayout());
-    panel.add(ScrollPaneFactory.createScrollPane(myTable), BorderLayout.CENTER);
-    return panel;
-  }
-
-  private void updateStatusDescription() {
-    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
+  @Override
+  protected void updateStatusDescription() {
+    final AnalysisProblemsTableModel model = getModel();
     DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
     problemsView.setHeaderText(model.getStatusText());
-    problemsView.setToolWindowIcon(model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13);
+    problemsView.setToolWindowIcon(getStatusIcon());
   }
 
   private static void addReanalyzeActions(@NotNull final DefaultActionGroup group) {
@@ -258,62 +112,42 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     }
   }
 
-  private void addAutoScrollToSourceAction(@NotNull final DefaultActionGroup group) {
-    final AutoScrollToSourceHandler autoScrollToSourceHandler = new AutoScrollToSourceHandler() {
-      @Override
-      protected boolean isAutoScrollMode() {
-        return myPresentationHelper.isAutoScrollToSource();
-      }
+  @Override
+  protected void addActionsTo(@NotNull DefaultActionGroup group) {
+    addReanalyzeActions(group);
+    group.addAction(new DartProblemsViewPanel.AnalysisServerSettingsAction());
+    group.addSeparator();
 
-      @Override
-      protected void setAutoScrollMode(boolean autoScrollToSource) {
-        myPresentationHelper.setAutoScrollToSource(autoScrollToSource);
-      }
-    };
-
-    autoScrollToSourceHandler.install(myTable);
-    group.addAction(autoScrollToSourceHandler.createToggleAction());
+    addAutoScrollToSourceAction(group);
+    addGroupBySeverityAction(group);
+    group.addAction(new DartProblemsViewPanel.FilterProblemsAction());
+    group.addSeparator();
   }
 
-  private void addGroupBySeverityAction(@NotNull final DefaultActionGroup group) {
-    final AnAction action = new DumbAwareToggleAction(DartBundle.message("group.by.severity"),
-                                                      DartBundle.message("group.by.severity.description"),
-                                                      AllIcons.Nodes.SortBySeverity) {
-      @Override
-      public boolean isSelected(@NotNull AnActionEvent e) {
-        return myPresentationHelper.isGroupBySeverity();
-      }
-
-      @Override
-      public void setSelected(@NotNull AnActionEvent e, boolean groupBySeverity) {
-        myPresentationHelper.setGroupBySeverity(groupBySeverity);
-        fireGroupingOrFilterChanged();
-      }
-    };
-
-    group.addAction(action);
+  @Override
+  protected @NotNull Icon getStatusIcon() {
+    final AnalysisProblemsTableModel model = getModel();
+    return model.hasErrors() ? DART_ERRORS_ICON : model.hasWarnings() ? DART_WARNINGS_ICON : DartIcons.Dart_13;
   }
 
-  void fireGroupingOrFilterChanged() {
-    myTable.getRowSorter().allRowsChanged();
-    ((DartProblemsTableModel)myTable.getModel()).onFilterChanged();
-    updateStatusDescription();
+  DartProblemsPresentationHelper getPresentationHelper() {
+    return (DartProblemsPresentationHelper)myPresentationHelper;
   }
 
   private void showFiltersPopup() {
     final DartProblemsFilterForm filterForm = new DartProblemsFilterForm();
-    filterForm.reset(myPresentationHelper);
+    filterForm.reset(getPresentationHelper());
     filterForm.addListener(new DartProblemsFilterForm.FilterListener() {
       @Override
       public void filtersChanged() {
-        myPresentationHelper.updateFromFilterSettingsUI(filterForm);
+        getPresentationHelper().updateFromFilterSettingsUI(filterForm);
         fireGroupingOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
-        myPresentationHelper.resetAllFilters();
-        filterForm.reset(myPresentationHelper);
+        getPresentationHelper().resetAllFilters();
+        filterForm.reset(getPresentationHelper());
         fireGroupingOrFilterChanged();
       }
     });
@@ -323,94 +157,39 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   private void showAnalysisServerSettingsPopup() {
     final DartAnalysisServerSettingsForm serverSettingsForm = new DartAnalysisServerSettingsForm(myProject);
-    serverSettingsForm.reset(myPresentationHelper);
+    serverSettingsForm.reset(getPresentationHelper());
 
     serverSettingsForm.addListener(() -> {
-      myPresentationHelper.updateFromServerSettingsUI(serverSettingsForm);
+      getPresentationHelper().updateFromServerSettingsUI(serverSettingsForm);
       DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
     });
 
     createAndShowPopup(DartBundle.message("analysis.server.settings.title"), serverSettingsForm.getMainPanel());
   }
 
-  private void createAndShowPopup(@NotNull final String title, @NotNull final JPanel jPanel) {
-    final Rectangle visibleRect = myTable.getVisibleRect();
-    final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
+  public void setErrors(@NotNull final Map<String, List<? extends AnalysisError>> filePathToErrors) {
+    final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = getPresentationHelper().getScopedAnalysisMode();
+    final List<AnalysisProblem> problemsToAdd = new ArrayList<>();
+    for (Map.Entry<String, List<? extends AnalysisError>> entry : filePathToErrors.entrySet()) {
+      final String filePath = entry.getKey();
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+      final boolean fileOk = vFile != null && (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
+                                               ProjectFileIndex.getInstance(myProject).isInContent(vFile));
+      List<? extends AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
 
-    JBPopupFactory.getInstance()
-      .createComponentPopupBuilder(jPanel, null)
-      .setProject(myProject)
-      .setTitle(title)
-      .setMovable(true)
-      .setRequestFocus(true)
-      .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
-  }
+      for (AnalysisError analysisError : errors) {
+        if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {
+          continue;
+        }
 
-  @Override
-  public boolean isCopyVisible(@NotNull DataContext dataContext) {
-    return true;
-  }
-
-  @Override
-  public boolean isCopyEnabled(@NotNull DataContext dataContext) {
-    return myTable.getSelectedObject() != null;
-  }
-
-  @Override
-  public void performCopy(@NotNull DataContext dataContext) {
-    final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> StringUtil.toLowerCase(problem.getSeverity()) +
-                                                                 ": " +
-                                                                 problem.getErrorMessage() +
-                                                                 " (" +
-                                                                 problem.getCode() + " at " + problem.getPresentableLocation() +
-                                                                 ")", "\n");
-
-    if (!s.isEmpty()) {
-      CopyPasteManager.getInstance().setContents(new StringSelection(s));
-    }
-  }
-
-  @Nullable
-  @Override
-  public Object getData(@NotNull @NonNls String dataId) {
-    if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
-      return this;
-    }
-    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
-      return createNavigatable();
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private Navigatable createNavigatable() {
-    final DartProblem problem = myTable.getSelectedObject();
-    if (problem != null) {
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(problem.getSystemIndependentPath());
-      if (file != null) {
-        final OpenFileDescriptor navigatable = new OpenFileDescriptor(myProject, file, problem.getOffset());
-        navigatable.setScrollType(ScrollType.MAKE_VISIBLE);
-        return navigatable;
+        final AnalysisProblem problem = new DartProblem(myProject, analysisError);
+        problemsToAdd.add(problem);
       }
     }
 
-    return null;
-  }
-
-  private void navigate(@SuppressWarnings("SameParameterValue") final boolean requestFocus) {
-    final Navigatable navigatable = createNavigatable();
-    if (navigatable != null && navigatable.canNavigateToSource()) {
-      navigatable.navigate(requestFocus);
-    }
-  }
-
-  public void setErrors(@NotNull final Map<String, List<? extends AnalysisError>> filePathToErrors) {
-    final DartProblemsTableModel model = (DartProblemsTableModel)myTable.getModel();
-    final DartProblem oldSelectedProblem = myTable.getSelectedObject();
-
-    final DartProblem updatedSelectedProblem = model.setErrorsAndReturnReplacementForSelection(filePathToErrors, oldSelectedProblem);
+    AnalysisProblem oldSelectedProblem = myTable.getSelectedObject();
+    DartProblemsTableModel model = getModel();
+    AnalysisProblem updatedSelectedProblem = model.setErrorsAndReturnReplacementForSelection(filePathToErrors.keySet(), problemsToAdd, oldSelectedProblem);
 
     if (updatedSelectedProblem != null) {
       myTable.setSelection(Collections.singletonList(updatedSelectedProblem));
@@ -419,9 +198,10 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     updateStatusDescription();
   }
 
-  void clearAll() {
-    ((DartProblemsTableModel)myTable.getModel()).removeAll();
-    updateStatusDescription();
+  @NotNull
+  @Override
+  public DartProblemsTableModel getModel() {
+    return (DartProblemsTableModel)super.getModel();
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
@@ -432,7 +212,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void update(@NotNull final AnActionEvent e) {
       // show icon as toggled on if any filter is active
-      Toggleable.setSelected(e.getPresentation(), myPresentationHelper.areFiltersApplied());
+      Toggleable.setSelected(e.getPresentation(), getPresentationHelper().areFiltersApplied());
     }
 
     @Override
@@ -449,7 +229,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     @Override
     public void update(@NotNull final AnActionEvent e) {
-      final boolean asByDefault = myPresentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
+      final boolean asByDefault = getPresentationHelper().getScopedAnalysisMode() == DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
       Toggleable.setSelected(e.getPresentation(), !asByDefault);
     }
 
