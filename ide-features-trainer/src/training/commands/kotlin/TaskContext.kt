@@ -213,8 +213,10 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
       val list = LearningUiUtil.findComponentWithTimeout(null, JList::class.java, delay) {
         checkList(it) != -1
       }
-      LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)
-      list
+      return@triggerByUiComponentAndHighlight {
+        LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)
+        list
+      }
     }
   }
 
@@ -222,19 +224,21 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     highlightBorder: Boolean = true, highlightInside: Boolean = true, crossinline finderFunction: (ComponentType) -> Boolean
   ) {
     @Suppress("DEPRECATION")
-    triggerByUiComponentAndHighlight {
+    triggerByUiComponentAndHighlight l@{
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
       val component = LearningUiUtil.findComponentWithTimeout(null, ComponentType::class.java, delay) {
         finderFunction(it)
       }
-      LearningUiHighlightingManager.highlightComponent(component,
-                                                       LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside))
-      component
+      return@l {
+        val options = LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)
+        LearningUiHighlightingManager.highlightComponent(component, options)
+        component
+      }
     }
   }
 
   @Deprecated("It is auxiliary method with explicit class parameter. Use inlined short form instead")
-  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> Component) {
+  fun triggerByUiComponentAndHighlight(findAndHighlight: () -> (() -> Component)) {
     val step = CompletableFuture<Boolean>()
     ApplicationManager.getApplication().executeOnPooledThread {
       while (true) {
@@ -243,7 +247,9 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
           break
         }
         try {
-          lessonExecutor.foundComponent = findAndHighlight()
+          val highlightFunction = findAndHighlight()
+          lessonExecutor.foundComponent = highlightFunction()
+          lessonExecutor.rehighlightComponent = highlightFunction
         }
         catch (e: WaitTimedOutError) {
           continue

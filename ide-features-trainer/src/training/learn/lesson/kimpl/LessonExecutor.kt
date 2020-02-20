@@ -30,6 +30,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private data class TaskInfo(val content: (Int) -> Unit,
                               var restoreIndex: Int = 0,
                               var messagesNumberBeforeStart: Int = 0,
+                              var rehighlightComponent: (() -> Component)? = null,
                               var userVisibleInfo: PreviousTaskInfo? = null)
 
   data class TaskCallbackData(var restoreCondition: (() -> Boolean)? = null,
@@ -39,6 +40,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   private val taskActions: MutableList<TaskInfo> = ArrayList()
 
   var foundComponent: Component? = null
+  var rehighlightComponent: (() -> Component)? = null
 
   private var currentRecorder: ActionsRecorder? = null
 
@@ -131,10 +133,12 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
         override val sample: LessonSample = prepareSampleFromCurrentState(editor)
         override val ui: Component? = foundComponent
       }
+      taskInfo.rehighlightComponent = rehighlightComponent
     }
     //Clear user visible information for later tasks
     for (i in taskIndex + 1 until taskActions.size) {
       taskActions[i].userVisibleInfo = null
+      taskActions[i].rehighlightComponent = null
     }
   }
 
@@ -166,7 +170,9 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       disposeRecorderLater(stepsRecorder)
       taskContext.steps.forEach { it.cancel(true) }
       val restoreIndex = taskActions[taskIndex].restoreIndex
-      LessonManager.instance.resetMessagesNumber(taskActions[restoreIndex].messagesNumberBeforeStart)
+      val restoreInfo = taskActions[restoreIndex]
+      restoreInfo.rehighlightComponent?.let { it() }
+      LessonManager.instance.resetMessagesNumber(restoreInfo.messagesNumberBeforeStart)
       processNextTask(restoreIndex)
     }
 
