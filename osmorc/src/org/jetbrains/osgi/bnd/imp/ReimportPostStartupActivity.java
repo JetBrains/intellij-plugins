@@ -1,6 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
+import com.intellij.ide.plugins.DynamicPlugins;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -28,7 +29,7 @@ public class ReimportPostStartupActivity implements StartupActivity.DumbAware {
   public void runActivity(@NotNull Project project) {
     if (BndProjectImporter.findWorkspace(project) != null) {
       FileListener listener = new FileListener(project);
-      Disposer.register(project, listener);
+      Disposer.register(DynamicPlugins.pluginDisposable(getClass(), project), listener);
       VirtualFileManager.getInstance().addAsyncFileListener(listener, listener);
     }
   }
