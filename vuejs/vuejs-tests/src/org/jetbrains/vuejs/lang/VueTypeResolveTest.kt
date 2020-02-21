@@ -14,10 +14,10 @@ class VueTypeResolveTest : BasePlatformTestCase() {
 
   fun testVForJS() {
     myFixture.configureByFile("vFor-js.vue")
-    testVFor(Triple("el", "any,number|string", "number"),
+    testVFor(Triple("el", "*,number|string", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "#compof(any),number|string", "string|number"))
+             Triple("obj", "#compof(*),number|string", "string|number"))
   }
 
   fun testVForTS() {
