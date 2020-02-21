@@ -55,6 +55,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   private final Map<String, List<? extends AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
 
+  @NotNull
   private Icon myCurrentIcon = DartIcons.Dart_13;
   private boolean myAnalysisIsBusy;
 
