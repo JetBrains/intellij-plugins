@@ -70,7 +70,8 @@ class PythonLangSupport : AbstractLangSupport() {
       .mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
   }
 
-  private fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)
+  private fun isNoOlderThan27(sdk: Sdk) =
+    PythonSdkFlavor.getFlavor(sdk)?.getLanguageLevel(sdk)?.isAtLeast(LanguageLevel.PYTHON27) ?: false
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
     return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${sandboxFile}"
