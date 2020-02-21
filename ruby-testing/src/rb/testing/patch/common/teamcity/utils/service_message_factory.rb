@@ -53,15 +53,18 @@ module Rake
           :error_msg => {:value => '##MESSAGE##', :enabled => ::Rake::TeamCity.is_fake_error_msg_enabled?}
       }
 
-      def self.create_suite_started(suite_name, location_url = nil)
+      def self.create_suite_started(suite_name, location_url = nil, parent_node_id = nil, node_id = nil)
         create_message :message_name => "testSuiteStarted",
                        :name => suite_name,
-                       :locationHint => location_url
+                       :locationHint => location_url,
+                       :parentNodeId => parent_node_id,
+                       :nodeId => node_id
       end
 
-      def self.create_suite_finished(suite_name)
+      def self.create_suite_finished(suite_name, node_id = nil)
         create_message :message_name => "testSuiteFinished",
-                       :name => suite_name
+                       :name => suite_name,
+                       :nodeId => node_id
       end
 
       def self.create_tests_count(int_count)
@@ -69,19 +72,22 @@ module Rake
                        :count => int_count
       end
 
-      def self.create_test_started(test_name, location_url = nil)
+      def self.create_test_started(test_name, location_url = nil, parent_node_id = nil, node_id = nil)
         create_message :message_name => "testStarted",
                        :name => test_name,
                        :captureStandardOutput => 'true',
-                       :locationHint => location_url
+                       :locationHint => location_url,
+                       :parentNodeId => parent_node_id,
+                       :nodeId => node_id
       end
 
       # Duration in millisec
-      def self.create_test_finished(test_name, duration_ms, diagnostic_info=nil)
+      def self.create_test_finished(test_name, duration_ms, diagnostic_info=nil, node_id = nil)
         create_message :message_name => "testFinished",
                        :name => test_name,
                        :duration => [duration_ms, 0].max,
-                       :diagnosticInfo => diagnostic_info
+                       :diagnosticInfo => diagnostic_info,
+                       :nodeId => node_id
       end
 
       def self.create_test_output_message(test_name, is_std_out, out_text)
@@ -90,28 +96,31 @@ module Rake
                        :out => out_text
       end
 
-      def self.create_test_failed(test_name, message, stacktrace)
-        stacktrace = format_stacktrace_if_needed(message, stacktrace)
-        create_message :message_name => 'testFailed',
-                       :name => test_name,
-                       :message => message,
-                       :details => stacktrace
-      end
-
-      def self.create_test_error(test_name, message, stacktrace)
+      def self.create_test_failed(test_name, message, stacktrace, node_id = nil)
         stacktrace = format_stacktrace_if_needed(message, stacktrace)
         create_message :message_name => 'testFailed',
                        :name => test_name,
                        :message => message,
                        :details => stacktrace,
-                       :error => 'true'
+                       :nodeId => node_id
       end
 
-      def self.create_test_ignored(test_name, message, stacktrace = nil)
+      def self.create_test_error(test_name, message, stacktrace, node_id = nil)
+        stacktrace = format_stacktrace_if_needed(message, stacktrace)
+        create_message :message_name => 'testFailed',
+                       :name => test_name,
+                       :message => message,
+                       :details => stacktrace,
+                       :error => 'true',
+                       :nodeId => node_id
+      end
+
+      def self.create_test_ignored(test_name, message, stacktrace = nil, node_id = nil)
         create_message :message_name => 'testIgnored',
                        :name => test_name,
                        :message => message,
-                       :details => stacktrace
+                       :details => stacktrace,
+                       :nodeId => node_id
       end
 
       # This message should show progress on buildserver and can be
