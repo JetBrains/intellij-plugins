@@ -212,62 +212,58 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   public void testQuickNavigateInfo() {
-    final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ<br>implements yyy.XXX");
+    doQuickNavigateTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testQuickNavigateInfoWithMxml() {
     setUpJdk();
-    doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite<br>Event mouseDown" + file("MockFlex.as"));
+    doQuickNavigateTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
   public void testQuickNavigateInfoWithMxml2() {
-    doNavigateTest(getTestName(false), "mxml", "id xxx", false);
+    doQuickNavigateTest(getTestName(false), "mxml");
   }
 
   public void testQuickNavigateInfo_2() {
-    doNavigateTest(getTestName(false), "js2", "public var xxx.AAA.ttt:* = new Object");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_3() {
-    doNavigateTest(getTestName(false), "js2", "public static function xxx.<a href=\"psi_element://AAA\">AAA</a>.yyy(p:Object):AAA");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_4() {
-    doNavigateTest(getTestName(false), "js2", "(property) public static function xxx.AAA.yyy:Object");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_5() {
-    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_5_2() {
-    doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_6() {
-    doNavigateTest(getTestName(false), "js2", "testData.documentation<br>namespace XXX = \"\"", false);
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_7() {
-    doNavigateTest(getTestName(false), "js2", "xxx static const Foo.XXX = &quot;111&quot;");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_9() {
-    doNavigateTest(getTestName(false), "js2",
-                   "var xxx:int");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_10() {
-    doNavigateTest(getTestName(false), "js2",
-                   "var xxx:Vector.&lt;int&gt; = new Vector.&lt;int&gt;()");
+    doQuickNavigateTest();
   }
 
   public void testQuickNavigateInfo_11() {
-    doNavigateTest(getTestName(false), "js2",
-                   "function foo():Vector.&lt;int&gt;");
+    doQuickNavigateTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -437,7 +433,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testQuickNavigateInfoFromSource() {
     testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> {
       final String testName = getTestName(false);
-      doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
+      doQuickNavigateTest();
     });
   }
 
