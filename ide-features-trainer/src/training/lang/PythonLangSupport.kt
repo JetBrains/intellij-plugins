@@ -68,6 +68,7 @@ class PythonLangSupport : AbstractLangSupport() {
       .mapTo(mutableListOf(), ::PyDetectedSdk).filter { sdk -> isNoOlderThan27(sdk) }
   }
 
-  private fun isNoOlderThan27(sdk: Sdk) = PythonSdkFlavor.getFlavor(sdk)!!.getLanguageLevel(sdk).isAtLeast(LanguageLevel.PYTHON27)
+  private fun isNoOlderThan27(sdk: Sdk) =
+    PythonSdkFlavor.getFlavor(sdk)?.getLanguageLevel(sdk)?.isAtLeast(LanguageLevel.PYTHON27) ?: false
 
 }
