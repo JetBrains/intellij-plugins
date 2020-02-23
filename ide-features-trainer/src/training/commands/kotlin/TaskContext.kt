@@ -248,8 +248,11 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         }
         try {
           val highlightFunction = findAndHighlight()
-          lessonExecutor.foundComponent = highlightFunction()
-          lessonExecutor.rehighlightComponent = highlightFunction
+          invokeLater {
+            lessonExecutor.foundComponent = highlightFunction()
+            lessonExecutor.rehighlightComponent = highlightFunction
+            step.complete(true)
+          }
         }
         catch (e: WaitTimedOutError) {
           continue
@@ -257,7 +260,6 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         catch (e: ComponentLookupException) {
           continue
         }
-        invokeLater { step.complete(true) }
         break
       }
     }

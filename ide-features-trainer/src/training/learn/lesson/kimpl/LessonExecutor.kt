@@ -4,6 +4,7 @@ package training.learn.lesson.kimpl
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.DocumentReferenceManager
@@ -140,6 +141,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       taskActions[i].userVisibleInfo = null
       taskActions[i].rehighlightComponent = null
     }
+    foundComponent = null
+    rehighlightComponent = null
   }
 
   private fun processTask(taskContent: TaskContext.() -> Unit, taskIndex: Int) {
@@ -207,7 +210,6 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       checkRestoreCondition
     }
     clearRestore = {
-      // We can be now inside some listener registered by recorder
       disposeRecorderLater(restoreRecorder)
       if (!restoreFuture.isDone) {
         restoreFuture.cancel(true)
@@ -218,8 +220,10 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
     restoreFuture.thenAccept {
       clearRestore()
-      if (!isTaskCompleted(taskContext)) {
-        restoreTask()
+      invokeLater { // restore check must be done after pass conditions (and they will be done during current event processing)
+        if (!isTaskCompleted(taskContext)) {
+          restoreTask()
+        }
       }
     }
     return clearRestore
@@ -231,6 +235,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
                             taskCallbackData: TaskCallbackData) {
     val clearRestore = checkForRestore(taskContext, taskIndex, recorder, taskCallbackData)
 
+    recorder.tryToCheckCallback()
+
     taskContext.steps.forEach { step ->
       step.thenAccept {
         assert(ApplicationManager.getApplication().isDispatchThread)
@@ -240,6 +246,8 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
           clearRestore()
           currentRecorder = null
           LessonManager.instance.passExercise()
+          if(foundComponent == null) foundComponent = taskActions[taskIndex].userVisibleInfo?.ui
+          if(rehighlightComponent == null) rehighlightComponent = taskActions[taskIndex].rehighlightComponent
           processNextTask(taskIndex + 1)
         }
       }
