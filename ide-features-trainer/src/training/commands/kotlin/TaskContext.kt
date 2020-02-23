@@ -211,7 +211,8 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
       val list = LearningUiUtil.findComponentWithTimeout(null, JList::class.java, delay) {
-        checkList(it) != -1
+        val index = checkList(it)
+        index != -1 && it.visibleRowCount > index
       }
       return@triggerByUiComponentAndHighlight {
         LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)

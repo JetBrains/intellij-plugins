@@ -78,7 +78,7 @@ internal open class RepaintByTimer(val original: Component,
   private fun initTimer() {
     val timer = TimerUtil.createNamedTimer("IFT item", 50)
     timer.addActionListener {
-      if (!original.isShowing) {
+      if (!isShowing()) {
         LearningUiHighlightingManager.removeIt(this)
       }
       if (this.removed) {
@@ -92,6 +92,10 @@ internal open class RepaintByTimer(val original: Component,
       highlightComponent.repaint()
     }
     timer.start()
+  }
+
+  protected open fun isShowing(): Boolean {
+    return original.isShowing
   }
 
   fun cleanup() {
@@ -108,6 +112,11 @@ internal class RepaintCellByTimer(val list: JList<*>,
                                   glassPane: JComponent,
                                   options: LearningUiHighlightingManager.HighlightingOptions)
   : RepaintByTimer(list, glassPane, options) {
+
+  override fun isShowing(): Boolean {
+    return super.isShowing() && list.visibleRowCount > index()
+  }
+
   override fun reinitHighlightComponent() {
     val i = index()
     if (i == -1) {
