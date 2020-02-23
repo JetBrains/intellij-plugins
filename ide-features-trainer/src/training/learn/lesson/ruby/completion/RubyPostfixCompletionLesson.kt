@@ -3,11 +3,11 @@ package training.learn.lesson.ruby.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
-import training.commands.kotlin.TaskContext
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.LessonUtil
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix Completion", module, "ruby") {
@@ -37,7 +37,9 @@ end
           it.toString() == ".if"
         }
         proposeRestore {
-          checkEditorState()
+          LessonUtil.checkExpectedStateOfEditor(editor, sample) {
+            ".if".startsWith(it)
+          }
         }
         test {
           ideFrame {
@@ -69,31 +71,6 @@ end
         }
       }
     }
-
-  private fun TaskContext.checkEditorState(): TaskContext.RestoreProposal {
-    val prefix = sample.text.substring(0, sample.startOffset)
-    val postfix = sample.text.substring(sample.startOffset)
-
-    val docText = editor.document.charsSequence
-    return if (docText.startsWith(prefix) && docText.endsWith(postfix)) {
-      val middle = docText.subSequence(prefix.length, docText.length - postfix.length)
-      if (".if".startsWith(middle)) {
-        val offset = editor.caretModel.offset
-        if (prefix.length <= offset && offset <= prefix.length + middle.length) {
-          TaskContext.RestoreProposal.None
-        }
-        else {
-          TaskContext.RestoreProposal.Caret
-        }
-      }
-      else {
-        TaskContext.RestoreProposal.Modification
-      }
-    }
-    else {
-      TaskContext.RestoreProposal.Modification
-    }
-  }
 
   override val existedFile = RubyLangSupport.sandboxFile
 }
