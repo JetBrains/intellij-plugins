@@ -162,11 +162,12 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     processTestActions(taskContext)
   }
 
+  /** @return a callback to clear resources used to track restore */
   private fun checkForRestore(taskContext: TaskContext,
                               taskIndex: Int,
                               stepsRecorder: ActionsRecorder,
                               taskCallbackData: TaskCallbackData): () -> Unit {
-    fun clearSteps() {
+    fun restoreTask() {
       disposeRecorderLater(stepsRecorder)
       taskContext.steps.forEach { it.cancel(true) }
       val restoreIndex = taskActions[taskIndex].restoreIndex
@@ -180,7 +181,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
     if (restoreCondition()) {
       // check restore condition
-      clearSteps()
+      restoreTask()
       return {}
     }
 
@@ -194,7 +195,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
       }
       restoreCondition()
     }
-    val restoreStep = if (taskCallbackData.delayMillis != 0) {
+    val restoreFuture = if (taskCallbackData.delayMillis != 0) {
       val waited = CompletableFuture<Boolean>()
       // we need to wait some times and only then restore if the task has not been passed
       checkRestoreCondition.thenAccept {
@@ -208,17 +209,17 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     clearRestore = {
       // We can be now inside some listener registered by recorder
       disposeRecorderLater(restoreRecorder)
-      if (!restoreStep.isDone) {
-        restoreStep.cancel(true)
+      if (!restoreFuture.isDone) {
+        restoreFuture.cancel(true)
       }
-      if (!checkRestoreCondition.isDone && checkRestoreCondition != restoreStep) {
-        restoreStep.cancel(true)
+      if (!checkRestoreCondition.isDone && checkRestoreCondition != restoreFuture) {
+        restoreFuture.cancel(true)
       }
     }
-    restoreStep.thenAccept {
+    restoreFuture.thenAccept {
       clearRestore()
       if (!isTaskCompleted(taskContext)) {
-        clearSteps()
+        restoreTask()
       }
     }
     return clearRestore
