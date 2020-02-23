@@ -44,6 +44,8 @@ class ActionsRecorder(private val project: Project,
   // TODO: I suspect that editor listener could be replaced by command listener. Need to check it
   private var editorListener: FileEditorManagerListener? = null
 
+  private var checkCallback: (() -> Unit)? = null
+
   init {
     Disposer.register(project, this)
 
@@ -200,6 +202,7 @@ class ActionsRecorder(private val project: Project,
         future.complete(true)
       }
     }
+    checkCallback = check
 
     addKeyEventListener { check() }
     document.addDocumentListener(createDocumentListener { check() })
@@ -215,6 +218,10 @@ class ActionsRecorder(private val project: Project,
     }
 
     return future
+  }
+
+  fun tryToCheckCallback() {
+    checkCallback?.let { it() }
   }
 
   private fun addSimpleCommandListener(check: () -> Unit) {
