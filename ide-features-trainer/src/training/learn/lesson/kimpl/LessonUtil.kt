@@ -5,6 +5,10 @@ import com.intellij.openapi.editor.Editor
 import training.commands.kotlin.TaskContext
 
 object LessonUtil {
+  fun insertIntoSample(sample: LessonSample, inserted: String): String {
+    return sample.text.substring(0, sample.startOffset) + inserted + sample.text.substring(sample.startOffset)
+  }
+
   fun checkExpectedStateOfEditor(editor: Editor,
                                  sample: LessonSample,
                                  checkModification: (String) -> Boolean): TaskContext.RestoreProposal {
