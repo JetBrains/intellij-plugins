@@ -2,9 +2,9 @@
 package training.ui
 
 import com.intellij.util.containers.ContainerUtil
+import org.fest.swing.core.BasicRobot
 import org.fest.swing.core.GenericTypeMatcher
 import org.fest.swing.core.Robot
-import org.fest.swing.core.SmartWaitRobot
 import org.fest.swing.exception.ComponentLookupException
 import org.fest.swing.exception.WaitTimedOutError
 import org.fest.swing.timing.Condition
@@ -30,7 +30,7 @@ object LearningUiUtil {
 
   private fun initializeRobot() {
     if (myRobot != null) releaseRobot()
-    myRobot = SmartWaitRobot() // acquires ScreenLock
+    myRobot = BasicRobot.robotWithCurrentAwtHierarchyWithoutScreenLock() // acquires ScreenLock
   }
 
   fun releaseRobot() {
