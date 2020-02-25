@@ -34,7 +34,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson
       task {
         text("By default, the IDE proposes completion for your code instantly. Start typing <code>$item1Completion</code> right where " +
              "the caret is, and you will see the Lookup Menu with matching suggestions.")
-        triggerByListItem(highlightBorder = false, highlightInside = false) { // no highlighting
+        triggerByListItemAndHighlight(highlightBorder = false, highlightInside = false) { // no highlighting
           it.toString().contains(item1Completion)
         }
         proposeRestore {
@@ -76,7 +76,7 @@ abstract class BasicCompletionLessonBase(module: Module, lang: String) : KLesson
       task("CodeCompletion") {
         text("To activate Basic Completion explicitly, press ${action(it)}.")
         trigger(it)
-        triggerByListItem { item ->
+        triggerByListItemAndHighlight { item ->
           item.toString().contains(item2Completion)
         }
         proposeRestore {

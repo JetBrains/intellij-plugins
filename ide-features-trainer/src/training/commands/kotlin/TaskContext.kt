@@ -193,12 +193,12 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     })
   }
 
-  fun triggerByListItem(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
-    triggerByFoundListItem(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
+  fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
+    triggerByFoundListItemAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
       for (i in 0 until ui.model.size) {
         val elementAt = ui.model.getElementAt(i)
         if (checkList(elementAt)) {
-          return@triggerByFoundListItem i
+          return@triggerByFoundListItemAndHighlight i
         }
       }
       -1
@@ -206,7 +206,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
   }
 
   // This method later can be converted to the public (But I'm not sure it will be ever needed in a such form
-  private fun triggerByFoundListItem(options: LearningUiHighlightingManager.HighlightingOptions, checkList: (list: JList<*>) -> Int) {
+  private fun triggerByFoundListItemAndHighlight(options: LearningUiHighlightingManager.HighlightingOptions, checkList: (list: JList<*>) -> Int) {
     @Suppress("DEPRECATION")
     triggerByUiComponentAndHighlight {
       val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
