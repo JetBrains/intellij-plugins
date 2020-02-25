@@ -19,22 +19,14 @@ object LearningUiHighlightingManager {
   private val highlights: MutableList<RepaintByTimer> = ArrayList()
 
   fun highlightComponent(original: Component, options: HighlightingOptions = HighlightingOptions()) {
-    runInEdt {
-      clearHighlights()
-      val glassPane = getGlassPane(original) ?: return@runInEdt
-      val repaintByTimer = RepaintByTimer(original, glassPane, options)
-      repaintByTimer.reinitHighlightComponent()
-      highlights.add(repaintByTimer)
+    highlightComponent(original) { glassPane ->
+      RepaintByTimer(original, glassPane, options)
     }
   }
 
   fun highlightJListItem(list: JList<*>, index: () -> Int, options: HighlightingOptions = HighlightingOptions()) {
-    runInEdt {
-      clearHighlights()
-      val glassPane = getGlassPane(list) ?: return@runInEdt
-      val repaintByTimer = RepaintCellByTimer(list, index, glassPane, options)
-      repaintByTimer.reinitHighlightComponent()
-      highlights.add(repaintByTimer)
+    highlightComponent(list) { glassPane ->
+      RepaintCellByTimer(list, index, glassPane, options)
     }
   }
 
@@ -44,6 +36,17 @@ object LearningUiHighlightingManager {
         removeIt(core)
       }
       highlights.clear()
+    }
+  }
+
+  private fun highlightComponent(original: Component, init: (glassPane: JComponent) -> RepaintByTimer) {
+    runInEdt {
+      clearHighlights()
+      val glassPane = getGlassPane(original) ?: return@runInEdt
+      val repaintByTimer = init(glassPane)
+      repaintByTimer.reinitHighlightComponent()
+      repaintByTimer.initTimer()
+      highlights.add(repaintByTimer)
     }
   }
 
@@ -59,48 +62,48 @@ internal open class RepaintByTimer(val original: Component,
   var removed = false
   protected val startDate = Date()
 
-  protected lateinit var highlightComponent: GlassHighlightComponent
+  protected var highlightComponent: GlassHighlightComponent? = null
 
-  init {
-    initTimer()
-  }
 
   open fun reinitHighlightComponent() {
-    highlightComponent = GlassHighlightComponent(startDate, options)
+    val newHighlightComponent = GlassHighlightComponent(startDate, options)
 
     val pt = SwingUtilities.convertPoint(original, Point(0, 0), glassPane)
     val bounds = Rectangle(pt.x, pt.y, original.width, original.height)
 
-    highlightComponent.bounds = bounds
-    glassPane.add(highlightComponent)
+    newHighlightComponent.bounds = bounds
+    glassPane.add(newHighlightComponent)
+    highlightComponent = newHighlightComponent
   }
 
-  private fun initTimer() {
+  fun initTimer() {
     val timer = TimerUtil.createNamedTimer("IFT item", 50)
     timer.addActionListener {
-      if (!isShowing()) {
+      if (!original.isShowing) {
         LearningUiHighlightingManager.removeIt(this)
       }
       if (this.removed) {
         timer.stop()
         return@addActionListener
       }
-      if (highlightComponent.isValid && original.locationOnScreen != highlightComponent.locationOnScreen || original.size != highlightComponent.size) {
+      if (shouldReinit()) {
         cleanup()
+        highlightComponent = null
         reinitHighlightComponent()
       }
-      highlightComponent.repaint()
+      highlightComponent?.repaint()
     }
     timer.start()
   }
 
-  protected open fun isShowing(): Boolean {
-    return original.isShowing
+  protected open fun shouldReinit(): Boolean {
+    val component = highlightComponent
+    return component == null || original.locationOnScreen != component.locationOnScreen || original.size != component.size
   }
 
   fun cleanup() {
     if (glassPane.isValid) {
-      glassPane.remove(highlightComponent)
+      highlightComponent?.let { glassPane.remove(it) }
       glassPane.revalidate()
       glassPane.repaint()
     }
@@ -112,25 +115,37 @@ internal class RepaintCellByTimer(val list: JList<*>,
                                   glassPane: JComponent,
                                   options: LearningUiHighlightingManager.HighlightingOptions)
   : RepaintByTimer(list, glassPane, options) {
+  private var listLocationOnScreen: Point? = null
+  private var cellBoundsInList: Rectangle? = null
 
-  override fun isShowing(): Boolean {
-    return super.isShowing() && list.visibleRowCount > index()
+  override fun shouldReinit(): Boolean {
+    if (highlightComponent == null) {
+      return true
+    }
+    val i = index()
+    if (i < 0 && list.visibleRowCount <= i) {
+      return true
+    }
+    return list.locationOnScreen != listLocationOnScreen || list.getCellBounds(i, i) != cellBoundsInList
   }
 
   override fun reinitHighlightComponent() {
     val i = index()
-    if (i == -1) {
+    if (i < 0 && list.visibleRowCount <= i) {
       return
     }
-    highlightComponent = GlassHighlightComponent(startDate, options)
+    val newHighlightComponent = GlassHighlightComponent(startDate, options)
 
     val cellBounds = list.getCellBounds(i, i)
 
     val pt = SwingUtilities.convertPoint(original, cellBounds.location, glassPane)
     val bounds = Rectangle(pt.x, pt.y, cellBounds.width, cellBounds.height)
 
-    highlightComponent.bounds = bounds
-    glassPane.add(highlightComponent)
+    newHighlightComponent.bounds = bounds
+    glassPane.add(newHighlightComponent)
+    highlightComponent = newHighlightComponent
+    listLocationOnScreen = list.locationOnScreen
+    cellBoundsInList = cellBounds
   }
 }
 
