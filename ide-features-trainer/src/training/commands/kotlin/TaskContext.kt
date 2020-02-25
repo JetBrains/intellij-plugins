@@ -21,6 +21,7 @@ import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonExecutor
+import training.learn.lesson.kimpl.LessonUtil
 import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
@@ -195,13 +196,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
 
   fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
     triggerByFoundListItemAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
-      for (i in 0 until ui.model.size) {
-        val elementAt = ui.model.getElementAt(i)
-        if (checkList(elementAt)) {
-          return@triggerByFoundListItemAndHighlight i
-        }
-      }
-      -1
+      LessonUtil.findItem(ui, checkList)
     }
   }
 

@@ -3,6 +3,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.openapi.editor.Editor
 import training.commands.kotlin.TaskContext
+import javax.swing.JList
 
 object LessonUtil {
   fun insertIntoSample(sample: LessonSample, inserted: String): String {
@@ -35,4 +36,15 @@ object LessonUtil {
       TaskContext.RestoreProposal.Modification
     }
   }
+
+  fun findItem(ui: JList<*>, checkList: (item: Any) -> Boolean): Int {
+    for (i in 0 until ui.model.size) {
+      val elementAt = ui.model.getElementAt(i)
+      if (checkList(elementAt)) {
+        return i
+      }
+    }
+    return -1
+  }
+
 }
