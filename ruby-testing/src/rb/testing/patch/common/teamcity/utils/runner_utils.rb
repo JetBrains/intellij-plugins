@@ -205,6 +205,17 @@ module Rake
             elsif defined? MiniTest::Unit.runner
               MiniTest::Unit.runner = Minitest.rubymine_reporter
             end
+
+            if defined? Minitest::Reporters.use!
+              Minitest::Reporters.module_eval do
+                def self.use!(*args)
+                  # do not register RubyMineReporter from minitest-reporters
+                end
+              end
+            end
+            if defined? Minitest::Reporters.reporters
+              Minitest::Reporters.reporters = [Minitest.rubymine_reporter]
+            end
           end
         end
       end
