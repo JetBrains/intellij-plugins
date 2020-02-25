@@ -39,7 +39,7 @@ class PythonPostfixCompletionLesson(module: Module) : KLesson("Postfix Completio
       prepareSample(sample)
       task {
         text("The IDE can offer postfix shortcuts. Type ${code(completionSuffix)}.")
-        triggerByListItem {
+        triggerByListItemAndHighlight {
           it.toString() == completionSuffix
         }
         proposeRestore {

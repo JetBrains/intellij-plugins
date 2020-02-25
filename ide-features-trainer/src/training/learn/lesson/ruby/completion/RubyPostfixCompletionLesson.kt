@@ -33,7 +33,7 @@ end
       prepareSample(sample)
       task {
         text("The IDE can offer postfix shortcuts. Type ${code(".if")}.")
-        triggerByListItem {
+        triggerByListItemAndHighlight {
           it.toString() == ".if"
         }
         proposeRestore {
@@ -49,7 +49,7 @@ end
       }
       task {
         text("Now just press ${action("EditorEnter")} to choose the first postfix template.")
-        triggerByListItem {
+        triggerByListItemAndHighlight {
           it.toString() == "string_array.length > 1"
         }
         restoreByUi(200)

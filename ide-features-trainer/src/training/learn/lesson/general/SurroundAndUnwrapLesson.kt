@@ -28,7 +28,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
           editor.caretModel.currentCaret.selectionEnd != previous.sample.selection?.second
         }
         text("Press ${action(it)} to surround selected code with some template code.")
-        triggerByListItem { item ->
+        triggerByListItemAndHighlight { item ->
           surroundItems.all { need -> wordIsPresent(item.toString(), need) }
         }
         test { actions(it) }
@@ -58,7 +58,7 @@ abstract class SurroundAndUnwrapLesson(module: Module, lang: String) :
           editor.caretModel.currentCaret.logicalPosition.line != previous.position.line
         }
         text("Lets return to the initial file with unwrapping action by ${action(it)}.")
-        triggerByListItem { item ->
+        triggerByListItemAndHighlight { item ->
           wordIsPresent(item.toString(), surroundItems[0])
         }
         test { actions(it) }
