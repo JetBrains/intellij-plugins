@@ -134,9 +134,9 @@ internal class RepaintCellByTimer(val list: JList<*>,
     if (i < 0 && list.visibleRowCount <= i) {
       return
     }
-    val newHighlightComponent = GlassHighlightComponent(startDate, options)
+    val cellBounds = list.getCellBounds(i, i) ?: return
 
-    val cellBounds = list.getCellBounds(i, i)
+    val newHighlightComponent = GlassHighlightComponent(startDate, options)
 
     val pt = SwingUtilities.convertPoint(original, cellBounds.location, glassPane)
     val bounds = Rectangle(pt.x, pt.y, cellBounds.width, cellBounds.height)
