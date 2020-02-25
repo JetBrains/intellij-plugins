@@ -25,6 +25,10 @@ require File.dirname(__FILE__) + '/runner_settings'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/service_message_factory'
 
+include Rake::TeamCity::RunnerUtils::RubyMineTestFrameworkInitializer
+
+initialize_testing_framework
+
 def collect_test_scripts
   test_scripts = []
   Dir["#{IntelliJ::FOLDER_PATH}/#{IntelliJ::SEARCH_MASK}"].each { |file|
