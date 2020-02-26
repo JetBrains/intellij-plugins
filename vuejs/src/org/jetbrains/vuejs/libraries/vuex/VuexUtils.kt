@@ -45,4 +45,10 @@ object VuexUtils {
            && parameter.contextOfType(JSFunctionItem::class)?.parameters?.getOrNull(0) == parameter
   }
 
+  fun isNamespaceChild(namespace: String, qualifiedName: String, onlyDirectChildren: Boolean): Boolean {
+    return qualifiedName.startsWith(namespace)
+           && qualifiedName.length > namespace.length
+           && (!onlyDirectChildren || qualifiedName.indexOf('/', namespace.length) < 0)
+  }
+
 }

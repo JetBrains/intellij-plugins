@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import java.util.*
 
 class VuexStoreStateElement(name: String, private val qualifiedStoreName: String, location: PsiElement, jsType: JSType?)
@@ -61,8 +62,7 @@ class VuexStoreStateElement(name: String, private val qualifiedStoreName: String
         }
         else {
           val prefix = VuexStoreContext.appendSegment(qualifiedName, "")
-          if (qualifiedStoreName.startsWith(prefix)
-              && qualifiedStoreName.length > prefix.length) {
+          if (isNamespaceChild(prefix, qualifiedStoreName, false)) {
             val segments = qualifiedStoreName.substring(prefix.length).split("/")
             var index = 0
             var signature = symbol.state[segments[0]]?.getPropertySignature(prefix, VuexStoreContext.appendSegment(prefix, segments[0]))

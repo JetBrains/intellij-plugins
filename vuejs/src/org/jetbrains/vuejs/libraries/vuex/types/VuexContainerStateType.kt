@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
 import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 class VuexContainerStateType private constructor(source: JSTypeSource, element: PsiElement, baseNamespace: VuexStoreNamespace)
@@ -26,10 +27,7 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
     val prefixLength = baseNamespace.length
     // TODO merge types from parent namespace states types
     context.visit { qualifiedName, container ->
-      if (container is VuexModule
-          && qualifiedName.startsWith(baseNamespace)
-          && qualifiedName.length > baseNamespace.length
-          && qualifiedName.indexOf('/', prefixLength + 1) < 0) {
+      if (container is VuexModule && isNamespaceChild(baseNamespace, qualifiedName, true)) {
         val name = qualifiedName.substring(prefixLength)
         val type = VuexContainerStateType(source, element, VuexStaticNamespace(qualifiedName))
         result.add(JSRecordTypeImpl.PropertySignatureImpl(
@@ -38,8 +36,7 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
       }
     }
     context.visitSymbols(VuexContainer::state) { qualifiedName, symbol ->
-      if (qualifiedName.startsWith(baseNamespace)
-          && qualifiedName.indexOf('/', prefixLength + 1) < 0) {
+      if (isNamespaceChild(baseNamespace, qualifiedName, false)) {
         result.add(symbol.getPropertySignature(baseNamespace, qualifiedName))
       }
     }
