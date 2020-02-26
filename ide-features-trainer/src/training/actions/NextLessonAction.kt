@@ -18,18 +18,25 @@ import training.ui.views.LearnPanel
 class NextLessonAction : AnAction() {
 
   override fun actionPerformed(e: AnActionEvent) {
-    //check if the lesson view is active
-    val project = e.project
-    if (project == null) {
-      LOG.warn("Unable to perform NextLesson action for 'null' project")
+    val view = getLearnPanel(e)
+    if (view == null) {
+      LOG.warn("No LearnPanel available")
       return
     }
-    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project]
-                            ?: throw Exception("Unable to get Learn toolwindow for project (${project.name})")
-    val view = myLearnToolWindow.scrollPane.viewport?.view
-               ?: throw Exception("Unable to get Learn toolwindow scrollpane or viewport (${project.name})")
     //click button to skip or go to the next lesson
-    (view as? LearnPanel)?.clickButton()
+    view.clickButton()
+  }
+
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabled = getLearnPanel(e)?.hasNextButton() ?: false
+  }
+
+  private fun getLearnPanel(e: AnActionEvent): LearnPanel? {
+    val project = e.project ?: return null
+    // Learning panel can be closed at all
+    val myLearnToolWindow = LearnToolWindowFactory.learnWindowPerProject[project] ?: return null
+    return myLearnToolWindow.scrollPane.viewport?.view as? LearnPanel
   }
 
   companion object {
