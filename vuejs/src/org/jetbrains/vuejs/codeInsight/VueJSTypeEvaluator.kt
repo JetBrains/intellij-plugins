@@ -48,7 +48,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
               type != null -> addType(type, expression)
               useTypeScriptKeyofType(collectionType) -> addType(
                 TypeScriptIndexedAccessJSTypeImpl(collectionType,
-                                                  TypeScriptTypeOperatorJSTypeImpl(collectionType, collectionType.source),
+                                                  JSCompositeTypeFactory.createKeyOfType(
+                                                    collectionType, collectionType.source),
                                                   collectionType.source),
                 expression)
               else -> addVForVarType(
@@ -82,7 +83,8 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
             when {
               indexerTypes.isNotEmpty() -> addVForVarType(collectionExpr, *indexerTypes.toTypedArray())
               useTypeScriptKeyofType(collectionType) -> addType(
-                TypeScriptTypeOperatorJSTypeImpl(collectionType, collectionType.source),
+                JSCompositeTypeFactory.createKeyOfType(collectionType,
+                                                                                                                 collectionType.source),
                 collectionExpr)
               else -> addVForVarType(collectionExpr, ::JSStringType, ::JSNumberType)
             }
