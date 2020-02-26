@@ -145,7 +145,7 @@ module Test
             test_name = convert_test_name_according_framework(test_name)
 
             if test_name == test_name_before_converting
-              get_test_name_und_fqn(test_name)
+              test_name_und_fqn(test_name)
             else
               # we would use BDD test name as qualified name
               [test_name, test_name]

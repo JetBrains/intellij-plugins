@@ -24,10 +24,9 @@
 require File.dirname(__FILE__) + '/runner_settings'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/service_message_factory'
+require 'rubymine_test_framework_initializer'
 
-include Rake::TeamCity::RunnerUtils::RubyMineTestFrameworkInitializer
-
-initialize_testing_framework
+include RubyMineTestFrameworkInitializer
 
 def collect_test_scripts
   test_scripts = []

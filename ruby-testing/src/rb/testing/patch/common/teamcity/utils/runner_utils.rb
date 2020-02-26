@@ -27,7 +27,7 @@ module Rake
       ####  Test::Unit
       ###########################################################################
       # Retrieves a short test name and fully qualified name from test-unit entity name
-      def get_test_name_und_fqn(ruby_name)
+      def test_name_und_fqn(ruby_name)
         if ruby_name && (ruby_name.strip =~ /(\S+)\(([\w:]*)\)/)
           # p [$1, $2]
           method_name = $1
@@ -174,59 +174,6 @@ module Rake
         end
 
         return nil, nil
-      end
-
-      module RubyMineTestFrameworkInitializer
-        def initialize_testing_framework
-          is_minitest_run = false
-          begin
-            require "minitest/autorun"
-            require "minitest/unit"
-            require 'minitest/rm_reporter_plugin'
-            is_minitest_run = true
-            begin
-              require 'minitest/reporters'
-            rescue LoadError
-              # ok, there is no minitest-reporters gem
-            end
-          rescue LoadError
-            begin
-              require 'test/unit'
-            rescue LoadError
-              puts "Neither minitest nor test-unit libraries available"
-            end
-          end
-
-          if is_minitest_run
-            #this patch is to simulate before_test hook, see file rubymine_minitest_patch.rb
-            Minitest.rubymine_reporter = Minitest::MyRubyMineReporter.new
-            if defined? Minitest::Unit.runner
-              Minitest::Unit.runner = Minitest.rubymine_reporter
-            elsif defined? MiniTest::Unit.runner
-              MiniTest::Unit.runner = Minitest.rubymine_reporter
-            end
-
-            if defined? Minitest::Reporters.use!
-              Minitest::Reporters.module_eval do
-                def self.use!(*args)
-                  # do not register RubyMineReporter from minitest-reporters
-                end
-              end
-            end
-            if defined? Minitest::Reporters.reporters
-              Minitest::Reporters.reporters = [Minitest.rubymine_reporter]
-            end
-          end
-        end
-      end
-
-      module RubyMineMinitestFrameworkPatch
-        def run_with_rm_hook(*args)
-          Minitest.rubymine_reporter.before_test(self)
-          result = original_run(*args)
-          Minitest.rubymine_reporter.after_test(self)
-          result
-        end
       end
     end
   end

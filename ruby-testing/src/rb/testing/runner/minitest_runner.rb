@@ -1,9 +1,8 @@
 require File.dirname(__FILE__) + '/runner_settings'
 require 'teamcity/utils/runner_utils'
+require 'rubymine_test_framework_initializer'
 
-include Rake::TeamCity::RunnerUtils::RubyMineTestFrameworkInitializer
-
-initialize_testing_framework
+include RubyMineTestFrameworkInitializer
 
 if ARGV.length > 0
   file = ARGV.shift

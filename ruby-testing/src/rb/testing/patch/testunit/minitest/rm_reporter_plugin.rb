@@ -10,16 +10,17 @@ rescue LoadError
   $stderr.puts("Using default results reporter...\n")
 else
   require 'drb/drb'
+  require 'minitest/rubymine_minitest_patch'
 
   if defined? Minitest::Test
     Minitest::Test.class_eval do
-      include Rake::TeamCity::RunnerUtils::RubyMineMinitestFrameworkPatch
+      include RubyMineMinitestPatch
       alias_method :original_run, :run
       alias_method :run, :run_with_rm_hook
     end
-  else
+  elsif defined? MiniTest::Unit::TestCase
     MiniTest::Unit::TestCase.class_eval do
-      include Rake::TeamCity::RunnerUtils::RubyMineMinitestFrameworkPatch
+      include RubyMineMinitestPatch
       alias_method :original_run, :run
       alias_method :run, :run_with_rm_hook
     end
@@ -104,10 +105,8 @@ else
       end
 
       def close_all_suites
-        i = 1
-        while i < self.already_run_tests.count
-          log(Rake::TeamCity::MessageFactory.create_suite_finished(self.already_run_tests[i], self.already_run_tests[i]))
-          i += 1
+        (1...already_run_tests.count).each do |i|
+          log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], self.already_run_tests[i]))
         end
         self.already_run_tests.clear()
       end
@@ -122,7 +121,7 @@ else
       end
 
       def after_suite(suite)
-        self.already_run_test.remove suite.name
+        already_run_test.remove suite.name
         log(Rake::TeamCity::MessageFactory.create_suite_finished(suite.name))
       end
 
