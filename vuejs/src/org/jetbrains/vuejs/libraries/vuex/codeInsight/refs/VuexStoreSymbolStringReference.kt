@@ -19,6 +19,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
 import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
@@ -92,10 +93,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
       val quote = if (wrapWithQuotes) JSCodeStyleSettings.getQuote(element) else ""
       VuexModelManager.getVuexStoreContext(element)
         ?.visit(accessor) { qualifiedName: String, symbol: Any ->
-          if (qualifiedName.startsWith(namePrefix)
-              && qualifiedName.length > namePrefix.length
-              && (includeMembers || qualifiedName.indexOf('/', namePrefix.length) < 0)
-              && symbol is VuexNamedSymbol)
+          if (symbol is VuexNamedSymbol && isNamespaceChild(namePrefix, qualifiedName, !includeMembers))
             result.add(createLookupItem(symbol.getResolveTarget(namePrefix, qualifiedName),
                                         quote + qualifiedName.substring(namePrefix.length) + quote))
         }
