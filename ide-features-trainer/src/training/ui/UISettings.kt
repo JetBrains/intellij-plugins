@@ -13,7 +13,7 @@ import javax.swing.Box
 import javax.swing.JLabel
 import javax.swing.border.Border
 import javax.swing.border.EmptyBorder
-import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
 
 @Suppress("MemberVisibilityCanBePrivate")
 class UISettings {
@@ -96,8 +96,8 @@ class UISettings {
       return rigidArea as Box.Filler
     }
 
-    fun rigidGap(settingsValue: KProperty<Int>, isVertical: Boolean = true): Box.Filler {
-      val value = settingsValue.call(instance)
+    fun rigidGap(settingsValue: KProperty1<training.ui.UISettings, Int>, isVertical: Boolean = true): Box.Filler {
+      val value = settingsValue.get(instance)
       return rigidGap(settingsValue.name, value, isVertical)
     }
   }
