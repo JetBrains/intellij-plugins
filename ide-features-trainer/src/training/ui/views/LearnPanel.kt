@@ -445,8 +445,10 @@ class LearnPanel : JPanel() {
     }
   }
 
+  fun hasNextButton(): Boolean = button.isEnabled && button.isVisible
+
   fun clickButton() {
-    if (button.isEnabled && button.isVisible) button.doClick()
+    if (hasNextButton()) button.doClick()
   }
 
   override fun getPreferredSize(): Dimension {
