@@ -14,28 +14,25 @@ import training.project.ProjectUtils
 
 object NewLearnProjectUtil {
 
-  fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project {
+  fun createLearnProject(projectToClose: Project?, langSupport: LangSupport, postInitCallback: (learnProject: Project) -> Unit) {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
 
-    val newProject: Project =
-      ProjectUtils.importOrOpenProject(langSupport, projectToClose)
-      ?: error("Could not create project for " + langSupport.primaryLanguage)
-
-    try {
-      val sdkForProject = langSupport.getSdkForProject(newProject)
-      if (sdkForProject != null) {
-        langSupport.applyProjectSdk(sdkForProject, newProject)
+    ProjectUtils.importOrOpenProject(langSupport, projectToClose) { newProject ->
+      try {
+        val sdkForProject = langSupport.getSdkForProject(newProject)
+        if (sdkForProject != null) {
+          langSupport.applyProjectSdk(sdkForProject, newProject)
+        }
       }
+      catch (e: NoSdkException) {
+        Messages.showMessageDialog(newProject, e.localizedMessage, LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
+      }
+
+      if (!unitTestMode) newProject.save()
+
+      newProject.save()
+      postInitCallback(newProject)
     }
-    catch (e: NoSdkException) {
-      Messages.showMessageDialog(newProject, e.localizedMessage, LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-    }
-
-    if (!unitTestMode) newProject.save()
-
-    newProject.save()
-    return newProject
-
   }
 
   fun projectFilePath(langSupport: LangSupport): @SystemDependent String =

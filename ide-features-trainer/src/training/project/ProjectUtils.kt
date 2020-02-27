@@ -3,10 +3,13 @@ package training.project
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
 import training.lang.LangSupport
+import training.learn.LearnBundle
 import training.util.featureTrainerVersion
 import java.io.File
 import java.io.PrintWriter
@@ -35,25 +38,31 @@ object ProjectUtils {
    * @projectName = "SimpleProject"
    *
    */
-  fun importOrOpenProject(langSupport: LangSupport, projectToClose: Project?): Project? {
-    val dest = File(ideProjectsBasePath, langSupport.defaultProjectName)
+  fun importOrOpenProject(langSupport: LangSupport, projectToClose: Project?, postInitCallback: (learnProject: Project) -> Unit) {
+    runBackgroundableTask(LearnBundle.message("learn.project.initializing.process"), project = projectToClose) {
+      val dest = File(ideProjectsBasePath, langSupport.defaultProjectName)
 
-    if (!isSameVersion(dest)) {
-      if (dest.exists()) {
-        dest.deleteRecursively()
+      if (!isSameVersion(dest)) {
+        if (dest.exists()) {
+          dest.deleteRecursively()
+        }
+
+        val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath) ?: throw IllegalArgumentException(
+          "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course"
+        )
+
+        FileUtils.copyResourcesRecursively(inputUrl, dest)
+        PrintWriter(versionFile(dest), "UTF-8").use {
+          it.println(featureTrainerVersion)
+        }
       }
-
-      val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath) ?: throw IllegalArgumentException(
-        "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course"
-      )
-
-      FileUtils.copyResourcesRecursively(inputUrl, dest)
-      PrintWriter(versionFile(dest), "UTF-8").use {
-        it.println(featureTrainerVersion)
+      val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
+      invokeLater {
+        val openOrImport = ProjectUtil.openOrImport(toSelect.path, projectToClose, false)
+                           ?: error("Could not create project for " + langSupport.primaryLanguage)
+        postInitCallback(openOrImport)
       }
     }
-    val toSelect = findFileByIoFile(dest, true) ?: throw Exception("Copied Learn project folder is null")
-    return ProjectUtil.openOrImport(toSelect.path, projectToClose, false)
   }
 
   private fun isSameVersion(dest: File): Boolean {

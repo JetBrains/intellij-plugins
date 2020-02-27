@@ -103,11 +103,11 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
         }
         else if (learnProject == null || learnProject.isDisposed) {
           LOG.debug("${projectWhereToStartLesson.name}: 1. learnProject is null or disposed")
-          val myLearnProject = initLearnProject(projectWhereToStartLesson) ?: return
-          // in case of user aborted to create a LearnProject
-          LOG.debug("${projectWhereToStartLesson.name}: 1. ... LearnProject has been started")
-          openLessonWhenLearnProjectStart(lesson, myLearnProject)
-          LOG.debug("${projectWhereToStartLesson.name}: 1. ... open lesson when learn project has been started")
+          initLearnProject(projectWhereToStartLesson) {
+            LOG.debug("${projectWhereToStartLesson.name}: 1. ... LearnProject has been started")
+            openLessonWhenLearnProjectStart(lesson, it)
+            LOG.debug("${projectWhereToStartLesson.name}: 1. ... open lesson when learn project has been started")
+          }
           return
           //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
         }
@@ -244,16 +244,18 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
   }
 
   private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?, lessonToOpen: Lesson) {
-    val project = initLearnProject(projectToClose)!!
-    if (project.isOpen) {
-      showModules(project)
-      openLessonWhenLearnProjectStart(lessonToOpen, project)
-      return
-    }
-    StartupManager.getInstance(project).registerPostStartupActivity {
-      hideOtherViews(project)
-      showModules(project)
-      openLessonWhenLearnProjectStart(lessonToOpen, project)
+    initLearnProject(projectToClose) { project ->
+      if (project.isOpen) {
+        showModules(project)
+        openLessonWhenLearnProjectStart(lessonToOpen, project)
+      }
+      else {
+        StartupManager.getInstance(project).registerPostStartupActivity {
+          hideOtherViews(project)
+          showModules(project)
+          openLessonWhenLearnProjectStart(lessonToOpen, project)
+        }
+      }
     }
   }
 
@@ -373,30 +375,27 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     return vf
   }
 
-  private fun initLearnProject(projectToClose: Project?): Project? {
+  private fun initLearnProject(projectToClose: Project?, postInitCallback: (learnProject: Project) -> Unit) {
     val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
     //if projectToClose is open
-    var myLearnProject = findLearnProjectInOpenedProjects(langSupport)
-    if (myLearnProject != null) return myLearnProject
+    findLearnProjectInOpenedProjects(langSupport)?.let {
+      postInitCallback(it)
+      return
+    }
 
     if (!ApplicationManager.getApplication().isUnitTestMode && projectToClose != null)
       if (!NewLearnProjectUtil.showDialogOpenLearnProject(projectToClose))
-        return null //if user abort to open lesson in a new Project
+        return //if user abort to open lesson in a new Project
     try {
-      myLearnProject = NewLearnProjectUtil.createLearnProject(projectToClose, langSupport)
+      NewLearnProjectUtil.createLearnProject(projectToClose, langSupport) { learnProject ->
+        langSupport.applyToProjectAfterConfigure().invoke(learnProject)
+        CourseManager.instance.learnProject = learnProject
+        postInitCallback(learnProject)
+      }
     }
     catch (e: IOException) {
       LOG.error(e)
-      return null
     }
-
-    langSupport.applyToProjectAfterConfigure().invoke(myLearnProject)
-
-    CourseManager.instance.learnProject = myLearnProject
-
-    assert(CourseManager.instance.learnProject != null)
-
-    return myLearnProject
   }
 
   private fun findLearnProjectInOpenedProjects(langSupport: LangSupport): Project? {
