@@ -43,7 +43,7 @@ internal class VueGlobalImpl(override val project: Project, private val packageJ
   override val delegate
     get() = CachedValuesManager.getManager(project).getCachedValue(this) {
       packageJson?.let { packageJson -> VueWebTypesRegistry.createWebTypesGlobal(project, packageJson, this) }
-      ?: Result.create(null as VueGlobal?, packageJson)
+      ?: Result.create(null as VueGlobal?, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
     } ?: mySourceGlobal
 
   private fun getElementToParentMap(): MultiMap<VueScopeElement, VueEntitiesContainer> =
