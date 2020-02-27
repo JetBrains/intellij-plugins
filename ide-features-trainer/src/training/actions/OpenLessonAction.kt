@@ -101,9 +101,8 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           vf = getFileInLearnProject(lesson)
           //1. learnProject == null and current project has different name then initLearnProject and register post startup open lesson
         }
-        else if (learnProject == null && projectWhereToStartLesson.name != langSupport.defaultProjectName) {
-          LOG.debug(
-            "${projectWhereToStartLesson.name}: 1. learnProject is null and current project ((${projectWhereToStartLesson.name})) has different name. Start LearnProject and register post startup open lesson")
+        else if (learnProject == null || learnProject.isDisposed) {
+          LOG.debug("${projectWhereToStartLesson.name}: 1. learnProject is null or disposed")
           val myLearnProject = initLearnProject(projectWhereToStartLesson) ?: return
           // in case of user aborted to create a LearnProject
           LOG.debug("${projectWhereToStartLesson.name}: 1. ... LearnProject has been started")
@@ -111,16 +110,6 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
           LOG.debug("${projectWhereToStartLesson.name}: 1. ... open lesson when learn project has been started")
           return
           //2. learnProject != null and learnProject is disposed then reinitProject and getFileInLearnProject
-        }
-        else if (learnProject!!.isDisposed) {
-          LOG.debug("${projectWhereToStartLesson.name}: 2. LearnProject is disposed. Start learn project again")
-          val myLearnProject = initLearnProject(projectWhereToStartLesson) ?: return
-          LOG.debug("${projectWhereToStartLesson.name}: 2. ... LearnProject has been started")
-          // in case of user aborted to create a LearnProject
-          openLessonWhenLearnProjectStart(lesson, myLearnProject)
-          LOG.debug("${projectWhereToStartLesson.name}: 2. ... open lesson when learn project has been started")
-          return
-          //3. learnProject != null and learnProject is opened but not focused then focus Project and getFileInLearnProject
         }
         else if (learnProject.isOpen && projectWhereToStartLesson != learnProject) {
           LOG.debug("${projectWhereToStartLesson.name}: 3. LearnProject is opened but not focused. Ask user to focus to LearnProject")
