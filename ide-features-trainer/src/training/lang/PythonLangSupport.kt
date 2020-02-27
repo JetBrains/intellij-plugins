@@ -9,6 +9,8 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.platform.templates.github.ZipUtil
+import com.intellij.util.download.DownloadableFileService
 import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
@@ -16,6 +18,8 @@ import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
+import java.io.File
+import java.nio.file.Files
 
 /**
  * @author Sergey Karashevich
@@ -75,6 +79,21 @@ class PythonLangSupport : AbstractLangSupport() {
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
     return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${sandboxFile}"
+  }
+
+  override val installRemoteProject: ((File) -> Unit)? = { projectDirectory ->
+    val service = DownloadableFileService.getInstance()
+    val zipName = "project.zip"
+    val url = "https://github.com/pallets/jinja/archive/master.zip"
+    val fileDescription = service.createFileDescription(url, zipName)
+    val downloader = service.createDownloader(listOf(fileDescription), zipName)
+    val tempDir = Files.createTempDirectory("IFT-temp")
+    val files = downloader.download(tempDir.toFile())
+    if (files.size != 1) {
+      error("Cannot download $url into $tempDir/$zipName")
+    }
+    val zipFile = files[0].first
+    ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile, projectDirectory, true)
   }
 
   companion object {

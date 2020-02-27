@@ -3,10 +3,12 @@ package training.project
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
 import training.lang.LangSupport
 import training.learn.LearnBundle
@@ -47,11 +49,25 @@ object ProjectUtils {
           dest.deleteRecursively()
         }
 
-        val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath) ?: throw IllegalArgumentException(
-          "No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course"
-        )
+        val installRemoteProject = langSupport.installRemoteProject
+        if (installRemoteProject != null) {
+          val ok = invokeAndWaitIfNeeded {
+            Messages.showOkCancelDialog(projectToClose,
+                                        "IDE Features Trainer plugin needs download demo project",
+                                        "Confirm Download",
+                                        "Download and Proceed",
+                                        Messages.getCancelButton(),
+                                        null) == Messages.OK
+          }
+          if (!ok) return@runBackgroundableTask
+          installRemoteProject(dest)
+        }
+        else {
+          val inputUrl: URL = langSupport.javaClass.classLoader.getResource(langSupport.projectResourcePath)
+          ?: throw IllegalArgumentException("No project ${langSupport.projectResourcePath} in resources for ${langSupport.primaryLanguage} IDE learning course")
 
-        FileUtils.copyResourcesRecursively(inputUrl, dest)
+          FileUtils.copyResourcesRecursively(inputUrl, dest)
+        }
         PrintWriter(versionFile(dest), "UTF-8").use {
           it.println(featureTrainerVersion)
         }
