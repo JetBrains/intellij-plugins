@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
+import java.io.File
 
 interface LangSupport {
   val primaryLanguage: String
@@ -18,7 +19,12 @@ interface LangSupport {
   val langCourseFeedback: String?
     get() = null
 
-  /** Relative path inside plugin resources */
+  /** Callback should download and install demo project */
+  @JvmDefault
+  val installRemoteProject: ((projectDirectory: File) -> Unit)?
+    get() = null
+
+  /** Relative path inside plugin resources. Used iff [installRemoteProject] is null*/
   @JvmDefault
   val projectResourcePath: String
   get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
