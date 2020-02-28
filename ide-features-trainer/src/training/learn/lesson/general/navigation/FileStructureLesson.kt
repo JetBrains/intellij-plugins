@@ -13,8 +13,9 @@ import training.learn.lesson.kimpl.LessonContext
 
 abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File structure", module, lang) {
   abstract override val existedFile: String
-
-  abstract val memberPrefix : String
+  abstract val searchSubstring : String
+  abstract val firstWord : String
+  abstract val secondWord : String
 
   override val lessonContent: LessonContext.() -> Unit
     get() = {
@@ -24,8 +25,9 @@ abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File
         "A large source file can be difficult to read and navigate, sometimes you only need an overview of the file." +
         "Use ${action(it)} to see the file structure."
       }
-      task(memberPrefix) {
-        text("Type <code>$it</code> to see elements that contain the word <strong>$it</strong>.")
+      task(searchSubstring) {
+        text("Suppose you want to find some method with ${code(firstWord)} and ${code(secondWord)} words in its name. " +
+             "Type ${code(searchSubstring)} (prefixes of required words) to filter file structure.")
         stateCheck { checkWordInSearch(it) }
         test {
           ideFrame {
@@ -35,7 +37,7 @@ abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File
         }
       }
       task {
-        text("Press <strong>Enter</strong> to jump to the selected item.")
+        text("Only the one item remains. Now press <strong>Enter</strong> to jump to the selected item.")
         stateCheck { focusOwner is EditorComponentImpl }
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }
