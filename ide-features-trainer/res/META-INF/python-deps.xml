@@ -5,6 +5,7 @@
     <TrainingModules language="Python">
       <module path="modules/python/EditorBasics.xml"/>
       <module path="modules/python/Completions.xml"/>
+      <module path="modules/python/Navigation.xml"/>
     </TrainingModules>
   </extensions>
 </idea-plugin>
