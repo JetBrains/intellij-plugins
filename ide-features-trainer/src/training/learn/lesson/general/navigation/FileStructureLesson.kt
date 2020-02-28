@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.navigation
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package training.learn.lesson.general.navigation
 
 import com.intellij.ide.dnd.aware.DnDAwareTree
 import com.intellij.openapi.editor.impl.EditorComponentImpl
@@ -11,7 +11,11 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-class RubyFileStructureLesson(module: Module) : KLesson("File structure", module, "ruby") {
+abstract class FileStructureLesson(module: Module, lang: String) : KLesson("File structure", module, lang) {
+  abstract override val existedFile: String
+
+  abstract val memberPrefix : String
+
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       caret(0)
@@ -20,7 +24,7 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
         "A large source file can be difficult to read and navigate, sometimes you only need an overview of the file." +
         "Use ${action(it)} to see the file structure."
       }
-      task("ch") {
+      task(memberPrefix) {
         text("Type <code>$it</code> to see elements that contain the word <strong>$it</strong>.")
         stateCheck { checkWordInSearch(it) }
         test {
@@ -50,7 +54,4 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
     }
     return false
   }
-
-  override val existedFile: String
-    get() = "lib/active_support/core_ext/date/calculations.rb"
 }
