@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.navigation
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package training.learn.lesson.general.navigation
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.actionSystem.impl.ActionMenuItem
@@ -16,10 +16,13 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 
-class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and usages", module, "ruby") {
+abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesson("Declaration and usages", module, lang) {
+  abstract fun LessonContext.setInitialPosition()
+  abstract override val existedFile: String
+
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      caret(20, 45)
+      setInitialPosition()
 
       task("GotoDeclaration") {
         text("Use ${action(it)} to jump to the declaration of an attribute accessor")
@@ -106,7 +109,8 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
     val target = TargetElementUtil.findTargetElement(currentEditor, flags) ?: return null
 
     val file = PsiDocumentManager.getInstance(project).getPsiFile(currentEditor.document) ?: return null
-    val position = MyPosition(file, currentEditor.caretModel.offset)
+    val position = MyPosition(file,
+                                                                                                                         currentEditor.caretModel.offset)
 
     return MyInfo(target, position)
   }
@@ -118,7 +122,4 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
   private data class MyInfo(val target: PsiElement, val position: MyPosition)
 
   private data class MyPosition(val file: PsiFile, val offset: Int)
-
-  override val existedFile: String
-    get() = "lib/active_support/core_ext/date/calculations.rb"
 }
