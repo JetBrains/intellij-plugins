@@ -22,6 +22,7 @@ import com.intellij.xml.util.CheckEmptyTagInspection
 import com.intellij.xml.util.CheckTagEmptyBodyInspection
 import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection
 import junit.framework.TestCase
+import org.jetbrains.vuejs.inspections.DuplicateTagInspection
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueHighlightingTest : BasePlatformTestCase() {
@@ -46,6 +47,7 @@ class VueHighlightingTest : BasePlatformTestCase() {
                                 TypeScriptValidateTypesInspection(),
                                 TypeScriptUnresolvedVariableInspection(),
                                 TypeScriptUnresolvedFunctionInspection(),
+                                DuplicateTagInspection(),
                                 JSCheckFunctionSignaturesInspection(),
                                 XmlUnboundNsPrefixInspection(),
                                 CheckEmptyTagInspection())
@@ -1503,6 +1505,18 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     myFixture.enableInspections(JSUnusedGlobalSymbolsInspection::class.java,
                                 JSUnusedLocalSymbolsInspection::class.java)
     myFixture.configureByFile("privateFields.vue")
+    myFixture.checkHighlighting()
+  }
+
+  fun testMultipleScriptTagsInHTML() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("htmlMultipleScripts.html")
+    myFixture.checkHighlighting()
+  }
+
+  fun testMultipleScriptTagsInVue() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("vueMultipleScripts.vue")
     myFixture.checkHighlighting()
   }
 
