@@ -1520,6 +1520,15 @@ var <info descr="local variable">i</info>:<info descr="exported class">SpaceInte
     myFixture.checkHighlighting()
   }
 
+  fun testCompositionApiBasic() {
+    createPackageJsonWithVueDependency(myFixture, """ "@vue/composition-api": "0.0.0" """)
+    myFixture.copyDirectoryToProject("../libs/composition-api", "node_modules/@vue/composition-api")
+    myFixture.configureByFile("compositeComponent1.vue")
+    myFixture.checkHighlighting()
+    myFixture.configureByFile("compositeComponent2.vue")
+    myFixture.checkHighlighting()
+  }
+
   fun testSimpleVueHtml() {
     for (suffix in listOf("cdn", "cdn.js", "cdn@", "js")) {
       myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
