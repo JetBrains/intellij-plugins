@@ -159,7 +159,7 @@ fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
         }
         is JSVariable -> cur.initializerOrStub?.let { queue.addLast(it) }
         is PsiPolyVariantReference -> cur.multiResolve(false)
-          .mapTo(queue) { if (it.isValidResult) it.element else null }
+          .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }
