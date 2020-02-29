@@ -81,7 +81,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters", "filter")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "data", "render", "props", "propsData", "computed", "methods", "watch",
-                                                  "mixins", "components", "directives", "filters")
+                                                  "mixins", "components", "directives", "filters", "setup")
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
 
