@@ -1,0 +1,10 @@
+export declare const onBeforeMount: (callback: Function) => void;
+export declare const onMounted: (callback: Function) => void;
+export declare const onBeforeUpdate: (callback: Function) => void;
+export declare const onUpdated: (callback: Function) => void;
+export declare const onBeforeUnmount: (callback: Function) => void;
+export declare const onUnmounted: (callback: Function) => void;
+export declare const onErrorCaptured: (callback: Function) => void;
+export declare const onActivated: (callback: Function) => void;
+export declare const onDeactivated: (callback: Function) => void;
+export declare const onServerPrefetch: (callback: Function) => void;
