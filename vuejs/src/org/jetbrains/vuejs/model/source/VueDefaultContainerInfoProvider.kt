@@ -17,7 +17,10 @@ import org.jetbrains.vuejs.codeInsight.getJSTypeFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getRequiredFromPropOptions
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.index.LOCAL
+import org.jetbrains.vuejs.index.VueExtendsBindingIndex
+import org.jetbrains.vuejs.index.VueMixinBindingIndex
+import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
@@ -42,15 +45,15 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
   companion object {
 
     private val ContainerMember = object {
-      val Props: MemberReader = MemberReader("props", true)
-      val Computed = MemberReader("computed")
-      val Methods = MemberReader("methods")
-      val Directives = MemberReader("directives")
-      val Components = MemberReader("components")
-      val Filters = MemberReader("filters")
-      val Delimiters = MemberReader("delimiters", true, false)
-      val Model = MemberReader("model")
-      val Data = object : MemberReader("data") {
+      val Props: MemberReader = MemberReader(PROPS_PROP, true)
+      val Computed = MemberReader(COMPUTED_PROP)
+      val Methods = MemberReader(METHODS_PROP)
+      val Directives = MemberReader(DIRECTIVES_PROP)
+      val Components = MemberReader(COMPONENTS_PROP)
+      val Filters = MemberReader(FILTERS_PROP)
+      val Delimiters = MemberReader(DELIMITERS_PROP, true, false)
+      val Model = MemberReader(MODEL_PROP)
+      val Data = object : MemberReader(DATA_PROP) {
         override fun getObjectLiteralFromResolved(resolved: PsiElement): JSObjectLiteralExpression? =
           findReturnedObjectLiteral(resolved)
 
@@ -154,9 +157,9 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         (element as? JSProperty)?.value
           ?.let { getTextIfLiteral(it) }
           ?.let { value ->
-            if (name == "prop")
+            if (name == MODEL_PROP_PROP)
               prop = value
-            else if (name == "event")
+            else if (name == MODEL_EVENT_PROP)
               event = value
           }
       }

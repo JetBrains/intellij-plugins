@@ -40,7 +40,7 @@ import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersF
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.model.source.VueComponents
+import org.jetbrains.vuejs.model.source.*
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
@@ -71,17 +71,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
-    const val VUE: String = "Vue"
     private const val REQUIRE = "require"
-    private const val METHOD = "methods"
-    private const val COMPUTED = "computed"
-    private const val DATA = "data"
-    private const val PROPS = "props"
     private const val VUE_INSTANCE = "CombinedVueInstance"
 
-    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters", "filter")
-    private val COMPONENT_INDICATOR_PROPS = setOf("template", "data", "render", "props", "propsData", "computed", "methods", "watch",
-                                                  "mixins", "components", "directives", "filters", "setup")
+    private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
+                                                FILTER_FUN)
+    private val COMPONENT_INDICATOR_PROPS = setOf(TEMPLATE_PROP, DATA_PROP, "render", PROPS_PROP, "propsData", COMPUTED_PROP, METHODS_PROP,
+                                                  "watch", MIXINS_PROP, COMPONENTS_PROP, DIRECTIVES_PROP, FILTERS_PROP, SETUP_METHOD,
+                                                  MODEL_PROP)
 
     private val INTERESTING_PROPERTIES = arrayOf(MIXINS_PROP, EXTENDS_PROP, DIRECTIVES_PROP, NAME_PROP, TEMPLATE_PROP)
 
@@ -141,11 +138,11 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     if (typeAlias == null) return null
     val typeSource = JSTypeSourceFactory.createTypeSource(typeAlias, false)
     val vueType = JSNamedTypeFactory.createType(VUE_INSTANCE, typeSource, JSContext.INSTANCE)
-    val vue = JSNamedTypeFactory.createType(VUE, typeSource, JSContext.INSTANCE)
-    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHOD))
-    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED))
-    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS))
-    val dataFunction = (parent.findProperty(DATA) as? ES6FunctionProperty)
+    val vue = JSNamedTypeFactory.createType(VUE_NAMESPACE, typeSource, JSContext.INSTANCE)
+    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHODS_PROP))
+    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED_PROP))
+    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS_PROP))
+    val dataFunction = (parent.findProperty(DATA_PROP) as? ES6FunctionProperty)
     val dataStream = JSTypeUtils.getFunctionType(
         JSResolveUtil.getElementJSType(dataFunction),
         false,
@@ -249,7 +246,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
       }
       else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
-        val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
+        val binding = (obj.findProperty(EL_PROP)?.value as? JSLiteralExpression)?.stringValue
         if (out == null) out = JSElementIndexingDataImpl()
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
@@ -264,7 +261,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val exportAssignment = (decorator.parent as? JSAttributeList)?.parent as? ES6ExportDefaultAssignment ?: return data
     val classExpression = exportAssignment.stubSafeElement as? JSClassExpression ?: return data
 
-    val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty("name")
+    val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty(NAME_PROP)
     val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)
     val outData = data ?: JSElementIndexingDataImpl()
     outData.addImplicitElement(createImplicitElement(name, classExpression, VueComponentsIndex.JS_KEY, null, null, false))
@@ -353,9 +350,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val argumentList = obj.parent as? JSArgumentList ?: return false
     if (argumentList.arguments[0] == obj) {
       return JSSymbolUtil.isAccurateReferenceExpressionName(
-        (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, VUE) ||
+        (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, VUE_NAMESPACE) ||
              JSSymbolUtil.isAccurateReferenceExpressionName(
-               (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, VUE, "extends")
+               (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, VUE_NAMESPACE, EXTEND_FUN)
     }
     return false
   }
@@ -371,7 +368,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val parentType = expression.node.treeParent?.elementType ?: return false
     if (JSElementTypes.ARRAY_LITERAL_EXPRESSION == parentType
         || (JSElementTypes.PROPERTY == parentType
-            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf("required", "el"))) {
+            && expression.node.treeParent.findChildByType(JSTokenTypes.IDENTIFIER)?.text in listOf(PROPS_REQUIRED_PROP, EL_PROP))) {
       return VueFileType.INSTANCE == expression.containingFile.fileType || insideVueDescriptor(expression)
     }
     return false
@@ -391,7 +388,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
-    return ((obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
+    return ((obj.findProperty(NAME_PROP)?.value as? JSLiteralExpression)?.stringValue
             ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
   }
 
@@ -454,17 +451,17 @@ fun findTopLevelVueTag(xmlFile: XmlFile, tagName: String): XmlTag? {
 }
 
 private enum class VueStaticMethod(val methodName: String) {
-  Component("component"),
-  Mixin("mixin"),
-  Directive("directive"),
-  Filter("filter");
+  Component(COMPONENT_FUN),
+  Mixin(MIXIN_FUN),
+  Directive(DIRECTIVE_FUN),
+  Filter(FILTER_FUN);
 
   companion object {
     fun matchesAny(reference: JSReferenceExpression): Boolean = values().any { it.matches(reference) }
   }
 
   fun matches(reference: JSReferenceExpression): Boolean =
-    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VueFrameworkHandler.VUE, methodName)
+    JSSymbolUtil.isAccurateReferenceExpressionName(reference, VUE_NAMESPACE, methodName)
 }
 
 open class VueFileVisitor : XmlElementVisitor() {

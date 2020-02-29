@@ -39,6 +39,8 @@ import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.source.PROPS_REQUIRED_PROP
+import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashSet
@@ -192,7 +194,7 @@ fun getJSTypeFromPropOptions(expression: JSExpression?): JSType? {
         .toList(),
       JSTypeSource.EXPLICITLY_DECLARED, false
     )
-    is JSObjectLiteralExpression -> expression.findProperty("type")
+    is JSObjectLiteralExpression -> expression.findProperty(PROPS_TYPE_PROP)
       ?.value
       ?.let {
         when (it) {
@@ -211,7 +213,7 @@ private fun getJSTypeFromVueType(reference: JSReferenceExpression): JSType? {
 
 fun getRequiredFromPropOptions(expression: JSExpression?): Boolean {
   return (expression as? JSObjectLiteralExpression)
-           ?.findProperty("required")
+           ?.findProperty(PROPS_REQUIRED_PROP)
            ?.literalExpressionInitializer
            ?.let {
              it.isBooleanLiteral && "true" == it.significantValue

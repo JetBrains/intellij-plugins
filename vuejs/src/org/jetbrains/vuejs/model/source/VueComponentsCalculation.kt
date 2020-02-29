@@ -126,7 +126,7 @@ class VueComponentsCalculation {
     }
 
     private fun getNameFromDescriptor(descriptor: JSObjectLiteralExpression): String? =
-      (descriptor.findProperty("name")?.jsType as? JSStringLiteralTypeImpl)?.literal
+      (descriptor.findProperty(NAME_PROP)?.jsType as? JSStringLiteralTypeImpl)?.literal
 
     private fun processComponentGroupRegistration(objLiteral: JSObjectLiteralExpression,
                                                   libCompResolveMap: MutableMap<String, String>,
@@ -150,7 +150,7 @@ class VueComponentsCalculation {
             val descriptor = objectLiteralFor(element)
 
             if (propName != null) {
-              val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty("name")?.value) ?: propName
+              val nameFromDescriptor = getTextIfLiteral(descriptor?.findProperty(NAME_PROP)?.value) ?: propName
               // name used in call Vue.component() overrides what was set in descriptor itself
               val normalizedName = fromAsset(propName)
               val realName = fromAsset(nameFromDescriptor)

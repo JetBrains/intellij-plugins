@@ -10,8 +10,9 @@ import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.util.Processor
 import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
-import org.jetbrains.vuejs.index.VUE
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import java.util.function.Consumer
 
 class VueContainerScopeProvider : VueTemplateScopesProvider() {
@@ -63,7 +64,7 @@ class VueContainerScopeProvider : VueTemplateScopesProvider() {
 
     override fun resolve(consumer: Consumer<in ResolveResult>) {
       val source = myEntitiesContainer.source ?: return
-      resolveSymbolFromNodeModule(source, VUE, "Vue", TypeScriptInterface::class.java)
+      resolveSymbolFromNodeModule(source, VUE_MODULE, VUE_NAMESPACE, TypeScriptInterface::class.java)
         ?.jsType
         ?.asRecordType()
         ?.properties

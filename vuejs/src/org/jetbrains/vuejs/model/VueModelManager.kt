@@ -29,7 +29,6 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.castSafelyTo
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import one.util.streamex.StreamEx
@@ -200,9 +199,7 @@ class VueModelManager {
     }
 
     private fun getDescriptorFromVueModule(element: PsiElement): VueComponentDescriptor? {
-      return findModule(element)
-        ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-        ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
+      return getDefaultExportedComponent(findModule(element))
     }
 
     private fun getDescriptorFromReferencedScript(element: PsiElement): VueComponentDescriptor? {
@@ -210,12 +207,15 @@ class VueModelManager {
       if (file != null && file.fileType == VueFileType.INSTANCE) {
         // TODO stub safe resolution
         return findTopLevelVueTag(file, SCRIPT_TAG_NAME)
-          ?.let { resolveTagSrcReference(it) }
-          ?.castSafelyTo<PsiFile>()
-          ?.let { content -> ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment }
-          ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
+          ?.let { getDefaultExportedComponent(resolveTagSrcReference(it) as? PsiFile) }
       }
       return null
+    }
+
+    private fun getDefaultExportedComponent(content: PsiElement?): VueComponentDescriptor? {
+      return content
+        ?.let { ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment }
+        ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {

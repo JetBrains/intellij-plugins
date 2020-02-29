@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 
@@ -40,7 +41,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
   }
 
   private fun createExportedObjectLiteralTypeEvaluator(obj: JSObjectLiteralExpression): JSType? {
-    val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, "vue")
+    val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, VUE_MODULE)
                       .asSequence()
                       .mapNotNull {
                         if (it !is JSElement) return@mapNotNull null

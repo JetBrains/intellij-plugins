@@ -12,9 +12,9 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.vuejs.index.BOOTSTRAP_VUE
-import org.jetbrains.vuejs.index.SHARDS_VUE
-import org.jetbrains.vuejs.index.VUETIFY
+import org.jetbrains.vuejs.index.BOOTSTRAP_VUE_MODULE
+import org.jetbrains.vuejs.index.SHARDS_VUE_MODULE
+import org.jetbrains.vuejs.index.VUETIFY_MODULE
 import org.jetbrains.vuejs.model.*
 
 class VueSourcePlugin constructor(private val project: Project,
@@ -70,6 +70,6 @@ class VueSourcePlugin constructor(private val project: Project,
   }
 
   companion object {
-    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY_MODULE, BOOTSTRAP_VUE_MODULE, SHARDS_VUE_MODULE)
   }
 }
