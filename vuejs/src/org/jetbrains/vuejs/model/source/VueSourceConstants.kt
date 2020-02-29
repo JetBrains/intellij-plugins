@@ -8,6 +8,7 @@ const val COMPONENT_FUN: String = "component"
 const val MIXIN_FUN: String = "mixin"
 const val DIRECTIVE_FUN: String = "directive"
 const val FILTER_FUN: String = "filter"
+const val DEFINE_COMPONENT_FUN: String = "defineComponent"
 
 const val MIXINS_PROP: String = "mixins"
 const val EXTENDS_PROP: String = "extends"

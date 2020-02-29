@@ -19,8 +19,8 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.objectLiteralFor
-import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.getVueIndexData
 
 /**
@@ -115,10 +115,12 @@ class VueComponents {
           ?.let { return VueComponentDescriptor(it) }
 
         // export default Vue.extend({...})
+        // export default defineComponent({...})
         is JSCallExpression ->
-          if (isExtendVueCall(exportedElement))
+          if (isExtendVueCall(exportedElement) || isDefineComponentCall(exportedElement)) {
             PsiTreeUtil.getStubChildOfType(exportedElement.argumentList!!, JSObjectLiteralExpression::class.java)
               ?.let { return VueComponentDescriptor(it) }
+          }
 
         // export default @Component({...}) class MyComponent {...}
         is JSClassExpression ->
@@ -149,7 +151,14 @@ class VueComponents {
     @StubUnsafe
     private fun isExtendVueCall(callExpression: JSCallExpression): Boolean {
       return JSSymbolUtil.isAccurateReferenceExpressionName(
-        callExpression.methodExpression as? JSReferenceExpression, VueFrameworkHandler.VUE, "extend")
+        callExpression.methodExpression as? JSReferenceExpression, VUE_NAMESPACE, EXTEND_FUN)
+    }
+
+    @StubUnsafe
+    private fun isDefineComponentCall(callExpression: JSCallExpression): Boolean {
+      return callExpression.methodExpression
+        ?.castSafelyTo<JSReferenceExpression>()
+        ?.takeIf { it.qualifier == null && it.referenceName == DEFINE_COMPONENT_FUN } != null
     }
   }
 }

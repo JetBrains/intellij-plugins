@@ -75,7 +75,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     private const val VUE_INSTANCE = "CombinedVueInstance"
 
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE_NAMESPACE, MIXIN_FUN, COMPONENT_FUN, EXTEND_FUN, DIRECTIVE_FUN, DELIMITERS_PROP,
-                                                FILTER_FUN)
+                                                FILTER_FUN, DEFINE_COMPONENT_FUN)
     private val COMPONENT_INDICATOR_PROPS = setOf(TEMPLATE_PROP, DATA_PROP, "render", PROPS_PROP, "propsData", COMPUTED_PROP, METHODS_PROP,
                                                   "watch", MIXINS_PROP, COMPONENTS_PROP, DIRECTIVES_PROP, FILTERS_PROP, SETUP_METHOD,
                                                   MODEL_PROP)
