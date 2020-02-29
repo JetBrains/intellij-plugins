@@ -26,7 +26,6 @@ import org.apache.commons.lang.StringUtils
 import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueIdIndex
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -34,6 +33,8 @@ import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueModelProximityVisitor
 import org.jetbrains.vuejs.model.VueProperty
+import org.jetbrains.vuejs.model.source.NAME_PROP
+import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 
 class VueJSReferenceContributor : PsiReferenceContributor() {
 
@@ -78,7 +79,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
           val content = findModule(element) ?: return false
           val defaultExport = ES6PsiUtil.findDefaultExport(content)
           if (defaultExport == null || element.parent.parent.parent == null) return false
-          return ((element.parent as? JSPropertyImpl)?.name == "name" && defaultExport as PsiElement == element.parent.parent.parent)
+          return ((element.parent as? JSPropertyImpl)?.name == NAME_PROP && defaultExport as PsiElement == element.parent.parent.parent)
         }
 
         override fun isClassAcceptable(hintClass: Class<*>?): Boolean {

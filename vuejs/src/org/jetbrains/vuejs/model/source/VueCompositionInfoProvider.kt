@@ -38,7 +38,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
         return CachedValuesManager.getCachedValue(initializer) {
           val context = JSTypeSubstitutionContextImpl()
           CachedValueProvider.Result.create(
-            initializer.findProperty("setup")
+            initializer.findProperty(SETUP_METHOD)
               ?.castSafelyTo<JSFunctionProperty>()
               ?.returnType
               ?.asRecordType()
@@ -57,7 +57,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
           var isReadOnly = false
           var isRef = false
           while (curType is JSGenericTypeImpl) {
-            when((curType.type as? JSTypeImpl)?.typeText) {
+            when ((curType.type as? JSTypeImpl)?.typeText) {
               "Ref", "UnwrapRef" -> {
                 isRef = true
                 curType = curType.arguments.getOrNull(0)
@@ -100,5 +100,5 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
                                             override val jsType: JSType?) : VueComputedProperty
 
   private class VueComposedMethod(override val name: String,
-                                  override val source: PsiElement?): VueMethod
+                                  override val source: PsiElement?) : VueMethod
 }

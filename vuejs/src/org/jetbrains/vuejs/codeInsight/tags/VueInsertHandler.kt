@@ -34,9 +34,13 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.castSafelyTo
 import org.jetbrains.vuejs.codeInsight.LANG_ATTRIBUTE_NAME
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VUE_CLASS_COMPONENT_MODULE
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
+import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.getElementComponentDecorator
 
@@ -170,8 +174,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
     }
 
     private fun addClassComponentImports(content: JSEmbeddedContent) {
-      insertImportIfNotThere("Vue", true, "vue", content)
-      insertImportIfNotThere("Component", false, "vue-class-component", content)
+      insertImportIfNotThere("Vue", true, VUE_MODULE, content)
+      insertImportIfNotThere("Component", false, VUE_CLASS_COMPONENT_MODULE, content)
     }
 
     private fun insertImportIfNotThere(exportedName: String, isDefault: Boolean, module: String, content: PsiElement) {
@@ -202,7 +206,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     }
 
     private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
-      val property = obj.findProperty("components")
+      val property = obj.findProperty(COMPONENTS_PROP)
       if (property != null) return property
       val newProperty = JSPsiElementFactory.createJSExpression("{ components: {} }", obj,
                                                                JSObjectLiteralExpression::class.java).firstProperty!!
@@ -216,7 +220,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
                             onTheNewLine: Boolean): JSProperty {
       val firstProperty = obj.firstProperty
       val anchor: PsiElement?
-      anchor = if ("name" == firstProperty?.name) {
+      anchor = if (NAME_PROP == firstProperty?.name) {
         PsiTreeUtil.findSiblingForward(firstProperty, JSTokenTypes.COMMA, null) ?: firstProperty
       }
       else {

@@ -21,7 +21,6 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.codeInsight.getFirstInjectedFile
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
-import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueUrlIndex
 import org.jetbrains.vuejs.index.findTopLevelVueTag
 import org.jetbrains.vuejs.model.VueFileTemplate

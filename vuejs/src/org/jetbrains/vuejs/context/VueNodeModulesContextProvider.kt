@@ -4,7 +4,7 @@ package org.jetbrains.vuejs.context
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.vuejs.index.VUE
+import org.jetbrains.vuejs.index.VUE_MODULE
 
 class VueNodeModulesContextProvider : VueContextProvider {
   override fun isVueContext(directory: PsiDirectory): CachedValueProvider.Result<Boolean> {
@@ -14,7 +14,7 @@ class VueNodeModulesContextProvider : VueContextProvider {
     for (dir in manager.nodeModulesDirectories) {
       val nodeModules = dir.nodeModulesDir
       if (dirPath.startsWith(nodeModules.parent.path + "/")) {
-        val child = dir.nodeModulesDir.findFileByRelativePath(VUE)
+        val child = dir.nodeModulesDir.findFileByRelativePath(VUE_MODULE)
         if (child != null && child.isValid && child.isDirectory) {
           result = true
           break

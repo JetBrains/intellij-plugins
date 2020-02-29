@@ -24,21 +24,16 @@ import com.intellij.util.Processor
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
-const val VUE: String = "vue"
-const val VUETIFY: String = "vuetify"
-const val BOOTSTRAP_VUE: String = "bootstrap-vue"
-const val SHARDS_VUE: String = "shards-vue"
+const val VUE_MODULE: String = "vue"
+const val VUETIFY_MODULE: String = "vuetify"
+const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
+const val SHARDS_VUE_MODULE: String = "shards-vue"
+const val VUE_CLASS_COMPONENT_MODULE: String = "vue-class-component"
 
 @Suppress("PropertyName")
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"
-const val MIXINS_PROP: String = "mixins"
-const val EXTENDS_PROP: String = "extends"
-const val DIRECTIVES_PROP: String = "directives"
-const val NAME_PROP: String = "name"
-const val TEMPLATE_PROP: String = "template"
 const val GLOBAL_BINDING_MARK: String = "*"
-const val VUE_CLASS_COMPONENT: String = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
 const val DELIMITER = "#"
 
@@ -72,12 +67,12 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
   return CachedValuesManager.getManager(project).getCachedValue(project) {
     val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
 
-    var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT) }
+    var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT_MODULE) }
     if (!recordedDependency) {
       val psiManager = PsiManager.getInstance(project)
       recordedDependency = packageJsonFiles.any {
         val psiFile = psiManager.findFile(it) ?: return@any false
-        NodePackageUtil.hasAnyOfPluginsInstalled(psiFile, listOf(VUE_CLASS_COMPONENT))
+        NodePackageUtil.hasAnyOfPluginsInstalled(psiFile, listOf(VUE_CLASS_COMPONENT_MODULE))
       }
     }
     CachedValueProvider.Result(recordedDependency, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,

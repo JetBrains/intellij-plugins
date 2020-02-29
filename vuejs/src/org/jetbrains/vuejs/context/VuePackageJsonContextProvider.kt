@@ -5,7 +5,7 @@ import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.vuejs.index.VUE
+import org.jetbrains.vuejs.index.VUE_MODULE
 
 class VuePackageJsonContextProvider : VueContextProvider {
   override fun isVueContext(directory: PsiDirectory): CachedValueProvider.Result<Boolean> {
@@ -15,7 +15,7 @@ class VuePackageJsonContextProvider : VueContextProvider {
     for (config in manager.validPackageJsonFiles) {
       if (dirPath.startsWith(config.parent.path + "/")) {
         val data = PackageJsonUtil.getOrCreateData(config)
-        if (data.isDependencyOfAnyType(VUE)) {
+        if (data.isDependencyOfAnyType(VUE_MODULE)) {
           result = true
           break
         }

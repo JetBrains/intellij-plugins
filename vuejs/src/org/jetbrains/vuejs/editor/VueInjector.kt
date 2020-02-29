@@ -26,7 +26,6 @@ import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.context.isVueContext
-import org.jetbrains.vuejs.index.TEMPLATE_PROP
 import org.jetbrains.vuejs.index.VueFrameworkHandler
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
@@ -36,6 +35,8 @@ import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.parser.VueFileElementType.Companion.INJECTED_FILE_SUFFIX
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
+import org.jetbrains.vuejs.model.source.DELIMITERS_PROP
+import org.jetbrains.vuejs.model.source.TEMPLATE_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.model.source.VueSourceContainer
@@ -63,13 +64,13 @@ class VueInjector : MultiHostInjector {
       val obj = element as? JSObjectLiteralExpression
                 ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
                 ?: return null
-      return obj.findProperty("delimiters")
+      return obj.findProperty(DELIMITERS_PROP)
         ?.let { getDelimiterValue(it, key) }
         ?.let { Pair.create(it, element) }
     }
 
     private fun calculateDelimitersFromAssignment(project: Project, key: String): Pair<String, PsiElement>? {
-      val delimitersDefinitions = JavaScriptIndex.getInstance(project).getSymbolsByName("delimiters", false)
+      val delimitersDefinitions = JavaScriptIndex.getInstance(project).getSymbolsByName(DELIMITERS_PROP, false)
       return delimitersDefinitions.filter {
         it is JSDefinitionExpression &&
         (it as PsiElement).context != null &&

@@ -21,7 +21,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
 
   override val defaultName: String?
     get() = indexData?.originalName
-            ?: getTextIfLiteral(initializer?.findProperty("name")?.value)
+            ?: getTextIfLiteral(initializer?.findProperty(NAME_PROP)?.value)
 
   override val slots: List<VueSlot>
     get() {

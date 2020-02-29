@@ -8,9 +8,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_ACTIONS
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
+import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
 import org.jetbrains.vuejs.model.VueComputedProperty
 import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueNamedSymbol
+import org.jetbrains.vuejs.model.source.COMPUTED_PROP
+import org.jetbrains.vuejs.model.source.METHODS_PROP
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
 
 class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VuexComponentInfo) {
@@ -36,8 +42,8 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
 
     private enum class ContainerMember(val propertyName: String,
                                        private vararg val functionNames: String) {
-      Computed("computed", "mapState", "mapGetters"),
-      Methods("methods", "mapActions", "mapMutations");
+      Computed(COMPUTED_PROP, MAP_STATE, MAP_GETTERS),
+      Methods(METHODS_PROP, MAP_ACTIONS, MAP_MUTATIONS);
 
       fun readMembers(descriptor: JSObjectLiteralExpression): List<Pair<String, JSElement>> {
         val property = descriptor.findProperty(propertyName) ?: return emptyList()
