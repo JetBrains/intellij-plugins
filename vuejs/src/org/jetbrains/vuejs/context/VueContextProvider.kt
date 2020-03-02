@@ -29,7 +29,7 @@ interface VueContextProvider {
    * and clear of all caches.
    */
   @JvmDefault
-  fun isVueContextForbidden(context: VirtualFile, project: Project): Boolean = false
+  fun isVueContextForbidden(contextFile: VirtualFile, project: Project): Boolean = false
 
   companion object {
     val VUE_CONTEXT_PROVIDER_EP = ExtensionPointName.create<VueContextProvider>("com.intellij.vuejs.contextProvider")
