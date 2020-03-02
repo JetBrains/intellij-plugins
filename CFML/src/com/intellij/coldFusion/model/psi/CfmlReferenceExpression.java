@@ -93,7 +93,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       PsiClass psiClass;
       if (type instanceof CfmlFunctionCallExpression.PsiClassStaticType) {
         psiClass = PsiUtil.resolveClassInType(((CfmlFunctionCallExpression.PsiClassStaticType)type).getRawType());
-        processor.handleEvent(JavaScopeProcessorEvent.START_STATIC, null);
+        processor.handleEvent(CfmlVariantsProcessor.CfmlProcessorEvent.START_STATIC, null);
       }
       else {
         psiClass = PsiUtil.resolveClassInType(type);
