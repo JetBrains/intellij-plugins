@@ -111,6 +111,10 @@ else
         self.already_run_tests.clear()
       end
 
+      def prerecord klass, name
+        # do not remove, this method called from minitest-reporters
+      end
+
       def report
         close_all_suites
         []
@@ -137,6 +141,7 @@ else
           end
         }
 
+        @test_start_time = Time.new
         @test_started = true
         test_name = get_test_name(test)
         log(Rake::TeamCity::MessageFactory.create_test_started(test_name, minitest_test_location(fqn), test.class.to_s, fqn))
@@ -145,8 +150,8 @@ else
       def after_test(result)
         test_name = get_test_name(result)
         fqn = get_fqn_from_test(result)
-        duration_ms = 0 # get_time_in_ms(result.time)
-        log(Rake::TeamCity::MessageFactory.create_test_finished(test_name, duration_ms.nil? ? 0 : duration_ms, nil, fqn))
+        duration_ms = get_time_in_ms(Time.new - @test_start_time)
+        log(Rake::TeamCity::MessageFactory.create_test_finished(test_name, duration_ms, nil, fqn))
       end
 
       def record(result,  name = nil, assertions = nil, time = nil, exceptions = nil)
