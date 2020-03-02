@@ -168,8 +168,9 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testPrivateMembersOrder() {
     myFixture.configureByFiles("event_private.html", "event_private.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals("Private members should be sorted after public ones", myFixture.getLookupElementStrings(),
-                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"));
+    assertEquals("Private members should be sorted after public ones",
+                 ContainerUtil.newArrayList("callSecuredApi", "callZ", "_callApi", "callA", "callAnonymousApi"),
+                 myFixture.getLookupElementStrings());
   }
 
   public void testResolutionWithDifferentTemplateName() {
