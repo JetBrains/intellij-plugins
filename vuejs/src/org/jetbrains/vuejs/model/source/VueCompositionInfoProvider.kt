@@ -56,7 +56,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
           var curType = signatureType
           var isReadOnly = false
           var isRef = false
-          while (curType is JSGenericTypeImpl) {
+          loop@ while (curType is JSGenericTypeImpl) {
             when ((curType.type as? JSTypeImpl)?.typeText) {
               "Ref", "UnwrapRef" -> {
                 isRef = true
@@ -66,6 +66,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
                 isReadOnly = true
                 curType = curType.arguments.getOrNull(0)
               }
+              else -> break@loop
             }
           }
           if (isReadOnly) {
