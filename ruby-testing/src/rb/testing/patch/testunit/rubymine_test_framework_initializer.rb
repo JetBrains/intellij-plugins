@@ -3,6 +3,11 @@ module RubyMineTestFrameworkInitializer
     is_minitest_run = false
     begin
       require "minitest/autorun"
+    rescue LoadError
+      # it's ok in case of minitest 1.4
+    end
+
+    begin
       require "minitest/unit"
       require 'minitest/rm_reporter_plugin'
       is_minitest_run = true
