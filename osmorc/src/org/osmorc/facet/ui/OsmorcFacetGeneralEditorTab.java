@@ -24,6 +24,7 @@
  */
 package org.osmorc.facet.ui;
 
+import com.intellij.CommonBundle;
 import com.intellij.facet.ui.*;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -42,7 +43,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
@@ -198,7 +198,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   @Nls
   @Override
   public String getDisplayName() {
-    return OsmorcBundle.message("configurable.OsmorcFacetGeneralEditorTab.display.name");
+    return CommonBundle.message("tab.title.general");
   }
 
   @Override
