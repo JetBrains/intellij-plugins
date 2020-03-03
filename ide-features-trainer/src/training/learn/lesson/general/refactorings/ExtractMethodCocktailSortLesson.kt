@@ -1,5 +1,5 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.refactorings
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package training.learn.lesson.general.refactorings
 
 import com.intellij.openapi.wm.IdeFrame
 import com.intellij.testGuiFramework.impl.button
@@ -10,35 +10,11 @@ import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JDialog
 import javax.swing.JTextPane
 
-class RubyExtractMethodLesson(module: Module) : KLesson("Extract Method", module, "ruby") {
-  private val sample = parseLessonSample("""
-    def cocktail_sort(array, compare = lambda { |a, b| a <=> b })
-      loop do
-        swapped = false
-        0.upto(array.length - 2) do |i|
-          if compare.call(array[i], array[i + 1]) > 0
-            <select>array[i], array[i + 1] = array[i + 1], array[i]</select>
-            swapped = true
-          end
-        end
-        break unless swapped
-
-        swapped = false
-        (array.length - 2).downto(0) do |i|
-          if compare.call(array[i], array[i + 1]) > 0
-            array[i], array[i + 1] = array[i + 1], array[i]
-            swapped = true
-          end
-        end
-        break unless swapped
-      end
-    end
-  """.trimIndent())
-
+class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val sample: LessonSample) : KLesson("Extract Method", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)

@@ -3,4 +3,5 @@
   <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonRefactorMenuLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.python.refactorings.PythonRenameLesson"/>
   <lesson-kt sample="ExtractVariable.py.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="Python"/>
+  <lesson-kt sample="ExtractMethod.py.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson" lang="Python"/>
 </module>
