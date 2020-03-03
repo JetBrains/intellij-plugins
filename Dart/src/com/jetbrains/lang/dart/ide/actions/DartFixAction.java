@@ -26,7 +26,7 @@ import java.util.List;
 public class DartFixAction extends AbstractDartFileProcessingAction {
 
   public DartFixAction() {
-    super(DartBundle.lazyMessage("dart.fix.action.name"), DartBundle.lazyMessage("dart.fix.action.description"), null);
+    super(DartBundle.messagePointer("dart.fix.action.name"), DartBundle.messagePointer("dart.fix.action.description"), null);
   }
 
   @NotNull

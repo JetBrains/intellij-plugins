@@ -21,7 +21,7 @@ import java.net.URLEncoder;
 
 public class AnalysisServerFeedbackAction extends DumbAwareAction {
   public AnalysisServerFeedbackAction() {
-    super(DartBundle.lazyMessage("analysis.server.status.good.text"), Presentation.NULL_STRING, AllIcons.General.Balloon);
+    super(DartBundle.messagePointer("analysis.server.status.good.text"), Presentation.NULL_STRING, AllIcons.General.Balloon);
   }
 
   @Override

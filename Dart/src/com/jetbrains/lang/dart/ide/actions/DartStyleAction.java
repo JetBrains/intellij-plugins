@@ -42,7 +42,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   private static final Logger LOG = Logger.getInstance(DartStyleAction.class.getName());
 
   public DartStyleAction() {
-    super(DartBundle.lazyMessage("dart.style.action.name"), DartBundle.lazyMessage("dart.style.action.description"), null);
+    super(DartBundle.messagePointer("dart.style.action.name"), DartBundle.messagePointer("dart.style.action.description"), null);
   }
 
   @NotNull

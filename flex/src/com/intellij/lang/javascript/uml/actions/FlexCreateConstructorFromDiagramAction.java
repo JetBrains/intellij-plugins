@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
  */
 public class FlexCreateConstructorFromDiagramAction extends JSCreateMethodActionBase {
   public FlexCreateConstructorFromDiagramAction() {
-    super(JSBundle.lazyMessage("new.constructor.action.text"), JSBundle.lazyMessage("new.constructor.action.description"),
+    super(JSBundle.messagePointer("new.constructor.action.text"), JSBundle.messagePointer("new.constructor.action.description"),
           JSFunctionImpl.CONSTRUCTOR_ICON);
   }
 

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
   public NewFlexComponentUmlAction() {
-    super(FlexBundle.lazyMessage("new.flex.component.uml.action.text"), FlexBundle.lazyMessage("new.flex.component.action.description"),
+    super(FlexBundle.messagePointer("new.flex.component.uml.action.text"), FlexBundle.messagePointer("new.flex.component.action.description"),
           JavaScriptPsiIcons.Classes.XmlBackedClass);
   }
 

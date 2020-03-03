@@ -317,7 +317,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
     final AnAction closeContentAction = new CloseActiveTabAction();
     closeContentAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
-    closeContentAction.getTemplatePresentation().setText(UIBundle.lazyMessage("tabbed.pane.close.tab.action.name"));
+    closeContentAction.getTemplatePresentation().setText(UIBundle.messagePointer("tabbed.pane.close.tab.action.name"));
     actionGroup.add(closeContentAction);
 
     final ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("DartPubAction", actionGroup, false);

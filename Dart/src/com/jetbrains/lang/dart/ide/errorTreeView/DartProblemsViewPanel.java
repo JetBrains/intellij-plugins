@@ -206,7 +206,7 @@ public class DartProblemsViewPanel extends AnalysisProblemsViewPanel {
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
     FilterProblemsAction() {
-      super(DartBundle.lazyMessage("filter.problems"), DartBundle.lazyMessage("filter.problems.description"), AllIcons.General.Filter);
+      super(DartBundle.messagePointer("filter.problems"), DartBundle.messagePointer("filter.problems.description"), AllIcons.General.Filter);
     }
 
     @Override
@@ -223,7 +223,7 @@ public class DartProblemsViewPanel extends AnalysisProblemsViewPanel {
 
   private class AnalysisServerSettingsAction extends DumbAwareAction implements Toggleable {
     AnalysisServerSettingsAction() {
-      super(DartBundle.lazyMessage("analysis.server.settings"), DartBundle.lazyMessage("analysis.server.settings.description"),
+      super(DartBundle.messagePointer("analysis.server.settings"), DartBundle.messagePointer("analysis.server.settings.description"),
             AllIcons.General.GearPlain);
     }
 

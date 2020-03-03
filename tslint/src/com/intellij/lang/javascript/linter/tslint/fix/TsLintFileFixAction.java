@@ -44,8 +44,8 @@ import java.util.concurrent.Future;
 public class TsLintFileFixAction extends JSLinterFixAction {
 
   public TsLintFileFixAction() {
-    super(TsLintBundle.lazyMessage("tslint.framework.title"),
-          TsLintBundle.lazyMessage("tslint.action.fix.all.problem.title"), null);
+    super(TsLintBundle.messagePointer("tslint.framework.title"),
+          TsLintBundle.messagePointer("tslint.action.fix.all.problem.title"), null);
   }
 
   @Override

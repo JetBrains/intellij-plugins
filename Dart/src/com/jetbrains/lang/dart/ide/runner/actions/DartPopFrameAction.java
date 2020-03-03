@@ -19,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 public class DartPopFrameAction extends AnAction implements DumbAware {
   public DartPopFrameAction() {
     Presentation presentation = getTemplatePresentation();
-    presentation.setText(DartBundle.lazyMessage("dart.pop.frame.action.text"));
-    presentation.setDescription(DartBundle.lazyMessage("dart.pop.frame.action.description"));
+    presentation.setText(DartBundle.messagePointer("dart.pop.frame.action.text"));
+    presentation.setDescription(DartBundle.messagePointer("dart.pop.frame.action.description"));
     presentation.setIcon(AllIcons.Actions.PopFrame);
   }
 
