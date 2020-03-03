@@ -130,6 +130,10 @@ class XmlModule(override val name: String,
         return
       }
       val lessonLanguage = lessonElement.getAttributeValue(XmlModuleConstants.MODULE_LESSON_LANGUAGE_ATTR)
+      if (lessonLanguage == null) {
+        LOG.error("Lesson $lessonImplementation does not specify lesson language")
+        return
+      }
       val lessonConstructor = Class.forName(lessonImplementation, true, classLoader)
         .getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
 
@@ -175,10 +179,8 @@ class XmlModule(override val name: String,
 
       //Check DOM with XmlModule
       val root = getRootFromPath(modulePath, classLoader)
-      if (root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR) == null) return null
-      val name = root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
-
-      return XmlModule(name, modulePath, root, primaryLanguage, classLoader)
+      val nameAttribute = root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR) ?: return null
+      return XmlModule(nameAttribute.value, modulePath, root, primaryLanguage, classLoader)
     }
 
     @Throws(JDOMException::class, IOException::class)
