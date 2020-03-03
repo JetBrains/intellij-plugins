@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.general.refactorings
 
-import com.intellij.openapi.wm.IdeFrame
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.ui.ComponentUtil
 import com.intellij.util.ui.UIUtil
@@ -47,10 +46,8 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
         text("Cocktail Sort has 2 swap places. The first fragment has just been extracted. Click <strong>Yes</strong> to extract both of them.")
 
         // Wait until the third dialog
-        stateCheck {
-          val parentOfType = ComponentUtil.getParentOfType(JDialog::class.java, focusOwner)
-          // Only the second dialog has JTextPane. We do not need to check title
-          parentOfType?.title == "Replace Fragment"
+        triggerByUiComponentAndHighlight(highlightBorder = false, highlightInside = false) { dialog : JDialog ->
+          dialog.title == "Replace Fragment"
         }
 
         test {
@@ -65,7 +62,7 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
         text("Now you can confirm or reject replacement of the second fragment.")
 
         stateCheck {
-          ComponentUtil.getParentOfType(IdeFrame::class.java, focusOwner) != null
+          previous.ui?.isShowing?.not() ?: true
         }
 
         test {
