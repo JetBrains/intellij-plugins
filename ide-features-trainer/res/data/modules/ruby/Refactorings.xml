@@ -3,5 +3,5 @@
     <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson"/>
     <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRenameLesson"/>
     <lesson-kt sample="ExtractVariable.rb.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractVariableFromBubbleLesson" lang="ruby"/>
-    <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyExtractMethodLesson"/>
+    <lesson-kt sample="ExtractMethod.rb.sample" implementationClass="training.learn.lesson.general.refactorings.ExtractMethodCocktailSortLesson" lang="ruby"/>
 </module>
