@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -44,12 +45,12 @@ public class CucumberStepHelper {
     return ep.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
-  public static boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory,
+  public static boolean validateNewStepDefinitionFileName(@NotNull Project project,
                                                           @NotNull final String fileName,
                                                           @NotNull final BDDFrameworkType frameworkType) {
     final CucumberJvmExtensionPoint ep = getExtensionMap().get(frameworkType);
     assert ep != null;
-    return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
+    return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(project, fileName);
   }
 
 

@@ -129,7 +129,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     // show error if file already exists
     Project project = step.getProject();
     if (LocalFileSystem.getInstance().findFileByPath(filePath) == null) {
-      final String parentDirPath = model.getDirectory().getVirtualFile().getPath();
+      final String parentDirPath = model.getStepDefinitionFolderPath();
 
       WriteCommandAction.runWriteCommandAction(project, "Create Step Definition", null, 
         () -> CommandProcessor.getInstance().executeCommand(project, () -> {
@@ -137,7 +137,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
             VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
             PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
             assert parentPsiDir != null;
-            PsiFile newFile = CucumberStepHelper.createStepDefinitionFile(model.getDirectory(), model.getFileName(), frameworkType);
+            PsiFile newFile = CucumberStepHelper.createStepDefinitionFile(parentPsiDir, model.getFileName(), frameworkType);
             createStepDefinition(step, new CucumberStepDefinitionCreationContext(newFile, frameworkType));
             context.setPsiFile(newFile);
           }
@@ -185,7 +185,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     };
 
     Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<>();
-    Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<>();
+    Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap = new HashMap<>();
     for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       if (e instanceof OptionalStepDefinitionExtensionPoint) {
         // Skip if framework file creation support is optional
@@ -194,11 +194,11 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
         }
       }
       supportedFileTypesAndDefaultFileNames.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepFileName(step));
-      fileTypeToDefaultDirectoryMap.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepDefinitionFolder(step));
+      fileTypeToDefaultDirectoryMap.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepDefinitionFolderPath(step));
     }
 
     CreateStepDefinitionFileModel model =
-      new CreateStepDefinitionFileModel(step.getProject(), supportedFileTypesAndDefaultFileNames, fileTypeToDefaultDirectoryMap);
+      new CreateStepDefinitionFileModel(step.getContainingFile(), supportedFileTypesAndDefaultFileNames, fileTypeToDefaultDirectoryMap);
     CreateStepDefinitionFileDialog createStepDefinitionFileDialog = new CreateStepDefinitionFileDialog(step.getProject(), model, validator);
     if (createStepDefinitionFileDialog.showAndGet()) {
       return model;

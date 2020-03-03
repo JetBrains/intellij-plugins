@@ -1,7 +1,8 @@
 package org.jetbrains.plugins.cucumber.inspections.model;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
@@ -13,19 +14,23 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateStepDefinitionFileModel {
-
   private String myFileName;
 
-  private final Map<BDDFrameworkType, PsiDirectory> myFileTypeToDefaultDirectoryMap;
+  private final Map<BDDFrameworkType, String> myFileTypeToDefaultDirectoryMap;
 
-  DefaultComboBoxModel myFileTypeModel;
+  private final DefaultComboBoxModel myFileTypeModel;
 
-  private PsiDirectory myDirectory;
+  private String myDirectory;
 
   private final Project myProject;
 
-  public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap, @NotNull final Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
-    myProject = project;
+  private final @NotNull PsiFile myContext;
+
+  public CreateStepDefinitionFileModel(@NotNull PsiFile context,
+                                       @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultNameMap,
+                                       @NotNull final Map<BDDFrameworkType, String> fileTypeToDefaultDirectoryMap) {
+    myContext = context;
+    myProject = context.getProject();
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<>();
     for (Map.Entry<BDDFrameworkType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
       if (myFileName == null) {
@@ -40,16 +45,11 @@ public class CreateStepDefinitionFileModel {
   }
 
   public String getFilePath() {
-    final StringBuilder result = new StringBuilder();
-    result.append(getDirectory().getVirtualFile().getPath()).append(File.separator).append(getFileNameWithExtension());
-    return result.toString();
+    return FileUtil.join(getStepDefinitionFolderPath(), getFileNameWithExtension());
   }
 
   public String getFileNameWithExtension() {
-    final StringBuilder result = new StringBuilder();
-    result.append(myFileName)
-      .append('.').append(getSelectedFileType().getFileType().getDefaultExtension());
-    return result.toString();
+    return myFileName + '.' + getSelectedFileType().getFileType().getDefaultExtension();
   }
 
   public String getFileName() {
@@ -60,16 +60,16 @@ public class CreateStepDefinitionFileModel {
     myFileName = fileName;
   }
 
-  public PsiDirectory getDefaultDirectory() {
+  public String getDefaultDirectory() {
     return myFileTypeToDefaultDirectoryMap.get(getSelectedFileType());
   }
 
-  public PsiDirectory getDirectory() {
+  public String getStepDefinitionFolderPath() {
     return myDirectory;
   }
 
-  public void setDirectory(@Nullable final PsiDirectory psiDirectory) {
-    myDirectory = psiDirectory;
+  public void setDirectory(@Nullable final String directory) {
+    myDirectory = directory;
   }
 
   public BDDFrameworkType getSelectedFileType() {
@@ -83,5 +83,9 @@ public class CreateStepDefinitionFileModel {
 
   public Project getProject() {
     return myProject;
+  }
+
+  public @NotNull PsiFile getContext() {
+    return myContext;
   }
 }

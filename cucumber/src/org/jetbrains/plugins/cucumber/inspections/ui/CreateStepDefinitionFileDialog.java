@@ -7,11 +7,10 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -24,9 +23,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 
 public class CreateStepDefinitionFileDialog extends DialogWrapper {
-
   private JTextField myFileNameTextField;
 
   private JComboBox myFileTypeCombobox;
@@ -59,7 +58,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
           myFileNameTextField.setText(newItem.getDefaultFileName());
           myModel.setFileName(newItem.getDefaultFileName());
         }
-        myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory().getVirtualFile().getPath()));
+        myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory()));
       }
     });
 
@@ -70,14 +69,20 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     String folderChooserTitle = CucumberBundle.message("cucumber.quick.fix.create.step.folder.chooser.title");
     final FileChooserDescriptor folderChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     folderChooserDescriptor.setTitle(folderChooserTitle);
-    folderChooserDescriptor.setRoots(model.getDirectory().getVirtualFile());
+
+
+    VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(model.getStepDefinitionFolderPath()));
+    if (virtualFile == null) {
+      virtualFile = model.getContext().getContainingFile().getContainingDirectory().getVirtualFile();
+    }
+    folderChooserDescriptor.setRoots(virtualFile);
     folderChooserDescriptor.withTreeRootVisible(true);
     folderChooserDescriptor.setShowFileSystemRoots(false);
     folderChooserDescriptor.setHideIgnored(true);
 
     myDirectoryTextField.addBrowseFolderListener(folderChooserTitle, null, project, folderChooserDescriptor);
     myDirectoryTextField.getTextField().addKeyListener(keyListener);
-    myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory().getVirtualFile().getPath()));
+    myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory()));
     validateAll();
   }
 
@@ -88,6 +93,12 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
+    String directoryName = myDirectoryTextField.getText();
+    if (directoryName.length() > 1 && directoryName.endsWith(File.separator)) {
+      directoryName = directoryName.substring(0, directoryName.length() - 1);
+    }
+    myModel.setDirectory(directoryName);
+
     String fileName = myFileNameTextField.getText();
     if (myValidator == null) {
       close(OK_EXIT_CODE);
@@ -111,44 +122,38 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     return CreateStepDefinitionFileDialog.class.getName();
   }
 
-  protected boolean validateAll() {
-    if (validateFileName()) {
-      return validateDirectoryPath();
-    } else {
-      return false;
+  private static boolean isValidPath(@NotNull String path) {
+    while (path.length() > 0) {
+      if (!PathUtil.isValidFileName(PathUtil.getFileName(path))) {
+        return false;
+      }
+      path = PathUtil.getParentPath(path);
     }
+    return true;
   }
 
-  protected boolean validateFileName() {
+  protected void validateAll() {
+    if (!isValidPath(myDirectoryTextField.getText())) {
+      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.incorrect.directory"), myDirectoryTextField);
+    } else {
+      setErrorText(null, myDirectoryTextField);
+    }
+
     final String fileName = myFileNameTextField.getText();
 
     boolean fileNameIsOk = fileName != null &&
                            CucumberStepHelper
-                             .validateNewStepDefinitionFileName(myModel.getDirectory(), fileName, myModel.getSelectedFileType());
+                             .validateNewStepDefinitionFileName(myModel.getProject(), fileName, myModel.getSelectedFileType());
 
     if (!fileNameIsOk) {
       setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.incorrect.file.name"), myFileNameTextField);
     } else {
-      PsiFile file = myModel.getDirectory().findFile(myModel.getFileNameWithExtension());
-      VirtualFile vFile = file != null ? file.getVirtualFile() : null;
+      String fileUrl = VfsUtilCore.pathToUrl(FileUtil.join(myModel.getStepDefinitionFolderPath(), myModel.getFileNameWithExtension()));
+      VirtualFile vFile = VirtualFileManager.getInstance().findFileByUrl(fileUrl);
       if (vFile != null) {
-        fileNameIsOk = false;
         setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists", (myModel.getFileNameWithExtension())), myFileNameTextField);
       }
     }
-    return fileNameIsOk;
-  }
-
-  protected boolean validateDirectoryPath() {
-    final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myDirectoryTextField.getText());
-    final boolean directoryIsOk = vFile != null && vFile.exists();
-    if (!directoryIsOk) {
-      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.directory.doesnt.exist"), myDirectoryTextField);
-    } else {
-      setErrorText(null);
-    }
-    setOKActionEnabled(directoryIsOk);
-    return directoryIsOk;
   }
 
   class FileNameKeyListener implements KeyListener {
@@ -161,14 +166,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     @Override
     public void keyReleased(KeyEvent e) {
       myModel.setFileName(myFileNameTextField.getText());
-
-      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myDirectoryTextField.getText());
-      if (vFile != null) {
-        final PsiDirectory psiDirectory = PsiManager.getInstance(myModel.getProject()).findDirectory(vFile);
-        if (psiDirectory != null) {
-          myModel.setDirectory(psiDirectory);
-        }
-      }
+      myModel.setDirectory(myDirectoryTextField.getText());
       validateAll();
     }
   }

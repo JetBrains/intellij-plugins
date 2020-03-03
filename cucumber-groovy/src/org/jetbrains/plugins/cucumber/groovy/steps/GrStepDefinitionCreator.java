@@ -193,9 +193,9 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
   @NotNull
   @Override
-  public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
+  public String getDefaultStepDefinitionFolderPath(@NotNull GherkinStep step) {
     final PsiFile featureFile = step.getContainingFile();
-    return Objects.requireNonNull(featureFile.getParent());
+    return Objects.requireNonNull(featureFile.getContainingDirectory()).getVirtualFile().getPath();
   }
 
   @NotNull

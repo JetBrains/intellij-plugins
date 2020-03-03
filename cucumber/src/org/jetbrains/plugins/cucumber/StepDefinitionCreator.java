@@ -36,7 +36,7 @@ public interface StepDefinitionCreator {
   boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName);
 
   @NotNull
-  PsiDirectory getDefaultStepDefinitionFolder(@NotNull final GherkinStep step);
+  String getDefaultStepDefinitionFolderPath(@NotNull final GherkinStep step);
 
   @NotNull
   String getStepDefinitionFilePath(@NotNull final PsiFile file);
