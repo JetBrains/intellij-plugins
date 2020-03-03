@@ -83,6 +83,11 @@ public class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
   private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
 
+  // Webdev works going back to 2.6.0, future minimum version listed in the pubspec.yaml, link below, won't mean that 2.6.0 aren't
+  // supported.
+  // https://github.com/dart-lang/webdev/blob/master/webdev/pubspec.yaml#L11
+  public static final String MIN_WEBDEV_SDK_VERSION = "2.6.0";
+
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
   private static final long CHECK_CANCELLED_PERIOD = 10;
@@ -443,6 +448,10 @@ public class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficientForMoveFileRefactoring(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionSufficientForWebdev(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_WEBDEV_SDK_VERSION) >= 0;
   }
 
   public void addCompletions(@NotNull final VirtualFile file,

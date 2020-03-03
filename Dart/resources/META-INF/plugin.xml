@@ -206,6 +206,7 @@
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartRemoteDebugConfigurationType"/>
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.webdev.DartWebdevConfigurationProducer"/>
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer"/>
 
