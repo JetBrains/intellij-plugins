@@ -2,6 +2,7 @@
 package training.commands.kotlin
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.Editor
@@ -272,7 +273,7 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         }
         try {
           val highlightFunction = findAndHighlight()
-          invokeLater {
+          invokeLater(ModalityState.any()) {
             lessonExecutor.foundComponent = highlightFunction()
             lessonExecutor.rehighlightComponent = highlightFunction
             step.complete(true)

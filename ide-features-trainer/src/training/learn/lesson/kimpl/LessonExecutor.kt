@@ -4,6 +4,7 @@ package training.learn.lesson.kimpl
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.BasicUndoableAction
@@ -220,7 +221,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     }
     restoreFuture.thenAccept {
       clearRestore()
-      invokeLater { // restore check must be done after pass conditions (and they will be done during current event processing)
+      invokeLater(ModalityState.any()) { // restore check must be done after pass conditions (and they will be done during current event processing)
         if (!isTaskCompleted(taskContext)) {
           restoreTask()
         }
@@ -256,7 +257,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
 
   private fun disposeRecorderLater(recorder: ActionsRecorder) {
     // Now we are inside some listener registered by recorder
-    ApplicationManager.getApplication().invokeLater {
+    invokeLater(ModalityState.any()) {
       // So better to exit from all callbacks and then clear all related data
       Disposer.dispose(recorder)
     }
