@@ -1,30 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package training.learn.lesson.ruby.refactorings
+package training.learn.lesson.general.refactorings
 
 import com.intellij.testGuiFramework.impl.jList
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.parseLessonSample
+import training.learn.lesson.kimpl.LessonSample
 
-class RubyExtractVariableLesson(module: Module) : KLesson("Extract Variable", module, "ruby") {
-  private val sample = parseLessonSample("""
-    def bubble_sort(array)
-      n = array.length
-      loop do
-        swapped = false
-        (n - 1).times do |i|
-          if array[i] > array[<select>i + 1</select>]
-            array[i], array[i + 1] = array[i + 1], array[i]
-            swapped = true
-          end
-        end
-        break unless swapped
-      end
-    end
-  """.trimIndent())
-
+class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val sample: LessonSample) : KLesson("Extract Variable", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
       prepareSample(sample)
