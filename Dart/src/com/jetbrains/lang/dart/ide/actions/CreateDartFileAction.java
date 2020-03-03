@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CreateDartFileAction extends CreateFileFromTemplateAction {
   public CreateDartFileAction() {
-    super(DartBundle.lazyMessage("dart.file"), DartBundle.lazyMessage("dart.file"), DartIcons.Dart_file);
+    super(DartBundle.messagePointer("dart.file"), DartBundle.messagePointer("dart.file"), DartIcons.Dart_file);
   }
 
   @Override

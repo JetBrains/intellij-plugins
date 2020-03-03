@@ -32,7 +32,7 @@ public class StrutsBundle extends DynamicBundle {
   }
 
   @NotNull
-  public static Supplier<String> lazyMessage(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
+  public static Supplier<String> messagePointer(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object @NotNull ... params) {
     return ourInstance.getLazyMessage(key, params);
   }
 

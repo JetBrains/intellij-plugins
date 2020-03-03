@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class RestartDartAnalysisServerAction extends DumbAwareAction {
   public RestartDartAnalysisServerAction() {
-    super(DartBundle.lazyMessage("dart.restart.server.action.name"),
-          DartBundle.lazyMessage("dart.restart.server.action.name"),
+    super(DartBundle.messagePointer("dart.restart.server.action.name"),
+          DartBundle.messagePointer("dart.restart.server.action.name"),
           AllIcons.Actions.ForceRefresh);
   }
 

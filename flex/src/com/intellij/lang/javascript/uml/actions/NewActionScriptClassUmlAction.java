@@ -20,7 +20,7 @@ import java.util.HashMap;
 public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
   public NewActionScriptClassUmlAction() {
-    super(JSBundle.lazyMessage("new.actionscript.class.uml.action.text"), JSBundle.lazyMessage("new.actionscript.class.action.description"),
+    super(JSBundle.messagePointer("new.actionscript.class.uml.action.text"), JSBundle.messagePointer("new.actionscript.class.action.description"),
           JSIconProvider.AS_INSTANCE.getClassIcon());
   }
 

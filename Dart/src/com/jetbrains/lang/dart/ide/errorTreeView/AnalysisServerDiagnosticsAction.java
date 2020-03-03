@@ -18,7 +18,7 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
   private static final String GROUP_DISPLAY_ID = "Dart Analysis Server";
 
   public AnalysisServerDiagnosticsAction() {
-    super(DartBundle.lazyMessage("analysis.server.show.diagnostics.text"));
+    super(DartBundle.messagePointer("analysis.server.show.diagnostics.text"));
   }
 
   @Override

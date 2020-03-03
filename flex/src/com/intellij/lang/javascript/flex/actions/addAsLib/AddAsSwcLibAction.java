@@ -43,7 +43,7 @@ public class AddAsSwcLibAction extends AnAction {
 
     final boolean enabled = project != null && containsFlashModule(project) && !getRoots(e).isEmpty();
 
-    e.getPresentation().setText(FlexBundle.lazyMessage("add.as.library.title") + "...");
+    e.getPresentation().setText(FlexBundle.messagePointer("add.as.library.title") + "...");
     e.getPresentation().setEnabledAndVisible(enabled);
   }
 

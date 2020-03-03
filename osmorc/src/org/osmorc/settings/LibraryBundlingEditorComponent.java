@@ -109,7 +109,7 @@ public class LibraryBundlingEditorComponent {
             updateFields();
           }
         })
-        .addExtraAction(new AnActionButton(OsmorcBundle.lazyMessage("action.AnActionButton.text.copy"), PlatformIcons.COPY_ICON) {
+        .addExtraAction(new AnActionButton(OsmorcBundle.messagePointer("action.AnActionButton.text.copy"), PlatformIcons.COPY_ICON) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             updateCurrentRule();
