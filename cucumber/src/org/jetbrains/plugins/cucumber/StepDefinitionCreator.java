@@ -40,6 +40,9 @@ public interface StepDefinitionCreator {
   @NotNull
   String getDefaultStepDefinitionFolderPath(@NotNull final GherkinStep step);
 
+  /**
+   * @return step definition file path relative to step definition folder
+   */
   @NotNull
   String getStepDefinitionFilePath(@NotNull final PsiFile file);
 
