@@ -11,6 +11,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.EditorNotifications
+import com.intellij.ui.tree.TreeVisitor
+import com.intellij.util.ui.tree.TreeUtil
 import org.fest.swing.exception.ComponentLookupException
 import org.fest.swing.exception.WaitTimedOutError
 import org.fest.swing.timing.Timeout
@@ -30,6 +32,8 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import javax.swing.JList
+import javax.swing.JTree
+import javax.swing.tree.TreePath
 
 class TaskContext(private val lessonExecutor: LessonExecutor,
                   private val recorder: ActionsRecorder,
@@ -192,6 +196,30 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
       DumbService.getInstance(project).waitForSmartMode()
       TaskTestContext(this).action()
     })
+  }
+
+
+  fun triggerByFoundPathAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkPath: (tree: JTree, path: TreePath) -> Boolean) {
+    triggerByFoundPathAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { tree ->
+      TreeUtil.visitVisibleRows(tree, TreeVisitor { path ->
+        if (checkPath(tree, path)) TreeVisitor.Action.INTERRUPT else TreeVisitor.Action.CONTINUE
+      })
+    }
+  }
+
+  // This method later can be converted to the public (But I'm not sure it will be ever needed in a such form)
+  private fun triggerByFoundPathAndHighlight(options: LearningUiHighlightingManager.HighlightingOptions, checkTree: (tree: JTree) -> TreePath?) {
+    @Suppress("DEPRECATION")
+    triggerByUiComponentAndHighlight {
+      val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
+      val tree = LearningUiUtil.findComponentWithTimeout(null, JTree::class.java, delay) {
+        checkTree(it) != null
+      }
+      return@triggerByUiComponentAndHighlight {
+        LearningUiHighlightingManager.highlightJTreeItem(tree, { checkTree(tree) }, options)
+        tree
+      }
+    }
   }
 
   fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {

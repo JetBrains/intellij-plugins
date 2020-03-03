@@ -10,7 +10,9 @@ import java.awt.*
 import java.util.*
 import javax.swing.JComponent
 import javax.swing.JList
+import javax.swing.JTree
 import javax.swing.SwingUtilities
+import javax.swing.tree.TreePath
 import kotlin.math.absoluteValue
 
 object LearningUiHighlightingManager {
@@ -27,6 +29,12 @@ object LearningUiHighlightingManager {
   fun highlightJListItem(list: JList<*>, index: () -> Int, options: HighlightingOptions = HighlightingOptions()) {
     highlightComponent(list) { glassPane ->
       RepaintCellByTimer(list, index, glassPane, options)
+    }
+  }
+
+  fun highlightJTreeItem(tree: JTree, path: () -> TreePath?, options: HighlightingOptions = HighlightingOptions()) {
+    highlightComponent(tree) { glassPane ->
+      RepaintPathByTimer(tree, path, glassPane, options)
     }
   }
 
@@ -149,13 +157,61 @@ internal class RepaintCellByTimer(val list: JList<*>,
   }
 }
 
+internal class RepaintPathByTimer(val tree: JTree,
+                                  private val path: () -> TreePath?,
+                                  glassPane: JComponent,
+                                  options: LearningUiHighlightingManager.HighlightingOptions)
+  : RepaintByTimer(tree, glassPane, options) {
+  private var treeLocationOnScreen: Point? = null
+  private var pathBoundsInList: Rectangle? = null
+
+  override fun shouldReinit(): Boolean {
+    if (highlightComponent == null) {
+      return true
+    }
+    val p = path() ?: return true
+    return tree.locationOnScreen != treeLocationOnScreen || tree.getPathBounds(p) != pathBoundsInList
+/*
+    val i = index()
+    if (i < 0 && list.visibleRowCount <= i) {
+      return true
+    }
+    return list.locationOnScreen != listLocationOnScreen || list.getCellBounds(i, i) != cellBoundsInList
+*/
+  }
+
+  override fun reinitHighlightComponent() {
+    val p = path() ?: return
+
+    val pathBounds = tree.getPathBounds(p) ?: return
+
+    val newHighlightComponent = GlassHighlightComponent(startDate, options)
+
+    val pt = SwingUtilities.convertPoint(original, pathBounds.location, glassPane)
+    val bounds = Rectangle(pt.x, pt.y, pathBounds.width, pathBounds.height)
+
+    newHighlightComponent.bounds = bounds
+    glassPane.add(newHighlightComponent)
+    highlightComponent = newHighlightComponent
+    treeLocationOnScreen = tree.locationOnScreen
+    pathBoundsInList = pathBounds
+  }
+}
+
+
 internal class GlassHighlightComponent(private val startDate: Date,
                                        private val options: LearningUiHighlightingManager.HighlightingOptions) : JComponent() {
+
+  var previous: Long = 0
+
   override fun paintComponent(g: Graphics) {
     val g2d = g as Graphics2D
     val r: Rectangle = bounds
     val oldColor = g2d.color
-    val delta = Date().time - startDate.time
+    val time = Date().time
+    val delta = time - startDate.time
+    //System.err.println("tik = ${time - previous}")
+    previous = time
     fun cyclicNumber(amplitude: Int, change: Long) = (change % (2 * amplitude) - amplitude).absoluteValue.toInt()
     val gradientShift = (delta / 20).toFloat()
     val alphaCycle = cyclicNumber(1000, delta).toDouble() / 1000
