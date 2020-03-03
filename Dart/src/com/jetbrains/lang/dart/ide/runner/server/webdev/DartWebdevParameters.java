@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.webdev;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -9,14 +9,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class DartWebdevParameters implements Cloneable {
-  private static final String MIN_DART_SDK_VERSION_FOR_WEBDEV = "2.5.0";
-
   @NotNull
   private String myHtmlFilePath = "";
   private int myWebdevPort = DartConfigurable.WEBDEV_PORT_DEFAULT;
@@ -71,14 +70,16 @@ public class DartWebdevParameters implements Cloneable {
   }
 
   public void check(@NotNull final Project project) throws RuntimeConfigurationError {
-    final DartSdk sdk = DartSdk.getDartSdk(project);
-    if (sdk == null) {
+    final DartSdk dartSdk = DartSdk.getDartSdk(project);
+    if (dartSdk == null) {
       throw new RuntimeConfigurationError(DartBundle.message("dart.sdk.is.not.configured"),
                                           () -> DartConfigurable.openDartSettings(project));
     }
-    final String sdkVersion = sdk.getVersion();
-    if (!sdkVersion.isEmpty() && StringUtil.compareVersionNumbers(sdkVersion, MIN_DART_SDK_VERSION_FOR_WEBDEV) < 0) {
-      throw new RuntimeConfigurationError(DartBundle.message("old.dart.sdk.for.webdev", MIN_DART_SDK_VERSION_FOR_WEBDEV, sdkVersion));
+    final String dartSdkVersion = dartSdk.getVersion();
+    if (!dartSdkVersion.isEmpty() &&
+        !DartAnalysisServerService.isDartSdkVersionSufficientForWebdev(dartSdk)) {
+      throw new RuntimeConfigurationError(
+        DartBundle.message("old.dart.sdk.for.webdev", DartAnalysisServerService.MIN_WEBDEV_SDK_VERSION, dartSdkVersion));
     }
 
     // check html file
