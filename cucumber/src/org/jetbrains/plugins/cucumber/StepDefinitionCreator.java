@@ -33,7 +33,9 @@ public interface StepDefinitionCreator {
    * @param fileName name of file to check
    * @return true if name is valid, false otherwise
    */
-  boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName);
+  default boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName) {
+    return true;
+  }
 
   @NotNull
   String getDefaultStepDefinitionFolderPath(@NotNull final GherkinStep step);
