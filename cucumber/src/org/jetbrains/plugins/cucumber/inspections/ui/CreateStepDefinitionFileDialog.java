@@ -19,16 +19,13 @@ import org.jetbrains.plugins.cucumber.inspections.model.FileTypeComboboxItem;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepHelper;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.File;
 
 public class CreateStepDefinitionFileDialog extends DialogWrapper {
   private JTextField myFileNameTextField;
 
-  private JComboBox myFileTypeCombobox;
+  private JComboBox<FileTypeComboboxItem> myFileTypeCombobox;
 
   private JPanel myContentPanel;
   private TextFieldWithBrowseButton myDirectoryTextField;
@@ -54,7 +51,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
         FileTypeComboboxItem newItem = (FileTypeComboboxItem)myFileTypeCombobox.getSelectedItem();
         FileTypeComboboxItem oldItem = (FileTypeComboboxItem)e.getItem();
 
-        if (oldItem.getDefaultFileName().equals(myFileNameTextField.getText())) {
+        if (newItem != null && oldItem.getDefaultFileName().equals(myFileNameTextField.getText())) {
           myFileNameTextField.setText(newItem.getDefaultFileName());
           myModel.setFileName(newItem.getDefaultFileName());
         }
@@ -63,7 +60,14 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     });
 
     myFileNameTextField.setText(model.getFileName());
-    final FileNameKeyListener keyListener = new FileNameKeyListener();
+    final KeyAdapter keyListener = new KeyAdapter() {
+      @Override
+      public void keyReleased(KeyEvent e) {
+        myModel.setFileName(myFileNameTextField.getText());
+        myModel.setDirectory(myDirectoryTextField.getText());
+        validateAll();
+      }
+    };
     myFileNameTextField.addKeyListener(keyListener);
 
     String folderChooserTitle = CucumberBundle.message("cucumber.quick.fix.create.step.folder.chooser.title");
@@ -141,7 +145,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
     final String fileName = myFileNameTextField.getText();
 
-    boolean fileNameIsOk = fileName != null &&
+    boolean fileNameIsOk = fileName != null && PathUtil.isValidFileName(fileName) &&
                            CucumberStepHelper
                              .validateNewStepDefinitionFileName(myModel.getProject(), fileName, myModel.getSelectedFileType());
 
@@ -153,21 +157,6 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
       if (vFile != null) {
         setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists", (myModel.getFileNameWithExtension())), myFileNameTextField);
       }
-    }
-  }
-
-  class FileNameKeyListener implements KeyListener {
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyPressed(KeyEvent e) {}
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-      myModel.setFileName(myFileNameTextField.getText());
-      myModel.setDirectory(myDirectoryTextField.getText());
-      validateAll();
     }
   }
 }

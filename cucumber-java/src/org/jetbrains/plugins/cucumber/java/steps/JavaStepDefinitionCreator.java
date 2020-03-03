@@ -48,7 +48,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_STEP_DEFINITION_JAVA = "Cucumber Java Step Definition.java";
   private static final String DEFAULT_STEP_KEYWORD = "Given";
 
-  private final static Logger LOG = Logger.getInstance("#org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator");
+  private final static Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class);
 
   @NotNull
   @Override

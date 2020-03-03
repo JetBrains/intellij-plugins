@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.BDDFrameworkType;
 
 import javax.swing.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ public class CreateStepDefinitionFileModel {
 
   private final Map<BDDFrameworkType, String> myFileTypeToDefaultDirectoryMap;
 
-  private final DefaultComboBoxModel myFileTypeModel;
+  private final DefaultComboBoxModel<FileTypeComboboxItem> myFileTypeModel;
 
   private String myDirectory;
 
@@ -40,7 +39,7 @@ public class CreateStepDefinitionFileModel {
       myFileTypeList.add(item);
     }
     myFileTypeToDefaultDirectoryMap = fileTypeToDefaultDirectoryMap;
-    myFileTypeModel = new DefaultComboBoxModel(myFileTypeList.toArray());
+    myFileTypeModel = new DefaultComboBoxModel<>(myFileTypeList.toArray(new FileTypeComboboxItem[0]));
     myDirectory = fileTypeToDefaultDirectoryMap.get(getSelectedFileType());
   }
 
@@ -77,7 +76,7 @@ public class CreateStepDefinitionFileModel {
     return selectedItem != null ? selectedItem.getFrameworkType() : null;
   }
 
-  public DefaultComboBoxModel getFileTypeModel() {
+  public DefaultComboBoxModel<FileTypeComboboxItem> getFileTypeModel() {
     return myFileTypeModel;
   }
 
