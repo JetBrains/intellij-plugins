@@ -135,6 +135,7 @@
     <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
+    <typedHandler implementation="com.intellij.lang.javascript.FlexMxmlGtTypedHandler" order="before xmlGt"/>
     <typedHandler implementation="com.intellij.lang.javascript.FlexMxmlTypedHandler" order="before xmlAuto"/>
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.SwfProjectViewStructureProvider"/>
     <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>
