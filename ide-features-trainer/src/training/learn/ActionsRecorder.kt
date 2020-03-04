@@ -24,6 +24,7 @@ import training.check.Check
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
+import java.beans.PropertyChangeListener
 import java.util.concurrent.CompletableFuture
 
 class ActionsRecorder(private val project: Project,
@@ -45,6 +46,8 @@ class ActionsRecorder(private val project: Project,
   private var editorListener: FileEditorManagerListener? = null
 
   private var checkCallback: (() -> Unit)? = null
+
+  private var focusChangeListener: PropertyChangeListener? = null
 
   init {
     Disposer.register(project, this)
@@ -213,8 +216,9 @@ class ActionsRecorder(private val project: Project,
       }
     })
 
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("focusOwner") {
-      check()
+    PropertyChangeListener { check() }.let {
+      KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("focusOwner", it)
+      focusChangeListener = it
     }
 
     return future
@@ -281,6 +285,7 @@ class ActionsRecorder(private val project: Project,
     eventDispatchers.clear()
     commandListener = null
     editorListener = null
+    focusChangeListener?.let { KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("focusOwner", it) }
   }
 
   private fun getActionId(action: AnAction): String = ActionManager.getInstance().getId(action) ?: action.javaClass.name
