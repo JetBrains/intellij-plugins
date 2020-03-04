@@ -47,10 +47,10 @@ class VueJSTypeEvaluator(context: JSEvaluateContext, processor: JSTypeProcessor,
             when {
               type != null -> addType(type, expression)
               useTypeScriptKeyofType(collectionType) -> addType(
-                TypeScriptIndexedAccessJSTypeImpl(collectionType,
-                                                  JSCompositeTypeFactory.createKeyOfType(
-                                                    collectionType, collectionType.source),
-                                                  collectionType.source),
+                JSCompositeTypeFactory.createIndexedAccessType(collectionType,
+                                                               JSCompositeTypeFactory.createKeyOfType(
+                                                                 collectionType, collectionType.source),
+                                                               collectionType.source),
                 expression)
               else -> addVForVarType(
                 collectionExpr, *getComponentTypeFromArrayExpression(expression, collectionExpr).toTypedArray())
