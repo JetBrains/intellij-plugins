@@ -56,7 +56,7 @@
       serviceImplementation="training.learn.lesson.LessonStateBase"/>
     <applicationService
       serviceImplementation="training.statistic.StatisticBase"/>
-    <toolWindow id="Learn" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow" anchor="left" factoryClass="training.ui.LearnToolWindowFactory"/>
+    <toolWindow id="Learn" icon="FeaturesTrainerIcons.FeatureTrainerToolWindow" factoryClass="training.ui.LearnToolWindowFactory"/>
 
     <editorNotificationProvider implementation="training.ui.IncorrectLearningStateNotificationProvider"/>
 
