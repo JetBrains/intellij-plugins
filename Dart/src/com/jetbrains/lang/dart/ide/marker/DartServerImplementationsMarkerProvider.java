@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.marker;
 
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
@@ -69,50 +68,48 @@ public final class DartServerImplementationsMarkerProvider implements LineMarker
   private static LineMarkerInfo createMarkerClass(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
-    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
-                                element -> DaemonBundle.message("class.is.subclassed.too.many"),
-                                (e, __) -> {
-                                  DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
-                                  final List<TypeHierarchyItem> items =
-                                    das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
-                                  if (items.isEmpty()) {
-                                    return;
-                                  }
-                                  // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-                                  final Set<DartComponent> components =
-                                    DartInheritorsSearcher
-                                      .getSubClasses(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
-                                  PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
-                                                                      DaemonBundle.message("navigation.title.subclass", name.getName(),
-                                                                                           components.size(), ""),
-                                                                      "Subclasses of " + name.getName(),
-                                                                      new DefaultPsiElementCellRenderer());
-                                }, GutterIconRenderer.Alignment.RIGHT);
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod,
+                                element -> DaemonBundle.message("class.is.subclassed.too.many"), (e, __) -> {
+                                      DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
+                                      final List<TypeHierarchyItem> items =
+                                        das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
+                                      if (items.isEmpty()) {
+                                        return;
+                                      }
+                                      // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
+                                      final Set<DartComponent> components =
+                                        DartInheritorsSearcher
+                                          .getSubClasses(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
+                                      PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
+                                                                          DaemonBundle.message("navigation.title.subclass", name.getName(),
+                                                                                               components.size(), ""),
+                                                                          "Subclasses of " + name.getName(),
+                                                                          new DefaultPsiElementCellRenderer());
+                                    }, GutterIconRenderer.Alignment.RIGHT);
   }
 
   @NotNull
   private static LineMarkerInfo createMarkerMember(@NotNull final DartComponentName name) {
     final VirtualFile file = name.getContainingFile().getVirtualFile();
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(name);
-    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod, Pass.LINE_MARKERS,
-                                element -> DaemonBundle.message("method.is.overridden.too.many"),
-                                (e, __) -> {
-                                  DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
-                                  final List<TypeHierarchyItem> items =
-                                    das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
-                                  if (items.isEmpty()) {
-                                    return;
-                                  }
-                                  // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
-                                  final Set<DartComponent> components =
-                                    DartInheritorsSearcher
-                                      .getSubMembers(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
-                                  PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
-                                                                      DaemonBundle
-                                                                        .message("navigation.title.overrider.method", name.getName(),
-                                                                                 components.size()),
-                                                                      "Overriding methods of " + name.getName(),
-                                                                      new DefaultPsiElementCellRenderer());
-                                }, GutterIconRenderer.Alignment.RIGHT);
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), AllIcons.Gutter.OverridenMethod,
+                                element -> DaemonBundle.message("method.is.overridden.too.many"), (e, __) -> {
+                                      DartAnalysisServerService das = DartAnalysisServerService.getInstance(name.getProject());
+                                      final List<TypeHierarchyItem> items =
+                                        das.search_getTypeHierarchy(file, anchor.getTextRange().getStartOffset(), false);
+                                      if (items.isEmpty()) {
+                                        return;
+                                      }
+                                      // TODO(scheglov) Consider using just Element(s), not PsiElement(s) for better performance
+                                      final Set<DartComponent> components =
+                                        DartInheritorsSearcher
+                                          .getSubMembers(name.getProject(), GlobalSearchScope.allScope(name.getProject()), items);
+                                      PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(components),
+                                                                          DaemonBundle
+                                                                            .message("navigation.title.overrider.method", name.getName(),
+                                                                                     components.size()),
+                                                                          "Overriding methods of " + name.getName(),
+                                                                          new DefaultPsiElementCellRenderer());
+                                    }, GutterIconRenderer.Alignment.RIGHT);
   }
 }

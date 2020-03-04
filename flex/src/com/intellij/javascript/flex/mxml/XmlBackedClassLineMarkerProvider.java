@@ -1,6 +1,5 @@
 package com.intellij.javascript.flex.mxml;
 
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
@@ -46,7 +45,6 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
         XmlToken nameElement = XmlTagUtil.getStartTagNameElement((XmlTag)parent);
         if (classQuery.findFirst() != null && nameElement != null) {
           result.add(new LineMarkerInfo<>(element, nameElement.getTextRange(), AllIcons.Gutter.OverridenMethod,
-                                          Pass.LINE_MARKERS,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsTooltipProvider,
                                           JavaScriptLineMarkerProvider.ourClassInheritorsNavHandler, GutterIconRenderer.Alignment.RIGHT));
         }

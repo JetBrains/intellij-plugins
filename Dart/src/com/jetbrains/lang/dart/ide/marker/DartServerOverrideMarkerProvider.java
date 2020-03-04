@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.ide.marker;
 
 import com.google.common.collect.Lists;
-import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
@@ -98,27 +97,26 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
     final Icon icon = overrides ? AllIcons.Gutter.OverridingMethod : AllIcons.Gutter.ImplementingMethod;
     PsiElement anchor = PsiTreeUtil.getDeepestFirst(componentName);
 
-    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), icon, Pass.LINE_MARKERS,
-                                __ -> {
-                                  final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
-                                  if (superClass == null) return "null";
-                                  if (overrides) {
-                                    return DartBundle.message(superclassComponent.isOperator() ? "overrides.operator.in"
-                                                                                               : "overrides.method.in",
-                                                              name,
-                                                              superClass.getName());
-                                  }
-                                  return DartBundle.message("implements.method.in", name, superClass.getName());
-                                }, (e, __) -> {
-      List<DartComponent> superComponents = Lists.newArrayList();
-      if (superclassComponent != null) {
-        superComponents.add(superclassComponent);
-      }
-      superComponents.addAll(interfaceComponents);
-      PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
-                                          DaemonBundle.message("navigation.title.super.method", name),
-                                          DaemonBundle.message("navigation.findUsages.title.super.method", name),
-                                          new DefaultPsiElementCellRenderer());
-    }, GutterIconRenderer.Alignment.LEFT);
+    return new LineMarkerInfo<>(anchor, anchor.getTextRange(), icon, __ -> {
+                                      final DartClass superClass = PsiTreeUtil.getParentOfType(superComponent, DartClass.class);
+                                      if (superClass == null) return "null";
+                                      if (overrides) {
+                                        return DartBundle.message(superclassComponent.isOperator() ? "overrides.operator.in"
+                                                                                                   : "overrides.method.in",
+                                                                  name,
+                                                                  superClass.getName());
+                                      }
+                                      return DartBundle.message("implements.method.in", name, superClass.getName());
+                                    }, (e, __) -> {
+          List<DartComponent> superComponents = Lists.newArrayList();
+          if (superclassComponent != null) {
+            superComponents.add(superclassComponent);
+          }
+          superComponents.addAll(interfaceComponents);
+          PsiElementListNavigator.openTargets(e, DartResolveUtil.getComponentNameArray(superComponents),
+                                              DaemonBundle.message("navigation.title.super.method", name),
+                                              DaemonBundle.message("navigation.findUsages.title.super.method", name),
+                                              new DefaultPsiElementCellRenderer());
+        }, GutterIconRenderer.Alignment.LEFT);
   }
 }
