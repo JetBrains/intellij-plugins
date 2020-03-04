@@ -2,6 +2,7 @@
 package org.jetbrains.vuejs.context
 
 import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.lang.javascript.library.JSCDNLibManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.DumbService
@@ -11,6 +12,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
@@ -23,6 +25,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.xml.XmlTag
 import com.intellij.testFramework.LightVirtualFileBase
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -88,11 +91,17 @@ fun isSimpleVueHtml(psiFile: PsiFile): Boolean {
           }
         }
 
-        private fun hasVueScriptLink(tag: XmlTag): Boolean =
-          tag.getAttribute(HtmlUtil.SRC_ATTRIBUTE_NAME)?.value?.let {
-            it.endsWith("vue.js") || it.endsWith("/vue")
-            || it.contains("/npm/vue@")
-          } == true
+        private fun hasVueScriptLink(tag: XmlTag): Boolean {
+          val link = tag.getAttribute(HtmlUtil.SRC_ATTRIBUTE_NAME)?.value
+          if (link == null || !link.contains("vue")) {
+            return false
+          }
+          if (JSCDNLibManager.getLibraryForUrl(link)?.libraryName == VUE_MODULE) {
+            return true
+          }
+          val fileName = VfsUtil.extractFileName(link)
+          return fileName != null && fileName.startsWith("vue.") && fileName.endsWith(".js")
+        }
       })
       CachedValueProvider.Result.create(result, psiFile)
     }
