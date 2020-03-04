@@ -77,13 +77,13 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   }
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement psiElement) {
+  public LineMarkerInfo<?> getLineMarkerInfo(final @NotNull PsiElement psiElement) {
     return null;
   }
 
   @Override
-  public void collectSlowLineMarkers(@NotNull final List<PsiElement> psiElements,
-                                     @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+  public void collectSlowLineMarkers(final @NotNull List<? extends PsiElement> psiElements,
+                                     final @NotNull Collection<? super LineMarkerInfo<?>> lineMarkerInfos) {
     if (psiElements.isEmpty()) {
       return;
     }
@@ -94,7 +94,7 @@ public class JspActionAnnotator extends LineMarkerProviderDescriptor {
   }
 
   private static void annotate(@NotNull final PsiElement element,
-                               @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+                               final @NotNull Collection<? super LineMarkerInfo<?>> lineMarkerInfos) {
     if (!(element instanceof XmlTag)) {
       return;
     }

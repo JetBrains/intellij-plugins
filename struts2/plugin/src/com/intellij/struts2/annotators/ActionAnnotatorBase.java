@@ -96,8 +96,8 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
   @Override
-  protected void collectNavigationMarkers(@NotNull final PsiElement element,
-                                          @NotNull final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos) {
+  protected void collectNavigationMarkers(final @NotNull PsiElement element,
+                                          final @NotNull Collection<? super RelatedItemLineMarkerInfo<?>> lineMarkerInfos) {
     if (!(element instanceof PsiIdentifier)) return;
     final PsiClass clazz = getActionPsiClass(element.getParent());
     if (clazz == null || clazz.getNameIdentifier() != element) {
@@ -144,8 +144,8 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param actions         Corresponding Actions.
    */
   private static void installActionTargets(final PsiElement element,
-                                           final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
-                                           final List<Action> actions) {
+                                           final Collection<? super RelatedItemLineMarkerInfo<?>> lineMarkerInfos,
+                                           final List<? extends Action> actions) {
     final String tooltip = actions.size() == 1 ? StrutsBundle.message("annotators.action.goto.tooltip.single") :
         StrutsBundle.message("annotators.action.goto.tooltip");
     final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
@@ -166,9 +166,9 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param clazz           Class to annotate.
    * @param actions         Corresponding Actions.
    */
-  private static void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+  private static void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo<?>> lineMarkerInfos,
                                            final PsiClass clazz,
-                                           final List<Action> actions) {
+                                           final List<? extends Action> actions) {
     final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<>();
     for (final Action action : actions) {
       final PsiMethod method = action.searchActionMethod();
@@ -215,7 +215,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param clazz           Class to find validation files for.
    */
   private static void installValidationTargets(final PsiElement element,
-                                               final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                               final Collection<? super RelatedItemLineMarkerInfo<?>> lineMarkerInfos,
                                                final PsiClass clazz) {
     final List<XmlFile> files = ValidatorManager.getInstance(element.getProject()).findValidationFilesFor(clazz);
     if (files.isEmpty()) {

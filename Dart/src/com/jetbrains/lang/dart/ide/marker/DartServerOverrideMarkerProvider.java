@@ -31,7 +31,7 @@ import java.util.List;
 
 public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+  public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
     if (!(element instanceof DartComponentName)) {
       return null;
     }

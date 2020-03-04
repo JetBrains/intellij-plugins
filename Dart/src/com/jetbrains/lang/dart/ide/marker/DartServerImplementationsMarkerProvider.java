@@ -28,7 +28,7 @@ import java.util.Set;
 
 public final class DartServerImplementationsMarkerProvider implements LineMarkerProvider {
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
+  public LineMarkerInfo<?> getLineMarkerInfo(final @NotNull PsiElement element) {
     if (!(element instanceof DartComponentName)) {
       return null;
     }

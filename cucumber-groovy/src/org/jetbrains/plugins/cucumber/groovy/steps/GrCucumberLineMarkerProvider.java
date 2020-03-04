@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import icons.CucumberIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
@@ -17,9 +16,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethod
  * @author Max Medvedev
  */
 public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
-  @Nullable
   @Override
-  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
+  public LineMarkerInfo<?> getLineMarkerInfo(@NotNull PsiElement element) {
     if (GrCucumberUtil.isStepDefinition(element)) {
       PsiElement anchor = PsiTreeUtil.getDeepestFirst(element);
 
