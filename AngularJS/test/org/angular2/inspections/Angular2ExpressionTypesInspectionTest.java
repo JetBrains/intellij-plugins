@@ -28,7 +28,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   public void testSimpleTypes() {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "common", "forms");
     myFixture.configureByFiles("async_pipe.d.ts", "ng_model.d.ts", "Observable.d.ts", "case_conversion_pipes.d.ts");
-    myFixture.configureByFiles("simple.html", "componentWithTypes.ts");
+    myFixture.configureByFiles("simple.html", "simpleComponent.ts", "componentWithTypes.ts");
     myFixture.checkHighlighting();
   }
 
