@@ -71,7 +71,7 @@ else
 
       attr_accessor :io, :test_count, :assertion_count, :failures, :errors, :skips
       attr_accessor :already_run_tests
-      attr_accessor :my_drb_url
+      attr_accessor :my_mutex
 
       def initialize(options = {})
         super()
@@ -82,7 +82,8 @@ else
         self.failures = 0
         self.errors = 0
         self.skips = 0
-        self.already_run_tests = [Mutex.new]
+        self.my_mutex = Mutex.new
+        self.already_run_tests = []
         Minitest.my_drb_url = DRb.start_service(nil, self.already_run_tests).uri
       end
 
@@ -105,7 +106,7 @@ else
       end
 
       def close_all_suites
-        (1...already_run_tests.count).each do |i|
+        (0...already_run_tests.count).each do |i|
           log(Rake::TeamCity::MessageFactory.create_suite_finished(already_run_tests[i], self.already_run_tests[i]))
         end
         self.already_run_tests.clear()
@@ -134,7 +135,7 @@ else
         tests = DRbObject.new_with_uri(Minitest.my_drb_url)
         DRb.start_service
 
-        tests[0].synchronize {
+        self.my_mutex.synchronize {
           unless tests.include? test.class.to_s
             tests << test.class.to_s
             log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, minitest_test_location(test.class.to_s), '0', test.class.to_s))
