@@ -118,6 +118,12 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       }
 
       @Override
+      public void visitJSProperty(JSProperty node) {
+        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
+          addIfNotNull(result, node.getValue()));
+      }
+
+      @Override
       public void visitES6ImportSpecifierAlias(ES6ImportSpecifierAlias specifierAlias) {
         addIfNotNull(result, specifierAlias.findAliasedElement());
       }
