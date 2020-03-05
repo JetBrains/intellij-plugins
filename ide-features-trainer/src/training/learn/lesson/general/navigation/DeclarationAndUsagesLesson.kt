@@ -18,6 +18,7 @@ import training.learn.lesson.kimpl.LessonContext
 
 abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesson("Declaration and usages", module, lang) {
   abstract fun LessonContext.setInitialPosition()
+  abstract val typeOfEntity: String
   abstract override val existedFile: String
 
   override val lessonContent: LessonContext.() -> Unit
@@ -25,7 +26,7 @@ abstract class DeclarationAndUsagesLesson(module: Module, lang: String) : KLesso
       setInitialPosition()
 
       task("GotoDeclaration") {
-        text("Use ${action(it)} to jump to the declaration of an attribute accessor")
+        text("Use ${action(it)} to jump to the declaration of $typeOfEntity")
         trigger(it, { state() }) { before, _ ->
           before != null && !isInsidePsi(before.target.navigationElement, before.position)
         }

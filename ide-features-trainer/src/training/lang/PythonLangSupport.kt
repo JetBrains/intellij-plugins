@@ -16,8 +16,6 @@ import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.VirtualEnvSdkFlavor
-import training.learn.exceptons.InvalidSdkException
-import training.learn.exceptons.NoSdkException
 import java.io.File
 import java.nio.file.Files
 
@@ -48,16 +46,6 @@ class PythonLangSupport : AbstractLangSupport() {
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
-    if (true) return
-
-    if (sdk?.sdkType is PythonSdkType) {
-      if (!isNoOlderThan27(sdk)) {
-        throw InvalidSdkException("Please use at least Python 2.7")
-      }
-    }
-    else {
-      throw NoSdkException()
-    }
   }
 
   //detect sdk with version 2.7 and higher
@@ -84,7 +72,7 @@ class PythonLangSupport : AbstractLangSupport() {
   override val installRemoteProject: ((File) -> Unit)? = { projectDirectory ->
     val service = DownloadableFileService.getInstance()
     val zipName = "project.zip"
-    val url = "https://github.com/pallets/jinja/archive/master.zip"
+    val url = "https://github.com/pallets/jinja/archive/2.11.1.zip"
     val fileDescription = service.createFileDescription(url, zipName)
     val downloader = service.createDownloader(listOf(fileDescription), zipName)
     val tempDir = Files.createTempDirectory("IFT-temp")
