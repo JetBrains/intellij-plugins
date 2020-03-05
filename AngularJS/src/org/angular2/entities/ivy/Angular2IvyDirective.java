@@ -18,10 +18,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
+import static org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity;
 import static org.angular2.entities.source.Angular2SourceDirective.getConstructorParamsMatchNoCache;
 
 public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEntityDef.Directive> implements Angular2Directive {
@@ -53,18 +53,6 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
 
   @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveProperty> getInputs() {
-    return getCachedProperties().first;
-  }
-
-  @NotNull
-  @Override
-  public Collection<? extends Angular2DirectiveProperty> getOutputs() {
-    return getCachedProperties().second;
-  }
-
-  @NotNull
-  @Override
   public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     // TODO Angular 9 d.ts metadata lacks this information
     // Try to fallback to metadata JSON information
@@ -87,7 +75,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
   protected Angular2Directive getMetadataDirective() {
     TypeScriptClass clazz = myClass;
     return CachedValuesManager.getCachedValue(clazz, () -> {
-      Angular2Directive metadataDirective = tryCast(Angular2EntitiesProvider.getMetadataEntity(clazz), Angular2Directive.class);
+      Angular2Directive metadataDirective = tryCast(getMetadataEntity(clazz), Angular2Directive.class);
       if (metadataDirective != null) {
         return CachedValueProvider.Result.create(metadataDirective, clazz, metadataDirective);
       }
@@ -101,16 +89,16 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
       getConstructorParamsMatchNoCache(myClass), getClassModificationDependencies()));
   }
 
-  @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
+  @Override
+  public @NotNull Angular2DirectiveProperties getBindings() {
     return getCachedValue(
-      () -> CachedValueProvider.Result.create(getProperties(),
+      () -> CachedValueProvider.Result.create(getPropertiesNoCache(),
                                               getClassModificationDependencies())
     );
   }
 
   @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties() {
+  private Angular2DirectiveProperties getPropertiesNoCache() {
     Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 
@@ -149,8 +137,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
     outputMap.values().forEach(
       output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
-    return pair(Collections.unmodifiableCollection(inputs.values()),
-                Collections.unmodifiableCollection(outputs.values()));
+    return new Angular2DirectiveProperties(inputs.values(), outputs.values());
   }
 
   private static void processProperty(@NotNull JSRecordType.PropertySignature property,

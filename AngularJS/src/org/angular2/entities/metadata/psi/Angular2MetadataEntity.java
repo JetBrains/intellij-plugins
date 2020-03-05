@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.intellij.util.ObjectUtils.notNull;
 import static java.util.Arrays.asList;
 
 public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub<?>> extends Angular2MetadataClassBase<Stub> implements
@@ -29,12 +28,6 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
   @Override
   public PsiElement getNavigableElement() {
     return getSourceElement();
-  }
-
-  @NotNull
-  @Override
-  public PsiElement getSourceElement() {
-    return notNull(getTypeScriptClass(), this);
   }
 
   @Nullable

@@ -5,12 +5,14 @@ import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
+import org.angular2.index.Angular2MetadataClassNameIndex;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.angular2.lang.metadata.stubs.MetadataElementStub;
@@ -147,6 +149,14 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     }
     if (!myOutputMappings.isEmpty()) {
       writeStringMap(myOutputMappings, stream);
+    }
+  }
+
+  @Override
+  public void index(@NotNull IndexSink sink) {
+    super.index(sink);
+    if (getClassName() != null) {
+      sink.occurrence(Angular2MetadataClassNameIndex.KEY, getClassName());
     }
   }
 

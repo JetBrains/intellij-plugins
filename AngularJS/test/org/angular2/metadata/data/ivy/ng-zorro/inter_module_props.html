@@ -1,1 +1,13 @@
-<i nz-icon [type]="status ? 'fullscreen' : 'fullscreen-exit'" twoToneColor="black" <warning descr="Attribute foo is not allowed here">foo</warning>="bad"></i>
+<i nz-icon
+   [nzRotate]="90"
+   [type]="status ? 'fullscreen' : 'fullscreen-exit'" twoToneColor="black"
+   <warning descr="Attribute foo is not allowed here">foo</warning>="bad"
+   <weak_warning descr="Property myInput is not provided by any applicable directives nor by i element">[myInput]</weak_warning>="12"
+></i>
+
+<my-icon
+  [nzRotate]="90"
+  [type]="status ? 'fullscreen' : 'fullscreen-exit'" twoToneColor="black"
+  <warning descr="Attribute foo is not allowed here">foo</warning>="bad"
+  [myInput]="12"
+></my-icon>
