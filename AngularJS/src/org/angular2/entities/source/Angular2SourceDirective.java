@@ -28,6 +28,8 @@ import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.entities.*;
+import org.angular2.entities.ivy.Angular2IvyEntity;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,8 +40,10 @@ import java.util.stream.Stream;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.exists;
+import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -105,18 +109,6 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveProperty> getInputs() {
-    return getCachedProperties().first;
-  }
-
-  @NotNull
-  @Override
-  public Collection<? extends Angular2DirectiveProperty> getOutputs() {
-    return getCachedProperties().second;
-  }
-
-  @NotNull
-  @Override
   public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return getCachedValue(
       () -> Result.create(getAttributeParameters(),
@@ -124,16 +116,16 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     );
   }
 
-  @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
+  @Override
+  public @NotNull Angular2DirectiveProperties getBindings() {
     return getCachedValue(
-      () -> CachedValueProvider.Result.create(getProperties(),
+      () -> CachedValueProvider.Result.create(getPropertiesNoCache(),
                                               getClassModificationDependencies())
     );
   }
 
   @NotNull
-  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties() {
+  private Angular2DirectiveProperties getPropertiesNoCache() {
     Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 
@@ -157,8 +149,29 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     outputMap.values().forEach(
       output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
-    return pair(Collections.unmodifiableCollection(inputs.values()),
-                Collections.unmodifiableCollection(outputs.values()));
+    Ref<Angular2DirectiveProperties> inheritedProperties = new Ref<>();
+    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass((TypeScriptClass)aClass)) {
+        Angular2DirectiveProperties props = withJsonMetadataFallback(aClass, cls -> {
+          Angular2IvyEntity<?> ivyEntity = getIvyEntity(aClass);
+          if (ivyEntity instanceof Angular2Directive) {
+            return ((Angular2Directive)ivyEntity).getBindings();
+          }
+          return null;
+        }, Angular2MetadataUtil::getMetadataClassDirectiveProperties);
+        if (props != null) {
+          inheritedProperties.set(props);
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (!inheritedProperties.isNull()) {
+      inheritedProperties.get().getInputs().forEach(prop -> inputs.putIfAbsent(prop.getName(), prop));
+      inheritedProperties.get().getOutputs().forEach(prop -> outputs.putIfAbsent(prop.getName(), prop));
+    }
+    return new Angular2DirectiveProperties(inputs.values(), outputs.values());
   }
 
   @NotNull

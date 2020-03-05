@@ -270,7 +270,7 @@
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="METADATA_JSON:"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
-    <stubIndex implementation="org.angular2.index.Angular2MetadataEntityClassNameIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2MetadataClassNameIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataNodeModuleIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataFunctionIndex"/>

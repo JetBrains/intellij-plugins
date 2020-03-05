@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.ivy;
 
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 import static com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil.processUpPackageJsonFilesInAllScope;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass;
 
 public class Angular2IvyUtil {
 
@@ -37,6 +40,30 @@ public class Angular2IvyUtil {
         return create(result.get(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS);
       }))
       .orElse(false);
+  }
+
+  public static Angular2IvyEntity<?> getIvyEntity(@NotNull PsiElement element) {
+    final Angular2IvyEntityDef entityDef;
+    if (element instanceof TypeScriptClass) {
+      if (!isDeclaredClass((TypeScriptClass)element)) {
+        return null;
+      }
+      entityDef = Angular2IvyEntityDef.get((TypeScriptClass)element);
+    }
+    else if (element instanceof TypeScriptField) {
+      entityDef = Angular2IvyEntityDef.get((TypeScriptField)element);
+    }
+    else {
+      entityDef = null;
+    }
+
+    if (entityDef == null) {
+      return null;
+    }
+
+    return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
+      return create(entityDef.createEntity(), entityDef.getField());
+    });
   }
 
   public static boolean isIvyMetadataSupportEnabled() {

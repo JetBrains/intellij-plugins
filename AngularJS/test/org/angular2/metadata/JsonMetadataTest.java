@@ -62,7 +62,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testMetadataStubBuildingWithResolution() {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
-    myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.ts",
+    myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.d.ts",
                                "nz-col.component.d.ts", "nz-form-control.component.d.ts");
     testMetadataStubBuilding("ng-zorro-antd.metadata.json", "ng-zorro-antd.metadata.resolved.psi.txt");
   }
@@ -115,7 +115,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testInterModuleExtends() {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
-    myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
+    myFixture.configureByFiles("inter_module_props.html", "inter_module_props.ts", "extends-comp.ts", "nz-icon.directive.d.ts", "icon.directive.d.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);

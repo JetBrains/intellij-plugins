@@ -42,6 +42,7 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static java.util.Arrays.asList;
 import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity> {
 
@@ -217,7 +218,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
         if (Angular2IvyUtil.isIvyMetadataSupportEnabled()) {
           TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
           if (tsClass != null) {
-            Angular2Module ivyModule = tryCast(Angular2EntitiesProvider.getIvyEntity(tsClass), Angular2Module.class);
+            Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
             if (ivyModule != null) {
               processCacheDependency(tsClass);
               //noinspection unchecked

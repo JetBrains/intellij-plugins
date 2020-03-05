@@ -2,10 +2,10 @@
 package org.angular2.entities;
 
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public interface Angular2Directive extends Angular2Declaration {
 
@@ -18,10 +18,21 @@ public interface Angular2Directive extends Angular2Declaration {
   List<String> getExportAsList();
 
   @NotNull
-  Collection<? extends Angular2DirectiveProperty> getInputs();
+  default Collection<? extends Angular2DirectiveProperty> getInputs() {
+    return getBindings().getInputs();
+  }
 
   @NotNull
-  Collection<? extends Angular2DirectiveProperty> getOutputs();
+  default Collection<? extends Angular2DirectiveProperty> getOutputs() {
+    return getBindings().getOutputs();
+  }
+
+  default List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>> getInOuts() {
+    return getBindings().getInOuts();
+  }
+
+  @NotNull
+  Angular2DirectiveProperties getBindings();
 
   @NotNull
   Collection<? extends Angular2DirectiveAttribute> getAttributes();
@@ -32,33 +43,5 @@ public interface Angular2Directive extends Angular2Declaration {
 
   default boolean isComponent() {
     return this instanceof Angular2Component;
-  }
-
-
-  default List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>> getInOuts() {
-    @NonNls final String OUTPUT_CHANGE_SUFFIX = "Change";
-
-    Collection<? extends Angular2DirectiveProperty> outputs = getOutputs();
-    Collection<? extends Angular2DirectiveProperty> inputs = getInputs();
-
-    if (inputs.isEmpty() || outputs.isEmpty()) {
-      return Collections.emptyList();
-    }
-    Map<String, Angular2DirectiveProperty> inputMap = new HashMap<>();
-    for (Angular2DirectiveProperty p : inputs) {
-      inputMap.putIfAbsent(p.getName(), p);
-    }
-    List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>> result = new ArrayList<>();
-    for (Angular2DirectiveProperty output : outputs) {
-      String name = output.getName();
-      if (output.getName().endsWith(OUTPUT_CHANGE_SUFFIX)) {
-        Angular2DirectiveProperty input = inputMap.get(
-          name.substring(0, name.length() - OUTPUT_CHANGE_SUFFIX.length()));
-        if (input != null) {
-          result.add(Pair.create(input, output));
-        }
-      }
-    }
-    return result;
   }
 }

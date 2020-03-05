@@ -4,13 +4,11 @@ package org.angular2.entities;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -22,8 +20,8 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.ivy.Angular2IvyEntity;
-import org.angular2.entities.ivy.Angular2IvyEntityDef;
+import org.angular2.entities.ivy.Angular2IvyUtil;
+import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
@@ -43,8 +41,7 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.*;
-import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
-import static org.angular2.entities.ivy.Angular2IvyUtil.isIvyMetadataSupportEnabled;
+import static org.angular2.entities.ivy.Angular2IvyUtil.*;
 import static org.angular2.index.Angular2IndexingHandler.*;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
@@ -60,15 +57,20 @@ public class Angular2EntitiesProvider {
     if (result != null) {
       return result;
     }
+    return withJsonMetadataFallback(element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
+  }
+
+  public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element, Function<E, R> ivy, Function<TypeScriptClass, R> jsonFallback) {
     boolean isIvyMetadataSupportEnabled = isIvyMetadataSupportEnabled();
+    R result = null;
     if (isIvyMetadataSupportEnabled) {
-      result = getIvyEntity(element);
+      result = ivy.apply(element);
     }
     if (result == null
         && element instanceof TypeScriptClass
         && (!isIvyMetadataSupportEnabled || !hasIvyMetadata(element))
         && isAngular2Context(element)) {
-      result = getMetadataEntity((TypeScriptClass)element);
+      return jsonFallback.apply((TypeScriptClass)element);
     }
     return result;
   }
@@ -260,46 +262,8 @@ public class Angular2EntitiesProvider {
     });
   }
 
-  public static Angular2IvyEntity<?> getIvyEntity(@NotNull PsiElement element) {
-    final Angular2IvyEntityDef entityDef;
-    if (element instanceof TypeScriptClass) {
-      entityDef = Angular2IvyEntityDef.get((TypeScriptClass)element);
-    }
-    else if (element instanceof TypeScriptField) {
-      entityDef = Angular2IvyEntityDef.get((TypeScriptField)element);
-    }
-    else {
-      entityDef = null;
-    }
-
-    if (entityDef == null) {
-      return null;
-    }
-
-    return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
-      return create(entityDef.createEntity(), entityDef.getField());
-    });
-  }
-
-  public static Angular2MetadataEntity<?> getMetadataEntity(@NotNull TypeScriptClass typeScriptClass) {
-    String className = typeScriptClass.getName();
-    if (className == null
-        //check classes only from d.ts files
-        || !Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE)) {
-      return null;
-    }
-    Ref<Angular2MetadataEntity<?>> result = new Ref<>();
-    StubIndex.getInstance().processElements(
-      Angular2MetadataEntityClassNameIndex.KEY, className, typeScriptClass.getProject(),
-      GlobalSearchScope.allScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
-      e -> {
-        if (e.isValid() && e.getTypeScriptClass() == typeScriptClass) {
-          result.set(e);
-          return false;
-        }
-        return true;
-      });
-    return result.get();
+  public static boolean isDeclaredClass(@NotNull TypeScriptClass typeScriptClass) {
+    return Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE);
   }
 
   private static boolean isEntityImplicitElement(JSImplicitElement element) {
