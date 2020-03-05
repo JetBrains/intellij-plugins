@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
@@ -92,13 +93,11 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   fun caret(offset: Int) {
-    addSimpleTaskAction { editor.caretModel.moveToOffset(offset) }
+    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, offset).navigateIn(editor) }
   }
 
   fun caret(line: Int, column: Int) {
-    addSimpleTaskAction {
-      editor.caretModel.moveToLogicalPosition(LogicalPosition(line - 1, column - 1))
-    }
+    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, line, column).navigateIn(editor) }
   }
 
   fun caret(text: String) {
