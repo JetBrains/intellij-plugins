@@ -10,12 +10,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import icons.CucumberJavaIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import javax.swing.*;
 
 public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBase {
   public CucumberJavaRunConfigurationType() {
-    super("CucumberJavaRunConfigurationType", "Cucumber Java", null,
+    super("CucumberJavaRunConfigurationType", CucumberJavaBundle.message("cucumber.java.run.configuration.type.name"), null,
           NotNullLazyValue.createValue(() -> CucumberJavaIcons.CucumberJavaRunConfiguration));
     addFactory(new ConfigurationFactory(this) {
       @Override
@@ -36,7 +37,7 @@ public final class CucumberJavaRunConfigurationType extends ConfigurationTypeBas
 
       @Override
       public @NotNull String getId() {
-        return "Cucumber Java";
+        return "Cucumber java";
       }
     });
   }
