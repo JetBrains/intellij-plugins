@@ -196,7 +196,7 @@ public class PlatformioLauncher extends CLionLauncher {
         XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);
         if (session != null) {
           ((CidrDebugProcess)session.getDebugProcess()).postCommand(
-            drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_restart_target")
+            drv -> ((GDBDriver)drv).interruptAndExecuteConsole("pio_reset_halt_target")
           );
         }
       }
