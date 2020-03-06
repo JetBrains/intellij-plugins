@@ -63,10 +63,18 @@ module Teamcity
           scenario_outline_location = "#{location.file}:#{location.lines.min}"
           log_suite_started(@current_scenario_outline.name, file_colon_line=scenario_outline_location)
           log_suite_started(EXAMPLES_NODE)
+
+          scenario_outline = scenario_source(@current_scenario_outline).scenario_outline
+          print_tags(scenario_outline)
         end
 
         file_colon_line = "#{location.file}:#{location.lines.max}"
         log_suite_started(event.test_case.name, file_colon_line=file_colon_line)
+
+        if @current_scenario_outline.nil?
+          scenario = scenario_source(event.test_case).scenario
+          print_tags(scenario)
+        end
       end
 
       def on_test_step_started(event)
@@ -179,6 +187,15 @@ module Teamcity
         feature_line = feature.location.line
         file_colon_line = feature_file + ":" + feature_line.to_s
         log_suite_started(current_feature_display_name, file_colon_line=file_colon_line)
+        print_tags(feature)
+      end
+
+      def scenario_source(test_case)
+        @ast_lookup.scenario_source(test_case)
+      end
+
+      def print_tags(test_case)
+        @io.puts(test_case.tags.map { |tag| format_string(tag.name, :tag) }.join(' '))
       end
 
       def print_summary(features)
