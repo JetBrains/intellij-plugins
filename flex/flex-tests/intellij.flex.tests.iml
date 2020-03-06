@@ -10,7 +10,6 @@
     <orderEntry type="module" module-name="intellij.javascript.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.testFramework" scope="TEST" />
     <orderEntry type="module" module-name="intellij.javascript.tests.ex" scope="TEST" />
-    
     <orderEntry type="module" module-name="intellij.diagram.impl" scope="TEST" />
     <orderEntry type="module" module-name="intellij.flex" />
     <orderEntry type="module" module-name="intellij.flex.shared" />
