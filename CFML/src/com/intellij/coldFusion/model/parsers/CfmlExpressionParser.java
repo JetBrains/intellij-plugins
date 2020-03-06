@@ -641,6 +641,7 @@ public class CfmlExpressionParser {
       return false;
     }
     PsiBuilder.Marker newExpression = mark();
+    PsiBuilder.Marker outerExpression = newExpression;
     advance();
     PsiBuilder.Marker constructorCall = mark();
     if (getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE) {
@@ -657,23 +658,27 @@ public class CfmlExpressionParser {
     constructorCall.done(CfmlElementTypes.COMPONENT_CONSTRUCTOR_CALL);
     newExpression.done(CfmlElementTypes.NEW_EXPRESSION);
     while (getTokenType() == POINT) {
-      PsiBuilder.Marker expr = newExpression.precede();
+      PsiBuilder.Marker beforePoint = mark();
+      outerExpression = outerExpression.precede();
       advance();
       if (getTokenType() == IDENTIFIER) {
         advance();
+        beforePoint.drop();
+        outerExpression.done(CfmlElementTypes.REFERENCE_EXPRESSION);
+        beforePoint = mark();
         if (getTokenType() == L_BRACKET) {
-          expr.done(CfmlElementTypes.REFERENCE_EXPRESSION);
-          PsiBuilder.Marker functionExpr = expr.precede();
+          outerExpression = outerExpression.precede();
           if (!parseArgumentsList()) {
-            expr.rollbackTo();
+            beforePoint.rollbackTo();
             break;
           }
-          functionExpr.done(CfmlElementTypes.FUNCTION_CALL_EXPRESSION);
+          outerExpression.done(CfmlElementTypes.FUNCTION_CALL_EXPRESSION);
         }
-      } else {
-        expr.rollbackTo();
-        break;
+        beforePoint.drop();
+        continue;
       }
+      beforePoint.rollbackTo();
+      break;
     }
     return true;
   }
