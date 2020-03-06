@@ -11,19 +11,15 @@ public interface Angular2Directive extends Angular2Declaration {
 
   Angular2Directive[] EMPTY_ARRAY = new Angular2Directive[0];
 
-  @NotNull
-  Angular2DirectiveSelector getSelector();
+  @NotNull Angular2DirectiveSelector getSelector();
 
-  @NotNull
-  List<String> getExportAsList();
+  @NotNull List<String> getExportAsList();
 
-  @NotNull
-  default Collection<? extends Angular2DirectiveProperty> getInputs() {
+  default @NotNull Collection<? extends Angular2DirectiveProperty> getInputs() {
     return getBindings().getInputs();
   }
 
-  @NotNull
-  default Collection<? extends Angular2DirectiveProperty> getOutputs() {
+  default @NotNull Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return getBindings().getOutputs();
   }
 
@@ -31,15 +27,11 @@ public interface Angular2Directive extends Angular2Declaration {
     return getBindings().getInOuts();
   }
 
-  @NotNull
-  Angular2DirectiveProperties getBindings();
+  @NotNull Angular2DirectiveProperties getBindings();
 
-  @NotNull
-  Collection<? extends Angular2DirectiveAttribute> getAttributes();
+  @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes();
 
-  boolean isStructuralDirective();
-
-  boolean isRegularDirective();
+  @NotNull Angular2DirectiveKind getDirectiveKind();
 
   default boolean isComponent() {
     return this instanceof Angular2Component;

@@ -22,6 +22,7 @@ import com.intellij.util.SmartList;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
@@ -85,13 +86,8 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    return false;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return true;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 
   @Nullable
@@ -134,7 +130,7 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
         .select(JSArrayLiteralExpression.class)
         .flatArray(JSArrayLiteralExpression::getExpressions)
         .map(expr -> getReferencedFileFromPsi(expr, directRefs)))
-        .nonNull();
+      .nonNull();
   }
 
   @StubSafe

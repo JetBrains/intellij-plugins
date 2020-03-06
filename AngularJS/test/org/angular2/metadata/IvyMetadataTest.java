@@ -15,7 +15,7 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) +"/ivy";
+    return AngularTestUtil.getBaseTestDataPath(getClass()) + "/ivy";
   }
 
   @Override
@@ -72,8 +72,14 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject("priority", ".");
     myFixture.configureFromTempProjectFile("template.html");
     myFixture.completeBasic();
-    assertEquals(ContainerUtil.newArrayList("comp-ivy-bar","comp-ivy-foo", "comp-meta-bar"),
+    assertEquals(ContainerUtil.newArrayList("comp-ivy-bar", "comp-ivy-foo", "comp-meta-bar"),
                  ContainerUtil.sorted(myFixture.getLookupElementStrings()));
   }
 
+  public void testTransloco() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.copyDirectoryToProject("transloco", ".");
+    myFixture.configureFromTempProjectFile("transloco.html");
+    myFixture.checkHighlighting();
+  }
 }

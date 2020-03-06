@@ -23,6 +23,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
@@ -101,7 +102,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     gettingDescriptors.set(true);
     try {
       return getAttributeDescriptors(xmlTag, a -> true);
-    } finally {
+    }
+    finally {
       gettingDescriptors.set(false);
     }
   }
@@ -176,7 +178,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
-      if (!isTemplateTag && candidate.isStructuralDirective()) {
+      Angular2DirectiveKind kind = candidate.getDirectiveKind();
+      if (!isTemplateTag && kind.isStructural()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         for (SimpleSelectorWithPsi selector : selectors) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
@@ -197,7 +200,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           }
         }
       }
-      if (isTemplateTag || candidate.isRegularDirective()) {
+      if (isTemplateTag || kind.isRegular()) {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
         attributes.clear();

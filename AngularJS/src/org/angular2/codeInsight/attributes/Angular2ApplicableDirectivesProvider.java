@@ -53,7 +53,7 @@ public class Angular2ApplicableDirectivesProvider {
     boolean isTemplateTag = isTemplateTag(tagName);
     Set<Angular2Directive> matchedDirectives = new HashSet<>();
     matcher.match(cssSelector, (selector, directive) -> {
-      if (directive.isRegularDirective() || isTemplateTag) {
+      if (directive.getDirectiveKind().isRegular() || isTemplateTag) {
         matchedDirectives.add(directive);
       }
     });

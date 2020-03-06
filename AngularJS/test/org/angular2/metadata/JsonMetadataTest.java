@@ -35,7 +35,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) +"/json";
+    return AngularTestUtil.getBaseTestDataPath(getClass()) + "/json";
   }
 
   public void testMetadataJsonFileTypeBinary() {
@@ -97,6 +97,11 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     testMetadataStubBuilding("spread-operator/evo-ui-kit.metadata.json");
   }
 
+  public void testTranslocoDirectiveMetadataStubBuilding() {
+    myFixture.configureByFiles("transloco/ngneat-transloco.d.ts", "package.json");
+    testMetadataStubBuilding("transloco/ngneat-transloco.metadata.json");
+  }
+
   public void testJsonFileType() {
     PsiFile file = myFixture.configureByFile("package.json");
     assert file != null;
@@ -115,7 +120,8 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testInterModuleExtends() {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
-    myFixture.configureByFiles("inter_module_props.html", "inter_module_props.ts", "extends-comp.ts", "nz-icon.directive.d.ts", "icon.directive.d.ts");
+    myFixture.configureByFiles("inter_module_props.html", "inter_module_props.ts", "extends-comp.ts", "nz-icon.directive.d.ts",
+                               "icon.directive.d.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
@@ -211,6 +217,14 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     }
     // Should resolve to lexically first file
     assertEquals("bar1.metadata.json", ((Angular2MetadataReference)nodeModule.findMember("Test4")).resolve().getContainingFile().getName());
+  }
+
+  public void testTranslocoDirective() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.copyDirectoryToProject("transloco", ".");
+    myFixture.configureByFile("package.json");
+    myFixture.configureFromTempProjectFile("transloco.html");
+    myFixture.checkHighlighting();
   }
 
   private void testMetadataStubBuilding(String metadataJson) {

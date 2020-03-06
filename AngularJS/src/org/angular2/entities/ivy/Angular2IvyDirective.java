@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptLiteralType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -22,7 +21,7 @@ import static com.intellij.openapi.vfs.VirtualFileManager.VFS_STRUCTURE_MODIFICA
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.codeInsight.Angular2LibrariesHacks.hackIonicComponentOutputs;
 import static org.angular2.entities.metadata.Angular2MetadataUtil.getMetadataEntity;
-import static org.angular2.entities.source.Angular2SourceDirective.getConstructorParamsMatchNoCache;
+import static org.angular2.entities.source.Angular2SourceDirective.getDirectiveKindNoCache;
 
 public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEntityDef.Directive> implements Angular2Directive {
 
@@ -62,14 +61,9 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
-    return matches.first || matches.second;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return !getConstructorParamsMatch().first;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
   }
 
   protected Angular2Directive getMetadataDirective() {
@@ -81,12 +75,6 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvyEnti
       }
       return CachedValueProvider.Result.create(null, clazz, VFS_STRUCTURE_MODIFICATIONS);
     });
-  }
-
-  @NotNull
-  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      getConstructorParamsMatchNoCache(myClass), getClassModificationDependencies()));
   }
 
   @Override

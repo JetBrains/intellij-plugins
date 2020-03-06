@@ -5,6 +5,7 @@ import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelectorImpl;
 import org.angular2.entities.metadata.stubs.Angular2MetadataComponentStub;
@@ -48,12 +49,7 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    return false;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return true;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 }
