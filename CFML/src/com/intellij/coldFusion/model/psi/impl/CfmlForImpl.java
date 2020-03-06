@@ -19,10 +19,7 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -54,7 +51,7 @@ public class CfmlForImpl extends CfmlCompositeElement {
       }
       if (!(arrayReference instanceof CfmlTypedElement)) return null;
       PsiType type = ((CfmlTypedElement)arrayReference).getPsiType();
-      return type instanceof CfmlArrayType ? ((CfmlArrayType)type).getComponentType() : null;
+      return type instanceof PsiArrayType ? ((PsiArrayType)type).getComponentType() : null;
     }
 
     @Override

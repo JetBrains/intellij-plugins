@@ -4,10 +4,7 @@ package com.intellij.coldFusion.model.psi.impl;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -31,14 +28,10 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
     public PsiType getPsiType() {
       PsiElement parent = getParent();
       if (!(parent instanceof CfmlTagLoopImpl)) return null;
-      PsiElement valueElement = ((CfmlTagLoopImpl)parent).getAttributeValueElement("array");
-      if (valueElement == null) return null;
-      ASTNode referenceNode = valueElement.getNode().findChildByType(CfmlElementTypes.REFERENCE_EXPRESSION);
-      if (referenceNode == null) return null;
-      PsiElement arrayReference = referenceNode.getPsi();
+      PsiElement arrayReference = ((CfmlTagLoopImpl)parent).getArrayReferenceExpression();
       if (!(arrayReference instanceof CfmlTypedElement)) return null;
       PsiType type = ((CfmlTypedElement)arrayReference).getPsiType();
-      return type instanceof CfmlArrayType ? ((CfmlArrayType)type).getComponentType() : null;
+      return type instanceof PsiArrayType ? ((PsiArrayType)type).getComponentType() : null;
     }
 
     @NotNull
@@ -99,6 +92,15 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
       }
     }
     return CfmlPsiUtil.processDeclarations(processor, state, lastParent, this);
+  }
+  
+   CfmlExpression getArrayReferenceExpression () {
+     PsiElement valueElement = getAttributeValueElement("array");
+     if (valueElement == null) return null;
+     for (PsiElement cur = valueElement.getFirstChild(); cur != null; cur = cur.getNextSibling()) {
+       if (cur instanceof CfmlExpression) return (CfmlExpression)cur;
+     }
+     return null;
   }
 
   @Override

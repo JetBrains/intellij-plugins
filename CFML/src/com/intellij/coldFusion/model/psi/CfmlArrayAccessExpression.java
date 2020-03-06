@@ -1,12 +1,11 @@
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiArrayType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 public class CfmlArrayAccessExpression extends CfmlCompositeElement implements CfmlExpression, CfmlTypedElement {
   public CfmlArrayAccessExpression(@NotNull ASTNode node) {
@@ -32,14 +31,14 @@ public class CfmlArrayAccessExpression extends CfmlCompositeElement implements C
   @Nullable
   public PsiType getPsiType() {
     PsiType type = getExternalType();
-    
+
     if (type == null) {
       CfmlReference referenceExpression = getReferenceExpression();
       type = referenceExpression != null ? referenceExpression.getPsiType() : null;
     }
 
-    if (type instanceof CfmlArrayType) {
-      return ((CfmlArrayType)type).getComponentType();
+    if (type instanceof PsiArrayType) {
+      return ((PsiArrayType)type).getComponentType();
     }
     return null;
   }

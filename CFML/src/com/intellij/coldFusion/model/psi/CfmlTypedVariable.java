@@ -35,11 +35,11 @@ public interface CfmlTypedVariable extends CfmlVariable {
       qualifiedTypeString = file.getComponentQualifiedName(typeString);
     }
     if (qualifiedTypeString == null) return null;
+    PsiType type = new CfmlComponentType(qualifiedTypeString, file, getProject());
     if (isArray) {
-      return new CfmlArrayType(qualifiedTypeString, file, getProject());
-    } else {
-      return new CfmlComponentType(qualifiedTypeString, file, getProject());
+      type = type.createArrayType();
     }
+    return type;
   }
 
   @Override
