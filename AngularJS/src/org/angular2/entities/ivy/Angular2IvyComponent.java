@@ -3,6 +3,7 @@ package org.angular2.entities.ivy;
 
 import com.intellij.psi.PsiFile;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,11 @@ public class Angular2IvyComponent extends Angular2IvyDirective implements Angula
   @Override
   public PsiFile getTemplateFile() {
     return null;
+  }
+
+  @Override
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 
   @NotNull

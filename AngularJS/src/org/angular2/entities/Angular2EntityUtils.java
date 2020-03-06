@@ -27,6 +27,7 @@ import static com.intellij.openapi.util.Pair.pair;
 
 public class Angular2EntityUtils {
 
+  @NonNls public static final String ELEMENT_REF = "ElementRef";
   @NonNls public static final String TEMPLATE_REF = "TemplateRef";
   @NonNls public static final String VIEW_CONTAINER_REF = "ViewContainerRef";
 
@@ -148,14 +149,17 @@ public class Angular2EntityUtils {
       if (directive.isComponent()) {
         result.append("component");
       }
-      else if (directive.isStructuralDirective()) {
-        if (directive.isRegularDirective()) {
-          result.append("directive/");
-        }
-        result.append("template");
-      }
       else {
-        result.append("directive");
+        Angular2DirectiveKind kind = directive.getDirectiveKind();
+        if (kind.isStructural()) {
+          if (kind.isRegular()) {
+            result.append("directive/");
+          }
+          result.append("template");
+        }
+        else {
+          result.append("directive");
+        }
       }
       result.append(">")
         .append(": selector=")

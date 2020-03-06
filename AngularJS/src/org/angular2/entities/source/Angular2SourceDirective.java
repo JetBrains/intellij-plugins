@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.stubs.JSPropertyStub;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -37,12 +36,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntitiesProvider.withJsonMetadataFallback;
-import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
-import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
+import static org.angular2.entities.Angular2EntityUtils.*;
 import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
@@ -85,14 +82,9 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
-    return matches.first || matches.second;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return !getConstructorParamsMatch().first;
+  public @NotNull Angular2DirectiveKind getDirectiveKind() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
   }
 
   @NotNull
@@ -297,14 +289,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @NotNull
-  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      getConstructorParamsMatchNoCache(myClass), getClassModificationDependencies()));
-  }
-
-  @NotNull
-  public static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
-    Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
+  public static Angular2DirectiveKind getDirectiveKindNoCache(@NotNull TypeScriptClass clazz) {
+    Ref<Angular2DirectiveKind> result = new Ref<>(null);
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {
         List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
@@ -315,15 +301,14 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
           .nonNull()
           .map(type -> type.getTypeText())
           .toList();
-        boolean templateRef = exists(types, t -> t.contains(TEMPLATE_REF));
-        boolean viewContainerRef = exists(types, t -> t.contains(VIEW_CONTAINER_REF));
-        if (templateRef || viewContainerRef) {
-          result.set(pair(templateRef, viewContainerRef));
-          return false;
-        }
+        result.set(Angular2DirectiveKind.get(
+          exists(types, t -> t.contains(ELEMENT_REF)),
+          exists(types, t -> t.contains(TEMPLATE_REF)),
+          exists(types, t -> t.contains(VIEW_CONTAINER_REF))
+        ));
       }
-      return true;
+      return result.isNull();
     });
-    return result.get();
+    return result.isNull() ? Angular2DirectiveKind.REGULAR : result.get();
   }
 }

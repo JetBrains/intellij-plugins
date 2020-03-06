@@ -1,0 +1,7 @@
+<p <weak_warning descr="Property foo is not provided by any applicable directives nor by p element">[foo]</weak_warning>="1"></p>
+<p transloco="title"></p>
+<p [transloco]="<error descr="Unresolved variable or type title">title</error>" <warning descr="Attribute trans is not allowed here">trans</warning>></p>
+<p>{{ 'title' | transloco}}</p>
+<ng-container *transloco="let t">
+  <p>{{ t("foo") }}</p>
+</ng-container>

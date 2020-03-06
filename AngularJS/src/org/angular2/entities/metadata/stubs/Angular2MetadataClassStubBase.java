@@ -10,6 +10,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
 import org.angular2.index.Angular2MetadataClassNameIndex;
@@ -131,12 +132,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     return Collections.unmodifiableMap(myOutputMappings);
   }
 
-  public boolean isStructuralDirective() {
-    return readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
-  }
-
-  public boolean isRegularDirective() {
-    return readFlag(IS_REGULAR_DIRECTIVE_FLAG);
+  public @Nullable Angular2DirectiveKind getDirectiveKind() {
+    boolean isStructural = readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
+    boolean isRegular = readFlag(IS_REGULAR_DIRECTIVE_FLAG);
+    if (isStructural || isRegular) {
+      return Angular2DirectiveKind.get(isRegular, isStructural);
+    }
+    return null;
   }
 
   @Override
@@ -173,9 +175,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
     JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
     String constructorText = constructor != null ? constructor.getText() : "";
-    boolean hasTemplateRef = constructorText.contains(Angular2EntityUtils.TEMPLATE_REF);
-    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, hasTemplateRef || constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF));
-    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, !hasTemplateRef);
+    Angular2DirectiveKind kind = Angular2DirectiveKind.get(
+      constructorText.contains(Angular2EntityUtils.ELEMENT_REF),
+      constructorText.contains(Angular2EntityUtils.TEMPLATE_REF),
+      constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF)
+    );
+    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, kind != null && kind.isStructural());
+    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, kind != null && kind.isRegular());
   }
 
   private void loadMember(@NotNull JsonProperty property) {

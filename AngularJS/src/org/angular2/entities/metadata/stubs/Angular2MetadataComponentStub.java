@@ -12,6 +12,7 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.SmartList;
+import org.angular2.entities.Angular2DirectiveKind;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataComponent;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -79,13 +80,8 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
   }
 
   @Override
-  public boolean isStructuralDirective() {
-    return false;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return true;
+  public @Nullable Angular2DirectiveKind getDirectiveKind() {
+    return Angular2DirectiveKind.REGULAR;
   }
 
   @NotNull

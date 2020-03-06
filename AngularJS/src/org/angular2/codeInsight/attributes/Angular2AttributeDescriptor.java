@@ -119,7 +119,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
                                                                           @NotNull XmlTag tag,
                                                                           @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
-    if (!directive.isRegularDirective() && !isTemplateTag(tag)) {
+    if (!directive.getDirectiveKind().isRegular() && !isTemplateTag(tag)) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive, shouldIncludeOneTimeBinding).get();
