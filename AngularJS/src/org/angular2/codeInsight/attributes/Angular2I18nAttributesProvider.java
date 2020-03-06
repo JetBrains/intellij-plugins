@@ -104,6 +104,11 @@ public class Angular2I18nAttributesProvider implements Angular2AttributesProvide
     }
 
     @Override
+    public XmlAttributeDescriptor cloneWithName(String attributeName) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected boolean shouldInsertHandlerRemoveLeftover() {
       return false;
     }

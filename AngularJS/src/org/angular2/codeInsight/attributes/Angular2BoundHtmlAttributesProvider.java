@@ -108,6 +108,11 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
     }
 
     @Override
+    public XmlAttributeDescriptor cloneWithName(String attributeName) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected LookupElementInfo buildElementInfo(@NotNull PrefixMatcher prefixMatcher) {
       return new LookupElementInfo(getName(), asList(pair(SHORT_PREFIX, "]"), pair(CANONICAL_PREFIX, "")), null);
     }

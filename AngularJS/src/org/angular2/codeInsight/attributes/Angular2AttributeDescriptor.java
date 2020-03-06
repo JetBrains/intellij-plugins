@@ -112,9 +112,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     else {
       implied = true;
     }
-    if (info.type == EVENT) {
-      return new Angular2EventHandlerDescriptor(tag, attributeName, info, elements, implied);
-    }
     return new Angular2AttributeDescriptor(tag, attributeName, info, elements, implied);
   }
 
@@ -206,6 +203,12 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, elements, true);
     }
   }
+
+  public XmlAttributeDescriptor cloneWithName(String attributeName) {
+    return new Angular2AttributeDescriptor(myResolver.getScope(), attributeName,
+                                           myInfo, myPriority, myResolver.getSources(), myImplied);
+  }
+
 
   @Override
   public String getName() {
@@ -675,10 +678,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
 
     @NotNull
-    private Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-      return new Angular2EventHandlerDescriptor(myTag, EVENT.buildName(info.getName()), AttributePriority.HIGH,
-                                                singletonList(myDirective),
-                                                false);
+    private Angular2AttributeDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
+      return new Angular2AttributeDescriptor(myTag, EVENT.buildName(info.getName()), AttributePriority.HIGH,
+                                             singletonList(myDirective),
+                                             false);
     }
   }
 }
