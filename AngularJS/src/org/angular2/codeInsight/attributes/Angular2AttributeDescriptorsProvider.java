@@ -15,6 +15,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -28,6 +29,7 @@ import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
@@ -62,13 +64,22 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       return null;
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, xmlTag);
+    if (info.type == REGULAR) {
+      XmlAttribute attribute = xmlTag.getAttribute(attrName);
+      if (attribute != null && Angular2Interpolation.get(attribute).length > 0) {
+        info = Angular2AttributeNameParser.parseBound(attrName);
+      }
+    }
+
     Predicate<String> shouldIncludeOneTimeBinding = info.type == REGULAR ? name -> name.equals(attrName)
                                                                          : name -> false;
     for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag, shouldIncludeOneTimeBinding)) {
       if (d instanceof Angular2AttributeDescriptor) {
-        if (attrName.equals(d.getName())
-            || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
+        if (attrName.equals(d.getName())) {
           return d;
+        }
+        else if (info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
+          return ((Angular2AttributeDescriptor)d).cloneWithName(attrName);
         }
       }
       else if (attrName.equalsIgnoreCase(d.getName())) {
@@ -302,12 +313,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
       for (String name : allowedElementProperties) {
-        if (name.startsWith("(")) {
-          result.add(new Angular2EventHandlerDescriptor(xmlTag, name, emptyList(), true));
-        }
-        else {
-          result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
-        }
+        result.add(new Angular2AttributeDescriptor(xmlTag, name, emptyList(), true));
       }
       if (dependencies.isEmpty()) {
         dependencies = Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT);

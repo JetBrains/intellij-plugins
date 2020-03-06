@@ -194,6 +194,11 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     }
 
     @Override
+    public XmlAttributeDescriptor cloneWithName(String attributeName) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected boolean shouldInsertHandlerRemoveLeftover() {
       return true;
     }

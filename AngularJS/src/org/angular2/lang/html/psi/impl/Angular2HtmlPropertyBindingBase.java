@@ -17,22 +17,19 @@ public abstract class Angular2HtmlPropertyBindingBase extends Angular2HtmlBoundA
     super(type);
   }
 
-  @NotNull
-  public final String getPropertyName() {
+  public final @NotNull String getPropertyName() {
     return getAttributeInfo().name;
   }
 
-  @NotNull
-  public final PropertyBindingType getBindingType() {
+  public final @NotNull PropertyBindingType getBindingType() {
     return ((PropertyBindingInfo)getAttributeInfo()).bindingType;
   }
 
-  @Nullable
-  public final Angular2Binding getBinding() {
+  public final @Nullable Angular2Binding getBinding() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Binding.class));
   }
 
-  public final Angular2Interpolation @NotNull [] getInterpolations() {
+  public final @NotNull Angular2Interpolation @NotNull [] getInterpolations() {
     return PsiTreeUtil.findChildrenOfType(this, Angular2Interpolation.class)
       .toArray(new Angular2Interpolation[0]);
   }
