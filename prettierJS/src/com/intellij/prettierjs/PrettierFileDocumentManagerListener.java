@@ -99,8 +99,10 @@ public class PrettierFileDocumentManagerListener implements FileDocumentManagerL
 
       @NonNls String glob = "glob:" + PrettierConfiguration.getInstance(project).getFilesPattern();
       try {
+        ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher(glob);
-        List<VirtualFile> filesToProcess = ContainerUtil.filter(files, file -> matcher.matches(Paths.get(getPathToMatch(project, file))));
+        List<VirtualFile> filesToProcess = ContainerUtil.filter(files, file -> fileIndex.isInContent(file) &&
+                                                                               matcher.matches(Paths.get(getPathToMatch(project, file))));
         if (!filesToProcess.isEmpty()) {
           ReformatWithPrettierAction.processVirtualFiles(project, filesToProcess, ERROR_HANDLER);
         }
