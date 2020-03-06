@@ -30,6 +30,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.PathMacroUtil;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -45,6 +46,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
+    setWorkingDirectory(PathMacroUtil.MODULE_WORKING_DIR);
   }
 
   @NotNull
@@ -135,6 +137,16 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         myConsoleFilters.addAll(Arrays.asList(filters));
       }
     };
+  }
+
+  @Override
+  public String getWorkingDirectory() {
+    return super.getWorkingDirectory();
+  }
+
+  @Override
+  public void setWorkingDirectory(@Nullable String value) {
+    super.setWorkingDirectory(value);
   }
 
   private String[] getSMRunnerPaths() {
