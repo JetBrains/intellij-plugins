@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart;
+package com.jetbrains.lang.dart.spellchecker;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -9,7 +9,7 @@ import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 public class DartSpellcheckingStrategy extends SpellcheckingStrategy {
-  //private final Tokenizer myStringLiteralTokenizer = new DartStringLiteralTokenizer();
+  private final Tokenizer dartStringLiteralTokenizer = new DartStringLiteralTokenizer();
 
   @Override
   @NotNull
@@ -18,9 +18,8 @@ public class DartSpellcheckingStrategy extends SpellcheckingStrategy {
       return EMPTY_TOKENIZER;
     }
     else if (element instanceof DartStringLiteralExpression) {
-      // return myStringLiteralTokenizer; todo
+      return dartStringLiteralTokenizer;
     }
-
     return super.getTokenizer(element);
   }
 }
