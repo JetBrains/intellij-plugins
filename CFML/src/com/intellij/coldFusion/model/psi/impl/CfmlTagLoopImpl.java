@@ -2,9 +2,7 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
-import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -31,13 +29,26 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
 
     @Override
     public PsiType getPsiType() {
-      return null;
+      PsiElement parent = getParent();
+      if (!(parent instanceof CfmlTagLoopImpl)) return null;
+      PsiElement valueElement = ((CfmlTagLoopImpl)parent).getAttributeValueElement("array");
+      if (valueElement == null) return null;
+      ASTNode referenceNode = valueElement.getNode().findChildByType(CfmlElementTypes.REFERENCE_EXPRESSION);
+      if (referenceNode == null) return null;
+      PsiElement arrayReference = referenceNode.getPsi();
+      if (!(arrayReference instanceof CfmlTypedElement)) return null;
+      PsiType type = ((CfmlTypedElement)arrayReference).getPsiType();
+      return type instanceof CfmlArrayType ? ((CfmlArrayType)type).getComponentType() : null;
     }
 
     @NotNull
     @Override
     public String getName() {
-      return getNameIdentifier().getText();
+      String name = getNameIdentifier().getText();
+      if (name.startsWith("local.")) {
+        name = name.substring(6);
+      }
+      return name;
     }
 
     @Override

@@ -26,11 +26,22 @@ public interface CfmlTypedVariable extends CfmlVariable {
     String typeString = getType();
     if (typeString == null) return null;
     CfmlFile file = getContainingFile();
-    final String qualifiedTypeString = file.getComponentQualifiedName(typeString);
+
+    final boolean isArray = typeString.endsWith("[]");
+    final String qualifiedTypeString;
+    if (isArray) {
+      qualifiedTypeString = file.getComponentQualifiedName(typeString.substring(0, typeString.length() - 2));
+    } else {
+      qualifiedTypeString = file.getComponentQualifiedName(typeString);
+    }
     if (qualifiedTypeString == null) return null;
-    return new CfmlComponentType(qualifiedTypeString, file, getProject());
+    if (isArray) {
+      return new CfmlArrayType(qualifiedTypeString, file, getProject());
+    } else {
+      return new CfmlComponentType(qualifiedTypeString, file, getProject());
+    }
   }
-  
+
   @Override
   CfmlFile getContainingFile();
 

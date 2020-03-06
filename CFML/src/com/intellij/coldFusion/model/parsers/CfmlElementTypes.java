@@ -127,6 +127,12 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
       return new CfmlReferenceExpression(node);
     }
   };
+  IElementType ARRAY_ACCESS_EXPRESSION = new CfmlCompositeElementType("ArrayAccessExpression") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new CfmlArrayAccessExpression(node);
+    }
+  };
   CfmlCompositeElementType FUNCTION_CALL_EXPRESSION = new CfmlCompositeElementType("FunctionCallExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {

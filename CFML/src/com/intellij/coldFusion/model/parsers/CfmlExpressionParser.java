@@ -23,8 +23,6 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 import static com.intellij.coldFusion.model.lexer.CfscriptTokenTypes.*;
 
 /**
@@ -502,8 +500,7 @@ public class CfmlExpressionParser {
           isReference = true;
           referenceExpression = referenceExpression.precede();
           parseArrayAccess();
-          // referenceExpression.done(CfmlElementTypes.ARRAY_ACCESS);
-          referenceExpression.done(CfmlElementTypes.NONE);
+          referenceExpression.done(CfmlElementTypes.ARRAY_ACCESS_EXPRESSION);
           arrayAccessNumber++;
         }
         if (arrayAccessNumber != 1) {
