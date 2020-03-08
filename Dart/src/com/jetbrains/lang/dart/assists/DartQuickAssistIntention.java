@@ -58,7 +58,7 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
   public String getFamilyName() {
     final String message = DartBundle.message("dart.quick.assist.family.name");
     // a bit hacky way to make inspections enabling/disabling work, see IntentionActionWrapper.getFullFamilyName()
-    return quickAssistSet == null ? message : "Dart/" + message;
+    return quickAssistSet == null ? message : DartBundle.message("intention.family.name.dart.0", message);
   }
 
   @NotNull

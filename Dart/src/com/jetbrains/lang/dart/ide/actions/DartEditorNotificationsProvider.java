@@ -124,9 +124,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       super(EditorColors.GUTTER_BACKGROUND);
       createActionLabel(DartBundle.message("get.dependencies"), "Dart.pub.get");
       createActionLabel(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade");
-      createActionLabel("Build...", "Dart.build");
+      createActionLabel(DartBundle.message("action.label.text.build"), "Dart.build");
       myLinksPanel.add(new JSeparator(SwingConstants.VERTICAL));
-      createActionLabel("Repair cache...", "Dart.pub.cache.repair");
+      createActionLabel(DartBundle.message("action.label.text.repair.cache"), "Dart.pub.cache.repair");
     }
   }
 

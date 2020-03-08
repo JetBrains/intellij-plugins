@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.psi.DartFile;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.Nls;
@@ -60,15 +61,15 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : StringUtil.toLowerCase(errorSeverity);
       if (topLevelAction) {
         // Suppress 'unused_local' warning
-        setText("Suppress '" + errorCode + "' " + severityText);
+        setText(DartBundle.message("intention.text.suppress.0.1", errorCode, severityText));
       }
       else if (eolComment) {
         // Suppress 'unused_local' using EOL comment
-        setText("Suppress '" + errorCode + "' using EOL comment");
+        setText(DartBundle.message("intention.text.suppress.0.using.eol.comment", errorCode));
       }
       else {
         // Suppress 'unused_local'
-        setText("Suppress '" + errorCode + "'");
+        setText(DartBundle.message("intention.text.suppress.0", errorCode));
       }
     }
 
@@ -76,7 +77,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Suppress errors and warnings in Dart code";
+      return DartBundle.message("intention.family.name.suppress.errors.and.warnings.in.dart.code");
     }
 
     @Override

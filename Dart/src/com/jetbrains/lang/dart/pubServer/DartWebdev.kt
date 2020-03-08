@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.lang.dart.DartBundle
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase
 import com.jetbrains.lang.dart.sdk.DartSdk
 import com.jetbrains.lang.dart.sdk.DartSdkUtil
@@ -71,7 +72,7 @@ object DartWebdev {
     try {
       val processOutput = ProgressManager.getInstance()
         .runProcessWithProgressSynchronously<ProcessOutput, ExecutionException>(process,
-                                                                                "Activating Package 'webdev'",
+                                                                                DartBundle.message("progress.title.activating.package.webdev"),
                                                                                 true,
                                                                                 project)
       if (processOutput.isCancelled) return false

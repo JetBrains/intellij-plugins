@@ -5,6 +5,7 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import org.jetbrains.annotations.NotNull;
@@ -25,12 +26,12 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
   @NotNull
   public String getType(@NotNull final PsiElement element) {
     if (element instanceof DartLibraryNameElement) {
-      return "library";
+      return DartBundle.message("find.usages.type.library");
     }
     final DartComponentType type = DartComponentType.typeOf(element.getParent());
-    if (type == null) return "reference";
-    if (type == DartComponentType.LOCAL_VARIABLE) return "local variable";
-    if (type == DartComponentType.GLOBAL_VARIABLE) return "top level variable";
+    if (type == null) return DartBundle.message("find.usages.type.reference");
+    if (type == DartComponentType.LOCAL_VARIABLE) return DartBundle.message("find.usages.type.local.variable");
+    if (type == DartComponentType.GLOBAL_VARIABLE) return DartBundle.message("find.usages.type.top.level.variable");
     return StringUtil.toLowerCase(type.toString());
   }
 

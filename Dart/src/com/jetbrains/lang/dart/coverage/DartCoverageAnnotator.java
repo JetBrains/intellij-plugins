@@ -19,6 +19,7 @@ import com.intellij.coverage.CoverageBundle;
 import com.intellij.coverage.SimpleCoverageAnnotator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,8 +57,10 @@ public class DartCoverageAnnotator extends SimpleCoverageAnnotator {
   @Override
   protected String getFilesCoverageInformationString(@NotNull final DirCoverageInfo info) {
     if (info.totalFilesCount == 0) return null;
-    if (info.coveredFilesCount == 0) return info.coveredFilesCount + " of " + info.totalFilesCount + " files covered";
-    return info.coveredFilesCount + " of " + info.totalFilesCount + " files";
+    if (info.coveredFilesCount == 0) {
+      return DartBundle.message("coverage.string.0.of.1.files.covered", info.coveredFilesCount, info.totalFilesCount);
+    }
+    return DartBundle.message("coverage.string.0.of.1.files", info.coveredFilesCount, info.totalFilesCount);
     //return super.getFilesCoverageInformationString(info); // "15% files"
   }
 }

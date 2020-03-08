@@ -219,9 +219,10 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
           myDisabledForSession = true;
         }
         else if ("never.show.again".equals(e.getDescription())) {
-          NOTIFICATION_GROUP.createNotification("Warning disabled.",
-                                                "You can enable it back in the <a href=''>Event Log</a> settings.",
-                                                NotificationType.INFORMATION, new Adapter() {
+          NOTIFICATION_GROUP
+            .createNotification(DartBundle.message("notification.title.warning.disabled"),
+                                DartBundle.message("notification.content.you.can.enable.it.back.in.the.a.href.event.log.a.settings"),
+                                NotificationType.INFORMATION, new Adapter() {
               @Override
               protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                 notification.expire();
