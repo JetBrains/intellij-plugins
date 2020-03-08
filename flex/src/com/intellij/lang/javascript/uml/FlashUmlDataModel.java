@@ -756,10 +756,10 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
 
   public static String getMessage(final JSClass source, final JSClass target, final DiagramRelationshipInfo relationship) {
     if (relationship == FlashUmlRelationship.ANNOTATION) {
-      return "Remove annotation from class"; //TODO: return UmlBundle.message("remove.annotation.from.class", target.getName(), source.getName());
+      return "Remove annotation from class"; //TODO: return DiagramBundle.message("remove.annotation.from.class", target.getName(), source.getName());
     }
     else {
-      return "This will remove relationship between classes";//TODO: return UmlBundle.message("this.will.remove.relationship.link.between.classes", source.getQualifiedName());
+      return "This will remove relationship between classes";//TODO: return DiagramBundle.message("this.will.remove.relationship.link.between.classes", source.getQualifiedName());
     }
   }
 
