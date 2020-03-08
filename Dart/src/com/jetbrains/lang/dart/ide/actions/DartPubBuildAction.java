@@ -30,12 +30,12 @@ public class DartPubBuildAction extends DartPubActionBase {
     super.update(e);
     final Project project = e.getProject();
     if (project != null && DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(project))) {
-      e.getPresentation().setText("Webdev: Build...");
-      e.getPresentation().setDescription("Run 'webdev build'");
+      e.getPresentation().setText(DartBundle.message("action.text.webdev.build"));
+      e.getPresentation().setDescription(DartBundle.message("action.description.run.webdev.build"));
     }
     else {
-      e.getPresentation().setText("Pub: Build...");
-      e.getPresentation().setDescription("Run 'pub build'");
+      e.getPresentation().setText(DartBundle.message("action.test.pub.build"));
+      e.getPresentation().setDescription(DartBundle.message("action.description.run.pub.build"));
     }
   }
 

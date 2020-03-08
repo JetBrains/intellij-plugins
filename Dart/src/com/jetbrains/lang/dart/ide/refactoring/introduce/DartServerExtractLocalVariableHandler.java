@@ -34,6 +34,7 @@ import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBUI;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.refactoring.ServerExtractLocalVariableRefactoring;
@@ -234,7 +235,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
     final String[] names = refactoring.getNames();
     myVariableNameField = new NameSuggestionsField(names, project);
 
-    setTitle("Extract Local Variable");
+    setTitle(DartBundle.message("dialog.title.extract.local.variable"));
     init();
 
     final String name = StringUtil.notNullize(ArrayUtil.getFirstElement(names), "name");
@@ -265,7 +266,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
     gbConstraints.anchor = GridBagConstraints.WEST;
     JLabel nameLabel = new JLabel();
     panel.add(nameLabel, gbConstraints);
-    nameLabel.setText("Name:");
+    nameLabel.setText(DartBundle.message("label.text.name"));
 
     gbConstraints.insets = JBUI.insets(0, 4, 4, 0);
     gbConstraints.gridx = 1;

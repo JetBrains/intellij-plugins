@@ -78,8 +78,8 @@ public class DartServerExtractMethodHandler implements RefactoringActionHandler 
 class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtractMethodRefactoring> {
   @NotNull final ServerExtractMethodRefactoring myRefactoring;
   private final JTextField myMethodNameField = new JTextField();
-  private final JCheckBox myAllCheckBox = new JCheckBox("Extract all occurrences");
-  private final JCheckBox myGetterCheckBox = new JCheckBox("Extract getter");
+  private final JCheckBox myAllCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.all.occurrences"));
+  private final JCheckBox myGetterCheckBox = new JCheckBox(DartBundle.message("checkbox.text.extract.getter"));
   private final JLabel mySignatureLabel = new JLabel();
 
   DartServerExtractMethodDialog(@NotNull Project project,
@@ -87,7 +87,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
                                        @NotNull ServerExtractMethodRefactoring refactoring) {
     super(project, editor, refactoring);
     myRefactoring = refactoring;
-    setTitle("Extract Method");
+    setTitle(DartBundle.message("dialog.title.extract.method"));
     init();
 
     final String name = StringUtil.notNullize(ArrayUtil.getFirstElement(refactoring.getNames()), "name");
@@ -105,7 +105,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
 
     if (myRefactoring.getOccurrencesCount() != 1) {
       myAllCheckBox.setSelected(true);
-      myAllCheckBox.setText("Extract all " + myRefactoring.getOccurrencesCount() + " occurrences");
+      myAllCheckBox.setText(DartBundle.message("checkbox.text.extract.all.0.occurrences", myRefactoring.getOccurrencesCount()));
       myAllCheckBox.addActionListener(e -> myRefactoring.setExtractAll(myAllCheckBox.isSelected()));
     }
     else {
@@ -149,7 +149,7 @@ class DartServerExtractMethodDialog extends ServerRefactoringDialog<ServerExtrac
     gbConstraints.anchor = GridBagConstraints.WEST;
     JLabel nameLabel = new JLabel();
     panel.add(nameLabel, gbConstraints);
-    nameLabel.setText("Method name:");
+    nameLabel.setText(DartBundle.message("label.text.method.name"));
 
     gbConstraints.insets = JBUI.insets(0, 4, 4, 0);
     gbConstraints.gridx = 1;

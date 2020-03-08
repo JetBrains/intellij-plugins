@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class DartFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Dart";
+    return DartBundle.message("file.type.description.dart");
   }
 
   @NotNull

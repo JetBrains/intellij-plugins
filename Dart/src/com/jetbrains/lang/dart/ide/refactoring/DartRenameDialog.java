@@ -47,7 +47,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
   DartRenameDialog(@NotNull final Project project, @Nullable final Editor editor, @NotNull final ServerRenameRefactoring refactoring) {
     super(project, editor, refactoring);
 
-    setTitle("Rename " + refactoring.getElementKindName());
+    setTitle(DartBundle.message("dialog.title.rename.0", refactoring.getElementKindName()));
     createNewNameComponent();
     init();
   }

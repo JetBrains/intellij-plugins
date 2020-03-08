@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 public class DartServerRenameHandler implements RenameHandler, TitledHandler {
   @Override
   public String getActionTitle() {
-    return "Dart Rename Refactoring";
+    return DartBundle.message("action.title.dart.rename.refactoring");
   }
 
   @Override

@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.EditorComboBoxEditor;
 import com.intellij.ui.EditorComboBoxRenderer;
 import com.intellij.ui.StringComboboxEditor;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.psi.DartExpression;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class DartIntroduceDialog extends DialogWrapper {
     if (myOccurrencesCount > 1) {
       myReplaceAll.setSelected(false);
       myReplaceAll.setEnabled(true);
-      myReplaceAll.setText(myReplaceAll.getText() + " (" + myOccurrencesCount + " occurrences)");
+      myReplaceAll.setText(DartBundle.message("checkbox.text.0.1.occurrences", myReplaceAll.getText(), myOccurrencesCount));
     }
     else {
       myReplaceAll.setSelected(false);
