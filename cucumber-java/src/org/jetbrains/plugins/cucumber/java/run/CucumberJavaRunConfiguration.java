@@ -139,16 +139,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     };
   }
 
-  @Override
-  public String getWorkingDirectory() {
-    return super.getWorkingDirectory();
-  }
-
-  @Override
-  public void setWorkingDirectory(@Nullable String value) {
-    super.setWorkingDirectory(value);
-  }
-
   private String[] getSMRunnerPaths() {
     List<String> result = new ArrayList<>();
 
