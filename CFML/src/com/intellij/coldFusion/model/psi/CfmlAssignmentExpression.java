@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
+import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
@@ -124,7 +125,7 @@ public class CfmlAssignmentExpression extends CfmlCompositeElement implements Cf
 
     @Override
     public String getTypeName() {
-      return "Unknown type";
+      return CfmlBundle.message("element.type.name.unknown.type");
     }
 
     @Override
