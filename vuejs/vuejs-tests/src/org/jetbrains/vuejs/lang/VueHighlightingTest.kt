@@ -1264,7 +1264,7 @@ namespace <info descr="moduleName">space</info> {
     var <info descr="static field">i</info>:<info descr="exported class">SpaceInterface</info>;
 }
 import <info descr="exported class">SpaceInterface</info> = <info descr="moduleName">space</info>.<info descr="exported class">SpaceInterface</info>;
-var <info descr="local variable">i</info>:<info descr="exported class">SpaceInterface</info>;
+var <info descr="global variable">i</info>:<info descr="exported class">SpaceInterface</info>;
 </script>
 """)
     myFixture.checkHighlighting(false, true, true)
