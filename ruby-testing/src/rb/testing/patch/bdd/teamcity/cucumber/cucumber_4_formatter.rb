@@ -60,7 +60,7 @@ module Teamcity
           @current_scenario_outline = event.test_case
           scenario_outline_location = "#{location.file}:#{location.lines.min}"
 
-          scenario_outline_node_name = get_scenario_node_name(@current_scenario_outline, true)
+          scenario_outline_node_name = scenario_node_name(@current_scenario_outline, outline_container: true)
           log_suite_started(scenario_outline_node_name, file_colon_line=scenario_outline_location)
           log_suite_started(EXAMPLES_NODE)
 
@@ -70,7 +70,7 @@ module Teamcity
 
 
         file_colon_line = "#{location.file}:#{location.lines.max}"
-        scenario_node_name = get_scenario_node_name(event.test_case)
+        scenario_node_name = scenario_node_name(event.test_case)
         log_suite_started(scenario_node_name, file_colon_line=file_colon_line)
 
         if @current_scenario_outline.nil?
@@ -120,7 +120,7 @@ module Teamcity
       end
 
       def on_test_case_finished(event)
-        scenario_node_name = get_scenario_node_name(event.test_case)
+        scenario_node_name = scenario_node_name(event.test_case)
         @passed_test_cases << event.test_case if @config.wip? && event.result.passed?
         log_suite_finished(scenario_node_name)
       end
@@ -147,7 +147,7 @@ module Teamcity
       def close_scenario_outline
         if @current_scenario_outline
           log_suite_finished(EXAMPLES_NODE)
-          scenario_outline_node_name = get_scenario_node_name(@current_scenario_outline, true)
+          scenario_outline_node_name = scenario_node_name(@current_scenario_outline, outline_container: true)
           log_suite_finished(scenario_outline_node_name)
           @current_scenario_outline = nil
         end
@@ -157,16 +157,9 @@ module Teamcity
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
         feature = gherkin_document.feature
 
-        result = nil
-        feature.children.each do |p|
-          rule = p.rule
-          unless rule.nil?
-            if rule.location.line <= test_case.location.lines.min
-              result = rule
-            end
-          end
-        end
-        result
+        feature.children.map(&:rule).reject(&:nil?).filter do |rule|
+          rule.location.line <= test_case.location.lines.min
+        end.last
       end
 
       def close_rule
@@ -212,26 +205,17 @@ module Teamcity
         @io.puts(test_case.tags.map { |tag| format_string(tag.name, :tag) }.join(' '))
       end
 
-      def get_scenario_keyword(test_case)
-        source = scenario_source(test_case)
-        if source.respond_to? :scenario_outline
-          source.scenario_outline.keyword
-        els
-          source.scenario.keyword
-        end
-      end
-
-      def get_scenario_node_name(test_case, outline_container=false)
+      def scenario_node_name(test_case, outline_container: false)
         source = scenario_source(test_case)
         if source.respond_to? :scenario_outline
           unless outline_container
-            return "Scenario: Line: " + test_case.location.lines.max.to_s
+            return "Scenario: Line: #{test_case.location.lines.max}"
           end
           prefix = source.scenario_outline.keyword
         else
           prefix = source.scenario.keyword
         end
-        prefix + ': ' + test_case.name
+        "#{prefix}: #{test_case.name}"
       end
 
       def get_step_node_name(test_step)
