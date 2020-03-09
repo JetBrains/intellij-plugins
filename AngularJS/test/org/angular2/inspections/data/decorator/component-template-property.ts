@@ -6,6 +6,11 @@ export class NoProp {
 
 }
 
+@Component(<error descr="NoProp doesn't have a template">{}</error>)
+export default class NoProp {
+
+}
+
 @Component({
     templateUrl: ""
 })

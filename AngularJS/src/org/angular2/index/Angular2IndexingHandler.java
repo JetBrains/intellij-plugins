@@ -32,7 +32,7 @@ import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
@@ -77,6 +77,9 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @NonNls public static final String NG_MODULE_INDEX_NAME = "ngModule";
 
   @NonNls private static final String STYLESHEET_INDEX_PREFIX = "ss/";
+
+  public static final TokenSet TS_CLASS_TOKENS = TokenSet.create(JSStubElementTypes.TYPESCRIPT_CLASS,
+                                                                 JSStubElementTypes.TYPESCRIPT_CLASS_EXPRESSION);
 
   private static final Set<String> STUBBED_PROPERTIES = ContainerUtil.newHashSet(
     TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP);
@@ -164,7 +167,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @Nullable
   @Override
   public JSElementIndexingDataImpl processDecorator(@NotNull ES6Decorator decorator, @Nullable JSElementIndexingDataImpl data) {
-    TypeScriptClass enclosingClass = PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class);
+    TypeScriptClass enclosingClass = getClassForDecoratorElement(decorator);
     if (enclosingClass != null) {
       String decoratorName = decorator.getDecoratorName();
       boolean isComponent = false;
@@ -336,9 +339,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     }
     if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
       // inline content
-      return ContainerUtil.packNullables(PsiTreeUtil.getContextOfType(
-        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file.getOriginalFile()),
-        TypeScriptClass.class));
+      return ContainerUtil.packNullables(getClassForDecoratorElement(
+        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file.getOriginalFile())));
     }
     // external content
     List<TypeScriptClass> result = new SmartList<>(
@@ -355,8 +357,9 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     final String name = file.getViewProvider().getVirtualFile().getNameWithoutExtension();
     final PsiDirectory dir = file.getParent();
     final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+
     if (directiveFile != null) {
-      return StreamEx.of(JSStubBasedPsiTreeUtil.getFileOrModuleChildrenStream(directiveFile))
+      return StreamEx.of(JSStubBasedPsiTreeUtil.findDescendants(directiveFile, TS_CLASS_TOKENS))
         .select(TypeScriptClass.class)
         .filter(cls -> {
           ES6Decorator dec = findDecorator(cls, COMPONENT_DEC);
@@ -376,7 +379,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         PsiElement componentDecorator = el.getParent();
         if (componentDecorator instanceof ES6Decorator
             && hasFileReference((ES6Decorator)componentDecorator, file)) {
-          ContainerUtil.addIfNotNull(result, PsiTreeUtil.getContextOfType(componentDecorator, TypeScriptClass.class));
+          ContainerUtil.addIfNotNull(result, getClassForDecoratorElement(componentDecorator));
         }
       }
       return true;

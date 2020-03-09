@@ -101,4 +101,10 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("duplicateDeclarationOffLocalTemplate.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testNestedComponentClasses() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("nested-classes.html", "nested-classes.ts","package.json");
+    myFixture.checkHighlighting();
+  }
 }

@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testIntegration.TestFinderHelper;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Declaration;
@@ -42,7 +41,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
                                                     Angular2Declaration.class);
           if (declaration != null) {
             Collection<Angular2Module> modules = declaration.getAllModules();
-            PsiElement classIdentifier = notNull(doIfNotNull(PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class),
+            PsiElement classIdentifier = notNull(doIfNotNull(getClassForDecoratorElement(decorator),
                                                              TypeScriptClass::getNameIdentifier), decorator);
             if (modules.isEmpty()) {
               holder.registerProblem(classIdentifier,
