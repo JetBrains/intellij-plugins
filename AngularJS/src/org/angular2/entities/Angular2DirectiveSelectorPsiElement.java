@@ -11,11 +11,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import static org.angular2.Angular2DecoratorUtil.getClassForDecoratorElement;
 
 public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PomTarget, NavigationItem {
 
@@ -93,7 +94,7 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   @Override
   public String getLocationString() {
     PsiElement parent = myParent.getValue();
-    TypeScriptClass clazz = PsiTreeUtil.getContextOfType(parent, TypeScriptClass.class, false);
+    TypeScriptClass clazz = getClassForDecoratorElement(parent);
     return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
                          : parent.getContainingFile().getName() + ":" + getTextOffset();
   }

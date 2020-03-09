@@ -41,6 +41,17 @@ export class MyDirective {
 }
 
 @Directive({
+    inputs: ["", ""],
+    outputs: [
+        "",
+        ""
+    ]
+})
+export default class MyDirective {
+
+}
+
+@Directive({
     selector: ""
 })
 export class MyDirective {
@@ -58,6 +69,13 @@ export class MyDirective {
     selector: "[foo]:not(a:not()"
 })
 export class MyDirective {
+
+}
+
+@Directive({
+    selector: "[foo]:not(a:not()"
+})
+export default class MyDirective {
 
 }
 

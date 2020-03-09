@@ -7,6 +7,8 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportExportDeclaration;
 import com.intellij.lang.javascript.injections.JSInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClassExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
@@ -28,7 +30,9 @@ import java.util.Optional;
 import static com.intellij.psi.util.PsiTreeUtil.getContextOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
 import static com.intellij.util.ArrayUtil.contains;
-import static com.intellij.util.ObjectUtils.*;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
+import static org.angular2.index.Angular2IndexingHandler.TS_CLASS_TOKENS;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
 public class Angular2DecoratorUtil {
@@ -73,6 +77,10 @@ public class Angular2DecoratorUtil {
     return false;
   }
 
+  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String name) {
+    return findDecorator(attributeListOwner, new String[]{name});
+  }
+
   @StubSafe
   @Nullable
   public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, String @NotNull ... names) {
@@ -85,19 +93,10 @@ public class Angular2DecoratorUtil {
         return decorator;
       }
     }
-    return null;
-  }
-
-  @StubSafe
-  @Nullable
-  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String name) {
-    JSAttributeList list = attributeListOwner.getAttributeList();
-    if (list == null) {
-      return null;
-    }
-    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      if (isAngularEntityDecorator(decorator, name)) {
-        return decorator;
+    if (attributeListOwner instanceof TypeScriptClassExpression) {
+      JSAttributeListOwner context = tryCast(attributeListOwner.getContext(), JSAttributeListOwner.class);
+      if (context != null) {
+        return findDecorator(context, names);
       }
     }
     return null;
@@ -183,8 +182,8 @@ public class Angular2DecoratorUtil {
     String decoratorName = decorator.getDecoratorName();
     return decoratorName != null
            && contains(decoratorName, names)
-           && doIfCast(decorator.getContext(), JSAttributeList.class,
-                 attrList -> attrList.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) != Boolean.TRUE
+           && doIfNotNull(doIfNotNull(getClassForDecoratorElement(decorator), JSAttributeListOwner::getAttributeList),
+                          attrList -> attrList.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) != Boolean.TRUE
            && Angular2LangUtil.isAngular2Context(decorator)
            && hasAngularImport(decoratorName, decorator.getContainingFile());
   }
@@ -197,5 +196,22 @@ public class Angular2DecoratorUtil {
       .map(StringUtil::unquoteString)
       .map(from -> ANGULAR_CORE_PACKAGE.equals(from))
       .orElse(false);
+  }
+
+  @Nullable
+  public static TypeScriptClass getClassForDecoratorElement(@Nullable PsiElement element) {
+    ES6Decorator decorator = element instanceof ES6Decorator ? (ES6Decorator)element
+                                                             : getContextOfType(element, ES6Decorator.class, false);
+    if (decorator == null) {
+      return null;
+    }
+    JSAttributeListOwner context = getContextOfType(decorator, JSAttributeListOwner.class);
+    if (context == null) {
+      return null;
+    }
+    if (context instanceof TypeScriptClass) {
+      return (TypeScriptClass)context;
+    }
+    return (TypeScriptClass)ArrayUtil.getFirstElement(JSStubBasedPsiTreeUtil.getChildrenByType(context, TS_CLASS_TOKENS));
   }
 }

@@ -6,6 +6,11 @@ export class NoProp {
 
 }
 
+@Component({})
+export default class NoProp {
+
+}
+
 @Component({
     templateUrl: ""
 })
