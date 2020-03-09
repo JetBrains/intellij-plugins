@@ -103,7 +103,7 @@ public class CfmlMappingsForm {
     };
     myTableEditor.getEmptyText().setText(CfmlBundle.message("no.mapping"));
 
-    myTablePanel.setBorder(IdeBorderFactory.createTitledBorder("Server mappings:", false, JBUI.insetsTop(8)).setShowLine(false));
+    myTablePanel.setBorder(IdeBorderFactory.createTitledBorder(CfmlBundle.message("border.text.server.mappings"), false, JBUI.insetsTop(8)).setShowLine(false));
     myTablePanel.add(myTableEditor.getContentPane(), BorderLayout.CENTER);
 
     //noinspection SpellCheckingInspection

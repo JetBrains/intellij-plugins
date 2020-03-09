@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CfmlTemplateContextType extends TemplateContextType {
   protected CfmlTemplateContextType() {
-    super("ColdFusion", "ColdFusion");
+    super("ColdFusion", CfmlBundle.message("template.context.presentable.name.coldfusion"));
   }
 
   @Override

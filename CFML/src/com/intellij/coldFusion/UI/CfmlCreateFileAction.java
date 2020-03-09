@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion.UI;
 
+import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
 import com.intellij.openapi.project.DumbAware;
@@ -32,7 +33,7 @@ public class CfmlCreateFileAction extends CreateFileFromTemplateAction implement
   @NonNls private static final String DEFAULT_HTML_TEMPLATE_PROPERTY = "DefaultCfmlFileTemplate";
 
   public CfmlCreateFileAction() {
-    super("CFML/CFC file", "Creates new CFML/CFC file", CFMLIcons.Cfml);
+    super(CfmlBundle.message("action.name.cfml.cfc.file"), CfmlBundle.message("action.CfmlCreateFileAction.description"), CFMLIcons.Cfml);
   }
 
   @Override
@@ -43,17 +44,17 @@ public class CfmlCreateFileAction extends CreateFileFromTemplateAction implement
   @Override
   protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
     builder
-      .setTitle("CFML/CFC File")
-      .addKind("CFML File", CFMLIcons.Cfml, "ColdFusion File.cfm")
-      .addKind("Script Component", CFMLIcons.Cfml, "ColdFusion Script Component.cfc")
-      .addKind("Script Interface", CFMLIcons.Cfml, "ColdFusion Script Interface.cfc")
-      .addKind("Tag Component", CFMLIcons.Cfml, "ColdFusion Tag Component.cfc")
-      .addKind("Tag Interface", CFMLIcons.Cfml, "ColdFusion Tag Interface.cfc");
+      .setTitle(CfmlBundle.message("dialog.title.cfml.cfc.file2"))
+      .addKind(CfmlBundle.message("dialog.kind.cfml.file"), CFMLIcons.Cfml, "ColdFusion File.cfm")
+      .addKind(CfmlBundle.message("dialog.kind.script.component"), CFMLIcons.Cfml, "ColdFusion Script Component.cfc")
+      .addKind(CfmlBundle.message("dialog.kind.script.interface"), CFMLIcons.Cfml, "ColdFusion Script Interface.cfc")
+      .addKind(CfmlBundle.message("dialog.kind.tag.component"), CFMLIcons.Cfml, "ColdFusion Tag Component.cfc")
+      .addKind(CfmlBundle.message("dialog.kind.tag.interface"), CFMLIcons.Cfml, "ColdFusion Tag Interface.cfc");
   }
 
   @Override
   protected String getActionName(PsiDirectory directory, @NotNull String newName, String templateName) {
-    return "CFML/CFC file";
+    return CfmlBundle.message("action.name.cfml.cfc.file");
   }
 
   @Override

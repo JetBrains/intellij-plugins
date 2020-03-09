@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.quickFix.CreateFileFix;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlTag;
@@ -51,7 +52,8 @@ public class CfmlFileReferenceInspection extends LocalInspectionTool {
 
               holder.registerProblem(
                 ref.getElement(), ref.getRangeInElement(),
-                isOnTheFly ? "Path '" + ref.getCanonicalText() + "' not found" : "Path not found",
+                isOnTheFly ? CfmlBundle.message("problem.message.inspection.cfml.file.reference.description2", ref.getCanonicalText())
+                           : CfmlBundle.message("problem.message.inspection.cfml.file.reference.description"),
                 isOnTheFly && dir != null
                 ? new LocalQuickFix[]{new CreateFileFix(i < refs.length - 1, ref.getCanonicalText(), dir)}
                 : LocalQuickFix.EMPTY_ARRAY

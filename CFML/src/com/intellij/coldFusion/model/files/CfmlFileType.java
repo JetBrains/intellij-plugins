@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.files;
 
+import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import icons.CFMLIcons;
@@ -28,7 +29,7 @@ public class CfmlFileType extends LanguageFileType {
   @Override
   @NotNull
   public String getDescription() {
-    return "ColdFusion";
+    return CfmlBundle.message("file.type.description.coldfusion");
   }
 
   @Override
