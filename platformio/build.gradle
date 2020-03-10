@@ -1,0 +1,48 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url 'https://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.5.0-SNAPSHOT"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.4.16'
+}
+apply plugin: 'org.jetbrains.intellij'
+
+
+group 'intellij.clion.embedded.platformio'
+version '1.0'
+
+
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+  version 'CL-LATEST-EAP-SNAPSHOT'
+  downloadSources false
+  plugins = ['clion-embedded']
+}
+
+sourceSets {
+  main.java.srcDirs = ['src']
+  main.resources.srcDirs = ['resources']
+  test.java.srcDirs = ['test']
+  test.resources.srcDirs = ['test-resources']
+}
+
+patchPluginXml {
+  changeNotes """
+<ul>
+ <li>Added Gradle support</li>
+</ul>"""
+}

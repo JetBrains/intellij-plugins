@@ -5,7 +5,7 @@
   <category>Embedded Development</category>
 
   <description><![CDATA[
-<a href="https://latformio.org/">PlatformIO.org</a> plugin for CLion integration
+<a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
 <br>
 <p>A new generation toolset for embedded C/C++ development</p>
 <p>PlatformIO is a new generation ecosystem for embedded development.</p>
