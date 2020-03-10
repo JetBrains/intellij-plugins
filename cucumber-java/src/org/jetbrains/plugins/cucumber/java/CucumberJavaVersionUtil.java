@@ -85,13 +85,13 @@ public class CucumberJavaVersionUtil {
     JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
     for (Pair<String, String> marker : VERSION_CLASS_MARKERS) {
       if (facade.findClass(marker.first, scope) != null) {
-        LOG.info("Cucumber-core version detected by class: " + marker.first + ", version: " + marker.second);
+        LOG.debug("Cucumber-core version detected by class: " + marker.first + ", version: " + marker.second);
         return marker.second;
       }
     }
 
     String theLatestVersion = VERSION_CLASS_MARKERS.get(VERSION_CLASS_MARKERS.size() - 1).second;
-    LOG.warn("Can't detect cucumber-core version by marker class, assume the latest version: " + theLatestVersion);
+    LOG.debug("Can't detect cucumber-core version by marker class, assume the latest version: " + theLatestVersion);
 
     return theLatestVersion;
   }
