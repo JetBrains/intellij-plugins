@@ -71,7 +71,7 @@ public class IDEtalkConfiguration implements Configurable {
     });
   }
 
-  private void setTimoutModel(JSpinner spinner, String option, int defaultValue) {
+  private void setTimeoutModel(JSpinner spinner, String option, int defaultValue) {
     double value = myOptions.getNumber(option, defaultValue);
     spinner.setModel(new SpinnerNumberModel(value, 0.0, 9999, 1.0));
   }
@@ -122,8 +122,8 @@ public class IDEtalkConfiguration implements Configurable {
       option.getFirst().setSelected(option.getSecond().isSet());
     }
 
-    setTimoutModel(myTimeoutAway, IDEtalkOptions.TIMEOUT_AWAY_MIN, UserActivityMonitor.AWAY_MINS);
-    setTimoutModel(myTimeoutXA, IDEtalkOptions.TIMEOUT_XA_MIN, UserActivityMonitor.EXTENDED_AWAY_MINS);
+    setTimeoutModel(myTimeoutAway, IDEtalkOptions.TIMEOUT_AWAY_MIN, UserActivityMonitor.AWAY_MINS);
+    setTimeoutModel(myTimeoutXA, IDEtalkOptions.TIMEOUT_XA_MIN, UserActivityMonitor.EXTENDED_AWAY_MINS);
   }
 
   @Override
