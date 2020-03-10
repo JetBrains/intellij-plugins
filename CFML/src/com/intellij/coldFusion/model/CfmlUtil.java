@@ -2,14 +2,14 @@
 package com.intellij.coldFusion.model;
 
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.info.CfmlAttributeDescription;
 import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.coldFusion.model.info.CfmlTagDescription;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlKeywords;
-import com.intellij.coldFusion.model.psi.CfmlImport;
-import com.intellij.coldFusion.model.psi.CfmlReferenceExpression;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagImpl;
 import com.intellij.lang.Language;
 import com.intellij.lang.PsiBuilder;
@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -167,6 +168,18 @@ public class CfmlUtil {
     return getCfmlLangInfo(project).getTagAttributes().get(tagName).isEndTagRequired();
   }
 
+  public static String getComponentDescription(CfmlComponent component, Project project) {
+    return CfmlDocUtil.componentDescription(component, project);
+  }
+
+  public static String getFunctionDescription(CfmlFunction function, Project project) {
+    return CfmlDocUtil.functionDescription(function, project);
+  }
+
+  public static String getPropertyDescription(CfmlProperty property, Project project) {
+    return CfmlDocUtil.propertyDescription(property, project);
+  }
+
   public static String getTagDescription(String tagName, Project project) {
     return CfmlDocUtil.tagDescription(tagName, project);
   }
@@ -293,5 +306,25 @@ public class CfmlUtil {
       return Couple.of(null, name);
     }
     return Couple.of(name.substring(0, index), name.substring(index + 1));
+  }
+
+  @Nullable
+  public static PsiType getTypeFromName(CfmlFile file, String typeName, Project project) {
+    if (file == null || typeName == null) return null;
+
+    final boolean isArray = typeName.endsWith("[]");
+    final String qualifiedTypeString;
+    if (isArray) {
+      qualifiedTypeString = file.getComponentQualifiedName(typeName.substring(0, typeName.length() - 2));
+    }
+    else {
+      qualifiedTypeString = file.getComponentQualifiedName(typeName);
+    }
+    if (qualifiedTypeString == null) return null;
+    PsiType type = new CfmlComponentType(qualifiedTypeString, file, project);
+    if (isArray) {
+      type = type.createArrayType();
+    }
+    return type;
   }
 }

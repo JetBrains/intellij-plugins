@@ -5,20 +5,19 @@ package com.intellij.coldFusion.model.psi.impl;
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
-import com.intellij.coldFusion.model.psi.CfmlParameter;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author vnikolaenko
  */
-public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlVariable {
+public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlTypedVariable {
   public static final CfmlFunctionParameterImpl[] EMPTY_ARRAY = new CfmlFunctionParameterImpl[0];
 
   public CfmlFunctionParameterImpl(@NotNull ASTNode node) {
@@ -30,11 +29,6 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     throw new IncorrectOperationException();
   }
 
-  @Override
-  public PsiType getPsiType() {
-    return null;
-  }
-
   @NotNull
   @Override
   public String getName() {
@@ -43,6 +37,12 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
       return parameterName.getText();
     }
     return "";
+  }
+
+  @Nullable
+  @Override
+  public String getDescription() {
+    return null;
   }
 
   @Override
@@ -56,6 +56,14 @@ public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements C
     final PsiElement typeElement = findChildByType(CfmlElementTypes.TYPE);
     if (typeElement != null) {
       return typeElement.getText();
+    }
+    return null;
+  }
+
+  public String getDefault() {
+    final PsiElement defaultElement = findChildByType(CfmlElementTypes.VALUE);
+    if (defaultElement != null) {
+      return defaultElement.getText();
     }
     return null;
   }

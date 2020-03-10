@@ -15,12 +15,16 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
+import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.coldFusion.model.psi.CfmlComponentReference;
 import com.intellij.coldFusion.model.psi.CfmlImport;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author vnikolaenko
@@ -32,15 +36,17 @@ public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   }
 
   @Override
-  public boolean isImported(String componentName) {
-    String importString = getImportString();
-    return importString != null ? importString.endsWith(componentName) : false;
-  }
-
-  @Override
   public String getImportString() {
+    String retval = null;
     PsiElement taglib = getAttributeValueElement("taglib");
-    return taglib != null ? taglib.getText() : null;
+    if (taglib != null) {
+      retval = taglib.getText();
+    }
+    PsiElement path = getAttributeValueElement("path");
+    if (path != null) {
+      retval = path.getText();
+    }
+    return retval;
   }
 
   @Override
@@ -52,9 +58,12 @@ public class CfmlImportImpl extends CfmlTagImpl implements CfmlImport {
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    PsiElement taglib = getAttributeValueElement("taglib");
-    if (taglib != null) {
-      return new PsiReference[]{new CfmlComponentReference(taglib.getNode(), this)};
+    PsiElement valueNode = getAttributeValueElement("taglib");
+    if (valueNode == null) {
+      valueNode = getAttributeValueElement("path");
+    }
+    if (valueNode != null) {
+      return new PsiReference[]{new CfmlComponentReference(valueNode.getNode(), this)};
     }
     return super.getReferences();
   }

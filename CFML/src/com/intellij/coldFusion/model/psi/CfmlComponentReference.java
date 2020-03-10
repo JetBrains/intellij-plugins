@@ -122,8 +122,8 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
       // PsiFile containingFile = getContainingFile();
       // containingFile = containingFile == null ? null : containingFile.getOriginalFile();
       {
-        CfmlFile cfmlConteiningFile = originalFile;
-        PsiDirectory directory = cfmlConteiningFile.getParent();
+        CfmlFile cfmlContainingFile = originalFile;
+        PsiDirectory directory = cfmlContainingFile.getParent();
         if (directory != null) {
           GlobalSearchScope searchScope = GlobalSearchScopesCore.directoryScope(directory, false);
 
@@ -165,6 +165,15 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
         componentName);
       components.addAll(CfmlIndex.getInstance(project).getInterfacesByName(
         componentName));
+
+      if (componentName.equals("*")) {
+        for (String name : CfmlIndex.getInstance(project).getAllComponentsNames()) {
+          components.addAll(CfmlIndex.getInstance(project).getComponentsByName(name));
+        }
+        for (String name : CfmlIndex.getInstance(project).getAllInterfaceNames()) {
+          components.addAll(CfmlIndex.getInstance(project).getInterfacesByName(name));
+        }
+      }
 
       for (CfmlComponent component : components) {
         PsiDirectory parent = component.getContainingFile().getParent();
@@ -333,7 +342,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
   public static Object[] buildVariants(String text, PsiFile containingFile, final Project project,
                                        @Nullable CfmlComponentReference reference,
                                        final boolean forceQualify
-                                       ) {
+  ) {
     Collection<Object> variants = new THashSet<>();
 
     String directoryName = "";

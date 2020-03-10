@@ -2,7 +2,10 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
-import com.intellij.coldFusion.model.psi.*;
+import com.intellij.coldFusion.model.CfmlUtil;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
+import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -10,15 +13,16 @@ import com.intellij.psi.PsiType;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlParameter, CfmlTypedVariable {
-  public final static String TAG_NAME = "cfargument";
+public class CfmlTagParamImpl extends CfmlTagImpl implements CfmlVariable {
+  public final static String TAG_NAME = "cfparam";
 
-  public CfmlTagFunctionParameterImpl(ASTNode astNode) {
+  public CfmlTagParamImpl(ASTNode astNode) {
     super(astNode);
   }
 
@@ -31,24 +35,31 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     }
     return this;
   }
-
+  
+  private String[] getScopeNameSplit() {
+    final CfmlAttributeNameImpl attribute = findChildByClass(CfmlAttributeNameImpl.class);
+    if (attribute == null) {
+      return new String[]{null, ""};
+    }
+    String name = attribute.getName();
+    String[] split = name.split("\\.", 1);
+    if (split.length > 1 && ArrayUtil.find(CfmlUtil.getVariableScopes(getProject()), split[0]) > -1) {
+      return split;
+    }
+    return new String[]{null, name};
+  }
+  
   @NotNull
   @Override
   public String getName() {
-    final CfmlAttributeNameImpl attribute = findChildByClass(CfmlAttributeNameImpl.class);
-    if (attribute != null) {
-      return attribute.getName();
-    }
-    return "";
+    return getScopeNameSplit()[1];
   }
 
   @Nullable
-  @Override
   public String getDescription() {
     return CfmlPsiUtil.getPureAttributeValue(this, "hint");
   }
 
-  @Override
   public boolean isRequired() {
     String requiredAttr = CfmlPsiUtil.getPureAttributeValue(this, "required");
     if (requiredAttr == null) {
@@ -58,19 +69,13 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     return "yes".equals(requiredAttr) || "true".equals(requiredAttr);
   }
 
-  @Override
   public String getType() {
     return CfmlPsiUtil.getPureAttributeValue(this, "type");
-  }
-  
-  @Override
-  public String getDefault() {
-    return CfmlPsiUtil.getPureAttributeValue(this, "default");
   }
 
   @Override
   public int getProvidedScope() {
-    return CfmlScopesInfo.ARGUMENTS_SCOPE;
+    return CfmlScopesInfo.getScopeByString(getScopeNameSplit()[0]);
   }
 
   @Override
@@ -106,8 +111,15 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
   }
 
   @Override
+  public PsiType getPsiType() {
+    final String returnTypeString = this.getType();
+    return returnTypeString != null ?
+           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
+  }
+
+  @Override
   public boolean isTrulyDeclaration() {
-    return true;
+    return false;
   }
 
   @NotNull

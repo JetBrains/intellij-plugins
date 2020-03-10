@@ -59,12 +59,14 @@ public class CfmlFunctionDescription {
   public static class CfmlParameterDescription {
     private final String myName;
     private final String myType;
+    private final String myDefault;
     private final boolean myIsRequired;
     private String myDescription;
 
-    public CfmlParameterDescription(String name, String type, boolean isRequired) {
+    public CfmlParameterDescription(String name, String type, String defaultValue, boolean isRequired) {
       myName = name;
       myType = type;
+      myDefault = defaultValue;
       myIsRequired = isRequired;
     }
 
@@ -74,6 +76,10 @@ public class CfmlFunctionDescription {
 
     public String getType() {
       return myType;
+    }
+    
+    public String getDefault() {
+      return myDefault;
     }
 
     public boolean isRequired() {
@@ -94,6 +100,10 @@ public class CfmlFunctionDescription {
       final String type = getType();
       if (type != null) {
         paramDescription = paramDescription + " : " + type;
+      }
+      final String defaultValue = getDefault();
+      if (defaultValue != null) {
+        paramDescription = paramDescription + " = \"" + defaultValue + "\"";
       }
       if (!isRequired()) {
         sb.append("[");

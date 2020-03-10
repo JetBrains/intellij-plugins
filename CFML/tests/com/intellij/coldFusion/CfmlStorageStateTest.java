@@ -6,7 +6,7 @@ import com.intellij.configurationStore.XmlSerializer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
-import static com.intellij.testFramework.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Nadya Zabrodina

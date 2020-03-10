@@ -15,12 +15,16 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
-import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
-import com.intellij.coldFusion.model.psi.CfmlImport;
-import com.intellij.coldFusion.model.psi.CfmlStringLiteralExpression;
+import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * @author vnikolaenko
@@ -32,17 +36,11 @@ public class CfmlScriptImportImpl extends CfmlCompositeElement implements CfmlIm
   }
 
   @Override
-  public boolean isImported(String componentName) {
-    String importString = getImportString();
-    return importString != null ? importString.endsWith(componentName) : false;
-  }
-
-  @Override
   @Nullable
   public String getImportString() {
-    CfmlStringLiteralExpression childByType = findChildByClass(CfmlStringLiteralExpression.class);
-    if (childByType != null) {
-      return childByType.getValue();
+    CfmlComponentReference referenceChild = findChildByType(CfmlElementTypes.COMPONENT_REFERENCE);
+    if (referenceChild != null) {
+      return referenceChild.getText();
     }
     return null;
   }
@@ -52,15 +50,13 @@ public class CfmlScriptImportImpl extends CfmlCompositeElement implements CfmlIm
     return null;
   }
 
-  /*
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    PsiElement reference = findChildByType(CfscriptElementTypes.COMPONENT_REFERENCE);
+    PsiElement reference = findChildByType(CfmlElementTypes.COMPONENT_REFERENCE);
     if (reference != null) {
-      return new PsiReference[]{new CfmlComponentReference( reference.getNode(), this)};
+      return new PsiReference[]{new CfmlComponentReference(reference.getNode(), this)};
     }
     return super.getReferences();
   }
-  */
 }

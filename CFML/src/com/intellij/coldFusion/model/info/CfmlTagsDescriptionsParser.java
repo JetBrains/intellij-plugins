@@ -135,9 +135,10 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
       else if (localName.equals("parameter") && myCurrentFunction != null) {
         String aName = attr.getValue("name");
         String aType = attr.getValue("type");
+        String aDefault = attr.getValue("default");
         boolean aRequired = Boolean.valueOf(attr.getValue("required"));
 
-        myCurrentFunction.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(aName, aType, aRequired));
+        myCurrentFunction.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(aName, aType, aDefault, aRequired));
       }
       else if (localName.equals("help")) {
         myIsFunctionHelpSection = true;

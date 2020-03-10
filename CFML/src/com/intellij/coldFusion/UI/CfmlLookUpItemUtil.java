@@ -11,6 +11,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.PsiTypeLookupItem;
 import com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlMethodInsertHandler;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
+import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.openapi.util.text.StringUtil;
@@ -132,10 +133,23 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     PsiType returnType = function.getReturnType();
     CfmlFunctionDescription functionInfo = new CfmlFunctionDescription(function.getName(),
                                                                        returnType != null ? returnType.getCanonicalText() : null);
+
+    functionInfo.setDescription(function.getDescription());
     CfmlParameter[] params = function.getParameters();
     for (CfmlParameter param : params) {
-      functionInfo.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(param.getName(), param.getType(), param.isRequired()));
+      CfmlFunctionDescription.CfmlParameterDescription description =
+        new CfmlFunctionDescription.CfmlParameterDescription(param.getName(), param.getType(), param.getDefault(), param.isRequired());
+      description.setDescription(param.getDescription());
+      functionInfo.addParameter(description);
     }
     return functionInfo;
+  }
+  
+  public static CfmlPropertyDescription getPropertyDescription(CfmlProperty property) {
+    PsiType type = property.getPsiType();
+    CfmlPropertyDescription propertyInfo = new CfmlPropertyDescription(property.getName(),
+                                                                       type != null ? type.getCanonicalText() : null);
+    propertyInfo.setDescription(property.getDescription());
+    return propertyInfo;
   }
 }

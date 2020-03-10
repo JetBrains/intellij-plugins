@@ -2,14 +2,9 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
-import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
-import com.intellij.coldFusion.model.psi.CfmlRecursiveElementVisitor;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -31,13 +26,22 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
 
     @Override
     public PsiType getPsiType() {
-      return null;
+      PsiElement parent = getParent();
+      if (!(parent instanceof CfmlTagLoopImpl)) return null;
+      PsiElement arrayReference = ((CfmlTagLoopImpl)parent).getArrayReferenceExpression();
+      if (!(arrayReference instanceof CfmlTypedElement)) return null;
+      PsiType type = ((CfmlTypedElement)arrayReference).getPsiType();
+      return type instanceof PsiArrayType ? ((PsiArrayType)type).getComponentType() : null;
     }
 
     @NotNull
     @Override
     public String getName() {
-      return getNameIdentifier().getText();
+      String name = getNameIdentifier().getText();
+      if (name.startsWith("local.")) {
+        name = name.substring(6);
+      }
+      return name;
     }
 
     @Override
@@ -88,6 +92,15 @@ public class CfmlTagLoopImpl extends CfmlTagImpl {
       }
     }
     return CfmlPsiUtil.processDeclarations(processor, state, lastParent, this);
+  }
+  
+   CfmlExpression getArrayReferenceExpression () {
+     PsiElement valueElement = getAttributeValueElement("array");
+     if (valueElement == null) return null;
+     for (PsiElement cur = valueElement.getFirstChild(); cur != null; cur = cur.getNextSibling()) {
+       if (cur instanceof CfmlExpression) return (CfmlExpression)cur;
+     }
+     return null;
   }
 
   @Override

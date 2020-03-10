@@ -15,8 +15,12 @@
  */
 package com.intellij.coldFusion.model.psi.impl;
 
+import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
+import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
 import com.intellij.coldFusion.model.psi.CfmlComponent;
+import com.intellij.coldFusion.model.psi.CfmlComponentType;
 import com.intellij.coldFusion.model.psi.CfmlProperty;
+import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
@@ -56,6 +60,18 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
     return PsiTreeUtil.findChildOfType(this, CfmlComponent.class);
   }
 
+  @Nullable
+  @Override
+  public String getDescription() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "hint");
+  }
+
+  @NotNull
+  @Override
+  public CfmlPropertyDescription getPropertyInfo() {
+    return CfmlLookUpItemUtil.getPropertyDescription(this);
+  }
+
   private boolean checkBooleanAttribute(String attributeName) {
     PsiElement attributeValue = getAttributeValueElement(attributeName);
     if (attributeValue != null) {
@@ -66,7 +82,7 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
     }
 
     CfmlComponent component = getComponent();
-    return component != null ? component.hasImplicitAccessors() : false;
+    return component != null && component.hasImplicitAccessors();
   }
 
   @Override
@@ -80,8 +96,13 @@ public class CfmlTagPropertyImpl extends CfmlNamedTagImpl implements CfmlPropert
   }
 
   @Override
-  public PsiType getPsiType() {
-    return null;
+  public String getType() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "type");
+  }
+
+  @Override
+  public String getDefault() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "default");
   }
 
   @NotNull

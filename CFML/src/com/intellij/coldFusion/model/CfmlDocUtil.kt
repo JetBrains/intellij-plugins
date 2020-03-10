@@ -7,9 +7,13 @@ import com.intellij.coldFusion.model.info.CfmlAttributeDescription
 import com.intellij.coldFusion.model.info.CfmlLangInfo
 import com.intellij.coldFusion.model.info.CfmlTagDescription
 import com.intellij.coldFusion.model.info.CfmlTypesInfo
+import com.intellij.coldFusion.model.psi.CfmlComponent
+import com.intellij.coldFusion.model.psi.CfmlFunction
+import com.intellij.coldFusion.model.psi.CfmlProperty
 import com.intellij.openapi.project.Project
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.xml.util.XmlStringUtil
+import java.util.*
 
 object CfmlDocUtil {
 
@@ -117,4 +121,58 @@ object CfmlDocUtil {
     return "<b>$this</b>"
   }
 
+  private fun String.faint(): String {
+    return "<span style=\"font-weight: lighter;\">$this</span>"
+  }
+
+  @JvmStatic
+  fun componentDescription(component: CfmlComponent, project: Project): String {
+    var description = p { (component.name ?: "Unknown component name").bold() }
+
+    val hintDescription = component.description
+    if (hintDescription != null) {
+      description += p { hintDescription }
+    }
+
+    val init = Arrays.stream(component.getFunctionsWithSupers(false)).filter { f: CfmlFunction -> f.name == "init" }
+           .findFirst()
+    if (init.isPresent) {
+      description += "<p></p>" + functionDescription(init.get(), project)
+    }
+    return description
+  }
+
+  @JvmStatic
+  fun functionDescription(function: CfmlFunction, project: Project): String {
+    val info = function.functionInfo
+    var paramsLabel = "Params: ".faint()
+    return p {
+      info.name.trim().bold() + if (info.parameters.isEmpty()) "()" else "(...)" + " : " + (info.returnType ?: "any")
+    } + p {
+      info.description?.trim() ?: ""
+    } + table {
+      info.parameters.map {
+        tr {
+          td {
+            paramsLabel
+          } + td {
+            paramsLabel = ""
+            it.presetableText.bold() + "  "
+          } + td {
+            it.description?.trim() ?: ""
+          }
+        }
+      }.joinToString("")
+    }
+  }
+
+  @JvmStatic
+  fun propertyDescription(property: CfmlProperty, project: Project): String {
+    val info = property.propertyInfo
+    return p {
+      info.name.trim().bold() + " : " + (info.type ?: "any")
+    } + p {
+      info.description?.trim() ?: ""
+    }
+  }
 }

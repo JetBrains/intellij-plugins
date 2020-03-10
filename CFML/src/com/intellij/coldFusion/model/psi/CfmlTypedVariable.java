@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2013 JetBrains s.r.o.
+ * Copyright 2000-2020 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,33 +15,24 @@
  */
 package com.intellij.coldFusion.model.psi;
 
-import com.intellij.coldFusion.model.info.CfmlPropertyDescription;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.coldFusion.model.CfmlUtil;
+import com.intellij.coldFusion.model.files.CfmlFile;
+import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author vnikolaenko
- * @date 09.02.11
- */
-public interface CfmlProperty extends CfmlPsiElement, CfmlTypedVariable {
-  CfmlProperty[] EMPTY_ARRAY = new CfmlProperty[0];
-
-  boolean hasGetter();
-
-  boolean hasSetter();
-
-  String getDefault();
+public interface CfmlTypedVariable extends CfmlVariable {
 
   @Nullable
-  CfmlComponent getComponent();
-
-  @Nullable
-  String getDescription();
+  default PsiType getPsiType() {
+    String typeName = getType();
+    if (typeName == null) return null;
+    CfmlFile file = getContainingFile();
+    return CfmlUtil.getTypeFromName(file, typeName, getProject());
+  }
 
   @Override
-  @NotNull
-  String getName();
+  CfmlFile getContainingFile();
 
-  @NotNull
-  CfmlPropertyDescription getPropertyInfo();
+  @Nullable
+  String getType();
 }

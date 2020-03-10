@@ -38,10 +38,14 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
 
   @Override
   @Nullable
-  public PsiType getReturnType() {
-    final String returnTypeString = CfmlPsiUtil.getPureAttributeValue(this, "returntype");
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
+  public String getReturnTypeName() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "returntype");
+  }
+
+  @Override
+  @Nullable
+  public String getDescription() {
+    return CfmlPsiUtil.getPureAttributeValue(this, "hint");
   }
 
   @Override

@@ -16,13 +16,10 @@
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
-import com.intellij.coldFusion.model.psi.CfmlAssignmentExpression;
-import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
-import com.intellij.coldFusion.model.psi.CfmlVariable;
+import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -43,7 +40,18 @@ public class CfmlForImpl extends CfmlCompositeElement {
 
     @Override
     public PsiType getPsiType() {
-      return null;
+      PsiElement in_keyword = getNextSibling();
+      while (in_keyword instanceof PsiWhiteSpace) {
+        in_keyword = in_keyword.getNextSibling();
+      }
+      if (in_keyword.getNode().getElementType() != CfscriptTokenTypes.IN_L) return null;
+      PsiElement arrayReference = in_keyword.getNextSibling();
+      while (arrayReference instanceof PsiWhiteSpace) {
+        arrayReference = arrayReference.getNextSibling();
+      }
+      if (!(arrayReference instanceof CfmlTypedElement)) return null;
+      PsiType type = ((CfmlTypedElement)arrayReference).getPsiType();
+      return type instanceof PsiArrayType ? ((PsiArrayType)type).getComponentType() : null;
     }
 
     @Override

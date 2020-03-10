@@ -1,6 +1,7 @@
 <idea-plugin>
   <id>CFML Support</id>
   <name>CFML</name>
+  <version>2019.3.0-BETA</version>
   <description>
     <![CDATA[
     Adds support for ColdFusion Markup Language (CFML).
@@ -17,6 +18,9 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
   <depends>com.intellij.modules.java</depends>
   <depends>com.intellij.modules.ultimate</depends>
   <depends>com.intellij.modules.idea.ultimate</depends>
+  
+  <!-- Minimum and maximum build of IDE compatible with the plugin -->
+  <idea-version since-build="193" until-build="193.*"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <psi.referenceContributor language="CFML"
@@ -103,6 +107,8 @@ To configure path mappings, open the <b>Settings / Preferences</b> dialog and se
 
     <multiHostInjector implementation="com.intellij.coldFusion.injection.CfmlSqlMultiHostInjector" order="first"/>
     <editorHighlighterProvider filetype="CFML" implementationClass="com.intellij.coldFusion.model.files.CfmlEditorHighlighterProvider"/>
+
+    <typeDeclarationProvider implementation="com.intellij.coldFusion.navigation.actions.CfmlTypeDeclarationProvider"/>
   </extensions>
 
   <actions>

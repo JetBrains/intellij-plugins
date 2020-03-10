@@ -18,6 +18,7 @@ package com.intellij.coldFusion.model.parsers;
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
+import com.intellij.coldFusion.model.psi.CfmlElementType;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
@@ -100,7 +101,8 @@ public class CfmlExpressionParser {
         return true;
       }
       expr.done(CfmlElementTypes.TERNARY_EXPRESSION);
-    } else if (myBuilder.getTokenType() == ELVIS) {
+    }
+    else if (myBuilder.getTokenType() == ELVIS) {
       advance();
       if (!parseExpression()) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.expression.expected"));
@@ -445,6 +447,9 @@ public class CfmlExpressionParser {
       }
       myBuilder.advanceLexer();
     }
+    if (myBuilder.getTokenType() == MUL) {
+      myBuilder.advanceLexer();
+    }
     componentReferenceMarker.done(CfmlElementTypes.COMPONENT_REFERENCE);
   }
 
@@ -495,8 +500,7 @@ public class CfmlExpressionParser {
           isReference = true;
           referenceExpression = referenceExpression.precede();
           parseArrayAccess();
-          // referenceExpression.done(CfmlElementTypes.ARRAY_ACCESS);
-          referenceExpression.done(CfmlElementTypes.NONE);
+          referenceExpression.done(CfmlElementTypes.ARRAY_ACCESS_EXPRESSION);
           arrayAccessNumber++;
         }
         if (arrayAccessNumber != 1) {
@@ -619,7 +623,7 @@ public class CfmlExpressionParser {
   */
 
   private void parseAssignsList() {
-    while(true) {
+    while (true) {
       parseAssignmentExpression(true);
       if (getTokenType() != COMMA) break;
       advance();
@@ -634,6 +638,7 @@ public class CfmlExpressionParser {
       return false;
     }
     PsiBuilder.Marker newExpression = mark();
+    PsiBuilder.Marker outerExpression = newExpression;
     advance();
     PsiBuilder.Marker constructorCall = mark();
     if (getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE) {
@@ -643,11 +648,35 @@ public class CfmlExpressionParser {
       parseComponentReference();
     }
     else {
-      myBuilder.error(CfmlBundle.message("cfml.parsing.identifier.expected"));
+      newExpression.rollbackTo();
+      return false;
     }
     parseArgumentsList();
     constructorCall.done(CfmlElementTypes.COMPONENT_CONSTRUCTOR_CALL);
     newExpression.done(CfmlElementTypes.NEW_EXPRESSION);
+    while (getTokenType() == POINT) {
+      PsiBuilder.Marker beforePoint = mark();
+      outerExpression = outerExpression.precede();
+      advance();
+      if (getTokenType() == IDENTIFIER) {
+        advance();
+        beforePoint.drop();
+        outerExpression.done(CfmlElementTypes.REFERENCE_EXPRESSION);
+        beforePoint = mark();
+        if (getTokenType() == L_BRACKET) {
+          outerExpression = outerExpression.precede();
+          if (!parseArgumentsList()) {
+            beforePoint.rollbackTo();
+            break;
+          }
+          outerExpression.done(CfmlElementTypes.FUNCTION_CALL_EXPRESSION);
+        }
+        beforePoint.drop();
+        continue;
+      }
+      beforePoint.rollbackTo();
+      break;
+    }
     return true;
   }
 

@@ -11,9 +11,15 @@ public interface CfmlParameter extends PsiElement, PsiNamedElement {
 
   @Nullable
   String getType();
+  
+  @Nullable
+  String getDefault();
 
   @Override
   @Nullable
   @NonNls
   String getName();
+  
+  @Nullable
+  String getDescription();
 }

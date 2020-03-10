@@ -178,7 +178,7 @@ public class CfmlFile extends PsiFileBase {
     CfmlImport[] childrenByClass = findChildrenByClass(CfmlImport.class);
     for (CfmlImport importStatement : childrenByClass) {
       if (importStatement.isImported(componentName)) {
-        String importString = importStatement.getImportString();
+        String importString = importStatement.getComponentQualifiedName(componentName);
         return importString != null ? importString : "";
       }
     }
@@ -189,10 +189,8 @@ public class CfmlFile extends PsiFileBase {
     Set<String> result = new HashSet<>();
     CfmlImport[] childrenByClass = findChildrenByClass(CfmlImport.class);
     for (CfmlImport importStatement : childrenByClass) {
-      String importString = importStatement.getImportString();
-      if (importString != null) {
-        result.add(importString);
-      }
+      Set<String> importStrings = importStatement.getAllComponentQualifiedNames();
+      result.addAll(importStrings);
     }
     return result;
   }
