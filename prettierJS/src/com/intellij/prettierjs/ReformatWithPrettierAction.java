@@ -184,7 +184,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       errorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
     }
     else if (result.ignored) {
-      showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
+      showHintLater(editor, PrettierBundle.message("file.was.ignored.hint", file.getName()), false, null);
     }
     else {
       Document document = editor.getDocument();
@@ -258,7 +258,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
       while (fileIterator.hasNext()) {
         PsiFile currentFile = fileIterator.next();
-        indicator.setText("Processing " + currentFile.getName());
+        indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {
@@ -302,7 +302,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     List<String> errors = ContainerUtil.mapNotNull(results.entrySet(), t -> t.getValue().error);
     if (errors.size() > 0) {
       errorHandler.showErrorWithDetails(project, null,
-                                        "Failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
+                                        PrettierBundle.message("failed.to.reformat.0.files", errors.size()),
                                         StringUtil.join(errors, "\n"));
     }
   }
@@ -343,9 +343,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                                  @NotNull CharSequence textBefore,
                                                  boolean lineSeparatorsUpdated) {
     int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
-    return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines"
-                                      : lineSeparatorsUpdated
-                                        ? "Line endings were updated" : "No lines changed. Content is already properly formatted");
+    if (number == 0) {
+      return lineSeparatorsUpdated ? PrettierBundle.message("line.endings.were.updated")
+                                   : PrettierBundle.message("no.lines.changed");
+    }
+    return PrettierBundle.message("formatted.0.lines", number);
   }
 
   private static void showHintLater(@NotNull Editor editor,
@@ -415,7 +417,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     @Override
     public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
       if (editor != null) {
-        showHintLater(editor, "Prettier: " + text, true, toHyperLinkListener(onLinkClick));
+        showHintLater(editor, PrettierBundle.message("prettier.formatter.hint.0", text), true, toHyperLinkListener(onLinkClick));
       }
       else {
         showErrorNotification(project, text, toNotificationListener(onLinkClick));
@@ -426,7 +428,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                               @NotNull String text,
                                               @Nullable NotificationListener notificationListener) {
       JSLinterGuesser.NOTIFICATION_GROUP
-        .createNotification("Prettier", text, NotificationType.ERROR, notificationListener)
+        .createNotification(PrettierBundle.message("prettier.formatter.notification.title"), text, NotificationType.ERROR,
+                            notificationListener)
         .notify(project);
     }
 
