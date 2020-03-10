@@ -44,6 +44,7 @@ module Teamcity
 
         feature_file = event.test_case.location.file
         if @current_feature_file.nil? || feature_file != @current_feature_file
+          close_rule
           close_feature
           open_feature(feature_file)
         end
@@ -84,12 +85,12 @@ module Teamcity
         location = step.location
         file_colon_line = "#{location.file}:#{location.lines.max}"
 
-        log_test_opened(get_step_node_name(step), file_colon_line=file_colon_line)
+        log_test_opened(step_node_name(step), file_colon_line=file_colon_line)
       end
 
       def on_test_step_finished(event)
         @test_step = event.test_step
-        step_node_name = get_step_node_name(@test_step)
+        step_node_name = step_node_name(@test_step)
         if event.result.kind_of?(::Cucumber::Core::Test::Result::Undefined)
           result = :undefined
           log_status_and_test_finished(result, step_node_name, 0, exception=nil)
@@ -218,8 +219,8 @@ module Teamcity
         "#{prefix}: #{test_case.name}"
       end
 
-      def get_step_node_name(test_step)
-        @ast_lookup.step_source(test_step).step.keyword + test_step.text
+      def step_node_name(test_step)
+        "#{@ast_lookup.step_source(test_step).step.keyword}#{test_step.text}"
       end
 
       def print_summary(features)
