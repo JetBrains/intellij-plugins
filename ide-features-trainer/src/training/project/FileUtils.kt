@@ -15,7 +15,7 @@ object FileUtils {
       return copyStream(FileInputStream(toCopy), FileOutputStream(destFile))
     }
     catch (e: FileNotFoundException) {
-      LOG.warn(e)
+      LOG.error(e)
     }
     return false
   }
@@ -78,7 +78,7 @@ object FileUtils {
         copyFilesRecursively(File(originUrl.path), destination.parentFile)
     }
     catch (e: IOException) {
-      LOG.warn(e)
+      LOG.error(e)
     }
     return false
   }
@@ -88,7 +88,7 @@ object FileUtils {
       return copyStream(inputStream, FileOutputStream(f))
     }
     catch (e: FileNotFoundException) {
-      LOG.warn(e)
+      LOG.error(e)
     }
     return false
   }
@@ -106,7 +106,7 @@ object FileUtils {
       return true
     }
     catch (e: IOException) {
-      LOG.warn(e)
+      LOG.error(e)
     }
     return false
   }

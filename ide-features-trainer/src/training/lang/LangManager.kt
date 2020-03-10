@@ -57,6 +57,7 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   override fun loadState(state: State) {
     myLangSupport = supportedLanguagesExtensions.find { langExt -> langExt.language == state.languageName }?.instance ?: return
     myState.languageName = state.languageName
+    myState.languageToProjectMap = state.languageToProjectMap
   }
 
   override fun getState() = myState
@@ -68,5 +69,5 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   }
 
   // Note: languageName - it is language Id actually
-  data class State(var languageName: String? = null)
+  data class State(var languageName: String? = null, var languageToProjectMap: MutableMap<String, String> = mutableMapOf())
 }
