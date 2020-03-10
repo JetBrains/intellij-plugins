@@ -15,6 +15,7 @@
  */
 package com.intellij.coldFusion.model.psi;
 
+import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.Nullable;
@@ -23,23 +24,10 @@ public interface CfmlTypedVariable extends CfmlVariable {
 
   @Nullable
   default PsiType getPsiType() {
-    String typeString = getType();
-    if (typeString == null) return null;
+    String typeName = getType();
+    if (typeName == null) return null;
     CfmlFile file = getContainingFile();
-
-    final boolean isArray = typeString.endsWith("[]");
-    final String qualifiedTypeString;
-    if (isArray) {
-      qualifiedTypeString = file.getComponentQualifiedName(typeString.substring(0, typeString.length() - 2));
-    } else {
-      qualifiedTypeString = file.getComponentQualifiedName(typeString);
-    }
-    if (qualifiedTypeString == null) return null;
-    PsiType type = new CfmlComponentType(qualifiedTypeString, file, getProject());
-    if (isArray) {
-      type = type.createArrayType();
-    }
-    return type;
+    return CfmlUtil.getTypeFromName(file, typeName, getProject());
   }
 
   @Override

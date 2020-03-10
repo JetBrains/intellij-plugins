@@ -79,15 +79,10 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
 
   @Override
   @Nullable
-  public PsiType getReturnType() {
+  public String getReturnTypeName() {
     final PsiElement type = findChildByType(CfmlElementTypes.TYPE);
     if (type == null) return null;
-    String returnTypeString = type.getText();
-    if (returnTypeString != null) {
-      returnTypeString = getContainingFile().getComponentQualifiedName(returnTypeString);
-    }
-    return returnTypeString != null ?
-           new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
+    return type.getText();
   }
 
   @Nullable

@@ -2,6 +2,7 @@
 package com.intellij.coldFusion.model;
 
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.info.CfmlAttributeDescription;
 import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.coldFusion.model.info.CfmlTagDescription;
@@ -24,6 +25,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -304,5 +306,25 @@ public class CfmlUtil {
       return Couple.of(null, name);
     }
     return Couple.of(name.substring(0, index), name.substring(index + 1));
+  }
+
+  @Nullable
+  public static PsiType getTypeFromName(CfmlFile file, String typeName, Project project) {
+    if (file == null || typeName == null) return null;
+
+    final boolean isArray = typeName.endsWith("[]");
+    final String qualifiedTypeString;
+    if (isArray) {
+      qualifiedTypeString = file.getComponentQualifiedName(typeName.substring(0, typeName.length() - 2));
+    }
+    else {
+      qualifiedTypeString = file.getComponentQualifiedName(typeName);
+    }
+    if (qualifiedTypeString == null) return null;
+    PsiType type = new CfmlComponentType(qualifiedTypeString, file, project);
+    if (isArray) {
+      type = type.createArrayType();
+    }
+    return type;
   }
 }
