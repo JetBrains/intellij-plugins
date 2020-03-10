@@ -78,8 +78,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.dart.server.internal.remote.RemoteAnalysisServerImpl.DART_FIX_INFO_NON_NULLABLE;
 
-public class DartAnalysisServerService implements Disposable {
-
+public final class DartAnalysisServerService implements Disposable {
   public static final String MIN_SDK_VERSION = "1.12";
   private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
 
