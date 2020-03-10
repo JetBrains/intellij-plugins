@@ -40,7 +40,8 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <projectConfigurable
         parentId="Settings.JavaScript"
         id="settings.javascript.prettier"
-        displayName="Prettier"
+        bundle="messages.PrettierBundle"
+        key="configurable.PrettierConfigurable.display.name"
         instance="com.intellij.prettierjs.PrettierConfigurable"/>
 
     <fileType name="JSON" language="JSON" fileNames=".prettierrc"/>
