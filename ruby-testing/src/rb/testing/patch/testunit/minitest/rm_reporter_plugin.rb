@@ -135,7 +135,7 @@ else
         tests = DRbObject.new_with_uri(Minitest.my_drb_url)
         DRb.start_service
 
-        self.my_mutex.synchronize {
+        my_mutex.synchronize {
           unless tests.include? test.class.to_s
             tests << test.class.to_s
             log(Rake::TeamCity::MessageFactory.create_suite_started(test.class.to_s, minitest_test_location(test.class.to_s), '0', test.class.to_s))
