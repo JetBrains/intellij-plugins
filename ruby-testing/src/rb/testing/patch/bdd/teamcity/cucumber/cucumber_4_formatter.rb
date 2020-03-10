@@ -23,7 +23,6 @@ module Teamcity
         @config = config
         @ast_lookup = ::Cucumber::Formatter::AstLookup.new(config)
         @passed_test_cases = []
-
         @current_scenario_outline = nil
         @current_feature_file = nil
         @test_step = nil
@@ -45,6 +44,7 @@ module Teamcity
 
         feature_file = event.test_case.location.file
         if @current_feature_file.nil? || feature_file != @current_feature_file
+          close_rule
           close_feature
           open_feature(feature_file)
         end
@@ -59,27 +59,41 @@ module Teamcity
         if @current_scenario_outline.nil? && location.lines.max > location.lines.min
           #It's Scenario Outline
           @current_scenario_outline = event.test_case
-
           scenario_outline_location = "#{location.file}:#{location.lines.min}"
-          log_suite_started(@current_scenario_outline.name, file_colon_line=scenario_outline_location)
+
+          scenario_outline_node_name = scenario_node_name(@current_scenario_outline, outline_container: true)
+          log_suite_started(scenario_outline_node_name, file_colon_line=scenario_outline_location)
           log_suite_started(EXAMPLES_NODE)
+
+          scenario_outline = scenario_source(@current_scenario_outline).scenario_outline
+          print_tags(scenario_outline)
         end
 
+
         file_colon_line = "#{location.file}:#{location.lines.max}"
-        log_suite_started(event.test_case.name, file_colon_line=file_colon_line)
+        scenario_node_name = scenario_node_name(event.test_case)
+        log_suite_started(scenario_node_name, file_colon_line=file_colon_line)
+
+        if @current_scenario_outline.nil?
+          scenario = scenario_source(event.test_case).scenario
+          print_tags(scenario)
+        end
       end
 
       def on_test_step_started(event)
-        location = event.test_step.location
+        step = event.test_step
+        location = step.location
         file_colon_line = "#{location.file}:#{location.lines.max}"
-        log_test_opened(event.test_step.text, file_colon_line=file_colon_line)
+
+        log_test_opened(step_node_name(step), file_colon_line=file_colon_line)
       end
 
       def on_test_step_finished(event)
         @test_step = event.test_step
+        step_node_name = step_node_name(@test_step)
         if event.result.kind_of?(::Cucumber::Core::Test::Result::Undefined)
           result = :undefined
-          log_status_and_test_finished(result, event.test_step.text, 0, exception=nil)
+          log_status_and_test_finished(result, step_node_name, 0, exception=nil)
           return
         end
 
@@ -89,6 +103,7 @@ module Teamcity
           duration_ms = 0
         end
 
+        exception = nil
         if event.result.kind_of?(::Cucumber::Core::Test::Result::Skipped)
           result = :skipped
         elsif event.result.kind_of?(::Cucumber::Core::Test::Result::Pending)
@@ -102,12 +117,13 @@ module Teamcity
           raise 'Unsupported step result'
         end
 
-        log_status_and_test_finished(result, event.test_step.text, duration_ms, exception=exception)
+        log_status_and_test_finished(result, step_node_name, duration_ms, exception=exception)
       end
 
       def on_test_case_finished(event)
+        scenario_node_name = scenario_node_name(event.test_case)
         @passed_test_cases << event.test_case if @config.wip? && event.result.passed?
-        log_suite_finished(event.test_case.name)
+        log_suite_finished(scenario_node_name)
       end
 
       def on_test_run_finished(event)
@@ -132,7 +148,8 @@ module Teamcity
       def close_scenario_outline
         if @current_scenario_outline
           log_suite_finished(EXAMPLES_NODE)
-          log_suite_finished(@current_scenario_outline.name)
+          scenario_outline_node_name = scenario_node_name(@current_scenario_outline, outline_container: true)
+          log_suite_finished(scenario_outline_node_name)
           @current_scenario_outline = nil
         end
       end
@@ -141,10 +158,9 @@ module Teamcity
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
         feature = gherkin_document.feature
 
-        feature.children.take_while { |child|
-          element = child.rule || child.scenario || child.background
-          element.location.line <= test_case.location.lines.min
-        }.first.rule
+        feature.children.map(&:rule).reject(&:nil?).filter do |rule|
+          rule.location.line <= test_case.location.lines.min
+        end.last
       end
 
       def close_rule
@@ -179,6 +195,32 @@ module Teamcity
         feature_line = feature.location.line
         file_colon_line = feature_file + ":" + feature_line.to_s
         log_suite_started(current_feature_display_name, file_colon_line=file_colon_line)
+        print_tags(feature)
+      end
+
+      def scenario_source(test_case)
+        @ast_lookup.scenario_source(test_case)
+      end
+
+      def print_tags(test_case)
+        @io.puts(test_case.tags.map { |tag| format_string(tag.name, :tag) }.join(' '))
+      end
+
+      def scenario_node_name(test_case, outline_container: false)
+        source = scenario_source(test_case)
+        if source.respond_to? :scenario_outline
+          unless outline_container
+            return "Scenario: Line: #{test_case.location.lines.max}"
+          end
+          prefix = source.scenario_outline.keyword
+        else
+          prefix = source.scenario.keyword
+        end
+        "#{prefix}: #{test_case.name}"
+      end
+
+      def step_node_name(test_step)
+        "#{@ast_lookup.step_source(test_step).step.keyword}#{test_step.text}"
       end
 
       def print_summary(features)
