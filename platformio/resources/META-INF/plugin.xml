@@ -5,6 +5,7 @@
   <category>Embedded Development</category>
 
   <description><![CDATA[
+<b>EXPERIMENTAL</b>
 <a href="https://platformio.org/">PlatformIO.org</a> plugin for CLion integration
 <br>
 <p>A new generation toolset for embedded C/C++ development</p>
