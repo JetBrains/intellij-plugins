@@ -45,8 +45,6 @@
     <applicationService
       serviceImplementation="training.learn.CourseManager"/>
     <applicationService
-      serviceImplementation="training.statistic.ActivityManager"/>
-    <applicationService
       serviceImplementation="training.lang.LangManager"/>
     <applicationService
       serviceImplementation="training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager"/>
