@@ -97,7 +97,7 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   fun caret(line: Int, column: Int) {
-    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, line, column).navigateIn(editor) }
+    addSimpleTaskAction { OpenFileDescriptor(project, virtualFile, line - 1, column - 1).navigateIn(editor) }
   }
 
   fun caret(text: String) {
