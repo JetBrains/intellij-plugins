@@ -51,7 +51,7 @@ public class DartAnalysisToolWindowFactory implements ToolWindowFactory, DumbAwa
 
     @Override
     public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-      ToolWindow toolWindow = toolWindowManager.getToolWindow(DartProblemsView.getToolwindowId());
+      ToolWindow toolWindow = toolWindowManager.getToolWindow(DartProblemsView.TOOLWINDOW_ID);
       if (toolWindow != null) {
         PropertiesComponent.getInstance(myProject).setValue(TOOL_WINDOW_VISIBLE_PROPERTY, toolWindow.isVisible(), true);
       }
