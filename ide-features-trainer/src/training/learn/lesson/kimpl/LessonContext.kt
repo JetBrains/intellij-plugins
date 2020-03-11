@@ -38,6 +38,7 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     executor.caret(offset)
   }
 
+  /** NOTE:  [line] and [column] starts from 1 not from zero. So these parameters should be same as in editors. */
   fun caret(line: Int, column: Int) {
     executor.caret(line, column)
   }
