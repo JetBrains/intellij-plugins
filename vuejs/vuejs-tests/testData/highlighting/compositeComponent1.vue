@@ -17,7 +17,7 @@
 <script>
 import {reactive, computed, toRefs, defineComponent} from "@vue/composition-api";
 
-export default defineComponent(<weak_warning descr="Argument type {name: string, setup(any): {isFolder: UnwrapRef<{isFolder: any, open: boolean}>[\"isFolder\"] extends Ref<infer V> ? Ref<V> : Ref<UnwrapRef<{isFolder: any, open: boolean}>[\"isFolder\"]>, changeType: function(): void, toggle: function(): void, addChild: function(): void, open: UnwrapRef<{isFolder: any, open: boolean}>[\"open\"] extends Ref<infer V> ? Ref<V> : Ref<UnwrapRef<{isFolder: any, open: boolean}>[\"open\"]>}, props: {model: ObjectConstructor}} is not assignable to parameter type ComponentOptionsWithoutProps<unknown, unknown>">{</weak_warning>
+export default defineComponent(<weak_warning descr="Argument type {name: string, setup(any): {isFolder: UnwrapRef<{isFolder: ...<...>, open: boolean}>[\"isFolder\"] extends Ref<infer V> ? Ref<V> : Ref<UnwrapRef<{isFolder: ..., open: boolean}>[\"isFolder\"]>, changeType: function(): void, toggle: function(): void, addChild: function(): void, open: UnwrapRef<{isFolder: ...<...>, open: boolean}>[\"open\"] extends Ref<infer V> ? Ref<V> : Ref<UnwrapRef<{isFolder: ..., open: boolean}>[\"open\"]>}, props: {model: ObjectConstructor}} is not assignable to parameter type ComponentOptionsWithoutProps<unknown, unknown>">{</weak_warning>
   name: "TreeItem", // necessary for self-reference
   props: {
     model: Object
