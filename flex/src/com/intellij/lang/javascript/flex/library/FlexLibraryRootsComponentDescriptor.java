@@ -41,7 +41,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   @NotNull
   @Override
   public List<? extends RootDetector> getRootDetectors() {
-    throw new UnsupportedOperationException("should not be called");
+    return FlexLibraryRootsDetector.getRootDetectors();
   }
 
   @NotNull

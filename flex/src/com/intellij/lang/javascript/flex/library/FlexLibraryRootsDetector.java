@@ -6,6 +6,7 @@ import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryRootType;
 import com.intellij.openapi.roots.libraries.ui.DetectedLibraryRoot;
+import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.roots.libraries.ui.impl.LibraryRootsDetectorImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -19,10 +20,15 @@ import java.util.List;
 public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
 
   public FlexLibraryRootsDetector() {
-    super(Arrays.asList(new FlexSwcLibrariesRootDetector(),
-                        new FlexDocsRootDetector(),
-                        new FlexSourcesRootDetector(),
-                        new FlexSwcFoldersRootDetector()));
+    super(getRootDetectors());
+  }
+
+  @NotNull
+  public static List<RootDetector> getRootDetectors() {
+    return Arrays.asList(new FlexSwcLibrariesRootDetector(),
+                         new FlexDocsRootDetector(),
+                         new FlexSourcesRootDetector(),
+                         new FlexSwcFoldersRootDetector());
   }
 
   @Override
