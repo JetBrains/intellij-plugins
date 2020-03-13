@@ -28,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.serialization.PathMacroUtil;
@@ -110,8 +111,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
       @NotNull
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
-        // console view
-        final String testFrameworkName = "cucumber";
+        @NonNls  String testFrameworkName = "cucumber";
         final CucumberJavaRunConfiguration runConfiguration = CucumberJavaRunConfiguration.this;
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor) {
           @NotNull
@@ -145,7 +145,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     String rtClassPath = PathUtil.getJarPathForClass(ExpectedPatterns.class);
     result.add(rtClassPath);
 
-    String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
+    @NonNls String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
     result.add(cucumberJvmFormatterClassPath);
 
     // Attach SM formatter's folder/jar for Cucumber v3/v4
@@ -172,7 +172,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
     }
 
-    String programParameters = getProgramParameters();
+    @NonNls String programParameters = getProgramParameters();
     if (programParameters != null && programParameters.contains("--glue")) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
     }
