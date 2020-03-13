@@ -6,6 +6,7 @@ import com.intellij.codeInsight.completion.CompletionProvider
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.lang.javascript.completion.JSCompletionUtil
 import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.completion.JSLookupPriority.*
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSPsiElementBase
 import com.intellij.lang.javascript.psi.JSThisExpression
@@ -49,7 +50,10 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
         val element = resolveResult.element as? JSPsiElementBase
         if (element != null) {
           result.consume(JSCompletionUtil.withJSLookupPriority(JSLookupUtilImpl.createLookupElement(element),
-                                                               JSLookupPriority.MAX_PRIORITY))
+                                                               if (element.name?.startsWith("$") == true)
+                                                                 LOCAL_SCOPE_MAX_PRIORITY_EXOTIC
+                                                               else
+                                                                 LOCAL_SCOPE_MAX_PRIORITY))
         }
         true
       })
@@ -58,10 +62,10 @@ class VueJSCompletionProvider : CompletionProvider<CompletionParameters>() {
 
   private fun getJSLookupPriorityOf(proximity: VueModelVisitor.Proximity): JSLookupPriority =
     when (proximity) {
-      VueModelVisitor.Proximity.LOCAL -> JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY
-      VueModelVisitor.Proximity.APP -> JSLookupPriority.NESTING_LEVEL_1
-      VueModelVisitor.Proximity.PLUGIN -> JSLookupPriority.NESTING_LEVEL_2
-      VueModelVisitor.Proximity.GLOBAL -> JSLookupPriority.NESTING_LEVEL_3
-      else -> JSLookupPriority.LOWEST_PRIORITY
+      VueModelVisitor.Proximity.LOCAL -> LOCAL_SCOPE_MAX_PRIORITY
+      VueModelVisitor.Proximity.APP -> NESTING_LEVEL_1
+      VueModelVisitor.Proximity.PLUGIN -> NESTING_LEVEL_2
+      VueModelVisitor.Proximity.GLOBAL -> NESTING_LEVEL_3
+      else -> LOWEST_PRIORITY
     }
 }

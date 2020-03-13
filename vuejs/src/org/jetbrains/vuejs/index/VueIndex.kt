@@ -29,6 +29,7 @@ const val VUETIFY_MODULE: String = "vuetify"
 const val BOOTSTRAP_VUE_MODULE: String = "bootstrap-vue"
 const val SHARDS_VUE_MODULE: String = "shards-vue"
 const val VUE_CLASS_COMPONENT_MODULE: String = "vue-class-component"
+const val COMPOSITION_API_MODULE: String = "@vue/composition-api"
 
 @Suppress("PropertyName")
 const val GLOBAL: String = "global"
