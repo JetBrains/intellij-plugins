@@ -1648,6 +1648,38 @@ $script""")
     assertEquals(listOf("ba", "foo"), myFixture.lookupElementStrings!!)
   }
 
+  fun testVue2CompositionApiCompletion() {
+    myFixture.copyDirectoryToProject("../libs/composition-api", "node_modules/@vue/composition-api")
+    createPackageJsonWithVueDependency(myFixture, """"@vue/composition-api":"0.0.0"""")
+    myFixture.configureByFile("compositionAPI/count-vue2.vue")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!foo#101", "!state#101")
+    // myFixture.type("foo.") <== makes test stuck
+    myFixture.moveToOffsetBySignature("{{foo.<caret>}}")
+    myFixture.completeBasic()
+    UsefulTestCase.assertDoesntContain(myFixture.renderLookupItems(false, true), "value#T")
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, true), "!substr#string#101")
+    myFixture.moveToOffsetBySignature("{{state.<caret>count}}")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!count#101", "!double#101")
+  }
+
+  fun testVue3CompositionApiCompletion() {
+    myFixture.copyDirectoryToProject("../types/vue-3.0.0-beta.9/node_modules", "node_modules")
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("compositionAPI/count-vue3.vue")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!foo#101", "!state#101")
+    // myFixture.type("foo.") <== makes test stuck
+    myFixture.moveToOffsetBySignature("{{foo.<caret>}}")
+    myFixture.completeBasic()
+    UsefulTestCase.assertDoesntContain(myFixture.renderLookupItems(false, true), "value#T")
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, true), "!substr#string#101")
+    myFixture.moveToOffsetBySignature("{{state.<caret>count}}")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!count#101", "!double#101")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
