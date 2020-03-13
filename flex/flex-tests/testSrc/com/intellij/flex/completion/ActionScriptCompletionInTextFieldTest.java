@@ -170,6 +170,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   }
 
   private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) {
+    String buildConfigName = "AIR";
     String filename = getTestName(false).replaceAll("\\d+", "");
     myFixture.configureByFiles(filename + "_2.mxml", filename + "_3.mxml");
 
@@ -184,7 +185,7 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
       }
       {
         final ModifiableFlexBuildConfiguration bc = e.createConfiguration(getModule());
-        bc.setName("AIR");
+        bc.setName(buildConfigName);
         bc.setNature(new BuildConfigurationNature(TargetPlatform.Desktop, false, OutputType.Application));
         FlexTestUtils.setSdk(bc, sdk);
       }
@@ -205,6 +206,14 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
 
     doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, filename + ".txt");
     assertEquals(numberOfVariants, myFixture.getLookupElements().length);
+
+    FlexTestUtils.modifyConfigs(getProject(), e -> {
+      ModifiableFlexBuildConfiguration[] configurations = e.getConfigurations(getModule());
+      if (configurations == null || configurations.length <= 1) return;
+      for (ModifiableFlexBuildConfiguration configuration : configurations) {
+        if (configuration.getName().equals(buildConfigName)) e.configurationRemoved(configuration);
+      }
+    });
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
