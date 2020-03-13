@@ -1,6 +1,7 @@
 package icons;
 
 import com.intellij.ui.IconManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -9,9 +10,9 @@ import javax.swing.*;
  * DO NOT EDIT IT BY HAND, run "Generate icon classes" configuration instead
  */
 public final class ClionEmbeddedPlatformioIcons {
-  private static Icon load(String path) {
+  private static @NotNull Icon load(@NotNull String path) {
     return IconManager.getInstance().getIcon(path, ClionEmbeddedPlatformioIcons.class);
   }
 
-  /** 16x16 */ public static final Icon Platformio = load("/icons/platformio.svg");
+  /** 16x16 */ public static final @NotNull Icon Platformio = load("/icons/platformio.svg");
 }
