@@ -14,4 +14,9 @@ public class ShoppingStepdefs implements En {
   @Given("my step definition")
   public void my_step_definition() {
   }
+
+  @Given("first regex")
+  @Given("second regex")
+  public void my_double_definition() {
+  }
 }

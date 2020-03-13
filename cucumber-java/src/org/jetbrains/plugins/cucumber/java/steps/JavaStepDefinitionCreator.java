@@ -42,10 +42,11 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotation;
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotations;
 
 public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
@@ -304,7 +305,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
   private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet, @NotNull GherkinStep step,
                                                            @NotNull JVMElementFactory factory) {
-    PsiAnnotation cucumberStepAnnotation = getCucumberStepAnnotation(methodFromSnippet);
+    List<PsiAnnotation> annotationsFromSnippetMethod = getCucumberStepAnnotations(methodFromSnippet);
+    PsiAnnotation cucumberStepAnnotation = annotationsFromSnippetMethod.get(0);
     String regexp = CucumberJavaUtil.getPatternFromStepDefinition(cucumberStepAnnotation);
     String stepAnnotationName = cucumberStepAnnotation.getQualifiedName();
     if (stepAnnotationName == null) {

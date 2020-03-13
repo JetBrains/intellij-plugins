@@ -15,6 +15,12 @@ public class CucumberJava5ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("my jav<caret>a8 step", "Given");
   }
 
+  public void testResolveWithSeveralStepDefinitionAnnotations() {
+    init("stepResolve_cucumber_5");
+    checkReference("first <caret>regex", "my_double_definition");
+    checkReference("second <caret>regex", "my_double_definition");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber5ProjectDescriptor();
