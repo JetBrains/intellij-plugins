@@ -29,7 +29,6 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -108,7 +107,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   public String getManifestLocation() {
     if (getConfiguration().isUseProjectDefaultManifestFileLocation()) {
 
-      final ProjectSettings projectSettings = ModuleServiceManager.getService(getModule(), ProjectSettings.class);
+      final ProjectSettings projectSettings = getModule().getService(ProjectSettings.class);
       return projectSettings.getDefaultManifestFileLocation();
     }
     else {

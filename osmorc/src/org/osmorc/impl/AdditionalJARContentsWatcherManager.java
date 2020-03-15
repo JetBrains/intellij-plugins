@@ -28,7 +28,6 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.util.Comparing;
@@ -55,7 +54,7 @@ import java.util.Set;
  */
 public final class AdditionalJARContentsWatcherManager {
   public static AdditionalJARContentsWatcherManager getInstance(@NotNull Module module) {
-    return ModuleServiceManager.getService(module, AdditionalJARContentsWatcherManager.class);
+    return module.getService(AdditionalJARContentsWatcherManager.class);
   }
 
   private final Module myModule;

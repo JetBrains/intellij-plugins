@@ -35,7 +35,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
@@ -337,7 +336,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
           return nullSafeLocation;
         }
       case OsgiOutputPath:
-        ProjectSettings projectSettings = ModuleServiceManager.getService(myFacet.getModule(), ProjectSettings.class);
+        ProjectSettings projectSettings = myFacet.getModule().getService(ProjectSettings.class);
         if (projectSettings != null) {
           String bundlesOutputPath = projectSettings.getBundlesOutputPath();
           if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
