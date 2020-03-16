@@ -33,8 +33,9 @@ public class CfmllFindUsagesProvider implements FindUsagesProvider {
   public String getType(@NotNull final PsiElement element) {
     return element instanceof CfmlReferenceExpression
            ? CfmlBundle.message("find.usages.descriptive.name.reference")
-           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? CfmlBundle
-             .message("find.usages.type.function.name") : CfmlBundle.message("find.usages.type.argument.name");
+           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl
+             ? CfmlBundle.message("find.usages.type.function.name")
+             : CfmlBundle.message("find.usages.type.argument.name");
   }
 
   @Override
@@ -42,8 +43,9 @@ public class CfmllFindUsagesProvider implements FindUsagesProvider {
   public String getDescriptiveName(@NotNull final PsiElement element) {
     return element instanceof CfmlReferenceExpression
            ? CfmlBundle.message("find.usages.descriptive.name.reference")
-           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? CfmlBundle
-             .message("find.usages.descriptive.name.function") : CfmlBundle.message("find.usages.descriptive.name.argument");
+           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl
+             ? CfmlBundle.message("find.usages.descriptive.name.function")
+             : CfmlBundle.message("find.usages.descriptive.name.argument");
   }
 
   @Override
