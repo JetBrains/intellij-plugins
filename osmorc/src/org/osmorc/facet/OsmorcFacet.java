@@ -42,7 +42,7 @@ import org.osmorc.settings.ProjectSettings;
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
+public final class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   public OsmorcFacet(@NotNull Module module) {
     this(FacetTypeRegistry.getInstance().findFacetType(OsmorcFacetType.ID), module,
          new OsmorcFacetConfiguration(),
@@ -106,9 +106,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   @NotNull
   public String getManifestLocation() {
     if (getConfiguration().isUseProjectDefaultManifestFileLocation()) {
-
-      final ProjectSettings projectSettings = getModule().getService(ProjectSettings.class);
-      return projectSettings.getDefaultManifestFileLocation();
+      return ProjectSettings.getInstance(getModule().getProject()).getDefaultManifestFileLocation();
     }
     else {
       return getConfiguration().getManifestLocation();
@@ -131,13 +129,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
 
       VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(jarFile);
       if (jarRoot != null) {
-        final VirtualFile manifestFile = jarRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
-        if (manifestFile == null) {
-          return null;
-        }
-        else {
-          return manifestFile;
-        }
+        return jarRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
       }
 
       return null;

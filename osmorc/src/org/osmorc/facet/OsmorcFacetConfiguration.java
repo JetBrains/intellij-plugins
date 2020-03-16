@@ -69,7 +69,7 @@ import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
+public final class OsmorcFacetConfiguration implements FacetConfiguration, ModificationTracker {
   private static final Logger LOG = Logger.getInstance(OsmorcFacetConfiguration.class);
 
   private static final String MANIFEST_GENERATION_MODE = "manifestGenerationMode";
@@ -336,7 +336,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
           return nullSafeLocation;
         }
       case OsgiOutputPath:
-        ProjectSettings projectSettings = myFacet.getModule().getService(ProjectSettings.class);
+        ProjectSettings projectSettings = ProjectSettings.getInstance(myFacet.getModule().getProject());
         if (projectSettings != null) {
           String bundlesOutputPath = projectSettings.getBundlesOutputPath();
           if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {

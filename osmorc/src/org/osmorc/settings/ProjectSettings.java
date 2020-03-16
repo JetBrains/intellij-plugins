@@ -25,7 +25,6 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
@@ -46,7 +45,7 @@ import java.util.EventListener;
  * @author Jan Thomä (janthomae@janthomae.de)
  */
 @State(name = "Osmorc")
-public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
+public final class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
   private final EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
 
   private String myFrameworkInstanceName;
@@ -80,7 +79,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
    * @return an instance of the project settings for the given project.
    */
   public static ProjectSettings getInstance(@NotNull Project project) {
-    return ServiceManager.getService(project, ProjectSettings.class);
+    return project.getService(ProjectSettings.class);
   }
 
   /**
