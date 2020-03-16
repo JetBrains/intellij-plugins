@@ -4,7 +4,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -155,7 +155,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     else {
       CreateClassParameters p = ActionScriptCreateClassOrInterfaceFix
         .createAndShow(defaultTemplateName, jsClass, suggestSubclassName(jsClass.getName()), true, jsPackageStatement.getQualifiedName(),
-                       jsClass, JSBundle.message("new.actionscript.class.dialog.title"),
+                       jsClass, JavaScriptBundle.message("new.actionscript.class.dialog.title"),
                        () -> ActionScriptCreateClassOrInterfaceFix.getApplicableTemplates(ActionScriptCreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS,
                                                                                           project));
 

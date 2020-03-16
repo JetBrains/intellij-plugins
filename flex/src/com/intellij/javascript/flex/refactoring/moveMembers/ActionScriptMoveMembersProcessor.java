@@ -18,7 +18,7 @@
  */
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
@@ -69,7 +69,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   private final MoveCallback myMoveCallback;
   private final JSClass mySourceClass;
   @Nullable private final String myNewVisibility; // "null" means "as is"
-  private String myCommandName = JSBundle.message("move.members.refactoring.name");
+  private String myCommandName = JavaScriptBundle.message("move.members.refactoring.name");
 
   public ActionScriptMoveMembersProcessor(Project project,
                                           MoveCallback moveCallback,
@@ -229,7 +229,7 @@ public class ActionScriptMoveMembersProcessor extends BaseRefactoringProcessor {
   public void doRun() {
     if (myMembersToMove.isEmpty()) {
       String message = RefactoringBundle.message("no.members.selected");
-      CommonRefactoringUtil.showErrorMessage(JSBundle.message("move.members.refactoring.name"), message, null, myProject);
+      CommonRefactoringUtil.showErrorMessage(JavaScriptBundle.message("move.members.refactoring.name"), message, null, myProject);
       return;
     }
     super.doRun();

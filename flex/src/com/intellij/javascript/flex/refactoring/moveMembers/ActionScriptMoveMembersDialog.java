@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.ide.util.PlatformPackageUtil;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -76,7 +76,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     myProject = project;
     mySourceClass = sourceClass;
     myMoveCallback = moveCallback;
-    setTitle(JSBundle.message("move.members.dialog.title"));
+    setTitle(JavaScriptBundle.message("move.members.dialog.title"));
 
     mySourceClassName = mySourceClass.getQualifiedName();
 
@@ -218,7 +218,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     if (message != null) {
       if (message.length() != 0) {
         CommonRefactoringUtil
-          .showErrorMessage(StringUtil.capitalizeWords(JSBundle.message("move.members.refactoring.name"), true), message, null, myProject);
+          .showErrorMessage(StringUtil.capitalizeWords(JavaScriptBundle.message("move.members.refactoring.name"), true), message, null, myProject);
       }
       return;
     }
@@ -299,13 +299,13 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     if (aClass instanceof JSClass) return (JSClass)aClass;
 
     if (aClass != null) {
-      Messages.showErrorDialog(myProject, JSBundle.message("class.0.cannot.be.created", fqName),
-                               StringUtil.capitalizeWords(JSBundle.message("move.members.refactoring.name"), true));
+      Messages.showErrorDialog(myProject, JavaScriptBundle.message("class.0.cannot.be.created", fqName),
+                               StringUtil.capitalizeWords(JavaScriptBundle.message("move.members.refactoring.name"), true));
       return null;
     }
 
     int answer = Messages.showYesNoDialog(myProject, RefactoringBundle.message("class.0.does.not.exist", fqName),
-                                          StringUtil.capitalizeWords(JSBundle.message("move.members.refactoring.name"), true),
+                                          StringUtil.capitalizeWords(JavaScriptBundle.message("move.members.refactoring.name"), true),
                                           Messages.getQuestionIcon());
     if (answer != Messages.YES) return null;
 
@@ -330,7 +330,7 @@ public class ActionScriptMoveMembersDialog extends RefactoringDialog implements 
     });
 
     if (!error.isNull()) {
-      CommonRefactoringUtil.showErrorMessage(JSBundle.message("move.members.refactoring.name"), error.get().getMessage(), null, myProject);
+      CommonRefactoringUtil.showErrorMessage(JavaScriptBundle.message("move.members.refactoring.name"), error.get().getMessage(), null, myProject);
       return null;
     }
     return newClass.get();

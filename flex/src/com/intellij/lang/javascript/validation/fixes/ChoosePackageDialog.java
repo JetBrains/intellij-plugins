@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
@@ -54,7 +54,7 @@ public class ChoosePackageDialog extends DialogWrapper{
     final String packageName = getPackageName();
     for (final String s : StringUtil.split(packageName, ".")) {
       if (!namesValidator.isIdentifier(s, null)) {
-        setErrorText(JSBundle.message("invalid.package", packageName), myPackageCombo);
+        setErrorText(JavaScriptBundle.message("invalid.package", packageName), myPackageCombo);
         return;
       }
     }

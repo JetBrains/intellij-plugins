@@ -17,7 +17,7 @@ package com.intellij.lang.javascript.linter.tslint.fix;
 import com.intellij.execution.ExecutionException;
 import com.intellij.history.LocalHistory;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterFixAction;
@@ -64,7 +64,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   @Override
   protected Task createTask(@NotNull Project project, @NotNull Collection<? extends VirtualFile> filesToProcess, @NotNull Runnable completeCallback) {
     LocalHistory
-      .getInstance().putSystemLabel(project, JSBundle
+      .getInstance().putSystemLabel(project, JavaScriptBundle
       .message("javascript.linter.action.fix.problems.name.start", TsLintBundle.message("tslint.framework.title")));
     return new Task.Backgroundable(project, TsLintBundle.message("tslint.action.background.title"), true) {
       @Override

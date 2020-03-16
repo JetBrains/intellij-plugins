@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.parsing.JavaScriptParserBase;
 import com.intellij.lang.javascript.psi.JSElementFactory;
@@ -50,7 +50,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
     super(clazz.getProject(), true);
     myTargetClass = clazz;
 
-    setTitle(JSBundle.message("create.field.dialog.title"));
+    setTitle(JavaScriptBundle.message("create.field.dialog.title"));
     myVisibilityPanel.configureForClassMember(false, false, DialectDetector.dialectOfElement(clazz));
     myVisibilityPanel.setVisibility(JSAttributeList.AccessType.PRIVATE.name());
     myTypeLabel.setLabelFor(myTypeField.getChildComponent());
@@ -80,7 +80,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
 
   public static JSReferenceEditor createTypeField(Project project, GlobalSearchScope scope) {
     return JSReferenceEditor.forClassName("", project, "JSCreateFieldDialog", scope, JavaScriptParserBase.ForceContext.Type, null,
-                                          JSBundle.message("choose.field.type"));
+                                          JavaScriptBundle.message("choose.field.type"));
   }
 
   public static JSExpressionCodeFragment createInitializerCodeFragment(JSClass c) {
@@ -120,20 +120,20 @@ public class JSCreateFieldDialog extends DialogWrapper {
   @Nullable
   private Pair<String, Boolean> validateData() {
     if (!JSRefactoringUtil.isValidIdentifier(getFieldName(), myTargetClass.getProject())) {
-      return Pair.create(JSBundle.message("invalid.identifier.value.0", getFieldName()), true);
+      return Pair.create(JavaScriptBundle.message("invalid.identifier.value.0", getFieldName()), true);
     }
     String type = getFieldType().trim();
     if ("void".equals(type) || type.contains(" ") || JSChangeUtil.tryCreateTypeElement(type, myTargetClass) == null) {
-      return Pair.create(JSBundle.message("invalid.field.type.expression", type), true);
+      return Pair.create(JavaScriptBundle.message("invalid.field.type.expression", type), true);
     }
     if (isConstant() && StringUtil.isEmpty(getInitializer())) {
-      return Pair.create(JSBundle.message("field.initializer.is.not.specified"), true);
+      return Pair.create(JavaScriptBundle.message("field.initializer.is.not.specified"), true);
     }
     if (!JSRefactoringUtil.isResolvableType(type, myTargetClass, false, false)) {
-      return Pair.create(JSBundle.message("type.is.not.resolved", type), false);
+      return Pair.create(JavaScriptBundle.message("type.is.not.resolved", type), false);
     }
     if (myTargetClass.findFieldByName(getFieldName()) != null) {
-      return Pair.create(JSBundle.message("class.already.contains.field.warning", myTargetClass.getQualifiedName(), getFieldName()), false);
+      return Pair.create(JavaScriptBundle.message("class.already.contains.field.warning", myTargetClass.getQualifiedName(), getFieldName()), false);
     }
     return null;
   }

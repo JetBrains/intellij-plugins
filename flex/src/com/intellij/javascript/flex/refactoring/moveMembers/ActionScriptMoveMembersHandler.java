@@ -14,7 +14,7 @@
 package com.intellij.javascript.flex.refactoring.moveMembers;
 
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -124,6 +124,6 @@ public class ActionScriptMoveMembersHandler extends MoveHandlerDelegate {
   }
 
   public static String getRefactoringName() {
-    return JSBundle.message("move.members.refactoring.name");
+    return JavaScriptBundle.message("move.members.refactoring.name");
   }
 }

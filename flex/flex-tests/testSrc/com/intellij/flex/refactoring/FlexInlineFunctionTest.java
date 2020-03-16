@@ -2,7 +2,7 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
@@ -50,7 +50,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testJustStatements2_4() {
-    doTestFailure(getTestName(false), "js2", JSBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
+    doTestFailure(getTestName(false), "js2", JavaScriptBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
   }
 
   public void testJustStatements2_5() {
@@ -94,16 +94,16 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
 
   public void testHasRestParams() {
-    doTestFailure(getTestName(false), "js2", 
-                  JSBundle.message("javascript.refactoring.cannot.inline.function.referencing.rest.parameter"));
+    doTestFailure(getTestName(false), "js2",
+                  JavaScriptBundle.message("javascript.refactoring.cannot.inline.function.referencing.rest.parameter"));
   }
 
   public void testConstructor() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
+    shouldFail(JavaScriptBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   public void testConstructor2() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
+    shouldFail(JavaScriptBundle.message("javascript.refactoring.cannot.inline.constructor"));
   }
 
   private void shouldFail(String reason) {
@@ -111,7 +111,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodInHierarchy() {
-    String reason = JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method");
+    String reason = JavaScriptBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method");
     doTestFailure(getTestName(false) + 1, "js2", reason);
     doTestFailure(getTestName(false) + 2, "js2", reason);
     doTestFailure(getTestName(false) + 3, "js2", reason);
@@ -119,19 +119,19 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMethodInHierarchyMxml() {
-    doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
-                  JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
+    doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"},
+                  JavaScriptBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
   }
 
   public void testInterfaceMethod() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.interface.method"));
+    shouldFail(JavaScriptBundle.message("javascript.refactoring.cannot.inline.interface.method"));
   }
 
   public void testMethodFromExternalLibrary() {
     FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
     Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
 
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.function.defined.in.library"));
+    shouldFail(JavaScriptBundle.message("javascript.refactoring.cannot.inline.function.defined.in.library"));
   }
 
   public void testNonCallUsage() {

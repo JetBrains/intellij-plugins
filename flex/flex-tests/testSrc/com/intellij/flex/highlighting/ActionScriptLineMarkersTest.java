@@ -5,7 +5,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -208,7 +208,7 @@ public class ActionScriptLineMarkersTest extends ActionScriptDaemonAnalyzerTestC
   public void testStaticMethodDoesNotImplement() throws Exception {
     final Collection<HighlightInfo> infos = doTestFor(true, getTestName(false) + ".as");
     invokeGotoSuperMethodAction("Impl");
-    findAndInvokeActionWithExpectedCheck(JSBundle.message("javascript.fix.implement.methods"), "as", infos);
+    findAndInvokeActionWithExpectedCheck(JavaScriptBundle.message("javascript.fix.implement.methods"), "as", infos);
   }
 
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithoutSourceRoot})

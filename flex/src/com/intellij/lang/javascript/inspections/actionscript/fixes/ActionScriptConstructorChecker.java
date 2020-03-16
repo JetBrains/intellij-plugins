@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.inspections.actionscript.fixes;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
@@ -28,7 +28,7 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
     }
 
     final PsiElement place = getPlaceForNamedElementProblem(jsClass);
-    myProblemReporter.registerGenericError(place, JSBundle
+    myProblemReporter.registerGenericError(place, JavaScriptBundle
       .message("javascript.validation.message.missed.super.constructor.call"), new ActionScriptAddConstructorAndSuperInvocationFix(jsClass, nontrivialSuperClassConstructor));
   }
 

@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.extras.providers.ImplementationsProvider;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.project.Project;
@@ -40,7 +40,7 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
 
   @Override
   public String getHeaderName(Object element, Project project) {
-    return JSBundle.message("javascript.uml.show.implementations.header", ((JSClass)element).getName());
+    return JavaScriptBundle.message("javascript.uml.show.implementations.header", ((JSClass)element).getName());
   }
 
   @Override

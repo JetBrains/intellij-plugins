@@ -6,7 +6,7 @@ import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
@@ -233,7 +233,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   private static String getPackageDisplayName(String s) {
-    return s.length() > 0 ? s : JSBundle.message("top.level");
+    return s.length() > 0 ? s : JavaScriptBundle.message("top.level");
   }
 
   private static SimpleColoredText decorate(String name) {

@@ -4,7 +4,7 @@ import com.intellij.codeInsight.JavaCodeInsightTestCase;
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -139,7 +139,7 @@ public class FlexIntroduceConstantTest extends JavaCodeInsightTestCase {
       assertFalse(true);
     }
     catch (RuntimeException ex) {
-      assertEquals(ex.getMessage(), JSBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"));
+      assertEquals(ex.getMessage(), JavaScriptBundle.message("javascript.introduce.constant.error.not.constant.expression.selected"));
     }
   }
 

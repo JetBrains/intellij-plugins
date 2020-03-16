@@ -1,7 +1,7 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
@@ -135,7 +135,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (isIdentifierToken(builder.getTokenType()) && OFFSET_OPTION.equals(builder.getTokenText())) {
       if (builder.lookAhead(1) != JSTokenTypes.COLON) {
         builder.advanceLexer();
-        builder.error(JSBundle.message("javascript.parser.message.expected.colon"));
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.colon"));
         return false;
       }
       final IElementType value = builder.lookAhead(2);

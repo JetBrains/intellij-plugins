@@ -13,7 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.lang
 
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.openapi.application.PathManager
@@ -39,15 +39,15 @@ class VueIntentionsTest : BasePlatformTestCase() {
   }
 
   fun testPropagateToDestructuring() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
   fun testPropagateToDestructuringWhenWithIndexer() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.propagate"))
   }
 
   fun testDepropagateFromDestructuring() {
-    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.depropagate"))
+    doIntentionTest(JavaScriptBundle.message("refactoring.destructuring.vars.intention.depropagate"))
   }
 
   fun testReplaceIfElseWithElvis() {

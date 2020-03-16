@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import org.angular2.Angular2MultiFileFixtureTestCase;
@@ -22,27 +22,27 @@ public class MultiFileIntentionsTest extends Angular2MultiFileFixtureTestCase {
   }
 
   public void testBasicFieldCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.field.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"));
   }
 
   public void testThisQualifiedFieldCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.field.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"));
   }
 
   public void testQualifiedFieldCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.field.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"));
   }
 
   public void testBasicMethodCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.method.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"));
   }
 
   public void testThisQualifiedMethodCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.method.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"));
   }
 
   public void testQualifiedMethodCreation() {
-    doMultiFileTest(JSBundle.message("javascript.create.method.intention.name", "foo"));
+    doMultiFileTest(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"));
   }
 
   private void doMultiFileTest(String intentionHint) {
