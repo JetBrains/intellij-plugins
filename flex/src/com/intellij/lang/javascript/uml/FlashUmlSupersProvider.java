@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.extras.providers.SupersProvider;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.project.Project;
@@ -30,7 +30,7 @@ public class FlashUmlSupersProvider extends SupersProvider<Object> {
 
   @Override
   public String getHeaderName(Object element, Project project) {
-    return JSBundle.message("javascript.uml.show.supers.header", ((JSClass)element).getName());
+    return JavaScriptBundle.message("javascript.uml.show.supers.header", ((JSClass)element).getName());
   }
 
   @Override

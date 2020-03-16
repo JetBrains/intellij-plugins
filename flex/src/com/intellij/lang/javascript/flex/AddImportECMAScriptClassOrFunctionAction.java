@@ -9,7 +9,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNewExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -209,9 +209,9 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
 
     if (candidates.size() > 1) {
       NavigationUtil.getPsiElementPopup(
-          candidates.toArray(new JSQualifiedNamedElement[0]),
-          new JSQualifiedNamedElementRenderer(),
-        JSBundle.message("choose.class.to.import.title"),
+        candidates.toArray(new JSQualifiedNamedElement[0]),
+        new JSQualifiedNamedElementRenderer(),
+        JavaScriptBundle.message("choose.class.to.import.title"),
         new PsiElementProcessor<JSQualifiedNamedElement>() {
           @Override
           public boolean execute(@NotNull final JSQualifiedNamedElement element) {

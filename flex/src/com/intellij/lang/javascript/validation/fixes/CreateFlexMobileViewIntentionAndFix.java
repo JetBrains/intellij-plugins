@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.validation.fixes;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
@@ -15,7 +15,7 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
   @Override
   @NotNull
   public String getText() {
-    return JSBundle.message("create.mobile.view", myClassName);
+    return JavaScriptBundle.message("create.mobile.view", myClassName);
   }
 
   public CreateFlexMobileViewIntentionAndFix(final String classFqn, final PsiElement element, final boolean askForPackage) {

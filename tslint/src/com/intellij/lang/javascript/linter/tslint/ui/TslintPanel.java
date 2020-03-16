@@ -4,7 +4,7 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
@@ -129,7 +129,7 @@ public final class TslintPanel {
   }
 
   private static JSLinterConfigFileTexts getConfigTexts() {
-    return new JSLinterConfigFileTexts(JSBundle.message("javascript.linter.configurable.config.autoSearch.title"),
+    return new JSLinterConfigFileTexts(JavaScriptBundle.message("javascript.linter.configurable.config.autoSearch.title"),
                                        TsLintBundle.message("tslint.configurable.search.option.description"),
                                        TsLintBundle.message("tslint.configuration.file.title"));
   }

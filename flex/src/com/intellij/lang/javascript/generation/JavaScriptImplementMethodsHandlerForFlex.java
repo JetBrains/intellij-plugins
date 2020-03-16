@@ -5,7 +5,7 @@ package com.intellij.lang.javascript.generation;
 
 import com.intellij.featureStatistics.ProductivityFeatureNames;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.validation.ActionScriptImplementedMethodProcessor;
@@ -33,7 +33,7 @@ public class JavaScriptImplementMethodsHandlerForFlex extends BaseJSGenerateHand
 
   @Override
   protected String getNoCandidatesMessage() {
-    return JSBundle.message("no.methods.to.implement");
+    return JavaScriptBundle.message("no.methods.to.implement");
   }
 
   @Override

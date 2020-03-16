@@ -6,7 +6,7 @@ import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
 import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
 import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JSTokenTypes
@@ -78,7 +78,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         if (!builder.eof()) {
           builder.advanceLexer()
         }
-        mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+        mark.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
         parseRest(true)
       }
     }
@@ -89,7 +89,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         if (!builder.eof()) {
           builder.advanceLexer()
         }
-        mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+        mark.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
         parseRest(true)
       }
     }
@@ -106,7 +106,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
             && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
           builder.advanceLexer()
         }
-        marker.error(JSBundle.message("javascript.parser.message.expected.identifier"))
+        marker.error(JavaScriptBundle.message("javascript.parser.message.expected.identifier"))
       }
       if (builder.tokenType !== JSTokenTypes.IN_KEYWORD && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
         builder.error(message("vue.parser.message.expected.in.or.of"))
@@ -145,7 +145,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         }
         else if (builder.tokenType === JSTokenTypes.DOT) {
           // incomplete ...args
-          builder.error(JSBundle.message("javascript.parser.message.expected.parameter.name"))
+          builder.error(JavaScriptBundle.message("javascript.parser.message.expected.parameter.name"))
           while (builder.tokenType === JSTokenTypes.DOT) {
             builder.advanceLexer()
           }
@@ -176,7 +176,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
             if (reported && !justReported) {
               val mark = builder.mark()
               builder.advanceLexer()
-              mark.error(JSBundle.message("javascript.parser.message.expected.expression"))
+              mark.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
             }
             else {
               builder.advanceLexer()
@@ -229,7 +229,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
         }
       }
       if (builder.tokenType != JSTokenTypes.RPAR) {
-        builder.error(JSBundle.message("javascript.parser.message.expected.rparen"))
+        builder.error(JavaScriptBundle.message("javascript.parser.message.expected.rparen"))
         while (!builder.eof()
                && builder.tokenType != JSTokenTypes.RPAR
                && builder.tokenType != JSTokenTypes.IN_KEYWORD

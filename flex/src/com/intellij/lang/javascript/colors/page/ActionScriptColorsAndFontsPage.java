@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.colors.page;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.highlighting.ECMAL4Highlighter;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -23,36 +23,36 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRS =
     {
-      new AttributesDescriptor(JSBundle.message("javascript.keyword"), ECMAL4Highlighter.ECMAL4_KEYWORD),
-      new AttributesDescriptor(JSBundle.message("javascript.metadata"), ECMAL4Highlighter.ECMAL4_METADATA),
-      new AttributesDescriptor(JSBundle.message("javascript.string"), ECMAL4Highlighter.ECMAL4_STRING),
-      new AttributesDescriptor(JSBundle.message("javascript.valid.string.escape"), ECMAL4Highlighter.ECMAL4_VALID_STRING_ESCAPE),
-      new AttributesDescriptor(JSBundle.message("javascript.invalid.string.escape"), ECMAL4Highlighter.ECMAL4_INVALID_STRING_ESCAPE),
-      new AttributesDescriptor(JSBundle.message("javascript.number"), ECMAL4Highlighter.ECMAL4_NUMBER),
-      new AttributesDescriptor(JSBundle.message("javascript.regexp"), ECMAL4Highlighter.ECMAL4_REGEXP),
-      new AttributesDescriptor(JSBundle.message("javascript.linecomment"), ECMAL4Highlighter.ECMAL4_LINE_COMMENT),
-      new AttributesDescriptor(JSBundle.message("javascript.blockcomment"), ECMAL4Highlighter.ECMAL4_BLOCK_COMMENT),
-      new AttributesDescriptor(JSBundle.message("javascript.doccomment"), ECMAL4Highlighter.ECMAL4_DOC_COMMENT),
-      new AttributesDescriptor(JSBundle.message("javascript.operation"), ECMAL4Highlighter.ECMAL4_OPERATION_SIGN),
-      new AttributesDescriptor(JSBundle.message("javascript.parens"), ECMAL4Highlighter.ECMAL4_PARENTHS),
-      new AttributesDescriptor(JSBundle.message("javascript.brackets"), ECMAL4Highlighter.ECMAL4_BRACKETS),
-      new AttributesDescriptor(JSBundle.message("javascript.braces"), ECMAL4Highlighter.ECMAL4_BRACES),
-      new AttributesDescriptor(JSBundle.message("javascript.comma"), ECMAL4Highlighter.ECMAL4_COMMA),
-      new AttributesDescriptor(JSBundle.message("javascript.dot"), ECMAL4Highlighter.ECMAL4_DOT),
-      new AttributesDescriptor(JSBundle.message("javascript.semicolon"), ECMAL4Highlighter.ECMAL4_SEMICOLON),
-      new AttributesDescriptor(JSBundle.message("javascript.badcharacter"), ECMAL4Highlighter.ECMAL4_BAD_CHARACTER),
-      new AttributesDescriptor(JSBundle.message("javascript.docmarkup"), ECMAL4Highlighter.ECMAL4_DOC_MARKUP),
-      new AttributesDescriptor(JSBundle.message("javascript.doctag"), ECMAL4Highlighter.ECMAL4_DOC_TAG),
-      new AttributesDescriptor(JSBundle.message("javascript.parameter"), ECMAL4Highlighter.ECMAL4_PARAMETER),
-      new AttributesDescriptor(JSBundle.message("javascript.local.variable"), ECMAL4Highlighter.ECMAL4_LOCAL_VARIABLE),
-      new AttributesDescriptor(JSBundle.message("javascript.global.variable"), ECMAL4Highlighter.ECMAL4_GLOBAL_VARIABLE),
-      new AttributesDescriptor(JSBundle.message("javascript.global.function"), ECMAL4Highlighter.ECMAL4_GLOBAL_FUNCTION),
-      new AttributesDescriptor(JSBundle.message("javascript.class"), ECMAL4Highlighter.ECMAL4_CLASS),
-      new AttributesDescriptor(JSBundle.message("javascript.interface"), ECMAL4Highlighter.ECMAL4_INTERFACE),
-      new AttributesDescriptor(JSBundle.message("javascript.instance.member.function"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_FUNCTION),
-      new AttributesDescriptor(JSBundle.message("javascript.instance.member.variable"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_VARIABLE),
-      new AttributesDescriptor(JSBundle.message("javascript.static.member.function"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_FUNCTION),
-      new AttributesDescriptor(JSBundle.message("javascript.static.member.variable"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE)
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.keyword"), ECMAL4Highlighter.ECMAL4_KEYWORD),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.metadata"), ECMAL4Highlighter.ECMAL4_METADATA),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.string"), ECMAL4Highlighter.ECMAL4_STRING),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.valid.string.escape"), ECMAL4Highlighter.ECMAL4_VALID_STRING_ESCAPE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.invalid.string.escape"), ECMAL4Highlighter.ECMAL4_INVALID_STRING_ESCAPE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.number"), ECMAL4Highlighter.ECMAL4_NUMBER),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.regexp"), ECMAL4Highlighter.ECMAL4_REGEXP),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.linecomment"), ECMAL4Highlighter.ECMAL4_LINE_COMMENT),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.blockcomment"), ECMAL4Highlighter.ECMAL4_BLOCK_COMMENT),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.doccomment"), ECMAL4Highlighter.ECMAL4_DOC_COMMENT),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.operation"), ECMAL4Highlighter.ECMAL4_OPERATION_SIGN),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.parens"), ECMAL4Highlighter.ECMAL4_PARENTHS),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.brackets"), ECMAL4Highlighter.ECMAL4_BRACKETS),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.braces"), ECMAL4Highlighter.ECMAL4_BRACES),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.comma"), ECMAL4Highlighter.ECMAL4_COMMA),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.dot"), ECMAL4Highlighter.ECMAL4_DOT),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.semicolon"), ECMAL4Highlighter.ECMAL4_SEMICOLON),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.badcharacter"), ECMAL4Highlighter.ECMAL4_BAD_CHARACTER),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.docmarkup"), ECMAL4Highlighter.ECMAL4_DOC_MARKUP),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.doctag"), ECMAL4Highlighter.ECMAL4_DOC_TAG),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.parameter"), ECMAL4Highlighter.ECMAL4_PARAMETER),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.local.variable"), ECMAL4Highlighter.ECMAL4_LOCAL_VARIABLE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.global.variable"), ECMAL4Highlighter.ECMAL4_GLOBAL_VARIABLE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.global.function"), ECMAL4Highlighter.ECMAL4_GLOBAL_FUNCTION),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.class"), ECMAL4Highlighter.ECMAL4_CLASS),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.interface"), ECMAL4Highlighter.ECMAL4_INTERFACE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.instance.member.function"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_FUNCTION),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.instance.member.variable"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_VARIABLE),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.static.member.function"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_FUNCTION),
+      new AttributesDescriptor(JavaScriptBundle.message("javascript.static.member.variable"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE)
     };
 
   @NonNls private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();

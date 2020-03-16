@@ -2,7 +2,7 @@
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
@@ -511,8 +511,8 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   @Override
   protected String getCommandName() {
     if (myMode == JSExtractSuperMode.RenameImplementation) {
-      return JSBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
-                              new JSNamedElementPresenter(mySourceClass).describeWithShortName());
+      return JavaScriptBundle.message("extract.subclass.command.name", StringUtil.getQualifiedName(myTargetPackage, myTargetName),
+                                      new JSNamedElementPresenter(mySourceClass).describeWithShortName());
     }
     else {
       return RefactoringBundle.message(myClassNotInterface ? "extract.superclass.command.name" : "extract.interface.command.name",

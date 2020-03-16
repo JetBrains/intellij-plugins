@@ -15,7 +15,7 @@ package com.intellij.flex.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.inspections.JSJoinVariableDeclarationAndAssignmentInspection;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
@@ -49,7 +49,7 @@ public class ActionScriptIntentionActionTest extends LightJavaCodeInsightFixture
   public void testMergeDeclarationAndInitialization() {
     myFixture.enableInspections(new JSJoinVariableDeclarationAndAssignmentInspection());
     final String dirName = "mergeDeclarationAndInitialization/";
-    final String intentionActionName = JSBundle.message("js.join.declaration.assignment.inspection.fix");
+    final String intentionActionName = JavaScriptBundle.message("js.join.declaration.assignment.inspection.fix");
     doIntentionTest(dirName, "", intentionActionName);
   }
 

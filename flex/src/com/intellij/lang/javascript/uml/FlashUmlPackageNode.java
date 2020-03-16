@@ -18,7 +18,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramNodeBase;
 import com.intellij.diagram.DiagramProvider;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +46,7 @@ public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
 
   @Override
   public String getTooltip() {
-    return "<html><b>" + (myPackage.length() > 0 ? myPackage : JSBundle.message("top.level")) + "</b></html>";
+    return "<html><b>" + (myPackage.length() > 0 ? myPackage : JavaScriptBundle.message("top.level")) + "</b></html>";
   }
 
   @Override

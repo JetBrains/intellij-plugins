@@ -532,7 +532,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       });
 
       try {
-        final String actionName = JSBundle.message("javascript.create.method.intention.name", "bar");
+        final String actionName = JavaScriptBundle.message("javascript.create.method.intention.name", "bar");
         findAndInvokeIntentionAction(highlightInfos, actionName, myEditor, myFile);
         assertNull(findIntentionAction(doHighlighting(), actionName, myEditor, myFile));
       }
@@ -646,7 +646,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void doImplementsTest(final String testName) throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(false, testName + ".mxml", "I" + getTestName(false) + ".as");
-    findAndInvokeIntentionAction(infoCollection, JSBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, JavaScriptBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
     JSTestUtils.initJSIndexes(getProject());
 
@@ -1017,9 +1017,9 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testGenerateGetterAndSetterIntentions() throws Exception {
     final String name = getTestName(false);
-    doTestIntention(name + "Getter", "as", JSBundle.message("javascript.intention.create.getter", "foo"));
-    doTestIntention(name + "Setter", "mxml", JSBundle.message("javascript.intention.create.setter", "foo"));
-    doTestIntention(name + "GetterAndSetter", "as", JSBundle.message("javascript.intention.create.getter.setter", "foo"));
+    doTestIntention(name + "Getter", "as", JavaScriptBundle.message("javascript.intention.create.getter", "foo"));
+    doTestIntention(name + "Setter", "mxml", JavaScriptBundle.message("javascript.intention.create.setter", "foo"));
+    doTestIntention(name + "GetterAndSetter", "as", JavaScriptBundle.message("javascript.intention.create.getter.setter", "foo"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
@@ -1409,7 +1409,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testIntroduceFieldAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.field.intention.name", "v"), "as",
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.field.intention.name", "v"), "as",
                                               getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
@@ -1419,12 +1419,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testCreateFunctionAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.method.intention.name", "foo"), "as",
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.method.intention.name", "foo"), "as",
                                               getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
   public void testImplementMethodsAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.implement.methods"), "as", getTestName(false) + ".as",
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.fix.implement.methods"), "as", getTestName(false) + ".as",
                                               getTestName(false) + "_2.as",
                                               getTestName(false) + "_3.as");
   }
@@ -1761,7 +1761,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassByAttributeValue() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "Foo"), "mxml");
     final VirtualFile verificationFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_Foo.as");
     final VirtualFile createdFile =
@@ -1958,7 +1958,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testBindingType() throws Exception {
     final String testName = getTestName(false);
     Collection<HighlightInfo> highlightInfos = doTestFor(true, (Runnable)null, testName + ".mxml");
-    findAndInvokeIntentionAction(highlightInfos, JSBundle.message("javascript.create.method.intention.name", "getMsg"), myEditor, myFile);
+    findAndInvokeIntentionAction(highlightInfos, JavaScriptBundle.message("javascript.create.method.intention.name", "getMsg"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
   }
 
@@ -1966,7 +1966,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testBindingType2() throws Exception {
     final String testName = getTestName(false);
     Collection<HighlightInfo> highlightInfos = doTestFor(true, (Runnable)null, testName + ".mxml");
-    findAndInvokeIntentionAction(highlightInfos, JSBundle.message("javascript.create.field.intention.name", "label"), myEditor, myFile);
+    findAndInvokeIntentionAction(highlightInfos, JavaScriptBundle.message("javascript.create.field.intention.name", "label"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
   }
 
@@ -1974,7 +1974,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testCreateClassFromMetadataAttr() throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JSBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
+    findAndInvokeIntentionAction(doTestFor(true, testName + ".as"), JavaScriptBundle.message("javascript.create.class.intention.name", "Baz"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/Baz.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -1987,7 +1987,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
     findAndInvokeIntentionAction(doTestFor(true, testName + ".as"),
-                                 JSBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
+                                 JavaScriptBundle.message("javascript.create.class.intention.name", "MyEvent"), myEditor, myFile);
     assertEmpty(filterUnwantedInfos(doHighlighting(), this));
     final VirtualFile createdFile = VfsUtilCore.findRelativeFile("foo/MyEvent.as", myFile.getVirtualFile().getParent());
     myEditor = FileEditorManager.getInstance(myProject).openTextEditor(new OpenFileDescriptor(myProject, createdFile), true);
@@ -2043,22 +2043,22 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.field.intention.name", "foo"), "as");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"), "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateFieldByMxmlAttribute2() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.field.intention.name", "foo"), "mxml");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.field.intention.name", "foo"), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateSetterByMxmlAttribute() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.set.property.intention.name", "foo"), "as");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.set.property.intention.name", "foo"), "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testCreateSetterByMxmlAttribute2() throws Exception {
-    doTestQuickFixForRedMxmlAttribute(JSBundle.message("javascript.create.set.property.intention.name", "foo"), "mxml");
+    doTestQuickFixForRedMxmlAttribute(JavaScriptBundle.message("javascript.create.set.property.intention.name", "foo"), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
@@ -2234,7 +2234,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidElementInspection());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     final String testName = getTestName(false);
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.class.intention.name", "MyZuperClass"), "mxml");
 
     final VirtualFile expectedFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_2.as");
@@ -2315,6 +2315,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testCreateMethodAfterCallExpression() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.create.method.intention.name", "bar"), "as");
+    doHighlightingWithInvokeFixAndCheckResult(JavaScriptBundle.message("javascript.create.method.intention.name", "bar"), "as");
   }
 }

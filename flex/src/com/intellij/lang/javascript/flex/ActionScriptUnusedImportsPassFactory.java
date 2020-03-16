@@ -14,7 +14,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ImportOptimizer;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -69,7 +69,7 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
       @Override
       @NotNull
       public String getText() {
-        return JSBundle.message("javascript.fix.optimize.imports");
+        return JavaScriptBundle.message("javascript.fix.optimize.imports");
       }
 
       @Override
@@ -140,9 +140,9 @@ final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlighti
       final List<HighlightInfo> infos = new ArrayList<>(importStatements.size() + fqnsToReplaceWithShortName.size());
       IntentionAction action = createOptimizeImportsIntention();
 
-      createHighlights(importStatements, action, JSBundle.message("javascript.validation.unused.import"), infos,
+      createHighlights(importStatements, action, JavaScriptBundle.message("javascript.validation.unused.import"), infos,
                        ProblemHighlightType.LIKE_UNUSED_SYMBOL);
-      createHighlights(fqnsToReplaceWithShortName, action, JSBundle.message("javascript.validation.fqn.to.replace.with.import"), infos,
+      createHighlights(fqnsToReplaceWithShortName, action, JavaScriptBundle.message("javascript.validation.fqn.to.replace.with.import"), infos,
                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
       return infos;
     }

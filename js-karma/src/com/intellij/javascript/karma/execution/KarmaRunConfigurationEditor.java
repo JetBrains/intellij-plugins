@@ -8,7 +8,7 @@ import com.intellij.javascript.karma.scope.KarmaScopeView;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackageField;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -73,9 +73,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karmaOptions.label"), myKarmaOptionsEditor)
       .addComponent(new JSeparator(), 8)
       .addLabeledComponent(NodeJsInterpreterField.getLabelTextForComponent(), myNodeInterpreterField, 8)
-      .addLabeledComponent(JSBundle.message("rc.nodeOptions.label"), myNodeOptionsEditor)
+      .addLabeledComponent(JavaScriptBundle.message("rc.nodeOptions.label"), myNodeOptionsEditor)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.karma_package_dir.label"), myKarmaPackageField)
-      .addLabeledComponent(JSBundle.message("rc.workingDirectory.label"), myWorkingDirComponent)
+      .addLabeledComponent(JavaScriptBundle.message("rc.workingDirectory.label"), myWorkingDirComponent)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.environment.label"), myEnvVarsComponent)
       .addSeparator(8)
       .addComponent(scopeKindPanel)
@@ -102,7 +102,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       textFieldWithBrowseButton,
-      JSBundle.message("rc.workingDirectory.browseDialogTitle"),
+      JavaScriptBundle.message("rc.workingDirectory.browseDialogTitle"),
       FileChooserDescriptorFactory.createSingleFolderDescriptor()
     );
     PathShortener.enablePathShortening(textFieldWithBrowseButton.getTextField(), null);

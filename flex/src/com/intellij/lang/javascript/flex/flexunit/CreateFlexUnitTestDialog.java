@@ -5,7 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
@@ -144,7 +144,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
     };
 
     mySuperClassField = JSReferenceEditor.forClassName("", module.getProject(), null, getSuperClassScope(module), null, filter,
-                                                       JSBundle.message("choose.super.class.title"));
+                                                       JavaScriptBundle.message("choose.super.class.title"));
 
 
     final List<JSMemberInfo> memberInfos = new ArrayList<>();

@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.editor
 
 import com.intellij.codeInsight.hints.Option
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.editing.JavaScriptInlayParameterHintsProvider
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
@@ -29,7 +29,7 @@ class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider()
 
   companion object {
     val NAMES_FOR_ALL_ARGS = Option(
-      "vuejs.show.names.for.all.args", JSBundle.message("js.param.hints.show.names.for.all.args"), false)
+      "vuejs.show.names.for.all.args", JavaScriptBundle.message("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_FILTERS = Option(
       "vuejs.show.names.for.filters", "For filter arguments", true)
   }

@@ -12,7 +12,7 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.LanguageNamesValidation;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -570,7 +570,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
     if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
       return LanguageNamesValidation.isIdentifier(JavascriptLanguage.INSTANCE, value, context.getProject()) ? null // ok
-                                                                                                                : JSBundle.message("invalid.identifier.value");
+                                                                                                                : JavaScriptBundle
+               .message("invalid.identifier.value");
     }
 
     if (value.indexOf('{') != -1) return null; // dynamic values

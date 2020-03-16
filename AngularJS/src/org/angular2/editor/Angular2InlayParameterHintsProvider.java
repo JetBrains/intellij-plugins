@@ -2,7 +2,7 @@
 package org.angular2.editor;
 
 import com.intellij.codeInsight.hints.Option;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.JSCallLikeExpression;
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider;
 import org.angular2.lang.Angular2Bundle;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
   public static final Option NAMES_FOR_ALL_ARGS = new Option(
-    "angular.show.names.for.all.args", JSBundle.message("js.param.hints.show.names.for.all.args"), false);
+    "angular.show.names.for.all.args", JavaScriptBundle.message("js.param.hints.show.names.for.all.args"), false);
   public static final Option NAMES_FOR_PIPES = new Option(
     "angular.show.names.for.pipes", Angular2Bundle.message("angular.inlay.params.option.pipe.arguments"), true);
 

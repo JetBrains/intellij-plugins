@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.diagram.DiagramDataModel;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
@@ -20,20 +20,22 @@ import java.util.HashMap;
 public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
   public NewActionScriptClassUmlAction() {
-    super(JSBundle.messagePointer("new.actionscript.class.uml.action.text"), JSBundle.messagePointer("new.actionscript.class.action.description"),
+    super(JavaScriptBundle.messagePointer("new.actionscript.class.uml.action.text"), JavaScriptBundle
+            .messagePointer("new.actionscript.class.action.description"),
           JSIconProvider.AS_INSTANCE.getClassIcon());
   }
 
   @Override
   public String getActionName() {
-    return JSBundle.message("new.actionscript.class.command.name");
+    return JavaScriptBundle.message("new.actionscript.class.command.name");
   }
 
   @Nullable
   @Override
   protected CreateClassParameters showDialog(final Project project, Pair<PsiDirectory, String> dirAndPackage) {
     return ActionScriptCreateClassOrInterfaceFix
-      .createAndShow(null, dirAndPackage.first, null, true, dirAndPackage.second, null, JSBundle.message("new.actionscript.class.dialog.title"),
+      .createAndShow(null, dirAndPackage.first, null, true, dirAndPackage.second, null, JavaScriptBundle
+                       .message("new.actionscript.class.dialog.title"),
                      () -> ActionScriptCreateClassOrInterfaceFix
                        .getApplicableTemplates(ActionScriptCreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS, project));
   }
@@ -55,7 +57,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
       catch (Exception e) {
         throw new IncorrectOperationException(e);
       }
-    }, JSBundle.message(JSBundle.message("new.actionscript.class.command.name")), null);
+    }, JavaScriptBundle.message(JavaScriptBundle.message("new.actionscript.class.command.name")), null);
     return clazz.get();
   }
 }

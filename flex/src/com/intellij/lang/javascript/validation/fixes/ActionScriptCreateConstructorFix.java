@@ -5,7 +5,7 @@ import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
@@ -215,13 +215,13 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   @NotNull
   @Override
   public String getName() {
-    return JSBundle.message("actionscript.create.constructor.intention.name", myName);
+    return JavaScriptBundle.message("actionscript.create.constructor.intention.name", myName);
   }
 
   private class MyDialog extends JSChangeSignatureDialog {
     MyDialog(JSMethodDescriptor descriptor, PsiElement context) {
       super(descriptor, context);
-      setTitle(JSBundle.message("create.constructor.dialog.title"));
+      setTitle(JavaScriptBundle.message("create.constructor.dialog.title"));
     }
 
     @Override

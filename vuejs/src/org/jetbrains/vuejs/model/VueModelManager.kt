@@ -7,7 +7,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
@@ -363,7 +363,8 @@ class VueModelManager {
           parent = parent.stubSafeElement as? ES6ClassExpression
         }
         if (parent is ES6ClassExpression)
-          (implicitElement?.toBuilder() ?: JSImplicitElementImpl.Builder(JSBundle.message("element.name.anonymous"), parent))
+          (implicitElement?.toBuilder() ?: JSImplicitElementImpl.Builder(
+            JavaScriptBundle.message("element.name.anonymous"), parent))
             .setProvider(parent)
             .forbidAstAccess()
             .toImplicitElement()
@@ -371,14 +372,14 @@ class VueModelManager {
           implicitElement
       }
       else if (declaration is ES6ClassExpression)
-        buildImplicitElement(declaration, declaration.name ?: JSBundle.message("element.name.anonymous"))
+        buildImplicitElement(declaration, declaration.name ?: JavaScriptBundle.message("element.name.anonymous"))
       else
         (declaration as? JSImplicitElementProvider)?.indexingData?.implicitElements?.find {
           it.userString == VueComponentsIndex.JS_KEY
         }
     }
 
-    private fun buildImplicitElement(parent: PsiElement, name: String = JSBundle.message("element.name.anonymous")) =
+    private fun buildImplicitElement(parent: PsiElement, name: String = JavaScriptBundle.message("element.name.anonymous")) =
       JSImplicitElementImpl(JSImplicitElementImpl.Builder(name, parent).forbidAstAccess())
 
   }

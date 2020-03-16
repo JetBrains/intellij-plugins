@@ -1,11 +1,11 @@
 package com.intellij.javascript.karma.scope;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public enum KarmaScopeKind {
-  ALL(JSBundle.message("rc.testRunScope.all")) {
+  ALL(JavaScriptBundle.message("rc.testRunScope.all")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -13,7 +13,7 @@ public enum KarmaScopeKind {
     }
   },
 
-  TEST_FILE(JSBundle.message("rc.testRunScope.testFile")) {
+  TEST_FILE(JavaScriptBundle.message("rc.testRunScope.testFile")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
@@ -21,23 +21,23 @@ public enum KarmaScopeKind {
     }
   },
 
-  SUITE(JSBundle.message("rc.testRunScope.suite")) {
+  SUITE(JavaScriptBundle.message("rc.testRunScope.suite")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
       return new KarmaSuiteOrTestScopeView(project,
-                                           JSBundle.message("rc.testOrSuiteScope.suite.title"),
-                                           JSBundle.message("rc.testOrSuiteScope.suite.label"));
+                                           JavaScriptBundle.message("rc.testOrSuiteScope.suite.title"),
+                                           JavaScriptBundle.message("rc.testOrSuiteScope.suite.label"));
     }
   },
 
-  TEST(JSBundle.message("rc.testRunScope.test")) {
+  TEST(JavaScriptBundle.message("rc.testRunScope.test")) {
     @NotNull
     @Override
     public KarmaScopeView createView(@NotNull Project project) {
       return new KarmaSuiteOrTestScopeView(project,
-                                           JSBundle.message("rc.testOrSuiteScope.test.title"),
-                                           JSBundle.message("rc.testOrSuiteScope.test.label"));
+                                           JavaScriptBundle.message("rc.testOrSuiteScope.test.title"),
+                                           JavaScriptBundle.message("rc.testOrSuiteScope.test.label"));
     }
   };
 

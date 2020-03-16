@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.uml.actions;
 
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -31,7 +31,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     super(method, forceConstructor, method);
     myTargetClass = targetClass;
 
-    setTitle(JSBundle.message(forceConstructor ? "create.constructor.dialog.title" : "create.method.dialog.title"));
+    setTitle(JavaScriptBundle.message(forceConstructor ? "create.constructor.dialog.title" : "create.method.dialog.title"));
   }
 
   static JSFunction createFakeMethod(JSClass clazz, String text, boolean inClass) {
@@ -108,8 +108,8 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
         existingMethod.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC) ==
         (myStaticCb != null && myStaticCb.isSelected())) {
       boolean contains = existingMethod.getParent() == myTargetClass;
-      String message = JSBundle.message("class.already.contains.method.warning", myTargetClass.getQualifiedName(),
-                                        Integer.valueOf(contains ? 1 : 2), getMethodName());
+      String message = JavaScriptBundle.message("class.already.contains.method.warning", myTargetClass.getQualifiedName(),
+                                                Integer.valueOf(contains ? 1 : 2), getMethodName());
       if (Messages.showYesNoDialog(myProject, message, getTitle(), Messages.getQuestionIcon()) != Messages.YES) {
         return EXIT_SILENTLY;
       }
@@ -140,7 +140,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(visibilityPanel, BorderLayout.NORTH);
-    myStaticCb = new JCheckBox(JSBundle.message("declare.static"));
+    myStaticCb = new JCheckBox(JavaScriptBundle.message("declare.static"));
     myStaticCb.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(final ChangeEvent e) {
@@ -153,7 +153,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
 
   private class CreateAction extends AbstractAction {
     CreateAction() {
-      putValue(NAME, JSBundle.message("create.button.text"));
+      putValue(NAME, JavaScriptBundle.message("create.button.text"));
       putValue(DEFAULT_ACTION, Boolean.TRUE);
     }
 

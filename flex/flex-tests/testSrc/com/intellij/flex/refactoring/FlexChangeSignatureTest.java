@@ -3,7 +3,7 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSChangeSignatureTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -286,14 +286,14 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   public void testIncompatibleOverrideConflict() {
     String[] conflicts = new String[]{
-      JSBundle.message("change.signature.conflict.incompatible.override", "method B.foo()", "method A.foo(int)", "Method B.foo()")
+      JavaScriptBundle.message("change.signature.conflict.incompatible.override", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo2", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }
 
   public void testIncompatibleImplementationConflict() {
     String[] conflicts = new String[]{
-      JSBundle.message("change.signature.conflict.incompatible.implementation", "method B.foo()", "method A.foo(int)", "Method B.foo()")
+      JavaScriptBundle.message("change.signature.conflict.incompatible.implementation", "method B.foo()", "method A.foo(int)", "Method B.foo()")
     };
     doTestConflicts("foo", JSAttributeList.AccessType.PUBLIC, "", conflicts, new JSParameterInfo("j", "int", "", "", 0));
   }

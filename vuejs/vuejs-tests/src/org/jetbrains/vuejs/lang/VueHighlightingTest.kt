@@ -5,7 +5,7 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspectio
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.JSBundle
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
@@ -748,7 +748,7 @@ Vue.component('global-comp-literal', {
 </template>
 """)
     val intentions = myFixture.filterAvailableIntentions(
-      JSBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
+      JavaScriptBundle.message("javascript.create.variable.intention.name", "someNonExistingReference2389"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -758,7 +758,8 @@ Vue.component('global-comp-literal', {
 <div @click="<caret>notExistingF()"></div>
 </template>
 """)
-    val intentions = myFixture.filterAvailableIntentions(JSBundle.message("javascript.create.function.intention.name", "notExistingF"))
+    val intentions = myFixture.filterAvailableIntentions(
+      JavaScriptBundle.message("javascript.create.function.intention.name", "notExistingF"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
@@ -768,7 +769,8 @@ Vue.component('global-comp-literal', {
 <div @click="new <caret>NotExistingClass().a()"></div>
 </template>
 """)
-    val intentions = myFixture.filterAvailableIntentions(JSBundle.message("javascript.create.class.intention.name", "NotExistingClass"))
+    val intentions = myFixture.filterAvailableIntentions(
+      JavaScriptBundle.message("javascript.create.class.intention.name", "NotExistingClass"))
     TestCase.assertTrue(intentions.isEmpty())
   }
 
