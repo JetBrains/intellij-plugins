@@ -858,7 +858,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (myTable.getSelectedRowCount() == 1) {
           myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
           return true;

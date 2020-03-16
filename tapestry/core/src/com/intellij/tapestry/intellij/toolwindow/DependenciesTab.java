@@ -91,7 +91,7 @@ public class DependenciesTab {
 
       new DoubleClickListener() {
         @Override
-        protected boolean onDoubleClick(MouseEvent e) {
+        protected boolean onDoubleClick(@NotNull MouseEvent e) {
           TreePath selected = _dependenciesTree.getSelectionPath();
 
           // When is double click

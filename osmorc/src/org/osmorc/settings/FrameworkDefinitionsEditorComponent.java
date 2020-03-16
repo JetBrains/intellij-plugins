@@ -115,7 +115,7 @@ public class FrameworkDefinitionsEditorComponent {
 
     new DoubleClickListener() {
       @Override
-      protected boolean onDoubleClick(MouseEvent e) {
+      protected boolean onDoubleClick(@NotNull MouseEvent e) {
         if (myFrameworkInstances.getSelectedIndex() != -1) {
           editFrameworkInstance();
           return true;

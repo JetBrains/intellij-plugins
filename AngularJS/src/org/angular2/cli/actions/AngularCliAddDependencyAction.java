@@ -204,7 +204,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     });
     new DoubleClickListener() {
       @Override
-      public boolean onDoubleClick(MouseEvent event) {
+      public boolean onDoubleClick(@NotNull MouseEvent event) {
         if (list.getSelectedValue() == null) return true;
         action.accept(list.getSelectedValue());
         return true;
