@@ -43,8 +43,8 @@
 
     <fileTypeDetector implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeDetector" />
 
-    <fileType name="AWSCloudFormation (JSON)" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationFileType" fieldName="INSTANCE" language="JSON" />
-    <fileType name="AWSCloudFormation (YAML)" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationFileType" fieldName="INSTANCE" language="yaml" />
+    <fileType name="AWSCloudFormation (JSON)" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationFileType" fieldName="INSTANCE" />
+    <fileType name="AWSCloudFormation (YAML)" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationFileType" fieldName="INSTANCE" />
     <lang.substitutor language="TEXT" implementationClass="com.intellij.aws.cloudformation.CloudFormationLanguageSubstitutor" />
 
     <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>

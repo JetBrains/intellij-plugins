@@ -5,7 +5,7 @@ import com.intellij.json.JsonLanguage
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE) {
+class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE, true) {
   override fun getName(): String = "AWSCloudFormation (JSON)"
   override fun getDescription(): String = "AWS CloudFormation templates (JSON)"
   override fun getDefaultExtension(): String = ""

@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType
 import org.jetbrains.yaml.YAMLLanguage
 import javax.swing.Icon
 
-class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE) {
+class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE, true) {
   override fun getName(): String = "AWSCloudFormation (YAML)"
   override fun getDescription(): String = "AWS CloudFormation templates (YAML)"
   override fun getDefaultExtension(): String = ""
