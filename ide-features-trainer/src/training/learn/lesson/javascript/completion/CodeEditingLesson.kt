@@ -1,8 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.learn.lesson.javascript.completion
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
+import com.intellij.psi.codeStyle.CodeStyleSettings
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.textAfterOffset
 import training.learn.lesson.javascript.textBeforeOffset
@@ -43,6 +45,7 @@ class CodeEditingLesson(module: Module) : KLesson("Code Editing Tips and Tricks"
     get() {
       return {
         JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        CodeStyle.getSettings(project).AUTODETECT_INDENTS = false
         prepareSample(sample)
         task("ReformatCode") {
           text("Let's go over some tips and tricks that can help you edit code a lot faster. For starters, there's no need to manually fix code formatting with WebStorm. Reformat the code with ${action(it)}.")
