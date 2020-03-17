@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.util.Key;
@@ -42,8 +42,8 @@ public class DartIndexUtil {
     result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
     result.setIsPart(PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class) != null);
 
-    for (PsiElement rootElement : DartResolveUtil.findDartRoots(psiFile)) {
-      PsiElement[] children = rootElement.getChildren();
+    if (psiFile instanceof DartFile) {
+      PsiElement[] children = psiFile.getChildren();
 
       for (DartComponentName componentName : DartControlFlowUtil.getSimpleDeclarations(children, null, false)) {
         final String name = componentName.getName();

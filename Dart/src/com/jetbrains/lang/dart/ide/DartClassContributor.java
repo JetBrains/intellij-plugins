@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.navigation.ChooseByNameContributorEx;
@@ -14,6 +15,7 @@ import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.IdFilter;
 import com.jetbrains.lang.dart.psi.DartComponent;
+import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +49,7 @@ public class DartClassContributor implements ChooseByNameContributorEx {
     FileBasedIndex.getInstance().getFilesWithKey(
       index, Collections.singleton(name), file ->
         JBIterable.of(psiManager.findFile(file))
-          .flatMap(DartResolveUtil::findDartRoots)
+          .filter(psiFile -> psiFile instanceof DartFile)
           .flatMap(componentGetter)
           .filter(o -> Comparing.equal(name, o.getName()))
           .filterMap(DartComponent::getComponentName)
