@@ -65,9 +65,9 @@ object ProjectUtils {
         if (installRemoteProject != null) {
           val ok = invokeAndWaitIfNeeded {
             Messages.showOkCancelDialog(projectToClose,
-                                        "IDE Features Trainer plugin needs download demo project",
-                                        "Confirm Download",
-                                        "Download and Proceed",
+                                        LearnBundle.message("learn.project.initializing.download.message"),
+                                        LearnBundle.message("learn.project.initializing.download.title"),
+                                        LearnBundle.message("learn.project.initializing.download.accept"),
                                         Messages.getCancelButton(),
                                         null) == Messages.OK
           }
@@ -89,8 +89,8 @@ object ProjectUtils {
             }.get()
             if (directories.isEmpty())
               return@runBackgroundableTask
-            if (directories.size > 1) error("Too many files were chosen for IFT Demo project root: $directories")
-            val canonicalPath = directories[0].canonicalPath ?: error("No canonical path for ${directories[0]}")
+            val chosen = directories.single()
+            val canonicalPath = chosen.canonicalPath ?: error("No canonical path for $chosen")
             dest = File(canonicalPath, langSupport.defaultProjectName)
             if (!FileUtils.copyResourcesRecursively(inputUrl, dest)) {
               invokeLater {
