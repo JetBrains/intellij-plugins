@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
@@ -8,6 +9,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.IOUtil;
+import com.jetbrains.lang.dart.DartFileType;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,13 +95,14 @@ public class DartImportAndExportIndex extends SingleEntryFileBasedIndexExtension
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return DartInputFilter.INSTANCE;
+    return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
   @NotNull
   public static List<DartImportOrExportInfo> getImportAndExportInfos(final @NotNull Project project,
                                                                      final @NotNull VirtualFile virtualFile) {
-    Map<Integer, List<DartImportOrExportInfo>> data = FileBasedIndex.getInstance().getFileData(DART_IMPORT_EXPORT_INDEX, virtualFile, project);
+    Map<Integer, List<DartImportOrExportInfo>> data =
+      FileBasedIndex.getInstance().getFileData(DART_IMPORT_EXPORT_INDEX, virtualFile, project);
     return ContainerUtil.getFirstItem(data.values(), Collections.emptyList());
   }
 }
