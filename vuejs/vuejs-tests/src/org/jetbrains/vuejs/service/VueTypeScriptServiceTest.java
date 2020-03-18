@@ -105,4 +105,9 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     myFixture.type('/');
     checkAfterFile("2.vue");
   }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueTsx() {
+    doTestWithCopyDirectory();
+  }
 }
