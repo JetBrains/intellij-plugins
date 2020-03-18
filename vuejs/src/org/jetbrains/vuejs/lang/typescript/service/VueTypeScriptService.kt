@@ -15,6 +15,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScript
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
+import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptOpenEditorCommand
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.application.ReadAction
@@ -174,4 +175,15 @@ class VueTypeScriptService(project: Project) :
 
   private fun isVueFile(virtualFile: VirtualFile) = virtualFile.fileType == VueFileType.INSTANCE
 
+
+  override fun createOpenCommand(file: VirtualFile,
+                                 timestamp: Long,
+                                 contentLength: Long,
+                                 lineCount: Int,
+                                 lastLineStartOffset: Int,
+                                 content: CharSequence?,
+                                 projectFileName: String?): TypeScriptOpenEditorCommand {
+    return VueTypeScriptServiceCache.createOpenCommand(myProject, file, timestamp, contentLength, lineCount, lastLineStartOffset, content,
+                                                       projectFileName)
+  }
 }
