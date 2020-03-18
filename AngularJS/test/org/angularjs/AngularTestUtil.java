@@ -39,10 +39,6 @@ public class AngularTestUtil {
     }
   }
 
-  public static void enableIvyMetadataSupport(UsefulTestCase testCase) {
-    Registry.get("angular.enableIvyMetadataSupport").setValue(true, testCase.getTestRootDisposable());
-  }
-
   public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
     Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
