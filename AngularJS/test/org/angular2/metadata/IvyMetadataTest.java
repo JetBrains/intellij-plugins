@@ -18,12 +18,6 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "/ivy";
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    AngularTestUtil.enableIvyMetadataSupport(this);
-  }
-
   public void testInterModuleExtends() {
     myFixture.copyDirectoryToProject("ng-zorro", ".");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,

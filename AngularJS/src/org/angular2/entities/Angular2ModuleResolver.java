@@ -24,6 +24,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 public class Angular2ModuleResolver<T extends PsiElement> {
 
   @NonNls public static final String NG_MODULE_PROP = "ngModule";
+  @NonNls public static final String MODULE_WITH_PROVIDERS_CLASS = "ModuleWithProviders";
 
   @NonNls private static final String KEYS_PREFIX = "angular.moduleResolver.";
   private static final Key<CachedValue<ResolvedEntitiesList<Angular2Declaration>>> DECLARATIONS_KEY =

@@ -102,15 +102,14 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
     doResolutionTest("metadata-forRoot",
                      "mainModule.ts",
                      "export class Main<caret>Module {",
-                     "check-json.txt");
+                     "check.txt");
   }
 
   public void testIvyMetadataForRootResolution() {
-    AngularTestUtil.enableIvyMetadataSupport(this);
-    doResolutionTest("metadata-forRoot",
+    doResolutionTest("ivy-forRoot",
                      "mainModule.ts",
                      "export class Main<caret>Module {",
-                     "check-ivy.txt");
+                     "check.txt");
   }
 
   public void testFormsResolution() {
