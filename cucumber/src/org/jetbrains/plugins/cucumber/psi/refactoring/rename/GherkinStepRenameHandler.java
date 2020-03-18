@@ -15,6 +15,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.psi.GherkinTable;
 
 public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
   @Override
@@ -54,6 +55,12 @@ public final class GherkinStepRenameHandler extends PsiElementRenameHandler {
     }
     if (element == null) {
       element = CommonDataKeys.PSI_ELEMENT.getData(context);
+    }
+
+    GherkinTable table = PsiTreeUtil.getParentOfType(element, GherkinTable.class);
+    if (table != null) {
+      // There is GherkinInplaceRenameHandler that should handle rename inside the GherkinTable
+      return null;
     }
     return element instanceof GherkinStep ? (GherkinStep)element : PsiTreeUtil.getParentOfType(element, GherkinStep.class);
   }
