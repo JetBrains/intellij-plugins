@@ -27,7 +27,6 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testHighlightingIvy() {
-    AngularTestUtil.enableIvyMetadataSupport(this);
     testHighlightingMetadata();
   }
 

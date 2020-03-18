@@ -4,7 +4,6 @@ package org.angular2.entities.ivy;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -64,9 +63,5 @@ public class Angular2IvyUtil {
     return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
       return create(entityDef.createEntity(), entityDef.getField());
     });
-  }
-
-  public static boolean isIvyMetadataSupportEnabled() {
-    return Registry.is("angular.enableIvyMetadataSupport"); //NON-NLS
   }
 }

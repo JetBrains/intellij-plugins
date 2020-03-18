@@ -41,7 +41,8 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.*;
-import static org.angular2.entities.ivy.Angular2IvyUtil.*;
+import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
+import static org.angular2.entities.ivy.Angular2IvyUtil.hasIvyMetadata;
 import static org.angular2.index.Angular2IndexingHandler.*;
 import static org.angular2.lang.Angular2LangUtil.isAngular2Context;
 
@@ -60,15 +61,13 @@ public class Angular2EntitiesProvider {
     return withJsonMetadataFallback(element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
   }
 
-  public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element, Function<E, R> ivy, Function<TypeScriptClass, R> jsonFallback) {
-    boolean isIvyMetadataSupportEnabled = isIvyMetadataSupportEnabled();
-    R result = null;
-    if (isIvyMetadataSupportEnabled) {
-      result = ivy.apply(element);
-    }
+  public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element,
+                                                                               Function<E, R> ivy,
+                                                                               Function<TypeScriptClass, R> jsonFallback) {
+    R result = ivy.apply(element);
     if (result == null
         && element instanceof TypeScriptClass
-        && (!isIvyMetadataSupportEnabled || !hasIvyMetadata(element))
+        && !hasIvyMetadata(element)
         && isAngular2Context(element)) {
       return jsonFallback.apply((TypeScriptClass)element);
     }
@@ -305,9 +304,8 @@ public class Angular2EntitiesProvider {
                                                                                     @NotNull Class<T> entityClass,
                                                                                     @NotNull StubIndexKey<String, T> key,
                                                                                     @NotNull Consumer<T> consumer) {
-    boolean ivyMetadataSupportEnabled = isIvyMetadataSupportEnabled();
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
-      if (el.isValid() && (!ivyMetadataSupportEnabled || !hasIvyMetadata(el))) {
+      if (el.isValid() && !hasIvyMetadata(el)) {
         consumer.accept(el);
       }
       return true;
@@ -319,16 +317,14 @@ public class Angular2EntitiesProvider {
                                                                     @NotNull StubIndexKey<String, TypeScriptClass> key,
                                                                     @NotNull Class<T> entityClass,
                                                                     @NotNull Consumer<T> consumer) {
-    if (isIvyMetadataSupportEnabled()) {
-      StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass.class, el -> {
-        if (el.isValid()) {
-          T entity = tryCast(getIvyEntity(el), entityClass);
-          if (entity != null) {
-            consumer.accept(entity);
-          }
+    StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), TypeScriptClass.class, el -> {
+      if (el.isValid()) {
+        T entity = tryCast(getIvyEntity(el), entityClass);
+        if (entity != null) {
+          consumer.accept(entity);
         }
-        return true;
-      });
-    }
+      }
+      return true;
+    });
   }
 }

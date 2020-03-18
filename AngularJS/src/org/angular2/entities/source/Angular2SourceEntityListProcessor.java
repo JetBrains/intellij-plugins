@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.impl.JSFunctionCachedData;
 import com.intellij.lang.javascript.psi.impl.JSFunctionNodesVisitor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
@@ -23,7 +24,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
-import org.angular2.entities.ivy.Angular2IvyUtil;
 import org.angular2.entities.metadata.Angular2MetadataUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
@@ -41,6 +41,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static java.util.Arrays.asList;
+import static org.angular2.entities.Angular2ModuleResolver.MODULE_WITH_PROVIDERS_CLASS;
 import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
 import static org.angular2.entities.ivy.Angular2IvyUtil.getIvyEntity;
 
@@ -208,14 +209,71 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
-    if (lookingForModule) {
-      Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
-      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
-      if (metadataModule != null) {
-        processCacheDependency(metadataFunction);
-        processCacheDependency(metadataModule);
-        // TODO Angular 9 d.ts metadata sometimes lacks ModuleType information, so we need to fallback to json metadata
-        if (Angular2IvyUtil.isIvyMetadataSupportEnabled()) {
+    JSType type = function.getReturnType();
+    while (type != null
+           && !(type instanceof JSAnyType)
+           && visitedTypes.add(type.getResolvedTypeId())) {
+      NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
+      JSRecordType.PropertySignature ngModuleSignature;
+      if (type.getSourceElement() != null) {
+        processCacheDependency(type.getSourceElement());
+      }
+      if (lookingForModule) {
+        if (type instanceof JSGenericTypeImpl
+            && ((JSGenericTypeImpl)type).getType() instanceof JSTypeImpl
+            && MODULE_WITH_PROVIDERS_CLASS.equals(((JSGenericTypeImpl)type).getType().getTypeText())) {
+          JSType argument = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
+          if (argument != null && !(argument instanceof JSAnyType)) {
+            type = argument;
+            lookingForModule = false;
+            continue;
+          }
+        }
+        if ((ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
+          type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
+          lookingForModule = false;
+          continue;
+        }
+      }
+      PsiElement sourceElement = type.getSourceElement();
+      if (sourceElement instanceof TypeScriptSingleType) {
+        JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
+          sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
+        if (expression != null) {
+          resolvedClazz = tryCast(expression.resolve(), JSClass.class);
+          T entity = getEntity(resolvedClazz);
+          if (entity != null) {
+            processCacheDependency(resolvedClazz);
+            processEntity(entity);
+            return;
+          }
+        }
+      }
+      else if (sourceElement instanceof TypeScriptClass) {
+        resolvedClazz = (JSClass)sourceElement;
+        T entity = getEntity(resolvedClazz);
+        if (entity != null) {
+          processCacheDependency(resolvedClazz);
+          processEntity(entity);
+          return;
+        }
+      }
+      JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
+                                                                  JSRecordType.CallSignature::hasNew);
+      type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
+    }
+    if (resolvedClazz != null && !(type instanceof JSAnyType)) {
+      processNonEntityClass(resolvedClazz);
+    }
+    else {
+      // Fallback to search in metadata
+      if (myEntityClass.isAssignableFrom(Angular2Module.class)) {
+        Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
+        Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
+        if (metadataModule != null) {
+          processCacheDependency(metadataFunction);
+          processCacheDependency(metadataModule);
+          // Make sure we translate to Ivy module if available
           TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
           if (tsClass != null) {
             Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
@@ -226,58 +284,11 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
               return;
             }
           }
+          //noinspection unchecked
+          processEntity((T)metadataModule);
+          return;
         }
-        //noinspection unchecked
-        processEntity((T)metadataModule);
-        return;
       }
-    }
-    JSType type = function.getReturnType();
-    while (type != null
-           && !(type instanceof JSAnyType)
-           && visitedTypes.add(type.getResolvedTypeId())) {
-      NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
-      JSRecordType.PropertySignature ngModuleSignature;
-      if (type.getSourceElement() != null) {
-        processCacheDependency(type.getSourceElement());
-      }
-      if (lookingForModule
-          && (ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
-        type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
-      }
-      else {
-        PsiElement sourceElement = type.getSourceElement();
-        if (sourceElement instanceof TypeScriptSingleType) {
-          JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
-            sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
-          if (expression != null) {
-            resolvedClazz = tryCast(expression.resolve(), JSClass.class);
-            T entity = getEntity(resolvedClazz);
-            if (entity != null) {
-              processCacheDependency(resolvedClazz);
-              processEntity(entity);
-              return;
-            }
-          }
-        }
-        else if (sourceElement instanceof TypeScriptClass) {
-          resolvedClazz = (JSClass)sourceElement;
-          T entity = getEntity(resolvedClazz);
-          if (entity != null) {
-            processCacheDependency(resolvedClazz);
-            processEntity(entity);
-            return;
-          }
-        }
-        JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
-                                                                    JSRecordType.CallSignature::hasNew);
-        type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
-      }
-    }
-    if (resolvedClazz != null && !(type instanceof JSAnyType)) {
-      processNonEntityClass(resolvedClazz);
-    }
-    else {
       processAnyType();
     }
   }
