@@ -31,8 +31,8 @@
                implementationClass="com.intellij.lang.ognl.highlight.OgnlHighlightingAnnotator"/>
 
     <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
-    <defaultLiveTemplates file="/liveTemplates/ognl"/>
-    <defaultLiveTemplates file="/liveTemplates/ognl-struts2"/>
+    <defaultLiveTemplates file="liveTemplates/ognl"/>
+    <defaultLiveTemplates file="liveTemplates/ognl-struts2"/>
 
     <spellchecker.support language="OGNL"
                           implementationClass="com.intellij.lang.ognl.spellchecker.OgnlSpellcheckingStrategy"/>

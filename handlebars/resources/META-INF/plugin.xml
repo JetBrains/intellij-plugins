@@ -44,7 +44,7 @@
     <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.file.HbLanguageSubstitutor"/>
 
     <liveTemplateContext implementation="com.dmarcotte.handlebars.editor.templates.HbTemplateContextType"/>
-    <defaultLiveTemplates file="/liveTemplates/Handlebars"/>
+    <defaultLiveTemplates file="liveTemplates/Handlebars"/>
     
     <lang.syntaxHighlighter language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbHighlighter"/>
 
