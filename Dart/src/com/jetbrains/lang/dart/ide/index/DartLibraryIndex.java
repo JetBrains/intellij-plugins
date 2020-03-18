@@ -188,8 +188,8 @@ const Map<String, LibraryInfo> LIBRARIES = const {
     public Map<String, Void> map(@NotNull final FileContent inputData) {
       final DartFileIndexData indexData = DartIndexUtil.indexFile(inputData);
 
-      return indexData.isPart() ? Collections.emptyMap()
-                                : Collections.singletonMap(indexData.getLibraryName(), null);
+      return indexData.isPart() || indexData.getLibraryName() == null ? Collections.emptyMap()
+                                                                      : Collections.singletonMap(indexData.getLibraryName(), null);
     }
   }
 }

@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.psi;
 import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public interface DartPartOfStatement extends DartPsiCompositeElement {
 
@@ -18,5 +19,8 @@ public interface DartPartOfStatement extends DartPsiCompositeElement {
 
   @NotNull
   String getLibraryName();
+
+  @NotNull
+  List<VirtualFile> getLibraryFiles();
 
 }

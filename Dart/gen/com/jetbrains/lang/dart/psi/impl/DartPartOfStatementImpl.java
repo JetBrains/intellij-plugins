@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl implements DartPartOfStatement {
 
@@ -48,6 +49,12 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
   @NotNull
   public String getLibraryName() {
     return DartPsiImplUtil.getLibraryName(this);
+  }
+
+  @Override
+  @NotNull
+  public List<VirtualFile> getLibraryFiles() {
+    return DartPsiImplUtil.getLibraryFiles(this);
   }
 
 }

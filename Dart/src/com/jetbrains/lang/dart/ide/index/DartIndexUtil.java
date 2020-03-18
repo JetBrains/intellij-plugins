@@ -19,7 +19,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 24;
+  public static final int INDEX_VERSION = 25;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -39,7 +39,11 @@ public class DartIndexUtil {
   private static DartFileIndexData indexFileRoots(PsiFile psiFile) {
     DartFileIndexData result = new DartFileIndexData();
 
-    result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
+    final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(psiFile, DartLibraryStatement.class);
+    if (libraryStatement != null) {
+      result.setLibraryName(libraryStatement.getLibraryNameElement().getName());
+    }
+
     result.setIsPart(PsiTreeUtil.getChildOfType(psiFile, DartPartOfStatement.class) != null);
 
     if (psiFile instanceof DartFile) {

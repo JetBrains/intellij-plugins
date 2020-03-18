@@ -310,14 +310,11 @@ public class DartResolveUtil {
     if (contextVirtualFile == null) return Collections.emptyList();
 
     return CachedValuesManager.getCachedValue(context, () -> {
-      if (context instanceof DartFile) {
-        final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(context, DartPartOfStatement.class);
-        if (partOfStatement != null) {
-          final String libraryName = partOfStatement.getLibraryName();
-          final List<VirtualFile> files = findLibraryByName(context, libraryName);
-          if (!files.isEmpty()) {
-            return new CachedValueProvider.Result<>(files, PsiModificationTracker.MODIFICATION_COUNT);
-          }
+      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(context, DartPartOfStatement.class);
+      if (partOfStatement != null) {
+        List<VirtualFile> files = partOfStatement.getLibraryFiles();
+        if (!files.isEmpty()) {
+          return new CachedValueProvider.Result<>(files, PsiModificationTracker.MODIFICATION_COUNT);
         }
       }
 
