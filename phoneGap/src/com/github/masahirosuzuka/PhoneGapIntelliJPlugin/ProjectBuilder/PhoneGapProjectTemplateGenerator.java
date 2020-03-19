@@ -15,6 +15,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -214,8 +215,9 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   private static void showErrorMessage(@NotNull String message) {
     String fullMessage = PhoneGapBundle.message("phonegap.project.template.error.text", message);
     String title = PhoneGapBundle.message("phonegap.project.template.error.notification.title");
-    Notifications.Bus.notify(
-      new Notification(PhoneGapBundle.message("phonegap.project.template.error.notification"), title, fullMessage, NotificationType.ERROR)
+    Notifications.Bus.notify(new Notification(
+      NotificationGroup.createIdWithTitle("Cordova Generator", PhoneGapBundle.message("phonegap.project.template.error.notification")),
+      title, fullMessage, NotificationType.ERROR)
     );
   }
 }

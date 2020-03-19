@@ -39,9 +39,9 @@ import static org.angular2.lang.Angular2LangUtil.ANGULAR_CLI_PACKAGE;
 
 public class AngularCliUtil {
 
-  private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS = new NotificationGroup(
-    Angular2Bundle.message("angular.description.angular-cli"), NotificationDisplayType.BALLOON,
-    false, null, AngularJSIcons.Angular2);
+  private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS =
+    new NotificationGroup("Angular CLI", NotificationDisplayType.BALLOON, false, null, AngularJSIcons.Angular2,
+                          Angular2Bundle.message("angular.description.angular-cli"), null);
 
   @NonNls private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
     "angular.json", ".angular-cli.json", "angular-cli.json");
