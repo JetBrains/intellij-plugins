@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 angular.module('heroApp').controller(
-    'EditableFieldController', function EditableFieldController($scope, $element, $attrs) {
+    'EditableFieldController', function($scope, $element, $attrs) {
       var ctrl = this;
       ctrl.editMode = false;
 
