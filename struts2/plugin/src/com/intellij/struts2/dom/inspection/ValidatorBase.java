@@ -19,6 +19,7 @@ import com.intellij.compiler.options.ValidationConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.util.InspectionValidator;
 import com.intellij.openapi.module.Module;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,13 +29,13 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract class ValidatorBase extends InspectionValidator {
 
-  protected ValidatorBase(@NotNull String description,
+  protected ValidatorBase(@NonNls @NotNull String id, @NotNull String description,
                           @NotNull String progressIndicatorText) {
-    super(description, progressIndicatorText);
+    super(id, description, progressIndicatorText);
   }
 
   protected final boolean isEnabledForModule(final Module module) {
-    return ValidationConfiguration.getInstance(module.getProject()).isSelected(getDescription());
+    return ValidationConfiguration.getInstance(module.getProject()).isSelected(getId());
   }
 
   @Override

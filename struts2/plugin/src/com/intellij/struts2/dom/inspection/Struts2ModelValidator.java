@@ -45,7 +45,7 @@ import java.util.Set;
 public class Struts2ModelValidator extends ValidatorBase {
 
   public Struts2ModelValidator() {
-    super(StrutsBundle.message("inspections.struts2.model.validator"),
+    super("Struts 2 Model Validator", StrutsBundle.message("inspections.struts2.model.validator"),
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
 
