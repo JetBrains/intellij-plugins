@@ -3,12 +3,15 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
+import com.intellij.idea.Bombed;
 import com.intellij.lang.javascript.inspections.JSUndeclaredVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.angularjs.AngularTestUtil;
+
+import java.util.Calendar;
 
 public class ComponentsTest extends BasePlatformTestCase {
   @Override
@@ -60,6 +63,7 @@ public class ComponentsTest extends BasePlatformTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "$ctrl");
   }
 
+  @Bombed(month = Calendar.MARCH, day = 25, user = "Konstantin Ulitin", description = "Should work with anonymous controller initializer too")
   public void testEditableFieldContentAssistOnCtrl() {
     myFixture.configureByFiles("editableField.html", "editableField.js", "angular.js");
     AngularTestUtil.moveToOffsetBySignature("\"$ctrl.<caret>editMode\"", myFixture);
