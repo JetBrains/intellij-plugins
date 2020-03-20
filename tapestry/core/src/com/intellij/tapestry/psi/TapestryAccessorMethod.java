@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Alexey Chmutov
@@ -256,6 +257,21 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     public String getName() {
       return StringUtil.notNullize(myName);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof TapestryAccessorMethod)) return false;
+    TapestryAccessorMethod method = (TapestryAccessorMethod)o;
+    return myGetterNotSetter == method.myGetterNotSetter &&
+           myProperty.equals(method.myProperty) &&
+           myName.equals(method.myName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myProperty, myGetterNotSetter, myName);
   }
 
   public static class LightParameterList extends LightElement implements PsiParameterList {
