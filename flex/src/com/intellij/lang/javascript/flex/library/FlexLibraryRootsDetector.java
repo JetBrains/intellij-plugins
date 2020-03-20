@@ -24,7 +24,7 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
   }
 
   @NotNull
-  public static List<RootDetector> getRootDetectors() {
+  static List<RootDetector> getRootDetectors() {
     return Arrays.asList(new FlexSwcLibrariesRootDetector(),
                          new FlexDocsRootDetector(),
                          new FlexSourcesRootDetector(),
