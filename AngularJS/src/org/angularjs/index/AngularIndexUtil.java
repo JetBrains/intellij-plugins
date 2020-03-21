@@ -123,8 +123,8 @@ public class AngularIndexUtil {
 
     final List<JSImplicitElement> elements = new ArrayList<>();
     for (VirtualFile file : files) {
-      final List<AngularNamedItemDefinition> values = instance.getValues(INDEX, id, GlobalSearchScope.fileScope(project, file));
-      for (AngularNamedItemDefinition value : values) {
+      final AngularNamedItemDefinition value = instance.getFileData(INDEX, file, project).get(id);
+      if (value != null) {
         JSQualifiedNameImpl qName = JSQualifiedNameImpl.fromQualifiedName(id);
         JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(qName, null);
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
