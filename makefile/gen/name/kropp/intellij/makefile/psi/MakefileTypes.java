@@ -24,6 +24,7 @@ public interface MakefileTypes {
   IElementType FUNCTION = new MakefileElementType("FUNCTION");
   IElementType FUNCTION_NAME = new MakefileElementType("FUNCTION_NAME");
   IElementType FUNCTION_PARAM = new MakefileElementType("FUNCTION_PARAM");
+  IElementType IDENTIFIER = new MakefileElementType("IDENTIFIER");
   IElementType INCLUDE = new MakefileElementType("INCLUDE");
   IElementType INLINE_COMMAND = new MakefileElementType("INLINE_COMMAND");
   IElementType NORMAL_PREREQUISITES = new MakefileElementType("NORMAL_PREREQUISITES");
@@ -47,14 +48,14 @@ public interface MakefileTypes {
   IElementType VPATH = new MakefileElementType("VPATH");
 
   IElementType ASSIGN = new MakefileTokenType("=");
+  IElementType CHARS = new MakefileTokenType("chars");
+  IElementType CLOSE_CURLY = new MakefileTokenType("}");
+  IElementType CLOSE_PAREN = new MakefileTokenType(")");
   IElementType COLON = new MakefileTokenType(":");
   IElementType COMMA = new MakefileTokenType(",");
+  IElementType DOLLAR = new MakefileTokenType("$");
   IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
-  IElementType FUNCTION_END = new MakefileTokenType(")");
-  IElementType FUNCTION_PARAM_TEXT = new MakefileTokenType("function-param-text");
-  IElementType FUNCTION_START = new MakefileTokenType("$(");
-  IElementType IDENTIFIER = new MakefileTokenType("identifier");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
@@ -70,16 +71,13 @@ public interface MakefileTypes {
   IElementType KEYWORD_UNDEFINE = new MakefileTokenType("undefine");
   IElementType KEYWORD_VPATH = new MakefileTokenType("vpath");
   IElementType MACRO = new MakefileTokenType("macro");
-  IElementType OPEN_BRACE = new MakefileTokenType("(");
+  IElementType OPEN_CURLY = new MakefileTokenType("{");
+  IElementType OPEN_PAREN = new MakefileTokenType("(");
   IElementType PIPE = new MakefileTokenType("|");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
   IElementType STRING = new MakefileTokenType("string");
   IElementType TAB = new MakefileTokenType("\\t");
-  IElementType TEXT = new MakefileTokenType("text");
-  IElementType VARIABLE_END = new MakefileTokenType("}");
-  IElementType VARIABLE_START = new MakefileTokenType("${");
-  IElementType VARIABLE_VALUE_LINE = new MakefileTokenType("variable-value-line");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {
@@ -128,6 +126,9 @@ public interface MakefileTypes {
       }
       else if (type == FUNCTION_PARAM) {
         return new MakefileFunctionParamImpl(node);
+      }
+      else if (type == IDENTIFIER) {
+        return new MakefileIdentifierImpl(node);
       }
       else if (type == INCLUDE) {
         return new MakefileIncludeImpl(node);

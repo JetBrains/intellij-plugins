@@ -1,5 +1,6 @@
 {
   parserClass = "name.kropp.intellij.makefile.MakefileParser"
+  parserUtilClass = "name.kropp.intellij.makefile.MakefileParserUtil"
   extends = "com.intellij.extapi.psi.ASTWrapperPsiElement"
 
   psiClassPrefix = "Makefile"
@@ -19,6 +20,13 @@
     COMMA = ","
     ASSIGN = "="
     PIPE = "|"
+
+    DOLLAR = "$"
+    OPEN_PAREN = "("
+    CLOSE_PAREN = ")"
+    OPEN_CURLY = "{"
+    CLOSE_CURLY = "}"
+
     KEYWORD_INCLUDE = "include"
     KEYWORD_IFEQ = "ifeq"
     KEYWORD_IFNEQ = "ifneq"
@@ -33,12 +41,6 @@
     KEYWORD_EXPORT = "export"
     KEYWORD_PRIVATE = "private"
     KEYWORD_VPATH = "vpath"
-
-    FUNCTION_START = "$("
-    VARIABLE_START = "${"
-    OPEN_BRACE = "("
-    FUNCTION_END = ")"
-    VARIABLE_END = "}"
   ]
 
   psiImplUtilClass = "name.kropp.intellij.makefile.psi.MakefilePsiImplUtil"
@@ -54,10 +56,11 @@ directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
-command ::= '\t'+ multiline? EOL? {pin=1}
+command ::= '\t'+ multiline EOL? {pin=1}
 inline_command ::= multiline
-private multiline ::= split* line (split line?)*
-private line ::= (variable-usage|text)+ {recoverWhile=recover}
+private multiline ::= split* line (split+ line)*
+private line ::= <<parseLine>>
+private defline ::= <<parseLineNotEndef>>
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -78,11 +81,12 @@ condition ::= ('(' (condition-body|',')* ')') | condition-body
 private condition-body ::= identifier|variable-usage|function|string
 block ::= any*
 
-meta variable-assignment ::= variable assignment (function|variable-value?) {pin=2 methods=[getAssignment getValue]}
+identifier ::= (chars|function-name)+
+meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
 meta variable-value ::= multiline
-define ::= 'define' variable assignment? (variable-value-line split?)* 'endef' {pin=1 methods=[getAssignment getValue]}
+define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
 export ::= 'export' (variable-assignment|variable)? EOL? {pin=1}
@@ -96,15 +100,15 @@ vpath ::= 'vpath' (pattern directory*)? EOL? {pin=1}
 pattern ::= identifier
 directory ::= identifier|'include' {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-private function_recover ::= !(')'|EOL)
-function ::= '$(' function-name function-param* ')' {pin=2}
+private function-recover ::= !( ')' | EOL )
+function ::= '$' '(' function-name function-param* ')'
 function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
-meta function-param ::= string|function-param-text|variable-usage|identifier|':'|','|function-name|function {recoverWhile=#auto}
+meta function-param ::= (string|'$''$'|variable-usage|chars|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
 
-variable-usage ::= ('$(' ((variable assignment text)|identifier) ')') | ('${' ((variable|function-name assignment text)|identifier|function-name) '}')
+variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>)
 
 comment ::=
 doc_comment ::=

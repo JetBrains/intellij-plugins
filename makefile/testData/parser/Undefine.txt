@@ -7,4 +7,5 @@ Makefile
         PsiElement(undefine)('undefine')
         PsiWhiteSpace(' ')
         MakefileVariableImpl(VARIABLE)
-          PsiElement(identifier)('FOO')
+          MakefileIdentifierImpl(IDENTIFIER)
+            PsiElement(chars)('FOO')

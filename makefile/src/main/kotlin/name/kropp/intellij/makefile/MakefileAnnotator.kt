@@ -10,7 +10,7 @@ import name.kropp.intellij.makefile.psi.*
 
 
 class MakefileAnnotator : Annotator {
-  private val lineTokenSet = TokenSet.create(MakefileTypes.TEXT)
+  private val lineTokenSet = TokenSet.create(MakefileTypes.IDENTIFIER)
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileRule && element.isUnused()) {

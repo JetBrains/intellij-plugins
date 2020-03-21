@@ -34,7 +34,6 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstri
   "basename"|"addsuffix"|"addprefix"|"join"|"wildcard"|"realpath"|"abspath"|"if"|"or"|"and"|
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")
 MACRO="@"[^@ \r\n]+"@"
-SOURCE_CODE=[^\r\n#]*[^\\\r\n#]
 COLON=":"
 DOUBLECOLON="::"
 SEMICOLON=";"
@@ -42,10 +41,9 @@ COMMA=","
 PIPE="|"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
-VARIABLE_USAGE_EXPR="$("[^ $)]*")"
+CHARS = [0-9a-zA-Z.!\-?\"%@/\\_\[\]+~*\^&+`'<>]
+
 STRING="\""[^\"]*"\""
-FILENAME=[^:=!?#$\",()}\ \r\n\t]+({VARIABLE_USAGE_EXPR}|[^:=!?#$)}\ \r\n\t])*
-CONDITION_CHARACTER=[^#\r\n]
 
 %state INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
 
@@ -56,32 +54,25 @@ CONDITION_CHARACTER=[^#\r\n]
 {COMMENT}              { return COMMENT; }
 ^{MACRO}               { return MACRO; }
 
-<FUNCTION> {
-  {FUNCTIONS}   { return FUNCTION_NAME; }
-  ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
-  [^$)]*        { return FUNCTION_PARAM_TEXT; }
-  {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
-  {EOL}         { yybegin(YYINITIAL); return EOL; }
-}
-
 <YYINITIAL> {
-    ^\t+               { yybegin(SOURCE); return TAB; }
+    ^\t+               { return TAB; }
     \t+                { return WHITE_SPACE; }
     {EOL}              { return EOL; }
     {SPACES}           { return WHITE_SPACE; }
     {DOUBLECOLON}      { return DOUBLECOLON; }
     {COLON}            { return COLON; }
     {COMMA}            { return COMMA; }
-    {ASSIGN}           { yybegin(SOURCE); return ASSIGN; }
+    {ASSIGN}           { return ASSIGN; }
     {BACKSLASHCRLF}    { return SPLIT; }
     {PIPE}             { return PIPE; }
-    {SEMICOLON}        { yybegin(SOURCE_FORCED); return SEMICOLON; }
+    {SEMICOLON}        { return SEMICOLON; }
     "include"          { return KEYWORD_INCLUDE; }
     "-include"         { return KEYWORD_INCLUDE; }
     "sinclude"         { return KEYWORD_INCLUDE; }
     "vpath"            { return KEYWORD_VPATH; }
-    "define"           { yybegin(DEFINE); return KEYWORD_DEFINE; }
-    "undefine"         { yybegin(INCLUDES); return KEYWORD_UNDEFINE; }
+    "define"           { return KEYWORD_DEFINE; }
+    "undefine"         { return KEYWORD_UNDEFINE; }
+    "endef"            { return KEYWORD_ENDEF; }
     "ifeq"             { return KEYWORD_IFEQ; }
     "ifneq"            { return KEYWORD_IFNEQ; }
     "ifdef"            { return KEYWORD_IFDEF; }
@@ -89,82 +80,16 @@ CONDITION_CHARACTER=[^#\r\n]
     "else"             { return KEYWORD_ELSE; }
     "endif"            { return KEYWORD_ENDIF; }
     "override"         { return KEYWORD_OVERRIDE; }
-    "export"           { yybegin(EXPORT); return KEYWORD_EXPORT; }
+    "export"           { return KEYWORD_EXPORT; }
     "private"          { return KEYWORD_PRIVATE; }
-    "$("               { return FUNCTION_START; }
-    "${"               { return VARIABLE_START; }
+    "$"                { return DOLLAR; }
     {FUNCTIONS}        { return FUNCTION_NAME; }
-    "("                { return OPEN_BRACE; }
-    ")"                { return FUNCTION_END; }
-    "}"                { return VARIABLE_END; }
+    "("                { return OPEN_PAREN; }
+    ")"                { return CLOSE_PAREN; }
+    "{"                { return OPEN_CURLY; }
+    "}"                { return CLOSE_CURLY; }
     {STRING}           { return STRING; }
-    {FILENAME}         { return IDENTIFIER; }
-    "!"                { return IDENTIFIER; }
-}
-
-<INCLUDES> {
-    {FILENAME}              { return IDENTIFIER; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
-}
-
-<EXPORT> {
-    "$("                    { yybegin(FUNCTION); return FUNCTION_START; }
-    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
-    {VARIABLE_USAGE_EXPR}   { return VARIABLE_USAGE; }
-    {FILENAME}              { return IDENTIFIER; }
-    {ASSIGN}                { yybegin(EXPORTVAR); return ASSIGN; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
-}
-
-<EXPORTVAR> {
-    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
-    {BACKSLASHCRLF}         { return SPLIT; }
-    {SOURCE_CODE}           { return TEXT; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-    <<EOF>>                 { yypushback(yylength()); yybegin(YYINITIAL); return EOL; }
-}
-
-<SOURCE> {
-    ^\t+                    { return TAB; }
-    ^[^\t]+                 { yypushback(yylength()); yybegin(YYINITIAL); return WHITE_SPACE; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
-    {BACKSLASHCRLF}         { return SPLIT; }
-    {SOURCE_CODE}           { return TEXT; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-}
-
-<SOURCE_FORCED> {
-    ^\t+                    { return TAB; }
-    {SPACES}|\t+            { return WHITE_SPACE; }
-    {BACKSLASHCRLF}         { return SPLIT; }
-    {SOURCE_CODE}           { return TEXT; }
-    {EOL}                   { yybegin(YYINITIAL); return EOL; }
-}
-
-<DEFINE> {
-    {SPACES}|\t+                { return WHITE_SPACE; }
-    {EOL}                       { yybegin(DEFINEBODY); return WHITE_SPACE; }
-    {ASSIGN}                    { return ASSIGN; }
-    {FILENAME}                  { return IDENTIFIER; }
-}
-
-<DEFINEBODY> {
-    "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
-    ({SPACES}|\t)+{COMMENT}              { return COMMENT; }
-    {BACKSLASHCRLF}        { return SPLIT; }
-    {SOURCE_CODE}          { return VARIABLE_VALUE_LINE; }
-    {EOL}                  { return WHITE_SPACE; }
-}
-
-<CONDITIONALS> {
-    {SPACES}                   { return WHITE_SPACE; }
-    {CONDITION_CHARACTER}+     { yybegin(YYINITIAL); return CONDITION; }
-    {EOL}                      { yybegin(YYINITIAL); return WHITE_SPACE; }
+    {CHARS}+           { return CHARS; }
 }
 
 [^] { return BAD_CHARACTER; }

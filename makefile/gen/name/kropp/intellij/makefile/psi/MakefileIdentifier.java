@@ -4,9 +4,11 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public interface MakefilePattern extends PsiElement {
+import java.util.List;
+
+public interface MakefileIdentifier extends PsiElement {
 
   @NotNull
-  MakefileIdentifier getIdentifier();
+  List<MakefileFunctionName> getFunctionNameList();
 
 }

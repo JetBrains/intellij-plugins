@@ -5,19 +5,21 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import name.kropp.intellij.makefile.psi.MakefileFunctionName;
 import name.kropp.intellij.makefile.psi.MakefileIdentifier;
-import name.kropp.intellij.makefile.psi.MakefilePattern;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
-public class MakefilePatternImpl extends ASTWrapperPsiElement implements MakefilePattern {
+import java.util.List;
 
-  public MakefilePatternImpl(@NotNull ASTNode node) {
+public class MakefileIdentifierImpl extends ASTWrapperPsiElement implements MakefileIdentifier {
+
+  public MakefileIdentifierImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull MakefileVisitor visitor) {
-    visitor.visitPattern(this);
+    visitor.visitIdentifier(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -27,8 +29,8 @@ public class MakefilePatternImpl extends ASTWrapperPsiElement implements Makefil
 
   @Override
   @NotNull
-  public MakefileIdentifier getIdentifier() {
-    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class));
+  public List<MakefileFunctionName> getFunctionNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunctionName.class);
   }
 
 }

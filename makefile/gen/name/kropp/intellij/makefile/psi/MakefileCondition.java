@@ -12,6 +12,9 @@ public interface MakefileCondition extends PsiElement {
   List<MakefileFunction> getFunctionList();
 
   @NotNull
+  List<MakefileIdentifier> getIdentifierList();
+
+  @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
 }

@@ -2,17 +2,19 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public interface MakefileFunctionParam extends PsiElement {
 
-  @Nullable
-  MakefileFunction getFunction();
+  @NotNull
+  List<MakefileFunction> getFunctionList();
 
-  @Nullable
-  MakefileFunctionName getFunctionName();
+  @NotNull
+  List<MakefileFunctionName> getFunctionNameList();
 
-  @Nullable
-  MakefileVariableUsage getVariableUsage();
+  @NotNull
+  List<MakefileVariableUsage> getVariableUsageList();
 
 }

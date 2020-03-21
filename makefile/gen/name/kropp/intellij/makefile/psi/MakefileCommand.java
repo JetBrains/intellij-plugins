@@ -2,13 +2,7 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public interface MakefileCommand extends PsiElement {
-
-  @NotNull
-  List<MakefileVariableUsage> getVariableUsageList();
 
 }

@@ -2,14 +2,7 @@
 package name.kropp.intellij.makefile.psi;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
 
 public interface MakefileVariableUsage extends PsiElement {
-
-  @Nullable
-  MakefileFunctionName getFunctionName();
-
-  @Nullable
-  MakefileVariable getVariable();
 
 }

@@ -45,6 +45,12 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
 
   @Override
   @Nullable
+  public MakefileIdentifier getIdentifier() {
+    return PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class);
+  }
+
+  @Override
+  @Nullable
   public MakefileVariableUsage getVariableUsage() {
     return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
   }
