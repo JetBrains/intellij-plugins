@@ -5,13 +5,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.*;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.EnumeratorStringDescriptor;
+import com.intellij.util.io.KeyDescriptor;
+import com.intellij.util.io.externalizer.StringCollectionExternalizer;
 import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,25 +47,7 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
   @NotNull
   @Override
   public DataExternalizer<List<String>> getValueExternalizer() {
-    return new DataExternalizer<List<String>>() {
-      @Override
-      public void save(@NotNull DataOutput out, List<String> value) throws IOException {
-        DataInputOutputUtil.writeINT(out, value.size());
-        for (String path : value) {
-          IOUtil.writeUTF(out, path);
-        }
-      }
-
-      @Override
-      public List<String> read(@NotNull DataInput in) throws IOException {
-        final int size = DataInputOutputUtil.readINT(in);
-        final List<String> result = new ArrayList<>(size);
-        for (int i = 0; i < size; ++i) {
-          result.add(IOUtil.readUTF(in));
-        }
-        return result;
-      }
-    };
+    return StringCollectionExternalizer.STRING_LIST_EXTERNALIZER;
   }
 
   @NotNull
