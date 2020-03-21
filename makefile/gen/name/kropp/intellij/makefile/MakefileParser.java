@@ -579,7 +579,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (chars|function-name)+
+  // (chars|function-name|directive)+
   public static boolean identifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "identifier")) return false;
     boolean r;
@@ -594,12 +594,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // chars|function-name
+  // chars|function-name|directive
   private static boolean identifier_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "identifier_0")) return false;
     boolean r;
     r = consumeToken(b, CHARS);
     if (!r) r = function_name(b, l + 1);
+    if (!r) r = directive(b, l + 1);
     return r;
   }
 

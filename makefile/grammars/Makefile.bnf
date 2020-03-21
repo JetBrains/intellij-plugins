@@ -81,7 +81,7 @@ condition ::= ('(' (condition-body|',')* ')') | condition-body
 private condition-body ::= identifier|variable-usage|function|string
 block ::= any*
 
-identifier ::= (chars|function-name)+
+identifier ::= (chars|function-name|directive)+
 meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier

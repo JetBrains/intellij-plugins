@@ -9,6 +9,9 @@ import java.util.List;
 public interface MakefileIdentifier extends PsiElement {
 
   @NotNull
+  List<MakefileDirective> getDirectiveList();
+
+  @NotNull
   List<MakefileFunctionName> getFunctionNameList();
 
 }
