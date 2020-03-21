@@ -1259,7 +1259,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>)
+  // ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars)
   public static boolean variable_usage(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "variable_usage")) return false;
     if (!nextTokenIs(b, DOLLAR)) return false;
@@ -1267,6 +1267,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = variable_usage_0(b, l + 1);
     if (!r) r = variable_usage_1(b, l + 1);
+    if (!r) r = variable_usage_2(b, l + 1);
     exit_section_(b, m, VARIABLE_USAGE, r);
     return r;
   }
@@ -1289,6 +1290,16 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeTokens(b, 0, DOLLAR, OPEN_CURLY);
     r = r && parseVariableUsageCurly(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '$' chars
+  private static boolean variable_usage_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "variable_usage_2")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokens(b, 0, DOLLAR, CHARS);
     exit_section_(b, m, null, r);
     return r;
   }

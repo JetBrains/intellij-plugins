@@ -108,7 +108,7 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
 meta function-param ::= (string|'$''$'|variable-usage|chars|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
 
-variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>)
+variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars)
 
 comment ::=
 doc_comment ::=
