@@ -77,7 +77,7 @@ private condition-recover ::= !'endif'
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 conditional ::= conditional-keyword condition EOL block conditional-else* 'endif' {pin=1}
 conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
-condition ::= ('(' (condition-body|',')* ')') | condition-body
+condition ::= ('(' (condition-body|',')* ')') | condition-body condition-body?
 private condition-body ::= identifier|variable-usage|function|string
 block ::= any*
 

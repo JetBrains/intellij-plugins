@@ -126,13 +126,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('(' (condition-body|',')* ')') | condition-body
+  // ('(' (condition-body|',')* ')') | condition-body condition-body?
   public static boolean condition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "condition")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITION, "<condition>");
     r = condition_0(b, l + 1);
-    if (!r) r = condition_body(b, l + 1);
+    if (!r) r = condition_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -169,6 +169,24 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, COMMA);
     exit_section_(b, m, null, r);
     return r;
+  }
+
+  // condition-body condition-body?
+  private static boolean condition_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = condition_body(b, l + 1);
+    r = r && condition_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // condition-body?
+  private static boolean condition_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_1_1")) return false;
+    condition_body(b, l + 1);
+    return true;
   }
 
   /* ********************************************************** */

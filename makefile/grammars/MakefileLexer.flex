@@ -43,7 +43,7 @@ ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
 CHARS = [0-9a-zA-Z.!\-?\"%@/\\_\[\]+~*\^&+`'<>]
 
-STRING="\""[^\"]*"\""
+STRING="\""[^\"]*"\""|"'"[^']*"'"
 
 %state INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
 
