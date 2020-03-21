@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,9 +37,16 @@ public class FlexSdkType2 extends SdkType {
   public String suggestHomePath() {
     final String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_FLEX_SDK_HOME_KEY);
     if (path != null) return PathUtil.getParentPath(path);
+    return null;
+  }
 
+  @NotNull
+  @Override
+  public Collection<String> suggestHomePaths() {
     final String fbInstallation = FlashBuilderSdkFinder.findFBInstallationPath();
-    return fbInstallation == null ? null : fbInstallation + "/" + FlashBuilderSdkFinder.SDKS_FOLDER;
+    return fbInstallation == null
+           ? Collections.emptySet()
+           : Collections.singleton(fbInstallation + "/" + FlashBuilderSdkFinder.SDKS_FOLDER);
   }
 
   @Override
