@@ -1,21 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileFunction;
-import name.kropp.intellij.makefile.psi.MakefileFunctionName;
-import name.kropp.intellij.makefile.psi.MakefileFunctionParam;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MakefileFunctionImpl extends ASTWrapperPsiElement implements MakefileFunction {
+public class MakefileFunctionImpl extends MakefileFunctionElementImpl implements MakefileFunction {
 
-  public MakefileFunctionImpl(@NotNull ASTNode node) {
+  public MakefileFunctionImpl(ASTNode node) {
     super(node);
   }
 

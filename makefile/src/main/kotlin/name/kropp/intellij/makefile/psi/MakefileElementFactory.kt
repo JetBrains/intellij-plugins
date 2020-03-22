@@ -25,4 +25,7 @@ object MakefileElementFactory {
 
   fun createRecipe(project: Project, text: String) =
       createRule(project, "target:\n\t$text").firstChild.nextSibling as MakefileRecipe
+
+  fun createFunction(project: Project, text: String) =
+      createFile(project, text).firstChild as MakefileFunction
 }

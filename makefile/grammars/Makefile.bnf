@@ -102,7 +102,7 @@ pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 private function-recover ::= !( ')' | EOL )
-function ::= '$' '(' function-name function-param* ')'
+function ::= '$' '(' function-name function-param* ')' {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileFunctionElementImpl"}
 function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
