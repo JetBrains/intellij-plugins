@@ -5,13 +5,12 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileDirective;
-import name.kropp.intellij.makefile.psi.MakefileFunctionName;
+import name.kropp.intellij.makefile.psi.MakefileFunction;
 import name.kropp.intellij.makefile.psi.MakefileIdentifier;
+import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class MakefileIdentifierImpl extends ASTWrapperPsiElement implements MakefileIdentifier {
 
@@ -29,15 +28,15 @@ public class MakefileIdentifierImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @NotNull
-  public List<MakefileDirective> getDirectiveList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileDirective.class);
+  @Nullable
+  public MakefileFunction getFunction() {
+    return PsiTreeUtil.getChildOfType(this, MakefileFunction.class);
   }
 
   @Override
-  @NotNull
-  public List<MakefileFunctionName> getFunctionNameList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunctionName.class);
+  @Nullable
+  public MakefileVariableUsage getVariableUsage() {
+    return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
   }
 
 }

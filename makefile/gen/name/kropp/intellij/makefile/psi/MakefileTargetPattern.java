@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 public interface MakefileTargetPattern extends PsiElement {
 
   @NotNull
-  MakefileIdentifier getIdentifier();
+  MakefileTarget getTarget();
 
 }

@@ -48,11 +48,12 @@
 
 makefile ::= any*
 
-private any ::= (conditional|rule|command|variable-assignment|directive|function|macro|EOL)
+private any ::= (conditional|variable-assignment|directive|rule|command|function|macro|EOL)
 
 private recover ::= !(EOL | split)
 
 directive ::= define|include|undefine|override|export|privatevar|vpath
+private directive-name ::= 'define'|'include'|'undefine'|'override'|'export'|'private'|'vpath'
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
@@ -64,24 +65,24 @@ private defline ::= <<parseLineNotEndef>>
 
 target_line ::= targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
-target ::= identifier|function-name|function|variable-usage {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
+target ::= function | variable-usage <<parseNoWhitespaceOrColon>> | variable-usage | <<parseNoWhitespaceOrColon>> {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
 
-target_pattern ::= identifier
+target_pattern ::= target
 
 prerequisites ::= normal_prerequisites ('|' order_only_prerequisites)?
 normal_prerequisites ::= prerequisite* (split prerequisite*)*
 order_only_prerequisites ::= prerequisite* (split prerequisite*)*
-prerequisite ::= identifier|variable-usage|function {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
+prerequisite ::= chars|function-name|directive-name|variable-usage|function {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 
 private condition-recover ::= !'endif'
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 conditional ::= conditional-keyword condition EOL block conditional-else* 'endif' {pin=1}
 conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
 condition ::= ('(' (condition-body|',')* ')') | condition-body condition-body?
-private condition-body ::= identifier|variable-usage|function|string
+private condition-body ::= variable-usage|function|string|identifier
 block ::= any*
 
-identifier ::= (chars|function-name|directive)+
+identifier ::= variable-usage <<parseNoWhitespace>> | variable-usage | function | <<parseNoWhitespace>>
 meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier
@@ -89,16 +90,16 @@ meta variable-value ::= multiline
 define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
-export ::= 'export' (variable-assignment|variable)? EOL? {pin=1}
+export ::= 'export' (variable-assignment|variable)? EOL?
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 
 include ::= ('include'|'-include'|'sinclude') (filename|variable-usage)+ EOL? {pin=1}
 filename ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
-vpath ::= 'vpath' (pattern directory*)? EOL? {pin=1}
+vpath ::= 'vpath' (pattern 'include'? directory*)? EOL? {pin=1}
 pattern ::= identifier
-directory ::= identifier|'include' {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
+directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 private function-recover ::= !( ')' | EOL )
 function ::= '$' '(' function-name function-param* ')'

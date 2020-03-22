@@ -39,18 +39,6 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
 
   @Override
   @Nullable
-  public MakefileFunctionName getFunctionName() {
-    return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
-  }
-
-  @Override
-  @Nullable
-  public MakefileIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class);
-  }
-
-  @Override
-  @Nullable
   public MakefileVariableUsage getVariableUsage() {
     return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
   }

@@ -12,7 +12,7 @@ public interface MakefilePrerequisite extends PsiElement {
   MakefileFunction getFunction();
 
   @Nullable
-  MakefileIdentifier getIdentifier();
+  MakefileFunctionName getFunctionName();
 
   @Nullable
   MakefileVariableUsage getVariableUsage();

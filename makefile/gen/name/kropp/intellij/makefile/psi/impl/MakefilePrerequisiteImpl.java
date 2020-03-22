@@ -31,8 +31,8 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
 
   @Override
   @Nullable
-  public MakefileIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class);
+  public MakefileFunctionName getFunctionName() {
+    return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
   }
 
   @Override

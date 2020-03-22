@@ -15,12 +15,6 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem, St
   MakefileFunction getFunction();
 
   @Nullable
-  MakefileFunctionName getFunctionName();
-
-  @Nullable
-  MakefileIdentifier getIdentifier();
-
-  @Nullable
   MakefileVariableUsage getVariableUsage();
 
   @Nullable

@@ -2,10 +2,52 @@ package name.kropp.intellij.makefile
 
 import com.intellij.lang.*
 import com.intellij.lang.parser.*
+import com.intellij.psi.*
 import com.intellij.psi.tree.*
 import name.kropp.intellij.makefile.psi.MakefileTypes.*
 
 object MakefileParserUtil : GeneratedParserUtilBase() {
+  @JvmStatic
+  fun parseNoWhitespaceOrColon(builder: PsiBuilder, level: Int): Boolean {
+    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, COLON, DOUBLECOLON))
+  }
+
+  @JvmStatic
+  fun parseNoWhitespace(builder: PsiBuilder, level: Int): Boolean {
+    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, TAB, COLON, DOLLAR, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA))
+  }
+
+  private fun consumeAllNonWsExceptTokens(builder: PsiBuilder, level: Int, tokens: Set<IElementType>): Boolean {
+    // accept everything till the end of line
+    var hasAny = false
+    do {
+/*
+      if (builder.tokenType == DOLLAR) {
+        if (builder.lookAhead(1) == OPEN_CURLY) {
+          builder.advanceLexer()
+          builder.advanceLexer()
+          if (parseVariableUsage(builder, level + 1, true, CLOSE_CURLY)) {
+            hasAny = true
+          }
+        } else if (builder.lookAhead(1) == OPEN_PAREN) {
+          builder.advanceLexer()
+          builder.advanceLexer()
+          if (parseVariableUsage(builder, level + 1, true, CLOSE_PAREN)) {
+            hasAny = true
+          }
+        }
+      }
+*/
+      if (builder.tokenType in tokens || builder.tokenType == null) return hasAny
+      if (builder.rawLookup(1) == TokenType.WHITE_SPACE) {
+        builder.advanceLexer()
+        return true
+      }
+      builder.advanceLexer()
+      hasAny = true
+    } while (true)
+  }
+
   @JvmStatic
   fun parseLine(builder: PsiBuilder, level: Int): Boolean {
     // accept everything till the end of line

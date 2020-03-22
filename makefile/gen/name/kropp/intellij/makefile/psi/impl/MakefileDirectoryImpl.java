@@ -8,7 +8,6 @@ import name.kropp.intellij.makefile.psi.MakefileDirectory;
 import name.kropp.intellij.makefile.psi.MakefileIdentifier;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MakefileDirectoryImpl extends MakefileFilenameMixin implements MakefileDirectory {
 
@@ -26,9 +25,9 @@ public class MakefileDirectoryImpl extends MakefileFilenameMixin implements Make
   }
 
   @Override
-  @Nullable
+  @NotNull
   public MakefileIdentifier getIdentifier() {
-    return PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, MakefileIdentifier.class));
   }
 
 }

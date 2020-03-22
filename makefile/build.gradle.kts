@@ -38,5 +38,5 @@ tasks.withType<KotlinCompile> {
 dependencies {
   api(kotlin("stdlib-jdk8"))
 
-  testImplementation("org.hamcrest", "hamcrest", "2.1")
+  testImplementation("org.hamcrest", "hamcrest", "2.2")
 }

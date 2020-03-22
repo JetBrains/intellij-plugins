@@ -5,6 +5,7 @@ import com.intellij.psi.*
 import com.intellij.psi.tree.*
 import com.intellij.psi.util.*
 import name.kropp.intellij.makefile.*
+import name.kropp.intellij.makefile.psi.MakefileTypes.*
 import name.kropp.intellij.makefile.psi.impl.*
 import java.util.regex.*
 
@@ -106,7 +107,7 @@ object MakefilePsiImplUtil {
   @JvmStatic
   fun getValue(element: MakefileVariableAssignment): String? {
     val value = element.variableValue ?: return ""
-    val nodes = value.node.getChildren(LINE)
+    val nodes = value.node.getChildren(TokenSet.ANY)
     return nodes.joinToString("\n") { it.text }
   }
 
@@ -118,8 +119,8 @@ object MakefilePsiImplUtil {
 
   @JvmStatic
   fun getValue(element: MakefileDefine): String? {
-    val nodes = element.node.getChildren(TokenSet.ANY)
-    return nodes.joinToString("\n") { it.text }
+    val nodes = element.node.getChildren(TokenSet.ANY).asSequence()
+    return nodes.dropWhile { it.elementType != EOL }.filter { it.elementType != KEYWORD_ENDEF }.joinToString("\n") { it.text }
   }
 
   @JvmStatic
