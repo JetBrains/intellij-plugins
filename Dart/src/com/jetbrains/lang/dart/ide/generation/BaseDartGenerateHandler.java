@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.nls.NlsContexts;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
 import com.jetbrains.lang.dart.psi.DartClass;
@@ -21,6 +22,7 @@ import com.jetbrains.lang.dart.psi.DartClassDefinition;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,6 +102,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   protected abstract BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass);
 
   @NotNull
+  @Nls @NlsContexts.DialogTitle
   protected abstract String getTitle();
 
   protected abstract void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates);
@@ -164,7 +167,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
                                                                           @NotNull final DartClass dartClass,
                                                                           @NotNull final Collection<DartComponent> candidates,
-                                                                          @NotNull final String title) {
+                                                                          @NotNull @Nls @NlsContexts.DialogTitle String title) {
     final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {

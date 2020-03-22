@@ -7,9 +7,11 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.EditorComboBoxEditor;
 import com.intellij.ui.EditorComboBoxRenderer;
 import com.intellij.ui.StringComboboxEditor;
+import com.intellij.util.nls.NlsContexts;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.psi.DartExpression;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +30,7 @@ public class DartIntroduceDialog extends DialogWrapper {
   private final DartExpression myExpression;
 
   public DartIntroduceDialog(@NotNull final Project project,
-                             @NotNull final String caption,
+                             @NotNull @Nls @NlsContexts.DialogTitle String caption,
                              final DartIntroduceOperation operation) {
     super(project, true);
     myOccurrencesCount = operation.getOccurrences().size();
