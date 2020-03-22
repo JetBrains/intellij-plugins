@@ -20,7 +20,8 @@ class MakefileShellLanguageInjector : MultiHostInjector {
     if (SHELL_LANGUAGE != null && context is MakefileRecipe) {
       val rangesToInject = context.children.filterIsInstance<MakefileCommand>().map {
         val tabs = it.text.takeWhile { c -> c == '\t' }.count()
-        TextRange.create(it.textRangeInParent.startOffset + tabs, min(it.textRangeInParent.endOffset + 1, context.textLength))
+        val silent = if (it.text.dropWhile { c -> c == '\t' }.firstOrNull() == '@') 1 else 0
+        TextRange.create(it.textRangeInParent.startOffset + tabs + silent, min(it.textRangeInParent.endOffset + 1, context.textLength))
       }
       if (rangesToInject.any()) {
         registrar.startInjecting(SHELL_LANGUAGE)
