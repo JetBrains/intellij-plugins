@@ -50,8 +50,8 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   @Override
   public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
     if (!(xmlTag instanceof HtmlTag)
-        || !Angular2LangUtil.isAngular2Context(xmlTag)
         || DumbService.isDumb(xmlTag.getProject())
+        || !Angular2LangUtil.isAngular2Context(xmlTag)
         || HtmlUtil.SVG_NAMESPACE.equals(xmlTag.getNamespace())) {
       return;
     }
@@ -130,8 +130,9 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(@NotNull XmlTag xmlTag) {
-    if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))
-        || DumbService.isDumb(xmlTag.getProject())) {
+    if (!(xmlTag instanceof HtmlTag)
+        || DumbService.isDumb(xmlTag.getProject())
+        || !Angular2LangUtil.isAngular2Context(xmlTag)) {
       return null;
     }
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
