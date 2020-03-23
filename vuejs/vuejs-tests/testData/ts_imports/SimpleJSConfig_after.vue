@@ -1,7 +1,7 @@
 <template><div></div></template>
 <script>
- import {myVariable} from "@/exportValue";
+import {myVariable} from "@/exportValue";
 
- myVariable
+myVariable
 
 </script>

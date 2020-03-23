@@ -11,6 +11,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
 import com.intellij.psi.formatter.xml.XmlTagBlock
+import com.intellij.psi.impl.source.html.HtmlDocumentImpl
+import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import java.util.*
 
@@ -37,5 +40,17 @@ class VueHtmlTagBlock(node: ASTNode,
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {
     return childLanguage === VueLanguage.INSTANCE || super.useMyFormatter(myLanguage, childLanguage, childPsi)
+  }
+
+  override fun getChildrenIndent(): Indent {
+    // No indent for top-level script or style tags in Vue files
+    if (tag?.let { tag ->
+        tag.parent is HtmlDocumentImpl
+        && tag.name.let { it == HtmlUtil.SCRIPT_TAG_NAME || it == HtmlUtil.STYLE_TAG_NAME }
+        && tag.containingFile.originalFile.virtualFile?.let { it.fileType is VueFileType } != false
+      } == true) {
+      return Indent.getAbsoluteNoneIndent()
+    }
+    return super.getChildrenIndent()
   }
 }

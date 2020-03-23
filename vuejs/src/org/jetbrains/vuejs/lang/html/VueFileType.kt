@@ -10,6 +10,8 @@ class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   companion object {
     @JvmField
     val INSTANCE: VueFileType = VueFileType()
+
+    const val VUE_EXTENSION = "vue"
   }
 
   override fun getName(): String {
@@ -21,7 +23,7 @@ class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   }
 
   override fun getDefaultExtension(): String {
-    return "vue"
+    return VUE_EXTENSION
   }
 
   override fun getIcon(): Icon? {

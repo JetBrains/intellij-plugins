@@ -88,10 +88,10 @@ import compUI from 'compUI.vue'
 <to-import<caret>
 </template>
 <script>
-  import ToImport from "./toImport";
-  export default {
-      components: {ToImport}
-  }
+import ToImport from "./toImport";
+export default {
+    components: {ToImport}
+}
 </script>
 """)
     })
@@ -101,10 +101,10 @@ import compUI from 'compUI.vue'
     myFixture.configureByText("toImport.vue", """
 <template>text here</template>
 <script>
-  export default {
-    name: 'toImport',
-    props: ['strangeCase']
-  }
+export default {
+  name: 'toImport',
+  props: ['strangeCase']
+}
 </script>
 """)
     myFixture.configureByText(getTestName(false) + ".vue", """
@@ -112,8 +112,8 @@ import compUI from 'compUI.vue'
 <to<caret>
 </template>
 <script${if (tsLang) " lang=\"ts\"" else ""}>
-  export default {
-  }
+export default {
+}
 </script>
 """)
   }
@@ -133,8 +133,8 @@ import compUI from 'compUI.vue'
 <to-import<caret>
 </template>
 <script>
-  export default {
-  }
+export default {
+}
 </script>
 """)
       })
@@ -159,8 +159,8 @@ import compUI from 'compUI.vue'
 <to-import<caret>
 </template>
 <script lang="ts">
-  export default {
-  }
+export default {
+}
 </script>
 """)
       })
@@ -173,9 +173,9 @@ import compUI from 'compUI.vue'
   fun testCompleteWithImportCreateExport() {
     myFixture.configureByText("toImport.vue", """
 <script>
-  export default {
-    name: 'toImport'
-  }
+export default {
+  name: 'toImport'
+}
 </script>
 """)
     myFixture.configureByText("CompleteWithImportCreateExport.vue", """
@@ -195,10 +195,10 @@ import compUI from 'compUI.vue'
 <ToImport<caret>></ToImport>
 </template>
 <script>
-    import ToImport from "./toImport";
-    export default {
-        components: {ToImport}
-    }
+import ToImport from "./toImport";
+export default {
+    components: {ToImport}
+}
 </script>
 """)
     })
@@ -207,9 +207,9 @@ import compUI from 'compUI.vue'
   fun testCompleteWithImportCreateScript() {
     myFixture.configureByText("toImport.vue", """
 <script>
-  export default {
-    name: 'toImport'
-  }
+export default {
+  name: 'toImport'
+}
 </script>
 """)
     myFixture.configureByText("CompleteWithImportCreateScript.vue", """
@@ -227,10 +227,10 @@ import compUI from 'compUI.vue'
 <to-import
 </template>
 <script>
-    import ToImport from "./toImport";
-    export default {
-        components: {ToImport}
-    }
+import ToImport from "./toImport";
+export default {
+    components: {ToImport}
+}
 </script>""")
     })
   }
@@ -976,14 +976,14 @@ $script""")
   <ShortComponent
 </template>
 <script>
-    import Vue from "vue";
-    import {Component} from "vue-class-component";
-    import ShortComponent from "./ShortComponent";
-    @Component({
-        components: {ShortComponent}
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import Vue from "vue";
+import {Component} from "vue-class-component";
+import ShortComponent from "./ShortComponent";
+@Component({
+    components: {ShortComponent}
+})
+export default class ComponentInsertion extends Vue {
+}
 </script>"""),
       Pair("""<template>
   <Sho<caret>
@@ -993,34 +993,34 @@ $script""")
   <ShortComponent
 </template>
 <script>
-    import Vue from "vue";
-    import {Component} from "vue-class-component";
-    import ShortComponent from "./ShortComponent";
-    @Component({
-        components: {ShortComponent}
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import Vue from "vue";
+import {Component} from "vue-class-component";
+import ShortComponent from "./ShortComponent";
+@Component({
+    components: {ShortComponent}
+})
+export default class ComponentInsertion extends Vue {
+}
 </script>
 """),
       Pair("""<template>
   <Sho<caret>
 </template>
 <script>
-    import Vue from "vue";
+import Vue from "vue";
 </script>
 """, """<template>
   <ShortComponent
 </template>
 <script>
-    import Vue from "vue";
-    import {Component} from "vue-class-component";
-    import ShortComponent from "./ShortComponent";
-    @Component({
-        components: {ShortComponent}
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import Vue from "vue";
+import {Component} from "vue-class-component";
+import ShortComponent from "./ShortComponent";
+@Component({
+    components: {ShortComponent}
+})
+export default class ComponentInsertion extends Vue {
+}
 
 </script>
 """),
@@ -1028,20 +1028,20 @@ $script""")
   <Sho<caret>
 </template>
 <script>
-    import {Component} from "vue-class-component";
+import {Component} from "vue-class-component";
 </script>
 """, """<template>
   <ShortComponent
 </template>
 <script>
-    import {Component} from "vue-class-component";
-    import Vue from "vue";
-    import ShortComponent from "./ShortComponent";
-    @Component({
-        components: {ShortComponent}
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import {Component} from "vue-class-component";
+import Vue from "vue";
+import ShortComponent from "./ShortComponent";
+@Component({
+    components: {ShortComponent}
+})
+export default class ComponentInsertion extends Vue {
+}
 
 </script>
 """),
@@ -1049,27 +1049,27 @@ $script""")
   <Sho<caret>
 </template>
 <script>
-    import Vue from "vue";
-    import {Component} from "vue-class-component";
-    @Component({
-        name: "a123"
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import Vue from "vue";
+import {Component} from "vue-class-component";
+@Component({
+    name: "a123"
+})
+export default class ComponentInsertion extends Vue {
+}
 </script>
 """, """<template>
   <ShortComponent
 </template>
 <script>
-    import Vue from "vue";
-    import {Component} from "vue-class-component";
-    import ShortComponent from "./ShortComponent";
-    @Component({
-        name: "a123",
-        components: {ShortComponent}
-    })
-    export default class ComponentInsertion extends Vue {
-    }
+import Vue from "vue";
+import {Component} from "vue-class-component";
+import ShortComponent from "./ShortComponent";
+@Component({
+    name: "a123",
+    components: {ShortComponent}
+})
+export default class ComponentInsertion extends Vue {
+}
 </script>
 """)
     )

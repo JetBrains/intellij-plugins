@@ -21,19 +21,19 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       typeScriptSettings.USE_DOUBLE_QUOTES = false
 
       doTest("""<script lang="ts">
-    import {Foo} from './singleQuotes';
+    import    {Foo} from './singleQuotes';
     import {Foo} from "./doubleQuotes"
 
-    console.log('semicolon');
-    console.log('no_semicolon')
+        console.log('semicolon');
+ console.log(   'no_semicolon')
 
 </script>""",
              """<script lang="ts">
-    import {Foo} from './singleQuotes'
-    import {Foo} from './doubleQuotes'
+import {Foo} from './singleQuotes'
+import {Foo} from './doubleQuotes'
 
-    console.log('semicolon')
-    console.log('no_semicolon')
+console.log('semicolon')
+console.log('no_semicolon')
 
 </script>""", "vue")
     }

@@ -1,7 +1,7 @@
 <template><div></div></template>
 <script lang="ts">
-    //no errors
-    <error>ToI<caret>mport</error>
+//no errors
+<error>ToI<caret>mport</error>
 
 
 </script>

@@ -62,6 +62,7 @@ import org.junit.runners.Suite;
   VuePugFoldingTest.class,
   VueModuleImportTest.class,
   VueCopyPasteTest.class,
+  VueMoveModuleMemberTest.class,
   VueTypeScriptDuplicateTest.class,
   VueTypeScriptLineMarkersTest.class,
   VueTypeScriptHighlightingTest.class,

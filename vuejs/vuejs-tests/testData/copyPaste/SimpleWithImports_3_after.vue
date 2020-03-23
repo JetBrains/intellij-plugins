@@ -3,10 +3,10 @@
 </template>
 
 <script>
-  import Component from "./SimpleWithImports_2";
+import Component from "./SimpleWithImports_2";
 
-  export default {
-    name: 'list3',
-  }
-  console.log(Component)
+export default {
+  name: 'list3',
+}
+console.log(Component)
 </script>
