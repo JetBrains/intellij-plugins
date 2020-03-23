@@ -73,6 +73,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
             .withParentEnvironmentType(if (environmentVariables.isPassParentEnvs) GeneralCommandLine.ParentEnvironmentType.CONSOLE else GeneralCommandLine.ParentEnvironmentType.NONE)
             .withParameters(params.list)
         val processHandler = ColoredProcessHandler(cmd)
+        processHandler.setShouldKillProcessSoftly(true)
         ProcessTerminatedListener.attach(processHandler)
         return processHandler
       }
