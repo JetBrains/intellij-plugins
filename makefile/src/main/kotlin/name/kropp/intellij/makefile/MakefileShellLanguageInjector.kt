@@ -25,7 +25,7 @@ class MakefileShellLanguageInjector : MultiHostInjector {
         context.children.filterIsInstance<MakefileCommand>().map {
           val tabs = it.text.takeWhile(::isTab).count()
           val silent = if (it.text.dropWhile(::isTab).firstOrNull() == '@') 1 else 0
-          TextRange.create(it.textRangeInParent.startOffset + tabs + silent, min(it.textRangeInParent.endOffset + 1, context.textLength))
+          TextRange.create(it.textRangeInParent.startOffset + tabs + silent, min(it.textRangeInParent.endOffset, context.textLength))
         }
       }
       is MakefileFunction -> {

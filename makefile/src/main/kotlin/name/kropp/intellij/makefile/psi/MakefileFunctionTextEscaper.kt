@@ -9,12 +9,19 @@ class MakefileFunctionTextEscaper(private val function: MakefileFunction) : Lite
   }
 
   override fun getOffsetInHost(offsetInDecoded: Int, rangeInsideHost: TextRange): Int {
-    return rangeInsideHost.startOffset + offsetInDecoded
+    var shift = 0
+    var i = 0
+    for (part in rangeInsideHost.substring(function.text).split("$$")) {
+      if (i + part.length >= offsetInDecoded) break
+      shift++
+      i += part.length + 1
+    }
+    return rangeInsideHost.startOffset + offsetInDecoded + shift
   }
 
   override fun decode(rangeInsideHost: TextRange, outChars: StringBuilder): Boolean {
     return try {
-      outChars.append(rangeInsideHost.substring(function.text))
+      outChars.append(rangeInsideHost.substring(function.text).replace("$$", "$"))
       true
     } catch (e: Throwable) {
       false
