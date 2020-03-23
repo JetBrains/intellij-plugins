@@ -53,7 +53,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
   @Nullable
   public Map<String, String> getOutlineTableMap() {
     SmartPsiElementPointer<GherkinScenarioOutline> smartPointer = SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this);
-    return CachedValuesManager.getCachedValue(getContainingFile(), new MyCachedValueProvider(smartPointer));
+    return CachedValuesManager.getCachedValue(this, new MyCachedValueProvider(smartPointer));
   }
   
   private static class MyCachedValueProvider implements CachedValueProvider<Map<String, String>> {
