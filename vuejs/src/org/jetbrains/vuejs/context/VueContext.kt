@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.html.HtmlLikeFile
+import com.intellij.psi.impl.source.xml.XmlTagImpl
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
@@ -86,7 +87,8 @@ fun isSimpleVueHtml(psiFile: PsiFile): Boolean {
             result = true
           }
           if (++level < 3) {
-            tag.subTags.forEach { it.accept(this) }
+            // Do not process XIncludes to avoid recursion
+            (tag as? XmlTagImpl)?.getSubTags(false)?.forEach { it.accept(this) }
             level--
           }
         }
