@@ -49,6 +49,11 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
     return super.resolve(expression, incompleteCode);
   }
 
+  @Override
+  protected ResolveResult[] postProcessIndexResults(ResolveResult[] results) {
+    return results;
+  }
+
   private ResolveResult @NotNull [] resolvePipeNameReference(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (!incompleteCode) {
       ResolveResult[] results = expression.multiResolve(true);
