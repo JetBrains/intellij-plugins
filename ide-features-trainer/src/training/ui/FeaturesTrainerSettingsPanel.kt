@@ -5,6 +5,7 @@ import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.showYesNoDialog
 import com.intellij.ui.layout.*
+import training.actions.StartLearnAction
 import training.lang.LangManager
 import training.learn.LearnBundle
 import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
@@ -17,7 +18,7 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
     row {
       checkBox(LearnBundle.message("learn.option.show.list.on.welcome.frame"),
                { GroupManager.instance.showTutorialsOnWelcomeFrame },
-               { GroupManager.instance.showTutorialsOnWelcomeFrame = it })
+               { updateWelcomeFrame(it) })
     }
     val languagesExtensions = LangManager.getInstance().supportedLanguagesExtensions
     if (languagesExtensions.isNotEmpty()) {
@@ -39,5 +40,10 @@ class FeaturesTrainerSettingsPanel : BoundConfigurable(LearnBundle.message("lear
         }
       }
     }
+  }
+
+  private fun updateWelcomeFrame(show: Boolean) {
+    StartLearnAction.updateState(show)
+    GroupManager.instance.showTutorialsOnWelcomeFrame = show
   }
 }
