@@ -1,9 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training.actions
 
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.ui.DialogWrapper
@@ -67,4 +65,18 @@ class StartLearnAction : AnAction(
     return modules.map { it.giveNotPassedLesson() }.firstOrNull() ?: modules.first().lessons.first()
   }
 
+  companion object {
+    /** Show tutorials == don't show link */
+    fun updateState(dontShowLink: Boolean) {
+      val actionManager = ActionManager.getInstance()
+      val actionLinksGroup = actionManager.getAction("WelcomeScreen.QuickStart") as DefaultActionGroup
+      val action = actionLinksGroup.getChildren(null, actionManager).find { it is StartLearnAction }
+      if (dontShowLink) {
+        if (action != null) actionLinksGroup.remove(action)
+      }
+      else {
+        if (action == null) actionLinksGroup.addAction(StartLearnAction(), Constraints.LAST, actionManager)
+      }
+    }
+  }
 }

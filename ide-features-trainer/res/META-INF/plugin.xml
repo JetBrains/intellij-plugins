@@ -22,11 +22,11 @@
 
   <extensionPoints>
     <extensionPoint name="TrainingLangExtension"
-                    beanClass="com.intellij.lang.LanguageExtensionPoint">
+                    beanClass="com.intellij.lang.LanguageExtensionPoint" dynamic="true">
       <with attribute="implementationClass" implements="training.lang.LangSupport"/>
     </extensionPoint>
 
-    <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules"/>
+    <extensionPoint name="TrainingModules" beanClass="training.learn.TrainingModules" dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -41,7 +41,6 @@
                         serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"
                         overrides="true"/>
     <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
-    <actionConfigurationCustomizer implementation="training.ui.welcomeScreen.recentProjects.IFTWelcomeScreenActionCustomizer"/>
     <applicationService
       serviceImplementation="training.learn.CourseManager"/>
     <applicationService
