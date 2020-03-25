@@ -5,7 +5,7 @@ class MakefileTargetRenameTest : BasePlatformTestCase() {
 
 
   fun doTest(newName: String) {
-    myFixture.configureByFile("$testDataPath/$basePath/${getTestName(true)}.mk")
+    myFixture.configureByFile("$basePath/${getTestName(true)}.mk")
     myFixture.renameElementAtCaret(newName)
     myFixture.checkResultByFile("$basePath/${getTestName(true)}.gold.mk")
   }

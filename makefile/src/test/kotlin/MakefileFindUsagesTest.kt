@@ -8,7 +8,7 @@ import org.junit.Assert.*
 
 class MakefileFindUsagesTest : BasePlatformTestCase() {
   fun testSimple() {
-    val usages = myFixture.testFindUsages("$testDataPath/$basePath/${getTestName(true)}.mk")
+    val usages = myFixture.testFindUsages("$basePath/${getTestName(true)}.mk")
 
     assertThat(usages, hasSize(2))
   }
@@ -17,7 +17,7 @@ class MakefileFindUsagesTest : BasePlatformTestCase() {
   fun testForce() = notSearchableForUsages()
 
   fun notSearchableForUsages() {
-    myFixture.configureByFiles("$testDataPath/$basePath/${getTestName(true)}.mk")
+    myFixture.configureByFiles("$basePath/${getTestName(true)}.mk")
     val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, TargetElementUtil.ELEMENT_NAME_ACCEPTED or TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
     val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(targetElement!!, false)
 

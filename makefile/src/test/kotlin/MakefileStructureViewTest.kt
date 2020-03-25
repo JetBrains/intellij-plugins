@@ -4,7 +4,7 @@ import com.intellij.testFramework.fixtures.*
 class MakefileStructureViewTest : BasePlatformTestCase() {
   fun testSimple() {
     val filename = "${getTestName(true)}.mk"
-    myFixture.configureByFile("$testDataPath/$basePath/$filename")
+    myFixture.configureByFile("$basePath/$filename")
     myFixture.testStructureView {
       PlatformTestUtil.expandAll(it.tree)
       PlatformTestUtil.assertTreeEqual(it.tree, "-simple.mk\n all\n hello\n world\n")

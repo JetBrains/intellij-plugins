@@ -6,7 +6,7 @@ class MakefileCreateRuleQuickfixTest : BasePlatformTestCase() {
 
 
   fun doTest() {
-    myFixture.configureByFile("$testDataPath/$basePath/${getTestName(true)}.mk")
+    myFixture.configureByFile("$basePath/${getTestName(true)}.mk")
     val intention = myFixture.findSingleIntention("Create Rule")
     myFixture.launchAction(intention)
     myFixture.checkResultByFile("$basePath/${getTestName(true)}.gold.mk")
