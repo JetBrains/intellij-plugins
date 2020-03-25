@@ -1,11 +1,14 @@
 import com.intellij.testFramework.fixtures.*
 
 class MakefileCompletionTest : BasePlatformTestCase() {
-  fun testSimple() = doTest("b", "c", "d", "${getTestName(true)}.mk")
-  fun testTargets() = doTest("a", "${getTestName(true)}.mk")
+  fun testSimple() = doTest("b", "c", "d", testFilename)
+  fun testTargets() = doTest("a", testFilename)
+//  fun testAny() = doTest("include", "private", "define", "ifeq", "vpath", "ifndef", "ifneq", "override", "export", "undefine", "ifdef")
+  fun testFunctions() = doTest("addsuffix", "realpath", "firstword", "origin", "dir", "error", "suffix", "wildcard", "findstring", "foreach", "file", "strip", "wordlist", "addprefix", "and", "guile", "abspath", "warning", "join", "if", "notdir", "value", "info", "or", "patsubst", "filter-out", "words", "subst", "sort", "call", "filter", "flavor", "basename", "eval", "lastword", "shell", "word")
 
-  fun doTest(vararg variants: String) = myFixture.testCompletionVariants("$basePath/${getTestName(true)}.mk", *variants)
+  fun doTest(vararg variants: String) = myFixture.testCompletionVariants("$basePath/$testFilename", *variants)
 
+  private val testFilename get() = "${getTestName(true)}.mk"
   override fun getTestDataPath() = "testData"
   override fun getBasePath() = "completion"
 }
