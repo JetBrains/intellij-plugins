@@ -6,8 +6,8 @@ import name.kropp.intellij.makefile.psi.*
 
 class MakefileTargetRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(element: PsiElement): Info? {
-    if (element.node.elementType == MakefileTypes.CHARS && element.parent.node.elementType == MakefileTypes.IDENTIFIER) {
-      val target = element.parent.parent
+    if (element.node.elementType == MakefileTypes.CHARS) {
+      val target = element.parent
       if (target is MakefileTarget) {
         val targets = target.parent as MakefileTargets
         val targetList = targets.targetList
