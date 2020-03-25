@@ -26,12 +26,20 @@ public class NgContentSelectorsTest extends Angular2CodeInsightFixtureTestCase {
     doTestHighlighting();
   }
 
-  public void testHighlightingIvy() {
-    testHighlightingMetadata();
+  public void testHighlightingPureIvy() {
+    myFixture.copyDirectoryToProject("node_modules/ivy-lib", "node_modules/ivy-lib");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
+  }
+
+  public void testHighlightingMixedIvy() {
+    myFixture.copyDirectoryToProject("node_modules/mixed-lib", "node_modules/mixed-lib");
+    myFixture.configureByFiles("highlighting.html", "package.json");
+    doTestHighlighting();
   }
 
   public void testHighlightingMetadata() {
-    myFixture.copyDirectoryToProject("node_modules", ".");
+    myFixture.copyDirectoryToProject("node_modules/metadata-lib", "node_modules/metadata-lib");
     myFixture.configureByFiles("highlighting.html", "package.json");
     doTestHighlighting();
   }

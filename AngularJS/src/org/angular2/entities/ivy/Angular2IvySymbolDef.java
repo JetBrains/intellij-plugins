@@ -4,58 +4,58 @@ package org.angular2.entities.ivy;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.psi.JSField;
+import com.intellij.lang.javascript.psi.JSParameterListElement;
 import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.stubs.*;
 import com.intellij.lang.typescript.TypeScriptStubElementTypes;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 @SuppressWarnings("unused")
-public abstract class Angular2IvyEntityDef {
+public abstract class Angular2IvySymbolDef {
 
-  @Nullable
-  public static Angular2IvyEntityDef get(@NotNull TypeScriptClass typeScriptClass) {
-    if (!isSuitableClass(typeScriptClass)) {
-      return null;
-    }
-    StubElement<?> stub = doIfNotNull(tryCast(typeScriptClass, StubBasedPsiElementBase.class),
-                                      StubBasedPsiElementBase::getStub);
-    if (stub instanceof TypeScriptClassStub) {
-      return get((TypeScriptClassStub)stub);
-    }
-    return findEntityDefFieldPsi(typeScriptClass);
+  public static @Nullable Entity get(@NotNull TypeScriptClass typeScriptClass) {
+    return getSymbolDef(typeScriptClass, Angular2IvySymbolDef::createEntityDef);
   }
 
-  @Nullable
-  public static Angular2IvyEntityDef get(@NotNull TypeScriptClassStub stub) {
-    return getEntityDefStubbed(stub);
+  public static @Nullable Factory getFactory(@NotNull TypeScriptClass typeScriptClass) {
+    return getSymbolDef(typeScriptClass, Angular2IvySymbolDef::createFactoryDef);
   }
 
-  @Nullable
-  public static Angular2IvyEntityDef get(@NotNull TypeScriptField field) {
-    JSAttributeList attrs = field.getAttributeList();
-    if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
-      return null;
-    }
-    TypeScriptClass tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass.class);
-    if (tsClass == null || !isSuitableClass(tsClass)) {
-      return null;
-    }
-    return createEntityDef(field.getName(), field);
+
+  public static @Nullable Entity get(@NotNull TypeScriptClassStub stub) {
+    return getSymbolDefStubbed(stub, Angular2IvySymbolDef::createEntityDef);
   }
 
-  public static class Module extends Angular2IvyEntityDef {
+  public static @Nullable Entity get(@NotNull TypeScriptField field) {
+    return getSymbolDef(field, Angular2IvySymbolDef::createEntityDef);
+  }
+
+  public abstract static class Entity extends Angular2IvySymbolDef {
+
+    private Entity(@NotNull Object fieldOrStub) {
+      super(fieldOrStub);
+    }
+
+    public abstract Angular2IvyEntity<?> createEntity();
+  }
+
+  public static class Module extends Entity {
     private Module(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     @NotNull
@@ -73,7 +73,7 @@ public abstract class Angular2IvyEntityDef {
       else {
         return Collections.emptyList();
       }
-      return processTupleArgument(index, TypeScriptTypeofType.class, Function.identity());
+      return processTupleArgument(index, TypeScriptTypeofType.class, Function.identity(), false);
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class Angular2IvyEntityDef {
     }
   }
 
-  public static class Directive extends Angular2IvyEntityDef {
+  public static class Directive extends Entity {
     private Directive(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     @Override
@@ -109,7 +109,7 @@ public abstract class Angular2IvyEntityDef {
     @NotNull
     public List<String> getExportAsList() {
       return processTupleArgument(2, TypeScriptStringLiteralType.class,
-                                  TypeScriptStringLiteralType::getInnerText);
+                                  TypeScriptStringLiteralType::getInnerText, false);
     }
 
     @NotNull
@@ -125,7 +125,8 @@ public abstract class Angular2IvyEntityDef {
         return Collections.emptyMap();
       }
       return processObjectArgument(index, TypeScriptStringLiteralType.class,
-                                   TypeScriptStringLiteralType::getInnerText);
+                                   TypeScriptStringLiteralType::getInnerText
+      );
     }
 
     @NotNull
@@ -136,11 +137,21 @@ public abstract class Angular2IvyEntityDef {
   }
 
   public static class Component extends Directive {
+
     private Component(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
     @Override
     public Angular2IvyDirective createEntity() {
       return new Angular2IvyComponent(this);
+    }
+
+    /**
+     * Returns null if type doesn't contain the argument and logic should fallback to metadata.json
+     */
+    @Nullable
+    public Collection<TypeScriptStringLiteralType> getNgContentSelectors() {
+      return processTupleArgument(6, TypeScriptStringLiteralType.class,
+                                  Function.identity(), true);
     }
 
     @NotNull
@@ -150,7 +161,7 @@ public abstract class Angular2IvyEntityDef {
     }
   }
 
-  public static class Pipe extends Angular2IvyEntityDef {
+  public static class Pipe extends Entity {
 
     private Pipe(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
 
@@ -163,6 +174,7 @@ public abstract class Angular2IvyEntityDef {
     public String getName() {
       return getStringGenericParam(1);
     }
+
     @NotNull
     @Override
     protected String getDefTypeName() {
@@ -170,19 +182,83 @@ public abstract class Angular2IvyEntityDef {
     }
   }
 
+  public static class Factory extends Angular2IvySymbolDef {
+
+    private Factory(@NotNull Object fieldStubOrPsi) {super(fieldStubOrPsi);}
+
+    @Override
+    protected @NotNull String getDefTypeName() {
+      return TYPE_FACTORY_DEF;
+    }
+
+    /**
+     * Returns null if type doesn't contain the argument and logic should fallback to metadata.json
+     */
+    public @Nullable Map<String, JSTypeDeclaration> getAttributeNames() {
+      Map<String, JSTypeDeclaration> result = new HashMap<>();
+      if (!processConstructorArguments("attribute", TypeScriptStringLiteralType.class, (name, type) -> {
+        doIfNotNull(name.getInnerText(), value -> result.put(value, type));
+      })) {
+        return null;
+      }
+      return result;
+    }
+
+    private <T extends TypeScriptType> boolean processConstructorArguments(String kind, Class<T> valueClass,
+                                                                           BiConsumer<@NotNull T, @Nullable TypeScriptType> consumer) {
+      JSTypeDeclaration declaration = getDefFieldArgument(1);
+      if (declaration == null) {
+        return false;
+      }
+      TypeScriptClass cls = getContextClass();
+      if (!(declaration instanceof TypeScriptTupleType) || cls == null) {
+        return true;
+      }
+
+      TypeScriptFunction constructor = ContainerUtil.find(cls.getConstructors(),fun -> !fun.isOverloadImplementation());
+      if (constructor == null) {
+        // TODO support annotations in super constructors
+        return true;
+      }
+
+      JSParameterListElement[] params = constructor.getParameters();
+      TypeScriptType[] paramsDecoratorsInfo =  ((TypeScriptTupleType)declaration).getElements();
+      if (params.length != paramsDecoratorsInfo.length) {
+        return true;
+      }
+      for (int i = 0; i < params.length; i++) {
+        TypeScriptObjectType info = tryCast(paramsDecoratorsInfo[i], TypeScriptObjectType.class);
+        if (info != null) {
+          TypeScriptPropertySignature kindInfo = tryCast(ContainerUtil.find(info.getTypeMembers(), member -> kind.equals(member.getName())),
+                                                  TypeScriptPropertySignature.class);
+          if (kindInfo == null) {
+            continue;
+          }
+          T value = tryCast(kindInfo.getTypeDeclaration(), valueClass);
+          if (value != null) {
+            consumer.accept(value, tryCast(params[i].getTypeElement(), TypeScriptType.class));
+          }
+        }
+      }
+      return true;
+    }
+  }
+
   @NonNls private static final String FIELD_DIRECTIVE_DEF = "ɵdir";
   @NonNls private static final String FIELD_MODULE_DEF = "ɵmod";
   @NonNls private static final String FIELD_PIPE_DEF = "ɵpipe";
   @NonNls private static final String FIELD_COMPONENT_DEF = "ɵcmp";
+  @NonNls private static final String FIELD_FACTORY_DEF = "ɵfac";
 
   @NonNls private static final String TYPE_DIRECTIVE_DEF = "ɵɵDirectiveDefWithMeta";
   @NonNls private static final String TYPE_MODULE_DEF = "ɵɵNgModuleDefWithMeta";
   @NonNls private static final String TYPE_PIPE_DEF = "ɵɵPipeDefWithMeta";
   @NonNls private static final String TYPE_COMPONENT_DEF = "ɵɵComponentDefWithMeta";
+  @NonNls private static final String TYPE_FACTORY_DEF = "ɵɵFactoryDef";
 
   private final Object myFieldOrStub;
 
-  private Angular2IvyEntityDef(@NotNull Object fieldOrStub) {
+  private Angular2IvySymbolDef(@NotNull Object fieldOrStub) {
     this.myFieldOrStub = fieldOrStub;
   }
 
@@ -194,13 +270,11 @@ public abstract class Angular2IvyEntityDef {
     return (TypeScriptField)myFieldOrStub;
   }
 
-  public abstract Angular2IvyEntity<?> createEntity();
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Angular2IvyEntityDef entityDef = (Angular2IvyEntityDef)o;
+    Angular2IvySymbolDef entityDef = (Angular2IvySymbolDef)o;
     return getField().equals(entityDef.getField());
   }
 
@@ -211,6 +285,11 @@ public abstract class Angular2IvyEntityDef {
 
   @NotNull
   protected abstract String getDefTypeName();
+
+  @Nullable
+  protected TypeScriptClass getContextClass() {
+    return PsiTreeUtil.getContextOfType(getField(), TypeScriptClass.class);
+  }
 
   @Nullable
   protected JSTypeDeclaration getDefFieldArgument(int index) {
@@ -233,30 +312,35 @@ public abstract class Angular2IvyEntityDef {
     return null;
   }
 
-  @NotNull
+  @Nullable
+  @Contract("_,_,_,false->!null")
   protected <T extends TypeScriptType, R> List<R> processTupleArgument(int index,
                                                                        @NotNull Class<T> itemsClass,
-                                                                       @NotNull Function<T, R> itemMapper) {
-    TypeScriptTupleType tuple = tryCast(getDefFieldArgument(index), TypeScriptTupleType.class);
-    if (tuple == null) {
+                                                                       @NotNull Function<T, R> itemMapper,
+                                                                       boolean nullIfNotFound) {
+    JSTypeDeclaration declaration = getDefFieldArgument(index);
+    if (declaration == null) {
+      return nullIfNotFound ? null : Collections.emptyList();
+    }
+    if (!(declaration instanceof TypeScriptTupleType)) {
       return Collections.emptyList();
     }
-    return StreamEx.of(tuple.getElements())
+    return StreamEx.of(((TypeScriptTupleType)declaration).getElements())
       .select(itemsClass)
       .map(itemMapper)
       .toList();
   }
 
   @NotNull
-  protected <T extends TypeScriptType, R> Map<String, R> processObjectArgument(int index,
-                                                                               @NotNull Class<T> valueClass,
-                                                                               @NotNull Function<T, R> valueMapper) {
-    TypeScriptObjectType object = tryCast(getDefFieldArgument(index), TypeScriptObjectType.class);
-    if (object == null) {
+  protected <T extends JSTypeDeclaration, R> Map<String, R> processObjectArgument(int index,
+                                                                                  @NotNull Class<T> valueClass,
+                                                                                  @NotNull Function<T, R> valueMapper) {
+    JSTypeDeclaration object = getDefFieldArgument(index);
+    if (!(object instanceof TypeScriptObjectType)) {
       return Collections.emptyMap();
     }
     Map<String, R> result = new LinkedHashMap<>();
-    for (TypeScriptTypeMember child : object.getTypeMembers()) {
+    for (TypeScriptTypeMember child : ((TypeScriptObjectType)object).getTypeMembers()) {
       TypeScriptPropertySignature prop = tryCast(child, TypeScriptPropertySignature.class);
       if (prop != null) {
         Optional.ofNullable(tryCast(prop.getTypeDeclaration(), valueClass))
@@ -272,7 +356,8 @@ public abstract class Angular2IvyEntityDef {
   }
 
   @Nullable
-  private static Angular2IvyEntityDef getEntityDefStubbed(@NotNull TypeScriptClassStub jsClassStub) {
+  private static <T extends Angular2IvySymbolDef> T getSymbolDefStubbed(@NotNull TypeScriptClassStub jsClassStub,
+                                                                        BiFunction<String, Object, T> symbolFactory) {
     JSAttributeListStub clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
     // Do not index abstract classes
     if (clsAttrs == null || clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
@@ -290,7 +375,7 @@ public abstract class Angular2IvyEntityDef {
       if (!(fieldStub instanceof TypeScriptFieldStub)) {
         continue;
       }
-      Angular2IvyEntityDef entityDefKind = createEntityDef(fieldStub.getName(), fieldStub);
+      T entityDefKind = symbolFactory.apply(fieldStub.getName(), fieldStub);
       if (entityDefKind != null) {
         return entityDefKind;
       }
@@ -299,12 +384,13 @@ public abstract class Angular2IvyEntityDef {
   }
 
   @Nullable
-  private static Angular2IvyEntityDef findEntityDefFieldPsi(@NotNull TypeScriptClass jsClass) {
+  private static <T extends Angular2IvySymbolDef> T findSymbolDefFieldPsi(@NotNull TypeScriptClass jsClass,
+                                                                          BiFunction<String, Object, T> symbolFactory) {
     for (JSField field : jsClass.getFields()) {
       if (!(field instanceof TypeScriptField)) {
         continue;
       }
-      Angular2IvyEntityDef entityDefKind = get((TypeScriptField)field);
+      T entityDefKind = getSymbolDef((TypeScriptField)field, symbolFactory);
       if (entityDefKind != null) {
         return entityDefKind;
       }
@@ -312,8 +398,35 @@ public abstract class Angular2IvyEntityDef {
     return null;
   }
 
+  private static @Nullable <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptClass typeScriptClass,
+                                                                           BiFunction<String, Object, T> symbolFactory) {
+    if (!isSuitableClass(typeScriptClass)) {
+      return null;
+    }
+    StubElement<?> stub = doIfNotNull(tryCast(typeScriptClass, StubBasedPsiElementBase.class),
+                                      StubBasedPsiElementBase::getStub);
+    if (stub instanceof TypeScriptClassStub) {
+      return getSymbolDefStubbed((TypeScriptClassStub)stub, symbolFactory);
+    }
+    return findSymbolDefFieldPsi(typeScriptClass, symbolFactory);
+  }
+
   @Nullable
-  private static Angular2IvyEntityDef createEntityDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
+  private static <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptField field,
+                                                                 BiFunction<String, Object, T> symbolFactory) {
+    JSAttributeList attrs = field.getAttributeList();
+    if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
+      return null;
+    }
+    TypeScriptClass tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass.class);
+    if (tsClass == null || !isSuitableClass(tsClass)) {
+      return null;
+    }
+    return symbolFactory.apply(field.getName(), field);
+  }
+
+  @Nullable
+  private static Angular2IvySymbolDef.Entity createEntityDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
     if (fieldName == null) {
       return null;
     }
@@ -330,6 +443,11 @@ public abstract class Angular2IvyEntityDef {
       return new Pipe(fieldPsiOrStub);
     }
     return null;
+  }
+
+  @Nullable
+  private static Factory createFactoryDef(@Nullable String fieldName, @NotNull Object fieldPsiOrStub) {
+    return fieldName != null && fieldName.equals(FIELD_FACTORY_DEF) ? new Factory(fieldPsiOrStub) : null;
   }
 
   @Nullable
