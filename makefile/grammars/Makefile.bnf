@@ -90,7 +90,7 @@ meta variable-value ::= multiline
 define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
-export ::= 'export' (variable-assignment|variable)? EOL?
+export ::= 'export' (EOL | (variable-assignment|variable) EOL?)
 private exportvar ::= 'export' variable-assignment {pin=1}
 privatevar ::= 'private' variable-assignment {pin=1}
 

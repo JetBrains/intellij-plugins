@@ -415,7 +415,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'export' (variable-assignment|variable)? EOL?
+  // 'export' (EOL | (variable-assignment|variable) EOL?)
   public static boolean export(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export")) return false;
     if (!nextTokenIs(b, KEYWORD_EXPORT)) return false;
@@ -423,21 +423,35 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_EXPORT);
     r = r && export_1(b, l + 1);
-    r = r && export_2(b, l + 1);
     exit_section_(b, m, EXPORT, r);
     return r;
   }
 
-  // (variable-assignment|variable)?
+  // EOL | (variable-assignment|variable) EOL?
   private static boolean export_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "export_1")) return false;
-    export_1_0(b, l + 1);
-    return true;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, EOL);
+    if (!r) r = export_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (variable-assignment|variable) EOL?
+  private static boolean export_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = export_1_1_0(b, l + 1);
+    r = r && export_1_1_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   // variable-assignment|variable
-  private static boolean export_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "export_1_0")) return false;
+  private static boolean export_1_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1_1_0")) return false;
     boolean r;
     r = variable_assignment(b, l + 1);
     if (!r) r = variable(b, l + 1);
@@ -445,8 +459,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   // EOL?
-  private static boolean export_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "export_2")) return false;
+  private static boolean export_1_1_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "export_1_1_1")) return false;
     consumeToken(b, EOL);
     return true;
   }

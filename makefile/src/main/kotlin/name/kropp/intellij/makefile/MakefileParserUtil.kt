@@ -9,7 +9,7 @@ import name.kropp.intellij.makefile.psi.MakefileTypes.*
 object MakefileParserUtil : GeneratedParserUtilBase() {
   @JvmStatic
   fun parseNoWhitespaceOrColon(builder: PsiBuilder, level: Int): Boolean {
-    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, COLON, DOUBLECOLON))
+    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, COLON, DOUBLECOLON, TAB))
   }
 
   @JvmStatic
