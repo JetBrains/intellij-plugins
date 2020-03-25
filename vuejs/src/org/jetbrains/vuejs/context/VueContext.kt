@@ -86,7 +86,7 @@ fun isSimpleVueHtml(psiFile: PsiFile): Boolean {
           if (HtmlUtil.isScriptTag(tag) && hasVueScriptLink(tag)) {
             result = true
           }
-          if (++level < 3) {
+          if (++level <= 3) {
             // Do not process XIncludes to avoid recursion
             (tag as? XmlTagImpl)?.getSubTags(false)?.forEach { it.accept(this) }
             level--
