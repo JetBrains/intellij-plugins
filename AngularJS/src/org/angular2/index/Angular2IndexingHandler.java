@@ -42,7 +42,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.entities.ivy.Angular2IvyEntityDef;
+import org.angular2.entities.ivy.Angular2IvySymbolDef;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -229,20 +229,20 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public void indexClassStub(@NotNull JSClassStub<?> jsClassStub, @NotNull IndexSink sink) {
     if (jsClassStub instanceof TypeScriptClassStub) {
-      Angular2IvyEntityDef entityDef = Angular2IvyEntityDef.get((TypeScriptClassStub)jsClassStub);
+      Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClassStub)jsClassStub);
       if (entityDef != null) {
-        if (entityDef instanceof Angular2IvyEntityDef.Module) {
+        if (entityDef instanceof Angular2IvySymbolDef.Module) {
           sink.occurrence(Angular2IvyModuleIndex.KEY, NG_MODULE_INDEX_NAME);
         }
-        else if (entityDef instanceof Angular2IvyEntityDef.Pipe) {
-          String name = ((Angular2IvyEntityDef.Pipe)entityDef).getName();
+        else if (entityDef instanceof Angular2IvySymbolDef.Pipe) {
+          String name = ((Angular2IvySymbolDef.Pipe)entityDef).getName();
           if (name != null) {
             sink.occurrence(Angular2IvyPipeIndex.KEY, name);
             sink.occurrence(AngularSymbolIndex.KEY, name);
           }
         }
-        else if (entityDef instanceof Angular2IvyEntityDef.Directive) {
-          String selector = ((Angular2IvyEntityDef.Directive)entityDef).getSelector();
+        else if (entityDef instanceof Angular2IvySymbolDef.Directive) {
+          String selector = ((Angular2IvySymbolDef.Directive)entityDef).getSelector();
           if (selector != null) {
             for (String indexName : Angular2EntityUtils.getDirectiveIndexNames(selector.trim())) {
               sink.occurrence(Angular2IvyDirectiveIndex.KEY, indexName);
