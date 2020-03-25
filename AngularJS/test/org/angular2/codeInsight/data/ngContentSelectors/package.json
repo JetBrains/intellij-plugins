@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@angular/core": "0.0.0",
-    "my-lib": "0.0.0"
+    "ivy-lib": "0.0.0",
+    "mixed-lib": "0.0.0",
+    "metadata-lib": "0.0.0"
   }
 }

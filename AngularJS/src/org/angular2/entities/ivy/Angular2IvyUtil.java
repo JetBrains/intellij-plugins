@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -42,15 +43,15 @@ public class Angular2IvyUtil {
   }
 
   public static Angular2IvyEntity<?> getIvyEntity(@NotNull PsiElement element) {
-    final Angular2IvyEntityDef entityDef;
+    final Angular2IvySymbolDef.Entity entityDef;
     if (element instanceof TypeScriptClass) {
       if (!isDeclaredClass((TypeScriptClass)element)) {
         return null;
       }
-      entityDef = Angular2IvyEntityDef.get((TypeScriptClass)element);
+      entityDef = Angular2IvySymbolDef.get((TypeScriptClass)element);
     }
     else if (element instanceof TypeScriptField) {
-      entityDef = Angular2IvyEntityDef.get((TypeScriptField)element);
+      entityDef = Angular2IvySymbolDef.get((TypeScriptField)element);
     }
     else {
       entityDef = null;
@@ -61,7 +62,7 @@ public class Angular2IvyUtil {
     }
 
     return CachedValuesManager.getCachedValue(entityDef.getField(), () -> {
-      return create(entityDef.createEntity(), entityDef.getField());
+      return create(entityDef.createEntity(), ObjectUtils.notNull(entityDef.getContextClass(), entityDef.getField()));
     });
   }
 }

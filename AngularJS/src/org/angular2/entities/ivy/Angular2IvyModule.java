@@ -18,13 +18,13 @@ import java.util.Set;
 import static com.intellij.lang.javascript.psi.types.TypeScriptTypeOfJSTypeImpl.getTypeOfResultElements;
 import static com.intellij.util.ObjectUtils.tryCast;
 
-public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvyEntityDef.Module> implements Angular2Module {
+public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Module> implements Angular2Module {
 
   private final Angular2ModuleResolver<TypeScriptField> myModuleResolver = new Angular2ModuleResolver<>(
     () -> getField(), Angular2IvyModule::collectSymbols);
 
 
-  public Angular2IvyModule(@NotNull Angular2IvyEntityDef.Module entityDef) {
+  public Angular2IvyModule(@NotNull Angular2IvySymbolDef.Module entityDef) {
     super(entityDef);
   }
 
@@ -59,7 +59,6 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvyEntityDef.Mo
 
   @Override
   public boolean isPublic() {
-    //noinspection HardCodedStringLiteral
     return !getName().startsWith("ɵ");
   }
 
@@ -77,7 +76,7 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvyEntityDef.Mo
   private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
                                                                                            @NotNull String propertyName,
                                                                                            @NotNull Class<T> symbolClazz) {
-    Angular2IvyEntityDef.Module moduleDef = tryCast(Angular2IvyEntityDef.get(fieldDef), Angular2IvyEntityDef.Module.class);
+    Angular2IvySymbolDef.Module moduleDef = tryCast(Angular2IvySymbolDef.get(fieldDef), Angular2IvySymbolDef.Module.class);
     List<TypeScriptTypeofType> types = moduleDef == null? Collections.emptyList() : moduleDef.getTypesList(propertyName);
     if (types.isEmpty()) {
       return ResolvedEntitiesList.createResult(Collections.emptySet(), true, fieldDef);

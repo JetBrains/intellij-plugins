@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class Angular2IvyEntity<T extends Angular2IvyEntityDef> extends Angular2SourceEntityBase {
+public abstract class Angular2IvyEntity<T extends Angular2IvySymbolDef.Entity> extends Angular2SourceEntityBase {
 
   protected final T myEntityDef;
 

@@ -3,6 +3,7 @@ package org.angular2.entities.source;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
@@ -11,11 +12,15 @@ import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.Supplier;
 
 public abstract class Angular2SourceEntityBase extends UserDataHolderBase implements Angular2Entity {
+
+  private static Object NULL_MARK = new Object();
 
   protected final TypeScriptClass myClass;
 
@@ -42,6 +47,30 @@ public abstract class Angular2SourceEntityBase extends UserDataHolderBase implem
 
   protected <T> T getCachedValue(@NotNull CachedValueProvider<T> provider) {
     return CachedValuesManager.getManager(myClass.getProject()).getCachedValue(this, provider);
+  }
+
+  /** Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents. */
+  protected <T> @NotNull T getLazyValue(Key<T> key, @NotNull Supplier<@NotNull ? extends T> provider) {
+    T result = getUserData(key);
+    return result != null ? result : putUserDataIfAbsent(key, provider.get());
+  }
+
+  /** Since Ivy entities are cached on TypeScriptClass dependencies, we can avoid caching for values depending solely on class contents. */
+  protected <T> @Nullable T getNullableLazyValue(Key<T> key, @NotNull Supplier<@Nullable ? extends T> provider) {
+    T result = getUserData(key);
+    if (result == NULL_MARK) {
+      return null;
+    }
+    if (result == null) {
+      result = provider.get();
+      if (result == null) {
+        //noinspection unchecked
+        putUserDataIfAbsent(key, (T)NULL_MARK);
+      } else {
+        return putUserDataIfAbsent(key, result);
+      }
+    }
+    return result;
   }
 
   @NotNull

@@ -76,4 +76,12 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureFromTempProjectFile("transloco.html");
     myFixture.checkHighlighting();
   }
+
+  public void testPureIvyConstructorAttribute() {
+    myFixture.copyDirectoryToProject("pure-attr-support", ".");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureFromTempProjectFile("template.html");
+    myFixture.checkHighlighting();
+  }
+
 }
