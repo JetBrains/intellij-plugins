@@ -1532,7 +1532,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testSimpleVueHtml() {
-    for (suffix in listOf("cdn", "cdn2", "cdn3", "cdn.js", "cdn@", "js")) {
+    for (suffix in listOf("cdn", "cdn2", "cdn3", "cdn.js", "cdn@", "js", "deep")) {
       myFixture.configureByFile("simple-vue/simple-vue-${suffix}.html")
       myFixture.checkHighlighting(true, false, true)
     }
