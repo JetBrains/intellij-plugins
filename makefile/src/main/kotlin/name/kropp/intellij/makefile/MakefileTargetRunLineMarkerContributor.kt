@@ -9,7 +9,7 @@ class MakefileTargetRunLineMarkerContributor : RunLineMarkerContributor() {
     if (element.node.elementType == MakefileTypes.CHARS) {
       val target = element.parent
       if (target is MakefileTarget) {
-        val targets = target.parent as MakefileTargets
+        val targets = target.parent as? MakefileTargets ?: return null
         val targetList = targets.targetList
         if (targetList.firstOrNull() == target &&
             targetList.any { !it.isSpecialTarget }) {
