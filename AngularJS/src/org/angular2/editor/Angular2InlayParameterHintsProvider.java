@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.editor;
 
 import com.intellij.codeInsight.hints.Option;
@@ -15,9 +15,9 @@ import java.util.List;
 
 public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
   public static final Option NAMES_FOR_ALL_ARGS = new Option(
-    "angular.show.names.for.all.args", JavaScriptBundle.message("js.param.hints.show.names.for.all.args"), false);
+    "angular.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false);
   public static final Option NAMES_FOR_PIPES = new Option(
-    "angular.show.names.for.pipes", Angular2Bundle.message("angular.inlay.params.option.pipe.arguments"), true);
+    "angular.show.names.for.pipes", Angular2Bundle.messagePointer("angular.inlay.params.option.pipe.arguments"), true);
 
   @Override
   protected Option getShowNameForAllArgsOption() {

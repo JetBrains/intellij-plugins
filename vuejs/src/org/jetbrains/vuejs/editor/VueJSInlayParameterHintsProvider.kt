@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.editor
 
 import com.intellij.codeInsight.hints.Option
@@ -29,7 +29,7 @@ class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider()
 
   companion object {
     val NAMES_FOR_ALL_ARGS = Option(
-      "vuejs.show.names.for.all.args", JavaScriptBundle.message("js.param.hints.show.names.for.all.args"), false)
+      "vuejs.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_FILTERS = Option(
       "vuejs.show.names.for.filters", "For filter arguments", true)
   }
