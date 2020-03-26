@@ -17,6 +17,7 @@
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
+    <notificationWhitelist groupIds="PlatformIO plugin;org.platformio"/>
   </extensions>
   <actions>
     <group id="platformio-group" text="PlatformIO"

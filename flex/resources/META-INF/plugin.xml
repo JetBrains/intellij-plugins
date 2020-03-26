@@ -270,6 +270,7 @@
     <completion.contributor language="ECMA Script Level 4" id="ActionScriptMethodsCompletionContributor" order="before JSPatternBasedCompletionContributor" implementationClass="com.intellij.lang.javascript.flex.completion.ActionScriptMethodsCompletionContributor"/>
 
     <projectService serviceImplementation="com.intellij.javascript.flex.mxml.schema.CodeContextHolder"/>
+    <notificationWhitelist groupIds="AIR Packaging;Flash app not compiled before launch;Maven;Flash Compiler;Debugger"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

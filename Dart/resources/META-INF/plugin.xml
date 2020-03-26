@@ -230,6 +230,7 @@
 
     <lang.syntaxHighlighter language="Dart in Html" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter"/>
     <lang.parserDefinition language="Dart in Html" implementationClass="com.jetbrains.lang.dart.DartParserDefinition"/>
+    <notificationWhitelist groupIds="Dart analysis issue;Dart Support;Dart Analysis;Dart Webdev;Dart Pub Tool;Dart Analysis Server;pubspec.yaml inspection"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
