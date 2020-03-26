@@ -422,6 +422,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
   }
 
+  @NonNls
   @Override
   public String getTypeName() {
     JSType type = getJSType();

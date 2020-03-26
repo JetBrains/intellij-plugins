@@ -125,6 +125,11 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "i18n.html");
   }
 
+  public void testHammerJS() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    doTest(AngularUndefinedBindingInspection.class, "hammerJs.html");
+  }
+
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     doTest(1, null, null, inspection, files);

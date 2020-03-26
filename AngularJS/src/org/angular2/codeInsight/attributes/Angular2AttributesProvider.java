@@ -35,7 +35,7 @@ public interface Angular2AttributesProvider {
 
     Angular2DeclarationsScope getScope();
 
-    void addDescriptors(@NotNull List<Angular2AttributeDescriptor> descriptors);
+    void addDescriptors(@NotNull List<? extends Angular2AttributeDescriptor> descriptors);
 
     default void addDescriptor(@NotNull Angular2AttributeDescriptor descriptor) {
       addDescriptors(Collections.singletonList(descriptor));
