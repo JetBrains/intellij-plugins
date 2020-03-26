@@ -1102,4 +1102,19 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("foo='12'", myFixture.getElementAtCaret().getText());
   }
 
+  public void testHammerJS() {
+    myFixture.configureByFile("package.json");
+    myFixture.configureByText("hammer.html", "<div <caret>");
+    myFixture.completeBasic();
+    myFixture.type("(");
+    assertContainsElements(renderLookupItems(myFixture, false, true),
+                           "(pan)#HammerInput", "(panstart)#HammerInput", "(pinch)#HammerInput", "(tap)#HammerInput");
+    myFixture.type("pan\n\" on-");
+    myFixture.completeBasic();
+    assertDoesntContain(myFixture.getLookupElementStrings(), "pan");
+    assertContainsElements(myFixture.getLookupElementStrings(), "panstart", "pinch", "tap");
+    myFixture.type("pansta\n");
+    myFixture.checkResult("<div (pan)=\"\" on-panstart=\"<caret>\"");
+  }
+
 }

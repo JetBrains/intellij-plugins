@@ -305,6 +305,7 @@
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2NgContentSelectorAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2I18nAttributesProvider"/>
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2HammerJSEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
 
     <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>

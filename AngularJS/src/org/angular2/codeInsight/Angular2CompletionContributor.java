@@ -208,7 +208,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
                          expression -> new JSPsiBasedTypeOfType(expression, true));
     }
 
-    @SuppressWarnings("HardCodedStringLiteral")
     private static String renderPipeTypeText(@NotNull TypeScriptFunction f, @NotNull String pipeName) {
       StringBuilder result = new StringBuilder();
       result.append('[');
@@ -363,7 +362,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public void addDescriptors(@NotNull List<Angular2AttributeDescriptor> descriptorsInner) {
+    public void addDescriptors(@NotNull List<? extends Angular2AttributeDescriptor> descriptorsInner) {
       myDescriptors.addAll(descriptorsInner);
     }
 
