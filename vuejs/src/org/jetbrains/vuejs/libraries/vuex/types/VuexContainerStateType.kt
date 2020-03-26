@@ -14,7 +14,7 @@ class VuexContainerStateType private constructor(source: JSTypeSource, element: 
   : VuexContainerPropertyTypeBase(source, element, baseNamespace) {
 
   constructor(element: PsiElement, baseNamespace: VuexStoreNamespace)
-    : this(JSTypeSource(element.containingFile, element, JSTypeSource.SourceLanguage.TS, true), element, baseNamespace)
+    : this(JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true), element, baseNamespace)
 
   override val kind: String = "state"
 
