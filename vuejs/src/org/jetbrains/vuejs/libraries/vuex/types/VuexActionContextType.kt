@@ -27,7 +27,7 @@ class VuexActionContextType private constructor(source: JSTypeSource,
   : JSSimpleTypeBaseImpl(source), JSCodeBasedType, JSTypeWithIncompleteSubstitution {
 
   constructor(element: PsiElement)
-    : this(JSTypeSource(element.containingFile, element, JSTypeSource.SourceLanguage.TS, true), element)
+    : this(JSTypeSource(element, JSTypeSource.SourceLanguage.TS, true), element)
 
   override fun copyWithNewSource(source: JSTypeSource): JSType = VuexActionContextType(source, element)
 
