@@ -36,7 +36,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory
+import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -120,7 +120,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun addContextType(info: JSTypeInfo, context: PsiElement) {
     if (context.containingFile.fileType != VueFileType.INSTANCE) return
-    if (!VueFrameworkInsideScriptSpecificHandlersFactory.isInsideScript(context)) return
+    if (!VueFrameworkInsideScriptSpecificHandler.isInsideScript(context)) return
     val parent = PsiTreeUtil.findFirstParent(context, Condition {
       return@Condition it is JSObjectLiteralExpression && it.parent is ES6ExportDefaultAssignment
     })

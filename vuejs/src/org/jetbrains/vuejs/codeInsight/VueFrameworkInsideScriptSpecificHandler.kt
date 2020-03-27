@@ -6,7 +6,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
-import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandlersFactory
+import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandler
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory
@@ -19,7 +19,7 @@ import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
 
-class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
+class VueFrameworkInsideScriptSpecificHandler : JSFrameworkSpecificHandler {
   companion object {
     fun isInsideScript(element: PsiElement): Boolean {
       val tag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false
@@ -27,8 +27,8 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
     }
   }
 
-  override fun findExpectedType(parent: JSExpression, expectedTypeKind: JSExpectedTypeKind): JSType? {
-    val language = DialectDetector.languageOfElement(parent)
+  override fun findExpectedType(parent: PsiElement, expectedTypeKind: JSExpectedTypeKind): JSType? {
+    val language = DialectDetector.languageOfElement(parent as? JSExpression ?: return null)
     if (VueFileType.INSTANCE == parent.containingFile?.fileType
         && isInsideScript(parent)
         && VueJSLanguage.INSTANCE != language) {
