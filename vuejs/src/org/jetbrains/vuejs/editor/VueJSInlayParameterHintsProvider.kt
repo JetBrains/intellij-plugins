@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.editing.JavaScriptInlayParameterHintsProvider
 import com.intellij.lang.javascript.psi.JSCallLikeExpression
+import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.lang.expr.psi.VueJSFilterExpression
 
 class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider() {
@@ -31,6 +32,6 @@ class VueJSInlayParameterHintsProvider : JavaScriptInlayParameterHintsProvider()
     val NAMES_FOR_ALL_ARGS = Option(
       "vuejs.show.names.for.all.args", JavaScriptBundle.messagePointer("js.param.hints.show.names.for.all.args"), false)
     val NAMES_FOR_FILTERS = Option(
-      "vuejs.show.names.for.filters", "For filter arguments", true)
+      "vuejs.show.names.for.filters", VueBundle.messagePointer("vue.param.hints.show.names.for.filters"), true)
   }
 }
