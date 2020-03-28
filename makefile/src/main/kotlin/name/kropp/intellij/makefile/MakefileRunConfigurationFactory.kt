@@ -6,7 +6,10 @@ import com.intellij.openapi.project.*
 import name.kropp.intellij.makefile.psi.*
 import java.io.*
 
-class MakefileRunConfigurationFactory(runConfigurationType: MakefileRunConfigurationType) : ConfigurationFactory(runConfigurationType) {
+class MakefileRunConfigurationFactory(private val runConfigurationType: MakefileRunConfigurationType) : ConfigurationFactory(runConfigurationType) {
+  override fun getId(): String = "Makefile"
+  override fun getName(): String = runConfigurationType.displayName
+
   override fun createTemplateConfiguration(project: Project) = MakefileRunConfiguration(project, this, "name")
 
   fun createConfigurationFromTarget(target: MakefileTarget): MakefileRunConfiguration? {
