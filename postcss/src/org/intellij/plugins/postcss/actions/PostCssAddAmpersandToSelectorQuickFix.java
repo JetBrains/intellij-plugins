@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssAddAmpersandToSelectorQuickFix implements LocalQuickFix {
   @Override
-  public @Nls @NlsUI.ListItem @NotNull String getFamilyName() {
+  public @NlsUI.ListItem @NotNull String getFamilyName() {
     return PostCssBundle.message("annotator.add.ampersand.quickfix.name");
   }
 

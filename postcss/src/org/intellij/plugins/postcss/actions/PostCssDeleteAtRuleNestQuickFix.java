@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssDeleteAtRuleNestQuickFix implements LocalQuickFix {
   @Override
-  public @Nls @NlsUI.ListItem @NotNull String getFamilyName() {
+  public @NlsUI.ListItem @NotNull String getFamilyName() {
     return PostCssBundle.message("annotator.delete.at.rule.nest.quickfix.name");
   }
 

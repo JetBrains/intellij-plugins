@@ -43,7 +43,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         else if (!StringUtil.startsWith(text, ":--")) {
           CssAddPrefixQuickFix quickFix = new CssAddPrefixQuickFix(":--", PostCssCustomSelectorAtRule.class) {
             @Override
-            public @Nls @NlsUI.ListItem @NotNull String getFamilyName() {
+            public @NlsUI.ListItem @NotNull String getFamilyName() {
               return PostCssBundle.message("annotator.add.prefix.to.custom.selector.quickfix.name");
             }
           };

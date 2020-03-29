@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssWrapWithRootQuickFix implements LocalQuickFix {
   @Override
-  public @Nls @NlsUI.ListItem @NotNull String getFamilyName() {
+  public @NlsUI.ListItem @NotNull String getFamilyName() {
     return PostCssBundle.message("annotator.wrap.with.root.rule.quickfix.name");
   }
 

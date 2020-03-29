@@ -20,7 +20,7 @@ public class PostCssCustomMediaInspection extends PostCssBaseInspection {
   private static final CssAddPrefixQuickFix ADD_PREFIX_QUICK_FIX =
     new CssAddPrefixQuickFix("--", PostCssCustomMediaAtRule.class) {
       @Override
-      public @Nls @NlsUI.ListItem @NotNull String getFamilyName() {
+      public @NlsUI.ListItem @NotNull String getFamilyName() {
         return PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name");
       }
     };
