@@ -77,7 +77,6 @@ public class PostCssPsiUtil {
     return SyntaxTraverser.psiTraverser(mediaFeature).filter(PostCssPsiUtil::isComparisonOperator).toList();
   }
 
-  @Contract("null -> false")
   public static boolean startsWithAmpersand(@NotNull PsiElement element) {
     return StringUtil.startsWithChar(element.getText(), '&');
   }
