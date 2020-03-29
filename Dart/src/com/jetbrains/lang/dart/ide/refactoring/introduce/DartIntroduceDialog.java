@@ -30,7 +30,7 @@ public class DartIntroduceDialog extends DialogWrapper {
   private final DartExpression myExpression;
 
   public DartIntroduceDialog(@NotNull final Project project,
-                             @NotNull @Nls @NlsContexts.DialogTitle String caption,
+                             @NotNull @NlsContexts.DialogTitle String caption,
                              final DartIntroduceOperation operation) {
     super(project, true);
     myOccurrencesCount = operation.getOccurrences().size();

@@ -102,7 +102,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   protected abstract BaseCreateMethodsFix createFix(@NotNull final DartClass dartClass);
 
   @NotNull
-  @Nls @NlsContexts.DialogTitle
+  @NlsContexts.DialogTitle
   protected abstract String getTitle();
 
   protected abstract void collectCandidates(@NotNull final DartClass dartClass, @NotNull final List<DartComponent> candidates);
@@ -167,7 +167,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
   protected MemberChooser<DartNamedElementNode> createMemberChooserDialog(@NotNull final Project project,
                                                                           @NotNull final DartClass dartClass,
                                                                           @NotNull final Collection<DartComponent> candidates,
-                                                                          @NotNull @Nls @NlsContexts.DialogTitle String title) {
+                                                                          @NotNull @NlsContexts.DialogTitle String title) {
     final List<DartNamedElementNode> nodes = ContainerUtil.map(candidates, DartNamedElementNode::new);
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {

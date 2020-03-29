@@ -79,7 +79,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
 
   protected final String myDialogTitle;
 
-  public DartIntroduceHandler(@NotNull @Nls @NlsContexts.DialogTitle String dialogTitle) {
+  public DartIntroduceHandler(@NotNull @NlsContexts.DialogTitle String dialogTitle) {
     myDialogTitle = dialogTitle;
   }
 
