@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi;
 
 import com.intellij.lexer.LexerBase;
@@ -8,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class GherkinLexer extends LexerBase {
   private void updateLanguage(String language) {
     myCurLanguage = language;
     myKeywords = new ArrayList<>(myKeywordProvider.getAllKeywords(language));
-    Collections.sort(myKeywords, (o1, o2) -> o2.length() - o1.length());
+    myKeywords.sort((o1, o2) -> o2.length() - o1.length());
   }
 
   @Override
@@ -200,7 +200,7 @@ public class GherkinLexer extends LexerBase {
                 Character.isLetterOrDigit(myBuffer.charAt(myPosition + length))) {
               continue;
             }
-            
+
             char followedByChar = myPosition + length < myEndOffset ? myBuffer.charAt(myPosition + length) : 0;
             myCurrentToken = myKeywordProvider.getTokenType(myCurLanguage, keyword);
             if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD) {

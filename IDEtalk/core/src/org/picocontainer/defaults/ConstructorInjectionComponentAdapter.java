@@ -248,7 +248,7 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
     }
     // optimize list of constructors moving the longest at the beginning
     if (parameters == null) {
-      Collections.sort(matchingConstructors, (arg0, arg1) -> arg1.getParameterTypes().length - arg0.getParameterTypes().length);
+      matchingConstructors.sort((arg0, arg1) -> arg1.getParameterTypes().length - arg0.getParameterTypes().length);
     }
     return matchingConstructors;
   }

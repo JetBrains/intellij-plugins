@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.lang.javascript.uml;
 
@@ -43,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -157,7 +156,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code
-        Collections.sort(elements, Comparator.comparingInt(PsiElement::getTextOffset));
+        elements.sort(Comparator.comparingInt(PsiElement::getTextOffset));
       }
       return PsiUtilCore.toPsiElementArray(elements);
     }

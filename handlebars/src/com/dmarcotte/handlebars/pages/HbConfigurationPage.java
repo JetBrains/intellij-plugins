@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.pages;
 
 import com.dmarcotte.handlebars.HbBundle;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -102,7 +102,7 @@ public class HbConfigurationPage implements SearchableConfigurable {
     // add using the native Handlebars commenter as an option
     languages.add(HbLanguage.INSTANCE);
 
-    Collections.sort(languages, Comparator.comparing(Language::getID));
+    languages.sort(Comparator.comparing(Language::getID));
     for (Language language : languages) {
       model.addElement(language);
     }

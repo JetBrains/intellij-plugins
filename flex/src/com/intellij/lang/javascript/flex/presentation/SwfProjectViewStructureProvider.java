@@ -189,7 +189,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       }
     }
 
-    Collections.sort(elements, QNAME_COMPARATOR);
+    elements.sort(QNAME_COMPARATOR);
     return getChildrenForPackage("", elements, 0, elements.size(), psiFile.getProject(), ((PsiFileNode)parent).getSettings());
   }
 

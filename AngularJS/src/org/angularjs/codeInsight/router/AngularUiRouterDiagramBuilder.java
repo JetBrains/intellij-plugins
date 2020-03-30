@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.lang.javascript.JSStubElementTypes;
@@ -161,7 +162,7 @@ public class AngularUiRouterDiagramBuilder {
 
   private void getRootPages() {
     final List<VirtualFile> roots = new ArrayList<>();
-    Collections.sort(roots, (o1, o2) -> Integer.compare(o2.getUrl().length(), o1.getUrl().length()));
+    roots.sort((o1, o2) -> Integer.compare(o2.getUrl().length(), o1.getUrl().length()));
 
     final Map<PsiFile, AngularNamedItemDefinition> files = new HashMap<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();

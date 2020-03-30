@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.core.impl.dispatcher;
 
 import jetbrains.communicator.core.dispatcher.LocalMessage;
@@ -69,7 +69,7 @@ class DayHistory {
   public void resort() {
     for (User user : myData.keySet()) {
       List<LocalMessage> list = myData.get(user);
-      Collections.sort(list, (o1, o2) -> o1.getWhen().compareTo(o2.getWhen()));
+      list.sort((o1, o2) -> o1.getWhen().compareTo(o2.getWhen()));
     }
   }
 

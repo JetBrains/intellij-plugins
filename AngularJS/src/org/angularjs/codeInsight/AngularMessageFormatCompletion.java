@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
@@ -17,7 +17,10 @@ import org.angularjs.lang.parser.AngularJSMessageFormatParser;
 import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.angularjs.AngularJSBundle.message;
 
@@ -118,7 +121,7 @@ public class AngularMessageFormatCompletion {
       result.withRelevanceSorter(CompletionSorter.emptySorter().weigh(MESSAGE_FORMAT_KEYWORD_WEIGHER));
     if (AngularJSMessageFormatParser.ExtensionType.plural.equals(type)) {
       final List<AngularJSPluralCategories> values = new ArrayList<>(Arrays.asList(AngularJSPluralCategories.values()));
-      Collections.sort(values, PLURAL_CATEGORIES_COMPARATOR);
+      values.sort(PLURAL_CATEGORIES_COMPARATOR);
       for (AngularJSPluralCategories category : values) {
         LookupElementBuilder element = LookupElementBuilder.create(category).withInsertHandler(MESSAGE_FORMAT_KEYWORD_INSERT_HANDLER);
         if (AngularJSPluralCategories.other.equals(category)) {

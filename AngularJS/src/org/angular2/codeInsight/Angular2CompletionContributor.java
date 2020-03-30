@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
@@ -147,9 +147,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
           List<TypeScriptFunction> transformMethods = new ArrayList<>(match.getTransformMethods());
           if (!transformMethods.isEmpty() && actualType != null) {
-            Collections.sort(transformMethods, Comparator.
+            transformMethods.sort(Comparator.
               <TypeScriptFunction>comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0)
-              .thenComparingInt(f -> f.isOverloadDeclaration() ? 0 : 1));
+                                    .thenComparingInt(f -> f.isOverloadDeclaration() ? 0 : 1));
             Map<JSFunctionType, TypeScriptFunction> converted2Original = new LinkedHashMap<>();
             transformMethods.forEach(f -> {
               JSFunctionType type = TypeScriptTypeParser.buildFunctionType(f);

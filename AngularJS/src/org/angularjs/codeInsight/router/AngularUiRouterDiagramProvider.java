@@ -313,7 +313,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
           }
         }
         boolean sourceHeavier = edge.source().degree() > edge.target().degree();
-        Collections.sort(list, (o1, o2) -> {
+        list.sort((o1, o2) -> {
           final YPoint s1 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o1);
           final YPoint s2 = ((Graph2D)o1.getGraph()).getSourcePointAbs(o2);
           if (Math.abs(s1.getX() - s2.getX()) > 5) return Double.compare(s1.getX(), s2.getX());
