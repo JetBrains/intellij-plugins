@@ -19,7 +19,7 @@ import static org.angular2.lang.html.parser.Angular2AttributeType.EVENT;
 public class Angular2HammerJSEventAttributesProvider implements Angular2AttributesProvider {
 
   private static final String CANONICAL_PREFIX_BASE = EVENT.getCanonicalPrefix();
-  private static final Set<String> EVENTS = ContainerUtil.newHashSet(
+  private static final Set<String> EVENTS = ContainerUtil.immutableSet(
     // pan
     "pan",
     "panstart",
