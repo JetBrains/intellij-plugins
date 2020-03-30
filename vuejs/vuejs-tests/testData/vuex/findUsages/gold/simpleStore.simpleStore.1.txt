@@ -1,0 +1,2 @@
+<simpleStore.js:(192,204):(6,12)>	return state.state1
+<simpleStore.vue:(132,156):(18,24)>	this.$store.state.state1.toString

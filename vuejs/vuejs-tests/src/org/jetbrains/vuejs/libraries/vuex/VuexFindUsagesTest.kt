@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.jetbrains.vuejs.lang.checkUsages
+import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 class VuexFindUsagesTest : BasePlatformTestCase() {
 
@@ -71,6 +72,37 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
     }
   }
 
+  fun testShoppingCart() {
+    with(myFixture) {
+      configureShoppingCartStore()
+      checkUsages("store/modules/cart.js", "cart",
+                  "cart<caret>Products:",
+                  "cart<caret>TotalPrice:",
+                  "push<caret>ProductToCart (",
+                  "increment<caret>ItemQuantity (",
+                  "set<caret>CartItems (",
+                  "set<caret>CheckoutStatus (")
+      checkUsages("store/modules/products.js", "products",
+                  "set<caret>Products (",
+                  "decrement<caret>ProductInventory (")
+    }
+  }
+
+  fun testSimpleStore() {
+    with(myFixture) {
+      createPackageJsonWithVueDependency(this, "\"vuex\": \"^3.0.1\"")
+      copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
+      copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
+      copyFileToProject("simpleStore.vue")
+      copyFileToProject("simpleStore.js")
+
+      checkUsages("simpleStore.js", "simpleStore",
+                  "action<caret>1:",
+                  "state<caret>1:",
+                  "ba<caret>r:",
+                  "fo<caret>o:")
+    }
+  }
 
   private fun checkUsages(filePath: String, goldFileSuffix: String, vararg signatures: String) {
     val testName = getTestName(true)
