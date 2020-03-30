@@ -202,17 +202,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !'endif'
-  static boolean condition_recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "condition_recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !consumeToken(b, KEYWORD_ENDIF);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
   // conditional-keyword condition EOL block conditional-else* 'endif'
   public static boolean conditional(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional")) return false;
@@ -394,23 +383,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = privatevar(b, l + 1);
     if (!r) r = vpath(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // 'define'|'include'|'undefine'|'override'|'export'|'private'|'vpath'
-  static boolean directive_name(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "directive_name")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, KEYWORD_DEFINE);
-    if (!r) r = consumeToken(b, KEYWORD_INCLUDE);
-    if (!r) r = consumeToken(b, KEYWORD_UNDEFINE);
-    if (!r) r = consumeToken(b, KEYWORD_OVERRIDE);
-    if (!r) r = consumeToken(b, KEYWORD_EXPORT);
-    if (!r) r = consumeToken(b, KEYWORD_PRIVATE);
-    if (!r) r = consumeToken(b, KEYWORD_VPATH);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1199,26 +1171,6 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = command(b, l + 1);
     if (!r) r = conditional(b, l + 1);
     if (!r) r = consumeToken(b, EOL);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // !(EOL | split)
-  static boolean recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !recover_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // EOL | split
-  private static boolean recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "recover_0")) return false;
-    boolean r;
-    r = consumeToken(b, EOL);
-    if (!r) r = consumeToken(b, SPLIT);
     return r;
   }
 

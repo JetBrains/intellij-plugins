@@ -14,11 +14,17 @@ object MakefileElementFactory {
   fun createTarget(project: Project, name: String) =
       createRule(project, name).firstChild.firstChild.firstChild as MakefileTarget
 
+  fun createVariable(project: Project, name: String) =
+      createFile(project, "$name := ''").firstChild.firstChild as MakefileVariable
+
   fun createPrerequisite(project: Project, name: String) =
       (createFile(project, "a: $name").firstChild as MakefileRule).targetLine.prerequisites!!.normalPrerequisites.firstChild as MakefilePrerequisite
 
   fun createWhiteSpace(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild as PsiWhiteSpace
+
+  fun createChars(project: Project, chars: String) =
+      createFile(project, chars).firstChild.node
 
   fun createEOL(project: Project, whitespace: String) =
       createFile(project, whitespace).firstChild

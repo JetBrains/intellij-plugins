@@ -62,7 +62,7 @@ private defline ::= (<<parseLineNotEndef>>|function|variable-usage)*
 target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
 
-target ::= target_part | (<<parseToDollarNoWhitespaceOrColon>> target_part) | <<parseNoWhitespaceOrColon>> {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
+target ::= target_part | (<<parseToDollarNoWhitespaceOrColon>> target_part) | <<parseNoWhitespaceOrColon>> {mixin="name.kropp.intellij.makefile.psi.impl.MakefileTargetNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}
 private target_part ::= ((function | variable-usage) <<parseToDollarNoWhitespaceOrColonBehind>> target_part) | ((function | variable-usage) <<parseNoWhitespaceOrColonBehind>>)
 
 target_pattern ::= target
@@ -86,7 +86,7 @@ private identifier_part ::= ((function | variable-usage) <<parseToDollarNoWhites
 
 meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
-variable ::= identifier
+variable ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] methods=[getName setName getNameIdentifier]}
 meta variable-value ::= multiline
 define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL? {pin=1}
@@ -110,7 +110,7 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
 meta function-param ::= (string|'$''$'|variable-usage|chars|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
 
-variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars)
+variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars) {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageMixin"}
 
 comment ::=
 doc_comment ::=

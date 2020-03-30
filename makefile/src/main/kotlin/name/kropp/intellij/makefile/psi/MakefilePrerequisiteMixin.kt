@@ -9,7 +9,6 @@ import name.kropp.intellij.makefile.*
 import name.kropp.intellij.makefile.psi.*
 
 abstract class MakefilePrerequisiteMixin internal constructor(node: ASTNode) : ASTWrapperPsiElement(node), MakefilePrerequisite {
-
   override fun getReferences(): Array<PsiReference> {
     val targetReference = MakefileTargetReference(this)
     if (isPhonyTarget) {

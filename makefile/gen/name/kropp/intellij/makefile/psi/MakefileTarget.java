@@ -19,7 +19,7 @@ public interface MakefileTarget extends MakefileNamedElement, NavigationItem, St
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
-  @Nullable
+  @NotNull
   String getName();
 
   @NotNull

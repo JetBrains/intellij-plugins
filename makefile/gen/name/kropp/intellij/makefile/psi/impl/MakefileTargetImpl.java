@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MakefileTargetImpl extends MakefileNamedElementImpl implements MakefileTarget {
+public class MakefileTargetImpl extends MakefileTargetNamedElementImpl implements MakefileTarget {
 
   public MakefileTargetImpl(@NotNull ASTNode node) {
     super(node);
@@ -46,7 +46,7 @@ public class MakefileTargetImpl extends MakefileNamedElementImpl implements Make
   }
 
   @Override
-  @Nullable
+  @NotNull
   public String getName() {
     return MakefilePsiImplUtil.getName(this);
   }

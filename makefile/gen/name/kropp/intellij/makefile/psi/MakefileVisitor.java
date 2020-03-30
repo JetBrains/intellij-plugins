@@ -138,7 +138,8 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitVariable(@NotNull MakefileVariable o) {
-    visitPsiElement(o);
+    visitNamedElement(o);
+    // visitNavigationItem(o);
   }
 
   public void visitVariableAssignment(@NotNull MakefileVariableAssignment o) {

@@ -1,19 +1,27 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.lang.cacheBuilder.DefaultWordsScanner
-import com.intellij.lang.findUsages.FindUsagesProvider
-import com.intellij.psi.PsiElement
-import com.intellij.psi.tree.TokenSet
-import name.kropp.intellij.makefile.psi.MakefileTarget
-import name.kropp.intellij.makefile.psi.MakefileTypes
+import com.intellij.lang.cacheBuilder.*
+import com.intellij.lang.findUsages.*
+import com.intellij.psi.*
+import com.intellij.psi.tree.*
+import name.kropp.intellij.makefile.psi.*
+import name.kropp.intellij.makefile.psi.MakefileTypes.*
 
 class MakefileFindUsagesProvider : FindUsagesProvider {
-  override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(MakefileTypes.IDENTIFIER), TokenSet.create(MakefileTypes.COMMENT), TokenSet.EMPTY)
+  override fun getWordsScanner() = DefaultWordsScanner(MakefileLexerAdapter(), TokenSet.create(CHARS), TokenSet.create(COMMENT), TokenSet.EMPTY)
 
-  override fun canFindUsagesFor(element: PsiElement) = element is MakefileTarget && !element.isSpecialTarget
-  override fun getType(element: PsiElement) = if (canFindUsagesFor(element)) { "Makefile target" } else ""
-  override fun getDescriptiveName(element: PsiElement) = if (canFindUsagesFor(element)) { element.text } else ""
-  override fun getNodeText(element: PsiElement, useFullName: Boolean) = if (canFindUsagesFor(element)) { element.text } else ""
+  override fun canFindUsagesFor(element: PsiElement) =
+    if (element is MakefileTarget) !element.isSpecialTarget
+    else element is MakefileNamedElement
 
-  override fun getHelpId(element: PsiElement) = null
+  override fun getType(element: PsiElement) = when(element) {
+    is MakefileTarget -> if (!element.isSpecialTarget) "Makefile target" else ""
+    is MakefileVariable -> "Makefile variable"
+    else -> ""
+  }
+
+  override fun getDescriptiveName(element: PsiElement): String = if (canFindUsagesFor(element)) { element.text } else ""
+  override fun getNodeText(element: PsiElement, useFullName: Boolean): String = if (canFindUsagesFor(element)) { element.text } else ""
+
+  override fun getHelpId(element: PsiElement): String? = null
 }

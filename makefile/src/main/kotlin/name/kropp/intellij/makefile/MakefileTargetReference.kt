@@ -1,10 +1,8 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementResolveResult
-import com.intellij.psi.PsiReference
+import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.util.*
+import com.intellij.psi.*
 import name.kropp.intellij.makefile.psi.*
 
 class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
@@ -12,8 +10,7 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   override fun getRangeInElement() = TextRange.create(0, element.textLength)
   override fun bindToElement(element: PsiElement): PsiElement? = null
 
-  override fun isReferenceTo(element: PsiElement
-  ): Boolean {
+  override fun isReferenceTo(element: PsiElement): Boolean {
     if (element is MakefileTarget) {
       return element.matches(prerequisite.text)
     }

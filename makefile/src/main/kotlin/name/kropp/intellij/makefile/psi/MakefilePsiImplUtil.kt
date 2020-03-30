@@ -27,8 +27,8 @@ object MakefilePsiImplUtil {
   }
 
   @JvmStatic
-  fun getName(element: MakefileTarget?): String? {
-    return element?.text
+  fun getName(element: MakefileTarget): String {
+    return element.text
   }
 
   @JvmStatic
@@ -43,11 +43,32 @@ object MakefilePsiImplUtil {
   }
 
   @JvmStatic
+  fun getName(element: MakefileVariable): String {
+    return element.text
+  }
+
+  @JvmStatic
+  fun setName(element: MakefileVariable, newName: String): PsiElement {
+    val identifierNode = element.node.firstChildNode
+    if (identifierNode != null) {
+      val variable = MakefileElementFactory.createVariable(element.project, newName)
+      val newIdentifierNode = variable.firstChild.node
+      element.node.replaceChild(identifierNode, newIdentifierNode)
+    }
+    return element
+  }
+
+  @JvmStatic
   fun getNameIdentifier(element: MakefileTarget): PsiElement? {
     if (element.isSpecialTarget) return null
 
     val targetNode = element.node
     return targetNode?.psi
+  }
+
+  @JvmStatic
+  fun getNameIdentifier(element: MakefileVariable): PsiElement? {
+    return element.firstChild
   }
 
   @JvmStatic
