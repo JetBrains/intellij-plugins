@@ -1266,7 +1266,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // targets (':'|'::') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?)
+  // targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?)
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     boolean r, p;
@@ -1280,13 +1280,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // ':'|'::'
+  // ':'':' | ':'
   private static boolean target_line_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, COLON);
-    if (!r) r = consumeToken(b, DOUBLECOLON);
+    r = parseTokens(b, 0, COLON, COLON);
+    if (!r) r = consumeToken(b, COLON);
     exit_section_(b, m, null, r);
     return r;
   }

@@ -79,12 +79,12 @@ public class _MakefileLexer implements FlexLexer {
     "\4\0\1\1\1\2\1\3\1\4\1\3\1\5\24\4"+
     "\1\6\1\7\1\10\1\11\1\12\3\4\1\13\1\14"+
     "\1\15\1\16\1\17\1\20\1\4\1\1\2\21\2\5"+
-    "\1\22\6\4\1\23\11\4\1\23\24\4\1\24\1\0"+
-    "\1\25\2\0\1\4\1\0\1\22\13\4\1\23\33\4"+
-    "\1\25\2\26\2\4\1\27\2\4\1\23\7\4\1\30"+
-    "\20\4\1\31\1\32\11\4\1\33\1\4\1\34\12\4"+
-    "\1\35\1\36\5\4\1\37\1\4\1\23\3\4\1\40"+
-    "\1\4\1\41\2\4\1\42\1\43\1\4\1\44";
+    "\1\22\6\4\1\23\11\4\1\23\24\4\2\0\1\24"+
+    "\2\0\1\4\1\0\1\22\13\4\1\23\33\4\1\24"+
+    "\2\25\2\4\1\26\2\4\1\23\7\4\1\27\20\4"+
+    "\1\30\1\31\11\4\1\32\1\4\1\33\12\4\1\34"+
+    "\1\35\5\4\1\36\1\4\1\23\3\4\1\37\1\4"+
+    "\1\40\2\4\1\41\1\42\1\4\1\43";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[214];
@@ -395,7 +395,7 @@ public class _MakefileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\4\0\1\11\32\1\4\11\3\1\5\11\56\1\1\0"+
+    "\4\0\1\11\32\1\4\11\3\1\5\11\55\1\2\0"+
     "\1\1\2\0\1\1\1\0\50\1\2\11\115\1";
 
   private static int [] zzUnpackAttribute() {
@@ -741,182 +741,177 @@ public class _MakefileLexer implements FlexLexer {
             { return BAD_CHARACTER;
             } 
             // fall through
-          case 37: break;
+          case 36: break;
           case 2: 
             { return EOL;
             } 
             // fall through
-          case 38: break;
+          case 37: break;
           case 3: 
             { return WHITE_SPACE;
             } 
             // fall through
-          case 39: break;
+          case 38: break;
           case 4: 
             { return CHARS;
             } 
             // fall through
-          case 40: break;
+          case 39: break;
           case 5: 
             { return COMMENT;
             } 
             // fall through
-          case 41: break;
+          case 40: break;
           case 6: 
             { return COLON;
             } 
             // fall through
-          case 42: break;
+          case 41: break;
           case 7: 
             { return SEMICOLON;
             } 
             // fall through
-          case 43: break;
+          case 42: break;
           case 8: 
             { return COMMA;
             } 
             // fall through
-          case 44: break;
+          case 43: break;
           case 9: 
             { return PIPE;
             } 
             // fall through
-          case 45: break;
+          case 44: break;
           case 10: 
             { return ASSIGN;
             } 
             // fall through
-          case 46: break;
+          case 45: break;
           case 11: 
             { return DOLLAR;
             } 
             // fall through
-          case 47: break;
+          case 46: break;
           case 12: 
             { return OPEN_PAREN;
             } 
             // fall through
-          case 48: break;
+          case 47: break;
           case 13: 
             { return CLOSE_PAREN;
             } 
             // fall through
-          case 49: break;
+          case 48: break;
           case 14: 
             { return OPEN_CURLY;
             } 
             // fall through
-          case 50: break;
+          case 49: break;
           case 15: 
             { return CLOSE_CURLY;
             } 
             // fall through
-          case 51: break;
+          case 50: break;
           case 16: 
             { return TAB;
             } 
             // fall through
-          case 52: break;
+          case 51: break;
           case 17: 
             { return SPLIT;
             } 
             // fall through
-          case 53: break;
+          case 52: break;
           case 18: 
             { return DOC_COMMENT;
             } 
             // fall through
-          case 54: break;
+          case 53: break;
           case 19: 
             { return FUNCTION_NAME;
             } 
             // fall through
-          case 55: break;
+          case 54: break;
           case 20: 
-            { return DOUBLECOLON;
-            } 
-            // fall through
-          case 56: break;
-          case 21: 
             { return STRING;
             } 
             // fall through
-          case 57: break;
-          case 22: 
+          case 55: break;
+          case 21: 
             { return MACRO;
             } 
             // fall through
-          case 58: break;
-          case 23: 
+          case 56: break;
+          case 22: 
             { return KEYWORD_ELSE;
             } 
             // fall through
-          case 59: break;
-          case 24: 
+          case 57: break;
+          case 23: 
             { return KEYWORD_IFEQ;
             } 
             // fall through
-          case 60: break;
-          case 25: 
+          case 58: break;
+          case 24: 
             { return KEYWORD_ENDEF;
             } 
             // fall through
-          case 61: break;
-          case 26: 
+          case 59: break;
+          case 25: 
             { return KEYWORD_ENDIF;
             } 
             // fall through
-          case 62: break;
-          case 27: 
+          case 60: break;
+          case 26: 
             { return KEYWORD_IFNEQ;
             } 
             // fall through
-          case 63: break;
-          case 28: 
+          case 61: break;
+          case 27: 
             { return KEYWORD_IFDEF;
             } 
             // fall through
-          case 64: break;
-          case 29: 
+          case 62: break;
+          case 28: 
             { return KEYWORD_VPATH;
             } 
             // fall through
-          case 65: break;
-          case 30: 
+          case 63: break;
+          case 29: 
             { return KEYWORD_EXPORT;
             } 
             // fall through
-          case 66: break;
-          case 31: 
+          case 64: break;
+          case 30: 
             { return KEYWORD_IFNDEF;
             } 
             // fall through
-          case 67: break;
-          case 32: 
+          case 65: break;
+          case 31: 
             { return KEYWORD_DEFINE;
             } 
             // fall through
-          case 68: break;
-          case 33: 
+          case 66: break;
+          case 32: 
             { return KEYWORD_INCLUDE;
             } 
             // fall through
-          case 69: break;
-          case 34: 
+          case 67: break;
+          case 33: 
             { return KEYWORD_PRIVATE;
             } 
             // fall through
-          case 70: break;
-          case 35: 
+          case 68: break;
+          case 34: 
             { return KEYWORD_OVERRIDE;
             } 
             // fall through
-          case 71: break;
-          case 36: 
+          case 69: break;
+          case 35: 
             { return KEYWORD_UNDEFINE;
             } 
             // fall through
-          case 72: break;
+          case 70: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

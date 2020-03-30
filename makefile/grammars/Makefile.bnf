@@ -15,7 +15,6 @@
   tokens = [
     TAB = "\t"
     COLON = ":"
-    DOUBLECOLON = "::"
     SEMICOLON = ";"
     COMMA = ","
     ASSIGN = "="
@@ -63,7 +62,7 @@ private multiline ::= split* line (split+ line)*
 private line ::= (<<parseLine>>|function|variable-usage)*
 private defline ::= (<<parseLineNotEndef>>|function|variable-usage)*
 
-target_line ::= targets (':'|'::') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
+target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
 
 target ::= target_part | (<<parseToDollarNoWhitespaceOrColon>> target_part) | <<parseNoWhitespaceOrColon>> {mixin="name.kropp.intellij.makefile.psi.impl.MakefileNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] stubClass="name.kropp.intellij.makefile.stub.MakefileTargetStubElement"   elementTypeFactory="name.kropp.intellij.makefile.stub.MakefileTargetStubElementType.getInstance" methods=[getName setName getNameIdentifier getPresentation isSpecialTarget isPatternTarget matches getDocComment]}

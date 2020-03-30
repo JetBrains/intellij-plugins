@@ -35,7 +35,6 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstri
   "foreach"|"file"|"call"|"value"|"eval"|"origin"|"flavor"|"guile")
 MACRO="@"[^@ \r\n]+"@"
 COLON=":"
-DOUBLECOLON="::"
 SEMICOLON=";"
 COMMA=","
 PIPE="|"
@@ -59,7 +58,6 @@ STRING="\""[^\"]*"\""|"'"[^']*"'"
     \t+                { return WHITE_SPACE; }
     {EOL}              { return EOL; }
     {SPACES}           { return WHITE_SPACE; }
-    {DOUBLECOLON}      { return DOUBLECOLON; }
     {COLON}            { return COLON; }
     {COMMA}            { return COMMA; }
     {ASSIGN}           { return ASSIGN; }

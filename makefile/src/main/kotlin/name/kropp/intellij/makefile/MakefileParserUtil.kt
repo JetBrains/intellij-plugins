@@ -7,7 +7,7 @@ import com.intellij.psi.tree.*
 import name.kropp.intellij.makefile.psi.MakefileTypes.*
 
 object MakefileParserUtil : GeneratedParserUtilBase() {
-  private val nonTargetTokens = setOf(EOL, COLON, DOUBLECOLON, TAB, SPLIT)
+  private val nonTargetTokens = setOf(EOL, COLON, TAB, SPLIT)
   private val nonPrereqTokens = setOf(EOL, TAB, COLON, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA, PIPE, SEMICOLON, SPLIT)
   private val nonIdentifierTokens = setOf(EOL, TAB, SPLIT, COLON, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA)
 

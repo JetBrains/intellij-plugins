@@ -54,7 +54,6 @@ public interface MakefileTypes {
   IElementType COLON = new MakefileTokenType(":");
   IElementType COMMA = new MakefileTokenType(",");
   IElementType DOLLAR = new MakefileTokenType("$");
-  IElementType DOUBLECOLON = new MakefileTokenType("::");
   IElementType EOL = new MakefileTokenType("EOL");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
