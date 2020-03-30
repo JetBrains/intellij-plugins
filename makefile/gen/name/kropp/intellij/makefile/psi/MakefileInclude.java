@@ -11,7 +11,4 @@ public interface MakefileInclude extends PsiElement {
   @NotNull
   List<MakefileFilename> getFilenameList();
 
-  @NotNull
-  List<MakefileVariableUsage> getVariableUsageList();
-
 }

@@ -10,7 +10,8 @@ import name.kropp.intellij.makefile.psi.MakefileIdentifier;
 import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class MakefileIdentifierImpl extends ASTWrapperPsiElement implements MakefileIdentifier {
 
@@ -28,15 +29,15 @@ public class MakefileIdentifierImpl extends ASTWrapperPsiElement implements Make
   }
 
   @Override
-  @Nullable
-  public MakefileFunction getFunction() {
-    return PsiTreeUtil.getChildOfType(this, MakefileFunction.class);
+  @NotNull
+  public List<MakefileFunction> getFunctionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
   }
 
   @Override
-  @Nullable
-  public MakefileVariableUsage getVariableUsage() {
-    return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
+  @NotNull
+  public List<MakefileVariableUsage> getVariableUsageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }
 
 }

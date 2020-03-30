@@ -6,7 +6,8 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implements MakefilePrerequisite {
 
@@ -24,21 +25,15 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
   }
 
   @Override
-  @Nullable
-  public MakefileFunction getFunction() {
-    return PsiTreeUtil.getChildOfType(this, MakefileFunction.class);
+  @NotNull
+  public List<MakefileFunction> getFunctionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
   }
 
   @Override
-  @Nullable
-  public MakefileFunctionName getFunctionName() {
-    return PsiTreeUtil.getChildOfType(this, MakefileFunctionName.class);
-  }
-
-  @Override
-  @Nullable
-  public MakefileVariableUsage getVariableUsage() {
-    return PsiTreeUtil.getChildOfType(this, MakefileVariableUsage.class);
+  @NotNull
+  public List<MakefileVariableUsage> getVariableUsageList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }
 
   @Override

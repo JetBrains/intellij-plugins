@@ -26,7 +26,7 @@ Makefile
           PsiElement(chars)('https')
           PsiElement(:)(':')
           PsiElement(chars)('/xxxxx')
-  PsiElement(EOL)('\n')
+      PsiElement(EOL)('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

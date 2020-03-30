@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import name.kropp.intellij.makefile.psi.MakefileFilename;
 import name.kropp.intellij.makefile.psi.MakefileInclude;
-import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
 import name.kropp.intellij.makefile.psi.MakefileVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,12 +31,6 @@ public class MakefileIncludeImpl extends ASTWrapperPsiElement implements Makefil
   @NotNull
   public List<MakefileFilename> getFilenameList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFilename.class);
-  }
-
-  @Override
-  @NotNull
-  public List<MakefileVariableUsage> getVariableUsageList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }
 
 }

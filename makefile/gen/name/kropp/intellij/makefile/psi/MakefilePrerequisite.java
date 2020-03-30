@@ -4,18 +4,16 @@ package name.kropp.intellij.makefile.psi;
 import com.intellij.psi.PsiElement;
 import name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface MakefilePrerequisite extends PsiElement {
 
-  @Nullable
-  MakefileFunction getFunction();
+  @NotNull
+  List<MakefileFunction> getFunctionList();
 
-  @Nullable
-  MakefileFunctionName getFunctionName();
-
-  @Nullable
-  MakefileVariableUsage getVariableUsage();
+  @NotNull
+  List<MakefileVariableUsage> getVariableUsageList();
 
   @NotNull
   MakefilePrerequisiteImpl updateText(@NotNull String newText);

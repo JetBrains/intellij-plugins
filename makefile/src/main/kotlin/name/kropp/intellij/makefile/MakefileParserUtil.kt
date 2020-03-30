@@ -7,39 +7,85 @@ import com.intellij.psi.tree.*
 import name.kropp.intellij.makefile.psi.MakefileTypes.*
 
 object MakefileParserUtil : GeneratedParserUtilBase() {
+  private val nonTargetTokens = setOf(EOL, COLON, DOUBLECOLON, TAB, SPLIT)
+  private val nonPrereqTokens = setOf(EOL, TAB, COLON, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA, PIPE, SEMICOLON, SPLIT)
+  private val nonIdentifierTokens = setOf(EOL, TAB, SPLIT, COLON, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA)
+
+  // targets
   @JvmStatic
-  fun parseNoWhitespaceOrColon(builder: PsiBuilder, level: Int): Boolean {
-    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, COLON, DOUBLECOLON, TAB))
+  fun parseNoWhitespaceOrColon(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonTargetTokens)
+
+  @JvmStatic
+  fun parseToDollarNoWhitespaceOrColon(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonTargetTokens, errorOnWs = true)
+
+  @JvmStatic
+  fun parseNoWhitespaceOrColonBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return true
+    return consumeAllNonWsExceptTokens(builder, level, nonTargetTokens, allowEmpty = true)
   }
 
   @JvmStatic
-  fun parseNoWhitespace(builder: PsiBuilder, level: Int): Boolean {
-    return consumeAllNonWsExceptTokens(builder, level, setOf(EOL, TAB, COLON, DOLLAR, OPEN_PAREN, CLOSE_PAREN, OPEN_CURLY, CLOSE_CURLY, ASSIGN, STRING, COMMA))
+  fun parseToDollarNoWhitespaceOrColonBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return false
+    return consumeAllNonWsExceptTokens(builder, level, nonTargetTokens, allowEmpty = true, errorOnWs = true)
   }
 
-  private fun consumeAllNonWsExceptTokens(builder: PsiBuilder, level: Int, tokens: Set<IElementType>): Boolean {
+  // prerequisites
+  @JvmStatic
+  fun parsePrereqNoWhitespace(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonPrereqTokens)
+
+  @JvmStatic
+  fun parsePrereqToDollarNoWhitespace(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonPrereqTokens, errorOnWs = true)
+
+  @JvmStatic
+  fun parsePrereqNoWhitespaceBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return true
+    return consumeAllNonWsExceptTokens(builder, level, nonPrereqTokens, allowEmpty = true)
+  }
+
+  @JvmStatic
+  fun parsePrereqToDollarNoWhitespaceBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return false
+    return consumeAllNonWsExceptTokens(builder, level, nonPrereqTokens, allowEmpty = true, errorOnWs = true)
+  }
+
+  // identifiers
+  @JvmStatic
+  fun parseNoWhitespace(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonIdentifierTokens)
+
+  @JvmStatic
+  fun parseToDollarNoWhitespace(builder: PsiBuilder, level: Int): Boolean = consumeAllNonWsExceptTokens(builder, level, nonIdentifierTokens, errorOnWs = true)
+
+  @JvmStatic
+  fun parseNoWhitespaceBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return true
+    return consumeAllNonWsExceptTokens(builder, level, nonIdentifierTokens, allowEmpty = true)
+  }
+
+  @JvmStatic
+  fun parseToDollarNoWhitespaceBehind(builder: PsiBuilder, level: Int): Boolean {
+    if (isWhitespaceBehind(builder)) return false
+    return consumeAllNonWsExceptTokens(builder, level, nonIdentifierTokens, allowEmpty = true, errorOnWs = true)
+  }
+
+  private fun isWhitespaceBehind(builder: PsiBuilder): Boolean {
+    return builder.rawLookup(0) == TokenType.WHITE_SPACE ||
+           builder.rawLookup(-1) == TokenType.WHITE_SPACE
+  }
+
+  private fun consumeAllNonWsExceptTokens(builder: PsiBuilder, level: Int, tokens: Set<IElementType>, allowEmpty: Boolean = false, errorOnWs: Boolean = false): Boolean {
     // accept everything till the end of line
-    var hasAny = false
+    var hasAny = allowEmpty
     do {
-/*
       if (builder.tokenType == DOLLAR) {
-        if (builder.lookAhead(1) == OPEN_CURLY) {
-          builder.advanceLexer()
-          builder.advanceLexer()
-          if (parseVariableUsage(builder, level + 1, true, CLOSE_CURLY)) {
-            hasAny = true
-          }
-        } else if (builder.lookAhead(1) == OPEN_PAREN) {
-          builder.advanceLexer()
-          builder.advanceLexer()
-          if (parseVariableUsage(builder, level + 1, true, CLOSE_PAREN)) {
-            hasAny = true
-          }
+        val lookAhead = builder.lookAhead(1)
+        if (lookAhead == OPEN_CURLY || lookAhead == OPEN_PAREN) {
+          return hasAny
         }
       }
-*/
       if (builder.tokenType in tokens || builder.tokenType == null) return hasAny
       if (builder.rawLookup(1) == TokenType.WHITE_SPACE) {
+        if (errorOnWs) return false
         builder.advanceLexer()
         return true
       }
@@ -51,18 +97,34 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
   @JvmStatic
   fun parseLine(builder: PsiBuilder, level: Int): Boolean {
     // accept everything till the end of line
+    var hasAny = false
     do {
-      if (builder.tokenType == EOL || builder.tokenType == null) return true
+      if (builder.tokenType == DOLLAR) {
+        val lookAhead = builder.lookAhead(1)
+        if (lookAhead == OPEN_CURLY || lookAhead == OPEN_PAREN) {
+          return hasAny
+        }
+      }
+      if (builder.tokenType == EOL || builder.tokenType == null) return hasAny
       builder.advanceLexer()
+      hasAny = true
     } while (true)
   }
 
   @JvmStatic
   fun parseLineNotEndef(builder: PsiBuilder, level: Int): Boolean {
     // accept everything till the end of line
+    var hasAny = false
     do {
-      if (builder.tokenType == EOL || builder.tokenType == KEYWORD_ENDEF || builder.tokenType == null) return true
+      if (builder.tokenType == DOLLAR) {
+        val lookAhead = builder.lookAhead(1)
+        if (lookAhead == OPEN_CURLY || lookAhead == OPEN_PAREN) {
+          return hasAny
+        }
+      }
+      if (builder.tokenType == EOL || builder.tokenType == KEYWORD_ENDEF || builder.tokenType == null) return hasAny
       builder.advanceLexer()
+      hasAny = true
     } while (true)
   }
 

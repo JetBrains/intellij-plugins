@@ -9,13 +9,15 @@ import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public interface MakefileTarget extends MakefileNamedElement, NavigationItem, StubBasedPsiElement<MakefileTargetStubElement> {
 
-  @Nullable
-  MakefileFunction getFunction();
+  @NotNull
+  List<MakefileFunction> getFunctionList();
 
-  @Nullable
-  MakefileVariableUsage getVariableUsage();
+  @NotNull
+  List<MakefileVariableUsage> getVariableUsageList();
 
   @Nullable
   String getName();

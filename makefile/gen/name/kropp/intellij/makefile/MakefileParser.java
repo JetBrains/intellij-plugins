@@ -36,13 +36,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // conditional|variable-assignment|directive|rule|command|function|macro|EOL
+  // directive|conditional|variable-assignment|rule|command|function|macro|EOL
   static boolean any(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any")) return false;
     boolean r;
-    r = conditional(b, l + 1);
+    r = directive(b, l + 1);
+    if (!r) r = conditional(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
-    if (!r) r = directive(b, l + 1);
     if (!r) r = rule(b, l + 1);
     if (!r) r = command(b, l + 1);
     if (!r) r = function(b, l + 1);
@@ -357,9 +357,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<parseLineNotEndef>>
+  // (<<parseLineNotEndef>>|function|variable-usage)*
   static boolean defline(PsiBuilder b, int l) {
-    return parseLineNotEndef(b, l + 1);
+    if (!recursion_guard_(b, l, "defline")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!defline_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "defline", c)) break;
+    }
+    return true;
+  }
+
+  // <<parseLineNotEndef>>|function|variable-usage
+  private static boolean defline_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "defline_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseLineNotEndef(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -626,32 +644,85 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable-usage <<parseNoWhitespace>> | variable-usage | function | <<parseNoWhitespace>>
+  // identifier_part | (<<parseToDollarNoWhitespace>> identifier_part) | <<parseNoWhitespace>>
   public static boolean identifier(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "identifier")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, IDENTIFIER, "<identifier>");
-    r = identifier_0(b, l + 1);
-    if (!r) r = variable_usage(b, l + 1);
-    if (!r) r = function(b, l + 1);
+    r = identifier_part(b, l + 1);
+    if (!r) r = identifier_1(b, l + 1);
     if (!r) r = parseNoWhitespace(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // variable-usage <<parseNoWhitespace>>
-  private static boolean identifier_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "identifier_0")) return false;
+  // <<parseToDollarNoWhitespace>> identifier_part
+  private static boolean identifier_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = variable_usage(b, l + 1);
-    r = r && parseNoWhitespace(b, l + 1);
+    r = parseToDollarNoWhitespace(b, l + 1);
+    r = r && identifier_part(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // ('include'|'-include'|'sinclude') (filename|variable-usage)+ EOL?
+  // ((function | variable-usage) <<parseToDollarNoWhitespaceBehind>> identifier_part) | ((function | variable-usage) <<parseNoWhitespaceBehind>>)
+  static boolean identifier_part(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_part")) return false;
+    if (!nextTokenIs(b, DOLLAR)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identifier_part_0(b, l + 1);
+    if (!r) r = identifier_part_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (function | variable-usage) <<parseToDollarNoWhitespaceBehind>> identifier_part
+  private static boolean identifier_part_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_part_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identifier_part_0_0(b, l + 1);
+    r = r && parseToDollarNoWhitespaceBehind(b, l + 1);
+    r = r && identifier_part(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean identifier_part_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_part_0_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    return r;
+  }
+
+  // (function | variable-usage) <<parseNoWhitespaceBehind>>
+  private static boolean identifier_part_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_part_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = identifier_part_1_0(b, l + 1);
+    r = r && parseNoWhitespaceBehind(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean identifier_part_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier_part_1_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('include'|'-include'|'sinclude') filename+ EOL?
   public static boolean include(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include")) return false;
     boolean r, p;
@@ -676,27 +747,18 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // (filename|variable-usage)+
+  // filename+
   private static boolean include_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = include_1_0(b, l + 1);
+    r = filename(b, l + 1);
     while (r) {
       int c = current_position_(b);
-      if (!include_1_0(b, l + 1)) break;
+      if (!filename(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "include_1", c)) break;
     }
     exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // filename|variable-usage
-  private static boolean include_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "include_1_0")) return false;
-    boolean r;
-    r = filename(b, l + 1);
-    if (!r) r = variable_usage(b, l + 1);
     return r;
   }
 
@@ -719,9 +781,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // <<parseLine>>
+  // (<<parseLine>>|function|variable-usage)*
   static boolean line(PsiBuilder b, int l) {
-    return parseLine(b, l + 1);
+    if (!recursion_guard_(b, l, "line")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!line_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "line", c)) break;
+    }
+    return true;
+  }
+
+  // <<parseLine>>|function|variable-usage
+  private static boolean line_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "line_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseLine(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -944,17 +1024,80 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // chars|function-name|directive-name|variable-usage|function
+  // prerequisite_part | (<<parsePrereqToDollarNoWhitespace>> prerequisite_part) | <<parsePrereqNoWhitespace>>
   public static boolean prerequisite(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prerequisite")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREREQUISITE, "<prerequisite>");
-    r = consumeToken(b, CHARS);
-    if (!r) r = function_name(b, l + 1);
-    if (!r) r = directive_name(b, l + 1);
-    if (!r) r = variable_usage(b, l + 1);
-    if (!r) r = function(b, l + 1);
+    r = prerequisite_part(b, l + 1);
+    if (!r) r = prerequisite_1(b, l + 1);
+    if (!r) r = parsePrereqNoWhitespace(b, l + 1);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // <<parsePrereqToDollarNoWhitespace>> prerequisite_part
+  private static boolean prerequisite_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parsePrereqToDollarNoWhitespace(b, l + 1);
+    r = r && prerequisite_part(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ((function | variable-usage) <<parsePrereqToDollarNoWhitespaceBehind>> prerequisite_part) | ((function | variable-usage) <<parsePrereqNoWhitespaceBehind>>)
+  static boolean prerequisite_part(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_part")) return false;
+    if (!nextTokenIs(b, DOLLAR)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = prerequisite_part_0(b, l + 1);
+    if (!r) r = prerequisite_part_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (function | variable-usage) <<parsePrereqToDollarNoWhitespaceBehind>> prerequisite_part
+  private static boolean prerequisite_part_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_part_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = prerequisite_part_0_0(b, l + 1);
+    r = r && parsePrereqToDollarNoWhitespaceBehind(b, l + 1);
+    r = r && prerequisite_part(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean prerequisite_part_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_part_0_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    return r;
+  }
+
+  // (function | variable-usage) <<parsePrereqNoWhitespaceBehind>>
+  private static boolean prerequisite_part_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_part_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = prerequisite_part_1_0(b, l + 1);
+    r = r && parsePrereqNoWhitespaceBehind(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean prerequisite_part_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "prerequisite_part_1_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
     return r;
   }
 
@@ -1099,32 +1242,31 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // function | variable-usage <<parseNoWhitespaceOrColon>> | variable-usage | <<parseNoWhitespaceOrColon>>
+  // target_part | (<<parseToDollarNoWhitespaceOrColon>> target_part) | <<parseNoWhitespaceOrColon>>
   public static boolean target(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, TARGET, "<target>");
-    r = function(b, l + 1);
+    r = target_part(b, l + 1);
     if (!r) r = target_1(b, l + 1);
-    if (!r) r = variable_usage(b, l + 1);
     if (!r) r = parseNoWhitespaceOrColon(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // variable-usage <<parseNoWhitespaceOrColon>>
+  // <<parseToDollarNoWhitespaceOrColon>> target_part
   private static boolean target_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = variable_usage(b, l + 1);
-    r = r && parseNoWhitespaceOrColon(b, l + 1);
+    r = parseToDollarNoWhitespaceOrColon(b, l + 1);
+    r = r && target_part(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // targets (':'|'::') (target_pattern ':')? (exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?)
+  // targets (':'|'::') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?)
   public static boolean target_line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line")) return false;
     boolean r, p;
@@ -1167,62 +1309,114 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // exportvar|override|privatevar|variable-assignment|prerequisites (';' inline_command?)? EOL?
+  // (exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?
   private static boolean target_line_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "target_line_3")) return false;
     boolean r;
     Marker m = enter_section_(b);
+    r = target_line_3_0(b, l + 1);
+    r = r && target_line_3_1(b, l + 1);
+    r = r && target_line_3_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // exportvar|override|privatevar|variable-assignment|prerequisites
+  private static boolean target_line_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_0")) return false;
+    boolean r;
     r = exportvar(b, l + 1);
     if (!r) r = override(b, l + 1);
     if (!r) r = privatevar(b, l + 1);
     if (!r) r = variable_assignment(b, l + 1);
-    if (!r) r = target_line_3_4(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // prerequisites (';' inline_command?)? EOL?
-  private static boolean target_line_3_4(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_4")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = prerequisites(b, l + 1);
-    r = r && target_line_3_4_1(b, l + 1);
-    r = r && target_line_3_4_2(b, l + 1);
-    exit_section_(b, m, null, r);
+    if (!r) r = prerequisites(b, l + 1);
     return r;
   }
 
   // (';' inline_command?)?
-  private static boolean target_line_3_4_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_4_1")) return false;
-    target_line_3_4_1_0(b, l + 1);
+  private static boolean target_line_3_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_1")) return false;
+    target_line_3_1_0(b, l + 1);
     return true;
   }
 
   // ';' inline_command?
-  private static boolean target_line_3_4_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_4_1_0")) return false;
+  private static boolean target_line_3_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SEMICOLON);
-    r = r && target_line_3_4_1_0_1(b, l + 1);
+    r = r && target_line_3_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // inline_command?
-  private static boolean target_line_3_4_1_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_4_1_0_1")) return false;
+  private static boolean target_line_3_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_1_0_1")) return false;
     inline_command(b, l + 1);
     return true;
   }
 
   // EOL?
-  private static boolean target_line_3_4_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "target_line_3_4_2")) return false;
+  private static boolean target_line_3_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_line_3_2")) return false;
     consumeToken(b, EOL);
     return true;
+  }
+
+  /* ********************************************************** */
+  // ((function | variable-usage) <<parseToDollarNoWhitespaceOrColonBehind>> target_part) | ((function | variable-usage) <<parseNoWhitespaceOrColonBehind>>)
+  static boolean target_part(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_part")) return false;
+    if (!nextTokenIs(b, DOLLAR)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = target_part_0(b, l + 1);
+    if (!r) r = target_part_1(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (function | variable-usage) <<parseToDollarNoWhitespaceOrColonBehind>> target_part
+  private static boolean target_part_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_part_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = target_part_0_0(b, l + 1);
+    r = r && parseToDollarNoWhitespaceOrColonBehind(b, l + 1);
+    r = r && target_part(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean target_part_0_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_part_0_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    return r;
+  }
+
+  // (function | variable-usage) <<parseNoWhitespaceOrColonBehind>>
+  private static boolean target_part_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_part_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = target_part_1_0(b, l + 1);
+    r = r && parseNoWhitespaceOrColonBehind(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // function | variable-usage
+  private static boolean target_part_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "target_part_1_0")) return false;
+    boolean r;
+    r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    return r;
   }
 
   /* ********************************************************** */
