@@ -12,8 +12,7 @@ class MakefileColorSettingsPage : ColorSettingsPage {
       "variableName" to MakefileSyntaxHighlighter.VARIABLE,
       "prerequisite" to MakefileSyntaxHighlighter.PREREQUISITE,
       "function" to MakefileSyntaxHighlighter.FUNCTION,
-      "functionParam" to MakefileSyntaxHighlighter.FUNCTION_PARAM,
-      "variableUsage" to MakefileSyntaxHighlighter.VARIABLE_USAGE
+      "functionParam" to MakefileSyntaxHighlighter.FUNCTION_PARAM
   )
 
   private val DESCRIPTORS = arrayOf(
@@ -26,11 +25,11 @@ class MakefileColorSettingsPage : ColorSettingsPage {
       AttributesDescriptor("Prerequisite", MakefileSyntaxHighlighter.PREREQUISITE),
       AttributesDescriptor("Variable Name", MakefileSyntaxHighlighter.VARIABLE),
       AttributesDescriptor("Variable Value", MakefileSyntaxHighlighter.VARIABLE_VALUE),
-      AttributesDescriptor("Variable Usage", MakefileSyntaxHighlighter.VARIABLE_USAGE),
       AttributesDescriptor("Line Split", MakefileSyntaxHighlighter.LINE_SPLIT),
       AttributesDescriptor("Tab", MakefileSyntaxHighlighter.TAB),
       AttributesDescriptor("Function", MakefileSyntaxHighlighter.FUNCTION),
-      AttributesDescriptor("Function Param", MakefileSyntaxHighlighter.FUNCTION_PARAM)
+      AttributesDescriptor("Function Param", MakefileSyntaxHighlighter.FUNCTION_PARAM),
+      AttributesDescriptor("Braces", MakefileSyntaxHighlighter.BRACES)
   )
 
   override fun getAttributeDescriptors() = DESCRIPTORS
@@ -53,7 +52,7 @@ ${'\t'}$(GCC) -c qwe \
               -Wall
 else
 ${'\t'}echo "Hello World"
-${'\t'}$(<function>error</function><functionParam> Architecture <variableUsage>$(ARCH)</variableUsage> is not supported</functionParam>)
+${'\t'}$(<function>error</function><functionParam> Architecture $(ARCH) is not supported</functionParam>)
 endif"""
 
   override fun getAdditionalHighlightingTagToDescriptorMap() = tags
