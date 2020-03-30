@@ -3,7 +3,7 @@ import com.intellij.testFramework.fixtures.*
 class MakefileCompletionTest : BasePlatformTestCase() {
   fun testSimple() = doTest("b", "c", "d", testFilename)
   fun testTargets() = doTest("a", testFilename)
-//  fun testAny() = doTest("include", "private", "define", "ifeq", "vpath", "ifndef", "ifneq", "override", "export", "undefine", "ifdef")
+  fun testAny() = doTest("include", "private", "define", "ifeq", "vpath", "ifndef", "ifneq", "override", "export", "undefine", "ifdef")
   fun testFunctions() = doTest("addsuffix", "realpath", "firstword", "origin", "dir", "error", "suffix", "wildcard", "findstring", "foreach", "file", "strip", "wordlist", "addprefix", "and", "guile", "abspath", "warning", "join", "if", "notdir", "value", "info", "or", "patsubst", "filter-out", "words", "subst", "sort", "call", "filter", "flavor", "basename", "eval", "lastword", "shell", "word")
 
   fun doTest(vararg variants: String) = myFixture.testCompletionVariants("$basePath/$testFilename", *variants)

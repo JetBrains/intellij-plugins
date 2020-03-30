@@ -49,10 +49,7 @@ makefile ::= any*
 
 private any ::= (directive|conditional|variable-assignment|rule|command|function|macro|EOL)
 
-private recover ::= !(EOL | split)
-
 directive ::= define|include|undefine|override|export|privatevar|vpath
-private directive-name ::= 'define'|'include'|'undefine'|'override'|'export'|'private'|'vpath'
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
@@ -77,7 +74,6 @@ order_only_prerequisites ::= prerequisite* (split prerequisite*)*
 prerequisite ::= prerequisite_part | (<<parsePrereqToDollarNoWhitespace>> prerequisite_part) | <<parsePrereqNoWhitespace>> {mixin="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteMixin" methods=[updateText isPhonyTarget]}
 private prerequisite_part ::= ((function | variable-usage) <<parsePrereqToDollarNoWhitespaceBehind>> prerequisite_part) | ((function | variable-usage) <<parsePrereqNoWhitespaceBehind>>)
 
-private condition-recover ::= !'endif'
 private conditional-keyword ::= ('ifeq'|'ifneq'|'ifdef'|'ifndef')
 conditional ::= conditional-keyword condition EOL block conditional-else* 'endif' {pin=1}
 conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}

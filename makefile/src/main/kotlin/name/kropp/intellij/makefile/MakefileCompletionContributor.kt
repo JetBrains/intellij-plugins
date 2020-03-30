@@ -26,7 +26,7 @@ class MakefileCompletionContributor : CompletionContributor() {
   }
 
   init {
-    extend(CompletionType.BASIC, psiElement(CHARS).atStartOf(StandardPatterns.or(psiElement(CONDITIONAL), psiElement(DIRECTIVE))), KeywordCompletionProvider)
+    extend(CompletionType.BASIC, StandardPatterns.or(psiElement().afterLeaf(psiElement(EOL)), psiElement().isNull), KeywordCompletionProvider)
     extend(CompletionType.BASIC, psiElement().afterLeaf(psiElement(OPEN_PAREN).afterLeafSkipping(psiElement(OPEN_PAREN), psiElement(DOLLAR))), FunctionCompletionProvider)
   }
 }
