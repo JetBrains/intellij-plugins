@@ -25,7 +25,6 @@ import com.intellij.lang.properties.PropertiesImplUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -47,13 +46,13 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.impl.ConvertContextFactory;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -96,7 +95,8 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
       return null;
     }
 
-    final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), strutsConstant1 -> Comparing.equal(strutsConstant1.getName(), strutsConstantKey.getKey()));
+    final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), strutsConstant1 -> Objects.equals(
+      strutsConstant1.getName(), strutsConstantKey.getKey()));
 
     //noinspection unchecked
     return strutsConstant != null ? strutsConstant.getConverter() : null;
@@ -164,7 +164,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     }
 
     // 2. <constant> from StrutsModel
-    final Condition<Constant> constantNameCondition = constant -> Comparing.equal(constant.getName().getStringValue(), name);
+    final Condition<Constant> constantNameCondition = constant -> Objects.equals(constant.getName().getStringValue(), name);
 
     final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<>();
     collectStrutsXmls(domFileElements, strutsModel, "struts-default.xml", true);
@@ -183,7 +183,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     final IProperty strutsProperty = ContainerUtil.find(properties, property -> {
       final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
       return virtualFile != null &&
-             Comparing.equal(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
+             Objects.equals(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
              ModuleUtilCore.moduleContainsFile(module, virtualFile, false);
     });
     if (strutsProperty != null) {
@@ -203,7 +203,8 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     final Filter filter = ContainerUtil.find(webApp.getFilters(), WEB_XML_STRUTS_FILTER_CONDITION);
     if (filter != null) {
       final ParamValue initParam = ContainerUtil.find(filter.getInitParams(),
-                                                      (Condition<ParamValue>)paramValue -> Comparing.equal(paramValue.getParamName().getStringValue(), name));
+                                                      (Condition<ParamValue>)paramValue -> Objects.equals(
+                                                        paramValue.getParamName().getStringValue(), name));
       if (initParam != null) {
         value = initParam.getParamValue().getStringValue();
       }
@@ -260,7 +261,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                                                              final boolean onlyInJARs) {
     return strutsRootDomFileElement -> {
       final XmlFile xmlFile = strutsRootDomFileElement.getFile();
-      final boolean nameMatch = Comparing.equal(xmlFile.getName(), strutsXmlName);
+      final boolean nameMatch = Objects.equals(xmlFile.getName(), strutsXmlName);
       if (!onlyInJARs) {
         return nameMatch;
       }

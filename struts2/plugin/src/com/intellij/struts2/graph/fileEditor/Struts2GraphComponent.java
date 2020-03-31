@@ -30,7 +30,6 @@ import com.intellij.openapi.graph.view.Overview;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.graph.StrutsDataModel;
@@ -42,14 +41,15 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomEventListener;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Yann C&eacute;bron
@@ -157,7 +157,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   @Override
   @Nullable
   public Object getData(@NotNull @NonNls final String dataId) {
-    if (Comparing.equal(dataId, STRUTS2_DESIGNER_COMPONENT)) {
+    if (Objects.equals(dataId, STRUTS2_DESIGNER_COMPONENT)) {
       return this;
     }
 

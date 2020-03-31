@@ -17,22 +17,28 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
+import com.intellij.psi.PsiType;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtilBase;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Helper methods for {@link ActionImpl}.
@@ -59,7 +65,7 @@ final class ActionUtil {
 
     // do we have any wildcard-markers in our path? no --> exact compare
     if (actionPath.indexOf('*') == -1) {
-      return Comparing.equal(strippedCheckPath, actionPath);
+      return Objects.equals(strippedCheckPath, actionPath);
     }
 
     try {
@@ -115,7 +121,7 @@ final class ActionUtil {
 
       // skip "toString()"
       final String psiMethodName = psiMethod.getName();
-      if (Comparing.equal(psiMethodName, "toString")) {
+      if (Objects.equals(psiMethodName, "toString")) {
         continue;
       }
 

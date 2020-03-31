@@ -15,18 +15,17 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ResolvingConverter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * Global {@code exception-mapping} "result".
@@ -54,7 +53,7 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
     }
 
     return ContainerUtil.find(getVariants(context),
-                              (Condition<GlobalResult>)globalResult -> Comparing.equal(value, globalResult.getName().getStringValue()));
+                              (Condition<GlobalResult>)globalResult -> Objects.equals(value, globalResult.getName().getStringValue()));
   }
 
   @Override

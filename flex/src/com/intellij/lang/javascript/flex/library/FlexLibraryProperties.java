@@ -1,10 +1,12 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.openapi.roots.libraries.LibraryProperties;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperties> {
   @Nullable
@@ -30,7 +32,7 @@ public class FlexLibraryProperties extends LibraryProperties<FlexLibraryProperti
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof FlexLibraryProperties && Comparing.equal(((FlexLibraryProperties)obj).myId, myId);
+    return obj instanceof FlexLibraryProperties && Objects.equals(((FlexLibraryProperties)obj).myId, myId);
   }
 
   @Override

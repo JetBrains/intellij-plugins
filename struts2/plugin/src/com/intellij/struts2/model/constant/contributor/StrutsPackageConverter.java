@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.constant.contributor;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -23,12 +22,12 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.ResolvingConverter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Configuration property resolving to {@link StrutsPackage}.
@@ -50,7 +49,7 @@ class StrutsPackageConverter extends ResolvingConverter<StrutsPackage> {
     }
 
     return ContainerUtil.find(getStrutsPackages(convertContext),
-                              strutsPackage -> Comparing.equal(strutsPackage.getName().getStringValue(), s));
+                              strutsPackage -> Objects.equals(strutsPackage.getName().getStringValue(), s));
   }
 
   @Override

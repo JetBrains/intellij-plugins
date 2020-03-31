@@ -19,7 +19,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -36,11 +35,11 @@ import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import icons.Struts2Icons;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides links to Action-URLs in all places where Servlet-URLs are processed.
@@ -239,7 +238,7 @@ TODO not needed so far ?!
     @Override
     public PsiElement resolve() {
       for (final StrutsPackage strutsPackage : allStrutsPackages) {
-        if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
+        if (Objects.equals(namespace, strutsPackage.searchNamespace())) {
           return strutsPackage.getXmlTag();
         }
       }

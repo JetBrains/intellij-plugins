@@ -22,9 +22,12 @@ import com.intellij.jam.JamSimpleReferenceConverter;
 import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.annotations.JamPsiValidity;
-import com.intellij.jam.reflect.*;
 import com.intellij.jam.model.common.CommonModelElement;
-import com.intellij.openapi.util.Comparing;
+import com.intellij.jam.reflect.JamAnnotationMeta;
+import com.intellij.jam.reflect.JamAttributeMeta;
+import com.intellij.jam.reflect.JamClassMeta;
+import com.intellij.jam.reflect.JamPackageMeta;
+import com.intellij.jam.reflect.JamStringAttributeMeta;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -35,12 +38,12 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.jam.StrutsJamUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * {@code @org.apache.struts2.convention.annotation.ParentPackage}.
@@ -72,7 +75,7 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
         }
 
         return ContainerUtil.find(strutsModel.getStrutsPackages(),
-                                  strutsPackage -> Comparing.equal(strutsPackage.getName().getStringValue(), s));
+                                  strutsPackage -> Objects.equals(strutsPackage.getName().getStringValue(), s));
       }
 
       @Override

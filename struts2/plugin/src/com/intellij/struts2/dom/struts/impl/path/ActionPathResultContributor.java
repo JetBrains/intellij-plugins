@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts.impl.path;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
@@ -33,12 +32,12 @@ import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import icons.Struts2Icons;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides paths to "/XYZ.action".
@@ -163,12 +162,12 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       for (final Action action : allActions) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
-          final boolean isInCurrentPackage = Comparing.equal(action.getNamespace(), currentPackage);
+          final boolean isInCurrentPackage = Objects.equals(action.getNamespace(), currentPackage);
 
           // prepend package-name if not default ("/") or "current" package
           final String actionNamespace = action.getNamespace();
           final String fullPath;
-          if (!Comparing.equal(actionNamespace, StrutsPackage.DEFAULT_NAMESPACE) &&
+          if (!Objects.equals(actionNamespace, StrutsPackage.DEFAULT_NAMESPACE) &&
               !isInCurrentPackage) {
             fullPath = actionNamespace + "/" + actionPath + firstExtension;
           } else {

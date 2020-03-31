@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,12 +27,12 @@ import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Yann C&eacute;bron
@@ -62,7 +61,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
       return null;
     }
 
-    final Condition<ResultType> nameCondition = resultType -> Comparing.equal(name, resultType.getName().getStringValue());
+    final Condition<ResultType> nameCondition = resultType -> Objects.equals(name, resultType.getName().getStringValue());
 
     final Ref<ResultType> resolveResult = new Ref<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {

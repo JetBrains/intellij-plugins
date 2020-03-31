@@ -16,7 +16,6 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,12 +26,12 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.UniqueNameGenerator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Groups one or more {@code struts.xml} files in a named set.
@@ -150,7 +149,7 @@ public class StrutsFileSet implements Disposable {
   public boolean equals(final Object another) {
     if (another instanceof StrutsFileSet) {
       final StrutsFileSet obj = (StrutsFileSet) another;
-      return Comparing.equal(obj.getId(), id);
+      return Objects.equals(obj.getId(), id);
     }
 
     return false;
