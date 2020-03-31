@@ -87,8 +87,9 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDes
 import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.RemoteDebugTarget;
 
 public abstract class FlexBaseRunner extends GenericProgramRunner {
-  public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(
-    FlexBundle.message("check.flash.app.compiled.before.launch.notification.group"), ToolWindowId.RUN, false);
+  public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup
+    .toolWindowGroup("Flash app not compiled before launch", ToolWindowId.RUN, false,
+                     FlexBundle.message("check.flash.app.compiled.before.launch.notification.group"));
 
   @Override
   @Nullable

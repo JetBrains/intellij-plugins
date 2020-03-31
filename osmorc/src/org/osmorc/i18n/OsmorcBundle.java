@@ -58,7 +58,8 @@ public class OsmorcBundle extends DynamicBundle {
     return INSTANCE.getLazyMessage(key, params);
   }
 
-  private static final NotificationGroup NOTIFICATIONS = new NotificationGroup(message("notification.group"), NotificationDisplayType.BALLOON, true);
+  private static final NotificationGroup NOTIFICATIONS =
+    new NotificationGroup("OSGi", NotificationDisplayType.BALLOON, true, message("notification.group"));
 
   public static Notification notification(@NotNull @Nls(capitalization = Nls.Capitalization.Title) String title,
                                           @NotNull @Nls String message,
