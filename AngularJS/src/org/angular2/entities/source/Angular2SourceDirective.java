@@ -262,14 +262,11 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @Nullable
   private static String getStringParamValue(@Nullable ES6Decorator decorator) {
-    if (decorator == null) {
+    if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
       return null;
     }
     ES6DecoratorStub stub = decorator.getStub();
     if (stub != null) {
-      if (!Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
-        throw new IllegalArgumentException();
-      }
       return StreamEx.of(stub.getChildrenStubs())
         .filter(s -> s.getStubType() == JSStubElementTypes.CALL_EXPRESSION)
         .map(StubElement::getPsi)
