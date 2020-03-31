@@ -169,7 +169,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testBindingResolve2TypeScriptInputInDecorator() {
-    myFixture.configureByFiles("object_binding.after.html", "package.json", "object_in_dec.ts");
+    myFixture.copyFileToProject("object_in_dec.ts");
+    myFixture.configureByFiles("object_binding.after.html", "package.json");
     PsiElement resolve = resolveReference("[mod<caret>el]");
     assertEquals("object_in_dec.ts", resolve.getContainingFile().getName());
     assertInstanceOf(resolve, JSField.class);
@@ -182,8 +183,20 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                  component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
-    assertEquals(newHashSet("testAttrOne", "testAttrTwo"),
+    assertEquals(newHashSet("testAttrOne", "testAttrTwo", "testAttrThree"),
                  component.getAttributes().stream().map(Angular2DirectiveAttribute::getName).collect(Collectors.toSet()));
+
+    moveToOffsetBySignature("[model]=\"\"<caret>", myFixture);
+    myFixture.type(' ');
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "testAttrOne", "testAttrTwo", "testAttrThree");
+  }
+
+  public void testStaticAttributes() {
+    myFixture.copyFileToProject("object_in_dec.ts");
+    myFixture.configureByFiles("static_attributes.html", "package.json");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.checkHighlighting();
   }
 
   public void testBindingCompletionViaBase2TypeScript() {

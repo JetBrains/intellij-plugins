@@ -29,6 +29,7 @@ import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.entities.*;
 import org.angular2.entities.ivy.Angular2IvyEntity;
 import org.angular2.entities.metadata.Angular2MetadataUtil;
+import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -266,6 +267,9 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     }
     ES6DecoratorStub stub = decorator.getStub();
     if (stub != null) {
+      if (!Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
+        throw new IllegalArgumentException();
+      }
       return StreamEx.of(stub.getChildrenStubs())
         .filter(s -> s.getStubType() == JSStubElementTypes.CALL_EXPRESSION)
         .map(StubElement::getPsi)

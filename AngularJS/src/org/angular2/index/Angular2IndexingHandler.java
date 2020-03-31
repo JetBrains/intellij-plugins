@@ -81,7 +81,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static final Set<String> STUBBED_PROPERTIES = ContainerUtil.newHashSet(
     TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP);
   private static final Set<String> STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
-    INPUT_DEC, OUTPUT_DEC);
+    INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC);
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
@@ -114,6 +114,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static boolean isModule(@NotNull JSImplicitElement element) {
     return element instanceof JSImplicitElementImpl
            && MODULE_TYPE.equals(element.getTypeString());
+  }
+
+  public static boolean isDecoratorStringArgStubbed(@NotNull ES6Decorator decorator) {
+    return STUBBED_DECORATORS_STRING_ARGS.contains(decorator.getDecoratorName());
   }
 
   @Override
