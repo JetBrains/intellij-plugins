@@ -3,17 +3,16 @@ package org.intellij.plugins.postcss.actions;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsUI;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElementFactory;
 import org.intellij.plugins.postcss.PostCssBundle;
 import org.intellij.plugins.postcss.PostCssLanguage;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssDeleteAmpersandQuickFix implements LocalQuickFix {
   @Override
-  public @NlsUI.ListItem @NotNull String getFamilyName() {
+  public @NlsContexts.ListItem @NotNull String getFamilyName() {
     return PostCssBundle.message("annotator.delete.ampersand.quickfix.name");
   }
 

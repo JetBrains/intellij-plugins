@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.inspections;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.NlsUI;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -13,14 +13,13 @@ import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssCustomMediaAtRule;
 import org.intellij.plugins.postcss.psi.impl.PostCssCustomMediaAtRuleImpl;
 import org.intellij.plugins.postcss.psi.impl.PostCssElementVisitor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class PostCssCustomMediaInspection extends PostCssBaseInspection {
   private static final CssAddPrefixQuickFix ADD_PREFIX_QUICK_FIX =
     new CssAddPrefixQuickFix("--", PostCssCustomMediaAtRule.class) {
       @Override
-      public @NlsUI.ListItem @NotNull String getFamilyName() {
+      public @NlsContexts.ListItem @NotNull String getFamilyName() {
         return PostCssBundle.message("annotator.add.prefix.to.custom.media.quickfix.name");
       }
     };
