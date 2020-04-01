@@ -8,6 +8,9 @@ class MakefileTargetRunLineMarkerContributor : RunLineMarkerContributor() {
   override fun getInfo(element: PsiElement): Info? {
     if (element.node.elementType == MakefileTypes.CHARS) {
       val target = element.parent
+      if (target.firstChild != element) {
+        return null
+      }
       if (target is MakefileTarget) {
         val targets = target.parent as? MakefileTargets ?: return null
         val targetList = targets.targetList
