@@ -75,7 +75,7 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     }
   }
 
-  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
+  override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, resultSet: CompletionResultSet) {
     if (!isVueContext(parameters.position)) return
 
     val attr = parameters.position.parent as? XmlAttribute ?: return
@@ -88,7 +88,12 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
     val attrInfo = VueAttributeNameParser.parse(StringUtil.trimEnd(attr.name, CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED), attr.parent)
 
-    val providedAttributes = addTagDescriptorCompletions(attr, attrInfo, parameters, result, argumentsInsertHandler)
+    val providedAttributes = attr.parent?.attributes?.asSequence()
+                               ?.filter { it != attr }
+                               ?.flatMap { getAliases(it) }
+                               ?.toMutableSet() ?: mutableSetOf()
+    val collector = CompletionCollector(parameters, resultSet, providedAttributes)
+    addTagDescriptorCompletions(attr, attrInfo, collector, argumentsInsertHandler)
     if (attrInfo is VueDirectiveInfo) {
       val directive: VueDirective? = when (attrInfo.directiveKind) {
         ON, BIND, SLOT -> findAttributeDescriptor(ATTR_DIRECTIVE_PREFIX + fromAsset(attrInfo.name), attrInfo.name, attr.parent)
@@ -96,29 +101,29 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       }?.getSources()?.getOrNull(0) as? VueDirective
 
       if (attrInfo.modifiers.isNotEmpty()) {
-        addModifierCompletions(result, directive, attrInfo)
+        addModifierCompletions(resultSet, directive, attrInfo)
       }
       else {
         when (attrInfo.directiveKind) {
           ON -> {
-            addEventCompletions(attr, result)
+            addEventCompletions(attr, collector)
             return
           }
           BIND -> {
-            addBindCompletions(attr, result)
+            addBindCompletions(attr, collector)
             return
           }
           SLOT -> {
-            addSlotCompletions(attr, result)
+            addSlotCompletions(attr, collector)
             return
           }
           else -> {
             val argument = directive?.argument
             val argumentPrefix = getPatternCompletablePrefix(argument?.pattern)
             if (attrInfo.arguments != null && argumentPrefix.isNotBlank()) {
-              val prefix = result.prefixMatcher.prefix
-              val newResult = if (prefix == ATTR_DIRECTIVE_PREFIX + attrInfo.name + ATTR_ARGUMENT_PREFIX) result.withPrefixMatcher("")
-              else result
+              val prefix = collector.prefix
+              val newResult = if (prefix == ATTR_DIRECTIVE_PREFIX + attrInfo.name + ATTR_ARGUMENT_PREFIX) resultSet.withPrefixMatcher("")
+              else resultSet
               newResult.addElement(lookupElement(argumentPrefix, argument,
                                                  typeText = argument!!.pattern?.toString(), insertHandler = null))
             }
@@ -129,29 +134,59 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
     for (kind in listOf(ON, BIND, SLOT)) {
       val attrName = ATTR_DIRECTIVE_PREFIX + kind.directiveName + ATTR_ARGUMENT_PREFIX
-      if (providedAttributes.add(attrName)) {
-        result.addElement(lookupElement(attrName, null, priority = LOW, insertHandler = argumentsInsertHandler))
+      collector.contributeAttribute(lookupElement(attrName, null, priority = LOW, insertHandler = argumentsInsertHandler))
+    }
+  }
+
+  private fun getAliases(attr: XmlAttribute): Sequence<String> {
+    val info = VueAttributeNameParser.parse(attr.name, attr.parent)
+    val result = mutableSetOf(attr.name)
+    if (info is VueDirectiveInfo) {
+      val descriptor = attr.descriptor as? VueAttributeDescriptor
+      when (info.directiveKind) {
+        ON -> return emptySequence()
+        BIND -> {
+          if (info.arguments != null) {
+            result.add(ATTR_ARGUMENT_PREFIX + info.arguments)
+            result.add(ATTR_DIRECTIVE_PREFIX + info.name + ATTR_ARGUMENT_PREFIX + info.arguments)
+          } else {
+            return emptySequence()
+          }
+        }
+        SLOT -> {
+          result.add(ATTR_SLOT_SHORTHAND.toString())
+          result.add(ATTR_DIRECTIVE_PREFIX + info.name)
+          result.add(ATTR_DIRECTIVE_PREFIX + info.name + ATTR_ARGUMENT_PREFIX)
+        }
+        else -> {
+          val directive = descriptor?.getSources()?.getOrNull(0) as? VueDirective
+          if (directive?.argument == null) {
+            result.add(ATTR_DIRECTIVE_PREFIX + info.name)
+          }
+        }
       }
     }
+    else {
+      result.add(info.name)
+    }
+    return result.asSequence()
   }
 
   private fun addTagDescriptorCompletions(attr: XmlAttribute,
                                           attrInfo: VueAttributeNameParser.VueAttributeInfo,
-                                          parameters: CompletionParameters,
-                                          result: CompletionResultSet,
-                                          argumentsInsertHandler: InsertHandler<LookupElement>): MutableSet<String> {
-    val providedAttributes = mutableSetOf<String>()
+                                          collector: CompletionCollector,
+                                          argumentsInsertHandler: InsertHandler<LookupElement>) {
     val proposeWithArg = attrInfo.modifiers.isEmpty() && (attrInfo as? VueDirectiveInfo)?.arguments == null
-    val tag = attr.parent ?: return providedAttributes
-    (tag.descriptor ?: return providedAttributes).getAttributesDescriptors(tag)
+    val tag = attr.parent ?: return
+    (tag.descriptor ?: return).getAttributesDescriptors(tag)
       .filterIsInstance<VueAttributeDescriptor>()
       .forEach {
-        if (providedAttributes.add(it.name)) {
+        collector.contributeAttribute(it.name) { addAttribute ->
           val directive = it.getSources().getOrNull(0) as? VueDirective
-          if (directive?.argument != null && providedAttributes.add(it.name + ATTR_ARGUMENT_PREFIX) && proposeWithArg) {
+          if (directive?.argument != null && proposeWithArg) {
             val priority = if (directive.argument?.required != true) LOW else it.priority
-            result.addElement(lookupElement(it.name + ATTR_ARGUMENT_PREFIX, it, priority = priority,
-                                            insertHandler = argumentsInsertHandler))
+            collector.contributeAttribute(lookupElement(it.name + ATTR_ARGUMENT_PREFIX, it, priority = priority,
+                                                        insertHandler = argumentsInsertHandler))
           }
           if (directive?.argument?.required != true) {
             var insertHandler = XmlAttributeInsertHandler.INSTANCE
@@ -160,22 +195,11 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
                 || directive?.modifiers?.isNotEmpty() == true) {
               insertHandler = null
             }
-            result.addElement(lookupElement(it.name, it, priority = it.priority, insertHandler = insertHandler))
+            addAttribute(lookupElement(it.name, it, priority = it.priority, insertHandler = insertHandler))
           }
         }
       }
-
-    result.runRemainingContributors(parameters) { toPass ->
-      for (str in toPass.lookupElement.allLookupStrings) {
-        if (!providedAttributes.add(str)) {
-          return@runRemainingContributors
-        }
-      }
-      result.withPrefixMatcher(toPass.prefixMatcher)
-        .withRelevanceSorter(toPass.sorter)
-        .addElement(toPass.lookupElement)
-    }
-    return providedAttributes
+    collector.runRemainingContributors()
   }
 
   private fun addModifierCompletions(result: CompletionResultSet, directive: VueDirective?, attrInfo: VueDirectiveInfo) {
@@ -249,16 +273,15 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
     }
   }
 
-  private fun addEventCompletions(attr: XmlAttribute, result: CompletionResultSet) {
-    val originalPrefix = result.prefixMatcher.prefix
-    val newResult = if (originalPrefix == "v-on:") result.withPrefixMatcher("") else result
+  private fun addEventCompletions(attr: XmlAttribute, collector: CompletionCollector) {
+    val originalPrefix = collector.prefix
+    val newCollector = if (originalPrefix == "v-on:") collector.withPrefixMatcher("") else collector
     val tag = attr.parent
     val prefix = if (originalPrefix.startsWith(ATTR_EVENT_SHORTHAND)) ATTR_EVENT_SHORTHAND.toString() else ""
 
-    val events = mutableSetOf<String>()
     (tag?.descriptor as? VueElementDescriptor)?.getEmitCalls()?.forEach { emit ->
-      if (events.add(emit.name)) {
-        newResult.addElement(lookupElement(prefix + emit.name, emit))
+      newCollector.contributeAttribute("v-on:${emit.name}") { addAttribute ->
+        addAttribute(lookupElement(prefix + emit.name, emit))
       }
     }
 
@@ -266,29 +289,28 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       .filter { it.name.startsWith("on") }
       .forEach {
         val eventName = it.name.substring(2)
-        if (events.add(eventName)) {
-          newResult.addElement(lookupElement(prefix + eventName, it, priority = LOW, icon = null))
+        newCollector.contributeAttribute("v-on:$eventName") { addAttribute ->
+          addAttribute(lookupElement(prefix + eventName, it, priority = LOW, icon = null))
         }
       }
   }
 
-  private fun addBindCompletions(attr: XmlAttribute, result: CompletionResultSet) {
-    val prefix = result.prefixMatcher.prefix
-    val newResult = if (prefix == "v-bind:") result.withPrefixMatcher("") else result
+  private fun addBindCompletions(attr: XmlAttribute, collector: CompletionCollector) {
+    val prefix = collector.prefix
+    val newCollector = if (prefix == "v-bind:") collector.withPrefixMatcher("") else collector
     val lookupItemPrefix = if (prefix.startsWith(ATTR_ARGUMENT_PREFIX)) ATTR_ARGUMENT_PREFIX.toString() else ""
 
-    val bindings = mutableSetOf<String>()
     (attr.parent?.descriptor as? VueElementDescriptor)
       ?.getProps()
       ?.forEach { attribute ->
-        if (bindings.add(attribute.name)) {
-          newResult.addElement(lookupElement(lookupItemPrefix + attribute.name, attribute, priority = HIGH))
+        newCollector.contributeAttribute("v-bind:${attribute.name}") { addAttribute ->
+          addAttribute(lookupElement(lookupItemPrefix + attribute.name, attribute, priority = HIGH))
         }
       }
 
     // special binding
-    if (bindings.add("key")) {
-      newResult.addElement(lookupElement(lookupItemPrefix + "key", null, priority = LOW))
+    newCollector.contributeAttribute("v-bind:key") { addAttribute ->
+      addAttribute(lookupElement(lookupItemPrefix + "key", null, priority = LOW))
     }
 
     // v-bind:any-standard-attribute support
@@ -296,28 +318,32 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
       .filter { it.getName(attr).let { name -> !name.startsWith("on") && !name.contains(':') } }
       .forEach {
         val name = it.getName(attr)
-        if (bindings.add(name)) {
-          newResult.addElement(lookupElement(lookupItemPrefix + name, it, priority = LOW, icon = null))
+        newCollector.contributeAttribute("v-bind:$name") { addAttribute ->
+          addAttribute(lookupElement(lookupItemPrefix + name, it, priority = LOW, icon = null))
         }
       }
   }
 
-  private fun addSlotCompletions(attr: XmlAttribute, result: CompletionResultSet) {
-    val prefix = result.prefixMatcher.prefix
-    val newResult = if (prefix == "v-slot:") result.withPrefixMatcher("") else result
+  private fun addSlotCompletions(attr: XmlAttribute, collector: CompletionCollector) {
+    val prefix = collector.prefix
+    val newCollector = if (prefix == "v-slot:") collector.withPrefixMatcher("") else collector
     val lookupItemPrefix = if (prefix.startsWith("#")) "#" else ""
     for (slot in getAvailableSlots(attr, true)) {
       // TODO provide insert handler for scoped slots
       if (slot.pattern != null) {
         val patternPrefix = getPatternCompletablePrefix(slot.pattern!!)
         if (patternPrefix.isNotBlank()) {
-          result.addElement(lookupElement(patternPrefix, slot, insertHandler = null,
-                                          presentableText = slot.name, priority = HIGH,
-                                          typeText = slot.pattern?.toString()))
+          newCollector.contributeAttribute("v-slot:$patternPrefix") { addAttribute ->
+            addAttribute(lookupElement(patternPrefix, slot, insertHandler = null,
+                                       presentableText = slot.name, priority = HIGH,
+                                       typeText = slot.pattern?.toString()))
+          }
         }
       }
       else {
-        newResult.addElement(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
+        newCollector.contributeAttribute("v-slot:${slot.name}") { addAttribute ->
+          addAttribute(lookupElement(lookupItemPrefix + slot.name, slot, priority = HIGH, insertHandler = null))
+        }
       }
     }
   }
@@ -345,4 +371,43 @@ class VueAttributeNameCompletionProvider : CompletionProvider<CompletionParamete
 
   private class FakeModifier(override val name: String) : VueDirectiveModifier
 
+  private open class PrefixedCompletionCollector(protected val resultSet: CompletionResultSet,
+                                                 protected val providedAttributes: MutableSet<String>) {
+    fun contributeAttribute(name: String, runnable: (consumer: (lookupElement: LookupElement) -> Unit) -> Unit) {
+      if (providedAttributes.add(name)) {
+        runnable(resultSet::addElement)
+      }
+    }
+
+    fun withPrefixMatcher(prefix: String): PrefixedCompletionCollector =
+      PrefixedCompletionCollector(resultSet.withPrefixMatcher(prefix), providedAttributes)
+  }
+
+  private class CompletionCollector(private val parameters: CompletionParameters,
+                                    resultSet: CompletionResultSet,
+                                    providedAttributes: MutableSet<String>) :
+    PrefixedCompletionCollector(resultSet, providedAttributes) {
+
+    val prefix get() = resultSet.prefixMatcher.prefix
+
+    fun contributeAttribute(lookupElement: LookupElement) {
+      if (providedAttributes.add(lookupElement.lookupString)) {
+        resultSet.addElement(lookupElement)
+      }
+    }
+
+    fun runRemainingContributors() {
+      resultSet.runRemainingContributors(parameters) { toPass ->
+        for (str in toPass.lookupElement.allLookupStrings) {
+          if (!providedAttributes.add(str)) {
+            @Suppress("LABEL_NAME_CLASH")
+            return@runRemainingContributors
+          }
+        }
+        resultSet.withPrefixMatcher(toPass.prefixMatcher)
+          .withRelevanceSorter(toPass.sorter)
+          .addElement(toPass.lookupElement)
+      }
+    }
+  }
 }

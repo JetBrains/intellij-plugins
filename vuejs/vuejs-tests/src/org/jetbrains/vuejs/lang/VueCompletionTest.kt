@@ -1680,6 +1680,19 @@ export default class ComponentInsertion extends Vue {
     UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, false), "!count#101", "!double#101")
   }
 
+  fun testNoDuplicateCompletionProposals() {
+    myFixture.configureByFile("noDupedAttrs.vue")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "v-dir2", "v-on:", "v-bind:")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "v-dir1", "v-slot", "v-slot:")
+    myFixture.type("v-on:\n")
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "click", "dblclick")
+    myFixture.type("\n\" :")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, ":dir", ":bar")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":foo", ":id")
+  }
+
   private fun assertDoesntContainVueLifecycleHooks() {
     myFixture.completeBasic()
     assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
