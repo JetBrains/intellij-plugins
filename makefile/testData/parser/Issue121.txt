@@ -3,7 +3,7 @@ Makefile
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
         MakefileTargetImpl(TARGET)
-          PsiElement(chars)('target')
+          PsiElement(chars)('bar')
       PsiElement(:)(':')
       MakefilePrerequisitesImpl(PREREQUISITES)
         MakefileNormalPrerequisitesImpl(NORMAL_PREREQUISITES)
