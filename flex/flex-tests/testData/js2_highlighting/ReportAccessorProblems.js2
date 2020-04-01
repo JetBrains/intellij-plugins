@@ -6,6 +6,9 @@ class Foo implements IFoo {
     }
 
     function get prop2():<error descr="Return type of a getter definition should not be void">void</error>  {
+    }
+
+    function get withNested() {
       function get <error>zzz</error>():int { return 1; }
       function set <error>zzz2</error>(val:String):void { }
     }

@@ -375,8 +375,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkFunctionDeclaration(@NotNull final JSFunction node) {
-    super.checkFunctionDeclaration(node);
+  public void visitJSFunctionDeclaration(@NotNull final JSFunction node) {
+    super.visitJSFunctionDeclaration(node);
 
     final ASTNode nameIdentifier = node.findNameIdentifier();
     if (nameIdentifier == null) return;
