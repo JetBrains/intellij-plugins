@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
+import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.refactoring.FormatFixer
@@ -42,7 +43,6 @@ import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.COMPONENTS_PROP
 import org.jetbrains.vuejs.model.source.NAME_PROP
 import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getElementComponentDecorator
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
@@ -97,15 +97,17 @@ class VueInsertHandler : XmlTagInsertHandler() {
                               isClass: Boolean = false) {
       val file: XmlFile = context as? XmlFile ?: context.containingFile as? XmlFile ?: return
       val defaultExport = findOrCreateDefaultExport(file, isClass)
-      var obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: VueComponents.getExportedDescriptor(defaultExport)?.obj
+      val defaultExportElement = defaultExport.stubSafeElement
+      var obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj
 
       if (obj == null) {
-        val decorator = getElementComponentDecorator(defaultExport) ?: return
+        if (defaultExportElement !is JSClass) return
+        val decorator = VueComponents.getComponentDecorator(defaultExportElement) ?: return
         val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
-        val newDecorator = getElementComponentDecorator(newClass)!!
+        val newDecorator = VueComponents.getComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
-        obj = VueComponents.getExportedDescriptor(defaultExport)?.obj ?: return
+        obj = VueComponents.getComponentDescriptor(defaultExportElement)?.obj ?: return
       }
 
       val components = componentProperty(obj).value as? JSObjectLiteralExpression ?: return

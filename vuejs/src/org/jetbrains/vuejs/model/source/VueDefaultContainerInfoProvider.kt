@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model.source
 
 import com.intellij.codeInsight.completion.CompletionUtil
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
@@ -22,6 +21,7 @@ import org.jetbrains.vuejs.index.VueExtendsBindingIndex
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
 class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedContainerInfoProvider(::VueSourceContainerInfo) {
 
@@ -136,9 +136,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
         .mapValues { element ->
           (VueComponents.meaningfulExpression(element) ?: element)
             .let { meaningfulElement ->
-              objectLiteralFor(meaningfulElement)
-              ?: (meaningfulElement.parent as? ES6ExportDefaultAssignment)
-                ?.let { VueComponents.getExportedDescriptor(it) }
+              getComponentDescriptor(meaningfulElement as? JSElement)
                 ?.let { it.obj ?: it.clazz }
             }
             ?.let { VueModelManager.getComponent(it) }

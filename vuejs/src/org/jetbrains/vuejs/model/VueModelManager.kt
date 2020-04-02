@@ -3,12 +3,11 @@ package org.jetbrains.vuejs.model
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.ecmascript6.psi.ES6ClassExpression
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.JSStubElementTypes
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
@@ -31,13 +30,12 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import one.util.streamex.StreamEx
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getExportedDescriptor
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.getComponentDescriptor
 
 class VueModelManager {
 
@@ -51,6 +49,22 @@ class VueModelManager {
       return findComponent(templateElement) as? VueEntitiesContainer
              ?: findVueApp(templateElement)
              ?: getGlobal(templateElement)
+    }
+
+    fun findEnclosingComponent(jsElement: JSElement): VueComponent? {
+      var context: PsiElement = PsiTreeUtil.getContextOfType(jsElement, false,
+                                                             JSObjectLiteralExpression::class.java, JSClass::class.java)
+                                ?: return null
+      // Find the outermost JSObjectLiteralExpression or first enclosing class
+      while (context is JSObjectLiteralExpression) {
+        val superContext = PsiTreeUtil.getContextOfType(context, true,
+                                                        JSObjectLiteralExpression::class.java, JSClass::class.java)
+        if (superContext == null) {
+          break
+        }
+        context = superContext
+      }
+      return getComponentDescriptor(context)?.let { it.obj ?: it.clazz }?.let { getComponent(it) }
     }
 
     private fun findComponent(templateElement: PsiElement): VueComponent? {
@@ -118,11 +132,7 @@ class VueModelManager {
             null
         }
         is JSClass -> {
-          val decorator = VueComponents.getElementComponentDecorator(
-            when (val decoratorContext = context.context) {
-              is JSExportAssignment -> decoratorContext
-              else -> context
-            })
+          val decorator = VueComponents.getComponentDecorator(context)
           VueComponentDescriptor(
             obj = decorator?.let { VueComponents.getDescriptorFromDecorator(it) },
             clazz = context)
@@ -214,8 +224,8 @@ class VueModelManager {
 
     private fun getDefaultExportedComponent(content: PsiElement?): VueComponentDescriptor? {
       return content
-        ?.let { ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment }
-        ?.let { defaultExport -> getExportedDescriptor(defaultExport) }
+        ?.let { (ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment)?.stubSafeElement }
+        ?.let { defaultExport -> getComponentDescriptor(defaultExport) }
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
@@ -283,17 +293,8 @@ class VueModelManager {
     }
 
     fun getMixin(mixin: PsiElement): VueMixin? {
-      val context = when (mixin) {
-        is JSObjectLiteralExpression -> mixin
-        is ES6ImportedBinding -> StreamEx.of(mixin.findReferencedElements())
-          .select(JSExportAssignment::class.java)
-          .map { getExportedDescriptor(it) }
-          .nonNull()
-          .map { it!!.clazz ?: it.obj!! }
-          .findFirst()
-          .orElse(null)
-        else -> getEnclosingComponentDescriptor(mixin)?.let { it.clazz ?: it.obj!! }
-      }
+      val context = (getComponentDescriptor(mixin) ?: getEnclosingComponentDescriptor(mixin))
+        ?.let { it.clazz ?: it.obj!! }
       return CachedValuesManager.getCachedValue(context ?: return null) {
         val descriptor = getEnclosingComponentDescriptor(context)
         val declaration: PsiElement = descriptor?.obj ?: context

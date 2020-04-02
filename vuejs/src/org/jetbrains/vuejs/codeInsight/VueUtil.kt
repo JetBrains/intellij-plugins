@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.codeInsight
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
@@ -35,7 +34,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ObjectUtils.tryCast
 import com.intellij.util.castSafelyTo
 import one.util.streamex.StreamEx
-import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.lang.expr.psi.VueJSEmbeddedExpression
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -44,6 +42,7 @@ import org.jetbrains.vuejs.model.source.PROPS_TYPE_PROP
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashSet
+import kotlin.reflect.KClass
 
 const val LANG_ATTRIBUTE_NAME = "lang"
 const val ATTR_DIRECTIVE_PREFIX = "v-"
@@ -136,14 +135,18 @@ private val vueTypesMap = mapOf(
 )
 
 fun objectLiteralFor(element: PsiElement?): JSObjectLiteralExpression? {
+  return resolveElementTo(element, JSObjectLiteralExpression::class) as? JSObjectLiteralExpression?
+}
+
+fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>): JSElement? {
   val queue = ArrayDeque<PsiElement>()
   queue.add(element ?: return null)
   val visited = HashSet<PsiElement>()
   loop@ while (!queue.isEmpty()) {
     val cur = queue.removeFirst()
     if (visited.add(cur)) {
+      if (classes.any { it.isInstance(cur) }) return cur as? JSElement
       when (cur) {
-        is JSObjectLiteralExpression -> return cur
         is JSInitializerOwner -> {
           when (cur) {
             is JSProperty -> cur.objectLiteralExpressionInitializer?.let { return it }
@@ -246,24 +249,6 @@ fun getFirstInjectedFile(element: PsiElement?): PsiFile? {
     ?.mapNotNull { it.first as? PsiFile }
     ?.firstOrNull()
 }
-
-fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {
-  val xmlFile = getContainingXmlFile(element) ?: return null
-
-  val module = findModule(xmlFile) ?: return null
-  val defaultExport = ES6PsiUtil.findDefaultExport(module)
-                        as? ES6ExportDefaultAssignment ?: return null
-  if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {
-    return Pair(module, defaultExport)
-  }
-  return null
-}
-
-fun getContainingXmlFile(element: PsiElement): XmlFile? =
-  (element.containingFile as? XmlFile
-   ?: element as? XmlFile
-   ?: InjectedLanguageManager.getInstance(
-     element.project).getInjectionHost(element)?.containingFile as? XmlFile)
 
 fun getHostFile(context: PsiElement): PsiFile? {
   val original = CompletionUtil.getOriginalOrSelf(context)
