@@ -121,8 +121,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun addContextType(info: JSTypeInfo, context: PsiElement) {
     if (context.containingFile.fileType != VueFileType.INSTANCE) return
     if (!VueFrameworkInsideScriptSpecificHandlersFactory.isInsideScript(context)) return
-    val parent = PsiTreeUtil.findFirstParent(context, Condition {
-      return@Condition it is JSObjectLiteralExpression && it.parent is ES6ExportDefaultAssignment
+    val parent = PsiTreeUtil.findFirstContext(context, false, Condition {
+      it is JSObjectLiteralExpression && it.context is ES6ExportDefaultAssignment
     })
     if (parent == null) return
     if (context !is JSReferenceExpression) return
