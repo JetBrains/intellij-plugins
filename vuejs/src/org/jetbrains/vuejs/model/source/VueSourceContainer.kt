@@ -11,8 +11,8 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider.VueContainerInfo
 
 abstract class VueSourceContainer(sourceElement: JSImplicitElement,
-                                  private val clazz: JSClass?,
-                                  protected val initializer: JSObjectLiteralExpression?) : VueContainer {
+                                  override val clazz: JSClass?,
+                                  override val initializer: JSObjectLiteralExpression?) : VueContainer, VueSourceEntity {
 
   override val source: PsiElement = sourceElement
   override val parents: List<VueEntitiesContainer> get() = VueGlobalImpl.getParents(this)
