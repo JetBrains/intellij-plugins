@@ -29,10 +29,6 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   <depends optional="true" config-file="prettier-file-watcher.xml">com.intellij.plugins.watcher</depends>
   <resource-bundle>messages.PrettierBundle</resource-bundle>
 
-  <applicationListeners>
-    <listener class="com.intellij.prettierjs.PrettierFileDocumentManagerListener" topic="com.intellij.openapi.fileEditor.FileDocumentManagerListener"/>
-  </applicationListeners>
-
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceInterface="com.intellij.prettierjs.PrettierLanguageService"
                     serviceImplementation="com.intellij.prettierjs.PrettierLanguageServiceImpl"/>
@@ -69,6 +65,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   </extensions>
   <extensions defaultExtensionNs="com.intellij.json">
     <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
+  </extensions>
+  <extensions defaultExtensionNs="JavaScript">
+    <linterSaveAction implementation="com.intellij.prettierjs.PrettierSaveAction"/>
   </extensions>
 
 </idea-plugin>
