@@ -15,7 +15,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.tools.Tool;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.concurrency.Semaphore;
-import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup;
+import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction;
 import com.jetbrains.cidr.execution.build.CidrBuild;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +47,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
                              @NotNull RunConfiguration configuration,
                              @NotNull ExecutionEnvironment env,
                              @NotNull BeforeRunTask<?> task) {
-    Tool tool = PlatformioActionGroup.CLEAN_ACTION.createPlatformioTool(configuration.getProject());
+    Tool tool = PlatformioCleanAction.createPlatformioTool(configuration.getProject());
     Ref<Boolean> success = new Ref<>(false);
     Semaphore actionFinished = new Semaphore();
     if (tool != null) {

@@ -1,6 +1,7 @@
 package com.jetbrains.cidr.cpp.embedded.platformio;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
@@ -51,5 +52,9 @@ public class PlatformioFileType implements FileType {
   public @Nullable
   String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
     return null;
+  }
+
+  public static boolean isFileOfType(@Nullable VirtualFile file) {
+    return file != null && FileTypeManager.getInstance().isFileOfType(file, INSTANCE);
   }
 }
