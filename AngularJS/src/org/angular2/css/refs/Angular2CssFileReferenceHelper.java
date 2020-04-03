@@ -2,6 +2,8 @@
 package org.angular2.css.refs;
 
 import com.intellij.lang.javascript.frameworks.webpack.WebpackCssFileReferenceHelper;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
@@ -14,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 
 public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelper {
   @NotNull
@@ -36,10 +37,21 @@ public class Angular2CssFileReferenceHelper extends WebpackCssFileReferenceHelpe
 
     @Override
     protected Collection<VirtualFile> findRootDirectories(@NotNull final VirtualFile context, @NotNull final Project project) {
-      return Optional.ofNullable(AngularConfigProvider.getAngularProject(project, context))
-        .map(AngularProject::getSourceDir)
-        .map(Collections::singletonList)
-        .orElseGet(Collections::emptyList);
+      AngularProject ngProject = AngularConfigProvider.getAngularProject(project, context);
+      if (ngProject != null) {
+        TypeScriptConfig tsConfig = TypeScriptConfigService.Provider.parseConfigFile(project, ngProject.getTsConfigFile());
+        if (tsConfig != null) {
+          VirtualFile baseUrl = tsConfig.getBaseUrl();
+          if (baseUrl != null) {
+            return Collections.singletonList(baseUrl);
+          }
+        }
+        VirtualFile cssResolveDir = ngProject.getCssResolveRootDir();
+        if (cssResolveDir != null) {
+          return Collections.singletonList(cssResolveDir);
+        }
+      }
+      return Collections.emptyList();
     }
   }
 }

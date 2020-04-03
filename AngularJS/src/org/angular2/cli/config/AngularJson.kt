@@ -97,6 +97,10 @@ internal open class AngularJsonBuildOptionsBase {
   @JsonProperty("index")
   val index: String? = null
 
+  @JsonProperty("tsConfig")
+  @JsonAlias("tsconfig")
+  val tsConfig: String? = null
+
   @JsonProperty("styles")
   @JsonDeserialize(using = StringOrObjectWithInputDeserializer::class)
   val styles: List<String>? = null

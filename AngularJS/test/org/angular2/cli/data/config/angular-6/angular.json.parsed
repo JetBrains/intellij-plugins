@@ -6,6 +6,7 @@
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
+       tsConfig: temp:///src/src/tsconfig.app.json
        globalStyleSheets: [temp:///src/src/styles.css]
        stylePreprocessorIncludeDirs: []
        karmaConfigFile: temp:///src/src/karma.conf.js
@@ -25,6 +26,7 @@
        rootDir: temp:///src/e2e
        sourceDir: temp:///src/e2e
        indexHtml: null
+       tsConfig: null
        globalStyleSheets: []
        stylePreprocessorIncludeDirs: []
        karmaConfigFile: null
