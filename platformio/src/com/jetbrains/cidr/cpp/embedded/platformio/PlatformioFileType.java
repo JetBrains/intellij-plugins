@@ -4,6 +4,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.ClionEmbeddedPlatformioIcons;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,11 +50,12 @@ public class PlatformioFileType implements FileType {
   }
 
   @Override
-  public @Nullable
-  String getCharset(@NotNull VirtualFile virtualFile, @NotNull byte[] bytes) {
+  @Nullable
+  public String getCharset(@NotNull VirtualFile virtualFile, byte @NotNull [] bytes) {
     return null;
   }
 
+  @Contract("null->false")
   public static boolean isFileOfType(@Nullable VirtualFile file) {
     return file != null && FileTypeManager.getInstance().isFileOfType(file, INSTANCE);
   }
