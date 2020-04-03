@@ -3,9 +3,6 @@ package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -15,6 +12,7 @@ import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
+import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService;
 import com.jetbrains.cidr.cpp.execution.CMakeAppRunConfiguration;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
 import org.jetbrains.annotations.NotNull;
@@ -64,9 +62,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
                                              @NotNull String argumentsToPass, @NotNull String text) {
     String platformioPath = PlatformioBaseConfiguration.findPlatformio();
     if (platformioPath == null || !(new File(platformioPath).canExecute())) {
-      Notifications.Bus.notify(
-        new Notification("org.platformio", "PlatfotmIO utility is not found", "Please check system path", NotificationType.ERROR),
-        project);
+      PlatformioService.notifyPlatformioNotFound(project);
       return null;
     }
     //todo try default profile

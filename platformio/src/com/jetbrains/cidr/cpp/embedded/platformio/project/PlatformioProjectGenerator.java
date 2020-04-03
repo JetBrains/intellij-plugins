@@ -104,7 +104,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
      */
     String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
     if (myPioUtility == null) {
-      showError("PlatformIO utility is not found");
+      PlatformioService.notifyPlatformioNotFound(project);
       return;
     }
     CustomTool initTool = new CustomTool("PlatformIO init");

@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
@@ -33,6 +34,7 @@ import javax.swing.tree.TreePath;
 
 public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<String[]>> {
 
+  public static final String GATHERING_INFO = "Gathering info...";
   private final Tree myTree;
 
   public PlatformioProjectSettingsStep(DirectoryProjectGenerator<Ref<String[]>> projectGenerator,
@@ -54,7 +56,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
       }
     });
     myTree.setPaintBusy(true);
-    myTree.getEmptyText().setText("Gathering info...");
+    myTree.getEmptyText().setText(GATHERING_INFO);
     myTree.setRootVisible(false);
 
     myTree.addTreeSelectionListener(e -> {
@@ -89,9 +91,13 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
       new Task.Backgroundable(null, "PlatformIO Boards List Query") {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
+          myTree.getEmptyText().setText(GATHERING_INFO);
           String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
           if (myPioUtility == null) {
-            setErrorText("PlatformIO utility is not found");
+            setErrorText(PlatformioService.PLATFORMIO_IS_NOT_FOUND);
+            myTree.getEmptyText().setText(PlatformioService.PLATFORMIO_IS_NOT_FOUND);
+            myTree.getEmptyText().appendSecondaryText(PlatformioService.INSTALL_GUIDE, SimpleTextAttributes.LINK_ATTRIBUTES,
+                                                      e -> PlatformioService.openInstallGuide());
             return;
           }
           GeneralCommandLine commandLine = new GeneralCommandLine()
@@ -136,7 +142,7 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
     return panel;
   }
 
-  private void userSelected(@NotNull String[] newCmdParameter) {
+  private void userSelected(String[] newCmdParameter) {
     getPeer().getSettings().set(newCmdParameter);
     checkValid();
   }
