@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlatformioActionGroup extends ActionGroup {
   public PlatformioActionGroup() {
-
     //noinspection DialogTitleCapitalization
     super("PlatformIO", "PlatformIO Support", ClionEmbeddedPlatformioIcons.Platformio);
   }
@@ -37,5 +36,10 @@ public class PlatformioActionGroup extends ActionGroup {
         presentation.setEnabledAndVisible(false);
       }
     }
+  }
+
+  @Override
+  public boolean isDumbAware() {
+    return true;
   }
 }
