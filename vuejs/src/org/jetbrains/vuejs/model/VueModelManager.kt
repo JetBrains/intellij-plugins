@@ -8,9 +8,12 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
+import com.intellij.lang.javascript.psi.resolve.JSClassResolver
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -224,8 +227,19 @@ class VueModelManager {
 
     private fun getDefaultExportedComponent(content: PsiElement?): VueComponentDescriptor? {
       return content
-        ?.let { (ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment)?.stubSafeElement }
+        ?.let {
+          (ES6PsiUtil.findDefaultExport(it) as? JSExportAssignment)?.stubSafeElement
+          ?: findDefaultCommonJSExport(it)
+        }
         ?.let { defaultExport -> getComponentDescriptor(defaultExport) }
+    }
+
+    private fun findDefaultCommonJSExport(element: PsiElement): PsiElement? {
+      return JSClassResolver.getInstance().findElementsByQNameIncludingImplicit(JSSymbolUtil.MODULE_EXPORTS, element.containingFile)
+        .asSequence()
+        .filterIsInstance<JSDefinitionExpression>()
+        .mapNotNull { it.initializerOrStub }
+        .firstOrNull()
     }
 
     private fun findVueApp(templateElement: PsiElement): VueApp? {
