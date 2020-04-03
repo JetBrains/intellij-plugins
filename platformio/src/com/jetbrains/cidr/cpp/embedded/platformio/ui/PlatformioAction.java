@@ -10,14 +10,10 @@ import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PlatformioAction extends PlatformioActionBase {
-  public PlatformioAction(long executionId,
-                          @NotNull String text,
-                          @Nullable String description,
-                          @NotNull String arguments,
-                          boolean updateCmake,
-                          boolean appendEnvironmentKey) {
-    super(executionId, text, description, arguments, updateCmake, appendEnvironmentKey);
+public abstract class PlatformioAction extends PlatformioActionBase {
+  public PlatformioAction(@NotNull String text,
+                          @Nullable String description) {
+    super(text, description);
   }
 
   @Override
