@@ -35,4 +35,42 @@ public class CssCompletionTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.completeBasic();
     assertEquals(asList("id-in-html", "local-id-ext"), sorted(myFixture.getLookupElementStrings()));
   }
+
+  public void testPreprocessorIncludePaths() {
+    myFixture.addFileToProject("angular.json",
+                               "{\"projects\":{\"foo\":{\"root\":\"src\",\"architect\":{\"build\":{\"builder\":\"z\"," +
+                               "\"options\":{\"stylePreprocessorOptions\":{\"includePaths\":[\"src/foo\"]}}}}}}}");
+    myFixture.addFileToProject("src/_var1.scss", "");
+    myFixture.addFileToProject("src/foo/_var2.scss", "");
+    myFixture.addFileToProject("src/foo/bar/_var3.scss", "");
+    myFixture.addFileToProject("src/foobar/main.scss", "@import '<caret>';");
+    myFixture.configureFromTempProjectFile("src/foobar/main.scss");
+    myFixture.completeBasic();
+    assertSameElements(myFixture.getLookupElementStrings(), "~foo", "~foobar", "bar", "var2");
+  }
+
+  public void testBaseURLPriority() {
+    myFixture.addFileToProject("tsconfig.json", "{\"compilerOptions\": {\"baseUrl\": \"./src/foo\"}}");
+    myFixture.addFileToProject("angular.json",
+                               "{\"projects\":{\"foo\":{\"root\":\"src\",\"architect\":{\"build\":{\"builder\":\"z\"," +
+                               "\"options\":{\"tsConfig\":\"tsconfig.json\",\"stylePreprocessorOptions\":{\"includePaths\":[\"src/foo\"]}}}}}}}");
+    myFixture.addFileToProject("src/_var1.scss", "");
+    myFixture.addFileToProject("src/foo/_var2.scss", "");
+    myFixture.addFileToProject("src/foo/bar/_var3.scss", "");
+    myFixture.addFileToProject("src/foobar/main.scss", "@import '<caret>';");
+    myFixture.configureFromTempProjectFile("src/foobar/main.scss");
+    myFixture.completeBasic();
+    assertSameElements(myFixture.getLookupElementStrings(), "~bar", "bar", "var2");
+  }
+
+  public void testLegacyPreprocessorIncludePaths() {
+    myFixture.addFileToProject(".angular-cli.json",
+                               "{ \"apps\": [{\"root\": \"src\", \"stylePreprocessorOptions\": {\"includePaths\": [\"foo\"]}}]}");
+    myFixture.addFileToProject("src/_var1.scss", "");
+    myFixture.addFileToProject("src/foo/_var2.scss", "");
+    myFixture.addFileToProject("src/foo/bar/_var3.scss", "");
+    myFixture.configureByText("main.scss", "@import '<caret>';");
+    myFixture.completeBasic();
+    assertSameElements(myFixture.getLookupElementStrings(), "src", "~foo", "bar", "var2");
+  }
 }

@@ -17,6 +17,10 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
 
   abstract val stylePreprocessorIncludeDirs: List<VirtualFile>
 
+  abstract val cssResolveRootDir: VirtualFile?
+
+  abstract val tsConfigFile: VirtualFile?
+
   abstract val karmaConfigFile: VirtualFile?
 
   abstract val protractorConfigFile: VirtualFile?
@@ -46,6 +50,7 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
       |       rootDir: ${rootDir}
       |       sourceDir: ${sourceDir}
       |       indexHtml: ${indexHtmlFile}
+      |       tsConfig: ${tsConfigFile}
       |       globalStyleSheets: ${globalStyleSheets}
       |       stylePreprocessorIncludeDirs: ${stylePreprocessorIncludeDirs}
       |       karmaConfigFile: ${karmaConfigFile}
@@ -68,6 +73,8 @@ internal class AngularProjectImpl(override val name: String,
 
   override val sourceDir get() = ngProject.sourceRoot?.let { angularCliFolder.findFileByRelativePath(it) } ?: rootDir
 
+  override val cssResolveRootDir: VirtualFile? get() = rootDir
+
   override val indexHtmlFile get() = resolveFile(ngProject.targets?.build?.options?.index)
 
   override val globalStyleSheets
@@ -79,6 +86,9 @@ internal class AngularProjectImpl(override val name: String,
     get() = ngProject.targets?.build?.options?.stylePreprocessorOptions?.includePaths
               ?.mapNotNull { angularCliFolder.findFileByRelativePath(it) }
             ?: emptyList()
+
+  override val tsConfigFile: VirtualFile?
+    get() = resolveFile(ngProject.targets?.build?.options?.tsConfig)
 
   override val karmaConfigFile get() = resolveFile(ngProject.targets?.test?.options?.karmaConfig)
 
@@ -107,6 +117,8 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
 
   override val sourceDir: VirtualFile? get() = app.root?.let { rootDir.findFileByRelativePath(it) }
 
+  override val cssResolveRootDir: VirtualFile? get() = sourceDir
+
   override val indexHtmlFile: VirtualFile? get() = resolveFile(app.index)
 
   override val globalStyleSheets: List<VirtualFile>
@@ -118,6 +130,9 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
     get() = app.stylePreprocessorOptions?.includePaths
               ?.mapNotNull { sourceDir?.findFileByRelativePath(it) }
             ?: emptyList()
+
+  override val tsConfigFile: VirtualFile?
+    get() = resolveFile(app.tsConfig)
 
   override val karmaConfigFile: VirtualFile?
     get() = resolveFile(angularJson.legacyTest?.karma?.config)
