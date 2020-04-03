@@ -1538,6 +1538,12 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
     }
   }
 
+  fun testCommonJSSupport() {
+    createPackageJsonWithVueDependency(myFixture)
+    myFixture.configureByFile("module-exports.vue")
+    myFixture.checkHighlighting()
+  }
+
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
