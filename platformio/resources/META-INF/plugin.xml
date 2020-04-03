@@ -77,6 +77,12 @@
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
   </actions>
+  <applicationListeners>
+    <listener class="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"
+              topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    <listener class="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioListener"
+              topic="com.intellij.openapi.project.ProjectManagerListener"/>
+  </applicationListeners>
   <project-components>
     <component>
       <implementation-class>com.jetbrains.cidr.cpp.embedded.platformio.PlatformioSvdWindowState</implementation-class>
