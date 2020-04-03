@@ -45,11 +45,12 @@
   <depends>com.intellij.modules.clion</depends>
   <depends>com.intellij.modules.clion.cmake</depends>
   <depends>com.intellij.clion.embedded</depends>
+  <depends>com.jetbrains.plugins.ini4idea</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <configurationType order="last" id="platformio"
                        implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType"/>
-    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE"
+    <fileType id="platformio" name="platformio" fileNames="platformio.ini" fieldName="INSTANCE" language="Ini"
               implementationClass="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType"/>
     <stepsBeforeRunProvider
       implementation="com.jetbrains.cidr.cpp.embedded.platformio.PlatformioCleanBeforeRunTaskProvider"/>
