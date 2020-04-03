@@ -17,13 +17,21 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.util.concurrency.Semaphore;
 import com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction;
 import com.jetbrains.cidr.execution.build.CidrBuild;
+import icons.ClionEmbeddedPlatformioIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 
 public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<BeforeRunTask<?>> {
   public static final Key<BeforeRunTask<?>> ID = Key.create("PlatformioPluginTarget");
   private static final long executionId = ExecutionEnvironment.getNextUnusedExecutionId();
+
+  @Override
+  public @Nullable Icon getIcon() {
+    return ClionEmbeddedPlatformioIcons.Platformio;
+  }
 
   @Override
   public Key<BeforeRunTask<?>> getId() {
