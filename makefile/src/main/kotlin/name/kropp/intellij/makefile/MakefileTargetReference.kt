@@ -1,27 +1,10 @@
 package name.kropp.intellij.makefile
 
 import com.intellij.codeInsight.lookup.*
-import com.intellij.openapi.util.*
 import com.intellij.psi.*
 import name.kropp.intellij.makefile.psi.*
 
-class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiReference {
-  override fun getElement() = prerequisite
-  override fun getRangeInElement() = TextRange.create(0, element.textLength)
-  override fun bindToElement(element: PsiElement): PsiElement? = null
-
-  override fun isReferenceTo(element: PsiElement): Boolean {
-    if (element is MakefileTarget) {
-      return element.matches(prerequisite.text)
-    }
-    if (element is MakefileVariable) {
-      return "\$(${element.text})" == prerequisite.text
-    }
-    return false
-  }
-
-  override fun getCanonicalText() = prerequisite.text ?: ""
-
+class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiPolyVariantReferenceBase<MakefilePrerequisite>(prerequisite, true) {
   override fun handleElementRename(newName: String): PsiElement {
     if (newName.contains("%")) {
       return prerequisite
@@ -35,8 +18,6 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
     return prerequisite
   }
 
-  override fun isSoft() = false
-
   val rule: MakefileRule?
     get() = prerequisite.parent.parent.parent.parent as? MakefileRule
 
@@ -45,18 +26,18 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
     LookupElementBuilder.create(it).withIcon(MakefileTargetIcon)
   }.toTypedArray()
 
-  override fun resolve(): PsiElement? {
+  override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
     val match = Regex("""\$\((.*)\)""").find(prerequisite.text)
     if (match != null) {
       val name = match.groups[1]!!.value
       return (prerequisite.containingFile as MakefileFile).variables
           .filter { it.text == name }
           .map(::PsiElementResolveResult)
-          .firstOrNull()?.element
+          .toTypedArray()
     }
     return (prerequisite.containingFile as MakefileFile).allTargets
         .filter { it.matches(prerequisite.text) }
         .map(::PsiElementResolveResult)
-        .firstOrNull()?.element
+        .toTypedArray()
   }
 }
