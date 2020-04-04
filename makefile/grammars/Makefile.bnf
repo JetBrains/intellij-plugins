@@ -47,7 +47,9 @@
 
 makefile ::= any*
 
-private any ::= (directive|conditional|variable-assignment|rule|command|function|macro|EOL)
+private stmt ::= (directive|conditional|variable-assignment|rule|command|function|macro|EOL)
+private recover ::= !(any)
+private any ::= !<<eof>> stmt {pin=1 recoverWhile=recover}
 
 directive ::= define|include|undefine|override|export|privatevar|vpath
 
@@ -79,7 +81,7 @@ conditional ::= conditional-keyword condition EOL block conditional-else* 'endif
 conditional-else ::= 'else' (conditional-keyword condition block | EOL? block) {pin=1}
 condition ::= ('(' (condition-body|',')* ')') | condition-body condition-body?
 private condition-body ::= variable-usage|function|string|identifier
-block ::= any*
+block ::= stmt*
 
 identifier ::= identifier_part | (<<parseToDollarNoWhitespace>> identifier_part) | <<parseNoWhitespace>>
 private identifier_part ::= ((function | variable-usage) <<parseToDollarNoWhitespaceBehind>> identifier_part) | ((function | variable-usage) <<parseNoWhitespaceBehind>>)
@@ -103,7 +105,7 @@ pattern ::= identifier
 directory ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileFilenameMixin"}
 
 private function-recover ::= !( ')' | EOL )
-function ::= '$' '(' function-name function-param* ')' {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileFunctionElementImpl"}
+function ::= '$' '(' function-name function-param* ')' {implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileFunctionElementImpl" pin=3}
 function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'findstring'|
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|

@@ -36,18 +36,25 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // directive|conditional|variable-assignment|rule|command|function|macro|EOL
+  // !<<eof>> stmt
   static boolean any(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "any")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = any_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && stmt(b, l + 1);
+    exit_section_(b, l, m, r, p, recover_parser_);
+    return r || p;
+  }
+
+  // !<<eof>>
+  private static boolean any_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "any_0")) return false;
     boolean r;
-    r = directive(b, l + 1);
-    if (!r) r = conditional(b, l + 1);
-    if (!r) r = variable_assignment(b, l + 1);
-    if (!r) r = rule(b, l + 1);
-    if (!r) r = command(b, l + 1);
-    if (!r) r = function(b, l + 1);
-    if (!r) r = consumeToken(b, MACRO);
-    if (!r) r = consumeToken(b, EOL);
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !eof(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -68,13 +75,13 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // any*
+  // stmt*
   public static boolean block(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "block")) return false;
     Marker m = enter_section_(b, l, _NONE_, BLOCK, "<block>");
     while (true) {
       int c = current_position_(b);
-      if (!any(b, l + 1)) break;
+      if (!stmt(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "block", c)) break;
     }
     exit_section_(b, l, m, true, false, null);
@@ -485,14 +492,15 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   public static boolean function(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function")) return false;
     if (!nextTokenIs(b, DOLLAR)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FUNCTION, null);
     r = consumeTokens(b, 0, DOLLAR, OPEN_PAREN);
     r = r && function_name(b, l + 1);
-    r = r && function_3(b, l + 1);
-    r = r && consumeToken(b, CLOSE_PAREN);
-    exit_section_(b, m, FUNCTION, r);
-    return r;
+    p = r; // pin = 3
+    r = r && report_error_(b, function_3(b, l + 1));
+    r = p && consumeToken(b, CLOSE_PAREN) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   // function-param*
@@ -1175,6 +1183,27 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // !(any)
+  static boolean recover(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recover")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NOT_);
+    r = !recover_0(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // (any)
+  private static boolean recover_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "recover_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = any(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // target_line recipe?
   public static boolean rule(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "rule")) return false;
@@ -1191,6 +1220,22 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "rule_1")) return false;
     recipe(b, l + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // directive|conditional|variable-assignment|rule|command|function|macro|EOL
+  static boolean stmt(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "stmt")) return false;
+    boolean r;
+    r = directive(b, l + 1);
+    if (!r) r = conditional(b, l + 1);
+    if (!r) r = variable_assignment(b, l + 1);
+    if (!r) r = rule(b, l + 1);
+    if (!r) r = command(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = consumeToken(b, MACRO);
+    if (!r) r = consumeToken(b, EOL);
+    return r;
   }
 
   /* ********************************************************** */
@@ -1564,6 +1609,11 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   static final Parser function_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return function_recover(b, l + 1);
+    }
+  };
+  static final Parser recover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder b, int l) {
+      return recover(b, l + 1);
     }
   };
 }
