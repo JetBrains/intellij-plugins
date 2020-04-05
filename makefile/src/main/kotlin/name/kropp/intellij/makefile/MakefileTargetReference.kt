@@ -4,7 +4,7 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.psi.*
 import name.kropp.intellij.makefile.psi.*
 
-class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiPolyVariantReferenceBase<MakefilePrerequisite>(prerequisite, true) {
+class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : PsiPolyVariantReferenceBase<MakefilePrerequisite>(prerequisite, false) {
   override fun handleElementRename(newName: String): PsiElement {
     if (newName.contains("%")) {
       return prerequisite
