@@ -78,6 +78,16 @@ export default class MyDirective {
 
 }
 
+@Directive(<error descr="Directive is missing a required 'selector' property">{}</error>)
+export class MyDirective {
+
+}
+
+@Directive()
+export class MyDirective {
+
+}
+
 @Directive()
 export abstract class MyDirective {
 
