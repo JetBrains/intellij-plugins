@@ -37,7 +37,7 @@ class DebuggingSecondPart(module: Module) : KLesson("Debugging Code. Part II", m
         }
 
         task("Stop") {
-          text("Finally, let’s learn how to stop the debugger when you no longer need it. First, click the breakpoint we added to remove it. Then, stop the debugger with ${action(it)} (<icon>AllIcons.Ide.Macro.Recording_stop</icon> and close its tool window by pressing <action>HideActiveWindow</action>. ")
+          text("Finally, let’s learn how to stop the debugger when you no longer need it. First, click the breakpoint we added to remove it. Then, stop the debugger with ${action(it)} (<icon>AllIcons.Actions.Suspend</icon>) and close its tool window by pressing <action>HideActiveWindow</action>. ")
           trigger(it)
         }
 
