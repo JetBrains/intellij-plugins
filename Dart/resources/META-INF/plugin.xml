@@ -294,6 +294,7 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
+    <action id="Dart.pub.outdated" class="com.jetbrains.lang.dart.ide.actions.DartPubOutdatedAction"/>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction"/>
   </actions>
 </idea-plugin>
