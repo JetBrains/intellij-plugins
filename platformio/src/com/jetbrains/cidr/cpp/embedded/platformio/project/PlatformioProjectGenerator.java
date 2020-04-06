@@ -13,6 +13,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -96,12 +97,23 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
                               @NotNull VirtualFile baseDir,
                               @NotNull Ref<String[]> settings,
                               @NotNull Module module) {
-    /* This method starts multi-stage process
-       1. PlatformIO utility is started asynchronously under progress indicator
-       2. When it's done, another asynchronous code writes empty source code stub if no main.c or main.cpp is generated
-       3. When it's done, CMake workspace is initialized asynchronously, and a listener is set to watch the process
-       4. When it's done, CMake run configurations and build profiles are created
-     */
+    StringBuilder pioCmdLineTail = new StringBuilder();
+    for (String s : settings.get()) {
+      pioCmdLineTail.append(' ').append(s);
+    }
+    doGenerateProject(project, baseDir, pioCmdLineTail, true);
+  }
+
+  public void doGenerateProject(@NotNull Project project,
+                                @NotNull VirtualFile baseDir,
+                                @NotNull CharSequence pioCmdLineTail,
+                                boolean generateMain) {
+  /* This method starts multi-stage process
+     1. PlatformIO utility is started asynchronously under progress indicator
+     2. When it's done, another asynchronous code writes empty source code stub if no main.c or main.cpp is generated
+     3. When it's done, CMake workspace is initialized asynchronously, and a listener is set to watch the process
+     4. When it's done, CMake run configurations and build profiles are created
+   */
     String myPioUtility = PlatformioBaseConfiguration.findPlatformio();
     if (myPioUtility == null) {
       PlatformioService.notifyPlatformioNotFound(project);
@@ -110,7 +122,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
     CustomTool initTool = new CustomTool("PlatformIO init");
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
-    initTool.setParameters("init --ide clion " + String.join(" ", settings.get()));
+    initTool.setParameters("init --ide clion" + pioCmdLineTail);
     DataContext projectContext = SimpleDataContext.getProjectContext(project);
     Semaphore semaphore = new Semaphore(1);
     Ref<Boolean> success = new Ref<>(false);
@@ -135,7 +147,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
         public void onFinished() {
           if (success.get()) {
             // Phase 2 started
-            WriteAction.run(() -> finishFileStructure(project, baseDir));
+            WriteAction.run(() -> finishFileStructure(project, baseDir, generateMain));
           }
         }
       }.queue(); // Phase 1 started
@@ -143,24 +155,31 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
   }
 
   private void finishFileStructure(@NotNull Project project,
-                                   @NotNull VirtualFile baseDir) {
-    VirtualFile srcFolder = baseDir.findChild("src");
-    if (srcFolder == null || !srcFolder.isDirectory()) {
-      showError("Src folder is not found or invalid");
-      return;
-    }
-    if (srcFolder.findChild("main.cpp") == null) {
-      try {
-        VirtualFile mainC = srcFolder.findOrCreateChildData(this, "main.c");
-        if (mainC.getLength() == 0) {
-          mainC.setBinaryContent("# Write your code here".getBytes(StandardCharsets.US_ASCII));
-        }
-      }
-      catch (IOException e) {
-        showError(ExceptionUtil.getThrowableText(e));
+                                   @NotNull VirtualFile baseDir, boolean generateMain) {
+    baseDir.refresh(false, true);
+    if (generateMain) {
+      VirtualFile srcFolder = baseDir.findChild("src");
+      if (srcFolder == null || !srcFolder.isDirectory()) {
+        showError("Src folder is not found or invalid");
         return;
       }
+      if (srcFolder.findChild("main.cpp") == null) {
+        try {
+          VirtualFile mainC = srcFolder.findOrCreateChildData(this, "main.c");
+          if (mainC.getLength() == 0) {
+            mainC.setBinaryContent("# Write your code here".getBytes(StandardCharsets.US_ASCII));
+          }
+        }
+        catch (IOException e) {
+          showError(ExceptionUtil.getThrowableText(e));
+          return;
+        }
+      }
     }
+    updateCMakeProjectInformation(project, baseDir);
+  }
+
+  public static void updateCMakeProjectInformation(@NotNull Project project, @NotNull VirtualFile baseDir) {
     if (project.isInitialized()) {
       CMakeWorkspace cmakeWorkspace = CMakeWorkspace.getInstance(project);
       MessageBusConnection busConnection = project.getMessageBus().connect();
@@ -176,7 +195,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
           }
         }
       });
-      cmakeWorkspace.selectProjectDir(VfsUtilCore.virtualToIoFile(baseDir)); //Phase 3 started
+      ApplicationManager.getApplication().invokeLaterOnWriteThread(
+        () -> cmakeWorkspace.selectProjectDir(VfsUtilCore.virtualToIoFile(baseDir)) //Phase 3 started
+      );
     }
   }
 
