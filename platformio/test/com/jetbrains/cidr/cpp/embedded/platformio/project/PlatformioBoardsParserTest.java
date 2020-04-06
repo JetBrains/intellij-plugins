@@ -3,9 +3,9 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.ResourceUtil;
 
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.stream.Stream;
 
 import static com.jetbrains.cidr.cpp.embedded.platformio.project.DeviceTreeNode.TYPE.*;
@@ -38,8 +38,8 @@ public class PlatformioBoardsParserTest extends UsefulTestCase {
                                                  "--board", "disco_f334c8", "-O", "framework=stm32cube"));
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private static Stream<DeviceTreeNode> childrenStream(TreeNode treeNode) {
-    //noinspection unchecked
-    return Collections.<DefaultMutableTreeNode>list(treeNode.children()).stream();
+    return Collections.list((Enumeration)treeNode.children()).stream();
   }
 }
