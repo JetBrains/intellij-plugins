@@ -79,6 +79,16 @@ export default class MyDirective {
 
 }
 
+@Directive({})
+export class MyDirective {
+
+}
+
+@Directive()
+export class MyDirective {
+
+}
+
 @Directive()
 export abstract class MyDirective {
 
