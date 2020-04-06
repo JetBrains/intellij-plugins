@@ -57,6 +57,7 @@
     <directoryProjectGenerator implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioProjectGenerator"
                                id="jetbrains.cidr.platformio" order="after jetbrains.cidr.stm32cubemx"/>
     <notificationWhitelist groupIds="PlatformIO plugin;org.platformio"/>
+    <directoryIndexExcludePolicy implementation="com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioExcludePolicy"/>
   </extensions>
 
   <actions>
