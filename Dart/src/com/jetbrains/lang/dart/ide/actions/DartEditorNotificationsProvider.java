@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -44,7 +45,9 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
   @Override
   @Nullable
-  public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile vFile, @NotNull final FileEditor fileEditor, @NotNull Project project) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile vFile,
+                                                         @NotNull FileEditor fileEditor,
+                                                         @NotNull Project project) {
     if (!vFile.isInLocalFileSystem()) {
       return null;
     }
@@ -60,7 +63,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
       final DartSdk sdk = DartSdk.getDartSdk(project);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
-        return new PubActionsPanel();
+        return new PubActionsPanel(sdk);
       }
     }
 
@@ -120,13 +123,17 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   private static class PubActionsPanel extends EditorNotificationPanel {
-    private PubActionsPanel() {
+    private PubActionsPanel(@NotNull DartSdk sdk) {
       super(EditorColors.GUTTER_BACKGROUND);
-      createActionLabel(DartBundle.message("get.dependencies"), "Dart.pub.get");
-      createActionLabel(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade");
-      createActionLabel(DartBundle.message("action.label.text.build"), "Dart.build");
+      createActionLabel(DartBundle.message("pub.get"), "Dart.pub.get");
+      createActionLabel(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade");
+
+      if (StringUtil.compareVersionNumbers(sdk.getVersion(), DartPubOutdatedAction.MIN_SDK_VERSION) >= 0) {
+        createActionLabel(DartBundle.message("pub.outdated"), "Dart.pub.outdated");
+      }
+
       myLinksPanel.add(new JSeparator(SwingConstants.VERTICAL));
-      createActionLabel(DartBundle.message("action.label.text.repair.cache"), "Dart.pub.cache.repair");
+      createActionLabel(DartBundle.message("webdev.build"), "Dart.build");
     }
   }
 

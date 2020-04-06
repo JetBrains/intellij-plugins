@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -79,8 +79,8 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
                                                                  @NotNull final VirtualFile pubspecFile,
                                                                  @NotNull final String errorMessage) {
     final LocalQuickFix[] fixes = new LocalQuickFix[]{
-      new RunPubFix(DartBundle.message("get.dependencies"), "Dart.pub.get"),
-      new RunPubFix(DartBundle.message("upgrade.dependencies"), "Dart.pub.upgrade"),
+      new RunPubFix(DartBundle.message("pub.get"), "Dart.pub.get"),
+      new RunPubFix(DartBundle.message("pub.upgrade"), "Dart.pub.upgrade"),
       new OpenPubspecFix(),
       new IgnoreWarningFix(myIgnoredPubspecPaths, pubspecFile.getPath())};
 
