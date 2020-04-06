@@ -4,6 +4,7 @@ package training.learn.lesson.javascript.completion
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.openapi.editor.impl.EditorComponentImpl
+import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.JavaScriptLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.javascript.checkWordInSearchEverywhereInput
@@ -44,8 +45,13 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
     get() {
       return {
         JSRootConfiguration.getInstance(project).storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6)
+        
+        //by default in 2020.1 "Structure" is in "top-left" state, also the state can be changed by user 
+        val toolWindow = ToolWindowManager.getInstance(project).getToolWindow("Structure")
+        toolWindow?.setSplitMode(true, null)
+        
         prepareSample(sample)
-
+        
         task("RecentFiles") {
           text("Let’s start with navigating around a project. Press ${action(it)} to call up the <strong>Recent Files</strong> popup.")
           trigger(it)
