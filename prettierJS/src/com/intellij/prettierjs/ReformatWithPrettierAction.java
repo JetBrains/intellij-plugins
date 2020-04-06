@@ -28,6 +28,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper;
@@ -53,6 +54,7 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -64,6 +66,8 @@ import javax.swing.event.HyperlinkListener;
 import java.util.*;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
+  private static final @NotNull Logger LOG = Logger.getInstance(ReformatWithPrettierAction.class);
+
   private final ErrorHandler myErrorHandler;
 
   public ReformatWithPrettierAction(@NotNull ErrorHandler errorHandler) {
@@ -168,7 +172,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable =
-      () -> ReadAction.compute(() -> performRequestForFile(project, nodePackage, service, file, range));
+      () -> performRequestForFile(project, nodePackage, service, file, range);
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
@@ -253,11 +257,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                           boolean reportSkippedFiles,
                                           @NotNull ErrorHandler errorHandler) {
     PrettierLanguageService service = PrettierLanguageService.getInstance(project);
-    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> ReadAction.compute(() -> {
+    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
-      while (fileIterator.hasNext()) {
-        PsiFile currentFile = fileIterator.next();
+      List<PsiFile> files = new SmartList<>();
+      ReadAction.run(() -> {
+        while (fileIterator.hasNext()) {
+          files.add(fileIterator.next());
+        }
+      });
+
+      for (PsiFile currentFile : files) {
         indicator.setText(PrettierBundle.message("processing.0.progress", currentFile.getName()));
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
@@ -278,7 +288,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         reformattedResults.put(currentFile, result);
       }
       return reformattedResults;
-    }));
+    });
 
     runWriteCommandAction(project, () -> {
       for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
@@ -313,19 +323,35 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                                                             @NotNull PrettierLanguageService service,
                                                                             @NotNull PsiFile currentFile,
                                                                             @Nullable TextRange range) {
-    ApplicationManager.getApplication().assertReadAccessAllowed();
-    VirtualFile currentVFile = currentFile.getVirtualFile();
-    String filePath = currentVFile.getPath();
-    // PsiFile might be not committed at this point, take text from document
-    Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
-    if (document == null) {
+    if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+      LOG.error("JSLanguageServiceUtil.awaitFuture() under read action may cause deadlock");
+    }
+
+    Ref<String> text = Ref.create();
+    Ref<String> filePath = Ref.create();
+    Ref<String> ignoreFilePath = Ref.create();
+
+    ReadAction.run(() -> {
+      if (!currentFile.isValid()) return;
+
+      VirtualFile currentVFile = currentFile.getVirtualFile();
+      filePath.set(currentVFile.getPath());
+      // PsiFile might be not committed at this point, take text from document
+      Document document = PsiDocumentManager.getInstance(project).getDocument(currentFile);
+      if (document == null) return;
+      CharSequence content = document.getImmutableCharSequence();
+      text.set(JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, content, currentVFile).toString());
+      VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
+      if (ignoreVFile != null) {
+        ignoreFilePath.set(ignoreVFile.getPath());
+      }
+    });
+
+    if (text.isNull()) {
       return PrettierLanguageService.FormatResult.UNSUPPORTED;
     }
-    String text =
-      JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, document.getImmutableCharSequence(), currentVFile).toString();
-    VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
-    String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
-    return JSLanguageServiceUtil.awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
+
+    return JSLanguageServiceUtil.awaitFuture(service.format(filePath.get(), ignoreFilePath.get(), text.get(), nodePackage, range));
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {
