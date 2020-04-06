@@ -182,6 +182,7 @@ public class Angular2DecoratorUtil {
     String decoratorName = decorator.getDecoratorName();
     return decoratorName != null
            && contains(decoratorName, names)
+           && (!decoratorName.equals(DIRECTIVE_DEC) || getObjectLiteralInitializer(decorator) != null)
            && doIfNotNull(doIfNotNull(getClassForDecoratorElement(decorator), JSAttributeListOwner::getAttributeList),
                           attrList -> attrList.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) != Boolean.TRUE
            && Angular2LangUtil.isAngular2Context(decorator)
