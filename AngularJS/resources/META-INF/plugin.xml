@@ -123,6 +123,8 @@
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
+    <fileContextProvider implementation="org.angular2.cli.AngularCliContextProvider"/>
+
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"

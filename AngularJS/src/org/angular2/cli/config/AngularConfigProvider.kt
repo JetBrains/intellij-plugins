@@ -8,10 +8,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.file.PsiFileImplUtil
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiUtilCore
 import org.angular2.cli.AngularCliUtil
 
 class AngularConfigProvider private constructor() {
@@ -20,6 +23,13 @@ class AngularConfigProvider private constructor() {
 
     private val ANGULAR_CLI_CONFIG_KEY = Key.create<CachedValue<AngularConfig>>("ANGULAR_CONFIG_KEY")
     private val LOG = Logger.getInstance(AngularConfigProvider::class.java)
+
+    @JvmStatic
+    fun getAngularProject(context: PsiFile): AngularProject? {
+      return context.originalFile.virtualFile?.let {
+        getAngularProject(context.project, it)
+      }
+    }
 
     @JvmStatic
     fun getAngularProject(project: Project, context: VirtualFile): AngularProject? {
