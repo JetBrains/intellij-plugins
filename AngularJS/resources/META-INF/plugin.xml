@@ -152,7 +152,7 @@
                      groupName="Angular" enabledByDefault="true" level="ERROR" key="angular.inspection.invalid-directive-selector.name"
                      bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
-                     groupName="Angular" enabledByDefault="false" level="WARNING"
+                     groupName="Angular" enabledByDefault="true" level="WARNING"
                      key="angular.inspection.aot-inaccessible-member.name" bundle="messages.Angular2Bundle"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
