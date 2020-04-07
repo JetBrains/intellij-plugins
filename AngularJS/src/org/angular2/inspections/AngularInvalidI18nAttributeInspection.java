@@ -46,8 +46,9 @@ public class AngularInvalidI18nAttributeInspection extends AngularHtmlLikeTempla
         LocalQuickFix[] quickFixes = StreamEx.of(candidates)
           .limit(3)
           .map(name -> new RenameAttributeQuickFix(name)).toArray(LocalQuickFix[]::new);
+        //noinspection DialogTitleCapitalization
         holder.registerProblem(attribute, range,
-                               Angular2Bundle.message("angular.inspection.template.i18n.empty"),
+                               Angular2Bundle.message("angular.inspection.i18n.message.empty"),
                                quickFixes);
       }
       else if (descriptor.getDeclarations().isEmpty()) {
@@ -59,7 +60,7 @@ public class AngularInvalidI18nAttributeInspection extends AngularHtmlLikeTempla
           .toArray(LocalQuickFix[]::new);
 
         holder.registerProblem(attribute, new TextRange(range.getStartOffset() + 5, range.getEndOffset()),
-                               Angular2Bundle.message("angular.inspection.template.i18n.not-matching", i18nedAttrName),
+                               Angular2Bundle.message("angular.inspection.i18n.message.not-matching", i18nedAttrName),
                                quickFixes);
       }
     }

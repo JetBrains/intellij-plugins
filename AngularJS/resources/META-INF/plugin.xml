@@ -128,32 +128,32 @@
     <!--suppress PluginXmlValidity -->
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
-                     displayName="Angular CLI add dependency"
-                     groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
+                     groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"
+                     key="angular.inspection.install-with-ng-add.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection"
-                     displayName="Incorrect component template definition"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.invalid-template-definition.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection"
-                     displayName="Missing or invalid component, directive or pipe declaration in a module"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.invalid-declaration-in-module.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidImportedOrDeclaredSymbolInspection"
-                     displayName="Invalid imported or declared symbol"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.wrong-entity-type.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularRecursiveModuleImportExportInspection"
-                     displayName="Recursive import or export of Angular module"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.cyclic-module-dependency.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedModuleExportInspection"
-                     displayName="Undefined export from Angular module"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.undefined-export.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidEntryComponentInspection"
-                     displayName="Invalid entry component"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"
+                     key="angular.inspection.invalid-entry-component.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
-                     displayName="Missing or invalid selector"
-                     groupName="Angular" enabledByDefault="true" level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true" level="ERROR" key="angular.inspection.invalid-directive-selector.name"
+                     bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
-                     displayName="Inaccessible component member in AOT mode"
-                     groupName="Angular" enabledByDefault="false" level="WARNING"/>
+                     groupName="Angular" enabledByDefault="false" level="WARNING"
+                     key="angular.inspection.aot-inaccessible-member.name" bundle="messages.Angular2Bundle"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
@@ -192,39 +192,41 @@
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor" order="first"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingEventHandlerInspection"
-                     displayName="Missing event handler" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.missing-event-handler.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidExpressionResultTypeInspection"
-                     displayName="Invalid expression result type" groupName="Angular" enabledByDefault="true"
-                     level="WARNING" language="Angular2"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="WARNING" language="Angular2" key="angular.inspection.invalid-expr-result-type.name"
+                     bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInsecureBindingToEventInspection"
-                     displayName="Insecure binding to event" groupName="Angular" enabledByDefault="true"
-                     level="WARNING"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="WARNING" key="angular.inspection.insecure-binding-to-event.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularNonEmptyNgContentInspection"
-                     displayName="Content inside &lt;ng-content&gt; tag" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.ng-content-with-content.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMultipleStructuralDirectivesInspection"
-                     displayName="Multiple structural directives on one element" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.multiple-structural-directives.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidAnimationTriggerAssignmentInspection"
-                     alternativeId=""
-                     displayName="Invalid animation trigger assignment" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.animation-trigger-assignment.name"
+                     bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidTemplateReferenceVariableInspection"
-                     displayName="Unbound or ambiguous template reference variable" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.invalid-template-ref-var.name"
+                     bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedBindingInspection"
-                     displayName="Undefined binding" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.undefined-binding.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidI18nAttributeInspection"
-                     displayName="Invalid i18n attribute" groupName="Angular" enabledByDefault="true"
-                     level="WARNING"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="WARNING" key="angular.inspection.i18n.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularAmbiguousComponentTagInspection"
-                     displayName="Ambiguous component tag" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.ambiguous-component-tag.name" bundle="messages.Angular2Bundle"/>
     <localInspection implementationClass="org.angular2.inspections.AngularUndefinedTagInspection"
-                     displayName="Undefined tag" groupName="Angular" enabledByDefault="true"
-                     level="ERROR"/>
+                     groupName="Angular" enabledByDefault="true"
+                     level="ERROR" key="angular.inspection.undefined-tag.name" bundle="messages.Angular2Bundle"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
     <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
@@ -324,14 +326,13 @@
 
   <actions>
     <action class="org.angular2.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
-            text="Angular Schematic..." description="Generate new code from Angular Schematics"
             icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
     <action class="org.angular2.cli.actions.AngularCliAddDependencyAction" id="angularCliAdd"
-            text="Angular Dependency..." description="Add new dependency and execute associated 'ng-add' schematics"
             icon="/icons/angular2.svg">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
+  <resource-bundle>messages.Angular2Bundle</resource-bundle>
 </idea-plugin>

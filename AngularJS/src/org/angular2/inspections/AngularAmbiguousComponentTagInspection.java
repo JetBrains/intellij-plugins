@@ -36,14 +36,16 @@ public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTempl
       .shiftLeft(tag.getTextOffset());
     if (isTemplateTag(tag)) {
       if (!components.isEmpty()) {
-        holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.embedded.components",
-                                                                     Angular2EntityUtils.renderEntityList(components)));
+        holder.registerProblem(tag, startTag, Angular2Bundle.message(
+          "angular.inspection.ambiguous-component-tag.message.embedded",
+          Angular2EntityUtils.renderEntityList(components)));
       }
     }
     else {
       if (components.size() > 1) {
-        holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.element-with-many-components",
-                                                                     Angular2EntityUtils.renderEntityList(components)));
+        holder.registerProblem(tag, startTag, Angular2Bundle.message(
+          "angular.inspection.ambiguous-component-tag.message.many-components",
+          Angular2EntityUtils.renderEntityList(components)));
       }
     }
   }
@@ -59,8 +61,9 @@ public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTempl
         new Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute)).getMatched(),
         d -> d.isComponent() && scope.contains(d));
       if (!components.isEmpty()) {
-        holder.registerProblem(attribute, Angular2Bundle.message("angular.inspection.template.embedded.components",
-                                                                 Angular2EntityUtils.renderEntityList(components)));
+        holder.registerProblem(attribute, Angular2Bundle.message(
+          "angular.inspection.ambiguous-component-tag.message.embedded",
+          Angular2EntityUtils.renderEntityList(components)));
       }
     }
   }

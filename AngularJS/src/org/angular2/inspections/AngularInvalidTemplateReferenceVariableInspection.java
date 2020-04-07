@@ -46,7 +46,7 @@ public class AngularInvalidTemplateReferenceVariableInspection extends AngularHt
           }
           quickFixes.add(new RemoveAttributeIntentionFix(attribute.getName()));
           holder.registerProblem(attribute.getNameElement(),
-                                 Angular2Bundle.message("angular.inspection.template.ref-var-unbound", exportName),
+                                 Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.unbound", exportName),
                                  scope.isFullyResolved()
                                  ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                  : ProblemHighlightType.WEAK_WARNING,
@@ -56,7 +56,7 @@ public class AngularInvalidTemplateReferenceVariableInspection extends AngularHt
         else if (matching.size() > 1) {
           holder.registerProblem(attribute.getNameElement(),
                                  range,
-                                 Angular2Bundle.message("angular.inspection.template.ref-var-ambiguous-name", exportName,
+                                 Angular2Bundle.message("angular.inspection.invalid-template-ref-var.message.ambiguous-name", exportName,
                                                         Angular2EntityUtils.renderEntityList(matching)));
         }
       }

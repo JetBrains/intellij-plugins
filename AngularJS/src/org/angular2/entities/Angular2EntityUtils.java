@@ -124,7 +124,6 @@ public class Angular2EntityUtils {
     return result;
   }
 
-  @SuppressWarnings("HardCodedStringLiteral")
   public static String toString(Angular2Element element) {
     String sourceKind;
     if (element instanceof Angular2SourceEntity) {
@@ -224,7 +223,7 @@ public class Angular2EntityUtils {
       if (++i > 0) {
         if (i == entities.size() - 1) {
           result.append(' ');
-          result.append(Angular2Bundle.message("angular.inspection.template.and-separator"));
+          result.append(Angular2Bundle.message("angular.description.and-separator"));
           result.append(' ');
         }
         else {

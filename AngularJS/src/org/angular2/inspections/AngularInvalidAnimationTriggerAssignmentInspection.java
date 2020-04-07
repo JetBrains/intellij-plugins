@@ -26,7 +26,7 @@ public class AngularInvalidAnimationTriggerAssignmentInspection extends AngularH
         && attribute.getValueElement() != null
         && !StringUtil.notNullize(attribute.getValue()).isEmpty()) {
       holder.registerProblem(attribute.getValueElement(),
-                             Angular2Bundle.message("angular.inspection.template.animation-trigger-assignment"),
+                             Angular2Bundle.message("angular.inspection.animation-trigger-assignment.message"),
                              new ConvertToPropertyBindingQuickFix("@" + info.name),
                              new RemoveAttributeValueQuickFix());
     }

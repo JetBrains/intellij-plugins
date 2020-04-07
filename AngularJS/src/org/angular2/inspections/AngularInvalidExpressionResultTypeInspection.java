@@ -84,7 +84,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
         JSType actualType = JSResolveUtil.getElementJSType(expression, true);
         if (actualType != null
             && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
-          holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.template.type-not-assignable",
+          holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.invalid-expr-result-type.message",
                                                                     actualType.getTypeText(JSType.TypeTextFormat.PRESENTABLE),
                                                                     expectedType.getTypeText(JSType.TypeTextFormat.PRESENTABLE)));
         }
