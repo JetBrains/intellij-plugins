@@ -72,12 +72,12 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
 
     final List<FtlVariable> result = new ArrayList<>();
     result.add(new MyFtlLightVariable("stack", file, (FtlType) null));
-    result.add(new MyFtlLightVariable("response", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
-    result.add(new MyFtlLightVariable("res", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
-    result.add(new MyFtlLightVariable("request", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
-    result.add(new MyFtlLightVariable("req", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));
-    result.add(new MyFtlLightVariable("session", file, WebCommonClassNames.HTTP_SESSION));
-    result.add(new MyFtlLightVariable("application", file, WebCommonClassNames.SERVLET_CONTEXT));
+    result.add(new MyFtlLightVariable("response", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_RESPONSE));
+    result.add(new MyFtlLightVariable("res", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_RESPONSE));
+    result.add(new MyFtlLightVariable("request", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_REQUEST));
+    result.add(new MyFtlLightVariable("req", file, WebCommonClassNames.JAVAX_HTTP_SERVLET_REQUEST));
+    result.add(new MyFtlLightVariable("session", file, WebCommonClassNames.JAVAX_HTTP_SESSION));
+    result.add(new MyFtlLightVariable("application", file, WebCommonClassNames.JAVAX_SERVLET_CONTEXT));
     result.add(new MyFtlLightVariable("base", file, CommonClassNames.JAVA_LANG_STRING));
 
     installTaglibSupport(result, module,
