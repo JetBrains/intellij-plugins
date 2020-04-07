@@ -45,7 +45,7 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
         task("Refactorings.QuickListPopupAction") {
           text("WebStorm has a <a href='https://www.jetbrains.com/help/webstorm/refactoring-source-code.html#ws_supported_refactorings'>number of refactorings</a> that can automatically restructure existing code without changing its behavior across the entire project. Let's look up the list of refactorings available for the <strong>books</strong> parameter. To do this, press ${action(it)} or go to <strong>Refactor > Refactor This</strong> from the main menu.")
           stateCheck {
-            editor.caretModel.logicalPosition.line == 0 && textAtCaretEqualsTo("books")
+            textAtCaretEqualsTo("books")
           }
           trigger(it)
         }
@@ -53,7 +53,7 @@ class RefactoringLesson(module: Module) : KLesson("Refactorings in a Nutshell", 
         task("RenameElement") {
           text("With <strong>Refactor This</strong>, you don't need to memorize all the refactorings the IDE has, or their shortcuts. Let's click <strong>Rename</strong> to see one of the most popular refactorings in action.")
           trigger(it) {
-            editor.caretModel.logicalPosition.line == 0
+            textAtCaretEqualsTo("books")
           }
         }
 

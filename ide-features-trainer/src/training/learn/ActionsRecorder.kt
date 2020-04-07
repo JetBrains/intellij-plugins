@@ -178,6 +178,12 @@ class ActionsRecorder(private val project: Project,
     return future
   }
 
+  fun futureAction(checkId: (String) -> Boolean): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    registerActionListener { caughtActionId, _ -> if (checkId(caughtActionId)) future.complete(true) }
+    return future
+  }
+
   fun futureListActions(listOfActions: List<String>): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val mutableListOfActions = listOfActions.toMutableList()
