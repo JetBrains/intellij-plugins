@@ -88,7 +88,7 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
           trigger(it)
         }
         task {
-          text("Now that we’re on the <strong>Actions</strong> tab, let’s type <strong>Declaration or Usages</strong> in the search bar to look up a shortcut for another useful navigation feature.")
+          text("Now that we’re on the <strong>Actions</strong> tab, let’s type <strong>Go to Declaration or Usages</strong> in the search bar to look up a shortcut for another useful navigation feature.")
           stateCheck {
             checkWordInSearchEverywhereInput("Declaration o")
           }

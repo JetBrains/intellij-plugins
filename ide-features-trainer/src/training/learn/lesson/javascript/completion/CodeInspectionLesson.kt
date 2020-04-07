@@ -46,12 +46,10 @@ class CodeInspectionLesson(module: Module) : KLesson("The Power of Code Inspecti
         }
         task("ShowIntentionActions") {
           text("You can also use <strong>F2</strong> to jump from one error to another. Or, you can explore the found problems by hovering over them.\nIn this file, the IDE has located an unresolved variable – one that wasn't defined anywhere in the code. It suggests creating a new one, <strong>book</strong>, as one of the possible fixes, but we need to add a parameter book instead. Place the caret on <strong>book</strong> and hit ${action(it)} to see the full list of fixes.")
-          stateCheck {
-            val line = editor.caretModel.logicalPosition.line
-            (line == 3 || line == 4) && (textAtCaretEqualsTo("book"))
-          }
           caret(editor.document.getLineEndOffset(3) - 11)
-          trigger(it)
+          
+          //handle simple alt+enter and alt+enter for the error tooltip 
+          trigger { id -> id == it || id == "com.intellij.codeInsight.daemon.impl.DaemonTooltipWithActionRenderer\$addActionsRow$2"}
         }
         task {
           text("Let’s select <strong>Create parameter 'book'</strong> and press <action>EditorEnter</action>.")

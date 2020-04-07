@@ -111,6 +111,11 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     addStep(recorder.futureAction(actionId))
   }
 
+  /** Simply wait until an user perform actions */
+  fun trigger(checkId: (String) -> Boolean) {
+    addStep(recorder.futureAction(checkId))
+  }
+
   /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
   fun triggerStart(actionId: String, checkState: () -> Boolean = { true }) {
     addStep(recorder.futureActionOnStart(actionId, checkState))
