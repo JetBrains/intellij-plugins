@@ -20,11 +20,11 @@ public class AngularMissingEventHandlerInspection extends AngularHtmlLikeTemplat
       XmlAttributeValue value = attribute.getValueElement();
       if (value == null || value.getTextLength() == 0) {
         holder.registerProblem(attribute,
-                               Angular2Bundle.message("angular.inspection.template.empty-event-binding-handler"),
+                               Angular2Bundle.message("angular.inspection.missing-event-handler.message"),
                                new AddAttributeValueQuickFix());
       }
       else if (value.getValue().trim().isEmpty()) {
-        holder.registerProblem(value, Angular2Bundle.message("angular.inspection.template.empty-event-binding-handler"));
+        holder.registerProblem(value, Angular2Bundle.message("angular.inspection.missing-event-handler.message"));
       }
     }
   }

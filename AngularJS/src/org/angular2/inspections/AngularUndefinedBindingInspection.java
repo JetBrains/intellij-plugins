@@ -85,29 +85,29 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     switch (info.type) {
       case EVENT:
         if (templateTag) {
-          messageKey = "angular.inspection.template.embedded.event-not-emitted";
+          messageKey = "angular.inspection.undefined-binding.message.embedded.event-not-emitted";
         }
         else {
-          messageKey = "angular.inspection.template.event-not-emitted";
+          messageKey = "angular.inspection.undefined-binding.message.event-not-emitted";
         }
         break;
       case PROPERTY_BINDING:
         if (templateTag) {
-          messageKey = "angular.inspection.template.embedded.property-not-provided";
+          messageKey = "angular.inspection.undefined-binding.message.embedded.property-not-provided";
         }
         else {
-          messageKey = "angular.inspection.template.property-not-provided";
+          messageKey = "angular.inspection.undefined-binding.message.property-not-provided";
         }
         break;
       case BANANA_BOX_BINDING:
-        messageKey = "angular.inspection.template.banana-box-binding-not-provided";
+        messageKey = "angular.inspection.undefined-binding.message.banana-box-binding-not-provided";
         break;
       case REGULAR:
         if (proximity == NOT_REACHABLE) {
-          messageKey = "angular.inspection.template.unknown-attribute";
+          messageKey = "angular.inspection.undefined-binding.message.unknown-attribute";
         }
         else {
-          messageKey = "angular.inspection.template.attribute-directive-out-of-scope";
+          messageKey = "angular.inspection.undefined-binding.message.attribute-directive-out-of-scope";
         }
         severity = ProblemHighlightType.WARNING;
         break;
@@ -130,7 +130,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
       List<LocalQuickFix> fixes = new SmartList<>();
       Angular2FixesFactory.addUnresolvedDeclarationFixes(bindings, fixes);
       holder.registerProblem(attribute.getNameElement(),
-                             Angular2Bundle.message("angular.inspection.template.embedded.no-directive-matched",
+                             Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.no-directive-matched",
                                                     bindings.getTemplateName()),
                              ProblemHighlightType.WEAK_WARNING,
                              fixes.toArray(LocalQuickFix.EMPTY_ARRAY));
@@ -150,7 +150,8 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
           List<LocalQuickFix> fixes = new SmartList<>();
           Angular2FixesFactory.addUnresolvedDeclarationFixes(binding, fixes);
           holder.registerProblem(element,
-                                 Angular2Bundle.message("angular.inspection.template.embedded.property-not-provided", binding.getKey()),
+                                 Angular2Bundle.message("angular.inspection.undefined-binding.message.embedded.property-not-provided",
+                                                        binding.getKey()),
                                  scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                                          : ProblemHighlightType.WEAK_WARNING,
                                  fixes.toArray(LocalQuickFix.EMPTY_ARRAY));

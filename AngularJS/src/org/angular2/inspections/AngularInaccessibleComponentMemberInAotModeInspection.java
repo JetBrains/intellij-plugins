@@ -58,7 +58,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
             if (clazz != null && resolved instanceof JSElement && accept(resolved)) {
               holder.registerProblem(
                 notNull(node.getReferenceNameElement(), node),
-                capitalize(Angular2Bundle.message("angular.inspection.template.aot.inaccessible.symbol",
+                capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.template-symbol",
                                                   getAccessModifier((JSElement)resolved), getKind(resolved), getName(resolved))),
 
                 new AngularMakePublicQuickFix());
@@ -87,7 +87,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
               notNull(member instanceof PsiNameIdentifierOwner
                       ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
                       : null, member),
-              capitalize(Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member",
+              capitalize(Angular2Bundle.message("angular.inspection.aot-inaccessible-member.message.member",
                                                 getAccessModifier(member), getKind(member), getName(member))),
               new AngularMakePublicQuickFix());
           }

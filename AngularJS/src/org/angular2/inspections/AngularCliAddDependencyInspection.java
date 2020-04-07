@@ -65,7 +65,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
       if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
           || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, TIMEOUT))) {
-        String message = Angular2Bundle.message("angular.inspection.json.install-with-ng-add", StringUtil.wrapWithDoubleQuote(packageName));
+        String message = Angular2Bundle.message("angular.inspection.install-with-ng-add.message",
+                                                StringUtil.wrapWithDoubleQuote(packageName));
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
           if (pkgVersion == null) {

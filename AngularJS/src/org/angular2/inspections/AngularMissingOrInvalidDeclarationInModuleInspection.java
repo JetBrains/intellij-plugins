@@ -45,7 +45,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
                                                              TypeScriptClass::getNameIdentifier), decorator);
             if (modules.isEmpty()) {
               holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.decorator.not-declared-in-NgModule",
+                                     Angular2Bundle.message("angular.inspection.invalid-declaration-in-module.message.not-declared",
                                                             Angular2EntityUtils.getEntityClassName(decorator)),
                                      allSourceDeclarationsResolved(decorator.getProject())
                                      ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
@@ -53,7 +53,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
             }
             else if (modules.size() > 1) {
               holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.decorator.declared-in-many-NgModules",
+                                     Angular2Bundle.message("angular.inspection.invalid-declaration-in-module.message.declared-in-many",
                                                             Angular2EntityUtils.getEntityClassName(decorator),
                                                             renderEntityList(modules)));
             }

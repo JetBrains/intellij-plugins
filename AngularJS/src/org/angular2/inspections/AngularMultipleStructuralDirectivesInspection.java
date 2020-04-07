@@ -26,7 +26,7 @@ public class AngularMultipleStructuralDirectivesInspection extends AngularHtmlLi
     if (templateBindings.size() > 1) {
       templateBindings.forEach(attr -> holder.registerProblem(
         attr.getNameElement(),
-        Angular2Bundle.message("angular.inspection.template.multiple-structural-directives"),
+        Angular2Bundle.message("angular.inspection.multiple-structural-directives.message"),
         new RemoveAttributeIntentionFix(attr.getName())));
     }
   }

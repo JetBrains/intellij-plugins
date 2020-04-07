@@ -46,7 +46,7 @@ public class AngularUndefinedTagInspection extends AngularHtmlLikeTemplateLocalI
       Angular2FixesFactory.addUnresolvedDeclarationFixes(tag, quickFixes);
     }
     holder.registerProblem(tagName,
-                           Angular2Bundle.message("angular.inspection.template.tag-directive-out-of-scope", tagName.getText()),
+                           Angular2Bundle.message("angular.inspection.undefined-tag.message.out-of-scope", tagName.getText()),
                            scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                                    : ProblemHighlightType.WEAK_WARNING,
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));

@@ -68,7 +68,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       @Override
       protected Ref<String> createUnresolvedCallReferenceMessage(JSReferenceExpression methodExpression, boolean isNewExpression) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
-          return Ref.create(Angular2Bundle.message("angular.inspection.template.unresolved-pipe", methodExpression.getReferenceName()));
+          return Ref.create(Angular2Bundle.message("angular.inspection.unresolved-pipe.message", methodExpression.getReferenceName()));
         }
         return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
       }
@@ -108,11 +108,9 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
   private static void addClassMemberModifiers(Template template, boolean staticContext, @NotNull JSClass targetClass) {
     if (DialectDetector.isTypeScript(targetClass)) {
       if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
-        //noinspection HardCodedStringLiteral
         template.addTextSegment("public ");
       }
       if (staticContext) {
-        //noinspection HardCodedStringLiteral
         template.addTextSegment("static ");
       }
     }
