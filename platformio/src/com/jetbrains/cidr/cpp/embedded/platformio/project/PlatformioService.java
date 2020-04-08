@@ -11,6 +11,7 @@ import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,8 +20,6 @@ import java.util.stream.Stream;
 
 @Service
 public final class PlatformioService {
-  public static final String PLATFORMIO_IS_NOT_FOUND = "PlatformIO utility is not found";
-  public static final String INSTALL_GUIDE = "Install Guide...";
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("PlatformIO plugin");
   private State myState = State.NONE;
 
@@ -53,11 +52,11 @@ public final class PlatformioService {
 
   public static void notifyPlatformioNotFound(@Nullable Project project) {
     Notification notification = NOTIFICATION_GROUP.createNotification(
-      PLATFORMIO_IS_NOT_FOUND,
+      ClionEmbeddedPlatformioBundle.message("platformio.utility.is.not.found"),
       null,
-      "Please check system path",
+      ClionEmbeddedPlatformioBundle.message("please.check.system.path"),
       NotificationType.ERROR);
-    notification.addAction(new AnAction(INSTALL_GUIDE) {
+    notification.addAction(new AnAction(ClionEmbeddedPlatformioBundle.message("install.guide")) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         openInstallGuide();

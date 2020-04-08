@@ -63,7 +63,7 @@
   </extensions>
 
   <actions>
-    <group id="platformio-group" text="PlatformIO" popup="true" icon="ClionEmbeddedPlatformioIcons.Platformio">
+    <group id="platformio-group" popup="true" icon="ClionEmbeddedPlatformioIcons.Platformio">
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildProductionAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioBuildAction"/>
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioCleanAction"/>
@@ -76,7 +76,7 @@
       <action class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioHomeAction"/>
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </group>
-    <group id="platformio-group-file+popup" text="PlatformIO"
+    <group id="platformio-group-file-popup"
            class="com.jetbrains.cidr.cpp.embedded.platformio.ui.PlatformioActionGroup" popup="true">
       <add-to-group group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
@@ -87,4 +87,5 @@
     </component>
   </project-components>
 
+  <resource-bundle>messages.ClionEmbeddedPlatformioBundle</resource-bundle>
 </idea-plugin>

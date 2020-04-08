@@ -23,6 +23,7 @@ import com.jetbrains.cidr.ArchitectureType;
 import com.jetbrains.cidr.cpp.cmake.CMakeSettings;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeProfileInfo;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
+import com.jetbrains.cidr.cpp.embedded.EmbeddedBundle;
 import com.jetbrains.cidr.cpp.execution.CLionLauncher;
 import com.jetbrains.cidr.cpp.execution.CMakeBuildProfileExecutionTarget;
 import com.jetbrains.cidr.cpp.execution.debugger.backend.CLionGDBDriverConfiguration;
@@ -108,7 +109,7 @@ public class PlatformioLauncher extends CLionLauncher {
     final VirtualFileSystem vfs = LocalFileSystem.getInstance();
     if (projectPath == null ||
         Objects.requireNonNull(vfs.findFileByPath(projectPath)).findChild(PlatformioFileType.FILE_NAME) == null) {
-      throw new ExecutionException(PlatformioFileType.FILE_NAME + " is not found in the project");
+      throw new ExecutionException(ClionEmbeddedPlatformioBundle.message("file.is.not.found", PlatformioFileType.FILE_NAME));
     }
     GeneralCommandLine commandLine = new GeneralCommandLine("").withWorkDirectory(projectPath);
     TrivialRunParameters parameters = new TrivialRunParameters(debuggerDriverConfiguration, commandLine, ArchitectureType.UNKNOWN);
@@ -170,7 +171,7 @@ public class PlatformioLauncher extends CLionLauncher {
   private Optional<String> getCmakeBuildType(@NotNull CommandLineState commandLineState) throws ExecutionException {
     CMakeWorkspace workspace = CMakeWorkspace.getInstance(getProject());
     if (!workspace.isInitialized()) {
-      throw new ExecutionException("CMake workspace is not initialized.");
+      throw new ExecutionException(ClionEmbeddedPlatformioBundle.message("cmake.workspace.is.not.initialized"));
     }
     String buildProfileId = CMakeBuildProfileExecutionTarget.getProfileName(commandLineState.getExecutionTarget());
     return workspace
@@ -189,8 +190,7 @@ public class PlatformioLauncher extends CLionLauncher {
                                           @NotNull ExecutionConsole console,
                                           @NotNull List<? super AnAction> actions) throws ExecutionException {
 
-    //noinspection DialogTitleCapitalization
-    actions.add(new AnAction("Reset", "MCU Reset", CLionEmbeddedIcons.ResetMcu) {
+    actions.add(new AnAction(() -> "Reset", () -> EmbeddedBundle.message("mcu.reset.action.description"), CLionEmbeddedIcons.ResetMcu) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
         XDebugSession session = XDebuggerManager.getInstance(getProject()).getDebugSession(console);

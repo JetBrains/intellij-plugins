@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PlatformioMonitorAction extends PlatformioAction {
-  public PlatformioMonitorAction() {super("Monitor", null);}
+  public PlatformioMonitorAction() {super(() -> "Monitor");}
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
