@@ -13,7 +13,6 @@ package org.nanocontainer.script.xml;
 import org.nanocontainer.ClassNameKey;
 import org.nanocontainer.ClassPathElement;
 import org.nanocontainer.DefaultNanoContainer;
-import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.Parameter;
 import org.picocontainer.PicoContainer;
 import org.picocontainer.PicoException;
@@ -29,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Permission;
 import java.util.ArrayList;
@@ -92,10 +90,7 @@ public final class XMLContainerBuilder {
     try {
       rootElement = documentBuilder.parse(inputSource).getDocumentElement();
     }
-    catch (SAXException e) {
-      throw new PicoException(e);
-    }
-    catch (IOException e) {
+    catch (SAXException | IOException e) {
       throw new PicoException(e);
     }
   }
@@ -114,10 +109,7 @@ public final class XMLContainerBuilder {
       String message = "Class not found: " + e.getMessage();
       throw new PicoException(message, e);
     }
-    catch (IOException e) {
-      throw new PicoException(e);
-    }
-    catch (SAXException e) {
+    catch (IOException | SAXException e) {
       throw new PicoException(e);
     }
   }
@@ -177,7 +169,7 @@ public final class XMLContainerBuilder {
 
 
   private void addComponentAdapterFactory(Element element, DefaultNanoContainer metaContainer)
-    throws MalformedURLException, ClassNotFoundException {
+    throws ClassNotFoundException {
     if (notSet(element.getAttribute(KEY))) {
       String message = "'" + KEY + "' attribute not specified for " + element.getNodeName();
       throw new PicoException(message);
@@ -256,7 +248,7 @@ public final class XMLContainerBuilder {
         String permissionClassName = childElement.getAttribute(CLASSNAME);
         String action = childElement.getAttribute(CONTEXT);
         String value = childElement.getAttribute(VALUE);
-        MutablePicoContainer mpc = new DefaultPicoContainer();
+        DefaultPicoContainer mpc = new DefaultPicoContainer();
         mpc.registerComponentImplementation(Permission.class, Class.forName(permissionClassName),
                                             new Parameter[]{new ConstantParameter(action), new ConstantParameter(value)});
 
@@ -377,8 +369,7 @@ public final class XMLContainerBuilder {
       Class componentKeyType = myClassLoader.loadClass(componentKeyTypeString);
       Class componentValueType = myClassLoader.loadClass(componentValueTypeString);
 
-      boolean emptyCollection = Boolean.valueOf(emptyCollectionString).booleanValue();
-
+      boolean emptyCollection = Boolean.parseBoolean(emptyCollectionString);
       parameter = new ComponentParameter(componentKeyType, componentValueType, emptyCollection);
     }
     else if (componentValueTypeString != null && !EMPTY.equals(componentValueTypeString)) {
@@ -392,14 +383,13 @@ public final class XMLContainerBuilder {
 
       Class componentValueType = myClassLoader.loadClass(componentValueTypeString);
 
-      boolean emptyCollection = Boolean.valueOf(emptyCollectionString).booleanValue();
+      boolean emptyCollection = Boolean.parseBoolean(emptyCollectionString);
 
       parameter = new ComponentParameter(componentValueType, emptyCollection);
     }
     else if (emptyCollectionString != null && !EMPTY.equals(emptyCollectionString)) {
-      boolean emptyCollection = Boolean.valueOf(emptyCollectionString).booleanValue();
-
-      parameter = new ComponentParameter(emptyCollection);
+      boolean emptyCollection = Boolean.parseBoolean(emptyCollectionString);
+      parameter = new ComponentParameter(emptyCollection ? ARRAY_ALLOW_EMPTY : CollectionComponentParameter.ARRAY);
     }
     else if (getFirstChildElement(element, false) == null) {
       parameter = new ComponentParameter();
@@ -410,6 +400,12 @@ public final class XMLContainerBuilder {
     }
     return parameter;
   }
+
+  /**
+   * Use <code>ARRAY_ALLOW_EMPTY</code> as {@link Parameter}for an Array that may have no
+   * elements.
+   */
+  private static final CollectionComponentParameter ARRAY_ALLOW_EMPTY = new CollectionComponentParameter(true);
 
   private void registerComponentInstance(DefaultNanoContainer container, Element element)
     throws ClassNotFoundException {

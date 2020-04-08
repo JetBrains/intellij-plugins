@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*
  * Copyright (c) PicoContainer Organization. All rights reserved.            *
  * ------------------------------------------------------------------------- *
  * The software in this package is published under the terms of the BSD      *
@@ -6,8 +6,7 @@
  * the LICENSE.txt file.                                                     *
  *                                                                           *
  * Idea by Rachel Davies, Original code by Aslak Hellesoy and Paul Hammant   *
- *****************************************************************************/
-
+ */
 package org.picocontainer.defaults;
 
 import org.picocontainer.*;
@@ -28,7 +27,7 @@ import org.picocontainer.*;
  * @version $Revision: 2827 $
  */
 public final class CachingComponentAdapter extends DecoratingComponentAdapter implements LifecycleManager {
-  private final ObjectReference instanceReference;
+  private final SimpleReference instanceReference;
   private boolean disposed;
   private final boolean delegateHasLifecylce;
 
@@ -36,7 +35,7 @@ public final class CachingComponentAdapter extends DecoratingComponentAdapter im
     this(delegate, new SimpleReference());
   }
 
-  public CachingComponentAdapter(ComponentAdapter delegate, ObjectReference instanceReference) {
+  public CachingComponentAdapter(ComponentAdapter delegate, SimpleReference instanceReference) {
     super(delegate);
     this.instanceReference = instanceReference;
     this.disposed = false;

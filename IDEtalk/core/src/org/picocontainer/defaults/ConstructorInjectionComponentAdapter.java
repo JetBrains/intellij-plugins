@@ -7,7 +7,6 @@
  *                                                                           *
  * Idea by Rachel Davies, Original code by Aslak Hellesoy and Paul Hammant   *
  *****************************************************************************/
-
 package org.picocontainer.defaults;
 
 import org.picocontainer.Parameter;
@@ -80,32 +79,6 @@ public class ConstructorInjectionComponentAdapter extends InstantiatingComponent
                                               boolean allowNonPublicClasses)
     throws AssignabilityRegistrationException {
     super(componentKey, componentImplementation, parameters, allowNonPublicClasses);
-  }
-
-  /**
-   * Creates a ConstructorInjectionComponentAdapter with key, implementation and parameters
-   *
-   * @param componentKey            the search key for this implementation
-   * @param componentImplementation the concrete implementation
-   * @param parameters              the parameters to use for the initialization
-   * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NullPointerException               if one of the parameters is <code>null</code>
-   */
-  public ConstructorInjectionComponentAdapter(Object componentKey, Class componentImplementation, Parameter[] parameters) {
-    this(componentKey, componentImplementation, parameters, false);
-  }
-
-  /**
-   * Creates a ConstructorInjectionComponentAdapter with key and implementation
-   *
-   * @param componentKey            the search key for this implementation
-   * @param componentImplementation the concrete implementation
-   * @throws AssignabilityRegistrationException if the key is a type and the implementation cannot be assigned to.
-   * @throws NullPointerException               if one of the parameters is <code>null</code>
-   */
-  public ConstructorInjectionComponentAdapter(Object componentKey, Class componentImplementation)
-    throws AssignabilityRegistrationException {
-    this(componentKey, componentImplementation, null);
   }
 
   @Override

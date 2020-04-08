@@ -39,13 +39,6 @@ public abstract class InstantiatingComponentAdapter extends AbstractComponentAda
   protected boolean allowNonPublicClasses;
 
   /**
-   * The cycle guard for the verification.
-   */
-  protected static abstract class Guard extends ThreadLocalCyclicDependencyGuard {
-    protected PicoContainer guardedContainer;
-  }
-
-  /**
    * The strategy used to control the lifecycle
    */
   protected LifecycleStrategy lifecycleStrategy;

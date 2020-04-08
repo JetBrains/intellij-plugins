@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
@@ -8,7 +8,6 @@ import com.intellij.mock.MockApplication;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.psi.templateLanguages.TemplateDataLanguagePatterns;
 import com.intellij.testFramework.ParsingTestCase;
-import org.picocontainer.MutablePicoContainer;
 
 /**
  * ParsingTestCase test are created by placing a MyTestName.hbs file in the test/data/parsing directory with the syntax
@@ -45,7 +44,6 @@ public abstract class HbParserTest extends ParsingTestCase {
     super.setUp();
 
     MockApplication app = getApplication();
-    MutablePicoContainer appContainer = app.getPicoContainer();
 
     myProject.registerService(TemplateDataLanguageMappings.class, TemplateDataLanguageMappings.class);
 
@@ -54,7 +52,6 @@ public abstract class HbParserTest extends ParsingTestCase {
     myProject.registerService(PropertiesComponent.class, PropertiesComponentImpl.class);
 
     app.registerService(TemplateDataLanguagePatterns.class, new TemplateDataLanguagePatterns());
-    appContainer.registerComponentImplementation(TemplateDataLanguagePatterns.class, TemplateDataLanguagePatterns.class);
     registerParserDefinition(new HbParseDefinition());
   }
 }

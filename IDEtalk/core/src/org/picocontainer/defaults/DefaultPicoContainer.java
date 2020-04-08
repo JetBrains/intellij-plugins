@@ -9,6 +9,7 @@
  *****************************************************************************/
 package org.picocontainer.defaults;
 
+import org.jetbrains.annotations.NotNull;
 import org.picocontainer.*;
 
 import java.util.*;
@@ -98,7 +99,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   }
 
   @Override
-  public ComponentAdapter getComponentAdapterOfType(Class componentType) {
+  public ComponentAdapter getComponentAdapterOfType(@NotNull Class<?> componentType) {
     // See http://jira.codehaus.org/secure/ViewIssue.jspa?key=PICO-115
     ComponentAdapter adapterByKey = getComponentAdapter(componentType);
     if (adapterByKey != null) {
@@ -129,7 +130,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   }
 
   @Override
-  public List getComponentAdaptersOfType(Class componentType) {
+  public List getComponentAdaptersOfType(@NotNull Class<?> componentType) {
     if (componentType == null) {
       return Collections.EMPTY_LIST;
     }
@@ -192,9 +193,10 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
    * {@inheritDoc}
    * The returned ComponentAdapter will be instantiated by the {@link ComponentAdapterFactory}
    * passed to the container's constructor.
+   * @param componentImplementation
    */
   @Override
-  public ComponentAdapter registerComponentImplementation(Class componentImplementation) {
+  public ComponentAdapter registerComponentImplementation(@NotNull Class<?> componentImplementation) {
     return registerComponentImplementation(componentImplementation, componentImplementation);
   }
 
@@ -202,10 +204,12 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
    * {@inheritDoc}
    * The returned ComponentAdapter will be instantiated by the {@link ComponentAdapterFactory}
    * passed to the container's constructor.
+   * @param componentKey
+   * @param componentImplementation
    */
   @Override
-  public ComponentAdapter registerComponentImplementation(Object componentKey, Class componentImplementation) {
-    return registerComponentImplementation(componentKey, componentImplementation, (Parameter[])null);
+  public ComponentAdapter registerComponentImplementation(@NotNull Object componentKey, @NotNull Class<?> componentImplementation) {
+    return registerComponentImplementation(componentKey, componentImplementation, null);
   }
 
   /**
@@ -213,7 +217,6 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
    * The returned ComponentAdapter will be instantiated by the {@link ComponentAdapterFactory}
    * passed to the container's constructor.
    */
-  @Override
   public ComponentAdapter registerComponentImplementation(Object componentKey, Class componentImplementation, Parameter[] parameters) {
     ComponentAdapter componentAdapter = componentAdapterFactory.createComponentAdapter(componentKey, componentImplementation, parameters);
     return registerComponent(componentAdapter);
@@ -259,7 +262,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   }
 
   @Override
-  public Object getComponentInstance(Object componentKey) {
+  public Object getComponentInstance(@NotNull Object componentKey) {
     ComponentAdapter componentAdapter = getComponentAdapter(componentKey);
     if (componentAdapter != null) {
       return getInstance(componentAdapter);
@@ -270,7 +273,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   }
 
   @Override
-  public Object getComponentInstanceOfType(Class componentType) {
+  public Object getComponentInstanceOfType(@NotNull Class<?> componentType) {
     final ComponentAdapter componentAdapter = getComponentAdapterOfType(componentType);
     return componentAdapter == null ? null : getInstance(componentAdapter);
   }
@@ -286,10 +289,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
       try {
         instance = componentAdapter.getComponentInstance(this);
       }
-      catch (PicoInitializationException e) {
-        firstLevelException = e;
-      }
-      catch (PicoIntrospectionException e) {
+      catch (PicoInitializationException | PicoIntrospectionException e) {
         firstLevelException = e;
       }
       if (firstLevelException != null) {

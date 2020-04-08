@@ -1,4 +1,4 @@
-/*****************************************************************************
+/*
  * Copyright (C) NanoContainer Organization. All rights reserved.            *
  * ------------------------------------------------------------------------- *
  * The software in this package is published under the terms of the BSD      *
@@ -6,8 +6,7 @@
  * the LICENSE.txt file.                                                     *
  *                                                                           *
  * Original code by Aslak Hellesoy and Paul Hammant                          *
- *****************************************************************************/
-
+ */
 package org.nanocontainer;
 
 import org.picocontainer.ComponentAdapter;
@@ -29,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The default implementation of {@link DefaultNanoContainer}.
- *
  * @author Paul Hammant
  * @author Aslak Helles&oslash;y
  */
@@ -71,13 +68,13 @@ public final class DefaultNanoContainer {
     this(parentClassLoader, new DefaultPicoContainer());
   }
 
-  public ComponentAdapter registerComponentImplementation(Object key, String componentImplementationClassName)
+  public void registerComponentImplementation(Object key, String componentImplementationClassName)
     throws ClassNotFoundException {
     Class componentImplementation = loadClass(componentImplementationClassName);
     if (key instanceof ClassNameKey) {
       key = loadClass(((ClassNameKey)key).getClassName());
     }
-    return picoContainer.registerComponentImplementation(key, componentImplementation);
+    picoContainer.registerComponentImplementation(key, componentImplementation);
   }
 
 
