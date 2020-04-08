@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
 import com.intellij.util.PathUtilRt;
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,8 +52,8 @@ public class PlatformioListener implements AsyncFileListener, StartupActivity {
       if (!platformioNonCmakeRoots.isEmpty()) {
         boolean confirmCMakeCreate = Messages.showYesNoDialog(
           project,
-          "CLion configuration is not found. for this PlatformIO project.\nCreate?",
-          "Project Open", null) == Messages.YES;
+          ClionEmbeddedPlatformioBundle.message("cmake.to.create.confirmation"),
+          ClionEmbeddedPlatformioBundle.message("cmake.to.create.confirmation.title"), null) == Messages.YES;
         if (confirmCMakeCreate) {
           PlatformioProjectGenerator generator = new PlatformioProjectGenerator();
           platformioNonCmakeRoots.forEach(root -> generator.doGenerateProject(project, root, "", false));

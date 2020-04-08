@@ -40,7 +40,7 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
 
   @Override
   public String getName() {
-    return "PlatformIO Clean";
+    return ClionEmbeddedPlatformioBundle.message("platformio.prebuild.clean");
   }
 
   @Nullable
@@ -80,7 +80,8 @@ public class PlatformioCleanBeforeRunTaskProvider extends BeforeRunTaskProvider<
 
     if (!success.get()) {
       GuiUtils.invokeLaterIfNeeded(
-        () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR, "Platformio clean failed"),
+        () -> CidrBuild.showBuildNotification(configuration.getProject(), MessageType.ERROR,
+                                              ClionEmbeddedPlatformioBundle.message("platformio.clean.failed")),
         ModalityState.NON_MODAL);
     }
     return success.get();

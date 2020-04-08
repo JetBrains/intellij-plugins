@@ -35,7 +35,7 @@ public class PlatformioFileType extends LanguageFileType {
   @Override
   public @NotNull
   String getDescription() {
-    return "PlatformIO";
+    return ClionEmbeddedPlatformioBundle.message("platformio.short.description");
   }
 
   @Override

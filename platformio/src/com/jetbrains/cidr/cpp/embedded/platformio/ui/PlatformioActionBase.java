@@ -21,16 +21,17 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public abstract class PlatformioActionBase extends DumbAwareAction {
   private final long myExecutionId;
   @NotNull
-  private final String myText;
+  private final Supplier<String> myDynamicText;
 
-  public PlatformioActionBase(@NotNull String text, @Nullable String description) {
-    super(text, description, null);
+  public PlatformioActionBase(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription) {
+    super(dynamicText, dynamicDescription, null);
     this.myExecutionId = ExecutionEnvironment.getNextUnusedExecutionId();
-    this.myText = text;
+    this.myDynamicText = dynamicText;
   }
 
   protected void actionPerformed(@NotNull AnActionEvent e,
@@ -38,7 +39,7 @@ public abstract class PlatformioActionBase extends DumbAwareAction {
                                  boolean updateCmake,
                                  boolean appendEnvironmentKey) {
     Project project = e.getProject();
-    Tool tool = createPlatformioTool(project, appendEnvironmentKey, arguments, myText);
+    Tool tool = createPlatformioTool(project, appendEnvironmentKey, arguments, myDynamicText.get());
     if (tool == null) return;
     ProcessAdapter processListener = null;
     if (updateCmake && project != null) {

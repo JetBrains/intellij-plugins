@@ -4,12 +4,16 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public abstract class PlatformioAction extends PlatformioActionBase {
-  public PlatformioAction(@NotNull String text,
-                          @Nullable String description) {
-    super(text, description);
+  public PlatformioAction(@NotNull Supplier<String> dynamicText, @NotNull Supplier<String> dynamicDescription) {
+    super(dynamicText, dynamicDescription);
+  }
+
+  public PlatformioAction(@NotNull Supplier<String> dynamicText) {
+    this(dynamicText, () -> null);
   }
 
   @Override

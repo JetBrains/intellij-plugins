@@ -37,7 +37,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   private final String[] cliParameters;
 
 
-  private CPPToolchains.Toolchain myToolchain;
+  private volatile CPPToolchains.Toolchain myToolchain;
 
   public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
                                      @NotNull String myBuildTargetName, @NotNull String name, String @Nullable [] cliParameters) {
@@ -89,7 +89,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
   @Override
   public void checkSettingsBeforeRun() throws RuntimeConfigurationException {
     if (myToolchain == null) {
-      throw new RuntimeConfigurationException("PlatformIO utility can't be found. Please check system path.");
+      throw new RuntimeConfigurationException(ClionEmbeddedPlatformioBundle.message("platformio.not.found.long"));
     }
   }
 

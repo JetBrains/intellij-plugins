@@ -1,10 +1,13 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import org.jetbrains.annotations.NotNull;
 
 public class PlatformioHomeAction extends PlatformioActionBase {
-  public PlatformioHomeAction() {super("Home", "Start PlatformIO internal web server");}
+  public PlatformioHomeAction() {
+    super(() -> ClionEmbeddedPlatformioBundle.message("task.home"), () -> ClionEmbeddedPlatformioBundle.message("start.platformio.home"));
+  }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {

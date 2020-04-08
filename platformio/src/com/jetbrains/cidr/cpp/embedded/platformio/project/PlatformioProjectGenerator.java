@@ -20,6 +20,7 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,6 +36,7 @@ import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
 import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerator;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspaceListener;
+import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
 import com.jetbrains.cidr.cpp.embedded.platformio.CustomTool;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioBaseConfiguration;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioConfigurationType;
@@ -83,7 +85,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
 
   @Override
   public String getDescription() {
-    return "https://platformio.org/";
+    return ClionEmbeddedPlatformioBundle.message("platformio.project.description");
   }
 
   @NotNull
@@ -119,7 +121,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
       PlatformioService.notifyPlatformioNotFound(project);
       return;
     }
-    CustomTool initTool = new CustomTool("PlatformIO init");
+    CustomTool initTool = new CustomTool(ClionEmbeddedPlatformioBundle.message("platformio.init.title"));
     initTool.setProgram(myPioUtility);
     initTool.setWorkingDirectory(baseDir.getCanonicalPath());
     initTool.setParameters("init --ide clion" + pioCmdLineTail);
@@ -134,7 +136,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
       }
     };
     if (initTool.executeIfPossible(null, projectContext, -1, processListener)) {
-      new Task.Backgroundable(project, "Initializing", true, PerformInBackgroundOption.DEAF) {
+      new Task.Backgroundable(project, ClionEmbeddedPlatformioBundle.message("initializing"), true, PerformInBackgroundOption.DEAF) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           while (!semaphore.waitFor(200)) {
@@ -160,14 +162,14 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
     if (generateMain) {
       VirtualFile srcFolder = baseDir.findChild("src");
       if (srcFolder == null || !srcFolder.isDirectory()) {
-        showError("Src folder is not found or invalid");
+        showError(ClionEmbeddedPlatformioBundle.message("src.not.found"));
         return;
       }
       if (srcFolder.findChild("main.cpp") == null) {
         try {
           VirtualFile mainC = srcFolder.findOrCreateChildData(this, "main.c");
           if (mainC.getLength() == 0) {
-            mainC.setBinaryContent("# Write your code here".getBytes(StandardCharsets.US_ASCII));
+            mainC.setBinaryContent(ClionEmbeddedPlatformioBundle.message("write.your.code.here").getBytes(StandardCharsets.US_ASCII));
           }
         }
         catch (IOException e) {
@@ -240,9 +242,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
     settings.setProfiles(profiles);
   }
 
-  private static void showError(@NotNull String message) {
+  private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
     Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
-      "Project init failed", null,
+      ClionEmbeddedPlatformioBundle.message("project.init.failed"), null,
       message, NotificationType.WARNING);
     Notifications.Bus.notify(notification);
   }
