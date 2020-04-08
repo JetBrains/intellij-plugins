@@ -134,8 +134,10 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
       String errorMessage = String.valueOf(ExceptionUtil.getMessage(e));
       setErrorText(errorMessage);
       Notification notification =
-        new Notification("PlatformIO plugin", e.getClass().getSimpleName(),
-                         errorMessage, NotificationType.WARNING);
+        PlatformioService.NOTIFICATION_GROUP.createNotification(
+          "PlatformIO utility failed",
+          e.getClass().getSimpleName(),
+          errorMessage, NotificationType.WARNING);
       Notifications.Bus.notify(notification);
     }
     checkValid();

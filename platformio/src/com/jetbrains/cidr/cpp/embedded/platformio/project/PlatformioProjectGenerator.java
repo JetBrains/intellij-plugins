@@ -241,9 +241,9 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
   }
 
   private static void showError(@NotNull String message) {
-    Notification notification =
-      new Notification("PlatformIO plugin", "Project init failed",
-                       message, NotificationType.WARNING);
+    Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
+      "Project init failed", null,
+      message, NotificationType.WARNING);
     Notifications.Bus.notify(notification);
   }
 }

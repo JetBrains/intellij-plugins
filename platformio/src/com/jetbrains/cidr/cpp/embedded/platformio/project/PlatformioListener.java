@@ -1,75 +1,72 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.project;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.AsyncFileListener;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.util.concurrency.NonUrgentExecutor;
-import com.intellij.util.containers.SmartHashSet;
+import com.intellij.openapi.vfs.newvfs.events.VFilePropertyChangeEvent;
+import com.intellij.util.PathUtilRt;
 import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PlatformioListener implements BulkFileListener, ProjectManagerListener {
+public class PlatformioListener implements AsyncFileListener, StartupActivity {
+
   @Override
-  public void after(@NotNull List<? extends VFileEvent> events) {
-    SmartHashSet<VirtualFile> affectedDirs = null;
+  public @Nullable ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
+    boolean platformioAffected = false;
     for (VFileEvent event : events) {
-      VirtualFile file = event.getFile();
-      if (file != null && file.getName().equals(PlatformioFileType.FILE_NAME)) {
-        VirtualFile fileParent = file.getParent();
-        if (affectedDirs == null) {
-          affectedDirs = new SmartHashSet<>();
-        }
-        affectedDirs.add(fileParent);
+      String path = event.getPath();
+      if (PlatformioFileType.FILE_NAME.equals(PathUtilRt.getFileName(path)) ||
+          isPlatformioRename(event)) {
+        platformioAffected = true;
+        break;
       }
     }
-    if (affectedDirs != null) {
-      SmartHashSet<VirtualFile> affectedDirsHolder = affectedDirs;
-      NonUrgentExecutor.getInstance().execute(() -> {
-        for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-          for (VirtualFile root : ProjectRootManager.getInstance(project).getContentRoots()) {
-            if (affectedDirsHolder.contains(root)) {
-              ServiceManager.getService(project, PlatformioService.class).enable(root.findChild(PlatformioFileType.FILE_NAME) != null);
-            }
-          }
-        }
-      });
-    }
+    if (!platformioAffected) return null;
+    return new ChangeApplier() {
+      @Override
+      public void afterVfsChange() {
+        Stream.of(ProjectManager.getInstance().getOpenProjects()).forEach(PlatformioService::updateStateForProject);
+      }
+    };
   }
 
   @Override
-  public void projectOpened(@NotNull Project project) {
-    Optional<VirtualFile> actualRoot = Stream.of(ProjectRootManager.getInstance(project).getContentRoots())
-      .filter(root -> root.findChild(PlatformioFileType.FILE_NAME) != null)
-      .findFirst();
-    if (actualRoot.isPresent()) {
-      ServiceManager.getService(project, PlatformioService.class).enable(true);
-      boolean cMakeFound = actualRoot.get().findChild("CMakeLists.txt") != null;
-      if (!cMakeFound) {
-        int open = Messages.showYesNoDialog(project, "CLion configuration is not found. Create?", "Project Open", null);
-        if (open == Messages.YES) {
-          for (Module module : ModuleManager.getInstance(project).getModules()) {
-            for (VirtualFile root : ModuleRootManager.getInstance(module).getContentRoots()) {
-              if (Objects.equals(root, actualRoot.get())) {
-                new PlatformioProjectGenerator().doGenerateProject(project, actualRoot.get(), "", false);
-              }
-            }
-          }
+  public void runActivity(@NotNull Project project) {
+    PlatformioService.State state = PlatformioService.updateStateForProject(project);
+    if (state != PlatformioService.State.NONE) {
+      List<VirtualFile> platformioNonCmakeRoots = Stream.of(ProjectRootManager.getInstance(project).getContentRoots())
+        .filter(root -> root.findChild(PlatformioFileType.FILE_NAME) != null)
+        .filter(root -> root.findChild("CMakeLists.txt") == null)
+        .collect(Collectors.toList());
+      if (!platformioNonCmakeRoots.isEmpty()) {
+        boolean confirmCMakeCreate = Messages.showYesNoDialog(
+          project,
+          "CLion configuration is not found. for this PlatformIO project.\nCreate?",
+          "Project Open", null) == Messages.YES;
+        if (confirmCMakeCreate) {
+          PlatformioProjectGenerator generator = new PlatformioProjectGenerator();
+          platformioNonCmakeRoots.forEach(root -> generator.doGenerateProject(project, root, "", false));
         }
       }
     }
+  }
+
+  private static boolean isPlatformioRename(VFileEvent event) {
+    if (event instanceof VFilePropertyChangeEvent) {
+      VFilePropertyChangeEvent changeEvent = (VFilePropertyChangeEvent)event;
+      return changeEvent.isRename() &&
+             PlatformioFileType.FILE_NAME.equals(PathUtilRt.getFileName(changeEvent.getNewPath()));
+    }
+    return false;
   }
 }
