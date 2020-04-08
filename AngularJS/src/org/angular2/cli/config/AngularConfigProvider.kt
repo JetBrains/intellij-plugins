@@ -25,13 +25,6 @@ class AngularConfigProvider private constructor() {
     private val LOG = Logger.getInstance(AngularConfigProvider::class.java)
 
     @JvmStatic
-    fun getAngularProject(context: PsiFile): AngularProject? {
-      return context.originalFile.virtualFile?.let {
-        getAngularProject(context.project, it)
-      }
-    }
-
-    @JvmStatic
     fun getAngularProject(project: Project, context: VirtualFile): AngularProject? {
       return getAngularConfig(project, context)?.getProject(context)
     }

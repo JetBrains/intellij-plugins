@@ -25,6 +25,6 @@ public class AngularContextTest extends BasePlatformTestCase {
     });
     AngularTestUtil.moveToOffsetBySignature("<img src='<caret>'/>",myFixture);
     myFixture.completeBasic();
-    assertSameElements(myFixture.getLookupElementStrings(), "favicon.ico", "image.png");
+    assertContainsElements(myFixture.getLookupElementStrings(), "favicon.ico", "image.png");
   }
 }
