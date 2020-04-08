@@ -2,6 +2,7 @@ package com.jetbrains.cidr.cpp.embedded.platformio.project;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -9,13 +10,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.jetbrains.cidr.cpp.embedded.platformio.PlatformioFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.stream.Stream;
 
 @Service
 public final class PlatformioService {
   public static final String PLATFORMIO_IS_NOT_FOUND = "PlatformIO utility is not found";
   public static final String INSTALL_GUIDE = "Install Guide...";
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("PlatformIO plugin");
   private State myState = State.NONE;
 
   public PlatformioService() {
@@ -25,12 +31,14 @@ public final class PlatformioService {
     return myState;
   }
 
-  public void setState(@NotNull State state) {
-    myState = state;
-  }
-
-  public void enable(boolean b) {
-    myState = b ? State.OK : State.NONE;
+  public static void setEnabled(@NotNull Project project, boolean enabled) {
+    if (enabled) {
+      ServiceManager.getService(project, PlatformioService.class).myState = State.OK;
+    }
+    else {
+      PlatformioService serviceIfCreated = ServiceManager.getServiceIfCreated(project, PlatformioService.class);
+      if (serviceIfCreated != null) serviceIfCreated.myState = State.NONE;
+    }
   }
 
   public static void openInstallGuide() {
@@ -44,10 +52,11 @@ public final class PlatformioService {
   }
 
   public static void notifyPlatformioNotFound(@Nullable Project project) {
-    Notification notification = new Notification("PlatformIO plugin",
-                                                 PLATFORMIO_IS_NOT_FOUND,
-                                                 "Please check system path",
-                                                 NotificationType.ERROR);
+    Notification notification = NOTIFICATION_GROUP.createNotification(
+      PLATFORMIO_IS_NOT_FOUND,
+      null,
+      "Please check system path",
+      NotificationType.ERROR);
     notification.addAction(new AnAction(INSTALL_GUIDE) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
@@ -58,10 +67,17 @@ public final class PlatformioService {
     Notifications.Bus.notify(notification, project);
   }
 
+  public static State updateStateForProject(@Nullable Project project) {
+    if (project == null) return State.NONE;
+    boolean enabled =
+      Stream.of(ProjectRootManager.getInstance(project).getContentRoots())
+        .anyMatch(root -> root.findChild(PlatformioFileType.FILE_NAME) != null);
+    setEnabled(project, enabled);
+    return enabled ? State.OK : State.NONE;
+  }
+
   public enum State {
     NONE,
-    BROKEN,
-    OUTDATED,
     OK
   }
 }

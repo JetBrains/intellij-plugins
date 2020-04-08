@@ -1,6 +1,5 @@
 package com.jetbrains.cidr.cpp.embedded.platformio.ui;
 
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.jetbrains.cidr.cpp.embedded.platformio.project.PlatformioService;
@@ -18,7 +17,7 @@ public abstract class PlatformioAction extends PlatformioActionBase {
     super.update(e);
 
     Presentation presentation = e.getPresentation();
-    if (presentation.isVisible() && ActionPlaces.isMainMenuOrActionSearch(e.getPlace())) {
+    if (presentation.isVisible()) {
       presentation.setEnabled(PlatformioService.getState(e.getProject()) != PlatformioService.State.NONE);
     }
   }
