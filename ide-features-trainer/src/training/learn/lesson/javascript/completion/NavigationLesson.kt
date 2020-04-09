@@ -88,13 +88,13 @@ class NavigationLesson(module: Module) : KLesson("Secrets of Efficient Navigatio
           trigger(it)
         }
         task {
-          text("Now that we’re on the <strong>Actions</strong> tab, let’s type <strong>Go to Declaration or Usages</strong> in the search bar to look up a shortcut for another useful navigation feature.")
+          text("Now that we’re on the <strong>Actions</strong> tab, let’s start typing <strong>Go to Declaration or Usages</strong> in the search bar to look up a shortcut for another useful navigation feature.")
           stateCheck {
-            checkWordInSearchEverywhereInput("Declaration o")
+            checkWordInSearchEverywhereInput("go to d")
           }
         }
         task("GotoDeclaration") {
-          text("Notice the ${action(it)} next to <strong>Declaration or Usages</strong> – it shows you usages for the definition and vice versa. Let’s close the popup, place the caret on <strong>snoopy</strong> (line 16), and hit ${action(it)} to look for its declaration.")
+          text("Notice the ${action(it)} next to <strong>Go to Declaration or Usages</strong> – it shows you usages for the definition and vice versa. Let’s close the popup, place the caret on <strong>snoopy</strong> (line 16), and hit ${action(it)} to look for its declaration.")
           stateCheck {
             textAtCaretEqualsTo("snoopy")
           }
