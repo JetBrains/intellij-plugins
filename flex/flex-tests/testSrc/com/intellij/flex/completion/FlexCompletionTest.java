@@ -1357,6 +1357,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     try {
       PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
+        .reattemptUntilJitSettlesDown()
         .assertTiming();
     }
     finally {
