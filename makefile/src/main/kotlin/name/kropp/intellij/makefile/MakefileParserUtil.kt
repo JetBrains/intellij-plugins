@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package name.kropp.intellij.makefile
 
 import com.intellij.lang.*

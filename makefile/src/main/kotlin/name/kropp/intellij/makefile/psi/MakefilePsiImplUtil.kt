@@ -12,8 +12,8 @@ import java.util.regex.*
 object MakefilePsiImplUtil {
   private val suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$")
 
-  private val ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN)
-  private val LINE = TokenSet.create(MakefileTypes.IDENTIFIER, MakefileTypes.VARIABLE_USAGE)
+  private val ASSIGNMENT = TokenSet.create(ASSIGN)
+  private val LINE = TokenSet.create(IDENTIFIER, VARIABLE_USAGE)
 
   @JvmStatic
   fun getTargets(element: MakefileRule): List<MakefileTarget> {
@@ -22,7 +22,7 @@ object MakefilePsiImplUtil {
 
   @JvmStatic
   fun getTargetName(element: MakefileTargetLine): String? {
-    val targetNode = element.node.findChildByType(MakefileTypes.TARGET) ?: return null
+    val targetNode = element.node.findChildByType(TARGET) ?: return null
     return targetNode.text
   }
 
@@ -79,7 +79,7 @@ object MakefilePsiImplUtil {
 
     val comments = PsiTreeUtil.findChildrenOfType(targetLine, PsiComment::class.java)
     for (comment in comments) {
-      if (comment.tokenType === MakefileTypes.DOC_COMMENT) {
+      if (comment.tokenType === DOC_COMMENT) {
         return comment.text.substring(2)
       }
     }
@@ -95,18 +95,17 @@ object MakefilePsiImplUtil {
   @JvmStatic
   fun isSpecialTarget(element: MakefileTarget): Boolean {
     val name = element.name
-    return name != null && (name.matches("^\\.[A-Z_]*".toRegex()) || name == "FORCE" || suffixRule.matcher(name).matches())
+    return name.matches("^\\.[A-Z_]*".toRegex()) || name == "FORCE" || suffixRule.matcher(name).matches()
   }
 
   @JvmStatic
   fun isPatternTarget(element: MakefileTarget): Boolean {
-    val name = element.name
-    return name != null && name.contains("%")
+    return element.name.contains("%")
   }
 
   @JvmStatic
   fun matches(element: MakefileTarget, prerequisite: String): Boolean {
-    val name = element.name ?: return false
+    val name = element.name
     if (name.startsWith("%")) {
       return prerequisite.endsWith(name.substring(1))
     }

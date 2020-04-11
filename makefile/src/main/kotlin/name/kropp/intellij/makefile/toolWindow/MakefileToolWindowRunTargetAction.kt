@@ -28,7 +28,7 @@ class MakefileToolWindowRunTargetAction(private val tree: Tree, private val proj
           ?: return)
 
       (context.runManager as RunManagerEx).setTemporaryConfiguration(configuration)
-      ExecutionUtil.runConfiguration(configuration, ExecutorRegistry.getInstance().registeredExecutors.first())
+      ExecutionUtil.runConfiguration(configuration, Executor.EXECUTOR_EXTENSION_NAME.extensionList.first())
     }
   }
 }

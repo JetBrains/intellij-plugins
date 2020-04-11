@@ -13,12 +13,12 @@ class MakefileRunConfigurationFactory(private val runConfigurationType: Makefile
   override fun createTemplateConfiguration(project: Project) = MakefileRunConfiguration(project, this, "name")
 
   fun createConfigurationFromTarget(target: MakefileTarget): MakefileRunConfiguration? {
-    val configuration = MakefileRunConfiguration(target.project, this, target.name ?: "")
+    val configuration = MakefileRunConfiguration(target.project, this, target.name)
     val file = target.containingFile as? MakefileFile ?: return null
     val macroManager = PathMacroManager.getInstance(target.project)
-    val path = file.virtualFile?.path
+    val path = file.virtualFile?.path ?: return null
     configuration.filename = macroManager.collapsePath(path) ?: ""
-    configuration.target = target.name ?: ""
+    configuration.target = target.name
 
     if (configuration.target.isNotEmpty()) {
       configuration.name = configuration.target

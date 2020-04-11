@@ -7,7 +7,7 @@ import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
-class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name ?: "") {
+class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name) {
   override val icon: Icon
     get() = MakefileTargetIcon
 

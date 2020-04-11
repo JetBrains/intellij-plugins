@@ -1,15 +1,11 @@
 package name.kropp.intellij.makefile
 
-import com.intellij.execution.ExecutorRegistry
-import com.intellij.execution.Location
-import com.intellij.execution.PsiLocation
-import com.intellij.execution.RunManagerEx
-import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.runners.ExecutionUtil
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
-import name.kropp.intellij.makefile.psi.MakefileTarget
+import com.intellij.execution.*
+import com.intellij.execution.actions.*
+import com.intellij.execution.runners.*
+import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.impl.*
+import name.kropp.intellij.makefile.psi.*
 
 class MakefileRunTargetAction(private val target: MakefileTarget) : AnAction("make ${target.name}", "make ${target.name}", MakefileTargetIcon) {
   override fun actionPerformed(event: AnActionEvent) {
@@ -21,6 +17,6 @@ class MakefileRunTargetAction(private val target: MakefileTarget) : AnAction("ma
     val configuration = producer.findOrCreateConfigurationFromContext(context)?.configurationSettings ?: return
 
     (context.runManager as RunManagerEx).setTemporaryConfiguration(configuration)
-    ExecutionUtil.runConfiguration(configuration, ExecutorRegistry.getInstance().registeredExecutors.first())
+    ExecutionUtil.runConfiguration(configuration, Executor.EXECUTOR_EXTENSION_NAME.extensionList.first())
   }
 }
