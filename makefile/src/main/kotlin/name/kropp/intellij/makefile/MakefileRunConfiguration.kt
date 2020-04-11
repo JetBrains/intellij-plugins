@@ -54,7 +54,8 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
   }
 
   override fun getState(executor: Executor, executionEnvironment: ExecutionEnvironment): RunProfileState? {
-    val makePath = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings?.path ?: DEFAULT_MAKE_PATH
+    val makeSettings = ServiceManager.getService(project, MakefileProjectSettings::class.java).settings
+    val makePath = makeSettings?.path ?: DEFAULT_MAKE_PATH
     return object : CommandLineState(executionEnvironment) {
       override fun startProcess(): ProcessHandler {
         val params = ParametersList()
@@ -67,6 +68,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         }
         val workDirectory = if (workingDirectory.isNotEmpty()) macroManager.expandPath(workingDirectory) else File(path).parent
         val cmd = PtyCommandLine()
+            .withUseCygwinLaunch(makeSettings?.useCygwin ?: false)
             .withExePath(makePath)
             .withWorkDirectory(workDirectory)
             .withEnvironment(environmentVariables.envs)
