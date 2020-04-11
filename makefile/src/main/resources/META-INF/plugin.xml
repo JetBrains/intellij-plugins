@@ -14,7 +14,7 @@ Improved parsing resolves many reported highlighting issues, parser now also rec
 Eliminated many deprecated IntelliJ API usages.
 ]]></change-notes>
 
-  <idea-version since-build="192.0"/>
+  <idea-version since-build="201.3119"/>
 
   <depends>com.intellij.modules.lang</depends>
 

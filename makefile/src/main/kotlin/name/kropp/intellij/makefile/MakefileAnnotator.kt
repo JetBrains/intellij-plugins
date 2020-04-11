@@ -14,14 +14,11 @@ class MakefileAnnotator : Annotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileRule && element.isUnused()) {
-      holder.createInfoAnnotation(element, "Redundant rule").apply {
-        highlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
-        registerFix(RemoveRuleFix(element))
-      }
+      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Redundant rule").range(element).highlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL).withFix(RemoveRuleFix(element)).create()
     } else if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
-      holder.createInfoAnnotation(element, null).textAttributes = if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET
+      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET).create()
     } else if (element is MakefilePrerequisite) {
-      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.PREREQUISITE
+      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.PREREQUISITE).create()
 
       if (Regex("""\$\((.*)\)""").matches(element.text)) {
         return
@@ -48,19 +45,19 @@ class MakefileAnnotator : Annotator {
         }
 
         if (!targetReferences && !fileReferenceResolved) {
-          holder.createWeakWarningAnnotation(element, "Unresolved prerequisite").registerFix(CreateRuleFix(element))
+          holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Unresolved prerequisite").range(element).withFix(CreateRuleFix(element)).create()
         } else if (unresolvedFile != null) {
-          holder.createWeakWarningAnnotation(unresolvedFile!!, "File not found")
+          holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "File not found").range(unresolvedFile!!).create()
         }
       }
     } else if (element is MakefileVariable) {
-      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE
+      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.VARIABLE).create()
     } else if (element is MakefileVariableValue) {
       element.node.getChildren(lineTokenSet).forEach {
-        holder.createInfoAnnotation(it, null).textAttributes = MakefileSyntaxHighlighter.VARIABLE_VALUE
+        holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(it).textAttributes(MakefileSyntaxHighlighter.VARIABLE_VALUE).create()
       }
     } else if (element is MakefileFunctionName && element.parent is MakefileFunction) {
-      holder.createInfoAnnotation(element, null).textAttributes = MakefileSyntaxHighlighter.FUNCTION
+      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.FUNCTION).create()
     }
   }
 

@@ -13,7 +13,7 @@ repositories {
 }
 
 intellij {
-  version = "2019.3"
+  version = "2020.1"
   pluginName = rootProject.name
   updateSinceUntilBuild = false
 }

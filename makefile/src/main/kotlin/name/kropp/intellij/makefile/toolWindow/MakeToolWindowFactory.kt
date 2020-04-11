@@ -16,7 +16,7 @@ import javax.swing.tree.*
 class MakeToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     toolWindow.title = "make"
-//    toolWindow.isToHideOnEmptyContent = true
+    toolWindow.isAutoHide = true
 
     DumbService.getInstance(project).runWhenSmart {
       val files = MakefileTargetIndex.allTargets(project).filterNot { it.isSpecialTarget || it.isPatternTarget }.groupBy {
