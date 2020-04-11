@@ -34,6 +34,12 @@ public class MakefileDefineImpl extends ASTWrapperPsiElement implements Makefile
   }
 
   @Override
+  @NotNull
+  public List<MakefileSubstitution> getSubstitutionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileSubstitution.class);
+  }
+
+  @Override
   @Nullable
   public MakefileVariable getVariable() {
     return PsiTreeUtil.getChildOfType(this, MakefileVariable.class);

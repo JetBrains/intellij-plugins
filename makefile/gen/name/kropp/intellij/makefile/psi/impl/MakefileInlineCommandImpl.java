@@ -5,10 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileFunction;
-import name.kropp.intellij.makefile.psi.MakefileInlineCommand;
-import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -32,6 +29,12 @@ public class MakefileInlineCommandImpl extends ASTWrapperPsiElement implements M
   @NotNull
   public List<MakefileFunction> getFunctionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileFunction.class);
+  }
+
+  @Override
+  @NotNull
+  public List<MakefileSubstitution> getSubstitutionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileSubstitution.class);
   }
 
   @Override

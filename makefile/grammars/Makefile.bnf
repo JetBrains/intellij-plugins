@@ -19,6 +19,7 @@
     COMMA = ","
     ASSIGN = "="
     PIPE = "|"
+    BACKTICK = "`"
 
     DOLLAR = "$"
     OPEN_PAREN = "("
@@ -55,11 +56,11 @@ directive ::= define|include|undefine|override|export|privatevar|vpath
 
 rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
-command ::= '\t'+ multiline EOL? {pin=1}
-inline_command ::= multiline
-private multiline ::= split* line (split+ line)*
-private line ::= (<<parseLine>>|function|variable-usage)*
-private defline ::= (<<parseLineNotEndef>>|function|variable-usage)*
+command ::= '\t'+ line EOL? {pin=1}
+inline_command ::= line
+private line ::= (<<parseLine>>|function|variable-usage|substitution)*
+private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution)*
+substitution ::= '`' (<<parseLine>>|function|variable-usage)* '`' {pin=1}
 
 target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -89,7 +90,7 @@ private identifier_part ::= ((function | variable-usage) <<parseToDollarNoWhites
 meta variable-assignment ::= variable assignment variable-value {pin=2 methods=[getAssignment getValue]}
 private assignment ::= ('='|':='|'::='|'?='|'!='|'+=')
 variable ::= identifier {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableNamedElementImpl" implements=["name.kropp.intellij.makefile.psi.MakefileNamedElement" "com.intellij.navigation.NavigationItem"] methods=[getName setName getNameIdentifier]}
-meta variable-value ::= multiline
+meta variable-value ::= line
 define ::= 'define' variable assignment? EOL (defline EOL)* 'endef' {pin=1 methods=[getAssignment getValue]}
 undefine ::= 'undefine' variable EOL? {pin=1}
 override ::= 'override' (undefine|variable-assignment) {pin=1}
@@ -110,7 +111,7 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
-meta function-param ::= (string|'$''$'|variable-usage|chars|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
+meta function-param ::= (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
 
 variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars) {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageMixin"}
 

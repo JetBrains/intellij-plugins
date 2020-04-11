@@ -39,6 +39,12 @@ public class MakefileFunctionParamImpl extends ASTWrapperPsiElement implements M
 
   @Override
   @NotNull
+  public List<MakefileSubstitution> getSubstitutionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileSubstitution.class);
+  }
+
+  @Override
+  @NotNull
   public List<MakefileVariableUsage> getVariableUsageList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }

@@ -36,6 +36,7 @@ public interface MakefileTypes {
   IElementType PRIVATEVAR = new MakefileElementType("PRIVATEVAR");
   IElementType RECIPE = new MakefileElementType("RECIPE");
   IElementType RULE = new MakefileElementType("RULE");
+  IElementType SUBSTITUTION = new MakefileElementType("SUBSTITUTION");
   IElementType TARGET = MakefileTargetStubElementType.getInstance("TARGET");
   IElementType TARGETS = new MakefileElementType("TARGETS");
   IElementType TARGET_LINE = new MakefileElementType("TARGET_LINE");
@@ -48,6 +49,7 @@ public interface MakefileTypes {
   IElementType VPATH = new MakefileElementType("VPATH");
 
   IElementType ASSIGN = new MakefileTokenType("=");
+  IElementType BACKTICK = new MakefileTokenType("`");
   IElementType CHARS = new MakefileTokenType("chars");
   IElementType CLOSE_CURLY = new MakefileTokenType("}");
   IElementType CLOSE_PAREN = new MakefileTokenType(")");
@@ -161,6 +163,9 @@ public interface MakefileTypes {
       }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);
+      }
+      else if (type == SUBSTITUTION) {
+        return new MakefileSubstitutionImpl(node);
       }
       else if (type == TARGET) {
         return new MakefileTargetImpl(node);

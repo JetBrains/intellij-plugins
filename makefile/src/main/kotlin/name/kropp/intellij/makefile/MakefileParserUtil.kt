@@ -97,24 +97,12 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
   }
 
   @JvmStatic
-  fun parseLine(builder: PsiBuilder, level: Int): Boolean {
-    // accept everything till the end of line
-    var hasAny = false
-    do {
-      if (builder.tokenType == DOLLAR) {
-        val lookAhead = builder.lookAhead(1)
-        if (lookAhead == OPEN_CURLY || lookAhead == OPEN_PAREN) {
-          return hasAny
-        }
-      }
-      if (builder.tokenType == EOL || builder.tokenType == null) return hasAny
-      builder.advanceLexer()
-      hasAny = true
-    } while (true)
-  }
+  fun parseLine(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, BACKTICK))
 
   @JvmStatic
-  fun parseLineNotEndef(builder: PsiBuilder, level: Int): Boolean {
+  fun parseLineNotEndef(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, KEYWORD_ENDEF))
+
+  private fun parseLineTokens(builder: PsiBuilder, tokens: Set<IElementType>): Boolean {
     // accept everything till the end of line
     var hasAny = false
     do {
@@ -124,7 +112,7 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
           return hasAny
         }
       }
-      if (builder.tokenType == EOL || builder.tokenType == KEYWORD_ENDEF || builder.tokenType == null) return hasAny
+      if (builder.tokenType in tokens || builder.tokenType == null) return hasAny
       builder.advanceLexer()
       hasAny = true
     } while (true)
@@ -146,8 +134,7 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
       builder.advanceLexer()
     }
     do {
-      val current = builder.tokenType
-      when (current) {
+      when (builder.tokenType) {
         OPEN_PAREN -> paren++
         CLOSE_PAREN -> if (paren > 0) paren-- else return consumeToken(builder, end)
         OPEN_CURLY -> curly++
@@ -158,6 +145,4 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
       builder.advanceLexer()
     } while (true)
   }
-
-  private fun IElementType?.isComment() = this == COMMENT || this == DOC_COMMENT
 }

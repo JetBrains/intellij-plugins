@@ -6,13 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface MakefileVariableValue extends PsiElement {
+public interface MakefileSubstitution extends PsiElement {
 
   @NotNull
   List<MakefileFunction> getFunctionList();
-
-  @NotNull
-  List<MakefileSubstitution> getSubstitutionList();
 
   @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
