@@ -9,8 +9,8 @@ Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-Scripts in recipes are now highlighted with a help from bundled Shell Support plugin.
-Improved parsing resolves many reported highlighting issues.
+Added variable completion.
+Improved parsing resolves many reported highlighting issues, parser now also recovers better.
 Eliminated many deprecated IntelliJ API usages.
 ]]></change-notes>
 

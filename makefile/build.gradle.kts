@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "name.kropp.intellij"
-version = "2.0.1"
+version = "3.0"
 
 repositories {
   mavenCentral()
@@ -36,7 +36,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-  api(kotlin("stdlib-jdk8"))
+//  api(kotlin("stdlib-jdk8"))
 
   testImplementation("org.hamcrest", "hamcrest", "2.2")
 }
