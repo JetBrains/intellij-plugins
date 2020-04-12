@@ -10,7 +10,8 @@ Makefile
           <empty list>
       PsiElement(EOL)('\n')
   PsiComment(COMMENT)('#\t@echo install')
-  PsiElement(EOL)('\n\n')
+  PsiElement(EOL)('\n')
+  PsiElement(EOL)('\n')
   MakefileConditionalImpl(CONDITIONAL)
     PsiElement(ifneq)('ifneq')
     PsiWhiteSpace(' ')

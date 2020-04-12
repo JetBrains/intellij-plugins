@@ -7,7 +7,8 @@ Makefile
     PsiElement(=)(':=')
     MakefileVariableValueImpl(VARIABLE_VALUE)
       <empty list>
-  PsiElement(EOL)('\n\n')
+  PsiElement(EOL)('\n')
+  PsiElement(EOL)('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)

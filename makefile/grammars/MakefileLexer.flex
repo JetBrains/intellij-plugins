@@ -23,7 +23,7 @@ import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
 %type IElementType
 %unicode
 
-EOL=[\r\n]+
+EOL=\n|\r\n
 SPACES=" "+
 BACKSLASHCRLF="\\"(\r|\n|\r\n)(" "|\t)*
 DOCCOMMENT="##"[^\r\n]*

@@ -6,11 +6,13 @@ Makefile
     PsiElement(=)('=')
     MakefileVariableValueImpl(VARIABLE_VALUE)
       PsiElement(string)('"somevar"')
-  PsiElement(EOL)('\n\n')
+  PsiElement(EOL)('\n')
+  PsiElement(EOL)('\n')
   PsiElement(chars)('qwe')
   PsiErrorElement:'!=', $, '+=', ':', '::=', ':=', '=' or '?=' expected
     <empty list>
-  PsiElement(EOL)('\n\n')
+  PsiElement(EOL)('\n')
+  PsiElement(EOL)('\n')
   MakefileRuleImpl(RULE)
     MakefileTargetLineImpl(TARGET_LINE)
       MakefileTargetsImpl(TARGETS)
