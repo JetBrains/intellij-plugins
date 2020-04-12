@@ -7,6 +7,7 @@ import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
@@ -488,5 +489,33 @@ public class CucumberJavaUtil {
       return CUCUMBER_1_1_MAIN_CLASS;
     }
     return CUCUMBER_1_0_MAIN_CLASS;
+  }
+
+  public static Integer getLineNumber(PsiElement element) {
+    PsiFile containingFile = element.getContainingFile();
+    Project project = containingFile.getProject();
+    PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
+    Document document = psiDocumentManager.getDocument(containingFile);
+    int textOffset = element.getTextOffset();
+    if (document == null) {
+      return null;
+    }
+    return document.getLineNumber(textOffset) + 1;
+  }
+
+  @NotNull
+  public static String computeFileUrl(@NotNull PsiElement element) {
+    if (element instanceof PsiDirectory) {
+      return ((PsiDirectory) element).getVirtualFile().getUrl();
+    }
+    VirtualFile file = element.getContainingFile().getVirtualFile();
+    String filePath = file.getPath();
+    if (element.getParent() instanceof GherkinTableRow) {
+      Integer lineNumber = getLineNumber(element);
+      if (lineNumber != null) {
+        filePath += ":" + lineNumber;
+      }
+    }
+    return filePath;
   }
 }
