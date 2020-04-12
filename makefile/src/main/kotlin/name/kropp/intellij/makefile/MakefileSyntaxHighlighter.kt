@@ -67,7 +67,7 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     MakefileTypes.SPLIT -> LINE_SPLIT_KEYS
     MakefileTypes.TAB -> TAB_KEYS
     MakefileTypes.STRING -> STRING_KEYS
-    MakefileTypes.OPEN_PAREN, MakefileTypes.CLOSE_PAREN, MakefileTypes.OPEN_CURLY, MakefileTypes.CLOSE_CURLY -> BRACES_KEYS
+    MakefileTypes.OPEN_PAREN, MakefileTypes.CLOSE_PAREN, MakefileTypes.OPEN_CURLY, MakefileTypes.CLOSE_CURLY, MakefileTypes.BACKTICK -> BRACES_KEYS
     TokenType.BAD_CHARACTER -> BAD_CHAR_KEYS
     else -> EMPTY_KEYS
   }

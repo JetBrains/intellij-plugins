@@ -60,7 +60,7 @@ command ::= '\t'+ line EOL? {pin=1}
 inline_command ::= line
 private line ::= (<<parseLine>>|function|variable-usage|substitution)*
 private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution)*
-substitution ::= '`' (<<parseLine>>|function|variable-usage)* '`' {pin=1}
+substitution ::= '`' (<<parseLine>>|function|variable-usage)* '`' {pin=1 implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileSubstitutionInjectionHost"}
 
 target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+

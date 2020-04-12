@@ -117,7 +117,7 @@ public class MakefileVisitor extends PsiElementVisitor {
   }
 
   public void visitSubstitution(@NotNull MakefileSubstitution o) {
-    visitPsiElement(o);
+    visitPsiLanguageInjectionHost(o);
   }
 
   public void visitTarget(@NotNull MakefileTarget o) {

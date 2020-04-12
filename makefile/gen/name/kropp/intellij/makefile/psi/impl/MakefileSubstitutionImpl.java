@@ -1,21 +1,17 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile.psi.impl;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.psi.MakefileFunction;
-import name.kropp.intellij.makefile.psi.MakefileSubstitution;
-import name.kropp.intellij.makefile.psi.MakefileVariableUsage;
-import name.kropp.intellij.makefile.psi.MakefileVisitor;
+import name.kropp.intellij.makefile.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MakefileSubstitutionImpl extends ASTWrapperPsiElement implements MakefileSubstitution {
+public class MakefileSubstitutionImpl extends MakefileSubstitutionInjectionHost implements MakefileSubstitution {
 
-  public MakefileSubstitutionImpl(@NotNull ASTNode node) {
+  public MakefileSubstitutionImpl(ASTNode node) {
     super(node);
   }
 

@@ -34,4 +34,7 @@ object MakefileElementFactory {
 
   fun createFunction(project: Project, text: String) =
       createFile(project, text).firstChild as MakefileFunction
+
+  fun createSubstitution(project: Project, text: String): MakefileSubstitution =
+      createRecipe(project, text).commandList.first().substitutionList.first()
 }

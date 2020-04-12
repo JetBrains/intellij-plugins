@@ -12,7 +12,7 @@ private val SHELL_LANGUAGE = Language.findLanguageByID(SHELL_LANGUAGE_ID)
 
 class MakefileShellLanguageInjector : MultiHostInjector {
   override fun elementsToInjectIn(): MutableList<out Class<out PsiElement>> {
-    return mutableListOf(MakefileRecipe::class.java, MakefileFunction::class.java)
+    return mutableListOf(MakefileRecipe::class.java, MakefileFunction::class.java, MakefileSubstitution::class.java)
   }
 
   private fun isTab(c: Char): Boolean = c == '\t'
@@ -35,6 +35,11 @@ class MakefileShellLanguageInjector : MultiHostInjector {
         } else {
           emptyList()
         }
+      }
+      is MakefileSubstitution -> {
+        if (context.textLength > 2) {
+          listOf(TextRange(1, context.textLength - 1))
+        } else emptyList()
       }
       else -> emptyList()
     }
