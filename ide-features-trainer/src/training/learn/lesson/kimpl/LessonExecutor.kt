@@ -287,9 +287,11 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
   }
 
   private fun setSample(sample: LessonSample) {
-    setDocumentCode(sample.text)
-    sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
-    editor.caretModel.moveToOffset(sample.startOffset)
+    invokeLater(ModalityState.NON_MODAL) {
+      setDocumentCode(sample.text)
+      sample.selection?.let { editor.selectionModel.setSelection(it.first, it.second) }
+      editor.caretModel.moveToOffset(sample.startOffset)
+    }
   }
 
   private fun setDocumentCode(code: String) {
