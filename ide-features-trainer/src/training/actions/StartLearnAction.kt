@@ -69,7 +69,7 @@ class StartLearnAction : AnAction(
     /** Show tutorials == don't show link */
     fun updateState(dontShowLink: Boolean) {
       val actionManager = ActionManager.getInstance()
-      val actionLinksGroup = actionManager.getAction("WelcomeScreen.QuickStart") as DefaultActionGroup
+      val actionLinksGroup = actionManager.getAction(IdeActions.GROUP_WELCOME_SCREEN_QUICKSTART) as DefaultActionGroup
       val action = actionLinksGroup.getChildren(null, actionManager).find { it is StartLearnAction }
       if (dontShowLink) {
         if (action != null) actionLinksGroup.remove(action)
