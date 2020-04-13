@@ -355,7 +355,7 @@ public class DartAnnotator implements Annotator {
   }
 
   @NotNull
-  private static List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
+  public static List<Pair<TextRange, Boolean>> getEscapeSequenceRangesAndValidity(final @Nullable String text) {
     // \\xFF                 2 hex digits
     // \\uFFFF               4 hex digits
     // \\u{F} - \\u{FFFFFF}  from 1 up to 6 hex digits
