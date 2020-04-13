@@ -29,12 +29,6 @@ class MakefileVariableReference(private val usage: MakefileVariableUsage) : PsiP
     return false
   }
 
-  override fun handleElementRename(newName: String): PsiElement {
-    val newNameNode = MakefileElementFactory.createChars(usage.project, newName)
-    usage.node.replaceChild(nameNode, newNameNode)
-    return usage
-  }
-
   override fun getVariants()
       = (usage.containingFile as MakefileFile).variables.distinctBy { it.text }.map {
     LookupElementBuilder.create(it)

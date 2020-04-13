@@ -40,6 +40,8 @@ Eliminated many deprecated IntelliJ API usages.
     <langCodeStyleSettingsProvider implementation="name.kropp.intellij.makefile.MakefileCodeStyleSettingsProvider"/>
     <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefilePrerequisiteManipulator"
                              forClass="name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl"/>
+    <lang.elementManipulator implementationClass="name.kropp.intellij.makefile.psi.MakefileVariableUsageManipulator"
+                             forClass="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageImpl"/>
     <documentationProvider implementation="name.kropp.intellij.makefile.MakefileDocumentationProvider"/>
     <spellchecker.support language="Makefile" implementationClass="name.kropp.intellij.makefile.MakefileSpellcheckingStrategy" />
     <multiHostInjector implementation="name.kropp.intellij.makefile.MakefileShellLanguageInjector"/>
