@@ -27,7 +27,8 @@ public class GherkinLexer extends LexerBase {
   private final static int STATE_DEFAULT = 0;
   private final static int STATE_AFTER_KEYWORD = 1;
   private final static int STATE_TABLE = 2;
-  private final static int STATE_AFTER_KEYWORD_WITH_PARAMETER = 3;
+  private final static int STATE_AFTER_STEP_KEYWORD = 3;
+  private final static int STATE_AFTER_SCENARIO_KEYWORD = 4;
   private final static int STATE_INSIDE_PYSTRING = 5;
 
   private final static int STATE_PARAMETER_INSIDE_PYSTRING = 6;
@@ -174,7 +175,7 @@ public class GherkinLexer extends LexerBase {
         updateLanguage(language);
       }
     }
-    else if (c == ':') {
+    else if (c == ':' && myState != STATE_AFTER_STEP_KEYWORD) {
       myCurrentToken = GherkinTokenTypes.COLON;
       myPosition++;
     }
@@ -210,8 +211,10 @@ public class GherkinLexer extends LexerBase {
               }
             }
             myPosition += length;
-            if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD || myCurrentToken == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD) {
-              myState = STATE_AFTER_KEYWORD_WITH_PARAMETER;
+            if (myCurrentToken == GherkinTokenTypes.STEP_KEYWORD) {
+              myState = STATE_AFTER_STEP_KEYWORD;
+            } else if (myCurrentToken == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD) {
+              myState = STATE_AFTER_SCENARIO_KEYWORD;
             } else {
               myState = STATE_AFTER_KEYWORD;
             }
@@ -222,7 +225,7 @@ public class GherkinLexer extends LexerBase {
       }
       if (myState == STATE_PARAMETER_INSIDE_STEP) {
         if (c == '>') {
-          myState = STATE_AFTER_KEYWORD_WITH_PARAMETER;
+          myState = STATE_AFTER_STEP_KEYWORD;
           myPosition++;
           myCurrentToken = GherkinTokenTypes.STEP_PARAMETER_BRACE;
         } else {
@@ -230,20 +233,24 @@ public class GherkinLexer extends LexerBase {
           myCurrentToken = GherkinTokenTypes.STEP_PARAMETER_TEXT;
         }
         return;
-      } else if (myState == STATE_AFTER_KEYWORD_WITH_PARAMETER) {
+      } else if (isParameterAllowed()) {
         if (myPosition < myEndOffset && myBuffer.charAt(myPosition) == '<' && isStepParameter("\n")) {
           myState = STATE_PARAMETER_INSIDE_STEP;
           myPosition++;
           myCurrentToken = GherkinTokenTypes.STEP_PARAMETER_BRACE;
         } else {
           myCurrentToken = GherkinTokenTypes.TEXT;
-          advanceToParameterOrSymbol("\n", STATE_AFTER_KEYWORD_WITH_PARAMETER, true);
+          advanceToParameterOrSymbol("\n", STATE_AFTER_STEP_KEYWORD, true);
         }
         return;
       }
       myCurrentToken = GherkinTokenTypes.TEXT;
       advanceToEOL();
     }
+  }
+
+  protected boolean isParameterAllowed() {
+    return myState == STATE_AFTER_STEP_KEYWORD || myState == STATE_AFTER_SCENARIO_KEYWORD;
   }
 
   @Nullable
