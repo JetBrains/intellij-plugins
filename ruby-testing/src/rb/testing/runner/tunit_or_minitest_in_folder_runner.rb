@@ -54,7 +54,7 @@ def require_all_test_scripts(test_scripts)
     rescue Exception => e
       message_factory = Rake::TeamCity::MessageFactory
       test_name = test_script[IntelliJ::FOLDER_PATH.length + 1 .. -1]
-      puts message_factory.create_test_started(test_name)
+      puts message_factory.create_test_started(test_name, nil, '0')
       puts message_factory.create_test_failed(
                test_name,
                "Fail to load: #{test_script}:1\n      Exception message: #{e}",
