@@ -15,6 +15,11 @@ public class CucumberJava5ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("my jav<caret>a8 step", "Given");
   }
 
+  public void testResolveToMethodWithColon() {
+    init("stepResolve_cucumber_5");
+    checkReference("step <caret><color>:", "my_step_with_colon");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber5ProjectDescriptor();
