@@ -14,6 +14,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +38,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
         final boolean[] needOverride = new boolean[1];
         JSInheritanceUtil.processOverrides((JSClass)jsClass, new JSOverrideHandler() {
           @Override
-          public boolean process(@NotNull List<? extends JSPsiElementBase> elements, final PsiElement scope, final String className) {
+          public boolean process(@NotNull List<? extends JSPsiElementBase> elements, final PsiElement scope, final @Nullable String className) {
             needOverride[0] = !"Object".equals(className);
             return false;
           }
