@@ -1,0 +1,18 @@
+AmountModule: Angular2SourceModule
+  imports:
+    NgxsFeatureModule: Angular2IvyModule
+      imports:
+      declarations:
+      exports:
+      all-exported-declarations:
+      scope:
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+  exports:
+  all-exported-declarations:
+  scope:
+  scope fully resolved: false
+  exports fully resolved: true
+  declarations fully resolved: false
