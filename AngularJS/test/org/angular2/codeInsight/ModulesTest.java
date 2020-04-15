@@ -169,6 +169,20 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                                   "CommonModuleMetadataTest");
   }
 
+  public void testPrivateModuleExportMetadata() {
+    doResolutionTest("private-module-export-metadata",
+                     "module.ts",
+                     "export class Amount<caret>Module {",
+                     "check.txt");
+  }
+
+  public void testPrivateModuleExportIvy() {
+    doResolutionTest("private-module-export-ivy",
+                     "module.ts",
+                     "export class Amount<caret>Module {",
+                     "check.txt");
+  }
+
   private void doResolutionTest(@NotNull String directory,
                                 @NotNull String moduleFile,
                                 @NotNull String signature,
