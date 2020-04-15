@@ -262,33 +262,33 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
                                                                   JSRecordType.CallSignature::hasNew);
       type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
     }
+    // Fallback to search in metadata
+    if (myEntityClass.isAssignableFrom(Angular2Module.class)) {
+      Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
+      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
+      if (metadataModule != null) {
+        processCacheDependency(metadataFunction);
+        processCacheDependency(metadataModule);
+        // Make sure we translate to Ivy module if available
+        TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
+        if (tsClass != null) {
+          Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
+          if (ivyModule != null) {
+            processCacheDependency(tsClass);
+            //noinspection unchecked
+            processEntity((T)ivyModule);
+            return;
+          }
+        }
+        //noinspection unchecked
+        processEntity((T)metadataModule);
+        return;
+      }
+    }
     if (resolvedClazz != null && !(type instanceof JSAnyType)) {
       processNonEntityClass(resolvedClazz);
     }
     else {
-      // Fallback to search in metadata
-      if (myEntityClass.isAssignableFrom(Angular2Module.class)) {
-        Angular2MetadataFunction metadataFunction = Angular2MetadataUtil.findMetadataFunction(function);
-        Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
-        if (metadataModule != null) {
-          processCacheDependency(metadataFunction);
-          processCacheDependency(metadataModule);
-          // Make sure we translate to Ivy module if available
-          TypeScriptClass tsClass = metadataModule.getTypeScriptClass();
-          if (tsClass != null) {
-            Angular2Module ivyModule = tryCast(getIvyEntity(tsClass), Angular2Module.class);
-            if (ivyModule != null) {
-              processCacheDependency(tsClass);
-              //noinspection unchecked
-              processEntity((T)ivyModule);
-              return;
-            }
-          }
-          //noinspection unchecked
-          processEntity((T)metadataModule);
-          return;
-        }
-      }
       processAnyType();
     }
   }
