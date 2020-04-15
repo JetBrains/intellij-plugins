@@ -1,8 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.lang.javascript.JavaScriptBundle;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -14,7 +15,6 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -208,9 +208,9 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
                               "bar#string#()" ,
                               "bar#string#(test: boolean)",
                               "bar#string#(test: string)",
-                              "foo#string#"),
+                              "foo#string#null"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
-                   TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
+                   LookupElementPresentation presentation = LookupElementPresentation.renderElement(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
                  }).sorted().toList());
   }
