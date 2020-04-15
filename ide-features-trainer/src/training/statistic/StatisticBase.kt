@@ -5,6 +5,7 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.util.TimeoutUtil
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
 import training.statistic.FeatureUsageStatisticConsts.DURATION
@@ -35,7 +36,7 @@ class StatisticBase {
   }
 
   fun onStartLesson(lesson: Lesson) {
-    sessionLessonTimestamp[lesson.id] = System.currentTimeMillis()
+    sessionLessonTimestamp[lesson.id] = System.nanoTime()
     logEvent(START, FeatureUsageData()
       .addData(LESSON_ID, lesson.id)
       .addData(PROGRESS_PERCENTAGE, calcProgressPercentage(lesson.module))
@@ -48,7 +49,7 @@ class StatisticBase {
       LOG.warn("Unable to find timestamp for a lesson: ${lesson.name}")
       return
     }
-    val delta = System.currentTimeMillis() - timestamp
+    val delta = TimeoutUtil.getDurationMillis(timestamp)
     logEvent(PASSED, FeatureUsageData()
       .addData(LESSON_ID, lesson.id)
       .addData(LANGUAGE, lesson.lang.toLowerCase())
