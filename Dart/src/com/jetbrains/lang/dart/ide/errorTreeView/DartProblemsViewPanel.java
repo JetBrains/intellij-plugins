@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.analysis.problemsView.AnalysisProblem;
@@ -20,7 +20,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
-import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
@@ -178,12 +177,7 @@ public class DartProblemsViewPanel extends AnalysisProblemsViewPanel {
       List<? extends AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
 
       for (AnalysisError analysisError : errors) {
-        if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {
-          continue;
-        }
-
-        final AnalysisProblem problem = new DartProblem(myProject, analysisError);
-        problemsToAdd.add(problem);
+        problemsToAdd.add(new DartProblem(myProject, analysisError));
       }
     }
 
