@@ -1,0 +1,22 @@
+VuexStoreContext: {
+  stores: [
+    NuxtJsVuexStore <PsiDirectory:/src/store/store> {
+      actions: {
+        changeData: <store/actions.js:19:ES6FunctionProperty>,
+      }
+      mutations: {
+        UPDATE_TEST_DATA: <store/index.js:88:ES6FunctionProperty>,
+      }
+      modules: [
+        NuxtJsVuexModule foo [namespaced] <PsiDirectory:/src/store/store/foo> {
+          actions: {
+            changeData: <foo/actions.js:19:ES6FunctionProperty>,
+          }
+          mutations: {
+            UPDATE_TEST_DATA: <foo/index.js:75:ES6FunctionProperty>,
+          }
+        }
+      ]
+    }
+  ],
+}

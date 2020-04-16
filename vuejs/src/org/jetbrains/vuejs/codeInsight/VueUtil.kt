@@ -173,6 +173,28 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
   return null
 }
 
+fun collectPropertiesRecursively(element: JSObjectLiteralExpression): List<Pair<String, JSProperty>> {
+  val result = mutableListOf<Pair<String, JSProperty>>()
+  val initialPropsList = element.propertiesIncludingSpreads
+  val queue = ArrayDeque<JSElement>(initialPropsList.size)
+  queue.addAll(initialPropsList)
+  while (queue.isNotEmpty()) {
+    when (val property = queue.pollLast()) {
+      is JSSpreadExpression -> {
+        objectLiteralFor(property.expression)
+          ?.propertiesIncludingSpreads
+          ?.toCollection(queue)
+      }
+      is JSProperty -> {
+        if (property.name != null) {
+          result.add(Pair(property.name!!, property))
+        }
+      }
+    }
+  }
+  return result
+}
+
 fun getStubSafeCallArguments(call: JSCallExpression): List<PsiElement> {
   if (isStubBased(call)) {
     (call as StubBasedPsiElementBase<*>).stub?.let { stub ->

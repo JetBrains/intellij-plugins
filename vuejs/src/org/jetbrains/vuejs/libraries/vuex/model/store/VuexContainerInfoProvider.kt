@@ -24,11 +24,11 @@ class VuexContainerInfoProvider : InitializedContainerInfoProvider<VuexContainer
     val INSTANCE: VuexContainerInfoProvider = VuexContainerInfoProvider()
 
     private val ContainerMembers = object {
-      val State: MemberReader = MemberReader("state")
-      val Actions: MemberReader = MemberReader("actions")
-      val Getters: MemberReader = MemberReader("getters")
-      val Mutations: MemberReader = MemberReader("mutations")
-      val Modules: MemberReader = MemberReader("modules")
+      val State: MemberReader = MemberReader(VuexUtils.STATE)
+      val Actions: MemberReader = MemberReader(VuexUtils.ACTIONS)
+      val Getters: MemberReader = MemberReader(VuexUtils.GETTERS)
+      val Mutations: MemberReader = MemberReader(VuexUtils.MUTATIONS)
+      val Modules: MemberReader = MemberReader(VuexUtils.MODULES)
     }
 
     private val STATE = SimpleMemberMapAccessor(ContainerMembers.State, ::VuexStatePropertyImpl)
