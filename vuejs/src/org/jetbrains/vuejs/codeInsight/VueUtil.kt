@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.evaluable.JSReturnedExpressionType
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType
 import com.intellij.lang.javascript.psi.types.primitives.JSNumberType
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType
@@ -165,6 +166,11 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
         is JSVariable -> cur.initializerOrStub?.let { queue.addLast(it) }
         is PsiPolyVariantReference -> cur.multiResolve(false)
           .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
+        is JSFunctionExpression -> {
+          JSStubBasedPsiTreeUtil.findReturnedExpressions(cur).asSequence()
+            .filter { JSReturnedExpressionType.isCountableReturnedExpression(it) }
+            .toCollection(queue)
+        }
         else -> JSStubBasedPsiTreeUtil.calculateMeaningfulElements(cur)
           .toCollection(queue)
       }
