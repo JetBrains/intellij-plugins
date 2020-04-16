@@ -5,6 +5,10 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 
+fun CodeInsightTestFixture.configureNuxtJsStore() {
+  configureStore("nuxtjs")
+}
+
 fun CodeInsightTestFixture.configureCounterHotStore() {
   configureStore("counter-hot")
 }
@@ -15,6 +19,10 @@ fun CodeInsightTestFixture.configureShoppingCartStore() {
 
 fun CodeInsightTestFixture.configureStorefront() {
   configureStore("vue-storefront")
+}
+
+fun CodeInsightTestFixture.configureSimpleStore() {
+  configureStore("simple-store")
 }
 
 private fun CodeInsightTestFixture.configureStore(name: String) {

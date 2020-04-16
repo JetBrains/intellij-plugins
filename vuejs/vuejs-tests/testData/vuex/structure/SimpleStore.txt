@@ -1,0 +1,18 @@
+VuexStoreContext: {
+  stores: [
+    VuexStoreImpl <store/simpleStore.js:62:JSNewExpression> {
+      state: {
+        state1: <store/simpleStore.js:107:JSProperty>,
+      }
+      getters: {
+        bar: <store/simpleStore.js:152:JSProperty>,
+      }
+      actions: {
+        action1: <store/simpleStore.js:314:JSProperty>,
+      }
+      mutations: {
+        foo: <store/simpleStore.js:251:JSProperty>,
+      }
+    }
+  ],
+}

@@ -392,6 +392,30 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'inc<caret>rement'" to "store/actions.js:13:JSVariable")
   }
 
+  fun testNuxtJsResolution() {
+    myFixture.configureNuxtJsStore()
+    myFixture.configureFromTempProjectFile("store/pages/index.vue")
+    doTest(false,
+           "'change<caret>Data'" to "store/actions.js:19:ES6FunctionProperty",
+           "'foo/change<caret>Data'" to "foo/actions.js:19:ES6FunctionProperty")
+    myFixture.configureFromTempProjectFile("store/store/foo/actions.js")
+    doTest(false,
+    "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:ES6FunctionProperty")
+    myFixture.configureByText("foo.vue", """
+      <script>
+      export default {
+        mounted() {
+          this.${"store"}.dispatch('changeData', 'new data is nice');
+          this.${"store"}.dispatch('foo/changeData', 'foo data is nice');
+        }
+      }
+      </script>
+    """)
+    doTest(false,
+           "'change<caret>Data'" to null,
+           "'foo/change<caret>Data'" to null)
+  }
+
   private fun doStorefrontTest(vararg args: Pair<String, String?>) {
     doStorefrontTest("storefront-component.ts", *args)
   }
