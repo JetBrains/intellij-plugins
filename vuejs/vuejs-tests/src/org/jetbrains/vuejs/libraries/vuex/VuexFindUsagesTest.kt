@@ -17,7 +17,6 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
       copyFileToProject("../resolve/storefront-decorated-component.ts", "storefront-decorated-component.ts")
       copyFileToProject("../resolve/storefront-namespaced-component.ts", "storefront-namespaced-component.ts")
 
-
       //// Breadcrumbs file
       checkUsages("store/cart/breadcrumbs/index.ts", "bc",
                   "getBreadcrumbs<caret>Routes", // Getters
@@ -90,13 +89,9 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   fun testSimpleStore() {
     with(myFixture) {
-      createPackageJsonWithVueDependency(this, "\"vuex\": \"^3.0.1\"")
-      copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
-      copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
-      copyFileToProject("simpleStore.vue")
-      copyFileToProject("simpleStore.js")
+      myFixture.configureSimpleStore()
 
-      checkUsages("simpleStore.js", "simpleStore",
+      checkUsages("store/simpleStore.js", "simpleStore",
                   "action<caret>1:",
                   "state<caret>1:",
                   "ba<caret>r:",
