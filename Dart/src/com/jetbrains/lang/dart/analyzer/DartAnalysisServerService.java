@@ -1013,7 +1013,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
 
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final List<HoverInformation> result = Lists.newArrayList();
+    final List<HoverInformation> result = new ArrayList<>();
 
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
@@ -1099,7 +1099,7 @@ public final class DartAnalysisServerService implements Disposable {
     }
 
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
-    final List<SourceChange> results = Lists.newArrayList();
+    final List<SourceChange> results = new ArrayList<>();
     final CountDownLatch latch = new CountDownLatch(1);
     final int offset = getOriginalOffset(file, _offset);
     final int length = getOriginalOffset(file, _offset + _length) - offset;
@@ -1369,7 +1369,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull
   public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly) {
-    final List<TypeHierarchyItem> results = Lists.newArrayList();
+    final List<TypeHierarchyItem> results = new ArrayList<>();
     final AnalysisServer server = myServer;
     if (server == null) {
       return results;
@@ -1835,7 +1835,7 @@ public final class DartAnalysisServerService implements Disposable {
                                                           @NotNull final List<RuntimeCompletionExpression> expressions) {
     final AnalysisServer server = myServer;
     if (server == null) {
-      return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
+      return new RuntimeCompletionResult(new ArrayList<CompletionSuggestion>(), new ArrayList<RuntimeCompletionExpression>());
     }
 
     final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());

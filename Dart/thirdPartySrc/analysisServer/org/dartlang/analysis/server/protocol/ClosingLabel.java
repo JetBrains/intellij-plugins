@@ -8,20 +8,15 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A label that is associated with a range of code that may be useful to render at the end of the
@@ -36,7 +31,7 @@ public class ClosingLabel {
 
   public static final ClosingLabel[] EMPTY_ARRAY = new ClosingLabel[0];
 
-  public static final List<ClosingLabel> EMPTY_LIST = Lists.newArrayList();
+  public static final List<ClosingLabel> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The offset of the construct being labelled.

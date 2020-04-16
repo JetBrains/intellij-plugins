@@ -1,7 +1,7 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.template.macro;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.template.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -9,6 +9,7 @@ import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DartMethodParametersMacro extends DartMacroBase {
@@ -26,7 +27,7 @@ public class DartMethodParametersMacro extends DartMacroBase {
     }
 
 
-    List<Result> result = Lists.newArrayList();
+    List<Result> result = new ArrayList<>();
     for (String name : parameterNames) {
       result.add(new TextResult(name));
     }
@@ -53,7 +54,7 @@ public class DartMethodParametersMacro extends DartMacroBase {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(parent, DartFormalParameterList.class);
     if (parameterList == null) return null;
 
-    List<String> results = Lists.newArrayList();
+    List<String> results = new ArrayList<>();
 
     for (DartNormalFormalParameter parameter : parameterList.getNormalFormalParameterList()) {
       findAndAddName(results, parameter);

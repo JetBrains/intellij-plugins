@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2014, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -14,7 +14,6 @@
 package com.google.dart.server.internal.remote;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 
@@ -25,7 +24,7 @@ import java.util.List;
 
 /**
  * A remote server socket over standard input and output.
- * 
+ *
  * @coverage dart.server.remote
  */
 public class StdioServerSocket implements AnalysisServerSocket {
@@ -57,9 +56,9 @@ public class StdioServerSocket implements AnalysisServerSocket {
       String analysisServerPath, List<String> additionalServerArguments,
       DebugPrintStream debugStream) {
     this.runtimePath = runtimePath;
-    this.vmArguments = defaultIfNull(additionalVmArguments, Lists.<String> newArrayList());
+    this.vmArguments = defaultIfNull(additionalVmArguments, new ArrayList<String>());
     this.analysisServerPath = analysisServerPath;
-    this.serverArguments = defaultIfNull(additionalServerArguments, Lists.<String> newArrayList());
+    this.serverArguments = defaultIfNull(additionalServerArguments, new ArrayList<String>());
     this.debugStream = debugStream;
   }
 
@@ -167,7 +166,7 @@ public class StdioServerSocket implements AnalysisServerSocket {
 
   /**
    * Compute and return the command-line arguments used to start the analysis server process.
-   * 
+   *
    * @return the command-line arguments that were computed
    */
   private String[] computeProcessArguments() {

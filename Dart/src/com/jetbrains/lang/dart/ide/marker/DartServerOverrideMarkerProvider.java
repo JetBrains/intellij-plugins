@@ -1,7 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.marker;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonBundle;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
@@ -61,7 +61,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
     final Project project = componentName.getProject();
     final int nameOffset = componentName.getTextRange().getStartOffset();
     DartComponent superclassComponent = null;
-    List<DartComponent> interfaceComponents = Lists.newArrayList();
+    List<DartComponent> interfaceComponents = new ArrayList<>();
     for (DartServerData.DartOverrideMember overrideMember : overrideMembers) {
       if (overrideMember.getOffset() == nameOffset) {
         final OverriddenMember member = overrideMember.getSuperclassMember();
@@ -108,7 +108,7 @@ public class DartServerOverrideMarkerProvider implements LineMarkerProvider {
                                       }
                                       return DartBundle.message("implements.method.in", name, superClass.getName());
                                     }, (e, __) -> {
-          List<DartComponent> superComponents = Lists.newArrayList();
+      List<DartComponent> superComponents = new ArrayList<>();
           if (superclassComponent != null) {
             superComponents.add(superclassComponent);
           }

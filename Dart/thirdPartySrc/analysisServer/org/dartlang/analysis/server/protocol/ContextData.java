@@ -8,10 +8,8 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
+
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +31,7 @@ public class ContextData {
 
   public static final ContextData[] EMPTY_ARRAY = new ContextData[0];
 
-  public static final List<ContextData> EMPTY_LIST = Lists.newArrayList();
+  public static final List<ContextData> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The name of the context.

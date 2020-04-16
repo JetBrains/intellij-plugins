@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2014, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -13,26 +13,26 @@
  */
 package com.google.dart.server.internal.remote.processor;
 
-import com.google.common.collect.Lists;
 import com.google.dart.server.utilities.general.StringUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * Abstract processor class with common behavior for {@link NotificationProcessor} and
  * {@link ResultProcessor}.
- * 
+ *
  * @coverage dart.server.remote
  */
 public abstract class JsonProcessor {
 
   /**
    * Given some {@link JsonArray} and of {@code int} primitives, return the {@code int[]}.
-   * 
+   *
    * @param intJsonArray some {@link JsonArray} of {@code int}s
    * @return the {@code int[]}
    */
@@ -52,7 +52,7 @@ public abstract class JsonProcessor {
 
   /**
    * Given some {@link JsonArray} and of string primitives, return the {@link String} array.
-   * 
+   *
    * @param strJsonArray some {@link JsonArray} of {@link String}s
    * @return the {@link String} array
    */
@@ -60,7 +60,7 @@ public abstract class JsonProcessor {
     if (strJsonArray == null) {
       return StringUtilities.EMPTY_ARRAY;
     }
-    List<String> strings = Lists.newArrayList();
+    List<String> strings = new ArrayList<>();
     Iterator<JsonElement> iterator = strJsonArray.iterator();
     while (iterator.hasNext()) {
       strings.add(iterator.next().getAsString());
@@ -74,7 +74,7 @@ public abstract class JsonProcessor {
    * to the {@link JsonObject} is made in order to be faster. The result will be the passed default
    * value if the member is not on the {@link JsonObject}. This is used for optional json
    * parameters.
-   * 
+   *
    * @param jsonObject the {@link JsonObject}
    * @param memberName the member name
    * @param defaultValue the default value if the member is not in the {@link JsonObject}
@@ -95,7 +95,7 @@ public abstract class JsonProcessor {
    * one call to the {@link JsonObject} is made in order to be faster. The result will be
    * {@code null} if the member is not on the {@link JsonObject}. This is used for optional json
    * parameters.
-   * 
+   *
    * @param jsonObject the {@link JsonObject}
    * @param memberName the member name
    * @return the looked up {@link JsonArray}, or {@code null}
@@ -115,7 +115,7 @@ public abstract class JsonProcessor {
    * one call to the {@link JsonObject} is made in order to be faster. The result will be the passed
    * default value if the member is not on the {@link JsonObject}. This is used for optional json
    * parameters.
-   * 
+   *
    * @param jsonObject the {@link JsonObject}
    * @param memberName the member name
    * @return the looked up {@link JsonObject}, or {@code null}
@@ -135,7 +135,7 @@ public abstract class JsonProcessor {
    * one call to the {@link JsonObject} is made in order to be faster. The result will be
    * {@code null} if the member is not on the {@link JsonObject}. This is used for optional json
    * parameters.
-   * 
+   *
    * @param jsonObject the {@link JsonObject}
    * @param memberName the member name
    * @return the looked up {@link String}, or {@code null}

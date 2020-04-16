@@ -1,6 +1,6 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.text.StringUtil;
@@ -9,6 +9,7 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTestCase {
@@ -35,7 +36,7 @@ public class DartServerOverrideMarkerProviderTest extends CodeInsightFixtureTest
   }
 
   public static void checkGutter(final List<GutterMark> gutters, final String expectedText, final Icon expectedIcon) {
-    final List<String> textList = Lists.newArrayList();
+    final List<String> textList = new ArrayList<>();
     for (GutterMark gutter : gutters) {
       final String text = gutter.getTooltipText();
       textList.add(text);

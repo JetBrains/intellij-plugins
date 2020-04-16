@@ -10,10 +10,8 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
+
 import com.google.dart.server.utilities.general.JsonUtilities;
-import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,7 +31,7 @@ public class ExistingImport {
 
   public static final ExistingImport[] EMPTY_ARRAY = new ExistingImport[0];
 
-  public static final List<ExistingImport> EMPTY_LIST = Lists.newArrayList();
+  public static final List<ExistingImport> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The URI of the imported library. It is an index in the strings field, in the enclosing

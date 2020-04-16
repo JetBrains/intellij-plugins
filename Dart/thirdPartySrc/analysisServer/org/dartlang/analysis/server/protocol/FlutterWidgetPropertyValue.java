@@ -8,20 +8,15 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A value of a property of a Flutter widget.
@@ -33,7 +28,7 @@ public class FlutterWidgetPropertyValue {
 
   public static final FlutterWidgetPropertyValue[] EMPTY_ARRAY = new FlutterWidgetPropertyValue[0];
 
-  public static final List<FlutterWidgetPropertyValue> EMPTY_LIST = Lists.newArrayList();
+  public static final List<FlutterWidgetPropertyValue> EMPTY_LIST = new ArrayList<>();
 
   private final Boolean boolValue;
 

@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
@@ -16,6 +15,7 @@ import com.jetbrains.lang.dart.psi.DartComponent;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -59,7 +59,7 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
     HierarchyBrowserManager.State state = HierarchyBrowserManager.getInstance(myProject).getState();
     if (state == null) throw new NullPointerException();
 
-    List<DartMethodHierarchyNodeDescriptor> subDescriptors = Lists.newArrayList();
+    List<DartMethodHierarchyNodeDescriptor> subDescriptors = new ArrayList<>();
     try {
       for (int index : item.getSubclasses()) {
         final TypeHierarchyItem subItem = items.get(index);
@@ -93,7 +93,7 @@ public class DartMethodHierarchyTreeStructure extends HierarchyTreeStructure {
         }
       }
       if (state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED) {
-        List<DartMethodHierarchyNodeDescriptor> toRemove = Lists.newArrayList();
+        List<DartMethodHierarchyNodeDescriptor> toRemove = new ArrayList<>();
         for (DartMethodHierarchyNodeDescriptor subDescriptor : subDescriptors) {
           if (!(subDescriptor.myIsSuperclassOfImplementor || subDescriptor.myIsImplementor)) {
             toRemove.add(subDescriptor);

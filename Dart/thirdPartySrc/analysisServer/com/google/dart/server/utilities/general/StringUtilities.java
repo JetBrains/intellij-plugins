@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2012, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -15,13 +15,13 @@ package com.google.dart.server.utilities.general;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The class {@code StringUtilities} defines utility methods for strings.
- * 
+ *
  * @coverage dart.server.utilities
  */
 public final class StringUtilities {
@@ -39,7 +39,7 @@ public final class StringUtilities {
   /**
    * An empty list of {@link String}s.
    */
-  public static final List<String> EMPTY_LIST = Lists.newArrayList();
+  public static final List<String> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The {@link Interner} instance to use for {@link #intern(String)}.
@@ -62,7 +62,7 @@ public final class StringUtilities {
 
   /**
    * Return {@code true} if the three-character substring occurs at the end of the given string.
-   * 
+   *
    * @param string the string being searched
    * @param char1 the first character in the substring
    * @param char2 the second character in the substring
@@ -77,7 +77,7 @@ public final class StringUtilities {
 
   /**
    * Return {@code true} if the given string ends with the given character.
-   * 
+   *
    * @param string the string being searched
    * @param character the character being tested for
    * @return {@code true} if the string ends with the character
@@ -90,7 +90,7 @@ public final class StringUtilities {
   /**
    * Return the index of the first occurrence of the given character in the given string that is at
    * or after the given starting index. Return {@code -1} if the substring does not occur.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -112,7 +112,7 @@ public final class StringUtilities {
    * Return the index of the first occurrence of the given characters as a substring of the given
    * string that is at or after the given starting index. Return {@code -1} if the substring does
    * not occur.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -135,7 +135,7 @@ public final class StringUtilities {
    * Return the index of the first occurrence of the given characters as a substring of the given
    * string that is at or after the given starting index. Return {@code -1} if the substring does
    * not occur.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -162,7 +162,7 @@ public final class StringUtilities {
    * Return the index of the first occurrence of the given characters as a substring of the given
    * string that is at or after the given starting index. Return {@code -1} if the substring does
    * not occur.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -191,7 +191,7 @@ public final class StringUtilities {
    * Return the index of the first not letter/digit character in the given string that is at or
    * after the given starting index. Return the length of the given string if the all characters to
    * the end are letters/digits.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @return the index of the first not letter/digit character
@@ -211,7 +211,7 @@ public final class StringUtilities {
 
   /**
    * Returns a canonical representation for the given {@link String}.
-   * 
+   *
    * @return the given {@link String} or its canonical representation.
    */
   public static String intern(String str) {
@@ -230,7 +230,7 @@ public final class StringUtilities {
    * {@code null} will return {@code false}. An empty CharSequence (length()=0) will return
    * {@code false}.
    * </p>
-   * 
+   *
    * <pre>
    * StringUtils.isAlpha(null)   = false
    * StringUtils.isAlpha("")     = false
@@ -239,7 +239,7 @@ public final class StringUtilities {
    * StringUtils.isAlpha("ab2c") = false
    * StringUtils.isAlpha("ab-c") = false
    * </pre>
-   * 
+   *
    * @param cs the CharSequence to check, may be null
    * @return {@code true} if only contains letters, and is non-null
    */
@@ -258,7 +258,7 @@ public final class StringUtilities {
 
   /**
    * Return {@code true} if the given CharSequence is empty ("") or null.
-   * 
+   *
    * <pre>
    * StringUtils.isEmpty(null)      = true
    * StringUtils.isEmpty("")        = true
@@ -266,7 +266,7 @@ public final class StringUtilities {
    * StringUtils.isEmpty("bob")     = false
    * StringUtils.isEmpty("  bob  ") = false
    * </pre>
-   * 
+   *
    * @param cs the CharSequence to check, may be null
    * @return {@code true} if the CharSequence is empty or null
    */
@@ -281,7 +281,7 @@ public final class StringUtilities {
    * <p>
    * {@code null} will return {@code false}. An empty String (length()=0) will return {@code false}.
    * </p>
-   * 
+   *
    * <pre>
    * StringUtils.isAlpha(null)   = false
    * StringUtils.isAlpha("")     = false
@@ -291,7 +291,7 @@ public final class StringUtilities {
    * StringUtils.isAlpha("ab2c") = true
    * StringUtils.isAlpha("ab-c") = true
    * </pre>
-   * 
+   *
    * @param s the String to check, may be null
    * @return {@code true} if can be used as a tag name, and is non-null
    */
@@ -317,7 +317,7 @@ public final class StringUtilities {
   /**
    * Produce a string containing all of the names in the given array, surrounded by single quotes,
    * and separated by commas. The list must contain at least two elements.
-   * 
+   *
    * @param names the names to be printed
    * @return the result of printing the names
    */
@@ -347,7 +347,7 @@ public final class StringUtilities {
   /**
    * Return {@code true} if the two-character substring occurs at the given index in the given
    * string.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -362,7 +362,7 @@ public final class StringUtilities {
   /**
    * Return {@code true} if the three-character substring occurs at the given index in the given
    * string.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -378,7 +378,7 @@ public final class StringUtilities {
   /**
    * Return {@code true} if the four-character substring occurs at the given index in the given
    * string.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -397,7 +397,7 @@ public final class StringUtilities {
   /**
    * Return {@code true} if the five-character substring occurs at the given index in the given
    * string.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -417,7 +417,7 @@ public final class StringUtilities {
   /**
    * Return {@code true} if the six-character substring occurs at the given index in the given
    * string.
-   * 
+   *
    * @param string the string being searched
    * @param startIndex the index at which the search should begin
    * @param char1 the first character in the substring
@@ -438,7 +438,7 @@ public final class StringUtilities {
 
   /**
    * Return {@code true} if the given string starts with the given character.
-   * 
+   *
    * @param string the string being searched
    * @param character the character being tested for
    * @return {@code true} if the string starts with the character
@@ -459,7 +459,7 @@ public final class StringUtilities {
    * <p>
    * If nothing is found, the empty string is returned.
    * </p>
-   * 
+   *
    * <pre>
    * StringUtils.substringAfter(null, *)      = null
    * StringUtils.substringAfter("", *)        = ""
@@ -470,7 +470,7 @@ public final class StringUtilities {
    * StringUtils.substringAfter("abc", "d")   = ""
    * StringUtils.substringAfter("abc", "")    = "abc"
    * </pre>
-   * 
+   *
    * @param str the String to get a substring from, may be null
    * @param separator the String to search for, may be null
    * @return the substring after the first occurrence of the separator, {@code null} if null String
@@ -497,7 +497,7 @@ public final class StringUtilities {
    * the empty string. A {@code null} separator will return the input string.
    * <p>
    * If nothing is found, the string input is returned.
-   * 
+   *
    * <pre>
    * StringUtils.substringBefore(null, *)      = null
    * StringUtils.substringBefore("", *)        = ""
@@ -508,7 +508,7 @@ public final class StringUtilities {
    * StringUtils.substringBefore("abc", "")    = ""
    * StringUtils.substringBefore("abc", null)  = "abc"
    * </pre>
-   * 
+   *
    * @param str the string to get a substring from, may be null
    * @param separator the string to search for, may be null
    * @return the substring before the first occurrence of the separator
@@ -535,7 +535,7 @@ public final class StringUtilities {
    * the empty string.
    * <p>
    * If nothing is found, the string input is returned.
-   * 
+   *
    * <pre>
    * StringUtils.substringBefore(null, *)      = null
    * StringUtils.substringBefore("", *)        = ""
@@ -544,7 +544,7 @@ public final class StringUtilities {
    * StringUtils.substringBefore("abc", 'c')   = "ab"
    * StringUtils.substringBefore("abc", 'd')   = "abc"
    * </pre>
-   * 
+   *
    * @param str the string to get a substring from, may be null
    * @param separator the character to search for
    * @return the substring before the first occurrence of the separator

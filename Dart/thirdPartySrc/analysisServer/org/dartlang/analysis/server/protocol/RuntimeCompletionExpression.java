@@ -8,20 +8,15 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * An expression for which we want to know its runtime type. In expressions like 'a.b.c.where((e)
@@ -35,7 +30,7 @@ public class RuntimeCompletionExpression {
 
   public static final RuntimeCompletionExpression[] EMPTY_ARRAY = new RuntimeCompletionExpression[0];
 
-  public static final List<RuntimeCompletionExpression> EMPTY_LIST = Lists.newArrayList();
+  public static final List<RuntimeCompletionExpression> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The offset of the expression in the code for completion.

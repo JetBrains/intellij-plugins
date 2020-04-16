@@ -8,20 +8,14 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
-import com.google.dart.server.utilities.general.ObjectUtilities;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A description of a class member that is implemented or overridden.
@@ -33,7 +27,7 @@ public class ImplementedMember {
 
   public static final ImplementedMember[] EMPTY_ARRAY = new ImplementedMember[0];
 
-  public static final List<ImplementedMember> EMPTY_LIST = Lists.newArrayList();
+  public static final List<ImplementedMember> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The offset of the name of the implemented member.

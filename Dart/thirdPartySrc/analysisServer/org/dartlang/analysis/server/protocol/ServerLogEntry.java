@@ -8,20 +8,15 @@
  */
 package org.dartlang.analysis.server.protocol;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
-import com.google.dart.server.utilities.general.JsonUtilities;
+
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * A log entry from the server.
@@ -33,7 +28,7 @@ public class ServerLogEntry {
 
   public static final ServerLogEntry[] EMPTY_ARRAY = new ServerLogEntry[0];
 
-  public static final List<ServerLogEntry> EMPTY_LIST = Lists.newArrayList();
+  public static final List<ServerLogEntry> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The time (milliseconds since epoch) at which the server created this log entry.

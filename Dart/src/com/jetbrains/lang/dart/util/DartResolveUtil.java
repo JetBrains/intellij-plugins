@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -422,7 +421,7 @@ public class DartResolveUtil {
 
   public static List<DartMethodDeclaration> findOperators(AbstractDartPsiClass dartPsiClass) {
     return findSubComponents(dartClass -> {
-      List<DartMethodDeclaration> operators = Lists.newArrayList();
+      List<DartMethodDeclaration> operators = new ArrayList<>();
       final DartMethodDeclaration[] methods = PsiTreeUtil.getChildrenOfType(getBody(dartClass), DartMethodDeclaration.class);
       if (methods != null) {
         for (DartMethodDeclaration method : methods) {

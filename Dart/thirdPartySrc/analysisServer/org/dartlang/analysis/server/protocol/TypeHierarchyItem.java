@@ -10,8 +10,7 @@ package org.dartlang.analysis.server.protocol;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import com.google.common.collect.Lists;
+
 import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.dart.server.utilities.general.ObjectUtilities;
 import com.google.gson.JsonArray;
@@ -33,7 +32,7 @@ public class TypeHierarchyItem {
 
   public static final TypeHierarchyItem[] EMPTY_ARRAY = new TypeHierarchyItem[0];
 
-  public static final List<TypeHierarchyItem> EMPTY_LIST = Lists.newArrayList();
+  public static final List<TypeHierarchyItem> EMPTY_LIST = new ArrayList<>();
 
   /**
    * The class element represented by this item.
