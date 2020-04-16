@@ -1,6 +1,9 @@
 VuexStoreContext: {
   stores: [
     NuxtJsVuexStore <PsiDirectory:/src/store/store> {
+      state: {
+        test: <store/index.js:32:JSProperty>,
+      }
       actions: {
         changeData: <store/actions.js:19:ES6FunctionProperty>,
       }
@@ -9,6 +12,9 @@ VuexStoreContext: {
       }
       modules: [
         NuxtJsVuexModule foo [namespaced] <PsiDirectory:/src/store/store/foo> {
+          state: {
+            data: <foo/index.js:32:JSProperty>,
+          }
           actions: {
             changeData: <foo/actions.js:19:ES6FunctionProperty>,
           }
