@@ -34,27 +34,28 @@ public class CucumberJUnitRunConfigurationExtension extends RunConfigurationExte
     scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
 
     String mainClassName = ((JUnitConfiguration)configuration).getPersistentData().MAIN_CLASS_NAME;
-    PsiClass mainClass =  mainClassName != null 
-                          ? DumbService.getInstance(module.getProject())
-                            .computeWithAlternativeResolveEnabled(() -> JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope)) 
-                          : null;
-    if (mainClass == null) {
-      return;
-    }
-
-    PsiAnnotation runWithAnnotation = mainClass.getAnnotation(JUNIT_RUN_WITH_ANNOTATION_CLASS);
-    if (runWithAnnotation == null) {
-      return;
-    }
-    PsiNameValuePair[] annotationParameters = runWithAnnotation.getParameterList().getAttributes();
-    for (PsiNameValuePair parameter : annotationParameters) {
-      PsiAnnotationMemberValue value = parameter.getValue();
-      if (value != null && value.getText().equalsIgnoreCase(CUCUMBER_JUNIT_RUNNER_CLASS_MARKER)) {
-        params.getClassPath().add(PathUtil.getJarPathForClass(CucumberTestTreeNodeManager.class));
-        params.getVMParametersList().add("-D" + JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT + "=" + CucumberTestTreeNodeManager.class.getName());
+    DumbService.getInstance(module.getProject()).runWithAlternativeResolveEnabled(() -> {
+      PsiClass mainClass =  mainClassName != null
+                            ? JavaPsiFacade.getInstance(configuration.getProject()).findClass(mainClassName, scope)
+                            : null;
+      if (mainClass == null) {
         return;
       }
-    }
+
+      PsiAnnotation runWithAnnotation = mainClass.getAnnotation(JUNIT_RUN_WITH_ANNOTATION_CLASS);
+      if (runWithAnnotation == null) {
+        return;
+      }
+      PsiNameValuePair[] annotationParameters = runWithAnnotation.getParameterList().getAttributes();
+      for (PsiNameValuePair parameter : annotationParameters) {
+        PsiAnnotationMemberValue value = parameter.getValue();
+        if (value != null && value.getText().equalsIgnoreCase(CUCUMBER_JUNIT_RUNNER_CLASS_MARKER)) {
+          params.getClassPath().add(PathUtil.getJarPathForClass(CucumberTestTreeNodeManager.class));
+          params.getVMParametersList().add("-D" + JUNIT_TEST_TREE_NODE_MANAGER_ARGUMENT + "=" + CucumberTestTreeNodeManager.class.getName());
+          return;
+        }
+      }
+    });
   }
 
   @Override
