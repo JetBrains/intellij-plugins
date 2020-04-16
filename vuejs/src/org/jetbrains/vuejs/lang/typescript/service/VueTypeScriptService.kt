@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.typescript.service
 
 import com.intellij.lang.javascript.DialectDetector
@@ -69,9 +69,7 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   return result
 }
 
-class VueTypeScriptService(project: Project) :
-  TypeScriptServerServiceImpl(project, "Vue Console") {
-
+class VueTypeScriptService(project: Project) : TypeScriptServerServiceImpl(project, "Vue Console") {
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
     if (!isVueFile(virtualFile)) return false

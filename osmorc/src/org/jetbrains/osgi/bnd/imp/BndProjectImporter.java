@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -55,13 +55,15 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static org.osmorc.i18n.OsmorcBundle.message;
 
-public class BndProjectImporter {
+public final class BndProjectImporter {
   public static final String CNF_DIR = Workspace.CNFDIR;
   public static final String BUILD_FILE = Workspace.BUILDFILE;
   public static final String BND_FILE = Project.BNDFILE;
@@ -526,7 +528,7 @@ public class BndProjectImporter {
   @Nullable
   public static Workspace findWorkspace(@NotNull com.intellij.openapi.project.Project project) {
     String basePath = project.getBasePath();
-    if (basePath != null && new File(basePath, CNF_DIR).exists()) {
+    if (basePath != null && Files.exists(Paths.get(basePath, CNF_DIR))) {
       try {
         Workspace ws = Workspace.getWorkspace(new File(basePath), CNF_DIR);
         BND_WORKSPACE_KEY.set(project, ws);

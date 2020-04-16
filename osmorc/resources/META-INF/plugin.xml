@@ -56,6 +56,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <postStartupActivity implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity"/>
+    <vfs.asyncListener implementation="org.jetbrains.osgi.bnd.imp.ReimportPostStartupActivity$FileListener"/>
 
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndProjectImportProvider"/>
     <projectImportProvider implementation="org.jetbrains.osgi.bnd.imp.BndModuleImportProvider"/>
