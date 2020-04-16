@@ -30,7 +30,6 @@ import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.TestApplicationManager;
 import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
 import org.angular2.cli.AngularCliSchematicsRegistryServiceImpl;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -45,6 +44,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -70,7 +70,7 @@ public class GenerateNgAddCompatibleList {
   }
 
   public static void generate() throws Exception {
-    Map<String, NodePackageBasicInfo> angularPkgs = ContainerUtil.newConcurrentMap();
+    Map<String, NodePackageBasicInfo> angularPkgs = new ConcurrentHashMap<>();
     NpmRegistryService service = new NpmRegistryServiceImpl();
 
     ApplicationImpl app = (ApplicationImpl)ApplicationManager.getApplication();

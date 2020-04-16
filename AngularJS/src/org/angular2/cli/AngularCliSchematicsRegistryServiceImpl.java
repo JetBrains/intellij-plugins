@@ -1,13 +1,13 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
+import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
-import com.intellij.javascript.nodejs.npm.registry.NpmRegistryService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -60,13 +60,12 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
 
   private final CachedValue<List<NodePackageBasicInfo>> myNgAddPackages = new CachedValue<>(
     AngularCliSchematicsRegistryServiceImpl::fetchPackagesSupportingNgAdd);
-  private final Map<String, Pair<Boolean, Long>> myLocalNgAddPackages = ContainerUtil.newConcurrentMap();
-  private final Map<String, CachedValue<Boolean>> myNgAddSupportedCache = ContainerUtil.newConcurrentMap();
+  private final Map<String, Pair<Boolean, Long>> myLocalNgAddPackages = new ConcurrentHashMap<>();
+  private final Map<String, CachedValue<Boolean>> myNgAddSupportedCache = new ConcurrentHashMap<>();
 
 
-  @NotNull
   @Override
-  public List<NodePackageBasicInfo> getPackagesSupportingNgAdd(long timeout) {
+  public @NotNull List<NodePackageBasicInfo> getPackagesSupportingNgAdd(long timeout) {
     return ContainerUtil.notNullize(myNgAddPackages.getValue(timeout));
   }
 
@@ -111,12 +110,11 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     return false;
   }
 
-  @NotNull
   @Override
-  public List<Schematic> getSchematics(@NotNull Project project,
-                                       @NotNull VirtualFile cliFolder,
-                                       boolean includeHidden,
-                                       boolean logErrors) {
+  public @NotNull List<Schematic> getSchematics(@NotNull Project project,
+                                                @NotNull VirtualFile cliFolder,
+                                                boolean includeHidden,
+                                                boolean logErrors) {
     return Optional.ofNullable(AngularCliUtil.findCliJson(cliFolder))
       .map(angularJson -> ReadAction.compute(() -> PsiManager.getInstance(project).findFile(angularJson)))
       .map(angularJson -> getCachedSchematics(angularJson, includeHidden ? SCHEMATICS_ALL : SCHEMATICS_PUBLIC).getUpToDateOrCompute(
@@ -134,8 +132,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     SCHEMATICS_CACHE_TRACKER.incModificationCount();
   }
 
-  @NotNull
-  private static List<NodePackageBasicInfo> fetchPackagesSupportingNgAdd() {
+  private static @NotNull List<NodePackageBasicInfo> fetchPackagesSupportingNgAdd() {
     try {
       RequestBuilder builder = HttpRequests.request(NG_PACKAGES_URL);
       builder.userAgent(USER_AGENT);
@@ -154,8 +151,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     return Collections.emptyList();
   }
 
-  @NotNull
-  private static List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
+  private static @NotNull List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
     return Collections.unmodifiableList(
       ContainerUtil.map(
@@ -163,8 +159,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
         e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
   }
 
-  @Nullable
-  private static File getSchematicsCollection(@NotNull File packageJson) throws IOException {
+  private static @Nullable File getSchematicsCollection(@NotNull File packageJson) throws IOException {
     try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(packageJson),
                                                                   StandardCharsets.UTF_8))) {
       reader.beginObject();
@@ -230,8 +225,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     return packageName + "@" + version;
   }
 
-  @NotNull
-  private static CachedSchematics getCachedSchematics(@NotNull UserDataHolder dataHolder, @NotNull Key<CachedSchematics> key) {
+  private static @NotNull CachedSchematics getCachedSchematics(@NotNull UserDataHolder dataHolder, @NotNull Key<CachedSchematics> key) {
     CachedSchematics result = dataHolder.getUserData(key);
     if (result != null) {
       return result;
@@ -294,8 +288,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     }
 
     @SuppressWarnings("SynchronizeOnThis")
-    @Nullable
-    public T getValue(long timeout) {
+    public @Nullable T getValue(long timeout) {
       Future<T> cacheComputation;
       synchronized (this) {
         if (myCachedValue != null && !isCacheExpired()) {

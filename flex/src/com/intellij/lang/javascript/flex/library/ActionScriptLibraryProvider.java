@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -16,13 +16,13 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
 
-  private static final Map<String, Ref<VirtualFile>> ourLibFileCache = ContainerUtil.newConcurrentMap();
+  private static final Map<String, Ref<VirtualFile>> ourLibFileCache = new ConcurrentHashMap<>();
 
-  @Nullable
-  private static VirtualFile getPredefinedLibFile(@NotNull String libFileName) {
+  private static @Nullable VirtualFile getPredefinedLibFile(@NotNull String libFileName) {
     Ref<VirtualFile> fileRef = getCachedFileRef(libFileName);
     if (fileRef != null) return fileRef.get();
     VirtualFile file = findFileByURL(libFileName);
@@ -41,12 +41,11 @@ public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvid
         .warn("Cannot find virtual file " + libFileName + " by url " + libFileUrl.toExternalForm());
       return null;
     }
-    
+
     return file;
   }
 
-  @Nullable
-  private static Ref<VirtualFile> getCachedFileRef(@NotNull String fileName) {
+  private static @Nullable Ref<VirtualFile> getCachedFileRef(@NotNull String fileName) {
     Ref<VirtualFile> ref = ourLibFileCache.get(fileName);
     VirtualFile file = ref != null ? ref.get() : null;
     if (file != null && !file.isValid()) {
@@ -56,17 +55,15 @@ public final class ActionScriptLibraryProvider extends JSPredefinedLibraryProvid
     return ref;
   }
 
-  @NotNull
-  public static Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
+  public static @NotNull Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
     Set<VirtualFile> files = new HashSet<>(2);
     ContainerUtil.addIfNotNull(files, getPredefinedLibFile(JavaScriptIndex.ECMASCRIPT_JS2));
     ContainerUtil.addIfNotNull(files, getPredefinedLibFile("E4X.js2"));
     return files;
   }
 
-  @NotNull
   @Override
-  public Set<VirtualFile> getRequiredLibraryFilesToIndex() {
+  public @NotNull Set<VirtualFile> getRequiredLibraryFilesToIndex() {
     return getActionScriptPredefinedLibraryFiles();
   }
 }

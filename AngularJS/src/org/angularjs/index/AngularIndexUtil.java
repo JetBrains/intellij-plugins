@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.index;
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -52,13 +54,12 @@ public class AngularIndexUtil {
   public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
-    ContainerUtil.newConcurrentMap();
+    new ConcurrentHashMap<>();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
 
-  @Nullable
-  public static JSImplicitElement resolve(@NotNull Project project,
-                                          @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                          @NotNull String lookupKey) {
+  public static @Nullable JSImplicitElement resolve(@NotNull Project project,
+                                                    @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
+                                                    @NotNull String lookupKey) {
     Ref<JSImplicitElement> result = new Ref<>(null);
     Processor<JSImplicitElement> processor = element -> {
       result.set(element);
@@ -105,10 +106,10 @@ public class AngularIndexUtil {
     );
   }
 
-  public static ResolveResult @NotNull [] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
-                                                                                  @NotNull final ID<? super String, AngularNamedItemDefinition> INDEX,
-                                                                                  @NotNull final String id,
-                                                                                  @NotNull final Condition<? super VirtualFile> filter,
+  public static ResolveResult @NotNull [] multiResolveAngularNamedDefinitionIndex(final @NotNull Project project,
+                                                                                  final @NotNull ID<? super String, AngularNamedItemDefinition> INDEX,
+                                                                                  final @NotNull String id,
+                                                                                  final @NotNull Condition<? super VirtualFile> filter,
                                                                                   boolean dirtyResolve) {
     final FileBasedIndex instance = FileBasedIndex.getInstance();
     Collection<VirtualFile> files = instance.getContainingFiles(INDEX, id, GlobalSearchScope.allScope(project));
@@ -137,8 +138,7 @@ public class AngularIndexUtil {
     return list.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
-  @NotNull
-  public static Collection<String> getAllKeys(@NotNull final ID<String, ?> index, @NotNull final Project project) {
+  public static @NotNull Collection<String> getAllKeys(final @NotNull ID<String, ?> index, final @NotNull Project project) {
     final String indexId = index.getName();
     final Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>> key =
       ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.create("angularjs.index." + indexId));
@@ -146,12 +146,12 @@ public class AngularIndexUtil {
     return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, pair);
   }
 
-  public static boolean hasAngularJS(@NotNull final Project project) {
+  public static boolean hasAngularJS(final @NotNull Project project) {
     if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
     return getAngularJSVersion(project) > 0;
   }
 
-  private static int getAngularJSVersion(@NotNull final Project project) {
+  private static int getAngularJSVersion(final @NotNull Project project) {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
@@ -204,16 +204,14 @@ public class AngularIndexUtil {
     return false;
   }
 
-  @NotNull
-  public static List<PsiElement> resolveLocally(@NotNull JSReferenceExpression ref) {
+  public static @NotNull List<PsiElement> resolveLocally(@NotNull JSReferenceExpression ref) {
     if (ref.getQualifier() == null && ref.getReferenceName() != null) {
       return JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ref.getReferenceName(), ref);
     }
     return Collections.emptyList();
   }
 
-  @NotNull
-  public static String convertRestrictions(@NotNull final Project project, @NotNull String restrictions) {
+  public static @NotNull String convertRestrictions(final @NotNull Project project, @NotNull String restrictions) {
     if (AngularJSIndexingHandler.DEFAULT_RESTRICTIONS.equals(restrictions)) {
       return getAngularJSVersion(project) >= 13 ? "E" : "_";
     }
