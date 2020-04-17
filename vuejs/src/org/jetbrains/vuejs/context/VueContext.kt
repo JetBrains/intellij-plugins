@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.context
 
 import com.intellij.lang.injection.InjectedLanguageManager
-import com.intellij.lang.javascript.library.JSCDNLibManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.DumbService
@@ -12,21 +11,18 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.*
-import com.intellij.psi.impl.source.html.HtmlLikeFile
-import com.intellij.psi.impl.source.xml.XmlTagImpl
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.xml.XmlTag
 import com.intellij.testFramework.LightVirtualFileBase
-import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 
@@ -46,7 +42,7 @@ fun isVueContext(context: PsiElement): Boolean {
   val file = psiFile.originalFile.virtualFile
   if ((file != null && file.fileType == VueFileType.INSTANCE)
       || (file == null && psiFile.language == VueLanguage.INSTANCE)
-      || isSimpleVueHtml(psiFile)) {
+      || isEnabledFromProviders(psiFile)) {
     return true
   }
 
@@ -54,6 +50,10 @@ fun isVueContext(context: PsiElement): Boolean {
   return isVueContext(if (file != null && file.isInLocalFileSystem) file
                       else psiFile.project.baseDir ?: return false,
                       psiFile.project)
+}
+
+internal fun isVueContextEnabled(psiFile: PsiFile): Boolean {
+  return isEnabledFromProviders(psiFile)
 }
 
 fun isVueContext(contextFile: VirtualFile, project: Project): Boolean {
@@ -74,41 +74,6 @@ private fun isVueContext(directory: PsiDirectory): Boolean {
   return CachedValuesManager.getCachedValue(directory, VUE_CONTEXT_KEY) {
     isVueContextFromProviders(directory)
   }
-}
-
-fun isSimpleVueHtml(psiFile: PsiFile): Boolean {
-  if (psiFile is HtmlLikeFile) {
-    return CachedValuesManager.getCachedValue(psiFile) {
-      var level = 0
-      var result = false
-      psiFile.acceptChildren(object : XmlRecursiveElementVisitor() {
-        override fun visitXmlTag(tag: XmlTag) {
-          if (HtmlUtil.isScriptTag(tag) && hasVueScriptLink(tag)) {
-            result = true
-          }
-          if (++level <= 3) {
-            // Do not process XIncludes to avoid recursion
-            (tag as? XmlTagImpl)?.getSubTags(false)?.forEach { it.accept(this) }
-            level--
-          }
-        }
-
-        private fun hasVueScriptLink(tag: XmlTag): Boolean {
-          val link = tag.getAttribute(HtmlUtil.SRC_ATTRIBUTE_NAME)?.value
-          if (link == null || !link.contains("vue")) {
-            return false
-          }
-          if (JSCDNLibManager.getLibraryForUrl(link)?.libraryName == VUE_MODULE) {
-            return true
-          }
-          val fileName = VfsUtil.extractFileName(link)
-          return fileName != null && fileName.startsWith("vue.") && fileName.endsWith(".js")
-        }
-      })
-      CachedValueProvider.Result.create(result, psiFile)
-    }
-  }
-  return false
 }
 
 fun enableVueTSService(project: Project): Boolean {
@@ -135,6 +100,9 @@ fun enableVueTSService(project: Project): Boolean {
 private fun isVueContextForbiddenFromProviders(context: VirtualFile, project: Project): Boolean =
   VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList.any { it.isVueContextForbidden(context, project) }
 
+
+private fun isEnabledFromProviders(psiFile: PsiFile): Boolean =
+  VueContextProvider.VUE_CONTEXT_PROVIDER_EP.extensionList.any { it.isVueContextEnabled(psiFile) }
 
 private fun isVueContextFromProviders(psiDir: PsiDirectory): CachedValueProvider.Result<Boolean> {
   val dependencies = mutableSetOf<Any>()
