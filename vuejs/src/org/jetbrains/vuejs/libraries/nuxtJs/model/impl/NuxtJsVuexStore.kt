@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSFile
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -117,11 +118,16 @@ abstract class NuxtJsVuexContainer(override val source: PsiFileSystemItem) : Vue
 
     private fun getJSFiles(dir: PsiDirectory): Map<String, JSFile> {
       val result = mutableMapOf<String, JSFile>()
-      dir.processChildren {
-        if (it is JSFile) {
-          val name = FileUtil.getNameWithoutExtension(it.name)
-          if (!result.containsKey(name) || DialectDetector.isTypeScript(it)) {
-            result[name] = it
+      dir.processChildren { file ->
+        if (file is JSFile) {
+          val name = file.name.let {
+            if (it.endsWith(".d.ts"))
+              it.substring(0..it.length - 5)
+            else
+              FileUtil.getNameWithoutExtension(it)
+          }
+          if (!result.containsKey(name) || DialectDetector.isTypeScript(file)) {
+            result[name] = file
           }
         }
         true

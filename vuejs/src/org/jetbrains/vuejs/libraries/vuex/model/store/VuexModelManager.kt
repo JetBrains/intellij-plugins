@@ -30,7 +30,7 @@ object VuexModelManager {
     var stores = getAllVuexStores(element.project)
     // Introduce extension point if another provider would need to be added
     NuxtJsModelManager.getApplication(element)?.getVuexStore()?.let {
-      stores = stores.asSequence().plus(it).toList()
+      stores = stores + it
     }
     val registeredModules = getRegisteredModules(element.project)
     return if (stores.isNotEmpty() || registeredModules.isNotEmpty())
