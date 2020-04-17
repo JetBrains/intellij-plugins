@@ -1,6 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.libraries.nuxtJs.model.impl
 
+import com.intellij.javascript.JSFileReference
+import com.intellij.javascript.JSFileReference.IMPLICIT_EXTENSIONS
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.psi.JSFile
@@ -120,12 +122,7 @@ abstract class NuxtJsVuexContainer(override val source: PsiFileSystemItem) : Vue
       val result = mutableMapOf<String, JSFile>()
       dir.processChildren { file ->
         if (file is JSFile) {
-          val name = file.name.let {
-            if (it.endsWith(".d.ts"))
-              it.substring(0..it.length - 5)
-            else
-              FileUtil.getNameWithoutExtension(it)
-          }
+          val name = JSFileReference.getFileNameWithoutExtension(file.name, IMPLICIT_EXTENSIONS)
           if (!result.containsKey(name) || DialectDetector.isTypeScript(file)) {
             result[name] = file
           }
