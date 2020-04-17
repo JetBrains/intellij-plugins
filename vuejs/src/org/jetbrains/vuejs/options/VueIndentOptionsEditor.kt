@@ -4,37 +4,40 @@ package org.jetbrains.vuejs.options
 import com.intellij.application.options.SmartIndentOptionsEditor
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.fields.ExpandableTextField
+import org.jetbrains.vuejs.VueBundle.message
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
+import java.awt.Dimension
 import java.awt.GridBagConstraints.WEST
 import java.awt.GridBagLayout
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.JRadioButton
+import javax.swing.*
 
 class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
 
-  private var myUniformIndentRadioButton: JRadioButton? = null
-  private var myBlockSpecificIndentRadioButton: JRadioButton? = null
-  private var myIndentChildrenOfTopLevelTags: ExpandableTextField? = null
-  private var myIndentChildrenOfTopLevelTagsLabel: JLabel? = null
+  private val myUniformIndentRadioButton: JRadioButton = JRadioButton(message("options.indent.radio.uniform.caption"))
+  private val myBlockSpecificIndentRadioButton: JRadioButton = JRadioButton(message("options.indent.radio.block-specific.caption"))
+  private val myIndentChildrenOfTopLevelTags: ExpandableTextField = ExpandableTextField()
+  private val myIndentChildrenOfTopLevelTagsLabel: JLabel = JLabel(message("options.indent.label.top-level.caption"))
+  private val myBlockSpecificIndentPanel: JPanel = JPanel()
+
+  private val myComponentsList = listOf(myBlockSpecificIndentPanel, myUniformIndentRadioButton, myIndentChildrenOfTopLevelTagsLabel)
 
   override fun addComponents() {
-    myBlockSpecificIndentRadioButton = JRadioButton("Specific to the language in the block")
-    myBlockSpecificIndentRadioButton?.addActionListener {
-      myUniformIndentRadioButton?.isSelected = !myBlockSpecificIndentRadioButton!!.isSelected
+    myBlockSpecificIndentRadioButton.addActionListener {
+      myUniformIndentRadioButton.isSelected = !myBlockSpecificIndentRadioButton.isSelected
     }
-    add(myBlockSpecificIndentRadioButton)
-    myUniformIndentRadioButton = JRadioButton("Same in the whole file")
-    myUniformIndentRadioButton?.addActionListener {
-      myBlockSpecificIndentRadioButton?.isSelected = !myUniformIndentRadioButton!!.isSelected
+    myBlockSpecificIndentPanel.layout = BoxLayout(myBlockSpecificIndentPanel, BoxLayout.X_AXIS)
+    myBlockSpecificIndentPanel.add(myBlockSpecificIndentRadioButton)
+    myBlockSpecificIndentPanel.add(Box.createRigidArea(Dimension(10, 0)))
+    myBlockSpecificIndentPanel.add(ContextHelpLabel.create(message("options.indent.radio.block-specific.tooltip")))
+    add(myBlockSpecificIndentPanel)
+    myUniformIndentRadioButton.addActionListener {
+      myBlockSpecificIndentRadioButton.isSelected = !myUniformIndentRadioButton.isSelected
     }
     add(myUniformIndentRadioButton)
     super.addComponents()
-    myIndentChildrenOfTopLevelTagsLabel = JLabel("Indent children of top-level tag:")
-    myIndentChildrenOfTopLevelTags = ExpandableTextField()
     add(myIndentChildrenOfTopLevelTagsLabel, myIndentChildrenOfTopLevelTags)
   }
 
@@ -43,7 +46,7 @@ class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
     val layout = panel.layout as? GridBagLayout ?: return panel
     panel.components.asSequence()
       .filterIsInstance<JComponent>()
-      .filter { it !in listOf(myBlockSpecificIndentRadioButton, myUniformIndentRadioButton, myIndentChildrenOfTopLevelTagsLabel) }
+      .filter { it !in myComponentsList }
       .forEach {
         val constraints = layout.getConstraints(it)
         if (constraints.anchor == WEST) {
@@ -56,17 +59,17 @@ class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
 
   override fun isModified(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions): Boolean {
     val vueSettings = settings.getCustomSettings(VueCodeStyleSettings::class.java)
-    if (vueSettings.UNIFORM_INDENT != myUniformIndentRadioButton!!.isSelected
-        || vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL != myIndentChildrenOfTopLevelTags!!.text.trim()) {
+    if (vueSettings.UNIFORM_INDENT != myUniformIndentRadioButton.isSelected
+        || vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL != myIndentChildrenOfTopLevelTags.text.trim()) {
       return true
     }
-    return !myUniformIndentRadioButton!!.isSelected || super.isModified(settings, options)
+    return !myUniformIndentRadioButton.isSelected || super.isModified(settings, options)
   }
 
   override fun apply(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions) {
     val vueSettings = settings.getCustomSettings(VueCodeStyleSettings::class.java)
-    vueSettings.UNIFORM_INDENT = myUniformIndentRadioButton!!.isSelected
-    vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL = myIndentChildrenOfTopLevelTags!!.text
+    vueSettings.UNIFORM_INDENT = myUniformIndentRadioButton.isSelected
+    vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL = myIndentChildrenOfTopLevelTags.text
     if (vueSettings.UNIFORM_INDENT) {
       super.apply(settings, options)
     }
@@ -74,17 +77,17 @@ class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
 
   override fun reset(settings: CodeStyleSettings, options: CommonCodeStyleSettings.IndentOptions) {
     val vueSettings = settings.getCustomSettings(VueCodeStyleSettings::class.java)
-    myUniformIndentRadioButton!!.isSelected = vueSettings.UNIFORM_INDENT
-    myBlockSpecificIndentRadioButton!!.isSelected = !vueSettings.UNIFORM_INDENT
-    myIndentChildrenOfTopLevelTags!!.text = vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL
+    myUniformIndentRadioButton.isSelected = vueSettings.UNIFORM_INDENT
+    myBlockSpecificIndentRadioButton.isSelected = !vueSettings.UNIFORM_INDENT
+    myIndentChildrenOfTopLevelTags.text = vueSettings.INDENT_CHILDREN_OF_TOP_LEVEL
     super.reset(settings, options)
   }
 
   override fun setEnabled(enabled: Boolean) {
-    myUniformIndentRadioButton!!.isEnabled = enabled
-    myBlockSpecificIndentRadioButton!!.isEnabled = enabled
-    myIndentChildrenOfTopLevelTags!!.isEnabled = enabled
-    setIndentSectionEnabled(enabled && myUniformIndentRadioButton!!.isSelected)
+    myUniformIndentRadioButton.isEnabled = enabled
+    myBlockSpecificIndentRadioButton.isEnabled = enabled
+    myIndentChildrenOfTopLevelTags.isEnabled = enabled
+    setIndentSectionEnabled(enabled && myUniformIndentRadioButton.isSelected)
   }
 
   private fun setIndentSectionEnabled(value: Boolean) {
