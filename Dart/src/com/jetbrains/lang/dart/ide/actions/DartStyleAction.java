@@ -1,6 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
+import com.intellij.CommonBundle;
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
@@ -23,7 +25,6 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
@@ -38,17 +39,12 @@ import java.util.Map;
 import static com.intellij.openapi.util.text.StringUtil.isWhiteSpace;
 
 public class DartStyleAction extends AbstractDartFileProcessingAction {
-
   private static final Logger LOG = Logger.getInstance(DartStyleAction.class.getName());
-
-  public DartStyleAction() {
-    super(DartBundle.messagePointer("dart.style.action.name"), DartBundle.messagePointer("dart.style.action.description"), null);
-  }
 
   @NotNull
   @Override
   protected String getActionTextForEditor() {
-    return DartBundle.message("dart.style.action.name");
+    return DartBundle.message("action.Dart.DartStyle.text");
   }
 
   @NotNull
@@ -130,7 +126,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     final String formattedRange = rangeInFormattedText.substring(formattedText);
 
     WriteCommandAction
-      .runWriteCommandAction(project, DartBundle.message("dart.style.action.name"), null,
+      .runWriteCommandAction(project, DartBundle.message("action.Dart.DartStyle.text"), null,
                              () -> document.replaceString(inputRange.getStartOffset(), inputRange.getEndOffset(), formattedRange),
                              psiFile);
 
@@ -151,12 +147,14 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
   @Override
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
-      Messages.showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("dart.style.action.name"));
+      Messages
+        .showInfoMessage(project, DartBundle.message("dart.style.files.no.dart.files"), DartBundle.message("action.Dart.DartStyle.text"));
       return;
     }
 
     if (Messages.showOkCancelDialog(project, DartBundle.message("dart.style.files.dialog.question", dartFiles.size()),
-                                    DartBundle.message("dart.style.action.name"), null) != Messages.OK) {
+                                    DartBundle.message("action.Dart.DartStyle.text"),
+                                    CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText(), null) != Messages.OK) {
       return;
     }
 
@@ -175,8 +173,11 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
         final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
         if (indicator != null) {
           indicator.checkCanceled();
-          indicator.setFraction(fraction / dartFiles.size());
           indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
+          if (dartFiles.size() > 1) {
+            indicator.setIndeterminate(false);
+            indicator.setFraction(fraction / dartFiles.size());
+          }
         }
 
         final DartAnalysisServerService.FormatResult formatResult =
@@ -191,7 +192,7 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
     DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
-      .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.style.action.name"), true, project);
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartStyle.text"), true, project);
 
     if (ok) {
       final Runnable onSuccessRunnable = () -> {
@@ -207,12 +208,12 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
       };
 
       ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
-        .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.style.action.name"), null));
+        .executeCommand(project, onSuccessRunnable, DartBundle.message("action.Dart.DartStyle.text"), null));
     }
   }
 
   private static int getRightMargin(@NotNull Project project) {
-    return CodeStyleSettingsManager.getSettings(project).getCommonSettings(DartLanguage.INSTANCE).RIGHT_MARGIN;
+    return CodeStyle.getSettings(project).getCommonSettings(DartLanguage.INSTANCE).RIGHT_MARGIN;
   }
 
   /**

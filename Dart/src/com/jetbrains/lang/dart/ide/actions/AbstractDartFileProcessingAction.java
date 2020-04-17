@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -34,16 +34,12 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * An abstract {@link AnAction} for processing a single Dart file open in the editor,
  * or a group of selected Dart files.
  */
 public abstract class AbstractDartFileProcessingAction extends AnAction implements DumbAware {
-  public AbstractDartFileProcessingAction(@NotNull Supplier<String> text, @NotNull Supplier<String> description, @Nullable Icon icon) {
-    super(text, description, icon);
-  }
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {

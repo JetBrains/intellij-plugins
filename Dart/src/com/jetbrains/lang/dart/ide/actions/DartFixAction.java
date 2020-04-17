@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,15 +24,10 @@ import java.util.List;
  * This is currently experimental work.
  */
 public class DartFixAction extends AbstractDartFileProcessingAction {
-
-  public DartFixAction() {
-    super(DartBundle.messagePointer("dart.fix.action.name"), DartBundle.messagePointer("dart.fix.action.description"), null);
-  }
-
   @NotNull
   @Override
   protected String getActionTextForEditor() {
-    return DartBundle.message("dart.fix.action.name");
+    return DartBundle.message("action.Dart.DartFix.text");
   }
 
   @NotNull
@@ -62,7 +57,7 @@ public class DartFixAction extends AbstractDartFileProcessingAction {
     };
 
     ApplicationManager.getApplication().runWriteAction(
-      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.fix.action.name"), null));
+      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("action.Dart.DartFix.text"), null));
   }
 
   @Override

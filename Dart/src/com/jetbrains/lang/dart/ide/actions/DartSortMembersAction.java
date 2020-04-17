@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.google.common.collect.Maps;
+import com.intellij.CommonBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
@@ -29,17 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 public class DartSortMembersAction extends AbstractDartFileProcessingAction {
-
   private static final Logger LOG = Logger.getInstance(DartSortMembersAction.class.getName());
-
-  public DartSortMembersAction() {
-    super(DartBundle.messagePointer("dart.sort.members.action.name"), DartBundle.messagePointer("dart.sort.members.action.description"), null);
-  }
 
   @NotNull
   @Override
   protected String getActionTextForEditor() {
-    return DartBundle.message("dart.sort.members.action.name");
+    return DartBundle.message("action.Dart.DartSortMembers.text");
   }
 
   @NotNull
@@ -77,19 +73,20 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     };
 
     ApplicationManager.getApplication().runWriteAction(
-      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("dart.sort.members.action.name"), null));
+      () -> CommandProcessor.getInstance().executeCommand(project, runnable, DartBundle.message("action.Dart.DartSortMembers.text"), null));
   }
 
   @Override
   protected void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles) {
     if (dartFiles.isEmpty()) {
       Messages.showInfoMessage(project, DartBundle.message("dart.sort.members.files.no.dart.files"),
-                               DartBundle.message("dart.sort.members.action.name"));
+                               DartBundle.message("action.Dart.DartSortMembers.text"));
       return;
     }
 
     if (Messages.showOkCancelDialog(project, DartBundle.message("dart.sort.members.files.dialog.question", dartFiles.size()),
-                                    DartBundle.message("dart.sort.members.action.name"), null) != Messages.OK) {
+                                    DartBundle.message("action.Dart.DartSortMembers.text"), CommonBundle.getYesButtonText(),
+                                    CommonBundle.getNoButtonText(), null) != Messages.OK) {
       return;
     }
 
@@ -102,8 +99,11 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
         final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
         if (indicator != null) {
           indicator.checkCanceled();
-          indicator.setFraction(fraction / dartFiles.size());
           indicator.setText2(FileUtil.toSystemDependentName(virtualFile.getPath()));
+          if (dartFiles.size() > 1) {
+            indicator.setIndeterminate(false);
+            indicator.setFraction(fraction / dartFiles.size());
+          }
         }
 
         final String path = virtualFile.getPath();
@@ -117,7 +117,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
     DartAnalysisServerService.getInstance(project).updateFilesContent();
 
     final boolean ok = ApplicationManagerEx.getApplicationEx()
-      .runProcessWithProgressSynchronously(runnable, DartBundle.message("dart.sort.members.action.name"), true, project);
+      .runProcessWithProgressSynchronously(runnable, DartBundle.message("action.Dart.DartSortMembers.text"), true, project);
 
     if (ok) {
       final Runnable onSuccessRunnable = () -> {
@@ -132,7 +132,7 @@ public class DartSortMembersAction extends AbstractDartFileProcessingAction {
       };
 
       ApplicationManager.getApplication().runWriteAction(() -> CommandProcessor.getInstance()
-        .executeCommand(project, onSuccessRunnable, DartBundle.message("dart.sort.members.action.name"), null));
+        .executeCommand(project, onSuccessRunnable, DartBundle.message("action.Dart.DartSortMembers.text"), null));
     }
   }
 }
