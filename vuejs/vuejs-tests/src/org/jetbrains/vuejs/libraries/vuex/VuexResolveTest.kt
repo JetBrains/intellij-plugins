@@ -264,7 +264,7 @@ class VuexResolveTest : BasePlatformTestCase() {
            "'root<caret>Action'" to "src/root-namespaced-module.js:164:JSProperty",
            "'inner<caret>RootAction'" to "src/root-namespaced-module.js:439:JSProperty",
            "'namespaced<caret>Action'" to null,
-           "'foo/namespaced<caret>Action'" to "src/root-namespaced-module.js:124:ES6FunctionProperty",
+           "'foo/namespaced<caret>Action'" to "src/root-namespaced-module.js:124:JSFunctionProperty",
            "'foo/root<caret>Action'" to null,
            "'fo<caret>o/rootAction'" to "src/root-namespaced-module.js:78:JSLiteralExpression",
            "'foo/inner<caret>RootAction'" to null,
@@ -353,13 +353,13 @@ class VuexResolveTest : BasePlatformTestCase() {
            "rootState.products.a<caret>ll.f" to "modules/products.js:70:JSProperty",
            "return getters.cart<caret>Products" to "modules/cart.js:167:JSProperty",
            "[...state.it<caret>ems]" to "modules/cart.js:99:JSProperty",
-           "commit('set<caret>CheckoutStatus', null)" to "modules/cart.js:1956:ES6FunctionProperty",
-           "commit('set<caret>CartItems', { items: [] })" to "modules/cart.js:1890:ES6FunctionProperty",
+           "commit('set<caret>CheckoutStatus', null)" to "modules/cart.js:1956:JSFunctionProperty",
+           "commit('set<caret>CartItems', { items: [] })" to "modules/cart.js:1890:JSFunctionProperty",
            "state.it<caret>ems.push({" to "modules/cart.js:99:JSProperty"
     )
     myFixture.configureFromTempProjectFile("store/modules/products.js")
     doTest(false,
-           "commit('set<caret>Products'" to "modules/products.js:295:ES6FunctionProperty",
+           "commit('set<caret>Products'" to "modules/products.js:295:JSFunctionProperty",
            "state.al<caret>l" to "modules/products.js:70:JSProperty")
   }
 
@@ -396,11 +396,11 @@ class VuexResolveTest : BasePlatformTestCase() {
     myFixture.configureNuxtJsStore()
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTest(false,
-           "'change<caret>Data'" to "store/actions.js:19:ES6FunctionProperty",
-           "'foo/change<caret>Data'" to "foo/actions.js:19:ES6FunctionProperty")
+           "'change<caret>Data'" to "store/actions.js:19:JSFunctionProperty",
+           "'foo/change<caret>Data'" to "foo/actions.js:19:JSFunctionProperty")
     myFixture.configureFromTempProjectFile("store/store/foo/actions.js")
     doTest(false,
-    "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:ES6FunctionProperty")
+    "UPDATE_TEST_<caret>DATA" to "foo/index.js:75:JSFunctionProperty")
     myFixture.configureByText("foo.vue", """
       <script>
       export default {
