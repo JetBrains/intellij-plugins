@@ -6,6 +6,7 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import junit.framework.TestCase
@@ -624,5 +625,6 @@ class VuexCompletionTest : BasePlatformTestCase() {
           UsefulTestCase.assertContainsElements(list, items)
         }
       }
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
   }
 }
