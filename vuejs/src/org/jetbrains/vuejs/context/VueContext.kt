@@ -52,10 +52,6 @@ fun isVueContext(context: PsiElement): Boolean {
                       psiFile.project)
 }
 
-internal fun isVueContextEnabled(psiFile: PsiFile): Boolean {
-  return isEnabledFromProviders(psiFile)
-}
-
 fun isVueContext(contextFile: VirtualFile, project: Project): Boolean {
   // TODO merge with Angular
   var file: VirtualFile? = contextFile

@@ -14,7 +14,7 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
-import org.jetbrains.vuejs.context.isVueContextEnabled
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
@@ -24,8 +24,9 @@ import org.jetbrains.vuejs.model.VueModelManager
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean =
     file?.let {
-      it.language is VueLanguage ||
-      (it.language is HTMLLanguage && isVueContextEnabled(it))
+      it.language is VueLanguage
+      // Support extension in plain HTML with Vue.js lib, PHP, Twig and others
+      || (HTMLLanguage.INSTANCE in it.viewProvider.languages && isVueContext(it))
     } == true
 
   override fun getPrefixDeclaration(context: XmlTag, namespacePrefix: String?): SchemaPrefix? {
