@@ -21,7 +21,8 @@ import org.junit.runners.Suite;
   VuexMappersTest.class,
   VuexCompletionTest.class,
   VuexResolveTest.class,
-  VuexFindUsagesTest.class
+  VuexFindUsagesTest.class,
+  VuexTestStructure.class
 })
 public class VuexTestSuite {
 }
