@@ -7,7 +7,6 @@ import com.intellij.openapi.fileTypes.*
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
 import name.kropp.intellij.makefile.psi.*
-import java.awt.*
 
 class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
   companion object {
@@ -25,12 +24,14 @@ class MakefileSyntaxHighlighter : SyntaxHighlighterBase() {
     val TAB = createTextAttributesKey("MAKEFILE_TAB", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
     val FUNCTION = createTextAttributesKey("MAKEFILE_FUNCTION", DefaultLanguageHighlighterColors.KEYWORD)
     val FUNCTION_PARAM = createTextAttributesKey("MAKEFILE_FUNCTION_PARAM", DefaultLanguageHighlighterColors.STRING)
-    val BRACES = createTextAttributesKey("MAKEFILE_BRACES", DefaultLanguageHighlighterColors.BRACES).apply(::braces)
-    val PARENS = createTextAttributesKey("MAKEFILE_PARENTHESES", DefaultLanguageHighlighterColors.PARENTHESES).apply(::braces)
+    val BRACES = createTextAttributesKey("MAKEFILE_BRACES", DefaultLanguageHighlighterColors.BRACES)
+    val PARENS = createTextAttributesKey("MAKEFILE_PARENTHESES", DefaultLanguageHighlighterColors.PARENTHESES)
 
+/*
     private fun braces(t: TextAttributesKey) {
-      t.defaultAttributes.foregroundColor = Color(0x00, 0x73, 0xbf)
+      t.foregroundColor = Color(0x00, 0x73, 0xbf)
     }
+*/
 
     val BAD_CHARACTER = createTextAttributesKey("MAKEFILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER)
 
