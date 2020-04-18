@@ -98,9 +98,11 @@ class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
       }
       test {
         ideFrame {
-          runReadAction {
-            jTree("Dynamic references", timeout = Timeouts.seconds03, predicate = substringPredicate).doubleClickPath()
+          val jTree = runReadAction {
+            jTree("Dynamic references", timeout = Timeouts.seconds03, predicate = substringPredicate)
           }
+          // WARNING: several exception will be here because of UsageNode#toString inside info output during this operation
+          jTree.doubleClickPath()
         }
       }
     }
