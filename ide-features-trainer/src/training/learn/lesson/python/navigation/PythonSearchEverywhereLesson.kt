@@ -2,6 +2,7 @@
 package training.learn.lesson.python.navigation
 
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText
+import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.testGuiFramework.util.Key
@@ -81,6 +82,14 @@ class PythonSearchEverywhereLesson(module: Module) : KLesson("Search Everywhere"
     task {
       text("<strong>Done!</strong> In the same way you can use ${action("GotoSymbol")} to look for a method or global variable " +
            "and use ${action("GotoFile")} to look for a file.")
+    }
+
+    if (TaskContext.inTestMode) task {
+      stateCheck { focusOwner is EditorComponentImpl }
+      test {
+        GuiTestUtil.shortcut(Key.ESCAPE)
+        GuiTestUtil.shortcut(Key.ESCAPE)
+      }
     }
   }
 
