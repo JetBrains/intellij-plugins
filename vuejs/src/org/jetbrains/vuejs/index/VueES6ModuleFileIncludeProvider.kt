@@ -27,7 +27,7 @@ class VueES6ModuleFileIncludeProvider : FileIncludeProvider() {
     return file.fileType == VueFileType.INSTANCE
   }
 
-  override fun registerFileTypesUsedForIndexing(fileTypeSink: Consumer<FileType>) {
+  override fun registerFileTypesUsedForIndexing(fileTypeSink: Consumer<in FileType>) {
     fileTypeSink.consume(VueFileType.INSTANCE)
   }
 

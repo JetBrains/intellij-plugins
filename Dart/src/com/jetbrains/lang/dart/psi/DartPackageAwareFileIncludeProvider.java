@@ -42,7 +42,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
   }
 
   @Override
-  public void registerFileTypesUsedForIndexing(@NotNull final Consumer<FileType> fileTypeSink) {
+  public void registerFileTypesUsedForIndexing(final @NotNull Consumer<? super FileType> fileTypeSink) {
     fileTypeSink.consume(StdFileTypes.HTML);
     fileTypeSink.consume(StdFileTypes.XHTML);
   }
