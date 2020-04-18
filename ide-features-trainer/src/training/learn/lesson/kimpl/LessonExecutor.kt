@@ -111,6 +111,12 @@ class LessonExecutor(val lesson: KLesson, val editor: Editor, val project: Proje
     get() = FileDocumentManager.getInstance().getFile(editor.document) ?: error("No Virtual File")
 
   fun processNextTask(taskIndex: Int) {
+    invokeLater(ModalityState.any()) {
+      processNextTask2(taskIndex)
+    }
+  }
+
+  private fun processNextTask2(taskIndex: Int) {
     IncorrectLearningStateNotificationProvider.clearMessage(virtualFile, project)
     assert(ApplicationManager.getApplication().isDispatchThread)
     if (taskIndex == taskActions.size) {
