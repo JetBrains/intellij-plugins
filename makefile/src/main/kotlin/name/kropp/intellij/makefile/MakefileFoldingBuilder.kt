@@ -21,7 +21,10 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
           is MakefileRule -> MakefileRuleFoldingDescriptor(it)
           is MakefileVariableAssignment -> MakefileVariableFoldingDescriptor(it)
           is MakefileDefine -> MakefileDefineFoldingDescriptor(it)
-          is MakefileConditional -> MakefileConditionalFoldingDescriptor(it)
+          is MakefileConditional -> {
+            val range = it.withoutFirstNode()
+            if (!range.isEmpty) MakefileConditionalFoldingDescriptor(it, range) else null
+          }
           else -> null
         }
       }.toTypedArray()
@@ -42,8 +45,11 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
     }
 
     fun PsiElement.trimmedTextRange() = TextRange.create(textRange.startOffset, textRange.startOffset + text.indexOfLast { !it.isWhitespace() } + 1)
-    fun PsiElement.withoutFirstNode() = TextRange.create(firstChild.nextNonWhiteSpaceSibling().textRange.startOffset, textRange.endOffset)
-    private tailrec fun PsiElement.nextNonWhiteSpaceSibling(): PsiElement = if (nextSibling !is PsiWhiteSpace) nextSibling else nextSibling.nextNonWhiteSpaceSibling()
+    fun PsiElement.withoutFirstNode(): TextRange {
+      val startOffset = firstChild.nextNonWhiteSpaceSibling()?.textRange?.startOffset ?: textRange.endOffset
+      return TextRange.create(startOffset, textRange.endOffset)
+    }
+    private tailrec fun PsiElement.nextNonWhiteSpaceSibling(): PsiElement? = if (nextSibling !is PsiWhiteSpace) nextSibling else nextSibling?.nextNonWhiteSpaceSibling()
   }
 
   class MakefileRuleFoldingDescriptor(private val rule: MakefileRule) : FoldingDescriptor(rule, rule.trimmedTextRange()) {
@@ -55,7 +61,7 @@ class MakefileFoldingBuilder : FoldingBuilderEx(), DumbAware {
   class MakefileDefineFoldingDescriptor(private val define: MakefileDefine) : FoldingDescriptor(define, define.trimmedTextRange()) {
     override fun getPlaceholderText() = "${define.variable?.text}${define.assignment?.text ?: "="}${cutValue(define.value)}"
   }
-  class MakefileConditionalFoldingDescriptor(private val conditional: MakefileConditional) : FoldingDescriptor(conditional, conditional.withoutFirstNode()) {
+  class MakefileConditionalFoldingDescriptor(private val conditional: MakefileConditional, range: TextRange) : FoldingDescriptor(conditional, range) {
     override fun getPlaceholderText() = cutValue(conditional.condition?.text)
   }
 }
