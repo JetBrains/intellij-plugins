@@ -17,7 +17,7 @@ import java.util.*;
 public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
   private final Map componentKeyToAdapterCache = new HashMap();
   private final ComponentAdapterFactory componentAdapterFactory;
-  private final PicoContainer parent;
+  private final DefaultPicoContainer parent;
   private final Set<DefaultPicoContainer> children = new HashSet<>();
 
   private final List componentAdapters = new ArrayList();
@@ -73,7 +73,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
     if (lifecycleStrategyForInstanceRegistrations == null) throw new NullPointerException("lifecycleStrategyForInstanceRegistrations");
     this.componentAdapterFactory = componentAdapterFactory;
     this.lifecycleStrategyForInstanceRegistrations = lifecycleStrategyForInstanceRegistrations;
-    this.parent = parent;
+    this.parent = (DefaultPicoContainer)parent;
   }
 
   /**
@@ -84,7 +84,6 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
     this(new DefaultComponentAdapterFactory(), new DefaultLifecycleStrategy(), null);
   }
 
-  @Override
   public Collection getComponentAdapters() {
     return Collections.unmodifiableList(componentAdapters);
   }
@@ -98,7 +97,6 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
     return adapter;
   }
 
-  @Override
   public ComponentAdapter getComponentAdapterOfType(@NotNull Class<?> componentType) {
     // See http://jira.codehaus.org/secure/ViewIssue.jspa?key=PICO-115
     ComponentAdapter adapterByKey = getComponentAdapter(componentType);
@@ -129,7 +127,6 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
     }
   }
 
-  @Override
   public List getComponentAdaptersOfType(@NotNull Class<?> componentType) {
     if (componentType == null) {
       return Collections.EMPTY_LIST;
@@ -313,9 +310,7 @@ public class DefaultPicoContainer implements MutablePicoContainer, Disposable {
     return null;
   }
 
-
-  @Override
-  public PicoContainer getParent() {
+  public DefaultPicoContainer getParent() {
     return parent;
   }
 
