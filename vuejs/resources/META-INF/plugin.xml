@@ -38,7 +38,6 @@ Vue components defined using separate .html, .js, and .css files are not support
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
-  <depends optional="true" config-file="thymeleaf.xml">com.intellij.thymeleaf</depends>
 
   <extensionPoints>
     <!--suppress PluginXmlValidity -->
