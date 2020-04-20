@@ -55,7 +55,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontDirectGetter() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { return this.\$store.getters['<caret>']", section = "computed")
     doItemsTest(0, "foo() { return this.store.getters['<caret>']", section = "computed")
     doItemsTest(1, "foo() { return this.\$store.getters['cart/<caret>getCoupon']", section = "computed")
@@ -67,13 +67,13 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontDirectState() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { return this.\$store.state.<caret>", section = "computed", strict = false, renderPriority = true)
     doItemsTest(1, "foo() { return this.\$store.state.category.<caret>", section = "computed", strict = false, renderPriority = true)
   }
 
   fun testStorefrontDirectDispatch() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { this.\$store.dispatch('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.store.dispatch('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.\$store.dispatch('<caret>cart/applyCoupon', code) }", section = "methods")
@@ -95,7 +95,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontDirectCommit() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "foo() { this.\$store.commit('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.store.commit('<caret>', code) }", section = "methods")
     doItemsTest(0, "foo() { this.\$store.commit('<caret>cart/breadcrumbs/set', code) }", section = "methods")
@@ -120,7 +120,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontMapGetters() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapGetters(<caret>", section = "computed", strict = false, renderPriority = true)
     doItemsTest(1, "...mapGetters('<caret>'", section = "computed")
 
@@ -168,7 +168,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontMapState() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapState(<caret>", section = "computed", strict = false, renderPriority = true)
     doItemsTest(1, "...mapState('<caret>'", section = "computed")
 
@@ -233,7 +233,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontMapActions() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapActions(<caret>", section = "methods", strict = false, renderPriority = true)
     doItemsTest(1, "...mapActions('<caret>'", section = "methods")
 
@@ -297,7 +297,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontMapMutations() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     doItemsTest(0, "...mapMutations(<caret>", section = "methods", strict = false, renderPriority = true)
     doItemsTest(1, "...mapMutations('<caret>'", section = "methods")
 
@@ -361,7 +361,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreActionContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     val categoryActions = "store/category/actions.ts"
     //context
     doStoreItemsTest(0, categoryActions, "<caret>return CategoryService",
@@ -494,7 +494,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreGettersContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     val cartGetters = "store/cart/getters.ts"
 
     // state
@@ -521,13 +521,25 @@ class VuexCompletionTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreMutationsContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     val breadcrumbs = "store/cart/breadcrumbs/index.ts"
 
     // state
     doStoreItemsTest(0, breadcrumbs, "state.<caret>routes", strict = false)
     doStoreItemsTest(1, breadcrumbs, "state<caret>.routes", additionalContent = "[<caret>]", strict = false)
     doStoreItemsTest(2, breadcrumbs, "state<caret>.routes", additionalContent = "['<caret>']")
+  }
+
+  fun testFunctionInit() {
+    myFixture.configureStore(VuexTestStore.FunctionInit)
+
+    val module = "store/myVuexModule.js"
+
+    doStoreItemsTest(0, module, "'set<caret>Prop1'", strict = true)
+    doStoreItemsTest(1, module, "state.<caret>prop1", strict = false)
+
+    doItemsTest(2, "...mapMutations(['<caret>'", section = "methods")
+    doItemsTest(3, "...mapActions(['<caret>'", section = "methods")
   }
 
   private val namespacedHandlersCode = """

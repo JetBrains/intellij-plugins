@@ -12,7 +12,7 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   fun testStorefront() {
     with(myFixture) {
-      configureStorefront()
+      configureStore(VuexTestStore.Storefront)
       copyFileToProject("../resolve/storefront-component.ts", "storefront-component.ts")
       copyFileToProject("../resolve/storefront-decorated-component.ts", "storefront-decorated-component.ts")
       copyFileToProject("../resolve/storefront-namespaced-component.ts", "storefront-namespaced-component.ts")
@@ -73,7 +73,7 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   fun testShoppingCart() {
     with(myFixture) {
-      configureShoppingCartStore()
+      configureStore(VuexTestStore.ShoppingCart)
       checkUsages("store/modules/cart.js", "cart",
                   "cart<caret>Products:",
                   "cart<caret>TotalPrice:",
@@ -89,7 +89,7 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   fun testSimpleStore() {
     with(myFixture) {
-      myFixture.configureSimpleStore()
+      myFixture.configureStore(VuexTestStore.SimpleStore)
 
       checkUsages("store/simpleStore.js", "simpleStore",
                   "action<caret>1:",

@@ -149,21 +149,18 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
       if (classes.any { it.isInstance(cur) }) return cur as? JSElement
       when (cur) {
         is JSInitializerOwner -> {
-          when (cur) {
-            is JSProperty -> cur.objectLiteralExpressionInitializer?.let { return it }
-            is JSVariable -> {
-              val initializer = cur.initializerOrStub
-              if (initializer != null) {
-                queue.addLast(initializer)
-                continue@loop
-              }
+          ( // Try with stub
+            when (cur) {
+              is JSProperty -> cur.objectLiteralExpressionInitializer
+              is JSVariable -> cur.initializerOrStub
+              else -> null
             }
-          }
-          JSPsiImplUtils.getInitializerReference(cur)
-            ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
-            ?.let { queue.addLast(it) }
+            // Try extract reference name from type
+            ?: JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
+            // Most expensive solution through substitution, works with function calls
+            ?: (element as? JSTypeInfoOwner)?.jsType?.substitute()?.sourceElement
+          )?.let { queue.addLast(it) }
         }
-        is JSVariable -> cur.initializerOrStub?.let { queue.addLast(it) }
         is PsiPolyVariantReference -> cur.multiResolve(false)
           .mapNotNullTo(queue) { if (it.isValidResult) it.element else null }
         is JSFunctionExpression -> {
