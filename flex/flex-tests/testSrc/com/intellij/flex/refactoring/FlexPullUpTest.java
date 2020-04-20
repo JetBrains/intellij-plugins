@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.classMembers.MemberInfoBase;
@@ -119,9 +118,8 @@ public class FlexPullUpTest extends MultiFileTestCase {
     }
     assertSameElements(messages, expectedConflicts);
     if (conflicts.isEmpty()) {
-      WriteCommandAction.runWriteCommandAction(null, () -> {
+      WriteCommandAction.runWriteCommandAction(getProject(), () -> {
         new JSPullUpHelper(sourceClass, targetClass, infosArray, docCommentPolicy).moveMembersToBase();
-        PostprocessReformattingAspect.getInstance(myProject).doPostponedFormatting();
       });
 
       FileDocumentManager.getInstance().saveAllDocuments();
