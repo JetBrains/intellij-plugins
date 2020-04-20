@@ -276,7 +276,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreActionsContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/category/actions.ts")
     doTest(false,
       // enclosing module getter
@@ -324,7 +324,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreGettersContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/cart/getters.ts")
     doTest(false,
       // state
@@ -338,7 +338,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testStorefrontStoreMutationsContext() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureFromTempProjectFile("store/cart/breadcrumbs/index.ts")
     doTest(false,
            "state.rou<caret>tes = " to "breadcrumbs/index.ts:69:JSProperty"
@@ -346,7 +346,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testShoppingCartResolution() {
-    myFixture.configureShoppingCartStore()
+    myFixture.configureStore(VuexTestStore.ShoppingCart)
     myFixture.configureFromTempProjectFile("store/modules/cart.js")
     doTest(false,
            "return state.ite<caret>ms.m" to "modules/cart.js:99:JSProperty",
@@ -364,7 +364,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testCounterHotResolution() {
-    myFixture.configureCounterHotStore()
+    myFixture.configureStore(VuexTestStore.CounterHot)
     myFixture.configureFromTempProjectFile("store/actions.js")
     doTest(false,
            "commit('inc<caret>rement')\n  }, 1000)" to "store/mutations.js:13:JSVariable",
@@ -393,7 +393,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   fun testNuxtJsResolution() {
-    myFixture.configureNuxtJsStore()
+    myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTest(false,
            "'change<caret>Data'" to "store/actions.js:19:ES6FunctionProperty",
@@ -421,7 +421,7 @@ class VuexResolveTest : BasePlatformTestCase() {
   }
 
   private fun doStorefrontTest(mainFile: String, vararg args: Pair<String, String?>) {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureByFiles(mainFile)
     doTest(false, *args)
     // Check the same with JavaScript file

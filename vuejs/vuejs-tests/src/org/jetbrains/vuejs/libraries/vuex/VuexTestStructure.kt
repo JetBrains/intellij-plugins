@@ -13,37 +13,43 @@ class VuexTestStructure : BasePlatformTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/structure"
 
   fun testNuxtJs() {
-    myFixture.configureNuxtJsStore()
+    myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureFromTempProjectFile("store/pages/index.vue")
     doTestStructure()
   }
 
   fun testNuxtJs2() {
-    myFixture.configureNuxtJsStore()
+    myFixture.configureStore(VuexTestStore.NuxtJs)
     myFixture.configureByText("foo.vue","<script>export default{}</script>")
     TestCase.assertNull(VuexModelManager.getVuexStoreContext(myFixture.file))
   }
 
   fun testStorefront() {
-    myFixture.configureStorefront()
+    myFixture.configureStore(VuexTestStore.Storefront)
     myFixture.configureByText("foo.vue","<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testShoppingCart() {
-    myFixture.configureShoppingCartStore()
+    myFixture.configureStore(VuexTestStore.ShoppingCart)
     myFixture.configureByText("foo.vue","<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testCounterHot() {
-    myFixture.configureCounterHotStore()
+    myFixture.configureStore(VuexTestStore.CounterHot)
     myFixture.configureByText("foo.vue","<script>export default{}</script>")
     doTestStructure()
   }
 
   fun testSimpleStore() {
-    myFixture.configureSimpleStore()
+    myFixture.configureStore(VuexTestStore.SimpleStore)
+    myFixture.configureByText("foo.vue","<script>export default{}</script>")
+    doTestStructure()
+  }
+
+  fun testFunctionInit() {
+    myFixture.configureStore(VuexTestStore.FunctionInit)
     myFixture.configureByText("foo.vue","<script>export default{}</script>")
     doTestStructure()
   }

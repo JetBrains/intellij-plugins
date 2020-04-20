@@ -4,30 +4,18 @@ package org.jetbrains.vuejs.libraries.vuex
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
-
-fun CodeInsightTestFixture.configureNuxtJsStore() {
-  configureStore("nuxtjs")
+enum class VuexTestStore(val dirName: String) {
+  CounterHot("counter-hot"),
+  NuxtJs("nuxtjs"),
+  ShoppingCart("shopping-cart"),
+  Storefront("vue-storefront"),
+  SimpleStore("simple-store"),
+  FunctionInit("function-init"),
 }
 
-fun CodeInsightTestFixture.configureCounterHotStore() {
-  configureStore("counter-hot")
-}
-
-fun CodeInsightTestFixture.configureShoppingCartStore() {
-  configureStore("shopping-cart")
-}
-
-fun CodeInsightTestFixture.configureStorefront() {
-  configureStore("vue-storefront")
-}
-
-fun CodeInsightTestFixture.configureSimpleStore() {
-  configureStore("simple-store")
-}
-
-private fun CodeInsightTestFixture.configureStore(name: String) {
+fun CodeInsightTestFixture.configureStore(store: VuexTestStore) {
   createPackageJsonWithVueDependency(this, "\"vuex\": \"^3.0.1\"")
   copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
   copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
-  copyDirectoryToProject("../stores/${name}", "store")
+  copyDirectoryToProject("../stores/${store.dirName}", "store")
 }
