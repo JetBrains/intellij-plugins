@@ -5,8 +5,9 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspectio
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
+import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection
@@ -1327,6 +1328,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
 
   fun testVueExtendSyntax() {
     myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    JSTestUtils.addPackageJson(myFixture, "vue")
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
