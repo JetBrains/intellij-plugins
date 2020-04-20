@@ -11,11 +11,10 @@ class VuexFindUsagesTest : BasePlatformTestCase() {
 
   fun testStorefront() {
     with(myFixture) {
-      configureStorefront()
+      configureStore(VuexTestStore.Storefront)
       copyFileToProject("../resolve/storefront-component.ts", "storefront-component.ts")
       copyFileToProject("../resolve/storefront-decorated-component.ts", "storefront-decorated-component.ts")
       copyFileToProject("../resolve/storefront-namespaced-component.ts", "storefront-namespaced-component.ts")
-
 
       //// Breadcrumbs file
       checkUsages("store/cart/breadcrumbs/index.ts", "bc",

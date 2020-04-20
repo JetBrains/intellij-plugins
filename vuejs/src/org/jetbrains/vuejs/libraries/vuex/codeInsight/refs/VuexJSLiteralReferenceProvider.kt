@@ -216,7 +216,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
     }
 
     private fun getNamespaceIfActionContextParam(contextReferenceExpression: JSReferenceExpression): VuexStoreNamespace? =
-      contextReferenceExpression.takeIf { it.qualifier == null && isPossiblyStoreContext(it) }
+      contextReferenceExpression.takeIf { it.qualifier == null }
         ?.referenceName
         ?.takeIf { it == CONTEXT }
         ?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, contextReferenceExpression) }
@@ -230,7 +230,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
       (functionName == DISPATCH || functionName == COMMIT)
       && element.contextOfType(JSCallExpression::class)
         ?.arguments
-        ?.takeIf { it.getOrNull(0) == element}
+        ?.takeIf { it.getOrNull(0) == element }
         ?.getOrNull(if (element is JSObjectLiteralExpression) 1 else 2)
         ?.castSafelyTo<JSObjectLiteralExpression>()
         ?.findProperty(PROP_ROOT)
@@ -240,8 +240,8 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
 
     fun getFunctionReference(callContext: PsiElement?): JSReferenceExpression? {
       return callContext?.let {
-          if (it is JSArgumentList) it.context else it
-        }
+        if (it is JSArgumentList) it.context else it
+      }
         ?.castSafelyTo<JSCallExpression>()
         ?.methodExpression
         ?.castSafelyTo<JSReferenceExpression>()
