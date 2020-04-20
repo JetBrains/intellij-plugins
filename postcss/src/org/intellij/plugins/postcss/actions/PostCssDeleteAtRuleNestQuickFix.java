@@ -2,8 +2,8 @@ package org.intellij.plugins.postcss.actions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssElementFactory;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostCssDeleteAtRuleNestQuickFix implements LocalQuickFix {
   @Override
-  public @NlsContexts.ListItem @NotNull String getFamilyName() {
+  public @IntentionFamilyName @NotNull String getFamilyName() {
     return PostCssBundle.message("annotator.delete.at.rule.nest.quickfix.name");
   }
 

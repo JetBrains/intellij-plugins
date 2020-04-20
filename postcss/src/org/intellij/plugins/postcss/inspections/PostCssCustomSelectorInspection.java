@@ -3,7 +3,7 @@ package org.intellij.plugins.postcss.inspections;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.openapi.util.NlsContexts;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
@@ -42,7 +42,7 @@ public class PostCssCustomSelectorInspection extends PostCssBaseInspection {
         else if (!StringUtil.startsWith(text, ":--")) {
           CssAddPrefixQuickFix quickFix = new CssAddPrefixQuickFix(":--", PostCssCustomSelectorAtRule.class) {
             @Override
-            public @NlsContexts.ListItem @NotNull String getFamilyName() {
+            public @IntentionFamilyName @NotNull String getFamilyName() {
               return PostCssBundle.message("annotator.add.prefix.to.custom.selector.quickfix.name");
             }
           };
