@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.vuejs">
+    <contextProvider implementation="org.jetbrains.vuejs.libraries.thymeleaf.VueThymeleafContextProvider"
+                     id="thymeleaf" order="after simple_html"/>
+  </extensions>
+</idea-plugin>
