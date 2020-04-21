@@ -1,3 +1,4 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.ModuleType;
@@ -13,7 +14,7 @@ import javax.swing.*;
 /**
  * @author Maxim.Mossienko
  */
-public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
+public final class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NonNls public static final String MODULE_TYPE_ID = "Flex";
 
   public FlexModuleType() {
@@ -21,26 +22,22 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   @Override
-  @NotNull
-  public FlexModuleBuilder createModuleBuilder() {
+  public @NotNull FlexModuleBuilder createModuleBuilder() {
     return new FlexModuleBuilder();
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return FlexBundle.message("flash.module.type.name");
   }
 
   @Override
-  @NotNull
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return FlexBundle.message("flash.module.type.description");
   }
 
-  @NotNull
   @Override
-  public Icon getNodeIcon(final boolean isOpened) {
+  public @NotNull Icon getNodeIcon(final boolean isOpened) {
     return FlexIcons.Flex.Flash_module_closed;
   }
 
@@ -49,7 +46,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   @Override
-  public boolean isSupportedRootType(JpsModuleSourceRootType type) {
+  public boolean isSupportedRootType(JpsModuleSourceRootType<?> type) {
     return type == JavaSourceRootType.SOURCE || type == JavaSourceRootType.TEST_SOURCE;
   }
 }
