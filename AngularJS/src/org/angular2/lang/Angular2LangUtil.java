@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -74,6 +75,9 @@ public class Angular2LangUtil {
           return result;
         }
         ContainerUtil.addAll(dependencies, result.getDependencyItems());
+      }
+      if (dependencies.isEmpty()) {
+        dependencies.add(ModificationTracker.EVER_CHANGED);
       }
       return new CachedValueProvider.Result<>(false, dependencies.toArray());
     });
