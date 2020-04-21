@@ -1,8 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.builders.ModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.ModuleFixture;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
@@ -12,7 +14,7 @@ import com.jetbrains.lang.dart.ide.info.DartFunctionDescription;
 import com.jetbrains.lang.dart.ide.info.DartParameterInfoHandler;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
-public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
+public class DartParameterInfoTest extends CodeInsightFixtureTestCase<ModuleFixtureBuilder<ModuleFixture>> {
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -38,14 +40,14 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     Object[] items = createContext.getItemsToShow();
     assertNotNull(items);
     assertTrue(items.length > 0);
-    MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
+    MockParameterInfoUIContext<PsiElement> context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
     assertEquals(infoText, parameterInfoHandler.getParametersListPresentableText());
 
     // index check
     MockUpdateParameterInfoContext updateContext = new MockUpdateParameterInfoContext(getEditor(), getFile());
     final PsiElement element = parameterInfoHandler.findElementForUpdatingParameterInfo(updateContext);
-    assertNotNull(element);
+    assertEquals(elt, element);
     parameterInfoHandler.updateParameterInfo(element, updateContext);
     assertEquals(highlightedParameterIndex, updateContext.getCurrentParameter());
 
