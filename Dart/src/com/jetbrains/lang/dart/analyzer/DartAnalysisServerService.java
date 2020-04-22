@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
@@ -2423,7 +2422,7 @@ public final class DartAnalysisServerService implements Disposable {
 
   private void server_setSubscriptions(@Nullable AnalysisServer server) {
     if (server != null) {
-      server.server_setSubscriptions(mySubscribeToServerLog ? Lists.newArrayList(ServerService.STATUS, ServerService.LOG)
+      server.server_setSubscriptions(mySubscribeToServerLog ? Arrays.asList(ServerService.STATUS, ServerService.LOG)
                                                             : Collections.singletonList(ServerService.STATUS));
     }
   }

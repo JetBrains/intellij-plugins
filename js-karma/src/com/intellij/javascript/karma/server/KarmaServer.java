@@ -1,7 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.execution.ExecutionException;
@@ -29,6 +28,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
@@ -44,8 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class KarmaServer {
-
+public final class KarmaServer {
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
   private final KarmaProcessOutputManager myProcessOutputManager;
@@ -54,11 +53,11 @@ public class KarmaServer {
   private final KarmaServerSettings myServerSettings;
   private final ConsoleCommandLineFolder myCommandLineFolder = new ConsoleCommandLineFolder();
 
-  private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
-  private List<Runnable> myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
+  private List<Runnable> myOnPortBoundCallbacks = ContainerUtil.createLockFreeCopyOnWriteList();
+  private List<Runnable> myOnBrowsersReadyCallbacks = ContainerUtil.createLockFreeCopyOnWriteList();
 
   private Integer myExitCode = null;
-  private final List<KarmaServerTerminatedListener> myTerminationCallbacks = Lists.newCopyOnWriteArrayList();
+  private final List<KarmaServerTerminatedListener> myTerminationCallbacks = ContainerUtil.createLockFreeCopyOnWriteList();
 
   private final Map<String, StreamEventHandler> myHandlers = new ConcurrentHashMap<>();
   private final MyDisposable myDisposable;
@@ -339,7 +338,7 @@ public class KarmaServer {
         }
       }
       else {
-        myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
+        myOnBrowsersReadyCallbacks = ContainerUtil.createLockFreeCopyOnWriteList();
       }
     });
   }
