@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -277,7 +277,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssUnknownPropertyInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       doTestFor(true, getTestName(false) + ".css");
     }
     finally {
@@ -289,7 +289,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSwitchToFlexCssQuickFix1() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       doHighlightingWithInvokeFixAndCheckResult(
         CssBundle.message("switch.to.css.dialect.quickfix.name", FlexCSSDialect.getInstance().getDisplayName()), "css");
     }
@@ -301,7 +301,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testSwitchToFlexCssQuickFix2() throws Exception {
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
       enableInspectionTool(new CssUnknownPropertyInspection());
       doHighlightingWithInvokeFixAndCheckResult(
         CssBundle.message("switch.to.css.dialect.quickfix.name", FlexCSSDialect.getInstance().getDisplayName()), "css");
@@ -315,7 +315,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSwitchToFlexCssQuickFix3() throws Exception {
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     try {
-      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC);
+      CssDialectMappings.getInstance(getProject()).setMapping(null, CssDialect.CLASSIC.getName());
 
       configureByFile(BASE_PATH + '/' + getTestName(false) + '.' + "html");
       doHighlighting();
