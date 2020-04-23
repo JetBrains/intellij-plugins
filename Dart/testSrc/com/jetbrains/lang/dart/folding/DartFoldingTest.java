@@ -86,6 +86,10 @@ public class DartFoldingTest extends DartCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testClassEnumExtensionBodies() {
+    doTest();
+  }
+
   public void testCommentsFolding() {
     doTest();
   }

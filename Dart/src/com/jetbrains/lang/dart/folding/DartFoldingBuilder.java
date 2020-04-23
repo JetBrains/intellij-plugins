@@ -70,8 +70,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
       DartAssertStatement.class,
       DartIfStatement.class);
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
-    foldClassBodies(descriptors, dartFile);                                            // 5. Class body
-    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
+    foldClassBodies(descriptors, dartFile);                                            // 5. Class bodies
+    foldFunctionBodies(descriptors, psiElements);                                      // 6. Function bodies
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
     foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
@@ -258,6 +258,12 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         if (lBrace != null && rBrace != null && rBrace.getStartOffset() - lBrace.getStartOffset() > 2) {
           descriptors.add(new FoldingDescriptor(dartClass, TextRange.create(lBrace.getStartOffset(), rBrace.getStartOffset() + 1)));
         }
+      }
+    }
+    for (DartExtensionDeclaration dartExtension : PsiTreeUtil.getChildrenOfTypeAsList(dartFile, DartExtensionDeclaration.class)) {
+      final DartClassBody body = dartExtension.getClassBody();
+      if (body.getTextLength() > 2) {
+        descriptors.add(new FoldingDescriptor(body, body.getTextRange()));
       }
     }
   }
