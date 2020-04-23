@@ -6,8 +6,8 @@ import com.intellij.diagram.extras.DiagramExtras;
 import com.intellij.diagram.settings.DiagramConfigElement;
 import com.intellij.diagram.settings.DiagramConfigGroup;
 import com.intellij.diagram.util.DiagramUtils;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.uml.utils.DiagramBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
   private static final DiagramConfigGroup[] ADDITIONAL_SETTINGS_GROUPS;
 
   static {
-    DiagramConfigGroup dependenciesGroup = new DiagramConfigGroup(FlexBundle.message("uml.dependencies.settings.group.title"));
+    DiagramConfigGroup dependenciesGroup = new DiagramConfigGroup(DiagramBundle.message("uml.dependencies.settings.group.title"));
     for (FlashUmlDependenciesSettingsOption option : FlashUmlDependenciesSettingsOption.values()) {
       dependenciesGroup.addElement(new DiagramConfigElement(option.getDisplayName(), true));
     }

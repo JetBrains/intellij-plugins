@@ -8,14 +8,18 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
+import com.intellij.uml.utils.DiagramBundle;
 import com.intellij.util.PlatformIcons;
 
 public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManager {
-
-  private static final DiagramCategory FIELDS = new DiagramCategory("Fields", PlatformIcons.FIELD_ICON);
-  private static final DiagramCategory CONSTRUCTORS = new DiagramCategory("Constructors", JSFunctionImpl.CONSTRUCTOR_ICON);
-  private static final DiagramCategory METHODS = new DiagramCategory("Methods", PlatformIcons.METHOD_ICON);
-  private static final DiagramCategory PROPERTIES = new DiagramCategory("Properties", PlatformIcons.PROPERTY_ICON);
+  private static final DiagramCategory FIELDS =
+    new DiagramCategory(DiagramBundle.message("category.name.fields"), PlatformIcons.FIELD_ICON);
+  private static final DiagramCategory CONSTRUCTORS =
+    new DiagramCategory(DiagramBundle.message("category.name.constructors"), JSFunctionImpl.CONSTRUCTOR_ICON);
+  private static final DiagramCategory METHODS =
+    new DiagramCategory(DiagramBundle.message("category.name.methods"), PlatformIcons.METHOD_ICON);
+  private static final DiagramCategory PROPERTIES =
+    new DiagramCategory(DiagramBundle.message("category.name.properties"), PlatformIcons.PROPERTY_ICON);
 
   private final static DiagramCategory[] CATEGORIES = {FIELDS, CONSTRUCTORS, METHODS, PROPERTIES};
 
