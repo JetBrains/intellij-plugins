@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Map;
 
-import static org.angular2.lang.html.highlighting.Angular2HtmlFileHighlighter.*;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.*;
 
 public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPrioritySortable {
   private static final AttributesDescriptor[] ATTRS;
