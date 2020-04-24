@@ -14,7 +14,7 @@ class IDE {
     <MoveCaret position="12:1"/>
     <Text>You can generate <code>equals</code>, <code>hashValue</code>, <code>description</code>, and <code>debugDescription</code> properties, as well as initializers by using the <strong>Generate</strong> action.</Text>
     <Try triggers="Generate;Swift.Generate.Init">Press <action>Generate</action> and select <strong>Initializer</strong> action in the in the <strong>Generate</strong> popup. Select properties to include into the initializer signature and press <action>EditorEnter</action></Try>
-    <Try triggers="Swift.Generate.EqualsHashValue">Generate <code>equals</code> and <code>hashValue</code> using <action>Generate</action> → <strong>equals and hashValue</strong></Try>
+    <Try triggers="Swift.Generate.EqualsHashValue">Generate <code>equals</code> and <code>hashValue</code> using <action>Generate</action> → <strong>equals and hash</strong></Try>
     <Try triggers="Swift.Generate.Description">Finally, generate <code>description</code> using <action>Generate</action> → <strong>description</strong> action.</Try>
     <Win/>
 </xml>
