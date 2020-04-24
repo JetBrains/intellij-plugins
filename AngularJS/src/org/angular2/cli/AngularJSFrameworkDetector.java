@@ -91,7 +91,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   }
 
   @Override
-  public FrameworkType getFrameworkType() {
+  public @NotNull FrameworkType getFrameworkType() {
     return AngularJSFramework.INSTANCE;
   }
 
