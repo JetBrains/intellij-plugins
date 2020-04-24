@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import training.check.Check
+import training.util.DataLoader
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
@@ -294,5 +295,11 @@ class ActionsRecorder(private val project: Project,
     focusChangeListener?.let { KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener("focusOwner", it) }
   }
 
-  private fun getActionId(action: AnAction): String = ActionManager.getInstance().getId(action) ?: action.javaClass.name
+  private fun getActionId(action: AnAction): String {
+    val actionId = ActionManager.getInstance().getId(action) ?: action.javaClass.name
+    if (DataLoader.liveMode) {
+      println(actionId)
+    }
+    return actionId
+  }
 }
