@@ -10,7 +10,9 @@ import org.jdom.Text
 import org.jdom.output.XMLOutputter
 import training.keymap.KeymapUtil.getKeyStrokeText
 import training.keymap.KeymapUtil.getShortcutByActionId
+import java.lang.reflect.Field
 import java.util.function.Consumer
+import javax.swing.Icon
 
 class Message(val text: String, val type: MessageType) {
 
@@ -26,6 +28,19 @@ class Message(val text: String, val type: MessageType) {
            "messageText='" + text + '\''.toString() +
            ", messageType=" + type +
            '}'
+  }
+
+  fun toIcon(): Icon? {
+    val iconName = text.substringAfterLast(".")
+    val path = text.substringBeforeLast(".")
+    val fullPath = "com.intellij.icons.${path.replace(".", "$")}"
+    val field: Field?
+    try {
+      field = Class.forName(fullPath).getField(iconName)
+    } catch (e: NoSuchFieldException) {
+      return null
+    }
+    return field?.get(null) as Icon
   }
 
   companion object {
