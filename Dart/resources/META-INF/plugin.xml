@@ -16,7 +16,7 @@
   <vendor>JetBrains</vendor>
   <category>Languages</category>
   <depends>com.intellij.modules.xml</depends>
-  <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
+  <depends optional="true" config-file="dart-js-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="dart-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
