@@ -118,13 +118,17 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
           Message.MessageType.ICON -> {
-            val icon = iconFromPath(message)
-            var placeholder = " "
-            while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
+            var placeholder = ""
+            try {
               placeholder += " "
+              val icon = iconFromPath(message)
+              while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
+                placeholder += " "
+              }
+              placeholder += " "
+              document.insertString(document.length, placeholder, REGULAR)
+            } catch (e: NoSuchFieldException) {
             }
-            placeholder += " "
-            document.insertString(document.length, placeholder, REGULAR)
           }
         }
         message.endOffset = document.endPosition.offset
@@ -248,8 +252,11 @@ class LessonMessagePane : JTextPane() {
         }
         else if (myMessage.type == Message.MessageType.ICON) {
           val rect = modelToView(myMessage.startOffset)
-          val icon = iconFromPath(myMessage)
-          icon.paintIcon(this, g2d, rect.x, rect.y)
+          try {
+            val icon = iconFromPath(myMessage)
+            icon.paintIcon(this, g2d, rect.x, rect.y)
+          } catch (e: NoSuchFieldException) {
+          }
         }
       }
     }
