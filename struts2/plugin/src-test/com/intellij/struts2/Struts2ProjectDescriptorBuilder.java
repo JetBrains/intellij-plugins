@@ -17,7 +17,7 @@ package com.intellij.struts2;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.facet.impl.FacetUtil;
-import com.intellij.javaee.DeploymentDescriptorsConstants;
+import com.intellij.javaee.constants.DeploymentDescriptorsConstants;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.javaee.web.facet.WebFacetType;
 import com.intellij.openapi.module.Module;

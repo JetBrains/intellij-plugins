@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.model.constant;
 
-import com.intellij.javaee.model.xml.ParamValue;
+import com.intellij.javaee.model.CommonParamValue;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.WebUtil;
@@ -46,13 +46,14 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.impl.ConvertContextFactory;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -202,8 +203,8 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
     final Filter filter = ContainerUtil.find(webApp.getFilters(), WEB_XML_STRUTS_FILTER_CONDITION);
     if (filter != null) {
-      final ParamValue initParam = ContainerUtil.find(filter.getInitParams(),
-                                                      (Condition<ParamValue>)paramValue -> Objects.equals(
+      final CommonParamValue initParam = ContainerUtil.find(filter.getInitParams(),
+                                                            (Condition<CommonParamValue>)paramValue -> Objects.equals(
                                                         paramValue.getParamName().getStringValue(), name));
       if (initParam != null) {
         value = initParam.getParamValue().getStringValue();
