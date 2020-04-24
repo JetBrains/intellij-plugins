@@ -1,8 +1,8 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training
 
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.testFramework.UsefulTestCase
-import org.jdesktop.swingx.action.ActionManager
 
 class ActionsTest : UsefulTestCase() {
   fun testActions() {
