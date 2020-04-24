@@ -39,20 +39,21 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-  version 'IU-193.5662.53'
+  version 'IU-201.6668.121'
 
   plugins = [
-    'Pythonid:193.5662.53',
-    'org.jetbrains.plugins.ruby:193.5662.46',
+    'Pythonid:201.6668.121',
     'com.intellij.testGuiFramework:0.9.44.1@nightly',
+    'org.jetbrains.plugins.ruby:201.6668.13',
     "JavaScriptLanguage",
     "HtmlTools",
     'java',
-    'org.jetbrains.plugins.go:193.5662.1.85'
+    'org.jetbrains.plugins.go:201.6668.1.98'
   ]
   if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
     alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")
   }
+  alternativeIdePath=""
   updateSinceUntilBuild false
 }
 
@@ -71,11 +72,12 @@ sourceSets {
     java.srcDir 'testsData'
   }
 }
-
 compileKotlin {
+  kotlinOptions.freeCompilerArgs = ['-Xjvm-default=enable']
   kotlinOptions.jvmTarget = "1.8"
 }
 compileTestKotlin {
+  kotlinOptions.freeCompilerArgs = ['-Xjvm-default=enable']
   kotlinOptions.jvmTarget = "1.8"
 }
 
