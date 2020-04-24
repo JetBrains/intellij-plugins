@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.swing.Icon
 import javax.swing.JTextPane
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
@@ -118,16 +117,14 @@ class LessonMessagePane : JTextPane() {
           Message.MessageType.CHECK -> document.insertString(document.length, message.text, ROBOTO)
           Message.MessageType.LINK -> appendLink(message)
           Message.MessageType.ICON -> {
-            var placeholder = ""
-            try {
-              placeholder += " "
-              val icon = iconFromPath(message)
+            var placeholder = " "
+            val icon = message.toIcon()
+            if (icon != null) {
               while (this.getFontMetrics(this.font).stringWidth(placeholder) <= icon.iconWidth) {
                 placeholder += " "
               }
               placeholder += " "
               document.insertString(document.length, placeholder, REGULAR)
-            } catch (e: NoSuchFieldException) {
             }
           }
         }
@@ -252,21 +249,11 @@ class LessonMessagePane : JTextPane() {
         }
         else if (myMessage.type == Message.MessageType.ICON) {
           val rect = modelToView(myMessage.startOffset)
-          try {
-            val icon = iconFromPath(myMessage)
-            icon.paintIcon(this, g2d, rect.x, rect.y)
-          } catch (e: NoSuchFieldException) {
-          }
+          val icon = myMessage.toIcon()
+          icon?.paintIcon(this, g2d, rect.x, rect.y)
         }
       }
     }
-  }
-
-  private fun iconFromPath(myMessage: Message): Icon {
-    val iconName = myMessage.text.substringAfterLast(".")
-    val path = myMessage.text.substringBeforeLast(".")
-    val fullPath = "com.intellij.icons.${path.replace(".", "$")}"
-    return Class.forName(fullPath).getField(iconName).get(null) as Icon
   }
 
   companion object {
