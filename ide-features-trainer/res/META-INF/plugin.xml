@@ -37,9 +37,7 @@
       implementation="training.statistic.IdeFeaturesTrainerRuleValidator"/>
     <statistics.validation.customWhiteListRule
       implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
-    <applicationService serviceInterface="com.intellij.ide.RecentProjectListActionProvider"
-                        serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"
-                        overrides="true"/>
+    <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
     <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
     <applicationService
       serviceImplementation="training.learn.CourseManager"/>

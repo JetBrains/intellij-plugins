@@ -5,6 +5,7 @@ import com.intellij.ide.ProjectGroupActionGroup
 import com.intellij.ide.RecentProjectListActionProvider
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.components.ServiceManager
 import training.ui.welcomeScreen.recentProjects.actionGroups.GroupManager
 
 class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
@@ -26,7 +27,7 @@ class IFTRecentProjectListActionProvider : RecentProjectListActionProvider() {
 
   companion object {
     val instance: IFTRecentProjectListActionProvider
-      get() = getInstance() as IFTRecentProjectListActionProvider
+      get() = ServiceManager.getService(IFTRecentProjectListActionProvider::class.java)
   }
 
 }
