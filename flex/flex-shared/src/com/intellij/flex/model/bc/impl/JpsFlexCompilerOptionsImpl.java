@@ -27,7 +27,6 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   }
 
   private JpsFlexCompilerOptionsImpl(final JpsFlexCompilerOptionsImpl original) {
-    myOptions.clear();
     myOptions.putAll(original.myOptions);
     myResourceFilesMode = original.myResourceFilesMode;
     myFilesToIncludeInSWC = original.myFilesToIncludeInSWC;

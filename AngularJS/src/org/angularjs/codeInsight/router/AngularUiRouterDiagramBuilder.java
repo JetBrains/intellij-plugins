@@ -162,7 +162,6 @@ public class AngularUiRouterDiagramBuilder {
 
   private void getRootPages() {
     final List<VirtualFile> roots = new ArrayList<>();
-    roots.sort((o1, o2) -> Integer.compare(o2.getUrl().length(), o1.getUrl().length()));
 
     final Map<PsiFile, AngularNamedItemDefinition> files = new HashMap<>();
     final FileBasedIndex instance = FileBasedIndex.getInstance();
