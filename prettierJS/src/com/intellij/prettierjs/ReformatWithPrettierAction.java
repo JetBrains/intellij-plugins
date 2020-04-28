@@ -2,7 +2,7 @@
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
-import com.intellij.codeInsight.actions.FormatChangedTextUtil;
+import com.intellij.codeInsight.actions.VcsFacade;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
@@ -368,7 +368,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static String buildNotificationMessage(@NotNull Document document,
                                                  @NotNull CharSequence textBefore,
                                                  boolean lineSeparatorsUpdated) {
-    int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
+    int number = VcsFacade.getInstance().calculateChangedLinesNumber(document, textBefore);
     if (number == 0) {
       return lineSeparatorsUpdated ? PrettierBundle.message("line.endings.were.updated")
                                    : PrettierBundle.message("no.lines.changed");
