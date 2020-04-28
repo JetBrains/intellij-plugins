@@ -26,6 +26,7 @@
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
+  <depends>com.intellij.javaee.web</depends>
   <depends>JavaScript</depends>
   <depends>com.intellij.java-i18n</depends>
 
