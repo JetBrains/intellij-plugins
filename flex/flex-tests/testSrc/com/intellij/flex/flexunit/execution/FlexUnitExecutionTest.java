@@ -459,7 +459,7 @@ public abstract class FlexUnitExecutionTest extends JavaCodeInsightTestCase impl
       for (FlexUnitRunnerParameters.OutputLogLevel level : FlexUnitRunnerParameters.OutputLogLevel.values()) {
         String message = LOG_MESSAGES.get(level);
         if (message != null) {
-          if (level.ordinal() <= logLevel.ordinal()) {
+          if (level.compareTo(logLevel) <= 0) {
             Assert.assertTrue("Expected message '" + message + "' was not found in test output '" + stdout + "'",
                               stdout.indexOf(message) != -1);
           }

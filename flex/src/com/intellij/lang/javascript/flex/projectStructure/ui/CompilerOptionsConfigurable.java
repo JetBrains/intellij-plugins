@@ -859,7 +859,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       for (final CompilerOptionInfo childInfo : info.getChildOptionInfos()) {
         if (myMode != Mode.BC || childInfo.isApplicable(getSdkVersion(), myNature)) {
           final ValueSource childSource = getValueAndSource(childInfo).second;
-          if (childSource.ordinal() > groupValueSource.ordinal()) {
+          if (childSource.compareTo(groupValueSource) >0) {
             groupValueSource = childSource;
           }
         }
