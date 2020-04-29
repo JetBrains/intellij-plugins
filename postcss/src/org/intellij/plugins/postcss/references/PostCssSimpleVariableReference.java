@@ -125,7 +125,7 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
     Set<VirtualFile> otherFiles = CssUtil.getImportedFiles(context.getContainingFile(), context, true);
     for (VirtualFile otherFile : otherFiles) {
       PsiFile otherPsiFile = contextFile.getManager().findFile(otherFile);
-      if (otherPsiFile instanceof StylesheetFile && !otherFile.equals(contextFile)) {
+      if (otherPsiFile instanceof StylesheetFile && !otherFile.equals(contextFile.getVirtualFile())) {
         CssStylesheet otherStylesheet = ((StylesheetFile)otherPsiFile).getStylesheet();
         CssRulesetList otherRulesetList = otherStylesheet == null ? null : otherStylesheet.getRulesetList();
         if (otherRulesetList != null) {

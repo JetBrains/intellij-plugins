@@ -107,7 +107,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
                 getJavaFacade(fixture).findClass("com.app.util.Class1", GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(fixture.getModule())).getFields()[0]
         );
 
-        assert field1.getDocumentation().equals("");
+        assert field1.getDocumentation().isEmpty();
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
@@ -133,6 +133,7 @@ public class IntellijJavaFieldTest extends BaseTestCase {
         assert !new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(false)).isValid();
     }
 
+    @SuppressWarnings({"ConstantConditions", "EqualsBetweenInconvertibleTypes"})
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
     public void equals(IdeaProjectTestFixture fixture) {
         IntellijJavaField field1 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
