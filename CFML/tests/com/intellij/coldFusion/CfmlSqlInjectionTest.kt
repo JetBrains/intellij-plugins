@@ -156,7 +156,7 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   dbPsiFacade.flushUpdates()
   UIUtil.dispatchAllInvocationEvents()
 
-  val files = dataSource.files
+  val files = dataSource.roots
   TestCase.assertFalse(files.isEmpty())
   return dataSourceElement
 }
