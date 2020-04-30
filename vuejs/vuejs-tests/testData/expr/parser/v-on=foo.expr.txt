@@ -1,0 +1,233 @@
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSBinaryExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:PLUS)('+')
+        PsiWhiteSpace(' ')
+        JSBinaryExpression
+          JSCallExpression
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('b')
+            JSArgumentList
+              PsiElement(JS:LPAR)('(')
+              JSLiteralExpression
+                PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiElement(JS:RPAR)(')')
+          PsiElement(JS:MULT)('*')
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('c')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSLiteralExpression
+        PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:OR)('|')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('lowercase')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:ANDAND)('&&')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:OROR)('||')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSBinaryExpression
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('0')
+        PsiElement(JS:OROR)('||')
+        JSBinaryExpression
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('1')
+          PsiElement(JS:ANDAND)('&&')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('2')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSCallExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiElement(JS:RPAR)(')')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSCallExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('b')
+        JSArgumentList
+          PsiElement(JS:LPAR)('(')
+          JSLiteralExpression
+            PsiElement(JS:NUMERIC_LITERAL)('12')
+          PsiElement(JS:RPAR)(')')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('c')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('a')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('c')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('test')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('2')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSAssignmentExpression
+        JSDefinitionExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('test2')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:EQ)('=')
+        PsiWhiteSpace(' ')
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('4')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSLiteralExpression
+        PsiElement(JS:NUMERIC_LITERAL)('12')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(JS:LT)('<')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('SDF')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    JSExpressionStatement
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('CV')
+      PsiErrorElement:Expecting newline or semicolon
+        <empty list>
+    JSExpressionStatement
+      JSAttributeList
+        ES6Decorator
+          PsiElement(JS:AT)('@')
+      PsiErrorElement:class expected
+        <empty list>
+    PsiElement(JS:SHARP)('#')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    JSExpressionStatement
+      JSBinaryExpression
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+        PsiWhiteSpace(' ')
+        PsiElement(JS:ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        JSBinaryExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:PLUS)('+')
+          PsiWhiteSpace(' ')
+          JSReferenceExpression
+            JSObjectLiteralExpression
+              PsiElement(JS:LBRACE)('{')
+              JSProperty
+                PsiElement(JS:IDENTIFIER)('a')
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSLiteralExpression
+                  PsiElement(JS:NUMERIC_LITERAL)('12')
+              PsiElement(JS:RBRACE)('}')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('a')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')
+------
+JSFile:test.js.v-on:foo.expr
+  VueJSEmbeddedExpression
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')
+    PsiErrorElement:expression expected
+      <empty list>
+    PsiElement(JS:SHARP)('#')

@@ -484,16 +484,19 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someOn"')
                       JSFile:PugAttrValueInjection.vue.v-on:click.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someOn')
+                          JSExpressionStatement
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('someOn')
                     JSFile:PugAttrValueInjection.vue.v-on:click.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someOn')
+                        JSExpressionStatement
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('someOn')
                   JSFile:PugAttrValueInjection.vue.v-on:click.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someOn')
+                      JSExpressionStatement
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someOn')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -510,16 +513,19 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someOn"')
                       JSFile:PugAttrValueInjection.vue.v-on:click ctrl capture.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someOn')
+                          JSExpressionStatement
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('someOn')
                     JSFile:PugAttrValueInjection.vue.v-on:click ctrl capture.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someOn')
+                        JSExpressionStatement
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('someOn')
                   JSFile:PugAttrValueInjection.vue.v-on:click ctrl capture.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someOn')
+                      JSExpressionStatement
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someOn')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -536,16 +542,19 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someOn"')
                       JSFile:PugAttrValueInjection.vue.@click.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someOn')
+                          JSExpressionStatement
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('someOn')
                     JSFile:PugAttrValueInjection.vue.@click.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someOn')
+                        JSExpressionStatement
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('someOn')
                   JSFile:PugAttrValueInjection.vue.@click.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someOn')
+                      JSExpressionStatement
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someOn')
               PsiElement(RPAREN)(')')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)
@@ -562,16 +571,19 @@ HtmlFile:PugAttrValueInjection.vue
                       PsiElement(JS:STRING_LITERAL)('"someOn"')
                       JSFile:PugAttrValueInjection.vue.@click stop.expr
                         VueJSEmbeddedExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('someOn')
+                          JSExpressionStatement
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('someOn')
                     JSFile:PugAttrValueInjection.vue.@click stop.expr
                       VueJSEmbeddedExpression
-                        JSReferenceExpression
-                          PsiElement(JS:IDENTIFIER)('someOn')
+                        JSExpressionStatement
+                          JSReferenceExpression
+                            PsiElement(JS:IDENTIFIER)('someOn')
                   JSFile:PugAttrValueInjection.vue.@click stop.expr
                     VueJSEmbeddedExpression
-                      JSReferenceExpression
-                        PsiElement(JS:IDENTIFIER)('someOn')
+                      JSExpressionStatement
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someOn')
               PsiElement(RPAREN)(')')
               PsiElement(EOL)('\n')
             PsiElement(INDENT)('\n    ')
