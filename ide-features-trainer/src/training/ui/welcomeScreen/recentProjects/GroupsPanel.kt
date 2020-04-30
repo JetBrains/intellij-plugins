@@ -178,11 +178,12 @@ class GroupsPanel(val app: Application) : NewRecentProjectPanel(app) {
       }
 
       override fun getListBackground(isSelected: Boolean, hasFocus: Boolean): Color {
-        return if (isSelected) WelcomeScreenUIManager.getListSelectionColor(hasFocus) else WelcomeScreenUIManager.getProjectsBackground()
+        return if (isSelected) WelcomeScreenUIManager.getProjectsSelectionBackground(hasFocus)
+        else WelcomeScreenUIManager.getProjectsBackground()
       }
 
       override fun getListForeground(isSelected: Boolean, hasFocus: Boolean): Color {
-        return UIUtil.getListForeground(isSelected && hasFocus)
+        return WelcomeScreenUIManager.getProjectsSelectionForeground(isSelected, hasFocus)
       }
 
       override fun layoutComponents() {
