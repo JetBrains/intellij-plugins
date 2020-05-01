@@ -36,7 +36,7 @@ class MakefileAnnotator : Annotator {
 
       val targetLine = element.parent.parent.parent as MakefileTargetLine
       if (targetLine.targets.targetList.firstOrNull()?.isSpecialTarget == false && targetLine.targetPattern == null) {
-        val targetReferences = element.references.filter { it is MakefileTargetReference && it.resolve() != null }.any()
+        val targetReferences = element.references.filter { it is MakefileTargetReference && it.multiResolve(false).isNotEmpty() }.any()
 
         var fileReferenceResolved = false
         var unresolvedFile: TextRange? = null

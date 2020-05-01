@@ -2,6 +2,7 @@ import com.intellij.testFramework.fixtures.*
 
 class MakefileHighlightingTest : BasePlatformTestCase() {
   fun testUnresolved() = doTest()
+  fun testMultiunresolved() = doTest()
   fun testRedundant() = doTest(true)
   fun testTargetspecificvars() = doTest()
 
