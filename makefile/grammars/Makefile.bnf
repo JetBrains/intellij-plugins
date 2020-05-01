@@ -114,7 +114,7 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'
                     'filter'|'filter-out'|'sort'|'word'|'wordlist'|'words'|'firstword'|'lastword'|'dir'|'notdir'|'suffix'|
                     'basename'|'addsuffix'|'addprefix'|'join'|'wildcard'|'realpath'|'abspath'|'if'|'or'|'and'|
                     'foreach'|'file'|'call'|'value'|'eval'|'origin'|'flavor'|'guile')
-meta function-param ::= (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
+meta function-param ::= (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split|'(' function-param ')')+ {recoverWhile=function-recover}
 
 variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars) {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageMixin"}
 

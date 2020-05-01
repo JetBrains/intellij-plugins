@@ -15,6 +15,9 @@ public interface MakefileFunctionParam extends PsiElement {
   List<MakefileFunctionName> getFunctionNameList();
 
   @NotNull
+  List<MakefileFunctionParam> getFunctionParamList();
+
+  @NotNull
   List<MakefileString> getStringList();
 
   @NotNull

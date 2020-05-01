@@ -567,11 +567,11 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split)+
+  // (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split|'(' function-param ')')+
   public static boolean function_param(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param")) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, FUNCTION_PARAM, null);
+    Marker m = enter_section_(b, l, _COLLAPSE_, FUNCTION_PARAM, null);
     r = function_param_0(b, l + 1);
     while (r) {
       int c = current_position_(b);
@@ -582,7 +582,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split
+  // string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split|'(' function-param ')'
   private static boolean function_param_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_param_0")) return false;
     boolean r;
@@ -600,6 +600,19 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, COLON);
     if (!r) r = consumeToken(b, SEMICOLON);
     if (!r) r = consumeToken(b, SPLIT);
+    if (!r) r = function_param_0_13(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // '(' function-param ')'
+  private static boolean function_param_0_13(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "function_param_0_13")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, OPEN_PAREN);
+    r = r && function_param(b, l + 1);
+    r = r && consumeToken(b, CLOSE_PAREN);
     exit_section_(b, m, null, r);
     return r;
   }
