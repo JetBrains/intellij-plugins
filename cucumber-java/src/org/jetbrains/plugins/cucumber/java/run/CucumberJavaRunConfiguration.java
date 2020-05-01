@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
@@ -18,15 +19,24 @@ import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.junit4.ExpectedPatterns;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiJavaModule;
+import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
+import com.intellij.util.PathsList;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +50,11 @@ import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 
-
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   private volatile CucumberGlueProvider myCucumberGlueProvider = null;
   private final static Logger LOG = Logger.getInstance(CucumberJavaRunConfiguration.class);
+  private static final String JIGSAW_OPTIONS = "Jigsaw Options";
+  private boolean myUseModulePath = true;
 
   protected CucumberJavaRunConfiguration(String name, Project project, ConfigurationFactory factory) {
     super(name, project, factory);
@@ -80,6 +91,8 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           params.getClassPath().add(path);
         }
 
+        configureModulePath(params, module.getModule());
+
         params.setMainClass(getMainClassName());
         for (RunConfigurationExtension ext : RunConfigurationExtension.EP_NAME.getExtensionList()) {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings(), executor);
@@ -108,6 +121,121 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         params.setShortenCommandLine(getShortenCommandLine(), getProject());
         return params;
       }
+
+      //code is copied from JavaTestFrameworkRunnableState
+
+      protected PsiJavaModule findJavaModule(Module module, boolean inTests) {
+        return DumbService.getInstance(module.getProject())
+          .computeWithAlternativeResolveEnabled(() -> JavaModuleGraphUtil.findDescriptorByModule(module, inTests));
+      }
+
+      private void configureModulePath(JavaParameters javaParameters, @NotNull Module module) {
+        if (!isUseModulePath()) return;
+        PsiJavaModule testModule = findJavaModule(module, true);
+        if (testModule != null) {
+          //adding the test module explicitly as it is unreachable from `idea.rt`
+          ParametersList vmParametersList = javaParameters
+            .getVMParametersList()
+            .addParamsGroup(JIGSAW_OPTIONS)
+            .getParametersList();
+
+          vmParametersList.add("--add-modules");
+          vmParametersList.add(testModule.getName());
+          //setup module path
+          PathsList classPath = javaParameters.getClassPath();
+          PathsList modulePath = javaParameters.getModulePath();
+          modulePath.addAll(classPath.getPathList());
+          classPath.clear();
+        }
+        else {
+          PsiJavaModule prodModule = findJavaModule(module, false);
+          if (prodModule != null) {
+            splitDepsBetweenModuleAndClasspath(javaParameters, module, prodModule);
+          }
+        }
+      }
+
+      private void splitDepsBetweenModuleAndClasspath(JavaParameters javaParameters, Module module, PsiJavaModule prodModule) {
+        CompilerModuleExtension compilerExt = CompilerModuleExtension.getInstance(module);
+        if (compilerExt == null) return;
+
+        PathsList modulePath = javaParameters.getModulePath();
+        PathsList classPath = javaParameters.getClassPath();
+
+        putDependenciesOnModulePath(modulePath, classPath, prodModule);
+
+        ParametersList vmParametersList = javaParameters.getVMParametersList()
+          .addParamsGroup(JIGSAW_OPTIONS)
+          .getParametersList();
+        String prodModuleName = prodModule.getName();
+
+        //ensure test output is merged to the production module
+        VirtualFile testOutput = compilerExt.getCompilerOutputPathForTests();
+        if (testOutput != null) {
+           // PATCH MODULE isn't really necessary, we don't want to 'open' our module
+          //vmParametersList.add("--patch-module");
+          //vmParametersList.add(prodModuleName + "=" + testOutput.getPath());
+        }
+
+        //ensure test dependencies missing from production module descriptor are available in tests
+        //todo enumerate all test dependencies explicitly
+        vmParametersList.add("--add-reads");
+        vmParametersList.add(prodModuleName + "=ALL-UNNAMED");
+
+        //open packages with tests to test runner
+        List<String> opensOptions = new ArrayList<>();
+        collectPackagesToOpen(opensOptions);
+        for (String option : opensOptions) {
+          if (option.isEmpty()) continue;
+          vmParametersList.add("--add-opens");
+          vmParametersList.add(prodModuleName + "/" + option + "=ALL-UNNAMED");
+        }
+
+        //ensure production module is explicitly added as test starter in `idea-rt` doesn't depend on it
+        vmParametersList.add("--add-modules");
+        vmParametersList.add(prodModuleName);
+      }
+
+      protected void putDependenciesOnModulePath(PathsList modulePath,
+                                                 PathsList classPath,
+                                                 PsiJavaModule prodModule) {
+        Set<PsiJavaModule> allRequires = JavaModuleGraphUtil.getAllDependencies(prodModule);
+        allRequires.add(prodModule);    //put production output on the module path as well
+        JarFileSystem jarFS = JarFileSystem.getInstance();
+        ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(prodModule.getProject());
+        allRequires.stream()
+          .filter(javaModule -> !PsiJavaModule.JAVA_BASE.equals(javaModule.getName()))
+          .map(javaModule -> getClasspathEntry(javaModule, fileIndex, jarFS))
+          .filter(Objects::nonNull)
+          .forEach(file -> putOnModulePath(modulePath, classPath, file));
+      }
+
+      protected void collectPackagesToOpen(List<String> options) {
+        //options.add(??? all glue packages ???); doesn't seem to be necessary, see remark patch-module above
+      }
+
+      private void putOnModulePath(PathsList modulePath, PathsList classPath, VirtualFile virtualFile) {
+        String path = PathUtil.getLocalPath(virtualFile.getPath());
+        if (classPath.getPathList().contains(path)) {
+          classPath.remove(path);
+          modulePath.add(path);
+        }
+      }
+
+      private VirtualFile getClasspathEntry(PsiJavaModule javaModule,
+                                            ProjectFileIndex fileIndex,
+                                            JarFileSystem jarFileSystem) {
+        VirtualFile moduleFile = PsiImplUtil.getModuleVirtualFile(javaModule);
+
+        Module moduleDependency = fileIndex.getModuleForFile(moduleFile);
+        if (moduleDependency == null) {
+          return jarFileSystem.getLocalVirtualFileFor(moduleFile);
+        }
+
+        CompilerModuleExtension moduleExtension = CompilerModuleExtension.getInstance(moduleDependency);
+        return moduleExtension != null ? moduleExtension.getCompilerOutputPath() : null;
+      }
+
 
       @NotNull
       private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
@@ -287,5 +415,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   @Override
   public String getActionName() {
     return getName();
+  }
+
+  public boolean isUseModulePath() {
+    return myUseModulePath;
+  }
+
+  public void setUseModulePath(boolean useModulePath) {
+    myUseModulePath = useModulePath;
   }
 }

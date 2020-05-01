@@ -2,6 +2,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.application.options.ModuleDescriptionsComboBox;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configurations.ConfigurationUtil;
 import com.intellij.execution.ui.*;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -16,6 +17,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiJavaModule;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiMethodUtil;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.EditorTextFieldWithBrowseButton;
@@ -36,6 +40,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private JPanel myWholePanel;
   private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private LabeledComponent<ModuleDescriptionsComboBox> myModule;
+  private LabeledComponent<JCheckBox> myUseModulePath;
   private LabeledComponent<RawCommandLineEditor> myGlue;
   private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;
@@ -64,8 +69,13 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
     myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myFeatureOrFolder, myModule, myCommonProgramParameters);
     myJrePathEditor.setAnchor(myModule.getLabel());
+    myUseModulePath.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));
+
+    myUseModulePath.getComponent().setText(ExecutionBundle.message("use.module.path.checkbox.label"));
+    myUseModulePath.getComponent().setSelected(true);
+    myUseModulePath.setVisible(FilenameIndex.getFilesByName(project, PsiJavaModule.MODULE_INFO_FILE, GlobalSearchScope.projectScope(myProject)).length > 0);
   }
 
   public void setFeatureOrFolder(String path) {
@@ -110,6 +120,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myFeatureOrFolder.getComponent().setText(configuration.getFilePath());
     myJrePathEditor.setPathOrName(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
     myShortenClasspathModeCombo.getComponent().setSelectedItem(configuration.getShortenCommandLine());
+    myUseModulePath.getComponent().setSelected(configuration.isUseModulePath());
   }
 
   @Override
@@ -124,6 +135,8 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     configuration.setAlternativeJrePathEnabled(myJrePathEditor.isAlternativeJreSelected());
     configuration.setShortenCommandLine(myShortenClasspathModeCombo.getComponent().getSelectedItem());
     configuration.setModule(myModuleSelector.getModule());
+
+    configuration.setUseModulePath(myUseModulePath.isVisible() && myUseModulePath.getComponent().isSelected());
   }
 
   @NotNull
