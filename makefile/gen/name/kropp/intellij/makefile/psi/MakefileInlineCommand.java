@@ -12,6 +12,9 @@ public interface MakefileInlineCommand extends PsiElement {
   List<MakefileFunction> getFunctionList();
 
   @NotNull
+  List<MakefileString> getStringList();
+
+  @NotNull
   List<MakefileSubstitution> getSubstitutionList();
 
   @NotNull

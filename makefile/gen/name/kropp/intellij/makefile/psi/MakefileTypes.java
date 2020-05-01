@@ -36,6 +36,7 @@ public interface MakefileTypes {
   IElementType PRIVATEVAR = new MakefileElementType("PRIVATEVAR");
   IElementType RECIPE = new MakefileElementType("RECIPE");
   IElementType RULE = new MakefileElementType("RULE");
+  IElementType STRING = new MakefileElementType("STRING");
   IElementType SUBSTITUTION = new MakefileElementType("SUBSTITUTION");
   IElementType TARGET = MakefileTargetStubElementType.getInstance("TARGET");
   IElementType TARGETS = new MakefileElementType("TARGETS");
@@ -56,7 +57,9 @@ public interface MakefileTypes {
   IElementType COLON = new MakefileTokenType(":");
   IElementType COMMA = new MakefileTokenType(",");
   IElementType DOLLAR = new MakefileTokenType("$");
+  IElementType DOUBLEQUOTE = new MakefileTokenType("\"");
   IElementType EOL = new MakefileTokenType("EOL");
+  IElementType ESCAPED_DOUBLEQUOTE = new MakefileTokenType("\\\\\"");
   IElementType KEYWORD_DEFINE = new MakefileTokenType("define");
   IElementType KEYWORD_ELSE = new MakefileTokenType("else");
   IElementType KEYWORD_ENDEF = new MakefileTokenType("endef");
@@ -75,9 +78,9 @@ public interface MakefileTypes {
   IElementType OPEN_CURLY = new MakefileTokenType("{");
   IElementType OPEN_PAREN = new MakefileTokenType("(");
   IElementType PIPE = new MakefileTokenType("|");
+  IElementType QUOTE = new MakefileTokenType("'");
   IElementType SEMICOLON = new MakefileTokenType(";");
   IElementType SPLIT = new MakefileTokenType("split");
-  IElementType STRING = new MakefileTokenType("string");
   IElementType TAB = new MakefileTokenType("\\t");
 
   class Factory {
@@ -163,6 +166,9 @@ public interface MakefileTypes {
       }
       else if (type == RULE) {
         return new MakefileRuleImpl(node);
+      }
+      else if (type == STRING) {
+        return new MakefileStringImpl(node);
       }
       else if (type == SUBSTITUTION) {
         return new MakefileSubstitutionImpl(node);

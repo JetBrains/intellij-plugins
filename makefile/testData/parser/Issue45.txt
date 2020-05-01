@@ -28,4 +28,7 @@ Makefile
         PsiElement(split)('\\n')
         PsiElement(chars)('echo')
         PsiWhiteSpace(' ')
-        PsiElement(string)('"hi"')
+        MakefileStringImpl(STRING)
+          PsiElement(")('"')
+          PsiElement(chars)('hi')
+          PsiElement(")('"')

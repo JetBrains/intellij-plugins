@@ -13,6 +13,9 @@ public interface MakefileDefine extends PsiElement {
   List<MakefileFunction> getFunctionList();
 
   @NotNull
+  List<MakefileString> getStringList();
+
+  @NotNull
   List<MakefileSubstitution> getSubstitutionList();
 
   @Nullable

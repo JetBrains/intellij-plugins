@@ -12,6 +12,9 @@ public interface MakefileSubstitution extends PsiLanguageInjectionHost {
   List<MakefileFunction> getFunctionList();
 
   @NotNull
+  List<MakefileString> getStringList();
+
+  @NotNull
   List<MakefileVariableUsage> getVariableUsageList();
 
 }

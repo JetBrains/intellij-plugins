@@ -39,6 +39,12 @@ public class MakefileConditionImpl extends ASTWrapperPsiElement implements Makef
 
   @Override
   @NotNull
+  public List<MakefileString> getStringList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileString.class);
+  }
+
+  @Override
+  @NotNull
   public List<MakefileVariableUsage> getVariableUsageList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileVariableUsage.class);
   }

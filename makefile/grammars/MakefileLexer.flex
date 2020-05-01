@@ -36,18 +36,31 @@ FUNCTIONS=("error"|"warning"|"info"|"shell"|"subst"|"patsubst"|"strip"|"findstri
 MACRO="@"[^@ \r\n]+"@"
 ASSIGN=("="|":="|"::="|"?="|"!="|"+=")
 
-CHARS = [0-9a-zA-Z.!\-?\"%@/_\[\]+~*\^&+'<>]
+CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
 
-STRING="\""[^\"]*"\""|"'"[^']*"'"
 
-%state INCLUDES SOURCE SOURCE_FORCED DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
+%state SQSTRING DQSTRING
 
 %%
 
+<SQSTRING> {
+  "'" {  yybegin(YYINITIAL); return QUOTE; }
+  "#"+ { return CHARS; }
+}
+
+<DQSTRING> {
+  "\"" {  yybegin(YYINITIAL); return DOUBLEQUOTE; }
+  "#"+ { return CHARS; }
+}
+
 \\"#"                  { return CHARS; }
-{DOCCOMMENT}           { return DOC_COMMENT; }
-{MULTILINECOMMENT}     { return COMMENT; }
-{COMMENT}              { return COMMENT; }
+
+<YYINITIAL> {
+  {DOCCOMMENT}           { return DOC_COMMENT; }
+  {MULTILINECOMMENT}     { return COMMENT; }
+  {COMMENT}              { return COMMENT; }
+}
+
 ^{MACRO}               { return MACRO; }
 
 ^\t+               { return TAB; }
@@ -84,8 +97,9 @@ STRING="\""[^\"]*"\""|"'"[^']*"'"
 ")"                { return CLOSE_PAREN; }
 "{"                { return OPEN_CURLY; }
 "}"                { return CLOSE_CURLY; }
-\\\"               { return CHARS; }
-{STRING}           { return STRING; }
+\\\"               { return ESCAPED_DOUBLEQUOTE; }
+"'"                { yybegin(SQSTRING); return QUOTE; }
+"\""               { yybegin(DQSTRING); return DOUBLEQUOTE; }
 {CHARS}+           { return CHARS; }
 \\\\               { return CHARS; }
 \\                 { return CHARS; }

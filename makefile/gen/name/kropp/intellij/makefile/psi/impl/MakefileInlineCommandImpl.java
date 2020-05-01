@@ -33,6 +33,12 @@ public class MakefileInlineCommandImpl extends ASTWrapperPsiElement implements M
 
   @Override
   @NotNull
+  public List<MakefileString> getStringList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileString.class);
+  }
+
+  @Override
+  @NotNull
   public List<MakefileSubstitution> getSubstitutionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, MakefileSubstitution.class);
   }

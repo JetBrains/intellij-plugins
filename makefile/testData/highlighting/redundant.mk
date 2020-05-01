@@ -1,3 +1,3 @@
-<info descr="Redundant rule">a:
-
-</info><info descr="null">.SUFFIXES</info>:
+<weak_warning descr="Redundant rule">a:
+</weak_warning>
+<info descr="null">.SUFFIXES</info>:

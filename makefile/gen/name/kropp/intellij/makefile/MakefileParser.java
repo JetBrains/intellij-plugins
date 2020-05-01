@@ -203,7 +203,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     boolean r;
     r = variable_usage(b, l + 1);
     if (!r) r = function(b, l + 1);
-    if (!r) r = consumeToken(b, STRING);
+    if (!r) r = string(b, l + 1);
     if (!r) r = identifier(b, l + 1);
     return r;
   }
@@ -353,7 +353,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (<<parseLineNotEndef>>|function|variable-usage|substitution)*
+  // (<<parseLineNotEndef>>|function|variable-usage|substitution|string)*
   static boolean defline(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defline")) return false;
     while (true) {
@@ -364,7 +364,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // <<parseLineNotEndef>>|function|variable-usage|substitution
+  // <<parseLineNotEndef>>|function|variable-usage|substitution|string
   private static boolean defline_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defline_0")) return false;
     boolean r;
@@ -373,6 +373,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = function(b, l + 1);
     if (!r) r = variable_usage(b, l + 1);
     if (!r) r = substitution(b, l + 1);
+    if (!r) r = string(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -586,7 +587,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "function_param_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, STRING);
+    r = string(b, l + 1);
     if (!r) r = parseTokens(b, 0, DOLLAR, DOLLAR);
     if (!r) r = variable_usage(b, l + 1);
     if (!r) r = consumeToken(b, CHARS);
@@ -763,7 +764,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (<<parseLine>>|function|variable-usage|substitution)*
+  // (<<parseLine>>|function|variable-usage|substitution|string)*
   static boolean line(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "line")) return false;
     while (true) {
@@ -774,7 +775,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // <<parseLine>>|function|variable-usage|substitution
+  // <<parseLine>>|function|variable-usage|substitution|string
   private static boolean line_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "line_0")) return false;
     boolean r;
@@ -783,6 +784,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     if (!r) r = function(b, l + 1);
     if (!r) r = variable_usage(b, l + 1);
     if (!r) r = substitution(b, l + 1);
+    if (!r) r = string(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1181,7 +1183,96 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '`' (<<parseLine>>|function|variable-usage)* '`'
+  // string-double-quoted | string-single-quoted
+  public static boolean string(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string")) return false;
+    if (!nextTokenIs(b, "<string>", DOUBLEQUOTE, QUOTE)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, STRING, "<string>");
+    r = string_double_quoted(b, l + 1);
+    if (!r) r = string_single_quoted(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '"' (<<parseDoubleQuotedString>>|function|variable-usage)* '"'
+  static boolean string_double_quoted(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_double_quoted")) return false;
+    if (!nextTokenIs(b, DOUBLEQUOTE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, DOUBLEQUOTE);
+    p = r; // pin = 1
+    r = r && report_error_(b, string_double_quoted_1(b, l + 1));
+    r = p && consumeToken(b, DOUBLEQUOTE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (<<parseDoubleQuotedString>>|function|variable-usage)*
+  private static boolean string_double_quoted_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_double_quoted_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!string_double_quoted_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "string_double_quoted_1", c)) break;
+    }
+    return true;
+  }
+
+  // <<parseDoubleQuotedString>>|function|variable-usage
+  private static boolean string_double_quoted_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_double_quoted_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseDoubleQuotedString(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // "'" (<<parseSingleQuotedString>>|function|variable-usage)* "'"
+  static boolean string_single_quoted(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_single_quoted")) return false;
+    if (!nextTokenIs(b, QUOTE)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, QUOTE);
+    p = r; // pin = 1
+    r = r && report_error_(b, string_single_quoted_1(b, l + 1));
+    r = p && consumeToken(b, QUOTE) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (<<parseSingleQuotedString>>|function|variable-usage)*
+  private static boolean string_single_quoted_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_single_quoted_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!string_single_quoted_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "string_single_quoted_1", c)) break;
+    }
+    return true;
+  }
+
+  // <<parseSingleQuotedString>>|function|variable-usage
+  private static boolean string_single_quoted_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_single_quoted_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = parseSingleQuotedString(b, l + 1);
+    if (!r) r = function(b, l + 1);
+    if (!r) r = variable_usage(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '`' (<<parseLine>>|function|variable-usage|string)* '`'
   public static boolean substitution(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "substitution")) return false;
     if (!nextTokenIs(b, BACKTICK)) return false;
@@ -1195,7 +1286,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  // (<<parseLine>>|function|variable-usage)*
+  // (<<parseLine>>|function|variable-usage|string)*
   private static boolean substitution_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "substitution_1")) return false;
     while (true) {
@@ -1206,7 +1297,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // <<parseLine>>|function|variable-usage
+  // <<parseLine>>|function|variable-usage|string
   private static boolean substitution_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "substitution_1_0")) return false;
     boolean r;
@@ -1214,6 +1305,7 @@ public class MakefileParser implements PsiParser, LightPsiParser {
     r = parseLine(b, l + 1);
     if (!r) r = function(b, l + 1);
     if (!r) r = variable_usage(b, l + 1);
+    if (!r) r = string(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

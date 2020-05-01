@@ -70,4 +70,7 @@ Makefile
         PsiElement(\t)('\t')
         PsiElement(chars)('@echo')
         PsiWhiteSpace(' ')
-        PsiElement(string)('"Exporting"')
+        MakefileStringImpl(STRING)
+          PsiElement(")('"')
+          PsiElement(chars)('Exporting')
+          PsiElement(")('"')

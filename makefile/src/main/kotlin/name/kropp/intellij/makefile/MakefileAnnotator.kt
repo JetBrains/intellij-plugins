@@ -1,11 +1,21 @@
 package name.kropp.intellij.makefile
 
 import com.intellij.codeInspection.*
+import com.intellij.lang.*
 import com.intellij.lang.annotation.*
+import com.intellij.lang.annotation.HighlightSeverity.*
+import com.intellij.openapi.editor.colors.*
 import com.intellij.openapi.util.*
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
 import com.intellij.psi.tree.*
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.FUNCTION
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.PREREQUISITE
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.SPECIAL_TARGET
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.STRING
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.TARGET
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE
+import name.kropp.intellij.makefile.MakefileSyntaxHighlighter.Companion.VARIABLE_VALUE
 import name.kropp.intellij.makefile.psi.*
 
 
@@ -14,11 +24,11 @@ class MakefileAnnotator : Annotator {
 
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is MakefileRule && element.isUnused()) {
-      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Redundant rule").range(element).highlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL).withFix(RemoveRuleFix(element)).create()
+      holder.newAnnotation(WEAK_WARNING, "Redundant rule").range(element).highlightType(ProblemHighlightType.LIKE_UNUSED_SYMBOL).withFix(RemoveRuleFix(element)).create()
     } else if (element is MakefileTarget && !(element.parent.parent.parent as MakefileRule).isUnused()) {
-      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(if (element.isSpecialTarget) MakefileSyntaxHighlighter.SPECIAL_TARGET else MakefileSyntaxHighlighter.TARGET).create()
+      holder.mark(element, if (element.isSpecialTarget) SPECIAL_TARGET else TARGET)
     } else if (element is MakefilePrerequisite) {
-      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.PREREQUISITE).create()
+      holder.mark(element, PREREQUISITE)
 
       if (Regex("""\$\((.*)\)""").matches(element.text)) {
         return
@@ -45,20 +55,32 @@ class MakefileAnnotator : Annotator {
         }
 
         if (!targetReferences && !fileReferenceResolved) {
-          holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Unresolved prerequisite").range(element).withFix(CreateRuleFix(element)).create()
+          holder.newAnnotation(WEAK_WARNING, "Unresolved prerequisite").range(element).withFix(CreateRuleFix(element)).create()
         } else if (unresolvedFile != null) {
-          holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "File not found").range(unresolvedFile!!).create()
+          holder.newAnnotation(WEAK_WARNING, "File not found").range(unresolvedFile!!).create()
         }
       }
     } else if (element is MakefileVariable) {
-      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.VARIABLE).create()
+      holder.mark(element, VARIABLE)
     } else if (element is MakefileVariableValue) {
       element.node.getChildren(lineTokenSet).forEach {
-        holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(it).textAttributes(MakefileSyntaxHighlighter.VARIABLE_VALUE).create()
+        holder.mark(it, VARIABLE_VALUE)
       }
     } else if (element is MakefileFunctionName && element.parent is MakefileFunction) {
-      holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "").range(element).textAttributes(MakefileSyntaxHighlighter.FUNCTION).create()
+      holder.mark(element, FUNCTION)
+    } else if (element is MakefileString) {
+      holder.mark(element, STRING)
+    } else if (element is MakefileVariableUsage) {
+      holder.mark(element, VARIABLE)
     }
+  }
+
+  private fun AnnotationHolder.mark(element: PsiElement, attr: TextAttributesKey) {
+    newSilentAnnotation(INFORMATION).range(element).textAttributes(attr).create()
+  }
+
+  private fun AnnotationHolder.mark(node: ASTNode, attr: TextAttributesKey) {
+    newSilentAnnotation(INFORMATION).range(node).textAttributes(attr).create()
   }
 
   private fun MakefileRule.isUnused(): Boolean {

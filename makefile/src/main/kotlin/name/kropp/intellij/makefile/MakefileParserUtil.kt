@@ -97,10 +97,16 @@ object MakefileParserUtil : GeneratedParserUtilBase() {
   }
 
   @JvmStatic
-  fun parseLine(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, BACKTICK))
+  fun parseLine(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, BACKTICK, DOUBLEQUOTE, QUOTE))
 
   @JvmStatic
-  fun parseLineNotEndef(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, KEYWORD_ENDEF))
+  fun parseLineNotEndef(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, KEYWORD_ENDEF, DOUBLEQUOTE, QUOTE))
+
+  @JvmStatic
+  fun parseDoubleQuotedString(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, DOUBLEQUOTE))
+
+  @JvmStatic
+  fun parseSingleQuotedString(builder: PsiBuilder, level: Int): Boolean = parseLineTokens(builder, setOf(EOL, QUOTE))
 
   private fun parseLineTokens(builder: PsiBuilder, tokens: Set<IElementType>): Boolean {
     // accept everything till the end of line

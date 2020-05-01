@@ -20,6 +20,9 @@
     ASSIGN = "="
     PIPE = "|"
     BACKTICK = "`"
+    QUOTE = "'"
+    DOUBLEQUOTE = "\""
+    ESCAPED_DOUBLEQUOTE = "\\\""
 
     DOLLAR = "$"
     OPEN_PAREN = "("
@@ -58,9 +61,9 @@ rule ::= target_line recipe? {methods=[getTargets]}
 recipe ::= (command|conditional)+ (command|conditional|EOL)* {methods=[isEmpty] implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileRecipeElementImpl"}
 command ::= '\t'+ line EOL? {pin=1}
 inline_command ::= line
-private line ::= (<<parseLine>>|function|variable-usage|substitution)*
-private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution)*
-substitution ::= '`' (<<parseLine>>|function|variable-usage)* '`' {pin=1 implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileSubstitutionInjectionHost"}
+private line ::= (<<parseLine>>|function|variable-usage|substitution|string)*
+private defline ::= (<<parseLineNotEndef>>|function|variable-usage|substitution|string)*
+substitution ::= '`' (<<parseLine>>|function|variable-usage|string)* '`' {pin=1 implements=["com.intellij.psi.PsiLanguageInjectionHost"] mixin="name.kropp.intellij.makefile.psi.impl.MakefileSubstitutionInjectionHost"}
 
 target_line ::= targets (':'':' | ':') (target_pattern ':')? ((exportvar|override|privatevar|variable-assignment|prerequisites) (';' inline_command?)? EOL?) {pin=2 methods=[getTargetName]}
 targets ::= target+
@@ -114,6 +117,10 @@ function-name ::= ('error'|'warning'|'info'|'shell'|'subst'|'patsubst'|'strip'|'
 meta function-param ::= (string|'$''$'|variable-usage|chars|substitution|','|'|'|function-name|function|assignment|':'|';'|split)+ {recoverWhile=function-recover}
 
 variable-usage ::= ('$''(' <<parseVariableUsageParen>>) | ('$''{' <<parseVariableUsageCurly>>) | ('$' chars) {mixin="name.kropp.intellij.makefile.psi.impl.MakefileVariableUsageMixin"}
+
+string ::= string-double-quoted | string-single-quoted
+private string-double-quoted ::= '"' (<<parseDoubleQuotedString>>|function|variable-usage)* '"' {pin=1}
+private string-single-quoted ::= "'" (<<parseSingleQuotedString>>|function|variable-usage)* "'" {pin=1}
 
 comment ::=
 doc_comment ::=
