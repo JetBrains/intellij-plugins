@@ -11,7 +11,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 import java.util.function.Consumer;
 
-
 public class CucumberJavaAllFeaturesInFolderGlueProvider implements CucumberGlueProvider {
   private final PsiDirectory myDirectory;
 
