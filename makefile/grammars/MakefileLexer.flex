@@ -68,6 +68,7 @@ CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
 {EOL}              { return EOL; }
 {SPACES}           { return WHITE_SPACE; }
 \\:                { return CHARS; }
+(\\\(|\\\))        { return CHARS; }
 :                  { return COLON; }
 ","                { return COMMA; }
 "`"                { return BACKTICK; }
