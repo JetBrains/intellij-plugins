@@ -343,16 +343,16 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testInsertImportAmbiguous1() {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    myFixture.getLookup().setCurrentItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    myFixture.getLookup().setCurrentItem(items[1]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous2() {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    myFixture.getLookup().setCurrentItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    myFixture.getLookup().setCurrentItem(items[1]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
@@ -669,10 +669,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
-    assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
-    assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
 
-    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[1]);
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_2_after.js2");
   }

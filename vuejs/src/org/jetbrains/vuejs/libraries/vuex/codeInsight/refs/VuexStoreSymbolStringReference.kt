@@ -104,8 +104,7 @@ class VuexStoreSymbolStringReference(element: PsiElement,
       ProgressManager.checkCanceled()
       val priority = JSLookupPriority.SMART_PRIORITY
       var builder = LookupElementBuilder.createWithSmartPointer(name, value)
-      builder = builder
-        .withRenderer(JSLookupElementRenderer(name, value, priority, false, null))
+      builder = JSLookupElementRenderer(name, priority, false, null).applyToBuilder(builder)
         .withInsertHandler { context, _ ->
           if (context.completionChar == REPLACE_SELECT_CHAR) {
             PsiDocumentManager.getInstance(context.project).commitAllDocuments()

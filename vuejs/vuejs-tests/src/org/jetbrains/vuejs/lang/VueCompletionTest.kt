@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.lang
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.javascript.BaseJSCompletionTestCase.*
 import com.intellij.lang.javascript.JSTestUtils
@@ -16,6 +15,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
 import org.jdom.input.SAXBuilder
@@ -653,8 +653,7 @@ export default {
       TestCase.assertNotNull(myFixture.lookupElements)
       val item: LookupElement? = myFixture.lookupElements?.firstOrNull { "callMe" == it.lookupString }
       TestCase.assertNotNull(item)
-      val presentation = LookupElementPresentation()
-      item!!.renderElement(presentation)
+      val presentation = TestLookupElementPresentation.renderReal(item!!)
       TestCase.assertEquals("number", presentation.typeText)
       TestCase.assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
     })

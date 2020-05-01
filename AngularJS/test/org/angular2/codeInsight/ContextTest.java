@@ -15,6 +15,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
@@ -210,7 +211,7 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
                               "bar#string#(test: string)",
                               "foo#string#null"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
-                   LookupElementPresentation presentation = LookupElementPresentation.renderElement(el);
+                   LookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
                  }).sorted().toList());
   }
