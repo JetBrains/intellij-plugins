@@ -151,13 +151,13 @@
   </projectListeners>
 
   <actions>
-    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reimport Projects"
-            description="Reimport selected Bnd/Bndtools projects"
+    <action id="osgi.bnd.reimport" icon="OsmorcIdeaIcons.Bnd" text="Reload Projects"
+            description="Reload selected Bnd/Bndtools projects"
             class="org.jetbrains.osgi.bnd.imp.ReimportProjectsAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
-    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reimport Workspace"
-            description="Reimport entire Bnd/Bndtools workspace"
+    <action id="osgi.bnd.reimport.all" icon="OsmorcIdeaIcons.Bnd" text="Reload Workspace"
+            description="Reload entire Bnd/Bndtools workspace"
             class="org.jetbrains.osgi.bnd.imp.ReimportWorkspaceAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
