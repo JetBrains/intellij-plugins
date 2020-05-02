@@ -144,7 +144,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   @Override
-  protected void retargetUsages(UsageInfo[] usages, Map<PsiElement, PsiElement> oldToNewMap) {
+  protected void retargetUsages(UsageInfo @NotNull [] usages, @NotNull Map<PsiElement, PsiElement> oldToNewMap) {
     super.retargetUsages(usages, oldToNewMap);
     for (UsageInfo usage : usages) {
       if (usage instanceof JSRefactoringUtil.ConstructorUsageInfo) {
