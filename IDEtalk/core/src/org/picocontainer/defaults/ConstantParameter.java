@@ -58,23 +58,19 @@ public final class ConstantParameter implements Parameter {
   @Override
   public void verify(PicoContainer container, ComponentAdapter adapter, Class expectedType) throws PicoException {
     if (!checkPrimitive(expectedType) && !expectedType.isInstance(value)) {
-      throw new PicoIntrospectionException(expectedType.getClass().getName()
-                                           + " is not assignable from "
-                                           + value.getClass().getName());
+      throw new PicoIntrospectionException(expectedType.getName() + " is not assignable from " + value.getClass().getName());
     }
   }
 
-  private boolean checkPrimitive(Class expectedType) {
+  private boolean checkPrimitive(Class<?> expectedType) {
     try {
       if (expectedType.isPrimitive()) {
         final Field field = value.getClass().getField("TYPE");
-        final Class type = (Class)field.get(value);
+        final Class<?> type = (Class<?>)field.get(value);
         return expectedType.isAssignableFrom(type);
       }
     }
-    catch (NoSuchFieldException e) {
-    }
-    catch (IllegalAccessException e) {
+    catch (NoSuchFieldException | IllegalAccessException ignore) {
     }
     return false;
   }
