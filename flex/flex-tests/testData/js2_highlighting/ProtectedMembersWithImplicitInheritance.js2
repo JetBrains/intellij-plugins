@@ -1,6 +1,6 @@
 package {
 
-public class ProtectedMembersWithImplicitInheritance extends BaseClass {
+public class <error descr="More than one externally visible symbol defined in file">ProtectedMembersWithImplicitInheritance</error> extends BaseClass {
 
     [Bindable]
     public var some:String;

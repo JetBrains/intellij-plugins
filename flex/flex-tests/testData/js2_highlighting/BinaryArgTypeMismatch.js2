@@ -1,5 +1,5 @@
 package {
-class BinaryArgTypeMismatch {
+class <error descr="More than one externally visible symbol defined in file">BinaryArgTypeMismatch</error> {
     function Foo() {
 
         var x:Bar
