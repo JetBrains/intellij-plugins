@@ -34,7 +34,7 @@ class <warning descr="Unused inner class InvalidUnusedSymbol">InvalidUnusedSymbo
 }
 
 package <error descr="Package name 'starling.events' does not correspond to file path ''">starling.events</error> {
-    public class <error descr="Class 'Event' should be defined in file 'Event.js2'">Event</error> {}
-    public class <error descr="Class 'TouchEvent' should be defined in file 'TouchEvent.js2'">TouchEvent</error> extends Event {}
-    public class <error descr="Class 'NotEvent' should be defined in file 'NotEvent.js2'">NotEvent</error> {}
+    public class <error descr="Class 'Event' should be defined in file 'Event.js2'"><error descr="More than one externally visible symbol defined in file">Event</error></error> {}
+    public class <error descr="Class 'TouchEvent' should be defined in file 'TouchEvent.js2'"><error descr="More than one externally visible symbol defined in file">TouchEvent</error></error> extends Event {}
+    public class <error descr="Class 'NotEvent' should be defined in file 'NotEvent.js2'"><error descr="More than one externally visible symbol defined in file">NotEvent</error></error> {}
 }

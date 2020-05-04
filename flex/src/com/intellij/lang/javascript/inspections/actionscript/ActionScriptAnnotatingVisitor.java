@@ -376,7 +376,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   public void visitJSFunctionDeclaration(@NotNull final JSFunction node) {
     super.visitJSFunctionDeclaration(node);
 
-    checkUniqueInPackage(node);
+    checkPackageElement(node);
 
     final ASTNode nameIdentifier = node.findNameIdentifier();
     if (nameIdentifier == null) return;
@@ -396,10 +396,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         ).range(nameIdentifier)
         .withFix(new RemoveASTNodeFix("javascript.fix.remove.constructor", node)).create();
       }
-    }
-
-    if (parent instanceof JSPackageStatement) {
-      checkNamedObjectIsInCorrespondingFile(node);
     }
 
     if (parent instanceof JSClass && !node.isConstructor()) {
@@ -544,13 +540,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Override
   public void visitJSVariable(@NotNull JSVariable var) {
     super.visitJSVariable(var);
-    checkUniqueInPackage(var);
+    checkPackageElement(var);
   }
 
   @Override
   public void visitJSClass(JSClass jsClass) {
     super.visitJSClass(jsClass);
-    checkUniqueInPackage(jsClass);
+    checkPackageElement(jsClass);
   }
 
   private static boolean isNative(final JSFunction function) {
@@ -670,7 +666,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     checkFileUnderSourceRoot(packageStatement, new SimpleErrorReportingClient());
   }
 
-  private void checkUniqueInPackage(@NotNull JSNamedElement el) {
+  private void checkPackageElement(@NotNull JSNamedElement el) {
     if (!(el instanceof JSAttributeListOwner)) return;
 
     PsiElement parent = el.getParent();
@@ -702,6 +698,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         .withFix(new RemoveASTNodeFix("javascript.fix.remove.externally.visible.symbol", el))
         .create();
     }
+
+    checkNamedObjectIsInCorrespondingFile(el);
   }
 
   @Override
@@ -731,14 +729,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       if (nameIdentifier != null && nameIdentifier.getPsi() == node) {
         if (parent instanceof JSPackageStatement) {
           checkPackageStatement((JSPackageStatement)parent);
-        }
-        else if (!(parent instanceof JSImportStatement) && parent.getParent() instanceof JSPackageStatement) {
-          checkNamedObjectIsInCorrespondingFile(namedElement);
-        }
-        else if (parent instanceof JSVariable) {
-          if (parent.getParent().getParent() instanceof JSPackageStatement) {
-            checkNamedObjectIsInCorrespondingFile((JSVariable)parent);
-          }
         }
         else if (parent instanceof JSNamespaceDeclaration) {
           checkDuplicates((JSNamespaceDeclaration)parent);
@@ -1079,6 +1069,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   public void visitJSNamespaceDeclaration(JSNamespaceDeclaration namespaceDeclaration) {
+    checkPackageElement(namespaceDeclaration);
     final PsiElement initializer = namespaceDeclaration.getInitializer();
     if (initializer instanceof JSExpression) {
       PsiElement resolve;

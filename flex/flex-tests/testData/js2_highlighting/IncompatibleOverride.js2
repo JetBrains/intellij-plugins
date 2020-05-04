@@ -8,7 +8,7 @@ package <error>xxx</error> {
     ns function baz2(x) {}
   }
 
-  class <error>Bar</error> extends Foo {
+  class Bar extends Foo {
     protected override function bar<error descr="Incompatible override, should have signature '(x)'">()</error> {
     }
     <error descr="Incompatible override, should have 'protected' access modifier">private</error> override function foo() {

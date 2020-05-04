@@ -16,7 +16,7 @@ package <error>foo</error> {
 }
 
 package <error>bar</error> {
-    class <error>Foo</error> {
+    class Foo {
       <error descr="Use namespace OR access modifier">public</error> <error descr="Use namespace OR access modifier">xxx</error> var n3;
     }
 }

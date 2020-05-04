@@ -10,7 +10,7 @@ public class <error descr="More than one externally visible symbol defined in fi
     }
 }
 
-class <error descr="Class 'BaseClass' should be defined in file 'BaseClass.js2'">BaseClass</error> {
+class <error descr="Class 'BaseClass' should be defined in file 'BaseClass.js2'"><error descr="More than one externally visible symbol defined in file">BaseClass</error></error> {
     protected var localIndex;
 
     public function toString():String {
