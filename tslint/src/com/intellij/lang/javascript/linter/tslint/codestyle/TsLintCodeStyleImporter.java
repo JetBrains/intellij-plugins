@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +72,7 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
                                                        @NotNull NodeJsInterpreter interpreter,
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
 
-    String configFilePath = configPsi.getVirtualFile().getPath();
+    String configFilePath = FileUtil.toSystemDependentName(configPsi.getVirtualFile().getPath());
     List<String> parameters =
       Arrays.asList(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
                     linterPackage.getSystemDependentPath(), configFilePath);
