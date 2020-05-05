@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.editor.AutoImportOptionsProvider;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +15,7 @@ public class ActionScriptAutoImportOptionsProvider implements AutoImportOptionsP
   private JPanel myMainPanel;
   private JBCheckBox myOnTheFlyCheckBox;
 
-  public static boolean isAddUnambiguousImportsOnTheFly() {
+  static boolean isAddUnambiguousImportsOnTheFly() {
     return PropertiesComponent.getInstance().getBoolean(ADD_IMPORTS_ON_THE_FLY_PROPERTY, ADD_IMPORTS_ON_THE_FLY_DEFAULT);
   }
 
@@ -32,7 +31,7 @@ public class ActionScriptAutoImportOptionsProvider implements AutoImportOptionsP
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     final boolean onTheFly = myOnTheFlyCheckBox.isSelected();
     PropertiesComponent.getInstance().setValue(ADD_IMPORTS_ON_THE_FLY_PROPERTY, onTheFly, ADD_IMPORTS_ON_THE_FLY_DEFAULT);
   }
