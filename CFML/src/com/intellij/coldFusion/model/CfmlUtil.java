@@ -240,8 +240,8 @@ public class CfmlUtil {
     String tagName = ((CfmlTagImpl)referenceName).getTagName();
     String tagNameWithoutCf = tagName.startsWith("cf") ? tagName.substring(2) : tagName;
     return
-      getCfmlLangInfo(project).getPredefinedVariables().keySet()
-        .contains(StringUtil.toLowerCase(tagNameWithoutCf) + "." + StringUtil.toLowerCase(predefVarText));
+      getCfmlLangInfo(project).getPredefinedVariables()
+        .containsKey(StringUtil.toLowerCase(tagNameWithoutCf) + "." + StringUtil.toLowerCase(predefVarText));
   }
 
   private static final String[] EMPTY_STRING_ARRAY = ArrayUtilRt.EMPTY_STRING_ARRAY;
