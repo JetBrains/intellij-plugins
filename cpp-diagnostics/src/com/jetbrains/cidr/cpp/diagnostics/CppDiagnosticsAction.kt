@@ -3,6 +3,7 @@ package com.jetbrains.cidr.cpp.diagnostics
 import com.intellij.ide.actions.RevealFileAction
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.application.runReadAction
@@ -65,12 +66,10 @@ class CppDiagnosticsAction : DumbAwareAction() {
         zipAndReveal(files)
 
         if (Registry.`is`("cpp.diagnostics.also.open.in.editor")) {
-          invokeLater {
-            if (!project.isDisposed) {
-              for (file in files) {
-                val virtualFile = LightVirtualFile(file.filename, file.contents)
-                FileEditorManager.getInstance(project).openFile(virtualFile, true)
-              }
+          AppUIExecutor.onUiThread().expireWith(project).submit {
+            for (file in files) {
+              val virtualFile = LightVirtualFile(file.filename, file.contents)
+              FileEditorManager.getInstance(project).openFile(virtualFile, true)
             }
           }
         }
