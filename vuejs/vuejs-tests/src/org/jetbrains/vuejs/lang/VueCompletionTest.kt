@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
@@ -1654,6 +1655,9 @@ export default class ComponentInsertion extends Vue {
   }
 
   fun testVue3CompositionApiCompletion() {
+    // Used TS type is recursive in itself and recursion prevention is expected
+    RecursionManager.disableAssertOnRecursionPrevention(myFixture.testRootDisposable)
+    RecursionManager.disableMissedCacheAssertions(myFixture.testRootDisposable)
     myFixture.copyDirectoryToProject("../types/vue-3.0.0-beta.9/node_modules", "node_modules")
     createPackageJsonWithVueDependency(myFixture)
     myFixture.configureByFile("compositionAPI/count-vue3.vue")
