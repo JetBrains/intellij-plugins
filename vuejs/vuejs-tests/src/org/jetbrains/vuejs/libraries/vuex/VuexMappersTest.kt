@@ -7,7 +7,7 @@ import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 class VuexMappersTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/mappers"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/mappers"
 
   fun testBasicVue() {
     createPackageJsonWithVueDependency(myFixture)

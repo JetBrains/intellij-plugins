@@ -1410,8 +1410,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveIntoVueDefinitions() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("ResolveIntoVueDefinitions.vue", """
 <script>
   export default {
@@ -1428,8 +1427,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveElementUiComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"element-ui\": \"2.0.5\"")
-    myFixture.copyDirectoryToProject("../libs/element-ui/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.ELEMENT_UI_2_0_5)
     val testData = arrayOf(
       Trinity("el-col", "ElCol", "col.js"),
       Trinity("el-button", "ElButton", "button.vue"),
@@ -1442,8 +1440,7 @@ const props = {seeMe: {}}
   }
 
   fun testResolveMintUiComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"mint-ui\": \"^2.2.3\"")
-    myFixture.copyDirectoryToProject("../libs/mint-ui/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.MINT_UI_2_2_3)
     val testData = arrayOf(
       Trinity("mt-field", "mt-field", "field.vue"),
       Trinity("mt-swipe", "mt-swipe", "swipe.vue"),
@@ -1458,8 +1455,7 @@ const props = {seeMe: {}}
   // Resolve into web-types libraries not supported for now.
   @Suppress("TestFunctionName", "unused")
   fun _testResolveVuetifyComponent() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
-    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUETIFY_0_17_2)
     val testData = arrayOf(
       Trinity("v-list", "v-list", "VList.js"),
       Trinity("v-list-tile-content", "v-list-tile-content", "index.js")
@@ -1888,7 +1884,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testVueDefaultSymbols() {
-    configureVueDefinitions(myFixture)
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByFile("vueDefaultSymbols.vue")
     assertEquals("vue.d.ts",
                  myFixture.resolveReference("\$<caret>slots").containingFile.name)

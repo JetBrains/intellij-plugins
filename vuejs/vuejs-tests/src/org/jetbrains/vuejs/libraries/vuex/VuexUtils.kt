@@ -2,7 +2,8 @@
 package org.jetbrains.vuejs.libraries.vuex
 
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
+import org.jetbrains.vuejs.lang.VueTestModule
+import org.jetbrains.vuejs.lang.configureDependencies
 
 enum class VuexTestStore(val dirName: String) {
   CounterHot("counter-hot"),
@@ -14,8 +15,6 @@ enum class VuexTestStore(val dirName: String) {
 }
 
 fun CodeInsightTestFixture.configureStore(store: VuexTestStore) {
-  createPackageJsonWithVueDependency(this, "\"vuex\": \"^3.0.1\"")
-  copyDirectoryToProject("../../libs/vuex/node_modules", "node_modules")
-  copyDirectoryToProject("../../types/vue-2.6.10", "node_modules/vue")
+  configureDependencies(VueTestModule.VUEX_3_1_0, VueTestModule.VUE_2_6_10)
   copyDirectoryToProject("../stores/${store.dirName}", "store")
 }

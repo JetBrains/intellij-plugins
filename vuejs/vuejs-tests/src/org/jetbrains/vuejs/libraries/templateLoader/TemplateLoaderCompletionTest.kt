@@ -7,7 +7,7 @@ import org.jetbrains.vuejs.lang.createPackageJsonWithVueDependency
 
 class TemplateLoaderCompletionTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/templateLoader/"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/templateLoader/"
 
   fun testDecoratedQuery() {
     doTest(getTestName(true))

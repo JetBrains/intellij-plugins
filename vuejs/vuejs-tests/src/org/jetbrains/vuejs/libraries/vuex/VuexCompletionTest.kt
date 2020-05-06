@@ -17,7 +17,7 @@ import java.io.File
 
 class VuexCompletionTest : BasePlatformTestCase() {
 
-  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/vuex/completion"
+  override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/libraries/vuex/completion"
 
   fun testBasicGettersCompletion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")

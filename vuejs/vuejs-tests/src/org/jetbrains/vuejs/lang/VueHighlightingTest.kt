@@ -5,7 +5,6 @@ import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspectio
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
 import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.JavaScriptBundle
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -816,8 +815,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testBuiltinTagsHighlighting() {
-    createPackageJsonWithVueDependency(myFixture, "")
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("BuiltinTagsHighlighting.vue", """
 <template>
     <transition-group>
@@ -1327,8 +1325,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testVueExtendSyntax() {
-    myFixture.copyDirectoryToProject("../types/node_modules", "./node_modules")
-    JSTestUtils.addPackageJson(myFixture, "vue")
+    myFixture.configureDependencies(VueTestModule.VUE_2_5_3)
     myFixture.configureByText("a-component.vue", """<script>export default Vue.extend({props:{msg: String}})</script>""")
     myFixture.configureByText("b-component.vue", """
       <template>
@@ -1351,8 +1348,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testBootstrapVue() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("b-component.vue", """
       <template>
         <b-alert show>Foo</b-alert>
@@ -1444,8 +1440,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testDirectiveWithModifiers() {
-    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
-    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureDependencies(VueTestModule.BOOTSTRAP_VUE_2_0_0_RC_11)
     myFixture.configureByText("a-component.vue", """
       <template>
         <div>
@@ -1525,8 +1520,7 @@ var <info descr="global variable">i</info>:<info descr="exported class">SpaceInt
   }
 
   fun testCompositionApiBasic() {
-    createPackageJsonWithVueDependency(myFixture, """ "@vue/composition-api": "0.0.0" """)
-    myFixture.copyDirectoryToProject("../libs/composition-api", "node_modules/@vue/composition-api")
+    myFixture.configureDependencies(VueTestModule.COMPOSITION_API_0_4_0)
     myFixture.configureByFile("compositeComponent1.vue")
     myFixture.checkHighlighting()
     myFixture.configureByFile("compositeComponent2.vue")
