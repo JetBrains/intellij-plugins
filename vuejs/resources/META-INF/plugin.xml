@@ -194,6 +194,9 @@ Vue components defined using separate .html, .js, and .css files are not support
     <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderComponentInfoProvider"
                                  id="templateLoader"
                                  order="after defaultTemplate"/>
+    <vuejs.containerInfoProvider implementation="org.jetbrains.vuejs.libraries.vuelidate.VuelidateContainerInfoProvider"
+                                 id="vuelidate"
+                                 order="after decoratedComponent"/>
 
     <lang.documentationProvider implementationClass="org.jetbrains.vuejs.codeInsight.documentation.VueDocumentationProvider"
                                 language="Vue" order="before html"/>

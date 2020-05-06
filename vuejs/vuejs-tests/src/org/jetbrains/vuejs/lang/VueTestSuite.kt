@@ -19,8 +19,7 @@ import org.jetbrains.vuejs.lang.html.VueHighlightingLexerTest
 import org.jetbrains.vuejs.lang.html.VueIndexerTest
 import org.jetbrains.vuejs.lang.html.VueLexerTest
 import org.jetbrains.vuejs.lang.html.VueParserTest
-import org.jetbrains.vuejs.libraries.templateLoader.TemplateLoaderCompletionTest
-import org.jetbrains.vuejs.libraries.vuex.VuexTestSuite
+import org.jetbrains.vuejs.libraries.LibrariesTestSuite
 import org.jetbrains.vuejs.pug.PugTemplateTest
 import org.jetbrains.vuejs.pug.VuePugFoldingTest
 import org.junit.runner.RunWith
@@ -57,8 +56,7 @@ import org.junit.runners.Suite
   VueAutoPopupTest::class,
   VueEmmetTest::class,
   VueTypeResolveTest::class,
-  VuexTestSuite::class,
-  TemplateLoaderCompletionTest::class,
+  LibrariesTestSuite::class,
   PugTemplateTest::class,
   VuePugFoldingTest::class,
   VueModuleImportTest::class,

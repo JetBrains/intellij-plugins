@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
+import org.jetbrains.vuejs.types.VueComponentInstanceType
 import java.util.*
 
 interface VueInstanceOwner : VueScopeElement {
@@ -42,7 +43,7 @@ private fun buildInstanceType(instance: VueInstanceOwner): JSType? {
   contributeDefaultInstanceProperties(source, result)
   contributeComponentProperties(instance, source, result)
   contributePropertiesFromProviders(instance, result)
-  return JSSimpleRecordTypeImpl(JSTypeSourceFactory.createTypeSource(source, true), result.values.toList())
+  return VueComponentInstanceType(JSTypeSourceFactory.createTypeSource(source, true), instance, result.values.toList())
 }
 
 private fun contributeDefaultInstanceProperties(source: PsiElement,
