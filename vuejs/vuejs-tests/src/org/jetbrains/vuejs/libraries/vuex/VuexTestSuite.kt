@@ -11,18 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.jetbrains.vuejs.libraries.vuex;
+package org.jetbrains.vuejs.libraries.vuex
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-  VuexMappersTest.class,
-  VuexCompletionTest.class,
-  VuexResolveTest.class,
-  VuexFindUsagesTest.class,
-  VuexTestStructure.class
-})
-public class VuexTestSuite {
-}
+@RunWith(Suite::class)
+@Suite.SuiteClasses(
+  VuexMappersTest::class,
+  VuexCompletionTest::class,
+  VuexResolveTest::class,
+  VuexFindUsagesTest::class,
+  VuexTestStructure::class
+)
+class VuexTestSuite 
