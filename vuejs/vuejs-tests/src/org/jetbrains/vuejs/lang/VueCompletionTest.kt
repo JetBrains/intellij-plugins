@@ -1609,6 +1609,28 @@ export default class ComponentInsertion extends Vue {
     }
   }
 
+  fun testComputedTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeTS.vue")
+    myFixture.moveToOffsetBySignature("{{ a<caret>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#12")
+    myFixture.moveToOffsetBySignature("this.<caret>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#12")
+  }
+
+  fun testComputedTypeJS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("computedTypeJS.vue")
+    myFixture.moveToOffsetBySignature("{{ a<caret>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#number")
+    myFixture.moveToOffsetBySignature("this.<caret>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#number")
+  }
+
   fun testCustomModifiers() {
     createPackageJsonWithVueDependency(myFixture, """"test-lib":"0.0.0"""")
     myFixture.copyDirectoryToProject("modifiers", ".")
