@@ -17,7 +17,7 @@ class VueTypeResolveTest : BasePlatformTestCase() {
     testVFor(Triple("el", "*,number|string", "number"),
              Triple("num", "number", "number"),
              Triple("str", "string", "number"),
-             Triple("obj", "#compof(*),number|string", "string|number"))
+             Triple("obj", "#compof(Object),number|string", "string|number"))
   }
 
   fun testVForTS() {

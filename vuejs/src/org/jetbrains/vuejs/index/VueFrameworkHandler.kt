@@ -3,21 +3,20 @@ package org.jetbrains.vuejs.index
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.ES6StubElementTypes
-import com.intellij.lang.ecmascript6.psi.*
-import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding
+import com.intellij.lang.ecmascript6.psi.JSClassExpression
+import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
-import com.intellij.lang.javascript.psi.resolve.JSTypeInfo
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.lang.javascript.psi.types.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
@@ -36,7 +35,6 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.PathUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
-import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandler
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -117,49 +115,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.index.findModule(result)
-
-  override fun addContextType(info: JSTypeInfo, context: PsiElement) {
-    if (context.containingFile.fileType != VueFileType.INSTANCE) return
-    if (!VueFrameworkInsideScriptSpecificHandler.isInsideScript(context)) return
-    val parent = PsiTreeUtil.findFirstContext(context, false, Condition {
-      it is JSObjectLiteralExpression && it.context is ES6ExportDefaultAssignment
-    })
-    if (parent == null) return
-    if (context !is JSReferenceExpression) return
-    if (context.qualifier !is JSThisExpression) return
-    if (context.parent.parent is ES6ExportDefaultAssignment) return
-    val processGenericType = processGenericType(context, parent)
-    if (processGenericType != null) info.addRecordType(processGenericType)
-  }
-
-  private fun processGenericType(context: JSReferenceExpression,
-                                 parent: PsiElement?): JSRecordType? {
-    val typeAlias = JSFileReferencesUtil.resolveModuleReference(context.containingFile, "vue/types/vue").firstOrNull()
-    if (typeAlias == null) return null
-    val typeSource = JSTypeSourceFactory.createTypeSource(typeAlias, false)
-    val vueType = JSNamedTypeFactory.createType(VUE_INSTANCE, typeSource, JSContext.INSTANCE)
-    val vue = JSNamedTypeFactory.createType(VUE_NAMESPACE, typeSource, JSContext.INSTANCE)
-    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHODS_PROP))
-    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED_PROP))
-    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS_PROP))
-    val dataFunction = (parent.findProperty(DATA_PROP) as? ES6FunctionProperty)
-    val dataStream = JSTypeUtils.getFunctionType(
-        JSResolveUtil.getElementJSType(dataFunction),
-        false,
-        context)
-      .filter { it is JSFunctionType }.findFirst()
-    val dataPropertyType = if (dataStream.isPresent) (dataStream.get() as? JSFunctionType)?.returnType
-    else null ?: JSTypeCastUtil.NO_RECORD_TYPE
-    val genericArguments = listOf(vue, getContextualType(dataPropertyType), getContextualType(methodPropertyType),
-                                  getContextualType(computedPropertyType), getContextualType(propsPropertyType))
-    return JSGenericTypeImpl(typeSource, vueType, genericArguments).asRecordType()
-  }
-
-  private fun getContextualType(type: JSType?): JSType {
-    if (type == null || type is JSAnyType) return JSTypeCastUtil.NO_RECORD_TYPE
-    if (type !is JSUnionType) return type
-    return JSCompositeTypeFactory.createContextualUnionType(type.types, type.source)
-  }
 
   override fun interestedProperties(): Array<String> = INTERESTING_PROPERTIES
 

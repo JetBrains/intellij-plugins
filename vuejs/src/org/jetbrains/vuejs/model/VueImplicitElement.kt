@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.model
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.stubs.TypeScriptMergedTypeImplicitElement
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import java.util.*
@@ -26,9 +27,12 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
 
   }
 
-  override fun isEquivalentTo(another: PsiElement?): Boolean {
-    return equivalentToProvider && this.myProvider!! == another
-  }
+  override fun isEquivalentTo(another: PsiElement?): Boolean =
+    when (another) {
+      is VueImplicitElement -> equals(another)
+      is TypeScriptMergedTypeImplicitElement -> equals(another.explicitElement)
+      else -> equivalentToProvider && this.myProvider!! == another
+    }
 
   override fun hashCode(): Int {
     return Objects.hash(javaClass, myName, myProvider, myKind)

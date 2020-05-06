@@ -26,7 +26,8 @@ import java.util.function.Function
 
 interface EntityContainerInfoProvider<T> {
 
-  fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T?
+  @JvmDefault
+  fun getInfo(initializer: JSObjectLiteralExpression?, clazz: JSClass?): T? = null
 
   abstract class DecoratedContainerInfoProvider<T>(val createInfo: (clazz: JSClass) -> T) : EntityContainerInfoProvider<T> {
 

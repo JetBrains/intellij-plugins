@@ -57,4 +57,4 @@ interface VueDataProperty : VueProperty
 
 interface VueComputedProperty : VueProperty
 
-interface VueMethod : VueNamedSymbol
+interface VueMethod : VueProperty

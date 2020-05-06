@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.libraries.vuex.model.component
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.lang.javascript.JSElementTypes
 import com.intellij.lang.javascript.psi.*
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
@@ -13,6 +14,7 @@ import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_GETTERS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_MUTATIONS
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.MAP_STATE
 import org.jetbrains.vuejs.model.VueComputedProperty
+import org.jetbrains.vuejs.model.VueImplicitElement
 import org.jetbrains.vuejs.model.VueMethod
 import org.jetbrains.vuejs.model.VueNamedSymbol
 import org.jetbrains.vuejs.model.source.COMPUTED_PROP
@@ -118,9 +120,21 @@ class VuexBasicComponentInfoProvider : VueContainerInfoProvider.VueInitializedCo
     }
 
     private class VuexMappedSourceComputedProperty(override val name: String,
-                                                   override val source: PsiElement?) : VueComputedProperty
+                                                   element: JSElement) : VueComputedProperty {
+      override val source: JSElement
+
+      init {
+        source = VueImplicitElement(name, null, element, JSImplicitElement.Type.Property, false)
+      }
+    }
 
     private class VuexMappedSourceMethod(override val name: String,
-                                         override val source: PsiElement?) : VueMethod
+                                         element: JSElement) : VueMethod {
+      override val source: JSElement
+
+      init {
+        source = VueImplicitElement(name, null, element, JSImplicitElement.Type.Function, false)
+      }
+    }
   }
 }

@@ -13,7 +13,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
@@ -35,6 +34,7 @@ import com.intellij.xml.util.HtmlUtil
 import com.intellij.xml.util.HtmlUtil.SCRIPT_TAG_NAME
 import org.jetbrains.vuejs.codeInsight.getHostFile
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.context.isVueContext
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.source.*
@@ -52,6 +52,27 @@ class VueModelManager {
       return findComponent(templateElement) as? VueEntitiesContainer
              ?: findVueApp(templateElement)
              ?: getGlobal(templateElement)
+    }
+
+    fun findComponentForThisResolve(jsThisExpression: JSThisExpression): VueComponent? {
+      //find enclosing function and it's second level enclosing function
+      val function = PsiTreeUtil.getContextOfType(jsThisExpression, JSFunction::class.java)
+      if (function == null || !isVueContext(function)) return null
+      var secondLevelFunctionScope = PsiTreeUtil.findFirstContext(function, true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
+      if (function.isArrowFunction && secondLevelFunctionScope != null) {
+        secondLevelFunctionScope = PsiTreeUtil.findFirstContext(secondLevelFunctionScope,
+                                                                true) { it is JSFunction && !it.isArrowFunction } as? JSFunction
+      }
+
+      val component = findEnclosingComponent(jsThisExpression) ?: return null
+
+      // we're good if function is part of implementation and second level function is null or is not part of the component
+      if (component is VueSourceEntity
+          && component.isPartOfImplementation(function)
+          && (secondLevelFunctionScope == null || !component.isPartOfImplementation(secondLevelFunctionScope))) {
+        return component
+      }
+      return null
     }
 
     fun findEnclosingComponent(jsElement: JSElement): VueComponent? {

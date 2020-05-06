@@ -44,7 +44,7 @@ abstract class VueModelVisitor {
   }
 
   open fun visitMethod(method: VueMethod, proximity: Proximity): Boolean {
-    return true
+    return visitProperty(method, proximity)
   }
 
   enum class Proximity {

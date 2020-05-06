@@ -76,7 +76,7 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
           }
         }
         is JSFunctionType -> {
-          return VueComposedMethod(name, signature.memberSource.singleElement)
+          return VueComposedMethod(name, signature.memberSource.singleElement, signature.jsType)
         }
       }
       val type = if (hasUnwrap || signatureType == null || unwrapRef == null) {
@@ -118,5 +118,6 @@ class VueCompositionInfoProvider : VueContainerInfoProvider {
                                             override val jsType: JSType?) : VueComputedProperty
 
   private class VueComposedMethod(override val name: String,
-                                  override val source: PsiElement?) : VueMethod
+                                  override val source: PsiElement?,
+                                  override val jsType: JSType?) : VueMethod
 }

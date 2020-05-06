@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.CachedValueProvider.Result
+import com.intellij.psi.util.CachedValueProvider.Result.create
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
@@ -27,7 +27,7 @@ class VueSourceComponent(sourceElement: JSImplicitElement,
     get() {
       val template = template ?: return emptyList()
       return CachedValuesManager.getCachedValue(template.source) {
-        Result.create(buildSlotsList(template), template.source)
+        create(buildSlotsList(template), template.source)
       }
     }
 

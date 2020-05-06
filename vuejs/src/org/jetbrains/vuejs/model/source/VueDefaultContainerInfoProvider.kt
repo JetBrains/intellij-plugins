@@ -5,6 +5,8 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.JSStubElementTypes
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory
+import com.intellij.lang.javascript.psi.types.evaluable.JSApplyCallType
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
@@ -183,7 +185,7 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
 
     override val source: VueImplicitElement =
       VueImplicitElement(name, getJSTypeFromPropOptions((sourceElement as? JSProperty)?.value),
-                         sourceElement, JSImplicitElement.Type.Property)
+                         sourceElement, JSImplicitElement.Type.Property, true)
     override val jsType: JSType? = source.jsType
     override val required: Boolean = getRequiredFromPropOptions((sourceElement as? JSProperty)?.value)
   }
@@ -197,15 +199,31 @@ class VueDefaultContainerInfoProvider : VueContainerInfoProvider.VueInitializedC
     override val jsType: JSType?
 
     init {
-      val functionSource = (sourceElement as? JSProperty)?.tryGetFunctionInitializer() ?: sourceElement
-      source = VueImplicitElement(name, (functionSource as? JSFunctionItem)?.returnType,
-                                  functionSource, JSImplicitElement.Type.Property)
+      var provider = sourceElement
+      val returnType = when (sourceElement) {
+        is JSFunctionProperty -> sourceElement.returnType
+        is JSProperty -> {
+          val functionInitializer = sourceElement.tryGetFunctionInitializer()
+          if (functionInitializer != null) {
+            provider = functionInitializer
+            functionInitializer.returnType
+          }
+          else {
+            sourceElement.jsType?.let {
+              JSApplyCallType(it, JSTypeSourceFactory.createTypeSource(sourceElement, false))
+            }
+          }
+        }
+        else -> null
+      }
+      source = VueImplicitElement(name, returnType, provider, JSImplicitElement.Type.Property, true)
       jsType = source.jsType
     }
 
   }
 
   private class VueSourceMethod(override val name: String,
-                                override val source: PsiElement?) : VueMethod
-
+                                override val source: PsiElement?) : VueMethod {
+    override val jsType: JSType? get() = (source as? JSProperty)?.jsType
+  }
 }

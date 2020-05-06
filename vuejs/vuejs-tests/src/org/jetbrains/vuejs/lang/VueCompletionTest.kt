@@ -1307,17 +1307,6 @@ export default class ComponentInsertion extends Vue {
     assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
   }
 
-  fun testVueCompletionInsideScriptNoLifecycleHooks() {
-    myFixture.configureByText("test.vue", "<script>\n" +
-                                          "    export default {\n" +
-                                          "        computed: {\n" +
-                                          "            dataData() {this.<caret> }\n" +
-                                          "        }\n" +
-                                          "    }\n" +
-                                          "</script>")
-    assertDoesntContainVueLifecycleHooks()
-  }
-
   fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() {
     configureVueDefinitions(myFixture)
     myFixture.configureByText("test.vue", "<script>\n" +
