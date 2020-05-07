@@ -443,7 +443,7 @@ export default {
               }
     }</script>""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
+    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg", "\$props", "\$data")
   }
 
   fun testScrInStyleCompletion() {
@@ -1293,7 +1293,7 @@ export default class ComponentInsertion extends Vue {
                                           "    }\n" +
                                           "</script>")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent", "\$props")
   }
 
   fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() {
