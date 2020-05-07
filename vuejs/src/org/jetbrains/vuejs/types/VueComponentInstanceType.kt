@@ -6,12 +6,10 @@ import com.intellij.lang.javascript.psi.JSRecordType.PropertySignature
 import com.intellij.lang.javascript.psi.JSType
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder
 import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution
-import com.intellij.lang.javascript.psi.types.JSCodeBasedType
-import com.intellij.lang.javascript.psi.types.JSSimpleRecordTypeImpl
-import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl
-import com.intellij.lang.javascript.psi.types.JSTypeSource
+import com.intellij.lang.javascript.psi.types.*
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.model.VueInstanceOwner
+import org.jetbrains.vuejs.model.VueNamedEntity
 
 class VueComponentInstanceType(source: JSTypeSource,
                                private val instanceOwner: VueInstanceOwner,
@@ -20,13 +18,16 @@ class VueComponentInstanceType(source: JSTypeSource,
 
   private val typeMembers = typeMembers.toList()
   private val membersNames = typeMembers.map { it.memberName }
-  private val hashCode by lazy { Objects.hashCode(membersNames.toTypedArray()) }
 
-  override fun copyWithNewSource(source: JSTypeSource): JSType {
-    return VueComponentInstanceType(source, instanceOwner, typeMembers)
-  }
+  override fun copyWithNewSource(source: JSTypeSource): JSType =
+    VueComponentInstanceType(source, instanceOwner, typeMembers)
 
-  override fun resolvedHashCodeImpl(): Int = hashCode
+  override fun acceptChildren(visitor: JSRecursiveTypeVisitor) =
+    typeMembers.forEach { it.acceptChildren(visitor) }
+
+
+  override fun resolvedHashCodeImpl(): Int
+    = Objects.hashCode(membersNames.toTypedArray()) * 31 + instanceOwner.hashCode()
 
   override fun isEquivalentToWithSameClass(type: JSType, context: ProcessingContext?, allowResolve: Boolean): Boolean =
     type is VueComponentInstanceType
@@ -35,7 +36,14 @@ class VueComponentInstanceType(source: JSTypeSource,
 
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format == JSType.TypeTextFormat.SIMPLE) {
-      builder.append("#$javaClass")
+      builder.append("#VueComponentInstanceType: ")
+        .append(instanceOwner.javaClass.simpleName)
+      if (instanceOwner is VueNamedEntity) {
+        builder.append("(").append(instanceOwner.defaultName).append(")")
+      }
+      builder.append(" [")
+      membersNames.forEach { builder.append(it).append(",") }
+      builder.append("]")
       return
     }
     substitute().buildTypeText(format, builder)
