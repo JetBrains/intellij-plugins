@@ -1611,23 +1611,32 @@ export default class ComponentInsertion extends Vue {
   fun testComputedTypeTS() {
     myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("computedTypeTS.vue")
-    myFixture.moveToOffsetBySignature("{{ a<caret>")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#12")
-    myFixture.moveToOffsetBySignature("this.<caret>")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#12")
+    for (test in listOf("{{ a<caret>", "this.<caret>")) {
+      myFixture.moveToOffsetBySignature("{{ a<caret>")
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#12")
+    }
   }
 
   fun testComputedTypeJS() {
     myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
     myFixture.configureByFile("computedTypeJS.vue")
-    myFixture.moveToOffsetBySignature("{{ a<caret>")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#number")
-    myFixture.moveToOffsetBySignature("this.<caret>")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#number")
+    for (test in listOf("{{ a<caret>", "this.<caret>")) {
+      myFixture.moveToOffsetBySignature("{{ a<caret>")
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.renderLookupItems(false, true), "annualReportPeriodId#number")
+    }
+  }
+
+  fun testDataTypeTS() {
+    myFixture.configureDependencies(VueTestModule.VUE_2_6_10)
+    myFixture.configureByFile("dataTypeTS.vue")
+    for (test in listOf("this.<caret>msg\"", "= this.<caret>userInput")) {
+      myFixture.moveToOffsetBySignature(test)
+      myFixture.completeBasic()
+      assertContainsElements(myFixture.renderLookupItems(false, true),
+                             "msg#Number", "userInput#string", "tasks#string[]")
+    }
   }
 
   fun testCustomModifiers() {
