@@ -66,8 +66,7 @@ public class DartFileReference implements PsiPolyVariantReference {
   @Override
   public PsiElement resolve() {
     final ResolveResult[] resolveResults = multiResolve(false);
-    return resolveResults.length == 0 ||
-           resolveResults.length > 1 ||
+    return resolveResults.length != 1 ||
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 

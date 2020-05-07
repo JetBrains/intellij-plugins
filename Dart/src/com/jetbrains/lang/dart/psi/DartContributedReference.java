@@ -53,8 +53,7 @@ class DartContributedReference implements PsiPolyVariantReference {
   public PsiElement resolve() {
     final ResolveResult[] resolveResults = multiResolve(true);
 
-    return resolveResults.length == 0 ||
-           resolveResults.length > 1 ||
+    return resolveResults.length != 1 ||
            !resolveResults[0].isValidResult() ? null : resolveResults[0].getElement();
   }
 

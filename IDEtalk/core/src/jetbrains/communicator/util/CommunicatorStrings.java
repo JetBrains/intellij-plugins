@@ -49,7 +49,7 @@ public class CommunicatorStrings {
   }
 
   public static String getText(String txt, int count) {
-    if (count % 10 == 1 && count % 10 != 11) {
+    if (count % 10 == 1) {
       return txt;
     }
     return txt + 's';
