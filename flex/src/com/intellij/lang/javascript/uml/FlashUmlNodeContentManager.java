@@ -12,20 +12,20 @@ import com.intellij.uml.utils.DiagramBundle;
 import com.intellij.util.PlatformIcons;
 
 public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManager {
-  private static final DiagramCategory FIELDS =
+  private final DiagramCategory myFields =
     new DiagramCategory(DiagramBundle.message("category.name.fields"), PlatformIcons.FIELD_ICON);
-  private static final DiagramCategory CONSTRUCTORS =
+  private final DiagramCategory myConstructors =
     new DiagramCategory(DiagramBundle.message("category.name.constructors"), JSFunctionImpl.CONSTRUCTOR_ICON);
-  private static final DiagramCategory METHODS =
+  private final DiagramCategory myMethods =
     new DiagramCategory(DiagramBundle.message("category.name.methods"), PlatformIcons.METHOD_ICON);
-  private static final DiagramCategory PROPERTIES =
+  private final DiagramCategory myProperties =
     new DiagramCategory(DiagramBundle.message("category.name.properties"), PlatformIcons.PROPERTY_ICON);
 
-  private final static DiagramCategory[] CATEGORIES = {FIELDS, CONSTRUCTORS, METHODS, PROPERTIES};
+  private final DiagramCategory[] myCategories = {myFields, myConstructors, myMethods, myProperties};
 
   @Override
   public DiagramCategory[] getContentCategories() {
-    return CATEGORIES;
+    return myCategories;
   }
 
   @Override
@@ -35,17 +35,17 @@ public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManage
 
     if (JSUtils.getMemberContainingClass(element) == null) return false;
 
-    if (FIELDS.equals(category)) {
+    if (myFields.equals(category)) {
       return element instanceof JSVariable;
     }
-    if (CONSTRUCTORS.equals(category)) {
+    if (myConstructors.equals(category)) {
       return element instanceof JSFunction && ((JSFunction)element).getKind() == JSFunction.FunctionKind.CONSTRUCTOR;
     }
-    if (METHODS.equals(category)) {
+    if (myMethods.equals(category)) {
       return element instanceof JSFunction && ((JSFunction)element).getKind() == JSFunction.FunctionKind.SIMPLE;
     }
 
-    if (PROPERTIES.equals(category)) {
+    if (myProperties.equals(category)) {
       return element instanceof JSFunction &&
              (((JSFunction)element).getKind() == JSFunction.FunctionKind.GETTER ||
               ((JSFunction)element).getKind() == JSFunction.FunctionKind.SETTER);
