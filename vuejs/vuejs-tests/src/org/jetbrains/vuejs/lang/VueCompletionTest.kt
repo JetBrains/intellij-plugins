@@ -12,11 +12,13 @@ import com.intellij.lang.javascript.settings.JSApplicationSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.RecursionManager
 import com.intellij.psi.xml.XmlAttribute
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation
 import com.intellij.util.containers.ContainerUtil
+import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jdom.input.SAXBuilder
 import org.jetbrains.vuejs.codeInsight.toAsset
@@ -1691,6 +1693,39 @@ export default class ComponentInsertion extends Vue {
     myFixture.completeBasic()
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, ":dir", ":bar")
     UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":foo", ":id")
+  }
+
+  fun testPropsDataOptionsJS() {
+    myFixture.configureByFile("propsDataOptionsJS.vue")
+    for ((tests, results) in listOf(
+      Pair(listOf("{{this.\$props.<caret>", "{{\$props.<caret>", "this.\$props.<caret>foo"),
+           listOf("!mixinProp#null#101", "!aProp#null#101")),
+      Pair(listOf("{{this.\$data.<caret>", "{{\$data.<caret>", "this.\$data.<caret>foo"),
+           listOf("!mixinData#string#101", "!foo#number#101", "!\$foo#number#101")),
+      Pair(listOf("{{this.\$options.<caret>", "{{\$options.<caret>", "this.\$options.<caret>foo"),
+           listOf("!customOption#string#101", "!customStuff#number#101", "!props#null#101", "!name#string#101"))
+    )) {
+      for (test in tests) {
+        try {
+          myFixture.moveToOffsetBySignature(test)
+          myFixture.completeBasic()
+          UsefulTestCase.assertContainsElements(myFixture.renderLookupItems(true, true), results)
+          PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
+        }
+        catch (e: ComparisonFailure) {
+          throw ComparisonFailure(test + ":" + e.message, e.expected, e.actual).initCause(e)
+        }
+        catch (e: AssertionError) {
+          throw AssertionError(test + ":" + e.message, e)
+        }
+      }
+    }
+    myFixture.moveToOffsetBySignature("this.<caret>\$options.foo")
+    myFixture.completeBasic()
+    myFixture.renderLookupItems(true,  true).let {
+      assertContainsElements(it, "!foo#number#99")
+      assertDoesntContain(it, "!\$foo#number#99")
+    }
   }
 
   private fun assertDoesntContainVueLifecycleHooks() {

@@ -16,6 +16,7 @@ import org.jetbrains.vuejs.codeInsight.resolveSymbolFromNodeModule
 import org.jetbrains.vuejs.index.VUE_MODULE
 import org.jetbrains.vuejs.model.source.VUE_NAMESPACE
 import org.jetbrains.vuejs.model.source.VueContainerInfoProvider
+import org.jetbrains.vuejs.model.source.VueSourceEntity
 import org.jetbrains.vuejs.types.VueComponentInstanceType
 import java.util.*
 
@@ -124,6 +125,12 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
 
   replaceStandardProperty("\$props", props.values.toList(), source, result)
   replaceStandardProperty("\$data", data.values.toList(), source, result)
+  buildOptionsType(instance, result["\$options"]?.jsType)?.let { replaceStandardProperty("\$options", it, source, result) }
+
+  // Vue will not proxy data properties starting with _ or $
+  // https://vuejs.org/v2/api/#data
+  // Interestingly it doesn't apply to computed, methods and props.
+  data.keys.removeIf { it.startsWith("_") || it.startsWith("\$") }
 
   result.keys.removeIf {
     props.containsKey(it) || data.containsKey(it) || computed.containsKey(it) || methods.containsKey(it)
@@ -135,11 +142,38 @@ private fun contributeComponentProperties(instance: VueInstanceOwner,
   mergePut(result, methods)
 }
 
+private fun buildOptionsType(instance: VueInstanceOwner, originalType: JSType?): JSType? {
+  val result = mutableListOf<JSType>()
+  originalType?.let(result::add)
+  instance.acceptEntities(object: VueModelVisitor() {
+    override fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean = visitInstanceOwner(mixin)
+
+    override fun visitSelfComponent(component: VueComponent, proximity: Proximity): Boolean = visitInstanceOwner(component)
+
+    override fun visitSelfApplication(application: VueApp, proximity: Proximity): Boolean = visitInstanceOwner(application)
+
+    fun visitInstanceOwner(instanceOwner: VueInstanceOwner): Boolean {
+      (instanceOwner as? VueSourceEntity)?.initializer?.let {
+        result.add(JSTypeofTypeImpl(it, JSTypeSourceFactory.createTypeSource(it, false)))
+      }
+      return true
+    }
+  }, VueModelVisitor.Proximity.LOCAL)
+  return JSCompositeTypeFactory.createIntersectionType(
+    result, originalType?.source ?: JSTypeSourceFactory.createTypeSource(instance.source!!, false))
+}
+
 private fun replaceStandardProperty(propName: String, properties: List<JSRecordType.PropertySignature>,
                                     defaultSource: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
   val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
   result[propName] = createImplicitPropertySignature(
     propName, JSSimpleRecordTypeImpl(JSTypeSourceFactory.createTypeSource(propSource, false), properties), propSource)
+}
+
+private fun replaceStandardProperty(propName: String, type: JSType,
+                                    defaultSource: PsiElement, result: MutableMap<String, JSRecordType.PropertySignature>) {
+  val propSource = result[propName]?.memberSource?.singleElement ?: defaultSource
+  result[propName] = createImplicitPropertySignature(propName, type, propSource)
 }
 
 private fun mergeSignatures(existing: JSRecordType.PropertySignature,
