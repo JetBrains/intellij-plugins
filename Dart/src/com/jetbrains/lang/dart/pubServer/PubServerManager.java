@@ -77,7 +77,7 @@ public class PubServerManager implements Disposable {
                                   }
                                 }
                               },
-                              project);
+                              this);
   }
 
   private void pubspecYamlChanged(@NotNull final VirtualFile file) {
