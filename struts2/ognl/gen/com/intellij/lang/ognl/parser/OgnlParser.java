@@ -39,31 +39,15 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, EXTENDS_SETS_);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == EXPRESSION) {
-      r = expression(b, 0, -1);
-    }
-    else if (t == FQN_TYPE_EXPRESSION) {
-      r = fqnTypeExpression(b, 0);
-    }
-    else if (t == MAP_ENTRY_ELEMENT) {
-      r = mapEntryElement(b, 0);
-    }
-    else if (t == PARAMETER_LIST) {
-      r = parameterList(b, 0);
-    }
-    else if (t == PROJECTION_EXPRESSION) {
-      r = projectionExpression(b, 0);
-    }
-    else if (t == SELECTION_EXPRESSION) {
-      r = selectionExpression(b, 0);
-    }
-    else {
-      r = parse_root_(t, b, 0);
-    }
+    r = parse_root_(t, b);
     exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
   }
 
-  protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
+  protected boolean parse_root_(IElementType t, PsiBuilder b) {
+    return parse_root_(t, b, 0);
+  }
+
+  static boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return root(b, l + 1);
   }
 
@@ -137,14 +121,12 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean bitwiseBooleanOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseBooleanOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, OR);
     if (!r) r = consumeToken(b, XOR);
     if (!r) r = consumeToken(b, AND);
     if (!r) r = consumeToken(b, BAND_KEYWORD);
     if (!r) r = consumeToken(b, BOR_KEYWORD);
     if (!r) r = consumeToken(b, XOR_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -154,10 +136,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "bitwiseOperations")) return false;
     if (!nextTokenIs(b, "", NEGATE, NOT)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, NEGATE);
     if (!r) r = consumeToken(b, NOT);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -167,10 +147,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "booleanLiteralExpression")) return false;
     if (!nextTokenIs(b, "", FALSE_KEYWORD, TRUE_KEYWORD)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, TRUE_KEYWORD);
     if (!r) r = consumeToken(b, FALSE_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -181,13 +159,11 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean booleanOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "booleanOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, AND_AND);
     if (!r) r = consumeToken(b, OR_OR);
     if (!r) r = consumeToken(b, AND_KEYWORD);
     if (!r) r = consumeToken(b, OR_KEYWORD);
     if (!r) r = consumeToken(b, NOT_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -225,11 +201,9 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean divideMultiplyOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "divideMultiplyOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, MULTIPLY);
     if (!r) r = consumeToken(b, DIVISION);
     if (!r) r = consumeToken(b, MODULO);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -239,12 +213,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean equalityOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "equalityOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, EQUAL);
     if (!r) r = consumeToken(b, NOT_EQUAL);
     if (!r) r = consumeToken(b, EQ_KEYWORD);
     if (!r) r = consumeToken(b, NEQ_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -459,10 +431,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "plusMinusOperations")) return false;
     if (!nextTokenIs(b, "", MINUS, PLUS)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, PLUS);
     if (!r) r = consumeToken(b, MINUS);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -486,7 +456,6 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean relationalOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "relationalOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, LESS);
     if (!r) r = consumeToken(b, LESS_EQUAL);
     if (!r) r = consumeToken(b, GREATER);
@@ -495,7 +464,6 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, LT_EQ_KEYWORD);
     if (!r) r = consumeToken(b, GT_KEYWORD);
     if (!r) r = consumeToken(b, GT_EQ_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -555,11 +523,9 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   private static boolean selectionExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "selectionExpression_1")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, QUESTION);
     if (!r) r = consumeToken(b, XOR);
     if (!r) r = consumeToken(b, DOLLAR);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -569,10 +535,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "setOperations")) return false;
     if (!nextTokenIs(b, "", IN_KEYWORD, NOT_IN_KEYWORD)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, NOT_IN_KEYWORD);
     if (!r) r = consumeToken(b, IN_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -582,14 +546,12 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean shiftOperations(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftOperations")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, SHIFT_LEFT);
     if (!r) r = consumeToken(b, SHIFT_RIGHT);
     if (!r) r = consumeToken(b, SHIFT_RIGHT_LOGICAL);
     if (!r) r = consumeToken(b, SHIFT_LEFT_KEYWORD);
     if (!r) r = consumeToken(b, SHIFT_RIGHT_KEYWORD);
     if (!r) r = consumeToken(b, SHIFT_RIGHT_LOGICAL_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -610,12 +572,10 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   static boolean unaryOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "unaryOperator")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = bitwiseOperations(b, l + 1);
     if (!r) r = consumeToken(b, PLUS);
     if (!r) r = consumeToken(b, MINUS);
     if (!r) r = consumeToken(b, NOT_KEYWORD);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -728,10 +688,8 @@ public class OgnlParser implements PsiParser, LightPsiParser {
   private static boolean mapExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapExpression_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeTokenSmart(b, "#{");
     if (!r) r = mapTypeExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1040,7 +998,7 @@ public class OgnlParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  final static Parser rootRecover_parser_ = new Parser() {
+  static final Parser rootRecover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return rootRecover(b, l + 1);
     }

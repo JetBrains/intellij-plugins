@@ -117,7 +117,7 @@ public interface OgnlTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == BINARY_EXPRESSION) {
+      if (type == BINARY_EXPRESSION) {
         return new OgnlBinaryExpressionImpl(node);
       }
       else if (type == CONDITIONAL_EXPRESSION) {
