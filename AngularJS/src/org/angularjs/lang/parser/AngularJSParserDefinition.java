@@ -1,7 +1,9 @@
 package org.angularjs.lang.parser;
 
+import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
+import com.intellij.lang.javascript.parsing.JavaScriptParser;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
@@ -26,6 +28,11 @@ public class AngularJSParserDefinition extends JavascriptParserDefinition {
   @Override
   public PsiParser createParser(Project project) {
     return new AngularParser();
+  }
+
+  @Override
+  public @NotNull JavaScriptParser<?, ?, ?, ?> createJSParser(@NotNull PsiBuilder builder) {
+    return new AngularJSParser(builder);
   }
 
   @Override

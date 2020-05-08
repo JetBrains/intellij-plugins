@@ -2,8 +2,10 @@
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
+import com.intellij.lang.javascript.parsing.JavaScriptParser;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
@@ -28,6 +30,11 @@ public class Angular2ParserDefinition extends JavascriptParserDefinition {
   @Override
   public PsiParser createParser(Project project) {
     return new Angular2PsiParser();
+  }
+
+  @Override
+  public @NotNull JavaScriptParser<?, ?, ?, ?> createJSParser(@NotNull PsiBuilder builder) {
+    return new Angular2Parser(builder);
   }
 
   @Override

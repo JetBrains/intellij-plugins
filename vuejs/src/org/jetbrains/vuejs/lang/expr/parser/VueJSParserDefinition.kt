@@ -1,9 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.lang.expr.parser
 
+import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiParser
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
+import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
@@ -60,6 +62,10 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
       }
       return@PsiParser builder.treeBuilt
     }
+  }
+
+  override fun createJSParser(builder: PsiBuilder): JavaScriptParser<*, *, *, *> {
+    return VueJSParser(builder)
   }
 
   override fun createLexer(project: Project?): Lexer {
