@@ -15,11 +15,6 @@ public class Angular2Language extends JSLanguageDialect implements DependentLang
   }
 
   @Override
-  public String getFileExtension() {
-    return "js";
-  }
-
-  @Override
   public boolean isAtLeast(@NotNull JSLanguageDialect other) {
     return super.isAtLeast(other) || JavaScriptSupportLoader.TYPESCRIPT.isAtLeast(other);
   }

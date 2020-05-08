@@ -7,9 +7,6 @@ import com.intellij.lang.javascript.JSLanguageDialect
 import com.intellij.lang.javascript.JavaScriptSupportLoader
 
 class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, JavaScriptSupportLoader.ECMA_SCRIPT_6), DependentLanguage {
-  override fun getFileExtension(): String {
-    return "js"
-  }
 
   companion object {
     val INSTANCE: VueJSLanguage = VueJSLanguage()

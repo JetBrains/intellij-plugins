@@ -12,9 +12,4 @@ public class AngularJSLanguage extends JSLanguageDialect {
   protected AngularJSLanguage() {
     super("AngularJS", DialectOptionHolder.OTHER);
   }
-
-  @Override
-  public String getFileExtension() {
-    return "js";
-  }
 }
