@@ -26,7 +26,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
   private static final String CUCUMBER_JAVA_5_STEP_DEFINITION_ANNOTATION_CLASS_NAME = "io.cucumber.java.StepDefinitionAnnotation";
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
   public static final String ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "org.zuchini.annotations.StepAnnotation";
-  private static final String[] CUCUMBER_JAVA_STEP_DEFINITION_ANNOTATION_CLASSES =
+  public static final String[] CUCUMBER_JAVA_STEP_DEFINITION_ANNOTATION_CLASSES =
     new String[]{CUCUMBER_JAVA_5_STEP_DEFINITION_ANNOTATION_CLASS_NAME, CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION,
       ZUCHINI_RUNTIME_JAVA_STEP_DEF_ANNOTATION};
 
