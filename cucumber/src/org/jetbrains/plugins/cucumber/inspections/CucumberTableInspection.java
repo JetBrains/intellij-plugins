@@ -1,10 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.containers.IntArrayList;
-import org.jetbrains.annotations.Nls;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * @author yole
  */
-public class CucumberTableInspection extends GherkinInspection {
+public final class CucumberTableInspection extends GherkinInspection {
   @Override
   public boolean isEnabledByDefault() {
     return true;
@@ -74,7 +74,7 @@ public class CucumberTableInspection extends GherkinInspection {
     final int cellsCount = cells.size();
 
     final GherkinTable table = (GherkinTable) row.getParent();
-    for (int i : unusedIndices.toArray()) {
+    for (int i : unusedIndices.toIntArray()) {
       if (i < cellsCount && cells.get(i).getTextLength() > 0) {
         holder.registerProblem(cells.get(i), CucumberBundle.message("unused.table.column"), ProblemHighlightType.LIKE_UNUSED_SYMBOL, new RemoveTableColumnFix(table, i));
       }
