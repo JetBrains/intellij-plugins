@@ -1,0 +1,38 @@
+!breadcrumbs/getBreadcrumbsRoutes% (breadcrumbs/index.ts)#any[]#99
+!breadcrumbs/set%(payload) (breadcrumbs/index.ts)#void#99
+!cart/breadcrumbs/set%(payload) (breadcrumbs/index.ts)#void#99
+!cart/configureItem%({ product, configuration }: {product: any, configuration: any}) (itemActions.ts)#void#99
+!cart/getLastTotalsSyncDate% (storefront-mappers-TS.ts)#null#99
+!cart/isCartConnected% (cart/getters.ts)#boolean#99
+!cart/isMicrocartOpen% (cart/index.ts)#false#99
+!cartMutFun%() (storefront-mappers-TS.ts)#12#99
+!catAction%(arg) (storefront-mappers-TS.ts)#any#99
+!category/bar% (storefront-mappers-TS.ts)#null#99
+!check%() (methods, storefront-mappers-TS.ts)#void#99
+!configItem%(arg) (storefront-mappers-TS.ts)#any#99
+!configItemMap%({ product, configuration }: {product: any, configuration: any}) (itemActions.ts)#void#99
+!configItemN%(arg) (storefront-mappers-TS.ts)#any#99
+!configureItem%({ product, configuration }: {product: any, configuration: any}) (itemActions.ts)#void#99
+!foo2% (storefront-mappers-TS.ts)#null#99
+!foo3% (storefront-mappers-TS.ts)#null#99
+!foo4% (storefront-mappers-TS.ts)#any#99
+!foobar% (storefront-mappers-TS.ts)#null#99
+!getCartItems% (cart/getters.ts)#any[]#99
+!getCategories% (category/getters.ts)#Category[]#99
+!getCategoryProducts% (category/getters.ts)#any#99
+!getLastTotalsSyncDate% (storefront-mappers-TS.ts)#null#99
+!getfoo2% (storefront-mappers-TS.ts)#null#99
+!isMicrocartOpen% (cart/index.ts)#false#99
+!isVirtualCart% (cart/getters.ts)#any#99
+!loadCategoryProducts%({ route, category, pageSize = 50 }?: {route: any, category: any, pageSize?: any}) (category/actions.ts)#null#99
+!micro% (cart/index.ts)#false#99
+!micro2% (cart/index.ts)#false#99
+!micro4% (storefront-mappers-TS.ts)#false#99
+!routes2% (storefront-mappers-TS.ts)#null#99
+!routes4% (storefront-mappers-TS.ts)#any[]#99
+!ship% (store/index.ts)#null#99
+!ship2% (cart/index.ts)#any[]#99
+!ship4% (storefront-mappers-TS.ts)#any[]#99
+!shipping% (cart/index.ts)#any[]#99
+!shippingMethod% (storefront-mappers-TS.ts)#null#99
+!shippingMethod2% (storefront-mappers-TS.ts)#null#99

@@ -57,7 +57,7 @@ abstract class VuexContainerPropertyTypeBase(source: JSTypeSource,
   override fun buildTypeTextImpl(format: JSType.TypeTextFormat, builder: JSTypeTextBuilder) {
     if (format != JSType.TypeTextFormat.SIMPLE) {
       appendPseudoType(builder)
-      val el = substitute()
+      val el = substituteCompletely()
       if (el is JSRecordType) {
         builder.append(" {\n")
         val useTypeScriptRecordTypeFormat = format == JSType.TypeTextFormat.CODE && isTypeScript

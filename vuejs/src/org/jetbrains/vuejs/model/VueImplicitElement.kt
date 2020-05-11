@@ -17,25 +17,10 @@ class VueImplicitElement(name: String, jsType: JSType?, provider: PsiElement, ki
     return myProvider!!.textRange
   }
 
-  override fun equals(other: Any?): Boolean {
-    return (other is VueImplicitElement)
-           && other.myName == myName
-           && other.myProvider == myProvider
-           && other.myKind == myKind
-           && ((other.jsType == null && jsType == null)
-               || (other.jsType?.isEquivalentTo(this.jsType, null) == true))
-
-  }
-
   override fun isEquivalentTo(another: PsiElement?): Boolean =
     when (another) {
       is VueImplicitElement -> equals(another)
       is TypeScriptMergedTypeImplicitElement -> equals(another.explicitElement)
       else -> equivalentToProvider && this.myProvider!! == another
     }
-
-  override fun hashCode(): Int {
-    return Objects.hash(javaClass, myName, myProvider, myKind)
-  }
-
 }

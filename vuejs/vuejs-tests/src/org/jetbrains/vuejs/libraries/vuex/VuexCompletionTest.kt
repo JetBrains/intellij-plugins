@@ -542,6 +542,15 @@ class VuexCompletionTest : BasePlatformTestCase() {
     doItemsTest(3, "...mapActions(['<caret>'", section = "methods")
   }
 
+  fun testStorefrontThisCompletion() {
+    myFixture.configureStore(VuexTestStore.Storefront)
+    myFixture.configureByFile("storefront-mappers-JS.vue")
+    checkItems(0, false, true, true, true)
+
+    myFixture.configureByFile("storefront-mappers-TS.ts")
+    checkItems(1, false, true, true, true)
+  }
+
   private val namespacedHandlersCode = """
     const {mapState, mapActions, mapGetters, mapMutations} = createNamespacedHelpers('cart')
     const categoryModule = createNamespacedHelpers('category')
@@ -618,7 +627,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
     myFixture.configureByText("${getTestName(true)}.${if (js) "js" else "ts"}", fileContents)
   }
 
-  private fun checkItems(id: Int, strict: Boolean, renderType: Boolean, renderPriority: Boolean) {
+  private fun checkItems(id: Int, strict: Boolean, renderType: Boolean, renderPriority: Boolean, renderTailText: Boolean = false) {
     myFixture.completeBasic()
     var checkFileName: String
     checkFileName = "gold/${myFixture.file.name}.${id}.txt"
@@ -626,7 +635,7 @@ class VuexCompletionTest : BasePlatformTestCase() {
       checkFileName = "gold/${getTestName(true)}.${id}.txt"
       FileUtil.createIfDoesntExist(File("$testDataPath/$checkFileName"))
     }
-    myFixture.renderLookupItems(renderPriority, renderType)
+    myFixture.renderLookupItems(renderPriority, renderType, renderTailText)
       .let { list ->
         if (strict) {
           myFixture.configureByText("out.txt", list.sorted().joinToString("\n") + "\n")
