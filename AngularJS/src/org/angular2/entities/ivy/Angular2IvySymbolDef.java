@@ -26,24 +26,24 @@ import java.util.function.Function;
 import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("SameParameterValue")
 public abstract class Angular2IvySymbolDef {
 
-  public static @Nullable Entity get(@NotNull TypeScriptClass typeScriptClass) {
-    return getSymbolDef(typeScriptClass, Angular2IvySymbolDef::createEntityDef);
+  public static @Nullable Entity get(@NotNull TypeScriptClass typeScriptClass, boolean allowAbstractClass) {
+    return getSymbolDef(typeScriptClass, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
   }
 
   public static @Nullable Factory getFactory(@NotNull TypeScriptClass typeScriptClass) {
-    return getSymbolDef(typeScriptClass, Angular2IvySymbolDef::createFactoryDef);
+    return getSymbolDef(typeScriptClass, true, Angular2IvySymbolDef::createFactoryDef);
   }
 
 
-  public static @Nullable Entity get(@NotNull TypeScriptClassStub stub) {
-    return getSymbolDefStubbed(stub, Angular2IvySymbolDef::createEntityDef);
+  public static @Nullable Entity get(@NotNull TypeScriptClassStub stub, boolean allowAbstractClass) {
+    return getSymbolDefStubbed(stub, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
   }
 
-  public static @Nullable Entity get(@NotNull TypeScriptField field) {
-    return getSymbolDef(field, Angular2IvySymbolDef::createEntityDef);
+  public static @Nullable Entity get(@NotNull TypeScriptField field, boolean allowAbstractClass) {
+    return getSymbolDef(field, allowAbstractClass, Angular2IvySymbolDef::createEntityDef);
   }
 
   public abstract static class Entity extends Angular2IvySymbolDef {
@@ -215,14 +215,14 @@ public abstract class Angular2IvySymbolDef {
         return true;
       }
 
-      TypeScriptFunction constructor = ContainerUtil.find(cls.getConstructors(),fun -> !fun.isOverloadImplementation());
+      TypeScriptFunction constructor = ContainerUtil.find(cls.getConstructors(), fun -> !fun.isOverloadImplementation());
       if (constructor == null) {
         // TODO support annotations in super constructors
         return true;
       }
 
       JSParameterListElement[] params = constructor.getParameters();
-      TypeScriptType[] paramsDecoratorsInfo =  ((TypeScriptTupleType)declaration).getElements();
+      TypeScriptType[] paramsDecoratorsInfo = ((TypeScriptTupleType)declaration).getElements();
       if (params.length != paramsDecoratorsInfo.length) {
         return true;
       }
@@ -230,7 +230,7 @@ public abstract class Angular2IvySymbolDef {
         TypeScriptObjectType info = tryCast(paramsDecoratorsInfo[i], TypeScriptObjectType.class);
         if (info != null) {
           TypeScriptPropertySignature kindInfo = tryCast(ContainerUtil.find(info.getTypeMembers(), member -> kind.equals(member.getName())),
-                                                  TypeScriptPropertySignature.class);
+                                                         TypeScriptPropertySignature.class);
           if (kindInfo == null) {
             continue;
           }
@@ -351,16 +351,16 @@ public abstract class Angular2IvySymbolDef {
     return result;
   }
 
-  private static boolean isSuitableClass(@NotNull TypeScriptClass tsClass) {
-    return !Objects.requireNonNull(tsClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.ABSTRACT);
+  private static boolean isAbstractClass(@NotNull TypeScriptClass tsClass) {
+    return Objects.requireNonNull(tsClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.ABSTRACT);
   }
 
   @Nullable
   private static <T extends Angular2IvySymbolDef> T getSymbolDefStubbed(@NotNull TypeScriptClassStub jsClassStub,
+                                                                        boolean allowAbstractClasses,
                                                                         BiFunction<String, Object, T> symbolFactory) {
     JSAttributeListStub clsAttrs = jsClassStub.findChildStubByType(JSStubElementTypes.ATTRIBUTE_LIST);
-    // Do not index abstract classes
-    if (clsAttrs == null || clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT)) {
+    if (clsAttrs == null || (!allowAbstractClasses && clsAttrs.hasModifier(JSAttributeList.ModifierType.ABSTRACT))) {
       return null;
     }
     for (StubElement<?> classChild : jsClassStub.getChildrenStubs()) {
@@ -385,12 +385,13 @@ public abstract class Angular2IvySymbolDef {
 
   @Nullable
   private static <T extends Angular2IvySymbolDef> T findSymbolDefFieldPsi(@NotNull TypeScriptClass jsClass,
+                                                                          boolean allowAbstractClass,
                                                                           BiFunction<String, Object, T> symbolFactory) {
     for (JSField field : jsClass.getFields()) {
       if (!(field instanceof TypeScriptField)) {
         continue;
       }
-      T entityDefKind = getSymbolDef((TypeScriptField)field, symbolFactory);
+      T entityDefKind = getSymbolDef((TypeScriptField)field, allowAbstractClass, symbolFactory);
       if (entityDefKind != null) {
         return entityDefKind;
       }
@@ -399,27 +400,29 @@ public abstract class Angular2IvySymbolDef {
   }
 
   private static @Nullable <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptClass typeScriptClass,
+                                                                           boolean allowAbstractClass,
                                                                            BiFunction<String, Object, T> symbolFactory) {
-    if (!isSuitableClass(typeScriptClass)) {
+    if (!allowAbstractClass && isAbstractClass(typeScriptClass)) {
       return null;
     }
     StubElement<?> stub = doIfNotNull(tryCast(typeScriptClass, StubBasedPsiElementBase.class),
                                       StubBasedPsiElementBase::getStub);
     if (stub instanceof TypeScriptClassStub) {
-      return getSymbolDefStubbed((TypeScriptClassStub)stub, symbolFactory);
+      return getSymbolDefStubbed((TypeScriptClassStub)stub, allowAbstractClass, symbolFactory);
     }
-    return findSymbolDefFieldPsi(typeScriptClass, symbolFactory);
+    return findSymbolDefFieldPsi(typeScriptClass, allowAbstractClass, symbolFactory);
   }
 
   @Nullable
   private static <T extends Angular2IvySymbolDef> T getSymbolDef(@NotNull TypeScriptField field,
+                                                                 boolean allowAbstractClass,
                                                                  BiFunction<String, Object, T> symbolFactory) {
     JSAttributeList attrs = field.getAttributeList();
     if (attrs == null || !attrs.hasModifier(JSAttributeList.ModifierType.STATIC)) {
       return null;
     }
     TypeScriptClass tsClass = PsiTreeUtil.getContextOfType(field, TypeScriptClass.class);
-    if (tsClass == null || !isSuitableClass(tsClass)) {
+    if (tsClass == null || (!allowAbstractClass && isAbstractClass(tsClass))) {
       return null;
     }
     return symbolFactory.apply(field.getName(), field);

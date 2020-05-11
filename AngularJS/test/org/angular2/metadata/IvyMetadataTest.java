@@ -27,14 +27,16 @@ public class IvyMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMixedMetadataResolution() {
-    //Test component matching and indirect node module indexing
+    //Test component matching, abstract class in hierarchy and indirect node module indexing
     myFixture.copyDirectoryToProject("material", ".");
-    myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
-                                AngularUndefinedTagInspection.class);
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.configureFromTempProjectFile("module.ts");
     myFixture.checkHighlighting();
     AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
     assertEquals("form-field.d.ts",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
+    AngularTestUtil.moveToOffsetBySignature("mat-tab<caret>-group", myFixture);
+    assertEquals("tab-group.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
 

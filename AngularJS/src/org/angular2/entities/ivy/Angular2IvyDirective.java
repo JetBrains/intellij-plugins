@@ -147,7 +147,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
 
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {
-        Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClass)aClass);
+        Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClass)aClass, true);
         if (entityDef instanceof Angular2IvySymbolDef.Directive) {
           inputMap.putAll(((Angular2IvySymbolDef.Directive)entityDef)
                             .readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP));
