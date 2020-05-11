@@ -46,7 +46,7 @@ class AngularConfigProvider private constructor() {
             throw e
           }
           catch (e: Exception) {
-            LOG.warn("Cannot load " + angularCliJson.name + ": " + e.message, e)
+            LOG.warn("Cannot load " + angularCliJson.name + ": " + e.message)
             null
           }
         CachedValueProvider.Result.create(config, cachedDocument ?: angularCliJson)
