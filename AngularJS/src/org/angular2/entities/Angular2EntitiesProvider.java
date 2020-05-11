@@ -58,7 +58,8 @@ public class Angular2EntitiesProvider {
     if (result != null) {
       return result;
     }
-    return withJsonMetadataFallback(element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
+    return Angular2EntitiesProvider.<Angular2Entity, PsiElement>withJsonMetadataFallback(
+      element, Angular2IvyUtil::getIvyEntity, Angular2MetadataUtil::getMetadataEntity);
   }
 
   public static <R, E extends PsiElement> @Nullable R withJsonMetadataFallback(E element,

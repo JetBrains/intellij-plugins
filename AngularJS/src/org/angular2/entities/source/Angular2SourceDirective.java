@@ -146,7 +146,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass && Angular2EntitiesProvider.isDeclaredClass((TypeScriptClass)aClass)) {
         Angular2DirectiveProperties props = withJsonMetadataFallback(aClass, cls -> {
-          Angular2IvyEntity<?> ivyEntity = getIvyEntity(aClass);
+          Angular2IvyEntity<?> ivyEntity = getIvyEntity(aClass, true);
           if (ivyEntity instanceof Angular2Directive) {
             return ((Angular2Directive)ivyEntity).getBindings();
           }

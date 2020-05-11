@@ -236,7 +236,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @Override
   public void indexClassStub(@NotNull JSClassStub<?> jsClassStub, @NotNull IndexSink sink) {
     if (jsClassStub instanceof TypeScriptClassStub) {
-      Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClassStub)jsClassStub);
+      Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClassStub)jsClassStub, false);
       if (entityDef != null) {
         if (entityDef instanceof Angular2IvySymbolDef.Module) {
           sink.occurrence(Angular2IvyModuleIndex.KEY, NG_MODULE_INDEX_NAME);

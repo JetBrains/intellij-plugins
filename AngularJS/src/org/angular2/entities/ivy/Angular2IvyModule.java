@@ -76,14 +76,14 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
   private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
                                                                                            @NotNull String propertyName,
                                                                                            @NotNull Class<T> symbolClazz) {
-    Angular2IvySymbolDef.Module moduleDef = tryCast(Angular2IvySymbolDef.get(fieldDef), Angular2IvySymbolDef.Module.class);
-    List<TypeScriptTypeofType> types = moduleDef == null? Collections.emptyList() : moduleDef.getTypesList(propertyName);
+    Angular2IvySymbolDef.Module moduleDef = tryCast(Angular2IvySymbolDef.get(fieldDef, false), Angular2IvySymbolDef.Module.class);
+    List<TypeScriptTypeofType> types = moduleDef == null ? Collections.emptyList() : moduleDef.getTypesList(propertyName);
     if (types.isEmpty()) {
       return ResolvedEntitiesList.createResult(Collections.emptySet(), true, fieldDef);
     }
     Set<T> entities = new HashSet<>();
     boolean fullyResolved = true;
-    for (TypeScriptTypeofType typeOfType: types) {
+    for (TypeScriptTypeofType typeOfType : types) {
       String reference = typeOfType.getReferenceText();
       if (reference == null) {
         fullyResolved = false;
@@ -95,11 +95,11 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
         .first();
       if (entity == null) {
         fullyResolved = false;
-      } else {
+      }
+      else {
         entities.add(entity);
       }
     }
     return ResolvedEntitiesList.createResult(entities, fullyResolved, JSTypeUtils.getTypeInvalidationDependency());
   }
-
 }
