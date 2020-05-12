@@ -35,6 +35,9 @@ internal class AngularJson {
 }
 
 internal class AngularJsonProject {
+  @JsonProperty("projectType")
+  val projectType: AngularProject.AngularProjectType? = null
+
   @JsonProperty("name")
   val name: String? = null
 

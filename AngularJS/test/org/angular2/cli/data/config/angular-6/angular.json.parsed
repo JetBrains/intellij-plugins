@@ -3,6 +3,7 @@
    projects: [
      AngularProjectImpl {
        name: ang-cli629ang6xx
+       type: APPLICATION
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
@@ -23,6 +24,7 @@
      },
      AngularProjectImpl {
        name: ang-cli629ang6xx-e2e
+       type: APPLICATION
        rootDir: temp:///src/e2e
        sourceDir: temp:///src/e2e
        indexHtml: null
