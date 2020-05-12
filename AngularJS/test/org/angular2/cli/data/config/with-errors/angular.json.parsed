@@ -3,6 +3,7 @@
    projects: [
      AngularProjectImpl {
        name: Webstorm-Test
+       type: null
        rootDir: temp:///src
        sourceDir: temp:///src
        indexHtml: null

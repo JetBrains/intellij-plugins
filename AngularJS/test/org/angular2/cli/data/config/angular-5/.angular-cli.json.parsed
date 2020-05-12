@@ -3,6 +3,7 @@
    projects: [
      AngularLegacyProjectImpl {
        name: idle-ant
+       type: null
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html

@@ -239,6 +239,16 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "ReactiveFormsModule - \"@angular/forms\"");
   }
 
+  public void testLocalLib() {
+    doMultiFileTest("src/app/app.component.html",
+                    "Import MyLibModule");
+  }
+
+  public void testLocalLibCompletion() {
+    doCompletionTest("LocalLib", "src/app/app.component.html",
+                     "lib-my-lib", "lib-my-l\n",
+                     "MyLibModule - \"my-lib\"");
+  }
 
   private void doMultiFileTest(@NotNull String mainFile,
                                @NotNull String intention) {
@@ -316,9 +326,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
 
   @NotNull
   private VirtualFile getNodeModules() {
-    VirtualFile nodeModules = ReSharperTestUtil.fetchVirtualFile(
+    return ReSharperTestUtil.fetchVirtualFile(
       getTestDataPath(), getTestRoot() + "/node_modules", getTestRootDisposable());
-    assert nodeModules != null;
-    return nodeModules;
   }
 }

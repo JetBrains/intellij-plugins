@@ -27,6 +27,7 @@ class AngularConfig(text: CharSequence, val angularJsonFile: VirtualFile, projec
         .configure(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES, true)
         .build())
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
     val angularJson = mapper.readValue(CharSequenceReader(text), AngularJson::class.java)
     if (angularJson.projects.isNotEmpty()) {
       projects = angularJson.projects.map { (name, ngProjectJson) ->
