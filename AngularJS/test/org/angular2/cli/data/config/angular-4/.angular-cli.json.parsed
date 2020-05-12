@@ -3,6 +3,7 @@
    projects: [
      AngularLegacyProjectImpl {
        name: ang-cli156ang446
+       type: null
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html

@@ -3,6 +3,7 @@
    projects: [
      AngularProjectImpl {
        name: ng-test-tslint
+       type: APPLICATION
        rootDir: temp:///src
        sourceDir: temp:///src/src
        indexHtml: temp:///src/src/index.html
@@ -23,6 +24,7 @@
      },
      AngularProjectImpl {
        name: ng-test-tslint-e2e
+       type: APPLICATION
        rootDir: temp:///src/e2e
        sourceDir: temp:///src/e2e
        indexHtml: null
@@ -43,6 +45,7 @@
      },
      AngularProjectImpl {
        name: test-ng-attr
+       type: LIBRARY
        rootDir: temp:///src/projects/test-ng-attr
        sourceDir: temp:///src/projects/test-ng-attr/src
        indexHtml: null

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.config
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
@@ -27,6 +28,8 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
 
   abstract val tsLintConfigurations: List<AngularLintConfiguration>
 
+  abstract val type: AngularProjectType?
+
   internal open fun resolveFile(filePath: String?): VirtualFile? {
     return filePath?.let { path ->
       rootDir?.takeIf { it.isValid }?.findFileByRelativePath(path)
@@ -47,6 +50,7 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
     return """
       |${javaClass.simpleName} {
       |       name: ${name}
+      |       type: ${type}
       |       rootDir: ${rootDir}
       |       sourceDir: ${sourceDir}
       |       indexHtml: ${indexHtmlFile}
@@ -60,6 +64,13 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
       |       ]
       |     }
     """.trimMargin()
+  }
+
+  enum class AngularProjectType {
+    @JsonProperty("application")
+    APPLICATION,
+    @JsonProperty("library")
+    LIBRARY
   }
 }
 
@@ -103,6 +114,9 @@ internal class AngularProjectImpl(override val name: String,
     result
   } ?: emptyList<AngularLintConfiguration>()
 
+  override val type: AngularProjectType?
+    get() = ngProject.projectType
+
 }
 
 internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
@@ -144,6 +158,9 @@ internal class AngularLegacyProjectImpl(private val angularJson: AngularJson,
     get() = angularJson.legacyLint.map { config ->
       AngularLintConfiguration(this, config, null)
     }
+
+  override val type: AngularProjectType?
+    get() = null
 
   override fun resolveFile(filePath: String?): VirtualFile? {
     return filePath?.let {
