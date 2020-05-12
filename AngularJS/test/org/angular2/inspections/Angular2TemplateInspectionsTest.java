@@ -68,7 +68,7 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
 
   public void testTemplateReferenceVariableWithModule() {
     doTest(1, "#a<caret>bc=\"foo\"", "Remove attribute #abc", AngularInvalidTemplateReferenceVariableInspection.class,
-           "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts");
+           "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts", "forms.d.ts");
   }
 
   public void testMatchingComponents() {

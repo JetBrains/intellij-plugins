@@ -3,6 +3,7 @@
 
 import {Component, NgModule} from "@angular/core";
 import {MyComponent, MyDirective} from "./component";
+import {FormsModule, ReactiveFormsModule} from './forms';
 
 @Component({
     templateUrl: "./template-reference-variable-with-module.html"
@@ -16,6 +17,10 @@ class RefVarComp {
         MyDirective,
         MyComponent,
         RefVarComp
+    ],
+    imports: [
+        FormsModule,
+        ReactiveFormsModule
     ]
 })
 export class MyModule {
