@@ -3,3 +3,6 @@
 <my-comp foo-dir #<error descr="There are multiple directives with 'exportAs' set to foo: MyComponent (my-comp) and MyDirective ([foo-dir])">a</error>="foo"></my-comp>
 <div #<error descr="There is no directive with 'exportAs' set to foo">abc</error>="foo"></div>
 <div foo-dir ref-<error descr="There is no directive with 'exportAs' set to bar">a</error>="bar"></div>
+
+<!-- WEB-45359 -->
+<form [formGroup]="formGroup" #foo="ngForm"></form>

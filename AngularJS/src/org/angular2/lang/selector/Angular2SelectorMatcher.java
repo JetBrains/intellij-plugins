@@ -217,7 +217,7 @@ public class Angular2SelectorMatcher<T> {
     boolean finalize(@NotNull Angular2DirectiveSimpleSelector cssSelector,
                      @Nullable BiConsumer<? super Angular2DirectiveSimpleSelector, ? super T> callback) {
       boolean result = true;
-      if (!notSelectors.isEmpty() && (listContext == null || listContext.alreadyMatched)) {
+      if (!notSelectors.isEmpty() && (listContext == null || !listContext.alreadyMatched)) {
         Angular2SelectorMatcher<T> notMatcher = createNotMatcher(notSelectors);
         result = !notMatcher.match(cssSelector, null);
       }
