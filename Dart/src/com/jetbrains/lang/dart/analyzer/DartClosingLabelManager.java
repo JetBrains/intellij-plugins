@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DartClosingLabelManager {
+public class DartClosingLabelManager implements @NotNull Disposable {
   private final EventDispatcher<PreferenceChangeListener> myEventDispatcher = EventDispatcher.create(PreferenceChangeListener.class);
 
   interface PreferenceChangeListener extends EventListener {
@@ -47,7 +47,7 @@ public class DartClosingLabelManager {
                     }
                   }
                 },
-                ApplicationManager.getApplication());
+                this);
   }
 
   public static DartClosingLabelManager getInstance() {
@@ -66,7 +66,7 @@ public class DartClosingLabelManager {
     return DartCodeInsightSettings.getInstance().SHOW_CLOSING_LABELS;
   }
 
-  public void addListener(@NotNull PreferenceChangeListener listener, @NotNull Disposable parentDisposable) {
+  void addListener(@NotNull PreferenceChangeListener listener, @NotNull Disposable parentDisposable) {
     myEventDispatcher.addListener(listener, parentDisposable);
   }
 
@@ -148,6 +148,9 @@ public class DartClosingLabelManager {
       }
     }
   }
+
+  @Override
+  public void dispose() {}
 }
 
 class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {

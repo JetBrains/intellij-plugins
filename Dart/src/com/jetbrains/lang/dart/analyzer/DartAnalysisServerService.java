@@ -520,8 +520,8 @@ public final class DartAnalysisServerService implements Disposable {
     myProject = project;
     myRootsHandler = new DartServerRootsHandler(project);
     myServerData = new DartServerData(this);
-    myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, project);
-    myShowServerProgressAlarm = new Alarm(project);
+    myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, this);
+    myShowServerProgressAlarm = new Alarm(this);
     myServerErrorHandler = new DartAnalysisServerErrorHandler(project);
 
     DartClosingLabelManager.getInstance().addListener(this::handleClosingLabelPreferenceChanged, this);
@@ -719,7 +719,7 @@ public final class DartAnalysisServerService implements Disposable {
       }
     };
 
-    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentListener, myProject);
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(documentListener, this);
   }
 
   @NotNull

@@ -7,6 +7,7 @@ import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationSettings;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
@@ -37,7 +38,7 @@ import java.util.Map;
   name = "DartProblemsView",
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
-public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings> {
+public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, @Nullable Disposable {
 
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
@@ -89,7 +90,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   public DartProblemsView(@NotNull Project project) {
     myProject = project;
     myPresentationHelper = new DartProblemsPresentationHelper(project);
-    myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
+    myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
     project.getMessageBus().connect().subscribe(
       DartAnalysisServerMessages.DART_ANALYSIS_TOPIC, new DartAnalysisServerMessages.DartAnalysisNotifier() {
@@ -302,4 +303,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
       panel.clearAll();
     }
   }
+
+  @Override
+  public void dispose() {}
 }
