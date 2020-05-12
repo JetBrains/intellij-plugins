@@ -80,7 +80,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
   @NotNull
   @Override
   public String getName() {
-    return "PlatformIO";
+    return ClionEmbeddedPlatformioBundle.message("platformio.project.type");
   }
 
   @Override

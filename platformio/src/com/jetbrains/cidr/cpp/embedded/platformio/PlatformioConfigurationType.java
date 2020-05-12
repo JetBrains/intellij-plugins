@@ -20,7 +20,8 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   private final ConfigurationFactory[] myNewProjectFactories;
 
   public PlatformioConfigurationType() {
-    super(TYPE_ID, PLATFORM_IO_DEBUG_ID, "PlatformIO", "PlatformIO",
+    super(TYPE_ID, PLATFORM_IO_DEBUG_ID, ClionEmbeddedPlatformioBundle.message("platformio.name"),
+          ClionEmbeddedPlatformioBundle.message("platformio.description"),
           NotNullLazyValue.createValue(() -> ClionEmbeddedPlatformioIcons.Platformio));
 
     ConfigurationFactory uploadFactory = getConfigurationFactories()[0];
@@ -35,7 +36,7 @@ public class PlatformioConfigurationType extends CMakeRunConfigurationType {
   }
 
   @NotNull
-  public ConfigurationFactory[] getNewProjectFactories() {
+  public ConfigurationFactory @NotNull [] getNewProjectFactories() {
     return myNewProjectFactories;
   }
 
