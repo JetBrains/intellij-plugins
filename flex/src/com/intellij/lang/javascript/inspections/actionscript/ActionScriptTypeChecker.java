@@ -178,7 +178,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       if (constantRef instanceof JSVariable) {
         final String initializerText = ((JSVariable)constantRef).getLiteralOrReferenceInitializerText();
         if (initializerText != null &&
-            (StringUtil.startsWith(initializerText, "\'") ||
+            (StringUtil.startsWith(initializerText, "'") ||
              StringUtil.startsWith(initializerText, "\"")
             )) {
           type = StringUtil.stripQuotesAroundValue(initializerText);
