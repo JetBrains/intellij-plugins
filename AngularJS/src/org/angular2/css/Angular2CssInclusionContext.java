@@ -25,8 +25,8 @@ import org.angular2.cli.AngularCliUtil;
 import org.angular2.cli.config.AngularConfigProvider;
 import org.angular2.cli.config.AngularProject;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
   @Override
   public PsiFile @NotNull [] getLocalUseScope(@NotNull PsiFile file) {
     if (file instanceof StylesheetFile) {
-      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
+      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
       if (component != null) {
         List<PsiFile> files = new ArrayList<>(component.getCssFiles());
         doIfNotNull(component.getTemplateFile(), files::add);
@@ -75,7 +75,7 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
   private static ComponentCssContext getComponentContext(@NotNull PsiElement context) {
     PsiFile file = context.getContainingFile();
     return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY, () -> {
-      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
+      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));
       if (component != null) {
         ComponentCssContext componentCssContext = new ComponentCssContext(component, file);
         return CachedValueProvider.Result.create(componentCssContext, componentCssContext.getDependencies());

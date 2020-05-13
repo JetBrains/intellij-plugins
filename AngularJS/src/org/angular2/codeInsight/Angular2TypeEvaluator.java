@@ -27,9 +27,9 @@ import one.util.streamex.EntryStream;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -171,7 +171,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   @Override
   protected void processThisQualifierInExecutionScope(@NotNull JSThisExpression thisQualifier, PsiElement thisScope) {
     if (thisScope instanceof Angular2EmbeddedExpression) {
-      TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);
+      TypeScriptClass componentClass = Angular2ComponentLocator.findComponentClass(thisQualifier);
       if (componentClass != null) {
         addType(componentClass.getJSType(), thisQualifier);
       }
@@ -406,7 +406,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   @Nullable
   private static JSTypeSource getTypeSource(@NotNull PsiElement element,
                                             @NotNull List<JSType> types) {
-    TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(element);
+    TypeScriptClass componentClass = Angular2ComponentLocator.findComponentClass(element);
     if (componentClass != null) {
       return JSTypeSourceFactory.createTypeSource(componentClass, true);
     }

@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -56,7 +56,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
         }
         JSExpression qualifier = methodExpression.getQualifier();
         if (qualifier == null || qualifier instanceof JSThisExpression) {
-          JSClass componentClass = Angular2IndexingHandler.findComponentClass(methodExpression);
+          JSClass componentClass = Angular2ComponentLocator.findComponentClass(methodExpression);
           if (componentClass != null && methodExpression.getReferenceName() != null) {
             quickFixes.add(new CreateComponentMethodIntentionAction(methodExpression));
           }
@@ -93,7 +93,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                                 boolean ecma) {
         JSExpression qualifier = referenceExpression.getQualifier();
         if (qualifier == null || qualifier instanceof JSThisExpression) {
-          JSClass componentClass = Angular2IndexingHandler.findComponentClass(referenceExpression);
+          JSClass componentClass = Angular2ComponentLocator.findComponentClass(referenceExpression);
           if (componentClass != null
               && referenceExpression.getReferenceName() != null) {
             quickFixes.add(new CreateComponentFieldIntentionAction(referenceExpression));
@@ -132,7 +132,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
 
     @Override
     protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
-      JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+      JSClass componentClass = Angular2ComponentLocator.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
     }
@@ -175,7 +175,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
 
     @Override
     protected void applyFix(Project project, PsiElement psiElement, @NotNull PsiFile file, @Nullable Editor editor) {
-      JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+      JSClass componentClass = Angular2ComponentLocator.findComponentClass(psiElement);
       assert componentClass != null;
       doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
     }

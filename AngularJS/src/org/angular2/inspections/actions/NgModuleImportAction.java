@@ -16,11 +16,11 @@ import com.intellij.util.containers.MultiMap;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil;
 import org.angular2.lang.Angular2Bundle;
@@ -62,9 +62,9 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
     MultiMap<Angular2Module, Integer> distancesToDirectives = new MultiMap<>();
     StreamEx.of(candidates.get(Angular2DeclarationsScope.DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE))
       .flatMap(declaration ->
-             StreamEx.of(scope.getPublicModulesExporting(declaration))
-               .distinct()
-               .map(module -> pair(module, distanceCalculator.get(module, declaration))))
+                 StreamEx.of(scope.getPublicModulesExporting(declaration))
+                   .distinct()
+                   .map(module -> pair(module, distanceCalculator.get(module, declaration))))
       .forEach(pair -> distancesToDirectives.putValue(pair.first, pair.second));
 
     Map<Angular2Module, Double> averageDistances = new HashMap<>();
@@ -88,7 +88,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
     if (!file.isValid() || project.isDisposed() || !project.isOpen()) {
       return ContainerUtil.emptyList();
     }
-    TypeScriptClass component = Angular2IndexingHandler.findComponentClass(file);
+    TypeScriptClass component = Angular2ComponentLocator.findComponentClass(file);
     if (component != null) {
       file = component.getContainingFile();
     }

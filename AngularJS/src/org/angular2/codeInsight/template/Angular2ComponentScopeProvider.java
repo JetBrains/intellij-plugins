@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class Angular2ComponentScopeProvider extends Angular2TemplateScopesProvid
   @NotNull
   @Override
   public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
-    return Optional.ofNullable(Angular2IndexingHandler.findComponentClass(element))
+    return Optional.ofNullable(Angular2ComponentLocator.findComponentClass(element))
       .map(Angular2ComponentScope::new)
       .map(Collections::singletonList)
       .orElseGet(Collections::emptyList);

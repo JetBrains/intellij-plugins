@@ -18,7 +18,6 @@ import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.*;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +45,7 @@ public class Angular2DeclarationsScope {
         return create(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
-        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file)),
+        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file)),
                                             c -> selectModule(c, file));
         return CachedValueProvider.Result.create(
           module != null ? create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())

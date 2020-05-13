@@ -31,7 +31,7 @@ import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
@@ -116,7 +116,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
 
   @Nullable
   private PsiElement getComponentClass() {
-    return Angular2IndexingHandler.findComponentClass(this);
+    return Angular2ComponentLocator.findComponentClass(this);
   }
 
   @Override
@@ -132,7 +132,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   @NotNull
   @Override
   public SearchScope getUseScope() {
-    final JSClass clazz = Angular2IndexingHandler.findComponentClass(this);
+    final JSClass clazz = Angular2ComponentLocator.findComponentClass(this);
     LocalSearchScope localScope;
     if (clazz != null) {
       localScope = new LocalSearchScope(new PsiElement[]{clazz, this.getContainingFile()});

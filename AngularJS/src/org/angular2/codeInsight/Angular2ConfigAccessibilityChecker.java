@@ -4,13 +4,13 @@ package org.angular2.codeInsight;
 import com.intellij.lang.javascript.psi.resolve.accessibility.TypeScriptConfigAccessibilityChecker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.jetbrains.annotations.Nullable;
 
 public class Angular2ConfigAccessibilityChecker extends TypeScriptConfigAccessibilityChecker {
 
   @Override
   protected VirtualFile getScope(@Nullable PsiElement place) {
-    return place == null ? null : super.getScope(Angular2IndexingHandler.findComponentClass(place));
+    return place == null ? null : super.getScope(Angular2ComponentLocator.findComponentClass(place));
   }
 }

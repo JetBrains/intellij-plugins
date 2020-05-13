@@ -16,9 +16,9 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       }
     }
     else {
-      componentClasses.addAll(Angular2IndexingHandler.findComponentClasses(file));
+      componentClasses.addAll(Angular2ComponentLocator.findComponentClasses(file));
     }
 
     PsiFile filter = ObjectUtils.notNull(
@@ -109,7 +109,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
                                                                     cssFiles.size() == 1 ? "" : " " + count++)));
     }
     first = true;
-    for (TypeScriptClass moduleClass: mapNotNull(component.getAllModules(), Angular2Module::getTypeScriptClass)) {
+    for (TypeScriptClass moduleClass : mapNotNull(component.getAllModules(), Angular2Module::getTypeScriptClass)) {
       if (moduleClass.getName() != null) {
         result.add(new Angular2GoToRelatedItem(moduleClass, first ? MODULE_INDEX : -1, false,
                                                Angular2Bundle.message("angular.action.goto-related.module")));

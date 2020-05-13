@@ -12,8 +12,8 @@ import com.intellij.lang.typescript.resolve.TypeScriptTypeHelper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
+import org.angular2.entities.Angular2ComponentLocator;
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
-    JSClass clazz = Angular2IndexingHandler.findComponentClass(place);
+    JSClass clazz = Angular2ComponentLocator.findComponentClass(place);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       return new TypeScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
     }

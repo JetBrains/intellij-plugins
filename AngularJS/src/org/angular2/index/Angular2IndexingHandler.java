@@ -1,13 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.index;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
-import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -22,14 +19,10 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.TypeScriptClassStub;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.StylesheetFile;
-import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.tree.TokenSet;
@@ -39,16 +32,12 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.entities.Angular2FrameworkHandler;
 import org.angular2.entities.ivy.Angular2IvySymbolDef;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.expr.Angular2Language;
-import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,11 +45,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
-import static java.util.Collections.emptyList;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2ComponentLocator.isStylesheet;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
@@ -324,87 +314,21 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     processor.consume(pipeElement);
   }
 
-  @Nullable
-  public static TypeScriptClass findComponentClass(@NotNull PsiElement context) {
-    return ContainerUtil.getFirstItem(findComponentClasses(context));
-  }
-
+  @ApiStatus.Internal
   @NotNull
-  public static List<TypeScriptClass> findComponentClasses(@NotNull PsiElement context) {
-    final PsiFile file = context.getContainingFile();
-    if (file == null
-        || !(file.getLanguage().isKindOf(Angular2HtmlLanguage.INSTANCE)
-             || file.getLanguage().is(Angular2Language.INSTANCE)
-             || isStylesheet(file))) {
-      return emptyList();
-    }
-    PsiFile hostFile = getHostFile(context);
-    if (hostFile == null) {
-      return emptyList();
-    }
-    if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
-      // inline content
-      return ContainerUtil.packNullables(getClassForDecoratorElement(
-        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file.getOriginalFile())));
-    }
-    // external content
-    List<TypeScriptClass> result = new SmartList<>(
-      StreamEx.of(Angular2FrameworkHandler.EP_NAME.getExtensionList())
-        .toFlatList(h -> h.findAdditionalComponentClasses(hostFile)));
-    if (result.isEmpty() || isStylesheet(file)) {
-      result.addAll(resolveComponentsFromSimilarFile(hostFile));
-    }
-    if (result.isEmpty() || isStylesheet(file)) {
-      result.addAll(resolveComponentsFromIndex(hostFile));
-    }
-    return result;
-  }
-
-  @NotNull
-  private static List<TypeScriptClass> resolveComponentsFromSimilarFile(@NotNull PsiFile file) {
-    final String name = file.getViewProvider().getVirtualFile().getNameWithoutExtension();
-    final PsiDirectory dir = file.getParent();
-    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
-
-    if (directiveFile != null) {
-      return StreamEx.of(JSStubBasedPsiTreeUtil.findDescendants(directiveFile, TS_CLASS_TOKENS))
-        .select(TypeScriptClass.class)
-        .filter(cls -> {
-          ES6Decorator dec = findDecorator(cls, COMPONENT_DEC);
-          return hasFileReference(dec, file);
-        })
-        .toList();
-    }
-    return emptyList();
-  }
-
-  @NotNull
-  private static List<TypeScriptClass> resolveComponentsFromIndex(@NotNull PsiFile file) {
+  public static List<TypeScriptClass> resolveComponentsFromIndex(@NotNull PsiFile file, @NotNull Predicate<ES6Decorator> filter) {
     final String name = (isStylesheet(file) ? STYLESHEET_INDEX_PREFIX : "") + file.getViewProvider().getVirtualFile().getName();
     final List<TypeScriptClass> result = new SmartList<>();
     AngularIndexUtil.multiResolve(file.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
       if (el != null) {
         PsiElement componentDecorator = el.getParent();
-        if (componentDecorator instanceof ES6Decorator
-            && hasFileReference((ES6Decorator)componentDecorator, file)) {
+        if (componentDecorator instanceof ES6Decorator && filter.test((ES6Decorator)componentDecorator)) {
           ContainerUtil.addIfNotNull(result, getClassForDecoratorElement(componentDecorator));
         }
       }
       return true;
     });
     return result;
-  }
-
-  private static boolean hasFileReference(@Nullable ES6Decorator componentDecorator, @NotNull PsiFile file) {
-    Angular2Component component = Angular2EntitiesProvider.getComponent(componentDecorator);
-    if (component != null) {
-      return isStylesheet(file) ? component.getCssFiles().contains(file) : file.equals(component.getTemplateFile());
-    }
-    return false;
-  }
-
-  private static boolean isStylesheet(@NotNull PsiFile file) {
-    return file instanceof StylesheetFile;
   }
 
   @Nullable
@@ -469,12 +393,5 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return null;
-  }
-
-  @Nullable
-  private static PsiFile getHostFile(@NotNull PsiElement context) {
-    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
-    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-    return hostFile != null ? hostFile.getOriginalFile() : null;
   }
 }
