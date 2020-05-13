@@ -234,7 +234,7 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testCustomContextProvider() {
     Disposable disposable = Disposer.newDisposable();
     Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP
-      .getPoint(null)
+      .getPoint()
       .registerExtension(psiDir -> CachedValueProvider.Result.create(true, ModificationTracker.EVER_CHANGED),
                          disposable);
     myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts");

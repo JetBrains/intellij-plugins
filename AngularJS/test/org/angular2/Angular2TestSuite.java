@@ -61,6 +61,7 @@ import org.junit.runners.Suite;
   ScopesTest.class,
   TagsTest.class,
   ModulesTest.class,
+  FrameworkHandlerTest.class,
   FormattingTest.class,
   Angular2TemplateInspectionsTest.class,
   Angular2DecoratorInspectionsTest.class,
