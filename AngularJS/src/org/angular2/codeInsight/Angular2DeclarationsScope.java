@@ -13,12 +13,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Entity;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +46,8 @@ public class Angular2DeclarationsScope {
         return create(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
-        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-          Angular2IndexingHandler.findComponentClass(file)), c -> c.getModule());
+        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file)),
+                                            c -> selectModule(c, file));
         return CachedValueProvider.Result.create(
           module != null ? create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
                          : create(null, null, false),
@@ -151,5 +149,20 @@ public class Angular2DeclarationsScope {
     NOT_DECLARED_IN_ANY_MODULE,
     NOT_EXPORTED_BY_MODULE,
     NOT_REACHABLE
+  }
+
+  @Nullable
+  private static Angular2Module selectModule(@NotNull Angular2Component component, @NotNull PsiFile context) {
+    Collection<Angular2Module> modules = component.getAllModules();
+    if (modules.size() > 1) {
+      for (Angular2FrameworkHandler handler : Angular2FrameworkHandler.EP_NAME.getExtensionList()) {
+        Angular2Module result = handler.selectModuleForDeclarationsScope(modules, component, context);
+        if (result != null) {
+          return result;
+        }
+      }
+      return Angular2EntityUtils.defaultChooseModule(modules.stream());
+    }
+    return ContainerUtil.getFirstItem(modules);
   }
 }

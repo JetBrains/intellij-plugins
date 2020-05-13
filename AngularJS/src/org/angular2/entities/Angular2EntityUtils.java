@@ -19,9 +19,11 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
 
@@ -93,6 +95,10 @@ public class Angular2EntityUtils {
       throw new IllegalArgumentException();
     }
     return attributeIndexName.substring(1);
+  }
+
+  public static <T extends Angular2Module> @Nullable T defaultChooseModule(@NotNull Stream<T> modulesStream) {
+    return modulesStream.min(Comparator.comparing(Angular2Module::getName)).orElse(null);
   }
 
   @NotNull

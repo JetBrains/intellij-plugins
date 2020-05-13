@@ -42,6 +42,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.entities.Angular2FrameworkHandler;
 import org.angular2.entities.ivy.Angular2IvySymbolDef;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.Angular2Language;
@@ -348,11 +349,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     }
     // external content
     List<TypeScriptClass> result = new SmartList<>(
-      resolveComponentsFromSimilarFile(hostFile));
-    if (!result.isEmpty() && !isStylesheet(file)) {
-      return result;
+      StreamEx.of(Angular2FrameworkHandler.EP_NAME.getExtensionList())
+        .toFlatList(h -> h.findAdditionalComponentClasses(hostFile)));
+    if (result.isEmpty() || isStylesheet(file)) {
+      result.addAll(resolveComponentsFromSimilarFile(hostFile));
     }
-    result.addAll(resolveComponentsFromIndex(hostFile));
+    if (result.isEmpty() || isStylesheet(file)) {
+      result.addAll(resolveComponentsFromIndex(hostFile));
+    }
     return result;
   }
 

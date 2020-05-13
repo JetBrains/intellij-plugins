@@ -43,6 +43,9 @@
     <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
                     interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"
                     dynamic="true"/>
+    <extensionPoint qualifiedName="org.angular2.frameworkHandler"
+                    interface="org.angular2.entities.Angular2FrameworkHandler"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
