@@ -29,7 +29,8 @@ import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.*;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
-import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
+import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
+import org.angular2.lang.html.psi.Angular2HtmlAttrVariable.Kind;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,26 +132,25 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testTemplateReferenceResolve2() {
     myFixture.configureByFiles("binding.after.html", "package.json");
     PsiElement resolve = resolveReference("$event, user<caret>name");
-    assertInstanceOf(resolve, Angular2HtmlReferenceVariable.class);
+    assertInstanceOf(resolve, Angular2HtmlAttrVariable.class);
     assertEquals("binding.after.html", resolve.getContainingFile().getName());
     assertEquals("#username", resolve.getParent().getParent().getText());
   }
 
   public void testVariableResolve2() {
     myFixture.configureByFiles("ngTemplate.after.html", "package.json");
-    PsiElement resolve = resolveReference("let-my_<caret>user");
+    PsiElement resolve = resolveReference("{{my_<caret>user");
+    assertInstanceOf(resolve, Angular2HtmlAttrVariable.class);
+    assertEquals(Kind.LET, ((Angular2HtmlAttrVariable)resolve).getKind());
     assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
-    assertEquals("let-my_user", resolve.getContainingFile().findElementAt(resolve.getParent().getTextOffset()).getText());
-
-    PsiElement resolve2 = resolveReference("{{my_<caret>user");
-    assertEquals("ngTemplate.after.html", resolve2.getContainingFile().getName());
-    assertEquals("let-my_user", resolve2.getContainingFile().findElementAt(resolve2.getParent().getTextOffset()).getText());
+    assertEquals("let-my_user", resolve.getParent().getParent().getText());
   }
 
   public void testTemplateReferenceResolve2Inline() {
     myFixture.configureByFiles("binding.after.ts", "package.json");
     PsiElement resolve = resolveReference("in<caret>put_el.");
-    assertInstanceOf(resolve, Angular2HtmlReferenceVariable.class);
+    assertInstanceOf(resolve, Angular2HtmlAttrVariable.class);
+    assertEquals(Kind.REFERENCE, ((Angular2HtmlAttrVariable)resolve).getKind());
     assertEquals("binding.after.ts", resolve.getContainingFile().getName());
     assertEquals("#input_el", resolve.getParent().getParent().getText());
   }

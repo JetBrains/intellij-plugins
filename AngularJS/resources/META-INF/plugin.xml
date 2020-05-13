@@ -238,7 +238,7 @@
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
-    <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlStubElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.lang.html.stub.Angular2HtmlStubElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>

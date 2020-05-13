@@ -14,7 +14,7 @@ import com.intellij.psi.tree.IFileElementType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.lexer.Angular2Lexer;
 import org.angular2.lang.html.XmlASTWrapperPsiElement;
-import org.angular2.lang.html.parser.Angular2HtmlReferenceTokenType;
+import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2ParserDefinition extends JavascriptParserDefinition {
@@ -45,7 +45,8 @@ public class Angular2ParserDefinition extends JavascriptParserDefinition {
   @Override
   @NotNull
   public PsiElement createElement(ASTNode node) {
-    if (node.getElementType() == Angular2HtmlReferenceTokenType.INSTANCE) {
+    if (node.getElementType() == Angular2HtmlVarAttrTokenType.REFERENCE
+        || node.getElementType() == Angular2HtmlVarAttrTokenType.LET) {
       return new XmlASTWrapperPsiElement(node);
     }
     return super.createElement(node);

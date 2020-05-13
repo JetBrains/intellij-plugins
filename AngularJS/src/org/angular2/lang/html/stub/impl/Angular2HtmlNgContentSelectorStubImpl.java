@@ -3,7 +3,7 @@ package org.angular2.lang.html.stub.impl;
 
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
-import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl;
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub;

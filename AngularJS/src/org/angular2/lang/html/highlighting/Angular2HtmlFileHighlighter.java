@@ -60,7 +60,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
       pair(PROPERTY_BINDING, NG_PROPERTY_BINDING_ATTR_NAME),
       pair(REFERENCE, NG_REFERENCE_ATTR_NAME),
       pair(TEMPLATE_BINDINGS, NG_TEMPLATE_BINDINGS_ATTR_NAME),
-      pair(VARIABLE, NG_TEMPLATE_VARIABLE_ATTR_NAME)).forEach(
+      pair(LET, NG_TEMPLATE_LET_ATTR_NAME)).forEach(
       p -> put(p.first, HTML_CODE, XmlHighlighterColors.HTML_TAG, XmlHighlighterColors.HTML_ATTRIBUTE_NAME, p.second)
     );
 

@@ -196,7 +196,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
     else if (attributeInfo.type == Angular2AttributeType.REFERENCE) {
       PsiBuilder.Marker attrName = mark();
       advance();
-      attrName.collapse(Angular2HtmlReferenceTokenType.INSTANCE);
+      attrName.collapse(Angular2HtmlVarAttrTokenType.REFERENCE);
+    }
+    else if (attributeInfo.type == Angular2AttributeType.LET) {
+      PsiBuilder.Marker attrName = mark();
+      advance();
+      attrName.collapse(Angular2HtmlVarAttrTokenType.LET);
     }
     else {
       advance();
@@ -290,7 +295,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     if (type == NG_CONTENT_SELECTOR) {
       return NG_CONTENT_SELECTOR;
     }
-    if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
+    if (type == REFERENCE || type == LET || type == XML_ATTRIBUTE) {
       return null;
     }
     throw new IllegalStateException("Unsupported element type: " + type);

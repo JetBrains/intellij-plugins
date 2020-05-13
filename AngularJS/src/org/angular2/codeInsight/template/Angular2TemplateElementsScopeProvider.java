@@ -203,8 +203,11 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
     }
 
     @Override
-    public void visitVariable(Angular2HtmlVariable variable) {
-      addElement(createVariable(variable.getVariableName(), variable));
+    public void visitLet(Angular2HtmlLet let) {
+      JSVariable var = let.getVariable();
+      if (var != null) {
+        addElement(var);
+      }
     }
 
     @Override
@@ -249,7 +252,7 @@ public class Angular2TemplateElementsScopeProvider extends Angular2TemplateScope
         case REFERENCE:
           addReference(attribute, info, isTemplateTag(attribute.getParent()));
           break;
-        case VARIABLE:
+        case LET:
           addVariable(attribute, info);
           break;
         case TEMPLATE_BINDINGS:

@@ -160,7 +160,7 @@ public class Angular2DirectiveSimpleSelector {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, element);
       if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
-          || info.type == Angular2AttributeType.VARIABLE
+          || info.type == Angular2AttributeType.LET
           || info.type == Angular2AttributeType.REFERENCE) {
         continue;
       }

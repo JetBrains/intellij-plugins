@@ -27,7 +27,7 @@ public interface Angular2HtmlHighlighterColors {
   TextAttributesKey NG_TEMPLATE_BINDINGS_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
     "NG.TEMPLATE_BINDINGS_ATTR_NAME", DefaultLanguageHighlighterColors.STATIC_FIELD);
 
-  TextAttributesKey NG_TEMPLATE_VARIABLE_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
+  TextAttributesKey NG_TEMPLATE_LET_ATTR_NAME = TextAttributesKey.createTextAttributesKey(
     "NG.TEMPLATE_VARIABLE_ATTR_NAME", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
 
   TextAttributesKey NG_EXPRESSION = TextAttributesKey.createTextAttributesKey(

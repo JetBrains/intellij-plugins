@@ -3,5 +3,12 @@ package org.angular2.lang.html.psi;
 
 import com.intellij.lang.javascript.psi.JSVariable;
 
-public interface Angular2HtmlReferenceVariable extends JSVariable {
+public interface Angular2HtmlAttrVariable extends JSVariable {
+
+  Kind getKind();
+
+  enum Kind {
+    LET,
+    REFERENCE
+  }
 }

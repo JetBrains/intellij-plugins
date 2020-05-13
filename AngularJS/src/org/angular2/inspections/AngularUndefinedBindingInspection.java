@@ -49,7 +49,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
       visitTemplateBindings(holder, attribute, Angular2TemplateBindings.get(attribute));
       return;
     }
-    else if (info.type == REFERENCE || info.type == VARIABLE) {
+    else if (info.type == REFERENCE || info.type == LET) {
       return;
     }
     List<Angular2Directive> sourceDirectives = descriptor.getSourceDirectives();

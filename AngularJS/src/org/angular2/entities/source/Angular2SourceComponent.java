@@ -35,7 +35,7 @@ import java.util.List;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.Angular2DecoratorUtil.*;
-import static org.angular2.lang.html.parser.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
+import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
 
 public class Angular2SourceComponent extends Angular2SourceDirective implements Angular2Component {
 

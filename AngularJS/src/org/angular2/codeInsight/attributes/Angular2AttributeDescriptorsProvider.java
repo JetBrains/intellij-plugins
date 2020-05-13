@@ -32,8 +32,8 @@ import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.psi.Angular2Interpolation;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
+import org.angular2.lang.html.psi.Angular2HtmlLet;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
-import org.angular2.lang.html.psi.Angular2HtmlVariable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -331,7 +331,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
-      public void visitVariable(Angular2HtmlVariable variable) {
+      public void visitLet(Angular2HtmlLet variable) {
         result.add(new Angular2AttributeDescriptor(xmlTag, variable.getName(),
                                                    singletonList(variable.getNameElement()),
                                                    true));

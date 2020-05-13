@@ -76,7 +76,7 @@ public class Angular2AttributeNameParser {
       return parseTemplateBindings(name.substring(1));
     }
     else if (name.startsWith("let-")) {
-      return parseVariable(name.substring(4), isTemplateTag(tagName));
+      return parseLet(name.substring(4), isTemplateTag(tagName));
     }
     else if (name.startsWith("#")) {
       return parseReference(name.substring(1), false);
@@ -179,7 +179,7 @@ public class Angular2AttributeNameParser {
   }
 
   @NotNull
-  private static AttributeInfo parseVariable(@NotNull String varName, boolean isInTemplateTag) {
+  private static AttributeInfo parseLet(@NotNull String varName, boolean isInTemplateTag) {
     if (!isInTemplateTag) {
       return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR,
                                Angular2Bundle.message("angular.parse.template.let-only-on-ng-template"));
@@ -188,7 +188,7 @@ public class Angular2AttributeNameParser {
       return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR,
                                Angular2Bundle.message("angular.parse.template.let-dash-not-allowed-in-name"));
     }
-    return new AttributeInfo(varName, false, Angular2AttributeType.VARIABLE);
+    return new AttributeInfo(varName, false, Angular2AttributeType.LET);
   }
 
   @NotNull

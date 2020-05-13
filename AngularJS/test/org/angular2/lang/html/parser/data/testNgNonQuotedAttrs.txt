@@ -49,7 +49,7 @@ HtmlFile:test.html
         XmlASTWrapperPsiElement(NG:REFERENCE_TOKEN)
           XmlToken:XML_NAME('#')
           JSVarStatement
-            Angular2HtmlReferenceVariable
+            Angular2HtmlAttrVariable[REFERENCE]
               PsiElement(JS:IDENTIFIER)('foo')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)

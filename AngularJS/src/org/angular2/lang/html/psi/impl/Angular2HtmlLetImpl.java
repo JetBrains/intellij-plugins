@@ -12,20 +12,20 @@ import com.intellij.psi.xml.XmlElement;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.parser.Angular2HtmlVarAttrTokenType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlReference;
+import org.angular2.lang.html.psi.Angular2HtmlLet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlReference {
+public class Angular2HtmlLetImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlLet {
 
-  public Angular2HtmlReferenceImpl(@NotNull Angular2ElementType type) {
+  public Angular2HtmlLetImpl(@NotNull Angular2ElementType type) {
     super(type);
   }
 
   @Override
   public int getChildRole(@NotNull ASTNode child) {
     IElementType i = child.getElementType();
-    if (i == Angular2HtmlVarAttrTokenType.REFERENCE) {
+    if (i == Angular2HtmlVarAttrTokenType.LET) {
       return XmlChildRole.XML_NAME;
     }
     return super.getChildRole(child);
@@ -35,7 +35,7 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   public XmlElement getNameElement() {
     XmlElement res = super.getNameElement();
     if (res == null &&
-        getFirstChild().getNode().getElementType() == Angular2HtmlVarAttrTokenType.REFERENCE) {
+        getFirstChild().getNode().getElementType() == Angular2HtmlVarAttrTokenType.LET) {
       return (XmlElement)getFirstChild();
     }
     return res;
@@ -50,7 +50,7 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof Angular2HtmlElementVisitor) {
-      ((Angular2HtmlElementVisitor)visitor).visitReference(this);
+      ((Angular2HtmlElementVisitor)visitor).visitLet(this);
     }
     else if (visitor instanceof XmlElementVisitor) {
       ((XmlElementVisitor)visitor).visitXmlAttribute(this);
@@ -62,7 +62,7 @@ public class Angular2HtmlReferenceImpl extends Angular2HtmlBoundAttributeImpl im
 
   @NotNull
   @Override
-  public String getReferenceName() {
+  public String getVariableName() {
     return getAttributeInfo().name;
   }
 }

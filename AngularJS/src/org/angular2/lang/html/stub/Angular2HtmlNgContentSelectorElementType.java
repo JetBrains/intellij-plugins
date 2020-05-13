@@ -6,7 +6,6 @@ import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.*;
 import com.intellij.psi.tree.ICompositeElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.psi.impl.Angular2HtmlNgContentSelectorImpl;
 import org.angular2.lang.html.stub.impl.Angular2HtmlNgContentSelectorStubImpl;

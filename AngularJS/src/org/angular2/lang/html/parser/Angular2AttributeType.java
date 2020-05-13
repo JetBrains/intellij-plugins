@@ -3,16 +3,16 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlElementType;
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("HardCodedStringLiteral")
 public enum Angular2AttributeType {
 
   REFERENCE(Angular2HtmlElementTypes.REFERENCE, "#", "", "ref-"),
   REGULAR(XmlElementType.XML_ATTRIBUTE, "", "", null),
-  VARIABLE(Angular2HtmlElementTypes.VARIABLE, "let-", "", null),
+  LET(Angular2HtmlElementTypes.LET, "let-", "", null),
   BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING, "[(", ")]", "bindon-"),
   PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
   EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),

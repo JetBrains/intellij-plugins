@@ -17,8 +17,12 @@ HtmlFile:test.html
       XmlToken:XML_START_TAG_START('<')
       XmlToken:XML_NAME('ng-template')
       PsiWhiteSpace(' ')
-      Angular2HtmlVariable <a>
-        XmlToken:XML_NAME('let-a')
+      Angular2HtmlLet <a>
+        XmlASTWrapperPsiElement(NG:LET_TOKEN)
+          XmlToken:XML_NAME('let-')
+          JSVarStatement
+            Angular2HtmlAttrVariable[LET]
+              PsiElement(JS:IDENTIFIER)('a')
         XmlToken:XML_EQ('=')
         PsiElement(XML_ATTRIBUTE_VALUE)
           XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
