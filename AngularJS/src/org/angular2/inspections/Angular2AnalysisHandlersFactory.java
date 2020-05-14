@@ -78,11 +78,12 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                                @NotNull JSReferenceExpression referenceExpression,
                                                @NotNull List<LocalQuickFix> quickFixes,
                                                @NotNull Ref<String> message,
-                                               boolean isFunction) {
+                                               boolean isFunction,
+                                               boolean inTypeContext) {
         if (referenceExpression instanceof Angular2PipeReferenceExpression) {
           Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, quickFixes);
         }
-        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction);
+        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction, inTypeContext);
       }
 
       @Override

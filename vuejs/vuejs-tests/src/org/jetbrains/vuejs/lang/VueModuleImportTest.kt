@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.JSTestOptions
 import com.intellij.lang.javascript.JavaScriptFormatterTest
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
-import com.intellij.lang.javascript.modules.ES6ModulesDependenciesInspection
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionLightTestBase
 import com.intellij.lang.typescript.intentions.TypeScriptAddImportStatementFix
 import com.intellij.util.Consumer
@@ -17,13 +16,7 @@ class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
   override fun getBasePath(): String = BASE_PATH
   override fun getExtension(): String = "vue"
   override fun getTestDataPath(): String = getVueTestDataPath() + basePath
-
-  override fun setUp() {
-    super.setUp()
-
-    myFixture.enableInspections(ES6ModulesDependenciesInspection())
-  }
-
+  
   fun testTypesModule() {
     doTestWithCopyDirectory()
   }
