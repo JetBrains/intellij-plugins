@@ -30,8 +30,10 @@ import com.intellij.platform.GeneratorPeerImpl;
 import com.intellij.platform.ProjectGeneratorPeer;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.cidr.cpp.cmake.CMakeSettings;
+import com.jetbrains.cidr.cpp.cmake.model.CMakeModelConfigurationData;
 import com.jetbrains.cidr.cpp.cmake.model.CMakeTarget;
 import com.jetbrains.cidr.cpp.cmake.projectWizard.generators.CLionProjectGenerator;
 import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace;
@@ -53,7 +55,6 @@ import javax.swing.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 
@@ -234,12 +235,11 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
 
   private static void configureBuildTypes(@NotNull CMakeWorkspace cmakeWorkspace) {
     CMakeSettings settings = cmakeWorkspace.getSettings();
-    List<CMakeSettings.Profile> profiles = cmakeWorkspace.getModelConfigurationData()
-      .stream()
-      .flatMap(modelConfigurationData -> modelConfigurationData.getRegisteredBuildTypes().stream())
-      .map(buildType -> new CMakeSettings.Profile(buildType))
-      .collect(Collectors.toList());
-    settings.setProfiles(profiles);
+    List<CMakeModelConfigurationData> cMakeModelConfigurationData = cmakeWorkspace.getModelConfigurationData();
+    if (!cMakeModelConfigurationData.isEmpty()) {
+      List<String> buildTypes = cMakeModelConfigurationData.get(0).getRegisteredBuildTypes();
+      settings.setProfiles(ContainerUtil.map(buildTypes, CMakeSettings.Profile::new));
+    }
   }
 
   private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
