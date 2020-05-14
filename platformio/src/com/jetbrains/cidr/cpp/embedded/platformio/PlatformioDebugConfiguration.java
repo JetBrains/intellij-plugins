@@ -10,7 +10,7 @@ public class PlatformioDebugConfiguration extends PlatformioBaseConfiguration
   implements RunConfigurationWithSuppressedDefaultRunAction {
 
   public PlatformioDebugConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory) {
-    super(project, configurationFactory, "Debug", "PlatformIO Debug", null);
+    super(project, configurationFactory, "Debug", () -> ClionEmbeddedPlatformioBundle.message("run.config.debug"), null);
   }
 
   @NotNull

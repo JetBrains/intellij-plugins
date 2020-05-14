@@ -27,21 +27,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.function.Supplier;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfiguration
   implements CidrExecutableDataHolder, TargetAwareRunProfile {
 
   private final String myBuildTargetName;
-  private final String mySuggestedName;
+  private final Supplier<String> mySuggestedName;
   private final String[] cliParameters;
 
 
   private volatile CPPToolchains.Toolchain myToolchain;
 
   public PlatformioBaseConfiguration(@NotNull Project project, @NotNull ConfigurationFactory configurationFactory,
-                                     @NotNull String myBuildTargetName, @NotNull String name, String @Nullable [] cliParameters) {
-    super(project, configurationFactory, name);
+                                     @NotNull String myBuildTargetName, @NotNull Supplier<String> name, String @Nullable [] cliParameters) {
+    super(project, configurationFactory, name.get());
     this.myBuildTargetName = myBuildTargetName;
     this.mySuggestedName = name;
     this.cliParameters = cliParameters;
@@ -95,7 +96,7 @@ public abstract class PlatformioBaseConfiguration extends CMakeAppRunConfigurati
 
   @Override
   public String suggestedName() {
-    return mySuggestedName;
+    return mySuggestedName.get();
   }
 
   @Nullable
