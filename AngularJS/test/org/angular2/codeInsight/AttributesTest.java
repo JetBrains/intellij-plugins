@@ -43,6 +43,7 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.*;
 
 public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
@@ -259,31 +260,25 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testOneTimeBindingAttributeResolve2JavaScript() {
-    configureWithMetadataFiles(myFixture, "button");
-    myFixture.configureByFiles("compiled_binding.after.html", "button.d.ts", "color.d.ts");
+    configureLink(myFixture, ANGULAR_MATERIAL_7_2_1);
+    myFixture.configureByFiles("compiled_binding.after.html");
     PsiElement resolve = resolveReference("col<caret>or");
     assertEquals("color.d.ts", resolve.getContainingFile().getName());
     assertInstanceOf(resolve, TypeScriptPropertySignature.class);
-    assertEquals("color: ThemePalette", resolve.getText());
+    assertEquals("/** Theme color palette for the component. */\n" +
+                 "    color: ThemePalette", resolve.getText());
   }
 
   public void testOneTimeBindingAttributeCompletion2JavaScript() {
-    configureWithMetadataFiles(myFixture, "button");
-    myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
+    configureLink(myFixture, ANGULAR_MATERIAL_7_2_1);
+    myFixture.configureByFiles("compiled_binding.html");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "color");
   }
 
-  public void testOneTimeBindingAttributeCompletion2JavaScriptPrimeButton() {
-    configureWithMetadataFiles(myFixture, "primeButton");
-    myFixture.configureByFiles("primeButton.html");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "icon", "iconPos", "label");
-  }
-
   public void testOneTimeBindingAttributeCompletion2ES6() {
-    configureWithMetadataFiles(myFixture, "button");
-    myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
+    configureLink(myFixture, ANGULAR_MATERIAL_7_2_1);
+    myFixture.configureByFiles("compiled_binding.html");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "color");
     assertDoesntContain(myFixture.getLookupElementStrings(), "tabIndex");
@@ -345,7 +340,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testForCompletion2Javascript() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("for2.html");
     int offsetBySignature = findOffsetBySignature("ngF<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
@@ -354,7 +349,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testIfCompletion4JavascriptUmd() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("if4.html");
     int offsetBySignature = findOffsetBySignature("*<caret>", myFixture.getFile());
     myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
@@ -364,20 +359,17 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testForTemplateCompletion2Javascript() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("for2Template.html");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "*ngFor");
   }
 
   public void testForOfResolve2Javascript() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("for2.html");
     PsiElement resolve = resolveReference("ngF<caret>");
-    assertEquals("common.metadata.json", resolve.getContainingFile().getName());
-    assertEquals(
-      "NgForOf <metadata template>: selector=[ngFor][ngForOf]; inputs=[ngForOf, ngForTrackBy, ngForTemplate]; outputs=[]; inOuts=[]",
-      resolve.getParent().toString());
+    assertEquals("ng_for_of.d.ts", resolve.getContainingFile().getName());
   }
 
   public void testTemplateUrl20Completion() {
@@ -410,36 +402,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("custom.html", ((PsiFile)resolve).getName());
   }
 
-  public void testTemplate20TypeScript() {
-    myFixture.configureByFiles("template.html", "package.json", "template.ts");
-    PsiElement resolve = resolveReference("*myHover<caret>List");
-    assertEquals("template.ts", resolve.getContainingFile().getName());
-    assertUnresolvedReference("myHover<caret>List");
-  }
-
-  public void testNoTemplate20TypeScript() {
-    myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts");
-    PsiElement resolve = resolveReference("myHover<caret>List");
-    assertEquals("noTemplate.ts", resolve.getContainingFile().getName());
-    assertUnresolvedReference("*myHover<caret>List");
-  }
-
-  public void testTemplate20JavaScript() {
-    configureWithMetadataFiles(myFixture, "template");
-    myFixture.configureByFiles("template.html");
-    PsiElement resolve = resolveReference("*myHover<caret>List");
-    assertEquals("template.metadata.json", resolve.getContainingFile().getName());
-    assertUnresolvedReference("myHover<caret>List");
-  }
-
-  public void testNoTemplate20JavaScript() {
-    configureWithMetadataFiles(myFixture, "noTemplate");
-    myFixture.configureByFiles("noTemplate.html");
-    PsiElement resolve = resolveReference("myHover<caret>List");
-    assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName());
-    assertUnresolvedReference("*myHover<caret>List");
-  }
-
   public void testBindingNamespace() {
     myFixture.configureByFiles("bindingNamespace.html", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
@@ -463,7 +425,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testTemplatesCompletion() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("templates_completion.html");
     myFixture.completeBasic();
     assertEquals(asList("*ngIf", "*ngSwitchCase", "*ngSwitchDefault"),
@@ -471,47 +433,25 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testTemplatesCompletion2() {
-    configureWithMetadataFiles(myFixture, "common");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0);
     myFixture.configureByFiles("templates_completion2.html");
     myFixture.completeBasic();
     assertEquals(asList("*ngComponentOutlet", "*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
                  sorted(myFixture.getLookupElementStrings()));
   }
 
-  public void testRouterLink() {
-    configureWithMetadataFiles(myFixture, "routerLink");
-    myFixture.configureByFiles("routerLink.html");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "[routerLink]", "routerLink2");
-  }
-
-  public void testComplexSelectorList() {
-    configureWithMetadataFiles(myFixture, "button");
+  public void testMaterialSelectors() {
+    configureLink(myFixture, ANGULAR_MATERIAL_7_2_1);
     myFixture.configureByFiles("material.html");
     myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "mat-icon-button");
-  }
-
-  public void testSelectorConcatenationList() {
-    configureWithMetadataFiles(myFixture, "button");
-    myFixture.configureByFiles("material.html");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "mat-raised-button");
+    assertContainsElements(myFixture.getLookupElementStrings(), "mat-icon-button", "mat-raised-button");
   }
 
   public void testComplexSelectorList2() {
-    configureWithMetadataFiles(myFixture, "ionic");
+    configureLink(myFixture, IONIC_ANGULAR_3_0_1);
     myFixture.configureByFiles("div.html");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
-  }
-
-  public void testVirtualInOuts() {
-    configureWithMetadataFiles(myFixture, "ionic");
-    myFixture.configureByFiles("div.html");
-    myFixture.type("ion-item ");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "fakeInput", "[fakeInput]", "(fakeOutput)");
   }
 
   public void testSelectorListSpaces() {
@@ -524,13 +464,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("spaces.html", "package.json", "spaces.ts");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "other-attr");
-  }
-
-  public void testSelectorListSpacesCompiled() {
-    configureWithMetadataFiles(myFixture, "flexOrder");
-    myFixture.configureByFiles("flexOrder.html");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "[fxFlexOrder]");
   }
 
   public void testId() {
@@ -730,7 +663,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testCodeCompletionWithNotSelector() {
-    configureWithMetadataFiles(myFixture, "router");
+    configureLink(myFixture, ANGULAR_ROUTER_4_0_0);
     myFixture.configureByFiles("contentAssistWithNotSelector.html");
     myFixture.completeBasic();
   }
@@ -764,12 +697,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkResultByFile("ngIfAs.after.ts");
   }
 
-  public void testNoStandardJSEvents() {
-    myFixture.configureByFiles("flexOrder.html", "package.json");
-    myFixture.completeBasic();
-    assertDoesntContain(myFixture.getLookupElementStrings(), "onclick", "onkeyup");
-  }
-
   public void testCodeCompletionItemsTypes() {
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
     myFixture.completeBasic();
@@ -789,7 +716,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMatchedDirectivesProperties() {
-    configureWithMetadataFiles(myFixture, "common", "forms");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_FORMS_4_0_0);
     myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
     myFixture.completeBasic();
     assertContainsElements(
@@ -981,7 +908,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testTypeAttrWithFormsCompletion() {
-    configureWithMetadataFiles(myFixture, "common", "forms");
+    configureLink(myFixture, ANGULAR_COMMON_4_0_0, ANGULAR_FORMS_4_0_0);
     myFixture.configureByFiles("typeAttrWithForms.html", "typeAttrWithForms.ts");
     moveToOffsetBySignature("<button <caret>>", myFixture);
     myFixture.completeBasic();
@@ -1066,7 +993,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testIonicAttributes() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
-    configureWithMetadataFiles(myFixture, "ionic4.1");
+    configureLink(myFixture, IONIC_ANGULAR_4_1_1);
     myFixture.configureByFiles("ionicAttributes.html");
     myFixture.checkHighlighting();
   }
@@ -1088,7 +1015,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testInputTypeCompletion() {
-    configureWithMetadataFiles(myFixture, "forms");
+    configureLink(myFixture, ANGULAR_FORMS_4_0_0);
     myFixture.configureByText("input-type.html", "<input type=\"<caret>\"");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(),
@@ -1129,5 +1056,4 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("pansta\n");
     myFixture.checkResult("<div (pan)=\"\" on-panstart=\"<caret>\"");
   }
-
 }

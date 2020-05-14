@@ -1,0 +1,106 @@
+MetadataFile:index.metadata.json
+  @angular/material/core <metadata node module>
+    AnimationCurves <metadata class>('')
+    AnimationDurations <metadata class>('')
+    ɵa1 <metadata function>('')
+    MatCommonModule <metadata module>: imports=[]; declarations=[]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=false
+      ___dec.exports <metadata array>
+        @angular/cdk/bidi#BidiModule <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/cdk/bidi#BidiModule <metadata reference>('')
+    mixinDisabled <metadata function>
+      #value <metadata class>('')
+    mixinColor <metadata function>
+      #value <metadata class>('')
+    mixinDisableRipple <metadata function>
+      #value <metadata class>('')
+    mixinTabIndex <metadata function>
+      #value <metadata class>('')
+    mixinErrorState <metadata function>
+      #value <metadata class>('')
+    mixinInitialized <metadata function>
+      #value <metadata class>('')
+    NativeDateModule <metadata module>: imports=[]; declarations=[]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.imports <metadata array>
+        @angular/cdk/platform#PlatformModule <metadata reference>('')
+    MatNativeDateModule <metadata module>: imports=[NativeDateModule]; declarations=[]; exports=[]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.imports <metadata array>
+        NativeDateModule <metadata reference>('')
+    MAT_DATE_LOCALE_FACTORY <metadata function>
+      #value: <metadata call>
+        #expression: @angular/core#inject <metadata reference>('')
+    MAT_DATE_LOCALE_PROVIDER <metadata object>
+      provide: MAT_DATE_LOCALE <metadata reference>('')
+      useExisting: @angular/core#LOCALE_ID <metadata reference>('')
+    DateAdapter <metadata class>('')
+    NativeDateAdapter <metadata class>
+      #ext: DateAdapter <metadata reference>('')
+    MAT_NATIVE_DATE_FORMATS <metadata object>
+      parse <metadata object>('')
+      display <metadata object>
+        dateInput <metadata object>
+          year: numeric <metadata string>('')
+          month: numeric <metadata string>('')
+          day: numeric <metadata string>('')
+        monthYearLabel <metadata object>
+          year: numeric <metadata string>('')
+          month: short <metadata string>('')
+        dateA11yLabel <metadata object>
+          year: numeric <metadata string>('')
+          month: long <metadata string>('')
+          day: numeric <metadata string>('')
+        monthYearA11yLabel <metadata object>
+          year: numeric <metadata string>('')
+          month: long <metadata string>('')
+    ShowOnDirtyErrorStateMatcher <metadata class>('')
+    ErrorStateMatcher <metadata class>('')
+    GestureConfig <metadata class>
+      #ext: @angular/platform-browser#HammerGestureConfig <metadata reference>('')
+    MatLine <metadata directive>: selector=[mat-line], [matLine]; inputs=[]; outputs=[]; inOuts=[]('')
+    MatLineSetter <metadata class>('')
+    MatLineModule <metadata module>: imports=[MatCommonModule]; declarations=[MatLine]; exports=[MatCommonModule, MatLine]; scopeFullyResolved=false; exportsFullyResolved=false
+      ___dec.declarations <metadata array>
+        MatLine <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatLine <metadata reference>('')
+        MatCommonModule <metadata reference>('')
+      ___dec.imports <metadata array>
+        MatCommonModule <metadata reference>('')
+    MatOptionModule <metadata module>: imports=[CommonModule, MatPseudoCheckboxModule, MatRippleModule]; declarations=[MatOptgroup, MatOption]; exports=[MatOptgroup, MatOption]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        MatOption <metadata reference>('')
+        MatOptgroup <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatOption <metadata reference>('')
+        MatOptgroup <metadata reference>('')
+      ___dec.imports <metadata array>
+        MatRippleModule <metadata reference>('')
+        @angular/common#CommonModule <metadata reference>('')
+        MatPseudoCheckboxModule <metadata reference>('')
+    MatOptionSelectionChange <metadata class>('')
+    MatOption <metadata component>: selector=mat-option; exportAs=matOption; inputs=[disabled, id, value]; outputs=[onSelectionChange]; inOuts=[]('')
+    MatOptgroupBase <metadata class>('')
+    _MatOptgroupMixinBase: <metadata call>
+      #expression: mixinDisabled <metadata reference>('')
+    MatOptgroup <metadata component>: selector=mat-optgroup; ngContentSelectors=[mat-option, ng-container]; exportAs=matOptgroup; inputs=[disabled, label]; outputs=[]; inOuts=[]
+      #ext: _MatOptgroupMixinBase <metadata reference>('')
+    MatRippleModule <metadata module>: imports=[MatCommonModule]; declarations=[MatRipple]; exports=[MatCommonModule, MatRipple]; scopeFullyResolved=false; exportsFullyResolved=false
+      ___dec.declarations <metadata array>
+        MatRipple <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatRipple <metadata reference>('')
+        MatCommonModule <metadata reference>('')
+      ___dec.imports <metadata array>
+        MatCommonModule <metadata reference>('')
+        @angular/cdk/platform#PlatformModule <metadata reference>('')
+    MatRipple <metadata directive>: selector=[mat-ripple], [matRipple]; exportAs=matRipple; inputs=[matRippleColor, matRippleCentered, matRippleDisabled, matRippleTrigger, matRippleUnbounded, matRippleRadius, matRippleAnimation]; outputs=[]; inOuts=[]('')
+    RippleState <metadata object>('')
+    RippleRef <metadata class>('')
+    defaultRippleAnimationConfig <metadata object>('')
+    RippleRenderer <metadata class>('')
+    MatPseudoCheckboxModule <metadata module>: imports=[]; declarations=[MatPseudoCheckbox]; exports=[MatPseudoCheckbox]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        MatPseudoCheckbox <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatPseudoCheckbox <metadata reference>('')
+    MatPseudoCheckbox <metadata component>: selector=mat-pseudo-checkbox; inputs=[disabled, state]; outputs=[]; inOuts=[]('')

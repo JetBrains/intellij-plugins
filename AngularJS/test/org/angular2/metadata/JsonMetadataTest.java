@@ -8,10 +8,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -23,7 +20,6 @@ import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
-import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,12 +27,13 @@ import java.io.File;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
 import static org.angular2.modules.Angular2TestModule.*;
+import static org.angularjs.AngularTestUtil.*;
 
 public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + "/json";
+    return getBaseTestDataPath(getClass()) + "/json";
   }
 
   public void testMetadataJsonFileTypeBinary() {
@@ -62,7 +59,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMetadataStubBuildingWithResolution() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
+    configureWithMetadataFiles("ant-design-icons-angular");
     myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.d.ts",
                                "nz-col.component.d.ts", "nz-form-control.component.d.ts");
     testMetadataStubBuilding("ng-zorro-antd.metadata.json", "ng-zorro-antd.metadata.resolved.psi.txt");
@@ -112,7 +109,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testExtendsObfuscatedName() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
+    configureWithMetadataFiles("ng-zorro-antd");
     myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 AngularUndefinedBindingInspection.class);
@@ -120,7 +117,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testInterModuleExtends() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
+    configureWithMetadataFiles("ng-zorro-antd", "ant-design-icons-angular");
     myFixture.configureByFiles("inter_module_props.html", "inter_module_props.ts", "extends-comp.ts", "nz-icon.directive.d.ts",
                                "icon.directive.d.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
@@ -146,7 +143,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
                                 AngularUndefinedTagInspection.class);
     myFixture.configureByFile("material/module.ts");
     myFixture.checkHighlighting();
-    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
+    moveToOffsetBySignature("mat-form<caret>-field", myFixture);
     assertEquals("form-field.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
@@ -188,7 +185,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
                                 HtmlUnknownAttributeInspection.class);
     myFixture.configureFromTempProjectFile("tab1.page.html");
     myFixture.checkHighlighting();
-    AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
+    moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
     assertEquals("proxies.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
@@ -221,6 +218,71 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("bar1.metadata.json", ((Angular2MetadataReference)nodeModule.findMember("Test4")).resolve().getContainingFile().getName());
   }
 
+  public void testRouterLink() {
+    configureWithMetadataFiles("routerLink");
+    myFixture.configureByFiles("routerLink.html");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "[routerLink]", "routerLink2");
+  }
+
+  public void testOneTimeBindingAttributeCompletion2JavaScriptPrimeButton() {
+    configureWithMetadataFiles("primeButton");
+    myFixture.configureByFiles("primeButton.html");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "icon", "iconPos", "label");
+  }
+
+  public void testTemplate20Metadata() {
+    configureWithMetadataFiles("template");
+    myFixture.configureByFiles("template.html");
+    PsiElement resolve = resolveReference("*myHover<caret>List", myFixture);
+    assertEquals("template.metadata.json", resolve.getContainingFile().getName());
+    assertUnresolvedReference("myHover<caret>List", myFixture);
+  }
+
+  public void testNoTemplate20Metadata() {
+    configureWithMetadataFiles("noTemplate");
+    myFixture.configureByFiles("noTemplate.html");
+    PsiElement resolve = resolveReference("myHover<caret>List", myFixture);
+    assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName());
+    assertUnresolvedReference("*myHover<caret>List", myFixture);
+  }
+
+  public void testTemplate20NoMetadata() {
+    myFixture.configureByFiles("template.html", "package.json", "template.ts");
+    PsiElement resolve = resolveReference("*myHover<caret>List", myFixture);
+    assertEquals("template.ts", resolve.getContainingFile().getName());
+    assertUnresolvedReference("myHover<caret>List", myFixture);
+  }
+
+  public void testNoTemplate20NoMetadata() {
+    myFixture.configureByFiles("noTemplate.html", "package.json", "noTemplate.ts");
+    PsiElement resolve = resolveReference("myHover<caret>List", myFixture);
+    assertEquals("noTemplate.ts", resolve.getContainingFile().getName());
+    assertUnresolvedReference("*myHover<caret>List", myFixture);
+  }
+
+  public void testSelectorListSpacesCompiled() {
+    configureWithMetadataFiles("flexOrder");
+    myFixture.configureByFiles("flexOrder.html");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "[fxFlexOrder]");
+  }
+
+  public void testNoStandardJSEventsUnknownTag() {
+    myFixture.configureByFiles("flexOrder.html", "package.json");
+    myFixture.completeBasic();
+    assertDoesntContain(myFixture.getLookupElementStrings(), "onclick", "onkeyup");
+  }
+
+  public void testVirtualInOuts() {
+    configureWithMetadataFiles("ionic");
+    myFixture.configureByFiles("div.html");
+    myFixture.type("ion-item ");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "fakeInput", "[fakeInput]", "(fakeOutput)");
+  }
+
   public void testTranslocoDirective() {
     myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
     myFixture.copyDirectoryToProject("transloco", ".");
@@ -239,5 +301,13 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
     assert file instanceof MetadataFileImpl;
     String result = DebugUtil.psiToString(file, false, false);
     UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), psiOutput).toString(), result);
+  }
+
+  private void configureWithMetadataFiles(String @NotNull ... names) {
+    myFixture.configureByFiles("package.json");
+    for (String name : names) {
+      myFixture.configureByFiles(name + ".d.ts");
+      myFixture.copyFileToProject(name + ".metadata.json");
+    }
   }
 }
