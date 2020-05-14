@@ -29,7 +29,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "\n" +
            "<p>   doc4</p>\n" +
            "\n" +
-           "<pre><code>    code</code></pre>",
+           "<pre><code>code</code></pre>",
 
            "/** 1 */\n" +
            "/**\n" +
@@ -279,7 +279,7 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "\n" +
            "<p>   doc4</p>\n" +
            "\n" +
-           "<pre><code>    code</code></pre>",
+           "<pre><code>code</code></pre>",
 
            "class A{\n" +
            "/** 1 */\n" +

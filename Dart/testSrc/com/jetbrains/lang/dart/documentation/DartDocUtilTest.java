@@ -238,14 +238,14 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
 
   public void testClassMultilineDoc1() {
     doTest("<code><b>test.dart</b><br>class <b>A</b><br><br></code>\n" +
-           "<pre><code>     doc1</code></pre>\n" +
+           "<pre><code> doc1</code></pre>\n" +
            "\n" +
            "<p>doc2\n" +
            " doc3</p>\n" +
            "\n" +
            "<p>   doc4</p>\n" +
            "\n" +
-           "<pre><code>    code</code></pre>",
+           "<pre><code>code</code></pre>",
 
            "/** 1 */\n" +
            "/**\n" +
@@ -311,14 +311,14 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
   public void testMethodMultilineDoc() {
     doTest(
       "<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
-      "<pre><code>     doc1</code></pre>\n" +
+      "<pre><code> doc1</code></pre>\n" +
       "\n" +
       "<p>doc2\n" +
       " doc3</p>\n" +
       "\n" +
       "<p>   doc4</p>\n" +
       "\n" +
-      "<pre><code>    code</code></pre>",
+      "<pre><code>code</code></pre>",
 
       "class A{\n" +
       "/** 1 */\n" +
@@ -340,7 +340,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>  doc1  </p>\n" +
            "\n" +
-           "<pre><code>    doc2   </code></pre>",
+           "<pre><code>doc2   </code></pre>",
 
            "class A{\n" +
            "// not doc \n" +
@@ -371,7 +371,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
            "<p>   text</p>\n" +
            "\n" +
-           "<pre><code>    code block</code></pre>\n" +
+           "<pre><code>code block</code></pre>\n" +
            "\n" +
            "<pre><code>\n" +
            " code block too\n" +
@@ -379,8 +379,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "\n" +
            "<p>simple text</p>\n" +
            "\n" +
-           "<pre><code>    $ code\n" +
-           "    $ code continues</code></pre>\n" +
+           "<pre><code>$ code\n" +
+           "$ code continues</code></pre>\n" +
            "\n" +
            "<p>code done</p>",
            "///    text\n" +
@@ -399,7 +399,7 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
     doTest("<code><b>test.dart</b><br><b>foo</b>() " + RIGHT_ARROW + " dynamic<br><br></code>\n" +
            "<p>   text <code>one</code> <a href=\"www.example.com\">two</a></p>\n" +
            "\n" +
-           "<pre><code>    code block [three]</code></pre>\n" +
+           "<pre><code>code block [three]</code></pre>\n" +
            "\n" +
            "<pre><code>\n" +
            " code block too [four]\n" +
@@ -407,8 +407,8 @@ public class DartDocUtilTest extends DartCodeInsightFixtureTestCase {
            "\n" +
            "<p>simple text <code>five</code> <a href=\"www.example.com\">six</a></p>\n" +
            "\n" +
-           "<pre><code>    $ code [seven]\n" +
-           "    $ code continues [eight] </code></pre>\n" +
+           "<pre><code>$ code [seven]\n" +
+           "$ code continues [eight] </code></pre>\n" +
            "\n" +
            "<p>code done <code></code> <code>nine</code></p>",
            "///    text [one] [two](www.example.com)\n" +

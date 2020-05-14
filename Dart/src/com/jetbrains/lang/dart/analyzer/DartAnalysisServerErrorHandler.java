@@ -2,7 +2,7 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.*;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
@@ -103,7 +103,7 @@ public class DartAnalysisServerErrorHandler {
 
     // version info
     final ApplicationInfo platform = ApplicationInfo.getInstance();
-    final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId("Dart"));
+    final IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.findId("Dart"));
 
     text.println("## Version information");
     text.println("");
