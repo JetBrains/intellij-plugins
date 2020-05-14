@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Input} from '@angular/core';
-import {NgModel} from './forms';
-
+import {NgModel} from '@angular/forms';
 
 export declare type MyType = 'off' | 'polite' | 'assertive';
 

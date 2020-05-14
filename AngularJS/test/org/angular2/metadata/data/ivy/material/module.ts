@@ -6,7 +6,7 @@ import {MatFormFieldModule, MatInputModule, MatTabsModule} from "@angular/materi
 @Component({
   template:`
     <mat-tab-group [selectedIndex]="selected.value"
-                   (selectedIndexChange)="selected.<weak_warning descr="Unresolved function or method setValue()">setValue</weak_warning>($event)"
+                   (selectedIndexChange)="selected.<weak_warning descr="Argument types do not match parameters">setValue</weak_warning>($event)"
                    <weak_warning descr="Property bar is not provided by any applicable directives nor by mat-tab-group element">[bar]</weak_warning>="12"
     ></mat-tab-group>
     <mat-form-field></mat-form-field>

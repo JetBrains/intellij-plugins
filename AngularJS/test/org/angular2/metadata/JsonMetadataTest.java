@@ -30,6 +30,7 @@ import java.io.File;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
+import static org.angular2.modules.Angular2TestModule.*;
 
 public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -140,10 +141,10 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testMaterialMetadataResolution() {
     //Test component matching and indirect node module indexing
-    myFixture.copyDirectoryToProject("material", ".");
+    configureCopy(myFixture, ANGULAR_MATERIAL_7_2_1, ANGULAR_COMMON_4_0_0);
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
                                 AngularUndefinedTagInspection.class);
-    myFixture.configureFromTempProjectFile("module.ts");
+    myFixture.configureByFile("material/module.ts");
     myFixture.checkHighlighting();
     AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
     assertEquals("form-field.d.ts",
@@ -151,7 +152,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMaterialMetadataStubGeneration() {
-    myFixture.copyDirectoryToProject("material", ".");
+    configureCopy(myFixture, ANGULAR_MATERIAL_7_2_1, ANGULAR_COMMON_4_0_0);
     VirtualFile materialDir = myFixture.getTempDirFixture().getFile("node_modules/@angular/material");
     String pathPrefix = materialDir.getPath();
     PsiDirectory material = myFixture.getPsiManager().findDirectory(materialDir);
@@ -178,6 +179,7 @@ public class JsonMetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testIonicMetadataResolution() {
+    configureCopy(myFixture, IONIC_ANGULAR_4_1_1);
     myFixture.copyDirectoryToProject("ionic", ".");
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
                                 AngularUndefinedTagInspection.class,

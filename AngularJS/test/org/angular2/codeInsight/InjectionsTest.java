@@ -43,6 +43,7 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.prepend;
 import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
+import static org.angular2.modules.Angular2TestModule.*;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
 
 public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
@@ -205,6 +206,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testAngularCliLibrary() {
     myFixture.copyDirectoryToProject("angular-cli-lib", ".");
 
+    configureCopy(myFixture, ANGULAR_L10N_4_2_0);
+
     // Add "dist" folder to excludes
     ModuleRootModificationUtil.updateModel(getModule(), model -> {
       ExcludeFolder folder = model.getContentEntries()[0].addExcludeFolder(
@@ -268,8 +271,8 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testCompletionOnTemplateReferenceVariable() {
-    myFixture.copyDirectoryToProject("node_modules", "./node_modules");
-    myFixture.configureByFiles("ref-var.html", "ref-var.ts", "package.json");
+    configureCopy(myFixture, ANGULAR_CORE_4_0_0);
+    myFixture.configureByFiles("ref-var.html", "ref-var.ts");
     List<String> defaultProps = asList("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
                                        "toLocaleString", "toString", "valueOf");
     for (Pair<String, List<String>> check : asList(
