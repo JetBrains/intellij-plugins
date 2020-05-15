@@ -8,25 +8,15 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.LearnBundle
-import training.learn.NewLearnProjectUtil
+import training.util.findLanguageSupport
 
 class LearnProjectFileEditorListener(project: Project) : FileEditorManagerListener {
   private val langSupport: LangSupport?
   init {
     langSupport = findLanguageSupport(project)
-  }
-
-  private fun findLanguageSupport(project: Project): LangSupport? {
-    val langSupport = LangManager.getInstance().getLangSupport() ?: return null
-    if (FileUtil.pathsEqual(project.basePath, NewLearnProjectUtil.projectFilePath(langSupport))) {
-      return langSupport
-    }
-    return null
   }
 
   override fun fileOpened(source: FileEditorManager, file: VirtualFile) {

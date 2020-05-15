@@ -7,13 +7,16 @@ import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
 import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
+import training.learn.NewLearnProjectUtil
 import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonStateManager
 import training.ui.UiManager
@@ -96,4 +99,12 @@ fun resetPrimaryLanguage(activeLangSupport: LangSupport): Boolean {
     return true
   }
   return false
+}
+
+fun findLanguageSupport(project: Project): LangSupport? {
+  val langSupport = LangManager.getInstance().getLangSupport() ?: return null
+  if (FileUtil.pathsEqual(project.basePath, NewLearnProjectUtil.projectFilePath(langSupport))) {
+    return langSupport
+  }
+  return null
 }

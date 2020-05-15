@@ -7,9 +7,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactoryEx
+import com.intellij.openapi.wm.ex.ToolWindowEx
 import training.lang.LangManager
+import training.util.findLanguageSupport
 
 internal class LearnToolWindowFactory : ToolWindowFactoryEx, DumbAware {
+  override fun init(toolWindow: ToolWindow) {
+    super.init(toolWindow)
+    val project = (toolWindow as? ToolWindowEx)?.project ?: return
+    toolWindow.isShowStripeButton = findLanguageSupport(project) != null
+  }
+
   override fun getAnchor(): ToolWindowAnchor? {
     // calling LangManager can slow down start-up - measure it
     runActivity("learn tool window anchor setting") {
