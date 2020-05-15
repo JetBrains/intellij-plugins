@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.easymock.EasyMock.*;
+import static org.testng.Assert.*;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -40,9 +41,9 @@ public class PresentationLibraryElementTest {
 
     @BeforeMethod
     public void initMocks() {
-        File builderClassFileMock = org.easymock.EasyMock.createMock(File.class);
-        org.easymock.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
-        org.easymock.EasyMock.replay(builderClassFileMock);
+        File builderClassFileMock = createMock(File.class);
+        expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
+        replay(builderClassFileMock);
 
         IResource builderClassResourceMock = createMock(IResource.class);
         expect(builderClassResourceMock.getFile()).andReturn(builderClassFileMock).anyTimes();
@@ -67,19 +68,19 @@ public class PresentationLibraryElementTest {
         _classInSubComponentsPackageMock = new JavaClassTypeMock("com.app.components.folder1.SomeClass").setPublic(true).setDefaultConstructor(true).setFile(builderClassResourceMock);
 
         _resourceFinderMock = createMock(IResourceFinder.class);
-        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
+        _tapestryProjectMock = createMock(TapestryProject.class);
+        expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        expect(_tapestryProjectMock.getResourceFinder()).andReturn(_resourceFinderMock).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
-        org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
+        _libraryMock = createMock(TapestryLibrary.class);
+        expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
+        expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
-        _libraryNoRootPackageMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
-        org.easymock.EasyMock.expect(_libraryNoRootPackageMock.getBasePackage()).andReturn(null).anyTimes();
-        org.easymock.EasyMock.expect(_libraryNoRootPackageMock.getId()).andReturn("id").anyTimes();
+        _libraryNoRootPackageMock = createMock(TapestryLibrary.class);
+        expect(_libraryNoRootPackageMock.getBasePackage()).andReturn(null).anyTimes();
+        expect(_libraryNoRootPackageMock.getId()).andReturn("id").anyTimes();
 
-        org.easymock.EasyMock.replay(_tapestryProjectMock, _libraryMock, _libraryNoRootPackageMock);
+        replay(_tapestryProjectMock, _libraryMock, _libraryNoRootPackageMock);
     }
 
     @Test
@@ -94,7 +95,7 @@ public class PresentationLibraryElementTest {
             }
         }
 
-        assert false;
+        fail();
     }
 
     @Test
@@ -105,7 +106,7 @@ public class PresentationLibraryElementTest {
             return;
         }
 
-        assert false;
+        fail();
     }
 
     @Test
@@ -116,7 +117,7 @@ public class PresentationLibraryElementTest {
             return;
         }
 
-        assert false;
+        fail();
     }
 
     @Test
@@ -127,7 +128,7 @@ public class PresentationLibraryElementTest {
             return;
         }
 
-        assert false;
+        fail();
     }
 
     @Test
@@ -141,23 +142,30 @@ public class PresentationLibraryElementTest {
 
     @Test
     public void getElementNameFromClass() {
-        assert new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getName().equals("SomeClass");
+        assertEquals(new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getName(),
+                     "SomeClass");
 
-        assert new TestableParameterReceiverElement(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getName().equals("SomeClass");
+        assertEquals(new TestableParameterReceiverElement(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getName(),
+                     "SomeClass");
 
-        assert new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getName().equals("folder1/SomeClass");
+        assertEquals(new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getName(),
+                     "folder1/SomeClass");
     }
 
     @Test
     public void getParameters_no_parameters() {
-        assert new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assertEquals(
+          new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters()
+            .size(), 0);
 
         JavaFieldMock publicField = new JavaFieldMock("publicField", false).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
         JavaFieldMock privateField = new JavaFieldMock("privateField", true);
 
         _classInSubComponentsPackageMock.addField(publicField).addField(privateField);
 
-        assert new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assertEquals(
+          new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size(),
+          0);
     }
 
     @Test
@@ -166,35 +174,43 @@ public class PresentationLibraryElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 1;
+        assertEquals(
+          new TestableParameterReceiverElement(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size(),
+          1);
     }
 
     @Test
     public void getElementClass() {
-        assert new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getElementClass().getFullyQualifiedName()
-                .equals("com.app.components.SomeClass");
+        assertEquals(
+          new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getElementClass()
+            .getFullyQualifiedName(), "com.app.components.SomeClass");
     }
 
     @Test
     public void getDocumentation() {
         _classInRootComponentsPackageMock.setDocumentation("docs");
 
-        assert new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getDescription().equals("docs");
+        assertEquals(
+          new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getDescription(),
+          "docs");
     }
 
     @Test
     public void createElementInstance_component() {
-        assert PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock) instanceof TapestryComponent;
+        assertTrue(PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootComponentsPackageMock,
+                                                                    _tapestryProjectMock) instanceof TapestryComponent);
     }
 
     @Test
     public void createElementInstance_page() {
-        assert PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock) instanceof Page;
+        assertTrue(PresentationLibraryElement
+                     .createElementInstance(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock) instanceof Page);
     }
 
     @Test
     public void createElementInstance_mixin() {
-        assert PresentationLibraryElement.createElementInstance(_libraryMock, _classInRootMixinsPackageMock, _tapestryProjectMock) instanceof Mixin;
+        assertTrue(PresentationLibraryElement
+                     .createElementInstance(_libraryMock, _classInRootMixinsPackageMock, _tapestryProjectMock) instanceof Mixin);
     }
 
     @Test
@@ -204,11 +220,11 @@ public class PresentationLibraryElementTest {
         IResource resource3 = new TestableResource("web.xml", "idontexist1.xml");
         IResource resource4 = new TestableResource("web.xml", "idontexist2.xml");
 
-        assert PresentationLibraryElement.checkAllValidResources(new IResource[]{resource1, resource2});
+        assertTrue(PresentationLibraryElement.checkAllValidResources(new IResource[]{resource1, resource2}));
 
-        assert !PresentationLibraryElement.checkAllValidResources(new IResource[]{resource3, resource4});
+        assertFalse(PresentationLibraryElement.checkAllValidResources(new IResource[]{resource3, resource4}));
 
-        assert !PresentationLibraryElement.checkAllValidResources(new IResource[]{resource1, resource2, resource3});
+        assertFalse(PresentationLibraryElement.checkAllValidResources(new IResource[]{resource1, resource2, resource3}));
     }
 
     @Test
@@ -225,15 +241,16 @@ public class PresentationLibraryElementTest {
 
         replay(_resourceFinderMock);
 
-        assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getMessageCatalog().length == 2;
+        assertEquals(new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getMessageCatalog().length, 2);
 
         resources1.clear();
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getMessageCatalog().length == 2;
+        assertEquals(new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getMessageCatalog().length,
+                     2);
 
         resources1.clear();
 
-        assert new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getMessageCatalog().length == 0;
+        assertEquals(new Page(_libraryMock, _classInRootPagesPackageMock, _tapestryProjectMock).getMessageCatalog().length, 0);
     }
 }
 

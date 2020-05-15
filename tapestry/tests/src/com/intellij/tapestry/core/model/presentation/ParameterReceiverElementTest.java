@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 
 import static org.easymock.EasyMock.*;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
@@ -25,9 +26,9 @@ public class ParameterReceiverElementTest {
 
     @BeforeMethod
     public void initMocks() {
-        File builderClassFileMock = org.easymock.EasyMock.createMock(File.class);
-        org.easymock.EasyMock.expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
-        org.easymock.EasyMock.replay(builderClassFileMock);
+        File builderClassFileMock = createMock(File.class);
+        expect(builderClassFileMock.lastModified()).andReturn(Long.MAX_VALUE).anyTimes();
+        replay(builderClassFileMock);
 
         IResource builderClassResourceMock = createMock(IResource.class);
         expect(builderClassResourceMock.getFile()).andReturn(builderClassFileMock).anyTimes();
@@ -37,28 +38,29 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock = new JavaClassTypeMock("com.app.components.folder1.SomeClass").setPublic(true).setDefaultConstructor(true).setFile(builderClassResourceMock);
 
-        _tapestryProjectMock = org.easymock.EasyMock.createMock(TapestryProject.class);
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_tapestryProjectMock.getResourceFinder()).andReturn(null).anyTimes();
+        _tapestryProjectMock = createMock(TapestryProject.class);
+        expect(_tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
+        expect(_tapestryProjectMock.getResourceFinder()).andReturn(null).anyTimes();
 
-        _libraryMock = org.easymock.EasyMock.createMock(TapestryLibrary.class);
-        org.easymock.EasyMock.expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
-        org.easymock.EasyMock.expect(_libraryMock.getId()).andReturn("application").anyTimes();
+        _libraryMock = createMock(TapestryLibrary.class);
+        expect(_libraryMock.getBasePackage()).andReturn("com.app").anyTimes();
+        expect(_libraryMock.getId()).andReturn("application").anyTimes();
 
 
-        org.easymock.EasyMock.replay(_tapestryProjectMock, _libraryMock);
+        replay(_tapestryProjectMock, _libraryMock);
     }
 
     @Test
     public void getParameters_no_parameters() {
-        assert new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assertEquals(new TapestryComponent(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size(),
+                     0);
 
         JavaFieldMock publicField = new JavaFieldMock("publicField", false).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
         JavaFieldMock privateField = new JavaFieldMock("privateField", true);
 
         _classInSubComponentsPackageMock.addField(publicField).addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
+        assertEquals(new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size(), 0);
     }
 
     @Test
@@ -67,7 +69,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 1;
+        assertEquals(new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getParameters().size(), 1);
     }
 
     @Test
@@ -76,7 +78,8 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 0;
+        assertEquals(
+          new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size(), 0);
     }
 
     @Test
@@ -86,7 +89,8 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size() == 1;
+        assertEquals(
+          new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getRequiredParameters().size(), 1);
     }
 
     @Test
@@ -95,7 +99,8 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 1;
+        assertEquals(
+          new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size(), 1);
     }
 
     @Test
@@ -105,6 +110,7 @@ public class ParameterReceiverElementTest {
 
         _classInSubComponentsPackageMock.addField(privateField);
 
-        assert new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size() == 0;
+        assertEquals(
+          new TapestryComponent(_libraryMock, _classInSubComponentsPackageMock, _tapestryProjectMock).getOptionalParameters().size(), 0);
     }
 }
