@@ -16,7 +16,7 @@ package com.intellij.struts2.facet;
 
 import com.intellij.facet.Facet;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidatorDescription;
-import com.intellij.javaee.utils.artifact.JavaeeArtifactUtil;
+import com.intellij.javaee.artifact.JavaeeArtifactUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
