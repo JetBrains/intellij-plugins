@@ -10,12 +10,12 @@ import com.intellij.lang.javascript.psi.impl.JSStatementImpl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
-import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindingKey;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.types.Angular2TemplateBindingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +67,7 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     if (!keyIsVar()) {
       Angular2TemplateBindings bindings = tryCast(getParent(), Angular2TemplateBindings.class);
       if (bindings != null) {
-        return Angular2TypeEvaluator.resolvePropertyType(bindings, myKey);
+        return new Angular2TemplateBindingType(bindings, myKey);
       }
     }
     return null;

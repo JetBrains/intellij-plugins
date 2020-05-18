@@ -37,13 +37,13 @@ import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2LibrariesHacks;
-import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
 import org.angular2.entities.*;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.angular2.lang.types.Angular2TypeUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -435,7 +435,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       }
       else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
                && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
-        type = Angular2TypeEvaluator.getEventVariableType(type);
+        type = Angular2TypeUtils.getEventVariableType(type);
         if (type != null) {
           return type.getTypeText();
         }

@@ -13,13 +13,13 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ArrayUtil;
-import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.types.Angular2PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public class AngularInvalidExpressionResultTypeInspection extends LocalInspectio
       @Override
       public void visitAngular2Binding(Angular2Binding binding) {
         validateBinding(binding,
-                        (b, attribute) -> pair(b.getExpression(), Angular2TypeEvaluator.resolvePropertyType(attribute)),
+                        (b, attribute) -> pair(b.getExpression(), new Angular2PropertyBindingType(attribute)),
                         Angular2AttributeType.PROPERTY_BINDING,
                         Angular2AttributeType.BANANA_BOX_BINDING);
       }

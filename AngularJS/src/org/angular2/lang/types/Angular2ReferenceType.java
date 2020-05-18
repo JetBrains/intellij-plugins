@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
@@ -19,6 +18,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
@@ -31,8 +31,6 @@ import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -41,10 +39,11 @@ import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.g
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
 
-public class Angular2ReferenceType extends Angular2HtmlAttrVariableType {
+public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
-  public static SearchScope getUseScope(Angular2HtmlAttrVariableImpl variable) {   final JSClass
-    clazz = Angular2ComponentLocator.findComponentClass(variable);
+  public static SearchScope getUseScope(Angular2HtmlAttrVariableImpl variable) {
+    final JSClass
+      clazz = Angular2ComponentLocator.findComponentClass(variable);
     LocalSearchScope localScope;
     if (clazz != null) {
       localScope = new LocalSearchScope(new PsiElement[]{clazz, variable.getContainingFile()});
@@ -56,13 +55,22 @@ public class Angular2ReferenceType extends Angular2HtmlAttrVariableType {
   }
 
   public Angular2ReferenceType(@NotNull Angular2HtmlAttrVariableImpl variable) {
-    this(JSTypeSourceFactory.createTypeSource(variable, true));
+    super(variable);
   }
 
   protected Angular2ReferenceType(@NotNull JSTypeSource source) {
     super(source);
-    assert ((Angular2HtmlAttrVariableImpl)Objects.requireNonNull(source.getSourceElement()))
-             .getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE;
+  }
+
+  @Override
+  protected void validateSourceElement(@NotNull Angular2HtmlAttrVariableImpl element) {
+    assert element.getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE;
+  }
+
+  @Override
+  protected @Nullable String getTypeOfText() {
+    return doIfNotNull(PsiTreeUtil.findFirstParent(getSourceElement(), XmlAttribute.class::isInstance),
+                       attr -> ((XmlAttribute)attr).getName());
   }
 
   @Override
@@ -71,8 +79,7 @@ public class Angular2ReferenceType extends Angular2HtmlAttrVariableType {
   }
 
   @Override
-  @Nullable
-  protected JSType resolveType() {
+  protected @Nullable JSType resolveType() {
     Angular2HtmlReference reference = getReferenceDefinitionAttribute();
     if (reference == null) {
       return null;
@@ -98,14 +105,12 @@ public class Angular2ReferenceType extends Angular2HtmlAttrVariableType {
     return null;
   }
 
-  @Nullable
-  private Angular2HtmlReference getReferenceDefinitionAttribute() {
+  private @Nullable Angular2HtmlReference getReferenceDefinitionAttribute() {
     return (Angular2HtmlReference)PsiTreeUtil.findFirstParent(
       getSourceElement(), Angular2HtmlReference.class::isInstance);
   }
 
-  @Nullable
-  private static JSType getTemplateRefType(@Nullable PsiElement scope) {
+  private static @Nullable JSType getTemplateRefType(@Nullable PsiElement scope) {
     return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
         if (!(module instanceof JSElement)) continue;
