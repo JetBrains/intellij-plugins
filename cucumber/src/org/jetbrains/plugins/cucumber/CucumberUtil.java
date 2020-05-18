@@ -219,7 +219,7 @@ public class CucumberUtil {
           while (j >= 0 && !Character.isWhitespace(result.charAt(j))) {
             j--;
           }
-          result.insert(j + 1, '(');
+          result.insert(j + 1, "(?:");
           inGroup = true;
         }
         result.append('|');
