@@ -18,7 +18,7 @@ import {mapState} from "vuex";
   },
   computed: {
     ...mapState({
-      app: "<weak_warning descr="">app</weak_warning>"
+      app: "<weak_warning descr="Cannot resolve Vuex state app">app</weak_warning>"
     })
   },
   methods: {

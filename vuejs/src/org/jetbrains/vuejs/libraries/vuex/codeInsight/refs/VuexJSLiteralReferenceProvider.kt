@@ -154,7 +154,7 @@ abstract class VuexJSLiteralReferenceProvider : PsiReferenceProvider() {
         return object : ReferenceProviderSettings {
           override val symbolAccessor = accessor
           override val baseNamespace: VuexStoreNamespace = namespace
-          override val isSoft: Boolean = true
+          override val isSoft: Boolean = accessor != null
         }
       }
 
