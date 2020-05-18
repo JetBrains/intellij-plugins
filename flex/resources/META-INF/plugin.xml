@@ -24,6 +24,8 @@
   <extensions defaultExtensionNs="com.intellij">
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
     <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
+    <lang.syntaxHighlighterFactory language="ECMA Script Level 4"
+                                   implementationClass="com.intellij.lang.actionscript.highlighting.ECMAL4SyntaxHighlighterFactory"/>
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>

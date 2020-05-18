@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.colors.page;
 
+import com.intellij.lang.actionscript.highlighting.ECMAL4Highlighter;
 import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.highlighting.ECMAL4Highlighter;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;

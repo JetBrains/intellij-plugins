@@ -6,13 +6,13 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.actionscript.highlighting.ActionScriptSemanticHighlightingUtil;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSFixFactory;
-import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.inspections.JSClosureCompilerSyntaxInspection;
@@ -1058,7 +1058,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       }
     }
 
-    JSSemanticHighlightingUtil.highlight(jsAttribute, myHolder);
+    ActionScriptSemanticHighlightingUtil.highlight(jsAttribute, myHolder);
 
     PsiReference psiReference = jsAttribute.getReference();
     if (psiReference != null && psiReference.resolve() == null) {
