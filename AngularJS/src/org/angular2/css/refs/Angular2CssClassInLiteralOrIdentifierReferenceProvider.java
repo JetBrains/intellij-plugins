@@ -30,7 +30,8 @@ public class Angular2CssClassInLiteralOrIdentifierReferenceProvider extends PsiR
       PsiElement nameSource;
       if (element instanceof JSProperty && (nameSource = ((JSProperty)element).getNameIdentifier()) != null) {
         offset = nameSource.getStartOffsetInParent();
-      } else {
+      }
+      else {
         nameSource = element;
       }
       if (nameSource.getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {

@@ -48,8 +48,7 @@ public class AngularCliUtil {
   @NonNls private static final String NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200";
 
 
-  @Nullable
-  public static VirtualFile findCliJson(@Nullable VirtualFile dir) {
+  public static @Nullable VirtualFile findCliJson(@Nullable VirtualFile dir) {
     if (dir == null || !dir.isValid()) return null;
     for (String name : ANGULAR_JSON_NAMES) {
       VirtualFile cliJson = dir.findChild(name);
@@ -60,8 +59,7 @@ public class AngularCliUtil {
     return null;
   }
 
-  @Nullable
-  public static VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
+  public static @Nullable VirtualFile findAngularCliFolder(@NotNull Project project, @Nullable VirtualFile file) {
     VirtualFile current = file;
     while (current != null) {
       if (current.isDirectory() && findCliJson(current) != null) return current;
@@ -121,8 +119,7 @@ public class AngularCliUtil {
       }));
   }
 
-  @Nullable
-  private static String getPackageJson(@NotNull VirtualFile baseDir) {
+  private static @Nullable String getPackageJson(@NotNull VirtualFile baseDir) {
     VirtualFile pkg = PackageJsonUtil.findChildPackageJsonFile(baseDir);
     if (pkg != null) {
       return pkg.getPath();
@@ -136,11 +133,10 @@ public class AngularCliUtil {
     ));
   }
 
-  @Nullable
-  private static RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
-                                                                       @NotNull String packageJsonPath,
-                                                                       @NotNull @NonNls String label,
-                                                                       @NotNull String scriptName) {
+  private static @Nullable RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
+                                                                                 @NotNull String packageJsonPath,
+                                                                                 @NotNull @NonNls String label,
+                                                                                 @NotNull String scriptName) {
     //noinspection HardCodedStringLiteral
     return createIfNoSimilar("npm", project, label, null, packageJsonPath,
                              ContainerUtil.newHashMap(pair("run-script", scriptName)));
@@ -167,13 +163,12 @@ public class AngularCliUtil {
                                               Collections.emptyMap()));
   }
 
-  @Nullable
-  private static RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
-                                                                  @NotNull Project project,
-                                                                  @NonNls @NotNull String label,
-                                                                  VirtualFile baseDir,
-                                                                  String configPath,
-                                                                  @NotNull Map<String, Object> options) {
+  private static @Nullable RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
+                                                                            @NotNull Project project,
+                                                                            @NonNls @NotNull String label,
+                                                                            VirtualFile baseDir,
+                                                                            String configPath,
+                                                                            @NotNull Map<String, Object> options) {
     return doIfNotNull(
       JSRunConfigurationBuilder.getForName(rcType, project),
       builder -> ObjectUtils.notNull(

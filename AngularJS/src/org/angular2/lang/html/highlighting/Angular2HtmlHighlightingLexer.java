@@ -76,9 +76,8 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
     };
   }
 
-  @Nullable
   @Override
-  protected Lexer createELLexer(Lexer newLexer) {
+  protected @Nullable Lexer createELLexer(Lexer newLexer) {
     return getInlineScriptHighlightingLexer();
   }
 

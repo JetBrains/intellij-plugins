@@ -16,10 +16,10 @@ import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
-import org.angular2.lang.html.stub.Angular2HtmlVariableElementType;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
+import org.angular2.lang.html.stub.Angular2HtmlStubElementTypes;
+import org.angular2.lang.html.stub.Angular2HtmlVariableElementType;
 import org.angular2.lang.types.Angular2LetType;
 import org.angular2.lang.types.Angular2ReferenceType;
 import org.jetbrains.annotations.NotNull;
@@ -37,14 +37,12 @@ public class Angular2HtmlAttrVariableImpl extends JSVariableImpl<JSVariableStub<
   }
 
   @Override
-  @NotNull
-  public Kind getKind() {
+  public @NotNull Kind getKind() {
     return ((Angular2HtmlVariableElementType)getElementType()).getKind();
   }
 
-  @Nullable
   @Override
-  public JSType calculateType() {
+  public @Nullable JSType calculateType() {
     switch (getKind()) {
       case REFERENCE:
         return new Angular2ReferenceType(this);
@@ -64,9 +62,8 @@ public class Angular2HtmlAttrVariableImpl extends JSVariableImpl<JSVariableStub<
     return true;
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     switch (getKind()) {
       case REFERENCE:
         return Angular2ReferenceType.getUseScope(this);
@@ -87,9 +84,8 @@ public class Angular2HtmlAttrVariableImpl extends JSVariableImpl<JSVariableStub<
     }
   }
 
-  @NotNull
   @Override
-  protected JSAttributeList.AccessType calcAccessType() {
+  protected @NotNull JSAttributeList.AccessType calcAccessType() {
     return JSAttributeList.AccessType.PUBLIC;
   }
 

@@ -52,17 +52,15 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2ElementType extends IElementType implements ICompositeElementType {
 
-    @NotNull
-    private final Function<Angular2ElementType, ASTNode> myClassConstructor;
+    private final @NotNull Function<Angular2ElementType, ASTNode> myClassConstructor;
 
     public Angular2ElementType(@NotNull @NonNls String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, Angular2Language.INSTANCE);
       myClassConstructor = classConstructor;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return myClassConstructor.apply(this);
     }
   }
@@ -77,11 +75,9 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2TemplateBindingType extends IElementType implements ICompositeElementType {
 
-    @NotNull
-    private final String myKey;
+    private final @NotNull String myKey;
     private final boolean myVar;
-    @Nullable
-    private final String myName;
+    private final @Nullable String myName;
 
     public Angular2TemplateBindingType(@NotNull String key, boolean isVar, @Nullable String name) {
       //noinspection HardCodedStringLiteral
@@ -91,9 +87,8 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
       myName = name;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new Angular2TemplateBindingImpl(TEMPLATE_BINDING_STATEMENT, myKey, myVar, myName);
     }
   }
@@ -101,7 +96,7 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
   class Angular2TemplateBindingsType extends IElementType implements ICompositeElementType {
 
 
-    @NotNull private final String myTemplateName;
+    private final @NotNull String myTemplateName;
 
     public Angular2TemplateBindingsType(@NotNull String templateName) {
       //noinspection HardCodedStringLiteral
@@ -109,9 +104,8 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
       myTemplateName = templateName;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return new Angular2TemplateBindingsImpl(TEMPLATE_BINDINGS_STATEMENT, myTemplateName);
     }
   }

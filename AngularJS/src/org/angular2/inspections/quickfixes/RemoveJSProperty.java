@@ -19,17 +19,13 @@ public class RemoveJSProperty implements LocalQuickFix {
     myPropertyName = name;
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.decorator.remove-property.name", myPropertyName);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.decorator.remove-property.family");
   }
 

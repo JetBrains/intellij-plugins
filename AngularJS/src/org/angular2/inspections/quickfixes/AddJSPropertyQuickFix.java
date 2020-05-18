@@ -42,17 +42,13 @@ public class AddJSPropertyQuickFix extends LocalQuickFixOnPsiElement {
     myCaretOffset = caretOffset;
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getText() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getText() {
     return Angular2Bundle.message("angular.quickfix.decorator.add-property.name", myPropertyName);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.decorator.add-property.family");
   }
 

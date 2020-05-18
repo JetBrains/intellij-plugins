@@ -11,16 +11,15 @@ import javax.swing.*;
  * @author Irina.Chernushina on 3/23/2016.
  */
 public class AngularUiRouterNode extends DiagramNodeBase<DiagramObject> {
-  @NotNull private final DiagramObject myDiagramObject;
+  private final @NotNull DiagramObject myDiagramObject;
 
   public AngularUiRouterNode(@NotNull DiagramObject diagramObject, @NotNull DiagramProvider<DiagramObject> provider) {
     super(provider);
     myDiagramObject = diagramObject;
   }
 
-  @Nullable
   @Override
-  public String getTooltip() {
+  public @Nullable String getTooltip() {
     return myDiagramObject.getName();
   }
 
@@ -29,9 +28,8 @@ public class AngularUiRouterNode extends DiagramNodeBase<DiagramObject> {
     return null;
   }
 
-  @NotNull
   @Override
-  public DiagramObject getIdentifyingElement() {
+  public @NotNull DiagramObject getIdentifyingElement() {
     return myDiagramObject;
   }
 

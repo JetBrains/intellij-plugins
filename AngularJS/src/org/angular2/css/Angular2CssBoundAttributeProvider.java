@@ -44,17 +44,15 @@ public class Angular2CssBoundAttributeProvider implements Angular2AttributesProv
     }
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     return null;
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     return Collections.emptyList();
   }
 }

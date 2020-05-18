@@ -29,7 +29,7 @@ public final class Angular2TemplateScopesResolver {
   @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
   @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
 
-  public static void resolve(final @NotNull PsiElement element, @NotNull final Processor<? super ResolveResult> processor) {
+  public static void resolve(final @NotNull PsiElement element, final @NotNull Processor<? super ResolveResult> processor) {
     PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
@@ -61,9 +61,8 @@ public final class Angular2TemplateScopesResolver {
                ));
   }
 
-  @Nullable
   @NonNls
-  public static JSType getHtmlElementClassType(@NotNull PsiElement context, @NotNull @NonNls String tagName) {
+  public static @Nullable JSType getHtmlElementClassType(@NotNull PsiElement context, @NotNull @NonNls String tagName) {
     JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(
       notNull(Angular2ComponentLocator.findComponentClass(context), context), true);
     return Optional

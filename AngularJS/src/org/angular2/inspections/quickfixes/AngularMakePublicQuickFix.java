@@ -25,10 +25,8 @@ import static com.intellij.util.ObjectUtils.notNull;
 
 public class AngularMakePublicQuickFix extends JSPublicModifierIntention implements LocalQuickFix {
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getName() {
     return getText();
   }
 
@@ -63,8 +61,7 @@ public class AngularMakePublicQuickFix extends JSPublicModifierIntention impleme
     );
   }
 
-  @Nullable
-  private PsiElement locateMemberToEdit(@NotNull PsiElement element) {
+  private @Nullable PsiElement locateMemberToEdit(@NotNull PsiElement element) {
     element = element instanceof PsiWhiteSpace
               ? element.getPrevSibling()
               : element.getParent();
@@ -93,13 +90,12 @@ public class AngularMakePublicQuickFix extends JSPublicModifierIntention impleme
     invoke(project, null, descriptor.getPsiElement());
   }
 
-  @NotNull
   @Override
-  public Priority getPriority() {
+  public @NotNull Priority getPriority() {
     return Priority.HIGH;
   }
 
-  private static boolean isAngularTemplateElement(@NotNull final PsiElement element) {
+  private static boolean isAngularTemplateElement(final @NotNull PsiElement element) {
     Language language = element.getContainingFile().getLanguage();
     return language instanceof HTMLLanguage || language instanceof Angular2Language;
   }

@@ -39,9 +39,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
 
   private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
     new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
-      @NotNull
       @Override
-      protected Map<String, EntityFactory> compute() {
+      protected @NotNull Map<String, EntityFactory> compute() {
         return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
           .put(MODULE_DEC, Angular2MetadataModuleStub::new)
           .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
@@ -111,8 +110,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     myOutputMappings = readFlag(HAS_OUTPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
   }
 
-  @Nullable
-  public String getClassName() {
+  public @Nullable String getClassName() {
     return getMemberName();
   }
 

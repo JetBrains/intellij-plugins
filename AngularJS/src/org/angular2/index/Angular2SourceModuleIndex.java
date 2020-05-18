@@ -9,9 +9,8 @@ public class Angular2SourceModuleIndex extends Angular2IndexBase<JSImplicitEleme
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angular2.source.module.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, JSImplicitElementProvider> getKey() {
+  public @NotNull StubIndexKey<String, JSImplicitElementProvider> getKey() {
     return KEY;
   }
 }

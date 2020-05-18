@@ -93,9 +93,8 @@ public class Angular2FixesFactory {
     }
   }
 
-  @NotNull
-  public static MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
-                                                                                               boolean codeCompletion) {
+  public static @NotNull MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
+                                                                                                        boolean codeCompletion) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
     if (scope.getModule() == null || !scope.isInSource(scope.getModule())) {
       return MultiMap.empty();
@@ -236,8 +235,7 @@ public class Angular2FixesFactory {
     });
   }
 
-  @NotNull
-  private static Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
+  private static @NotNull Supplier<List<? extends Angular2Declaration>> createSecondaryProvider(@NotNull Angular2TemplateBindings bindings) {
     return () -> Optional.of(notNull(InjectedLanguageManager.getInstance(bindings.getProject()).getInjectionHost(bindings), bindings))
       .map(element -> PsiTreeUtil.getParentOfType(element, XmlAttribute.class))
       .map(XmlAttribute::getDescriptor)
@@ -286,7 +284,7 @@ public class Angular2FixesFactory {
 
     PsiElementProcessor<JSElement> processor = new PsiElementProcessor<JSElement>() {
       @Override
-      public boolean execute(@NotNull final JSElement element) {
+      public boolean execute(final @NotNull JSElement element) {
         Optional.ofNullable(elementMap.get(element))
           .map(actionFactory)
           .ifPresent(QuestionAction::execute);

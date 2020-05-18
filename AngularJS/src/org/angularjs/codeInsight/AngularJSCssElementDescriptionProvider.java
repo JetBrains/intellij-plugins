@@ -32,7 +32,7 @@ public class AngularJSCssElementDescriptionProvider extends CssElementDescriptor
   }
 
   @Override
-  public boolean isPossibleSelector(@NotNull final String selector, @NotNull PsiElement context) {
+  public boolean isPossibleSelector(final @NotNull String selector, @NotNull PsiElement context) {
     return DirectiveUtil.getTagDirective(DirectiveUtil.normalizeAttributeName(selector), context.getProject()) != null;
   }
 

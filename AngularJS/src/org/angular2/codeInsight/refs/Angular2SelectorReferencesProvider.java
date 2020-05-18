@@ -68,8 +68,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     return result.toArray(PsiReference.EMPTY_ARRAY);
   }
 
-  @Nullable
-  private static XmlNSDescriptorEx getNamespaceDescriptor(@NotNull PsiFile baseFile) {
+  private static @Nullable XmlNSDescriptorEx getNamespaceDescriptor(@NotNull PsiFile baseFile) {
     return CachedValuesManager.getCachedValue(baseFile, () -> {
       String htmlNS = ExternalResourceManagerEx.getInstanceEx().getDefaultHtmlDoctype(baseFile.getProject());
       if (htmlNS.isEmpty()) {
@@ -86,8 +85,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
     });
   }
 
-  @Nullable
-  public static XmlElementDescriptor getElementDescriptor(@NotNull String name, @NotNull PsiFile baseFile) {
+  public static @Nullable XmlElementDescriptor getElementDescriptor(@NotNull String name, @NotNull PsiFile baseFile) {
     XmlNSDescriptorEx descriptorEx = getNamespaceDescriptor(baseFile);
     return descriptorEx != null ? descriptorEx.getElementDescriptor(name, XmlUtil.XHTML_URI) : null;
   }
@@ -101,9 +99,8 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
       mySelectorPsiElement = element;
     }
 
-    @Nullable
     @Override
-    public PsiElement resolve() {
+    public @Nullable PsiElement resolve() {
       XmlElementDescriptor descriptor = getElementDescriptor(mySelectorPsiElement.getName(), getElement().getContainingFile());
       return descriptor != null ? descriptor.getDeclaration() : mySelectorPsiElement;
     }

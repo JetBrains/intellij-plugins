@@ -36,8 +36,7 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   }
 
   @Override
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
@@ -51,9 +50,8 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return myParent.getValue().getTextOffset() + myRange.getStartOffset();
   }
 
-  @Nullable
   @Override
-  public TextRange getTextRange() {
+  public @Nullable TextRange getTextRange() {
     int startOffset = myParent.getValue().getTextOffset() + myRange.getStartOffset();
     return new TextRange(startOffset, startOffset + myName.length());
   }
@@ -63,15 +61,13 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return myName.length();
   }
 
-  @Nullable
   @Override
-  public String getText() {
+  public @Nullable String getText() {
     return myName;
   }
 
-  @NotNull
   @Override
-  public TextRange getTextRangeInParent() {
+  public @NotNull TextRange getTextRangeInParent() {
     return myRange;
   }
 
@@ -90,24 +86,21 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
     return getName();
   }
 
-  @Nullable
   @Override
-  public String getLocationString() {
+  public @Nullable String getLocationString() {
     PsiElement parent = myParent.getValue();
     TypeScriptClass clazz = getClassForDecoratorElement(parent);
     return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
                          : parent.getContainingFile().getName() + ":" + getTextOffset();
   }
 
-  @NotNull
   @Override
-  public SearchScope getUseScope() {
+  public @NotNull SearchScope getUseScope() {
     return GlobalSearchScope.projectScope(getProject());
   }
 
-  @Nullable
   @Override
-  public Icon getIcon(boolean open) {
+  public @Nullable Icon getIcon(boolean open) {
     return isElementSelector() ? AllIcons.Nodes.Tag : AllIcons.Nodes.ObjectTypeAttribute;
   }
 

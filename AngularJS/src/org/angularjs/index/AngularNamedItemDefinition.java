@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Irina.Chernushina on 2/11/2016.
  */
 public class AngularNamedItemDefinition {
-  @Nullable private final String myName;
+  private final @Nullable String myName;
   private final long myStartOffset;
 
   public AngularNamedItemDefinition(@Nullable String name, long startOffset) {
@@ -15,8 +15,7 @@ public class AngularNamedItemDefinition {
     myStartOffset = startOffset;
   }
 
-  @Nullable
-  public String getName() {
+  public @Nullable String getName() {
     return myName;
   }
 

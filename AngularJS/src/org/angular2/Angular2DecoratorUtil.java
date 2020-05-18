@@ -82,8 +82,7 @@ public class Angular2DecoratorUtil {
   }
 
   @StubSafe
-  @Nullable
-  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, String @NotNull ... names) {
+  public static @Nullable ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, String @NotNull ... names) {
     JSAttributeList list = attributeListOwner.getAttributeList();
     if (list == null || names.length == 0) {
       return null;
@@ -112,14 +111,12 @@ public class Angular2DecoratorUtil {
   }
 
   @StubUnsafe
-  @Nullable
-  public static String getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
+  public static @Nullable String getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
     return getExpressionStringValue(doIfNotNull(getProperty(decorator, name), JSProperty::getValue));
   }
 
   @StubUnsafe
-  @Nullable
-  public static String getExpressionStringValue(@Nullable JSExpression value) {
+  public static @Nullable String getExpressionStringValue(@Nullable JSExpression value) {
     if (value instanceof JSBinaryExpression) {
       return JSInjectionUtil.getConcatenationText(value);
     }
@@ -130,8 +127,7 @@ public class Angular2DecoratorUtil {
   }
 
   @StubSafe
-  @Nullable
-  public static JSObjectLiteralExpression getObjectLiteralInitializer(@Nullable ES6Decorator decorator) {
+  public static @Nullable JSObjectLiteralExpression getObjectLiteralInitializer(@Nullable ES6Decorator decorator) {
     for (PsiElement child : getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
       if (child instanceof JSCallExpression) {
         StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement)child).getStub() : null;
@@ -157,8 +153,7 @@ public class Angular2DecoratorUtil {
   }
 
   @StubUnsafe
-  @Nullable
-  public static JSObjectLiteralExpression getReferencedObjectLiteralInitializer(@NotNull ES6Decorator decorator) {
+  public static @Nullable JSObjectLiteralExpression getReferencedObjectLiteralInitializer(@NotNull ES6Decorator decorator) {
     return AstLoadingFilter.forceAllowTreeLoading(decorator.getContainingFile(), () ->
       Optional.ofNullable(decorator.getExpression())
         .map(expr -> tryCast(expr, JSCallExpression.class))
@@ -172,8 +167,7 @@ public class Angular2DecoratorUtil {
   }
 
   @StubSafe
-  @Nullable
-  public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
+  public static @Nullable JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
     return doIfNotNull(getObjectLiteralInitializer(decorator),
                        expr -> expr.findProperty(name));
   }
@@ -199,8 +193,7 @@ public class Angular2DecoratorUtil {
       .orElse(false);
   }
 
-  @Nullable
-  public static TypeScriptClass getClassForDecoratorElement(@Nullable PsiElement element) {
+  public static @Nullable TypeScriptClass getClassForDecoratorElement(@Nullable PsiElement element) {
     ES6Decorator decorator = element instanceof ES6Decorator ? (ES6Decorator)element
                                                              : getContextOfType(element, ES6Decorator.class, false);
     if (decorator == null) {

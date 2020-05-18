@@ -17,9 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2ElementDescriptionProvider implements ElementDescriptionProvider {
 
-  @Nullable
   @Override
-  public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+  public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
     String type = getTypeDescription(element);
     if (type != null) {
       if (location instanceof UsageViewTypeLocation) {

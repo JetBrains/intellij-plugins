@@ -18,15 +18,13 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSParserDefinition extends JavascriptParserDefinition {
   public static final IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new AngularJSLexer();
   }
 
-  @NotNull
   @Override
-  public PsiParser createParser(Project project) {
+  public @NotNull PsiParser createParser(Project project) {
     return new AngularParser();
   }
 

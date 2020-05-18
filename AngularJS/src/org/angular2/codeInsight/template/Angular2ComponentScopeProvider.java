@@ -22,9 +22,8 @@ import java.util.function.Consumer;
 
 public class Angular2ComponentScopeProvider extends Angular2TemplateScopesProvider {
 
-  @NotNull
   @Override
-  public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
+  public @NotNull List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     return Optional.ofNullable(Angular2ComponentLocator.findComponentClass(element))
       .map(Angular2ComponentScope::new)
       .map(Collections::singletonList)

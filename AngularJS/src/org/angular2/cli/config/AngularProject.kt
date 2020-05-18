@@ -69,6 +69,7 @@ abstract class AngularProject(internal val angularCliFolder: VirtualFile, intern
   enum class AngularProjectType {
     @JsonProperty("application")
     APPLICATION,
+
     @JsonProperty("library")
     LIBRARY
   }

@@ -24,15 +24,13 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
     super(element);
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigableElement() {
+  public @NotNull PsiElement getNavigableElement() {
     return getSourceElement();
   }
 
-  @Nullable
   @Override
-  public ES6Decorator getDecorator() {
+  public @Nullable ES6Decorator getDecorator() {
     return null;
   }
 

@@ -49,9 +49,8 @@ public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTo
       myClassConstructor = classConstructor;
     }
 
-    @NotNull
     @Override
-    public ASTNode createCompositeNode() {
+    public @NotNull ASTNode createCompositeNode() {
       return myClassConstructor.apply(this);
     }
   }

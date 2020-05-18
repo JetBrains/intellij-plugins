@@ -29,7 +29,8 @@ public class AngularJSXmlCompletionContributor extends CompletionContributor {
         final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularModuleIndex.KEY, originalPosition.getProject());
         addCompletionVariants(result, keys, " (AngularJS module)");
         result.stopHere();
-      } else if (AngularJSReferencesContributor.UI_VIEW_REF.accepts(position)) {
+      }
+      else if (AngularJSReferencesContributor.UI_VIEW_REF.accepts(position)) {
         if (!AngularIndexUtil.hasAngularJS(originalPosition.getProject())) return;
         final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularUiRouterStatesIndex.KEY, originalPosition.getProject());
         addCompletionVariants(result, keys, " (angular-ui-router state)");

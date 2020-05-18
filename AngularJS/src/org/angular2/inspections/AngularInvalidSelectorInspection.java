@@ -25,9 +25,8 @@ import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CO
 
 public class AngularInvalidSelectorInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     if (holder.getFile() instanceof HtmlLikeFile) {
       return new XmlElementVisitor() {
         @Override

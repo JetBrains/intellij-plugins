@@ -49,9 +49,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     super(decorator, implicitElement);
   }
 
-  @NotNull
   @Override
-  public Angular2DirectiveSelector getSelector() {
+  public @NotNull Angular2DirectiveSelector getSelector() {
     return getCachedValue(() -> {
       JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
       String value = null;
@@ -88,9 +87,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       getDirectiveKindNoCache(myClass), getClassModificationDependencies()));
   }
 
-  @NotNull
   @Override
-  public List<String> getExportAsList() {
+  public @NotNull List<String> getExportAsList() {
     return getCachedValue(() -> {
       String exportAsString = Angular2DecoratorUtil.getPropertyValue(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
       return CachedValueProvider.Result.create(exportAsString == null
@@ -100,9 +98,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     });
   }
 
-  @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return getCachedValue(
       () -> Result.create(getAttributeParameters(),
                           getClassModificationDependencies())
@@ -117,8 +114,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     );
   }
 
-  @NotNull
-  private Angular2DirectiveProperties getPropertiesNoCache() {
+  private @NotNull Angular2DirectiveProperties getPropertiesNoCache() {
     Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 
@@ -167,8 +163,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return new Angular2DirectiveProperties(inputs.values(), outputs.values());
   }
 
-  @NotNull
-  private Map<String, String> readPropertyMappings(String source) {
+  private @NotNull Map<String, String> readPropertyMappings(String source) {
     JSProperty prop = Angular2DecoratorUtil.getProperty(getDecorator(), source);
     if (prop == null) {
       return Collections.emptyMap();
@@ -233,8 +228,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     }
   }
 
-  @NotNull
-  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
+  private @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
     final TypeScriptFunction[] constructors = myClass.getConstructors();
     return constructors.length == 1
            ? processCtorParameters(constructors[0])
@@ -245,8 +239,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
              .orElse(Collections.emptyList());
   }
 
-  @NotNull
-  private static Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+  private static @NotNull Collection<? extends Angular2DirectiveAttribute> processCtorParameters(final @NotNull JSFunction ctor) {
     return StreamEx.of(ctor.getParameterVariables())
       .mapToEntry(JSParameter::getAttributeList)
       .nonNullValues()
@@ -260,8 +253,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       .toList();
   }
 
-  @Nullable
-  private static String getStringParamValue(@Nullable ES6Decorator decorator) {
+  private static @Nullable String getStringParamValue(@Nullable ES6Decorator decorator) {
     if (decorator == null || !Angular2IndexingHandler.isDecoratorStringArgStubbed(decorator)) {
       return null;
     }
@@ -289,8 +281,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return null;
   }
 
-  @NotNull
-  public static Angular2DirectiveKind getDirectiveKindNoCache(@NotNull TypeScriptClass clazz) {
+  public static @NotNull Angular2DirectiveKind getDirectiveKindNoCache(@NotNull TypeScriptClass clazz) {
     Ref<Angular2DirectiveKind> result = new Ref<>(null);
     JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
       if (aClass instanceof TypeScriptClass) {

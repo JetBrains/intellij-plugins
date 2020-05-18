@@ -40,14 +40,12 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
     super(element);
   }
 
-  @Nullable
-  public TypeScriptClass getTypeScriptClass() {
+  public @Nullable TypeScriptClass getTypeScriptClass() {
     return getClassAndDependencies().first;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return getCachedClassBasedValue(cls -> cls != null
                                            ? cls.getName()
                                            : StringUtil.notNullize(getStub().getMemberName(),

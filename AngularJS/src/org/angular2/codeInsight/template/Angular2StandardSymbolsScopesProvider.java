@@ -32,9 +32,8 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   @NonNls public static final String $ANY = "$any";
   @NonNls public static final String $EVENT = "$event";
 
-  @NotNull
   @Override
-  public List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
+  public @NotNull List<? extends Angular2TemplateScope> getScopes(@NotNull PsiElement element, @Nullable PsiElement hostElement) {
     SmartList<Angular2TemplateScope> result = new SmartList<>(new Angular2$AnyScope(element.getContainingFile()));
     if (hostElement != null) {
       PsiElement attribute = hostElement;
@@ -108,7 +107,7 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
   }
 
   private static class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
-    @Nullable private final Collection<PsiElement> myDeclarations;
+    private final @Nullable Collection<PsiElement> myDeclarations;
 
     private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {
       super($EVENT, new Angular2EventType(attribute), attribute, JSImplicitElement.Type.Variable);

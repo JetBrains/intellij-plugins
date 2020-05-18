@@ -76,16 +76,15 @@ public class AngularJSInjector implements MultiHostInjector {
     }
   }
 
-  private static boolean nonBindable(@NotNull final XmlTextImpl xmlText) {
+  private static boolean nonBindable(final @NotNull XmlTextImpl xmlText) {
     final XmlTag parentTag = xmlText.getParentTag();
     return parentTag != null && ContainerUtil.find(parentTag.getAttributes(),
                                                    attr -> "ngNonBindable".equals(DirectiveUtil.normalizeAttributeName(attr.getName()))) !=
                                 null;
   }
 
-  @NotNull
   @Override
-  public List<Class<? extends PsiElement>> elementsToInjectIn() {
+  public @NotNull List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }

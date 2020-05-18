@@ -66,8 +66,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_INDIRECT_PROPERTY_PROCESSORS = new HashMap<>();
-  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
-  private final static Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
+  private static final Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
+  private static final Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
 
   public static final Set<String> INTERESTING_METHODS = new HashSet<>();
   public static final Set<String> INJECTABLE_METHODS = new HashSet<>();
@@ -202,7 +202,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public JSLiteralImplicitElementProvider createLiteralImplicitElementProvider(@NotNull final String command) {
+  public JSLiteralImplicitElementProvider createLiteralImplicitElementProvider(final @NotNull String command) {
     return new JSLiteralImplicitElementProvider() {
       @Override
       public void fillIndexingData(@NotNull JSLiteralExpression argument,
@@ -295,9 +295,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
            || INJECTABLE_METHODS.contains(referencedName);
   }
 
-  @Nullable
   @Override
-  public JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
+  public @Nullable JSElementIndexingData processAnyProperty(@NotNull JSProperty property, @Nullable JSElementIndexingData outData) {
     final String name = property.getName();
     if (name == null) return outData;
     JSElementIndexingData localOutData;
@@ -342,8 +341,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  @Nullable
-  private static Trinity<JSCallExpression, Integer, Boolean> findWrappingCall(@NotNull JSProperty property) {
+  private static @Nullable Trinity<JSCallExpression, Integer, Boolean> findWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
     int level = 0;
     boolean immediate = true;
@@ -395,7 +393,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public JSElementIndexingData processJSDocComment(@NotNull final JSDocComment comment, @Nullable JSElementIndexingData outData) {
+  public JSElementIndexingData processJSDocComment(final @NotNull JSDocComment comment, @Nullable JSElementIndexingData outData) {
     JSDocTag ngdocTag = null;
     JSDocTag nameTag = null;
     for (JSDocTag tag : comment.getTags()) {
@@ -511,12 +509,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     //}
   }
 
-  private static void addImplicitElements(@NotNull final JSImplicitElementProvider elementProvider,
-                                          @Nullable final String command,
-                                          @NotNull final StubIndexKey<String, JSImplicitElementProvider> index,
+  private static void addImplicitElements(final @NotNull JSImplicitElementProvider elementProvider,
+                                          final @Nullable String command,
+                                          final @NotNull StubIndexKey<String, JSImplicitElementProvider> index,
                                           @Nullable String defaultName,
-                                          @Nullable final String value,
-                                          @NotNull final JSElementIndexingData outData) {
+                                          final @Nullable String value,
+                                          final @NotNull JSElementIndexingData outData) {
     if (defaultName == null) return;
     final List<String> keys = INDEXES.getKeysByValue(index);
     assert keys != null && keys.size() == 1;
@@ -726,8 +724,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     };
   }
 
-  @Nullable
-  public static String unquote(PsiElement value) {
+  public static @Nullable String unquote(PsiElement value) {
     return ((JSLiteralExpression)value).getStringValue();
   }
 

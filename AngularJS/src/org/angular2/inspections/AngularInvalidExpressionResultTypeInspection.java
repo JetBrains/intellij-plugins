@@ -32,9 +32,8 @@ import static com.intellij.util.ObjectUtils.tryCast;
 
 public class AngularInvalidExpressionResultTypeInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new Angular2ElementVisitor() {
       @Override
       public void visitAngular2Binding(Angular2Binding binding) {

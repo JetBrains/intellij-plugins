@@ -64,8 +64,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-37879
    */
-  @Nullable
-  public static JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
+  public static @Nullable JSType hackNgModelChangeType(@Nullable JSType type, @NotNull String propertyName) {
     if (type != null
         // Workaround issue with ngModelChange field.
         // The workaround won't execute once Angular source is corrected.
@@ -107,8 +106,7 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-39722
    */
-  @Nullable
-  public static Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
+  public static @Nullable Function<Angular2DirectiveProperty, Angular2AttributeDescriptor> hackIonicComponentAttributeNames(
     @NotNull Angular2Directive directive,
     BiFunction<? super Angular2DirectiveProperty, ? super String, Angular2AttributeDescriptor> oneTimeBindingCreator) {
     if (!isIonicDirective(directive)) {
@@ -175,9 +173,8 @@ public class Angular2LibrariesHacks {
   /**
    * Hack for WEB-38825. Make ngForOf accept QueryList in addition to NgIterable
    */
-  @Nullable
-  public static JSType hackQueryListTypeInNgForOf(@Nullable JSType type,
-                                                  @NotNull Angular2MetadataDirectiveProperty property) {
+  public static @Nullable JSType hackQueryListTypeInNgForOf(@Nullable JSType type,
+                                                            @NotNull Angular2MetadataDirectiveProperty property) {
     TypeScriptClass clazz;
     JSType queryListType;
     if (type instanceof JSGenericTypeImpl
@@ -192,8 +189,7 @@ public class Angular2LibrariesHacks {
     return type;
   }
 
-  @Nullable
-  private static JSType getQueryListType(@NotNull PsiElement scope) {
+  private static @Nullable JSType getQueryListType(@NotNull PsiElement scope) {
     return doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
         if (!(module instanceof JSElement)) continue;

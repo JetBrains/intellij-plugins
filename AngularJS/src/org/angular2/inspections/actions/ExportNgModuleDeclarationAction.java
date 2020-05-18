@@ -29,10 +29,10 @@ import static org.angular2.Angular2DecoratorUtil.EXPORTS_PROP;
 
 public class ExportNgModuleDeclarationAction implements QuestionAction {
 
-  @Nullable private final Editor myEditor;
-  @NotNull private final PsiElement myContext;
-  @NotNull private final SmartPsiElementPointer<ES6Decorator> myDecorator;
-  @NotNull private final String myName;
+  private final @Nullable Editor myEditor;
+  private final @NotNull PsiElement myContext;
+  private final @NotNull SmartPsiElementPointer<ES6Decorator> myDecorator;
+  private final @NotNull String myName;
   private final boolean myCodeCompletion;
   private final NotNullLazyValue<NgModuleImportAction> myImportAction;
 

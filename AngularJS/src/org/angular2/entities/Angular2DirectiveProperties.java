@@ -46,13 +46,11 @@ public class Angular2DirectiveProperties {
     myOutputs = Collections.unmodifiableCollection(outputs);
   }
 
-  @NotNull
-  public Collection<? extends Angular2DirectiveProperty> getInputs() {
+  public @NotNull Collection<? extends Angular2DirectiveProperty> getInputs() {
     return myInputs;
   }
 
-  @NotNull
-  public Collection<? extends Angular2DirectiveProperty> getOutputs() {
+  public @NotNull Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return myOutputs;
   }
 

@@ -37,17 +37,15 @@ public class Angular2BasicAttributesProvider implements Angular2AttributesProvid
     completionResultsConsumer.addAbbreviation("#", AttributePriority.NONE, null, null);
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     return Angular2AttributeDescriptor.create(tag, attributeName);
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     if (descriptor instanceof Angular2AttributeDescriptor) {
       Angular2AttributeNameParser.AttributeInfo info = ((Angular2AttributeDescriptor)descriptor).getInfo();
       if (info.type == Angular2AttributeType.BANANA_BOX_BINDING

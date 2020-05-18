@@ -13,8 +13,7 @@ public class TemplateBindingsPrefixMatcher extends PrefixMatcher {
   private static final char ASTERISK = '*';
   private static final char ASTERISK_REPLACEMENT = '⭐';
 
-  @NotNull
-  private final PrefixMatcher myDelegate;
+  private final @NotNull PrefixMatcher myDelegate;
 
   public TemplateBindingsPrefixMatcher(@NotNull PrefixMatcher delegate) {
     this(delegate.getPrefix(), delegate);
@@ -45,9 +44,8 @@ public class TemplateBindingsPrefixMatcher extends PrefixMatcher {
     return myDelegate.isStartMatch(convert(element));
   }
 
-  @NotNull
   @Override
-  public PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
+  public @NotNull PrefixMatcher cloneWithPrefix(@NotNull String prefix) {
     if (prefix.equals(myPrefix)) {
       return this;
     }

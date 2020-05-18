@@ -25,21 +25,18 @@ public abstract class Angular2IvyEntity<T extends Angular2IvySymbolDef.Entity> e
     return myEntityDef.getField();
   }
 
-  @Nullable
   @Override
-  public ES6Decorator getDecorator() {
+  public @Nullable ES6Decorator getDecorator() {
     return null;
   }
 
-  @NotNull
   @Override
-  public PsiElement getNavigableElement() {
+  public @NotNull PsiElement getNavigableElement() {
     return getField();
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return getField();
   }
 

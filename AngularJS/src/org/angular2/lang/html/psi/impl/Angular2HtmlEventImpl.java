@@ -32,27 +32,23 @@ public class Angular2HtmlEventImpl extends Angular2HtmlBoundAttributeImpl implem
     }
   }
 
-  @NotNull
   @Override
-  public String getEventName() {
+  public @NotNull String getEventName() {
     return getAttributeInfo().name;
   }
 
-  @NotNull
   @Override
-  public EventType getEventType() {
+  public @NotNull EventType getEventType() {
     return ((EventInfo)getAttributeInfo()).eventType;
   }
 
-  @Nullable
   @Override
-  public AnimationPhase getAnimationPhase() {
+  public @Nullable AnimationPhase getAnimationPhase() {
     return ((EventInfo)getAttributeInfo()).animationPhase;
   }
 
-  @Nullable
   @Override
-  public Angular2Action getAction() {
+  public @Nullable Angular2Action getAction() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Action.class));
   }
 }

@@ -21,29 +21,26 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
   private final NotNullComputable<? extends PsiElement> mySourceSupplier;
   private final String myName;
 
-  Angular2MetadataDirectiveAttribute(@NotNull final Supplier<? extends JSParameter> parameterSupplier,
-                                     @NotNull final NotNullComputable<? extends PsiElement> sourceSupplier,
-                                     @NotNull final String name) {
+  Angular2MetadataDirectiveAttribute(final @NotNull Supplier<? extends JSParameter> parameterSupplier,
+                                     final @NotNull NotNullComputable<? extends PsiElement> sourceSupplier,
+                                     final @NotNull String name) {
     myParameterSupplier = parameterSupplier;
     mySourceSupplier = sourceSupplier;
     myName = name;
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSType getType() {
+  public @Nullable JSType getType() {
     return doIfNotNull(myParameterSupplier.get(), JSTypeInfoOwner::getJSType);
   }
 
-  @NotNull
   @Override
-  public PsiElement getSourceElement() {
+  public @NotNull PsiElement getSourceElement() {
     return notNull(myParameterSupplier.get(), mySourceSupplier.compute());
   }
 

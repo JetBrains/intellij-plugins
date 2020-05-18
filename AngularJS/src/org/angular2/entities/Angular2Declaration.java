@@ -10,8 +10,7 @@ import static org.angular2.entities.Angular2EntitiesProvider.getDeclarationToMod
 
 public interface Angular2Declaration extends Angular2Entity {
 
-  @NotNull
-  default Collection<Angular2Module> getAllModules() {
+  default @NotNull Collection<Angular2Module> getAllModules() {
     return Collections.unmodifiableCollection(
       getDeclarationToModuleMap(getSourceElement().getProject()).get(this));
   }

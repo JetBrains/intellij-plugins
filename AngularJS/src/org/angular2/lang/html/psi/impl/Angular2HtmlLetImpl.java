@@ -41,9 +41,8 @@ public class Angular2HtmlLetImpl extends Angular2HtmlBoundAttributeImpl implemen
     return res;
   }
 
-  @Nullable
   @Override
-  public JSVariable getVariable() {
+  public @Nullable JSVariable getVariable() {
     return PsiTreeUtil.findChildOfType(this, JSVariable.class);
   }
 
@@ -60,9 +59,8 @@ public class Angular2HtmlLetImpl extends Angular2HtmlBoundAttributeImpl implemen
     }
   }
 
-  @NotNull
   @Override
-  public String getVariableName() {
+  public @NotNull String getVariableName() {
     return getAttributeInfo().name;
   }
 }

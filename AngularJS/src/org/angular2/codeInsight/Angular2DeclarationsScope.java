@@ -57,16 +57,14 @@ public class Angular2DeclarationsScope {
       () -> ProjectRootManager.getInstance(element.getProject()).getFileIndex());
   }
 
-  @Nullable
-  public <T extends Angular2Declaration> Pair<T, DeclarationProximity> getClosestDeclaration(@NotNull Collection<T> declarations) {
+  public @Nullable <T extends Angular2Declaration> Pair<T, DeclarationProximity> getClosestDeclaration(@NotNull Collection<T> declarations) {
     return StreamEx.of(declarations)
       .map(d -> pair(d, getDeclarationProximity(d)))
       .min(Comparator.comparing(p -> p.second))
       .orElse(null);
   }
 
-  @Nullable
-  public Angular2Module getModule() {
+  public @Nullable Angular2Module getModule() {
     return myScope.getValue().first;
   }
 
@@ -87,8 +85,7 @@ public class Angular2DeclarationsScope {
                   module -> module.isPublic() && module.getTypeScriptClass() != null);
   }
 
-  @NotNull
-  public DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
+  public @NotNull DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
     if (contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
@@ -110,8 +107,7 @@ public class Angular2DeclarationsScope {
     return DeclarationProximity.NOT_REACHABLE;
   }
 
-  @NotNull
-  public DeclarationProximity getDeclarationsProximity(@NotNull Iterable<? extends Angular2Declaration> declarations) {
+  public @NotNull DeclarationProximity getDeclarationsProximity(@NotNull Iterable<? extends Angular2Declaration> declarations) {
     if (myScope == null) {
       return DeclarationProximity.IN_SCOPE;
     }
@@ -150,8 +146,7 @@ public class Angular2DeclarationsScope {
     NOT_REACHABLE
   }
 
-  @Nullable
-  private static Angular2Module selectModule(@NotNull Angular2Component component, @NotNull PsiFile context) {
+  private static @Nullable Angular2Module selectModule(@NotNull Angular2Component component, @NotNull PsiFile context) {
     Collection<Angular2Module> modules = component.getAllModules();
     if (modules.size() > 1) {
       for (Angular2FrameworkHandler handler : Angular2FrameworkHandler.EP_NAME.getExtensionList()) {

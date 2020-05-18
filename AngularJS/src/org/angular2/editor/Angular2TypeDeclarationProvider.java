@@ -31,9 +31,8 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
     return null;
   }
 
-  @Nullable
   @Override
-  public String getActionText(@NotNull DataContext context) {
+  public @Nullable String getActionText(@NotNull DataContext context) {
     List<Angular2Directive> directives = Angular2EditorUtils.getDirectivesAtCaret(context);
     if (ContainerUtil.find(directives, Angular2Directive::isComponent) != null) {
       return Angular2Bundle.message("angular.action.goto-type-declaration.component-template");

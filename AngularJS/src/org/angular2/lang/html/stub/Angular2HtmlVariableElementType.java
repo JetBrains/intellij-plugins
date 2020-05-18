@@ -20,13 +20,12 @@ public class Angular2HtmlVariableElementType extends JSVariableElementType {
   private final Angular2HtmlAttrVariable.Kind myKind;
 
   public Angular2HtmlVariableElementType(Angular2HtmlAttrVariable.Kind kind) {
-    super("NG:" + kind.name() +"_VARIABLE");
+    super("NG:" + kind.name() + "_VARIABLE");
     myKind = kind;
   }
 
-  @NotNull
   @Override
-  public JSVariableStub<JSVariable> createStub(@NotNull JSVariable psi, StubElement parentStub) {
+  public @NotNull JSVariableStub<JSVariable> createStub(@NotNull JSVariable psi, StubElement parentStub) {
     return new Angular2HtmlAttrVariableStubImpl(psi, parentStub, this);
   }
 
@@ -40,9 +39,8 @@ public class Angular2HtmlVariableElementType extends JSVariableElementType {
     return new Angular2HtmlAttrVariableImpl(node);
   }
 
-  @NotNull
   @Override
-  public JSVariableStub<JSVariable> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+  public @NotNull JSVariableStub<JSVariable> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new Angular2HtmlAttrVariableStubImpl(dataStream, parentStub, this);
   }
 

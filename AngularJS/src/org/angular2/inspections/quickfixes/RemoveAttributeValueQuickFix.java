@@ -13,17 +13,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class RemoveAttributeValueQuickFix implements LocalQuickFix {
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.template.remove-attribute-value.name");
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.template.remove-attribute-value.family");
   }
 

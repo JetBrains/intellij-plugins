@@ -14,15 +14,13 @@ public class Angular2HtmlLanguage extends HTMLLanguage {
     super(HTMLLanguage.INSTANCE, "Angular2Html");
   }
 
-  @Nullable
   @Override
-  public LanguageFileType getAssociatedFileType() {
+  public @Nullable LanguageFileType getAssociatedFileType() {
     return Angular2HtmlFileType.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public String getDisplayName() {
+  public @NotNull String getDisplayName() {
     return Angular2Bundle.message("angular.description.angular-html-template");
   }
 }

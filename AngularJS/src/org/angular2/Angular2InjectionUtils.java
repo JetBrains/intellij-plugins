@@ -38,8 +38,7 @@ public class Angular2InjectionUtils {
     return null;
   }
 
-  @Nullable
-  public static PsiElement getElementAtCaretFromContext(@NotNull DataContext context) {
+  public static @Nullable PsiElement getElementAtCaretFromContext(@NotNull DataContext context) {
     Editor editor = context.getData(CommonDataKeys.EDITOR);
     PsiFile file = context.getData(CommonDataKeys.PSI_FILE);
     Project project = context.getData(CommonDataKeys.PROJECT);
@@ -58,9 +57,8 @@ public class Angular2InjectionUtils {
     return file.findElementAt(caretOffset);
   }
 
-  @Nullable
-  public static <T extends Angular2EmbeddedExpression> T findInjectedAngularExpression(@NotNull XmlAttribute attribute,
-                                                                                       @NotNull Class<T> expressionClass) {
+  public static @Nullable <T extends Angular2EmbeddedExpression> T findInjectedAngularExpression(@NotNull XmlAttribute attribute,
+                                                                                                 @NotNull Class<T> expressionClass) {
     XmlAttributeValue value = attribute.getValueElement();
     if (value != null && value.getTextLength() >= 2) {
       PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(

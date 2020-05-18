@@ -9,9 +9,8 @@ public class Angular2MetadataPipeIndex extends Angular2IndexBase<Angular2Metadat
 
   public static final StubIndexKey<String, Angular2MetadataPipe> KEY = StubIndexKey.createIndexKey("angular2.metadata.pipe.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, Angular2MetadataPipe> getKey() {
+  public @NotNull StubIndexKey<String, Angular2MetadataPipe> getKey() {
     return KEY;
   }
 }

@@ -27,26 +27,22 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Declaration> getDeclarations() {
+  public @NotNull Set<Angular2Declaration> getDeclarations() {
     return myModuleResolver.getDeclarations();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Module> getImports() {
     return myModuleResolver.getImports();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Entity> getExports() {
+  public @NotNull Set<Angular2Entity> getExports() {
     return myModuleResolver.getExports();
   }
 
-  @NotNull
   @Override
-  public Set<Angular2Declaration> getAllExportedDeclarations() {
+  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
     return myModuleResolver.getAllExportedDeclarations();
   }
 

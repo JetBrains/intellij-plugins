@@ -30,9 +30,8 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return (JSReferenceExpression)getFirstChild();
   }
 
-  @NotNull
   @Override
-  public List<JSType> getArgumentTypes(boolean contextual) {
+  public @NotNull List<JSType> getArgumentTypes(boolean contextual) {
     return JSPsiBasedTypeOfType.mapAsArguments(getArguments(), contextual);
   }
 
@@ -47,9 +46,8 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return null;
   }
 
-  @Nullable
   @Override
-  public JSArgumentList getArgumentList() {
+  public @Nullable JSArgumentList getArgumentList() {
     final ASTNode argumentList = JSCallExpressionImpl.getArgumentList(getNode());
     return argumentList != null ? (JSArgumentList)argumentList.getPsi() : null;
   }
@@ -69,9 +67,8 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return false;
   }
 
-  @Nullable
   @Override
-  public JSElementIndexingData getIndexingData() {
+  public @Nullable JSElementIndexingData getIndexingData() {
     return null;
   }
 }

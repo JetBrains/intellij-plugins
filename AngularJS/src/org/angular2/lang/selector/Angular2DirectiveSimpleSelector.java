@@ -30,7 +30,7 @@ import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TE
 
 public class Angular2DirectiveSimpleSelector {
 
-  private final static Pattern SELECTOR_REGEXP = Pattern.compile(
+  private static final Pattern SELECTOR_REGEXP = Pattern.compile(
     "(:not\\()|" +       //":not("
     "([-\\w]+)|" +         // "tag"
     "(?:\\.([-\\w]+))|" +  // ".class"
@@ -42,8 +42,7 @@ public class Angular2DirectiveSimpleSelector {
     "(\\s*,\\s*)"          // ","
   );
 
-  @NotNull
-  public static List<Angular2DirectiveSimpleSelector> parse(@NotNull String selector) throws ParseException {
+  public static @NotNull List<Angular2DirectiveSimpleSelector> parse(@NotNull String selector) throws ParseException {
     List<Angular2DirectiveSimpleSelector> results = new SmartList<>();
     Consumer<Angular2DirectiveSimpleSelector> addResult = cssSel -> {
       if (!cssSel.notSelectors.isEmpty() && cssSel.element == null && cssSel.classNames.isEmpty() &&
@@ -93,8 +92,7 @@ public class Angular2DirectiveSimpleSelector {
     return results;
   }
 
-  @NotNull
-  public static List<Angular2DirectiveSimpleSelectorWithRanges> parseRanges(@NotNull String selector) throws ParseException {
+  public static @NotNull List<Angular2DirectiveSimpleSelectorWithRanges> parseRanges(@NotNull String selector) throws ParseException {
     List<Angular2DirectiveSimpleSelectorWithRanges> results = new SmartList<>();
 
     Angular2DirectiveSimpleSelectorWithRanges cssSelector = new Angular2DirectiveSimpleSelectorWithRanges();
@@ -192,8 +190,7 @@ public class Angular2DirectiveSimpleSelector {
     return element != null;
   }
 
-  @Nullable
-  public String getElementName() {
+  public @Nullable String getElementName() {
     return element;
   }
 
@@ -210,8 +207,7 @@ public class Angular2DirectiveSimpleSelector {
    * ['key1', 'value1', 'key2', '']
    * ```
    */
-  @NotNull
-  public List<String> getAttrNames() {
+  public @NotNull List<String> getAttrNames() {
     List<String> result = new ArrayList<>();
     if (!classNames.isEmpty()) {
       result.add("class");
@@ -222,8 +218,7 @@ public class Angular2DirectiveSimpleSelector {
     return result;
   }
 
-  @NotNull
-  public List<Angular2DirectiveSimpleSelector> getNotSelectors() {
+  public @NotNull List<Angular2DirectiveSimpleSelector> getNotSelectors() {
     return notSelectors;
   }
 
@@ -236,8 +231,7 @@ public class Angular2DirectiveSimpleSelector {
     classNames.add(StringUtil.toLowerCase(name));
   }
 
-  @NotNull
-  public String toString() {
+  public @NotNull String toString() {
     @NonNls StringBuilder result = new StringBuilder();
     if (element != null) {
       result.append(element);
@@ -287,23 +281,19 @@ public class Angular2DirectiveSimpleSelector {
       element = pair(name, offset);
     }
 
-    @Nullable
-    public Pair<String, Integer> getElementRange() {
+    public @Nullable Pair<String, Integer> getElementRange() {
       return element;
     }
 
-    @NotNull
-    public List<Pair<String, Integer>> getClassNameRanges() {
+    public @NotNull List<Pair<String, Integer>> getClassNameRanges() {
       return classNames;
     }
 
-    @NotNull
-    public List<Pair<String, Integer>> getAttributeRanges() {
+    public @NotNull List<Pair<String, Integer>> getAttributeRanges() {
       return attrs;
     }
 
-    @NotNull
-    public List<Angular2DirectiveSimpleSelectorWithRanges> getNotSelectors() {
+    public @NotNull List<Angular2DirectiveSimpleSelectorWithRanges> getNotSelectors() {
       return notSelectors;
     }
   }

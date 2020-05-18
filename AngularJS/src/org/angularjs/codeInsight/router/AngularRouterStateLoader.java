@@ -20,7 +20,7 @@ import java.util.List;
  * @author Irina.Chernushina on 6/29/2016.
  */
 public class AngularRouterStateLoader {
-  @NotNull private final Project myProject;
+  private final @NotNull Project myProject;
 
   public AngularRouterStateLoader(final @NotNull Project project) {
     myProject = project;
@@ -49,8 +49,8 @@ public class AngularRouterStateLoader {
     return states;
   }
 
-  private static void findPossibleReferences(@NotNull final JSCallExpression callExpression,
-                                             @NotNull final Processor<? super JSObjectLiteralExpression> processor) {
+  private static void findPossibleReferences(final @NotNull JSCallExpression callExpression,
+                                             final @NotNull Processor<? super JSObjectLiteralExpression> processor) {
     final JSExpression[] arguments = callExpression.getArguments();
     if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
       processReference(processor, arguments[0]);
@@ -67,7 +67,8 @@ public class AngularRouterStateLoader {
       }
       final JSElement declarationScope = ObjectUtils.tryCast(((JSVariable)resolved).getDeclarationScope(), JSElement.class);
       if (declarationScope != null) {
-        final Collection<JSAssignmentExpression> assignments = PsiTreeUtil.findChildrenOfType(declarationScope, JSAssignmentExpression.class);
+        final Collection<JSAssignmentExpression> assignments =
+          PsiTreeUtil.findChildrenOfType(declarationScope, JSAssignmentExpression.class);
         assignments.stream().map(as -> as.getDefinitionExpression())
           .filter(definition -> definition != null && StringUtil.equals(reference.getReferenceName(), definition.getName()) &&
                                 definition.getInitializerOrStub() instanceof JSObjectLiteralExpression)

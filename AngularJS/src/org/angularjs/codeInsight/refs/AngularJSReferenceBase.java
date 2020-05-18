@@ -21,8 +21,7 @@ public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiRe
     return ResolveCache.getInstance(getElement().getProject()).resolveWithCaching(this, MyResolver.INSTANCE, false, false);
   }
 
-  @Nullable
-  public abstract PsiElement resolveInner();
+  public abstract @Nullable PsiElement resolveInner();
 
   @Override
   public boolean equals(Object o) {
@@ -45,8 +44,7 @@ public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiRe
     private static final MyResolver INSTANCE = new MyResolver();
 
     @Override
-    @Nullable
-    public PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
+    public @Nullable PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
       return ((AngularJSReferenceBase)ref).resolveInner();
     }
   }

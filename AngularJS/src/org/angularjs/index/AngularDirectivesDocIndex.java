@@ -11,9 +11,8 @@ public class AngularDirectivesDocIndex extends AngularIndexBase {
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angularjs.directives.doc.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, JSImplicitElementProvider> getKey() {
+  public @NotNull StubIndexKey<String, JSImplicitElementProvider> getKey() {
     return KEY;
   }
 }

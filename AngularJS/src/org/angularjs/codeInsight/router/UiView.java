@@ -10,15 +10,13 @@ import org.jetbrains.annotations.Nullable;
  * @author Irina.Chernushina on 3/8/2016.
  */
 public class UiView {
-  @NotNull
-  private final String myName;
-  @Nullable
-  private final String myTemplateUrl;
-  @Nullable private final VirtualFile myTemplateFile;
-  @Nullable private final SmartPsiElementPointer<PsiElement> myPointer;
-  @Nullable private SmartPsiElementPointer<PsiElement> myTemplatePointer;
+  private final @NotNull String myName;
+  private final @Nullable String myTemplateUrl;
+  private final @Nullable VirtualFile myTemplateFile;
+  private final @Nullable SmartPsiElementPointer<PsiElement> myPointer;
+  private @Nullable SmartPsiElementPointer<PsiElement> myTemplatePointer;
 
-  public UiView(@NotNull String name, @Nullable String template, @Nullable final VirtualFile templateFile,
+  public UiView(@NotNull String name, @Nullable String template, final @Nullable VirtualFile templateFile,
                 @Nullable SmartPsiElementPointer<PsiElement> pointer) {
     myName = name;
     myTemplateUrl = template;
@@ -26,28 +24,23 @@ public class UiView {
     myPointer = pointer;
   }
 
-  @NotNull
-  public String getName() {
+  public @NotNull String getName() {
     return myName;
   }
 
-  @Nullable
-  public String getTemplate() {
+  public @Nullable String getTemplate() {
     return myTemplateUrl;
   }
 
-  @Nullable
-  public SmartPsiElementPointer<PsiElement> getPointer() {
+  public @Nullable SmartPsiElementPointer<PsiElement> getPointer() {
     return myPointer;
   }
 
-  @Nullable
-  public VirtualFile getTemplateFile() {
+  public @Nullable VirtualFile getTemplateFile() {
     return myTemplateFile;
   }
 
-  @Nullable
-  public SmartPsiElementPointer<PsiElement> getTemplatePointer() {
+  public @Nullable SmartPsiElementPointer<PsiElement> getTemplatePointer() {
     return myTemplatePointer;
   }
 

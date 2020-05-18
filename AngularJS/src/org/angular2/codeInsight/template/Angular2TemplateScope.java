@@ -14,8 +14,7 @@ import java.util.function.Consumer;
 
 public abstract class Angular2TemplateScope {
 
-  @Nullable
-  private final Angular2TemplateScope myParent;
+  private final @Nullable Angular2TemplateScope myParent;
   private final List<Angular2TemplateScope> children = new ArrayList<>();
 
   /**
@@ -29,13 +28,11 @@ public abstract class Angular2TemplateScope {
     }
   }
 
-  @Nullable
-  public final Angular2TemplateScope getParent() {
+  public final @Nullable Angular2TemplateScope getParent() {
     return myParent;
   }
 
-  @NotNull
-  public final List<Angular2TemplateScope> getChildren() {
+  public final @NotNull List<Angular2TemplateScope> getChildren() {
     return Collections.unmodifiableList(children);
   }
 

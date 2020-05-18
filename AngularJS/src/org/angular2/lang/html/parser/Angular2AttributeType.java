@@ -18,7 +18,7 @@ public enum Angular2AttributeType {
   EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),
   TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null),
   NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null),
-  I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "" ,null);
+  I18N(XmlElementType.XML_ATTRIBUTE, "i18n-", "", null);
 
   private final IElementType myElementType;
   private final String myPrefix;
@@ -36,8 +36,7 @@ public enum Angular2AttributeType {
   }
 
 
-  @NotNull
-  public String buildName(@NotNull String name) {
+  public @NotNull String buildName(@NotNull String name) {
     return buildName(name, false);
   }
 
@@ -52,8 +51,7 @@ public enum Angular2AttributeType {
     return myPrefix + name + mySuffix;
   }
 
-  @NotNull
-  public IElementType getElementType() {
+  public @NotNull IElementType getElementType() {
     return myElementType;
   }
 

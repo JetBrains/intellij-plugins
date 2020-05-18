@@ -33,9 +33,8 @@ public class Angular2Lexer extends MergingLexerAdapterBase {
     super.restore(pos.getOriginal());
   }
 
-  @NotNull
   @Override
-  public LexerPosition getCurrentPosition() {
+  public @NotNull LexerPosition getCurrentPosition() {
     return new MyLexerPosition(super.getCurrentPosition(), myMergeFunction.isPrevTokenEscapeSequence());
   }
 

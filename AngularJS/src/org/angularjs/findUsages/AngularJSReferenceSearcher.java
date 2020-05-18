@@ -45,7 +45,7 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters,
-                           @NotNull final Processor<? super PsiReference> consumer) {
+                           final @NotNull Processor<? super PsiReference> consumer) {
     final JSImplicitElement directive;
     final Angular2Pipe pipe;
     final PsiElement element = queryParameters.getElementToSearch();
@@ -53,7 +53,8 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
       for (String attrName : DirectiveUtil.getAttributeNameVariations(directive.getName())) {
         queryParameters.getOptimizer().searchWord(attrName, queryParameters.getEffectiveSearchScope(), false, directive);
         queryParameters.getOptimizer().searchWord("x-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
-        queryParameters.getOptimizer().searchWord(HtmlUtil.HTML5_DATA_ATTR_PREFIX + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+        queryParameters.getOptimizer()
+          .searchWord(HtmlUtil.HTML5_DATA_ATTR_PREFIX + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
       }
     }
     else if ((pipe = Angular2EntitiesProvider.getPipe(element)) != null) {

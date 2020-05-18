@@ -14,12 +14,11 @@ public class Angular2ImportHandler extends TypeScriptImportHandler {
 
   private static final JSImportHandler JS_IMPORT_HANDLER = JSImportHandler.getInstance();
 
-  @NotNull
   @Override
-  protected JSTypeResolveResult resolveNameImpl(@NotNull String type,
-                                                @NotNull PsiElement sourceRaw,
-                                                @NotNull TypeScriptQualifiedNameResolver.StrictKind typeContext,
-                                                boolean includeAugmentations) {
+  protected @NotNull JSTypeResolveResult resolveNameImpl(@NotNull String type,
+                                                         @NotNull PsiElement sourceRaw,
+                                                         @NotNull TypeScriptQualifiedNameResolver.StrictKind typeContext,
+                                                         boolean includeAugmentations) {
     TypeScriptClass cls = Angular2ComponentLocator.findComponentClass(sourceRaw);
     if (cls != null) {
       return super.resolveNameImpl(type, cls, typeContext, includeAugmentations);

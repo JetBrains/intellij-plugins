@@ -39,9 +39,8 @@ public class Angular2StandardTagDescriptor extends HtmlElementDescriptorImpl {
     return myDelegate.getElementsDescriptors(context);
   }
 
-  @Nullable
   @Override
-  public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
+  public @Nullable XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     return myDelegate.getElementDescriptor(childTag, contextTag);
   }
 
@@ -50,21 +49,18 @@ public class Angular2StandardTagDescriptor extends HtmlElementDescriptorImpl {
     return myDelegate.getAttributesDescriptors(context);
   }
 
-  @Nullable
   @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, @Nullable XmlTag context) {
+  public @Nullable XmlAttributeDescriptor getAttributeDescriptor(String attributeName, @Nullable XmlTag context) {
     return mergeWithAngularDescriptorIfPossible(myDelegate.getAttributeDescriptor(attributeName, context), attributeName, context);
   }
 
-  @Nullable
   @Override
-  public XmlNSDescriptor getNSDescriptor() {
+  public @Nullable XmlNSDescriptor getNSDescriptor() {
     return myDelegate.getNSDescriptor();
   }
 
-  @Nullable
   @Override
-  public XmlElementsGroup getTopGroup() {
+  public @Nullable XmlElementsGroup getTopGroup() {
     return myDelegate.getTopGroup();
   }
 
@@ -73,9 +69,8 @@ public class Angular2StandardTagDescriptor extends HtmlElementDescriptorImpl {
     return myDelegate.getContentType();
   }
 
-  @Nullable
   @Override
-  public String getDefaultValue() {
+  public @Nullable String getDefaultValue() {
     return myDelegate.getDefaultValue();
   }
 
@@ -109,7 +104,9 @@ public class Angular2StandardTagDescriptor extends HtmlElementDescriptorImpl {
     return myDelegate.allowElementsFromNamespace(namespace, context);
   }
 
-  static XmlAttributeDescriptor mergeWithAngularDescriptorIfPossible(@Nullable XmlAttributeDescriptor descriptor, String attributeName, @Nullable XmlTag context) {
+  static XmlAttributeDescriptor mergeWithAngularDescriptorIfPossible(@Nullable XmlAttributeDescriptor descriptor,
+                                                                     String attributeName,
+                                                                     @Nullable XmlTag context) {
     if (!(descriptor instanceof Angular2AttributeDescriptor)) {
       Angular2AttributeDescriptor angularDescriptor = tryCast(
         RelaxedHtmlFromSchemaElementDescriptor.getAttributeDescriptorFromFacelets(attributeName, context),

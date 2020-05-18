@@ -19,8 +19,7 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.entities.Angular2EntitiesProvider.isDeclaredClass;
 
 public class Angular2MetadataUtil {
-  @Nullable
-  public static Angular2MetadataFunction findMetadataFunction(@NotNull JSFunction function) {
+  public static @Nullable Angular2MetadataFunction findMetadataFunction(@NotNull JSFunction function) {
     TypeScriptClass parent = tryCast(function.getContext(), TypeScriptClass.class);
     if (function.getName() == null || parent == null) {
       return null;
@@ -69,8 +68,7 @@ public class Angular2MetadataUtil {
     return result.get();
   }
 
-  @Nullable
-  public static Angular2DirectiveProperties getMetadataClassDirectiveProperties(@NotNull TypeScriptClass typeScriptClass) {
+  public static @Nullable Angular2DirectiveProperties getMetadataClassDirectiveProperties(@NotNull TypeScriptClass typeScriptClass) {
     Angular2MetadataClassBase<?> classBase = getMetadataClass(typeScriptClass, Angular2MetadataClassBase.class);
     return classBase != null ? classBase.getBindings() : null;
   }

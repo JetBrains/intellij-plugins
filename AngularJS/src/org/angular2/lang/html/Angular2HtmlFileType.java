@@ -18,15 +18,13 @@ public class Angular2HtmlFileType extends HtmlFileType {
     super(language);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return "Angular2Html";
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
+  public @NotNull String getDescription() {
     return Angular2Bundle.message("angular.description.angular-html-template");
   }
 }

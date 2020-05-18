@@ -17,17 +17,13 @@ public class RenameAttributeQuickFix implements LocalQuickFix {
     myNewAttributeName = newAttributeName;
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getName() {
+  public @Nls @NotNull String getName() {
     return Angular2Bundle.message("angular.quickfix.template.rename-attribute.name", myNewAttributeName);
   }
 
-  @Nls
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.template.rename-attribute.family");
   }
 

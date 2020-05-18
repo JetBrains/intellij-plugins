@@ -21,9 +21,8 @@ import static org.angular2.Angular2DecoratorUtil.*;
 
 public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
 
       @Override

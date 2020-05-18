@@ -34,9 +34,8 @@ public class Angular2PsiParser implements PsiParser {
     Pair.create(SIMPLE_BINDING, Angular2Parser::parseSimpleBinding)
   );
 
-  @NotNull
   @Override
-  public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
+  public @NotNull ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
     PsiFile containingFile = builder.getUserData(FileContextUtil.CONTAINING_FILE_KEY);
     if (containingFile != null) {
       String ext = FileUtilRt.getExtension(containingFile.getName());

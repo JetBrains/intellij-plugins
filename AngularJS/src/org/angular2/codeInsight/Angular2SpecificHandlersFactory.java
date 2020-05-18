@@ -19,9 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
 
-  @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
+  public @NotNull ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
     JSReferenceExpressionImpl referenceExpression, boolean ignorePerformanceLimits) {
     return new Angular2ReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }
@@ -36,27 +35,23 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     return super.createQualifiedItemProcessor(sink, place);
   }
 
-  @NotNull
   @Override
-  public JSImportHandler getImportHandler() {
+  public @NotNull JSImportHandler getImportHandler() {
     return new Angular2ImportHandler();
   }
 
-  @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
+  public @NotNull JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new Angular2TypeEvaluator(context, processor);
   }
 
-  @NotNull
   @Override
-  public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
+  public @NotNull AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
     return new Angular2AccessibilityProcessingHandler(place);
   }
 
-  @NotNull
   @Override
-  public JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
+  public @NotNull JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
     return Angular2ReadWriteAccessDetector.INSTANCE;
   }
 
@@ -65,9 +60,8 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
     return Angular2TypeEvaluationHelper.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public JSTypeHelper getTypeHelper() {
+  public @NotNull JSTypeHelper getTypeHelper() {
     return TypeScriptTypeHelper.getInstance();
   }
 }

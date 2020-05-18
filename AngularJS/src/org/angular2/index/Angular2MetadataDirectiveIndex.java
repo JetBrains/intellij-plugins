@@ -10,9 +10,8 @@ public class Angular2MetadataDirectiveIndex extends Angular2IndexBase<Angular2Me
   public static final StubIndexKey<String, Angular2MetadataDirectiveBase> KEY =
     StubIndexKey.createIndexKey("angular2.metadata.directive.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, Angular2MetadataDirectiveBase> getKey() {
+  public @NotNull StubIndexKey<String, Angular2MetadataDirectiveBase> getKey() {
     return KEY;
   }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class AngularJSUiRouterStatesReferencesProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] {new AngularJSUiRouterStateReference(((XmlAttributeValue)element))};
+    return new PsiReference[]{new AngularJSUiRouterStateReference(((XmlAttributeValue)element))};
   }
 
   private static class AngularJSUiRouterStateReference extends CachingPolyReferenceBase<XmlAttributeValue> {

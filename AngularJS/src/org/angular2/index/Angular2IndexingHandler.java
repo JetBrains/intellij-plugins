@@ -77,7 +77,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static final Set<String> STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
     INPUT_DEC, OUTPUT_DEC, ATTRIBUTE_DEC);
 
-  private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
+  private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
   static {
     INDEX_MAP.put(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
@@ -159,9 +159,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return shouldCreateStubForLiteral(expression.getNode());
   }
 
-  @Nullable
   @Override
-  public JSElementIndexingDataImpl processDecorator(@NotNull ES6Decorator decorator, @Nullable JSElementIndexingDataImpl data) {
+  public @Nullable JSElementIndexingDataImpl processDecorator(@NotNull ES6Decorator decorator, @Nullable JSElementIndexingDataImpl data) {
     TypeScriptClass enclosingClass = getClassForDecoratorElement(decorator);
     if (enclosingClass != null) {
       String decoratorName = decorator.getDecoratorName();
@@ -315,8 +314,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @ApiStatus.Internal
-  @NotNull
-  public static List<TypeScriptClass> resolveComponentsFromIndex(@NotNull PsiFile file, @NotNull Predicate<ES6Decorator> filter) {
+  public static @NotNull List<TypeScriptClass> resolveComponentsFromIndex(@NotNull PsiFile file, @NotNull Predicate<ES6Decorator> filter) {
     final String name = (isStylesheet(file) ? STYLESHEET_INDEX_PREFIX : "") + file.getViewProvider().getVirtualFile().getName();
     final List<TypeScriptClass> result = new SmartList<>();
     AngularIndexUtil.multiResolve(file.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
@@ -331,8 +329,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return result;
   }
 
-  @Nullable
-  private static String getTemplateFileUrl(@NotNull ES6Decorator decorator) {
+  private static @Nullable String getTemplateFileUrl(@NotNull ES6Decorator decorator) {
     String templateUrl = getPropertyValue(decorator, TEMPLATE_URL_PROP);
     if (templateUrl != null) {
       return templateUrl;
@@ -344,8 +341,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return null;
   }
 
-  @NotNull
-  private static List<String> getStylesUrls(@NotNull ES6Decorator decorator) {
+  private static @NotNull List<String> getStylesUrls(@NotNull ES6Decorator decorator) {
     List<String> result = new SmartList<>();
 
     BiConsumer<String, Function<JSExpression, String>> urlsGetts = (name, func) ->
@@ -365,8 +361,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return result;
   }
 
-  @Nullable
-  public static String getExprReferencedFileUrl(@Nullable JSExpression expression) {
+  public static @Nullable String getExprReferencedFileUrl(@Nullable JSExpression expression) {
     if (expression instanceof JSReferenceExpression) {
       for (PsiElement resolvedElement : AngularIndexUtil.resolveLocally((JSReferenceExpression)expression)) {
         if (resolvedElement instanceof ES6ImportedBinding) {

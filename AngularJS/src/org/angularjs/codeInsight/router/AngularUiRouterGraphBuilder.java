@@ -18,10 +18,10 @@ import static org.angularjs.codeInsight.router.Type.template;
  * @author Irina.Chernushina on 3/9/2016.
  */
 public class AngularUiRouterGraphBuilder {
-  @NotNull private final Project myProject;
+  private final @NotNull Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
   private final Map<VirtualFile, Template> myTemplatesMap;
-  @Nullable private final RootTemplate myRootTemplate;
+  private final @Nullable RootTemplate myRootTemplate;
   private final VirtualFile myKey;
 
   public AngularUiRouterGraphBuilder(@NotNull Project project,
@@ -48,9 +48,9 @@ public class AngularUiRouterGraphBuilder {
 
   public static class GraphNodesBuilder {
     public static final String DEFAULT = "$default";
-    @NotNull private final Map<String, UiRouterState> myStatesMap;
-    @NotNull private final Map<VirtualFile, Template> myTemplatesMap;
-    @Nullable private final RootTemplate myRootTemplate;
+    private final @NotNull Map<String, UiRouterState> myStatesMap;
+    private final @NotNull Map<VirtualFile, Template> myTemplatesMap;
+    private final @Nullable RootTemplate myRootTemplate;
     private final VirtualFile myKey;
 
     private AngularUiRouterNode myRootNode;
@@ -78,7 +78,7 @@ public class AngularUiRouterGraphBuilder {
       return myKey;
     }
 
-    public void build(@NotNull final AngularUiRouterDiagramProvider provider, @NotNull final Project project) {
+    public void build(final @NotNull AngularUiRouterDiagramProvider provider, final @NotNull Project project) {
       final DiagramObject rootDiagramObject;
       if (myRootTemplate != null) {
         myRootNode = getOrCreateTemplateNode(provider, myKey, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()),
@@ -285,7 +285,7 @@ public class AngularUiRouterGraphBuilder {
       }
     }
 
-    public List<AngularUiRouterNode> getStateTemplates(@NotNull final AngularUiRouterNode state) {
+    public List<AngularUiRouterNode> getStateTemplates(final @NotNull AngularUiRouterNode state) {
       final List<AngularUiRouterNode> list = new ArrayList<>();
       if (!Type.state.equals(state.getIdentifyingElement().getType())) return Collections.emptyList();
       for (AngularUiRouterEdge edge : edges) {
@@ -330,8 +330,7 @@ public class AngularUiRouterGraphBuilder {
       return allNodes;
     }
 
-    @Nullable
-    private Pair<AngularUiRouterNode, String> getParentTemplateNode(@NotNull final String state, @NotNull final String view) {
+    private @Nullable Pair<AngularUiRouterNode, String> getParentTemplateNode(final @NotNull String state, final @NotNull String view) {
       final int idx = view.indexOf("@");
       if (idx < 0) {
         // parent or top level template
@@ -358,10 +357,9 @@ public class AngularUiRouterGraphBuilder {
       }
     }
 
-    @NotNull
-    private AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider,
-                                                        @Nullable VirtualFile templateFile,
-                                                        @NotNull String templateUrl, @Nullable Template template) {
+    private @NotNull AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider,
+                                                                 @Nullable VirtualFile templateFile,
+                                                                 @NotNull String templateUrl, @Nullable Template template) {
       final String fullUrl = templateUrl;
       final int idx = fullUrl.lastIndexOf('/');
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;

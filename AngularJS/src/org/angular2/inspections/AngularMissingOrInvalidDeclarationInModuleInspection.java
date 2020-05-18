@@ -25,9 +25,8 @@ import static org.angular2.entities.Angular2EntityUtils.renderEntityList;
 
 public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+  public @NotNull PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new JSElementVisitor() {
 
       @Override
@@ -36,7 +35,7 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
             && !TestFinderHelper.isTest(decorator)) {
           Angular2Declaration declaration = tryCast(Angular2EntitiesProvider.getEntity(decorator),
                                                     Angular2Declaration.class);
-          if (declaration != null ) {
+          if (declaration != null) {
             Collection<Angular2Module> modules = declaration.getAllModules();
             if (Angular2FrameworkHandler.EP_NAME.extensions().anyMatch(h -> h.suppressModuleInspectionErrors(modules, declaration))) {
               return;

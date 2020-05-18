@@ -16,9 +16,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Angular2ResolveScopeProvider implements JSElementResolveScopeProvider {
 
-  @Nullable
   @Override
-  public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
+  public @Nullable GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
     if (Angular2Language.INSTANCE.is(DialectDetector.languageDialectOfElement(element))) {
       JSClass clazz = Angular2ComponentLocator.findComponentClass(element);
       if (clazz != null) {

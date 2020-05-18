@@ -38,9 +38,8 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
            && NG_CLASS_ATTR.equals(info.name);
   }
 
-  @Nullable
   @Override
-  public String getCustomAttributeValues(final XmlTag tag, final String attributeName) {
+  public @Nullable String getCustomAttributeValues(final XmlTag tag, final String attributeName) {
     if (Angular2LangUtil.isAngular2Context(tag)) {
       if (attributeName.equalsIgnoreCase(HtmlUtil.CLASS_ATTRIBUTE_NAME)) {
         List<String> result = new SmartList<>();
@@ -77,8 +76,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
     return null;
   }
 
-  @NotNull
-  private static String getClassNames(@Nullable Angular2Binding binding) {
+  private static @NotNull String getClassNames(@Nullable Angular2Binding binding) {
     StringBuilder result = new StringBuilder();
     if (binding != null && binding.getExpression() != null) {
       binding.getExpression().accept(new JSElementVisitor() {

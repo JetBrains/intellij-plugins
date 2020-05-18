@@ -71,8 +71,7 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
     return PsiFile.EMPTY_ARRAY;
   }
 
-  @Nullable
-  private static ComponentCssContext getComponentContext(@NotNull PsiElement context) {
+  private static @Nullable ComponentCssContext getComponentContext(@NotNull PsiElement context) {
     PsiFile file = context.getContainingFile();
     return CachedValuesManager.getCachedValue(file, COMPONENT_CONTEXT_KEY, () -> {
       Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2ComponentLocator.findComponentClass(file));

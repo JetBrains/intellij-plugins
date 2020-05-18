@@ -11,9 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2SvgLanguageSubstitutor extends LanguageSubstitutor {
 
-  @Nullable
   @Override
-  public Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
+  public @Nullable Language getLanguage(@NotNull VirtualFile file, @NotNull Project project) {
     if (Angular2LangUtil.isAngular2Context(project, file)) {
       return Angular2SvgLanguage.INSTANCE;
     }

@@ -54,9 +54,8 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     return ObjectUtils.doIfNotNull(myStub.getParentStub(), StubElement::getPsi);
   }
 
-  @NotNull
   @Override
-  public TextRange getTextRangeInParent() {
+  public @NotNull TextRange getTextRangeInParent() {
     return TextRange.EMPTY_RANGE;
   }
 
@@ -80,20 +79,17 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
   }
 
   @Override
-  @Nullable
-  public PsiElement getFirstChild() {
+  public @Nullable PsiElement getFirstChild() {
     return ArrayUtil.getFirstElement(getChildren());
   }
 
   @Override
-  @Nullable
-  public PsiElement getLastChild() {
+  public @Nullable PsiElement getLastChild() {
     return ArrayUtil.getLastElement(getChildren());
   }
 
   @Override
-  @Nullable
-  public PsiElement getNextSibling() {
+  public @Nullable PsiElement getNextSibling() {
     PsiElement parent = getParent();
     if (parent == null) {
       return null;
@@ -104,8 +100,7 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
   }
 
   @Override
-  @Nullable
-  public PsiElement getPrevSibling() {
+  public @Nullable PsiElement getPrevSibling() {
     PsiElement parent = getParent();
     if (parent == null) {
       return null;

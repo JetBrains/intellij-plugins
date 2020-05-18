@@ -1,9 +1,9 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JavaScriptBundle;
 import com.intellij.lang.javascript.parsing.ExpressionParser;
 import com.intellij.psi.tree.IElementType;
 import org.angularjs.codeInsight.AngularJSPluralCategories;
@@ -31,7 +31,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     if (myInsideSelectExpression) return false;
 
     final PsiBuilder.Marker expr = builder.mark();
-    if (! isIdentifierToken(builder.getTokenType())) {
+    if (!isIdentifierToken(builder.getTokenType())) {
       return rollback(expr);
     }
     final PsiBuilder.Marker refMark = builder.mark();
@@ -41,7 +41,8 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
       if (!myJavaScriptParser.getExpressionParser().parseUnaryExpression()) {
         return rollback(expr);
       }
-    } finally {
+    }
+    finally {
       myInsideSelectExpression = false;
     }
     //}
@@ -62,7 +63,8 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     builder.advanceLexer();
     if (ExtensionType.select.name().equals(extensionText)) {
       parseOptionsTail();
-    } else {
+    }
+    else {
       parsePluralTail();
     }
     expr.done(AngularJSElementTypes.MESSAGE_FORMAT_EXPRESSION);
@@ -84,7 +86,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
             builder.advanceLexer();
             builder.advanceLexer();
             myJavaScriptParser.getExpressionParser().parseExpression();
-            if (! expectDoubleRBrace(true)) {
+            if (!expectDoubleRBrace(true)) {
               mark.drop();
               return false;
             }
@@ -100,7 +102,8 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           builder.advanceLexer();
           return true;
         }
-      } else {
+      }
+      else {
         if (stringLiteralMark == null) stringLiteralMark = builder.mark();
         builder.advanceLexer();
       }
@@ -162,10 +165,12 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
         if (JSTokenTypes.RBRACE == type) {
           expectDoubleRBrace(false);
           return;
-        } else if (JSTokenTypes.LBRACE == type) {
+        }
+        else if (JSTokenTypes.LBRACE == type) {
           builder.error(message("angularjs.parser.message.expected.selection.keyword"));
           return;
-        } else {
+        }
+        else {
           final PsiBuilder.Marker mark = builder.mark();
           // = can be only in the beginning, like =0
           while (!JSTokenTypes.PARSER_WHITE_SPACE_TOKENS.contains(builder.rawLookup(0)) && builder.rawLookup(0) != null) {
@@ -174,12 +179,14 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
           mark.collapse(AngularJSElementTypes.MESSAGE_FORMAT_SELECTION_KEYWORD);
           key = false;
         }
-      } else {
+      }
+      else {
         if (JSTokenTypes.LBRACE == type) {
           builder.advanceLexer();
           if (!parseInnerMessage()) return;  //+-
           key = true;
-        } else {
+        }
+        else {
           builder.error(message("angularjs.parser.message.expected.message.in.brace.delimiters"));
           return;
         }
@@ -210,14 +217,14 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
     ExtensionType(String... keywords) {
       if (keywords.length == 0) {
         myRequiredSelectionKeywords = null;
-      } else {
+      }
+      else {
         myRequiredSelectionKeywords = new HashSet<>();
         Collections.addAll(myRequiredSelectionKeywords, keywords);
       }
     }
 
-    @NotNull
-    public Set<String> getRequiredSelectionKeywords() {
+    public @NotNull Set<String> getRequiredSelectionKeywords() {
       return myRequiredSelectionKeywords == null ? Collections.emptySet() : myRequiredSelectionKeywords;
     }
   }

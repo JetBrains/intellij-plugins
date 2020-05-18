@@ -39,21 +39,18 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     }
   }
 
-  @Nullable
   @Override
-  public JSElementIndexingData getIndexingData() {
+  public @Nullable JSElementIndexingData getIndexingData() {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return ObjectUtils.doIfNotNull(getNameReference(), JSReferenceExpression::getReferenceName);
   }
 
-  @NotNull
   @Override
-  public List<JSType> getArgumentTypes(boolean contextual) {
+  public @NotNull List<JSType> getArgumentTypes(boolean contextual) {
     return JSPsiBasedTypeOfType.mapAsArguments(getArguments(), contextual);
   }
 
@@ -67,9 +64,8 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     return null;
   }
 
-  @NotNull
   @Override
-  public JSArgumentList getArgumentList() {
+  public @NotNull JSArgumentList getArgumentList() {
     return getLeftSideArgument();
   }
 
@@ -95,8 +91,7 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     return false;
   }
 
-  @Nullable
-  private JSReferenceExpression getNameReference() {
+  private @Nullable JSReferenceExpression getNameReference() {
     return (JSReferenceExpression)findPsiChildByType(Angular2ElementTypes.PIPE_REFERENCE_EXPRESSION);
   }
 }

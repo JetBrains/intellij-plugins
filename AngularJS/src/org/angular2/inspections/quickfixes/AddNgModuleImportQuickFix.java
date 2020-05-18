@@ -23,8 +23,7 @@ import java.util.List;
 
 public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
 
-  @Nullable
-  private final String myModuleName;
+  private final @Nullable String myModuleName;
 
   public AddNgModuleImportQuickFix(@NotNull PsiElement context,
                                    @NotNull Collection<Angular2Declaration> declarations) {
@@ -43,18 +42,15 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
     }
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     return Angular2Bundle.message(myModuleName == null ? "angular.quickfix.ngmodule.import.name.choice"
                                                        : "angular.quickfix.ngmodule.import.name",
                                   myModuleName);
   }
 
-  @Nls(capitalization = Nls.Capitalization.Sentence)
-  @NotNull
   @Override
-  public String getFamilyName() {
+  public @Nls(capitalization = Nls.Capitalization.Sentence) @NotNull String getFamilyName() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.import.family");
   }
 

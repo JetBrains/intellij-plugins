@@ -345,13 +345,15 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
           builder.advanceLexer();
           if (!parseAssignmentExpressionChecked()) {
             builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"));
-          } else {
+          }
+          else {
             hasParams = true;
           }
         }
         if (hasParams) {
           params.done(PIPE_ARGUMENTS_LIST);
-        } else {
+        }
+        else {
           params.drop();
         }
         pipe.done(PIPE_EXPRESSION);

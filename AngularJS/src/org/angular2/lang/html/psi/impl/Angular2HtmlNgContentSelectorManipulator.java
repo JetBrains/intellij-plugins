@@ -24,11 +24,10 @@ public class Angular2HtmlNgContentSelectorManipulator
   private static final Logger LOG = Logger.getInstance(Angular2HtmlNgContentSelectorManipulator.class);
 
 
-  @Nullable
   @Override
-  public Angular2HtmlNgContentSelector handleContentChange(@NotNull Angular2HtmlNgContentSelector element,
-                                                           @NotNull TextRange range,
-                                                           String newContent) throws IncorrectOperationException {
+  public @Nullable Angular2HtmlNgContentSelector handleContentChange(@NotNull Angular2HtmlNgContentSelector element,
+                                                                     @NotNull TextRange range,
+                                                                     String newContent) throws IncorrectOperationException {
     if (!FileModificationService.getInstance().preparePsiElementsForWrite(element)) return element;
     String newSelector = range.replace(element.getText(), newContent);
     XmlAttribute newSelectAttribute = createNgContentSelectAttribute(element.getProject(), newSelector);
@@ -39,8 +38,7 @@ public class Angular2HtmlNgContentSelectorManipulator
     return (Angular2HtmlNgContentSelector)element.replace(newSelectorElement);
   }
 
-  @NotNull
-  private static XmlAttribute createNgContentSelectAttribute(@NotNull Project project, @NotNull String value) {
+  private static @NotNull XmlAttribute createNgContentSelectAttribute(@NotNull Project project, @NotNull String value) {
     String quotedValue = quoteValue(value);
 
     XmlTag tag = XmlElementFactory.getInstance(project).createTagFromText(

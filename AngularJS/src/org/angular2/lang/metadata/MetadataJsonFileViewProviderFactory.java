@@ -11,12 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class MetadataJsonFileViewProviderFactory implements FileViewProviderFactory {
 
-  @NotNull
   @Override
-  public FileViewProvider createFileViewProvider(@NotNull VirtualFile file,
-                                                 Language language,
-                                                 @NotNull PsiManager manager,
-                                                 boolean eventSystemEnabled) {
+  public @NotNull FileViewProvider createFileViewProvider(@NotNull VirtualFile file,
+                                                          Language language,
+                                                          @NotNull PsiManager manager,
+                                                          boolean eventSystemEnabled) {
     return new MetadataFileViewProvider(manager, file, eventSystemEnabled);
   }
 
@@ -33,9 +32,8 @@ public class MetadataJsonFileViewProviderFactory implements FileViewProviderFact
       return new MetadataFileImpl(this, (MetadataJsonFileType)fileType);
     }
 
-    @NotNull
     @Override
-    public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
+    public @NotNull SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
       return new MetadataFileViewProvider(getManager(), copy, false);
     }
   }

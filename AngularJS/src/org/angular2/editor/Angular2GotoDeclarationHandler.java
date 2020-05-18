@@ -20,9 +20,8 @@ public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
     return null;
   }
 
-  @Nullable
   @Override
-  public String getActionText(@NotNull DataContext context) {
+  public @Nullable String getActionText(@NotNull DataContext context) {
     List<Angular2Directive> directives = Angular2EditorUtils.getDirectivesAtCaret(context);
     if (!directives.isEmpty()) {
       return ContainerUtil.all(directives, Angular2Directive::isComponent)

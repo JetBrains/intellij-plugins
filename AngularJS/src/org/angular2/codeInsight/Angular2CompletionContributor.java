@@ -111,9 +111,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
   private static class TemplateExpressionCompletionProvider extends CompletionProvider<CompletionParameters> {
 
     @Override
-    protected void addCompletions(@NotNull final CompletionParameters parameters,
-                                  @NotNull final ProcessingContext context,
-                                  @NotNull final CompletionResultSet result) {
+    protected void addCompletions(final @NotNull CompletionParameters parameters,
+                                  final @NotNull ProcessingContext context,
+                                  final @NotNull CompletionResultSet result) {
       PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
       if (ref instanceof PsiMultiReference) {
         ref = ContainerUtil.find(((PsiMultiReference)ref).getReferences(), r ->
@@ -201,8 +201,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                       type.getReturnType());
     }
 
-    @Nullable
-    private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
+    private static @Nullable JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
       return doIfNotNull(ArrayUtil.getFirstElement(pipeCall.getArguments()),
                          expression -> new JSPsiBasedTypeOfType(expression, true));
@@ -338,7 +337,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;
-    @NotNull private final Angular2DeclarationsScope myScope;
+    private final @NotNull Angular2DeclarationsScope myScope;
     private final Set<String> myPrefixes = new HashSet<>();
     private final List<Runnable> myAbbreviations = new ArrayList<>();
 
@@ -351,8 +350,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     @Override
-    @NotNull
-    public Angular2DeclarationsScope getScope() {
+    public @NotNull Angular2DeclarationsScope getScope() {
       return myScope;
     }
 

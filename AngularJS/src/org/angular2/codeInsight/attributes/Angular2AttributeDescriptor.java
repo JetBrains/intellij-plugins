@@ -76,20 +76,19 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList(NG_CLASS_ATTR);
 
-  @Nullable
-  public static Angular2AttributeDescriptor create(@NotNull XmlTag tag, @NotNull String attributeName) {
+  public static @Nullable Angular2AttributeDescriptor create(@NotNull XmlTag tag, @NotNull String attributeName) {
     return create(tag, attributeName, emptyList());
   }
 
-  @Nullable
-  public static Angular2AttributeDescriptor create(@NotNull XmlTag tag, @NotNull String attributeName, @NotNull PsiElement element) {
+  public static @Nullable Angular2AttributeDescriptor create(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull PsiElement element) {
     return create(tag, attributeName, singletonList(element));
   }
 
-  @Nullable
-  private static Angular2AttributeDescriptor create(@NotNull XmlTag tag,
-                                                    @NotNull String attributeName,
-                                                    @NotNull List<PsiElement> elements) {
+  private static @Nullable Angular2AttributeDescriptor create(@NotNull XmlTag tag,
+                                                              @NotNull String attributeName,
+                                                              @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
       return new Angular2AttributeDescriptor(tag, attributeName, elements, true);
     }
@@ -115,23 +114,19 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return new Angular2AttributeDescriptor(tag, attributeName, info, elements, implied);
   }
 
-  @NotNull
-  public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
-                                                                          @NotNull XmlTag tag,
-                                                                          @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
+  public static @NotNull List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
+                                                                                   @NotNull XmlTag tag,
+                                                                                   @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     if (!directive.getDirectiveKind().isRegular() && !isTemplateTag(tag)) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive, shouldIncludeOneTimeBinding).get();
   }
 
-  @NotNull
-  private final AttributePriority myPriority;
+  private final @NotNull AttributePriority myPriority;
   private final Angular2XmlElementSourcesResolver myResolver;
-  @NotNull
-  private final String myAttributeName;
-  @NotNull
-  private final Angular2AttributeNameParser.AttributeInfo myInfo;
+  private final @NotNull String myAttributeName;
+  private final @NotNull Angular2AttributeNameParser.AttributeInfo myInfo;
   private final boolean myImplied;
   private final AtomicNullableLazyValue<JSType> myJSType = AtomicNullableLazyValue.createValue(this::buildJSType);
   private final XmlAttributeDescriptor myOverriddenHtmlDescriptor;
@@ -308,8 +303,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return super.getValuesForCompletion();
   }
 
-  @NotNull
-  public List<Angular2Directive> getSourceDirectives() {
+  public @NotNull List<Angular2Directive> getSourceDirectives() {
     return myResolver.getSourceDirectives();
   }
 
@@ -361,9 +355,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return declarations.size() == 1 ? getFirstItem(declarations) : null;
   }
 
-  @NotNull
   @Override
-  public Collection<PsiElement> getDeclarations() {
+  public @NotNull Collection<PsiElement> getDeclarations() {
     return myResolver.getDeclarations();
   }
 
@@ -376,8 +369,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .toList();
   }
 
-  @NotNull
-  private Collection<PsiElement> getProperties(@NotNull Angular2Directive directive) {
+  private @NotNull Collection<PsiElement> getProperties(@NotNull Angular2Directive directive) {
     switch (myInfo.type) {
       case PROPERTY_BINDING:
       case TEMPLATE_BINDINGS:
@@ -408,9 +400,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
   }
 
-  @Nullable
   @Override
-  public String handleTargetRename(@NotNull @NonNls String newTargetName) {
+  public @Nullable String handleTargetRename(@NotNull @NonNls String newTargetName) {
     if (myInfo.type != REGULAR) {
       int start = myAttributeName.lastIndexOf(myInfo.name);
       return myAttributeName.substring(0, start)
@@ -444,9 +435,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  @NotNull
-  public Pair<LookupElement, String> getLookupElementWithPrefix(@NotNull PrefixMatcher prefixMatcher,
-                                                                @NotNull Angular2DeclarationsScope moduleScope) {
+  public @NotNull Pair<LookupElement, String> getLookupElementWithPrefix(@NotNull PrefixMatcher prefixMatcher,
+                                                                         @NotNull Angular2DeclarationsScope moduleScope) {
     LookupElementInfo info = buildElementInfo(prefixMatcher);
     String currentPrefix = prefixMatcher.getPrefix();
     Pair<String, String> hide = notNull(find(info.hidePrefixesAndSuffixes,
@@ -502,19 +492,16 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
            || ((type = getJSType()) != null && !(type instanceof JSBooleanType));
   }
 
-  @NotNull
-  public Angular2AttributeNameParser.AttributeInfo getInfo() {
+  public @NotNull Angular2AttributeNameParser.AttributeInfo getInfo() {
     return myInfo;
   }
 
-  @Nullable
   @Override
-  public Icon getIcon() {
+  public @Nullable Icon getIcon() {
     return AngularJSIcons.Angular2;
   }
 
-  @Nullable
-  public JSType getJSType() {
+  public @Nullable JSType getJSType() {
     return myJSType.getValue();
   }
 
@@ -634,8 +621,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       list.forEach(el -> doIfNotNull(factory.apply(el), myResult::add));
     }
 
-    @NotNull
-    private Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
+    private @NotNull Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
       return new Angular2AttributeDescriptor(myTag,
                                              PROPERTY_BINDING.buildName(info.getName()),
                                              AttributePriority.HIGH,
@@ -643,8 +629,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                              false);
     }
 
-    @NotNull
-    private Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
+    private @NotNull Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
       return new Angular2AttributeDescriptor(myTag,
                                              BANANA_BOX_BINDING.buildName(info.first.getName()),
                                              AttributePriority.HIGH,
@@ -652,13 +637,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                              false);
     }
 
-    @Nullable
-    private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
+    private @Nullable Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
       return createOneTimeBinding(info, info.getName());
     }
 
-    @Nullable
-    private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info, String attributeName) {
+    private @Nullable Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info, String attributeName) {
       return myShouldIncludeOneTimeBinding.test(attributeName)
              && isOneTimeBindingProperty(info)
              ? new Angular2AttributeDescriptor(myTag, attributeName, AttributePriority.HIGH,
@@ -667,8 +650,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
              : null;
     }
 
-    @NotNull
-    private Angular2AttributeDescriptor createAttributeBinding(@NotNull Angular2DirectiveAttribute info) {
+    private @NotNull Angular2AttributeDescriptor createAttributeBinding(@NotNull Angular2DirectiveAttribute info) {
       return new Angular2AttributeDescriptor(
         myTag,
         info.getName(),
@@ -678,8 +660,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       );
     }
 
-    @NotNull
-    private Angular2AttributeDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
+    private @NotNull Angular2AttributeDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
       return new Angular2AttributeDescriptor(myTag, EVENT.buildName(info.getName()), AttributePriority.HIGH,
                                              singletonList(myDirective),
                                              false);

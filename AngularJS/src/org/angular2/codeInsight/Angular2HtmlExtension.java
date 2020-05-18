@@ -31,7 +31,7 @@ import java.util.List;
 
 public class Angular2HtmlExtension extends HtmlXmlExtension {
 
-  private static final NotNullLazyValue<String> NG_ENT_LOCATION = AtomicNotNullLazyValue.createValue(()-> {
+  private static final NotNullLazyValue<String> NG_ENT_LOCATION = AtomicNotNullLazyValue.createValue(() -> {
     URL url = Angular2HtmlExtension.class.getResource("/dtd/ngChars.ent");
     return VfsUtilCore.urlToPath(VfsUtilCore.fixURLforIDEA(
       URLUtil.unescapePercentSequences(url.toExternalForm())));
@@ -97,8 +97,7 @@ public class Angular2HtmlExtension extends HtmlXmlExtension {
     return super.getPrefixDeclaration(context, namespacePrefix);
   }
 
-  @Nullable
-  private static SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix) {
+  private static @Nullable SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix) {
     for (XmlAttribute attribute : context.getAttributes()) {
       if (attribute.getName().startsWith(namespacePrefix)) {
         return new SchemaPrefix(attribute, TextRange.create(1, namespacePrefix.length()), namespacePrefix.substring(1));

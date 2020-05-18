@@ -28,9 +28,8 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     return DirectiveUtil.getDirective(element) != null;
   }
 
-  @Nullable
   @Override
-  public PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
+  public @Nullable PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
     return DirectiveUtil.getDirective(element);
   }
 
@@ -59,12 +58,11 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     }
   }
 
-  @NotNull
   @Override
-  public RenameDialog createRenameDialog(@NotNull Project project,
-                                         @NotNull final PsiElement element,
-                                         PsiElement nameSuggestionContext,
-                                         Editor editor) {
+  public @NotNull RenameDialog createRenameDialog(@NotNull Project project,
+                                                  final @NotNull PsiElement element,
+                                                  PsiElement nameSuggestionContext,
+                                                  Editor editor) {
     final String directiveName = ((PsiNamedElement)element).getName();
     return new RenameDialog(project, element, nameSuggestionContext, editor) {
       @Override
@@ -80,9 +78,8 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
   }
 
   public static class AngularJSDirectiveElementDescriptor implements ElementDescriptionProvider {
-    @Nullable
     @Override
-    public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+    public @Nullable String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
       JSImplicitElement directive = DirectiveUtil.getDirective(element);
       if (directive != null) {
         if (location instanceof UsageViewTypeLocation) return "directive";

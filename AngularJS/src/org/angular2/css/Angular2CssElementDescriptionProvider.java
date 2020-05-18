@@ -42,30 +42,28 @@ public class Angular2CssElementDescriptionProvider extends CssElementDescriptorP
   }
 
   @Override
-  public boolean isPossibleSelector(@NotNull final String selector, @NotNull PsiElement context) {
+  public boolean isPossibleSelector(final @NotNull String selector, @NotNull PsiElement context) {
     return !Angular2EntitiesProvider.findElementDirectivesCandidates(context.getProject(), selector).isEmpty();
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
-                                                                                         @Nullable PsiElement context) {
+  public @NotNull Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name,
+                                                                                                  @Nullable PsiElement context) {
     if (context != null && NG_DEEP.equals(name) && Angular2LangUtil.isAngular2Context(context)) {
       return PSEUDO_SELECTORS;
     }
     return Collections.emptySet();
   }
 
-  @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable PsiElement context) {
+  public @NotNull Collection<? extends CssPseudoSelectorDescriptor> getAllPseudoSelectorDescriptors(@Nullable PsiElement context) {
     return context != null && Angular2LangUtil.isAngular2Context(context) ? PSEUDO_SELECTORS : Collections.emptySet();
   }
 
   @Override
   public String @NotNull [] getSimpleSelectors(@NotNull PsiElement context) {
     return ArrayUtilRt.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
-                                     .keySet());
+                                       .keySet());
   }
 
   @Override

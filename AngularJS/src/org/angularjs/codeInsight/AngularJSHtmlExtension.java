@@ -45,8 +45,7 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
     return super.getPrefixDeclaration(context, namespacePrefix);
   }
 
-  @Nullable
-  private static SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix) {
+  private static @Nullable SchemaPrefix findAttributeSchema(XmlTag context, String namespacePrefix) {
     for (XmlAttribute attribute : context.getAttributes()) {
       if (attribute.getName().startsWith(namespacePrefix)) {
         return new SchemaPrefix(attribute, TextRange.create(0, namespacePrefix.length()), namespacePrefix);

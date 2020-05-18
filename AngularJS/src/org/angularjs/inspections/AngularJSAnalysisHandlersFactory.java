@@ -7,9 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class AngularJSAnalysisHandlersFactory extends JSAnalysisHandlersFactory {
 
-  @NotNull
   @Override
-  public InspectionSuppressor getInspectionSuppressor() {
+  public @NotNull InspectionSuppressor getInspectionSuppressor() {
     return AngularJSInspectionSuppressor.INSTANCE;
   }
 }

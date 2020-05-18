@@ -15,15 +15,15 @@ public enum Type {
   topLevelTemplate(Categories.TOP_LEVEL_TEMPLATE);
 
   public static class Categories {
-    public final static DiagramCategory STATE =
+    public static final DiagramCategory STATE =
       new DiagramCategory(AngularJSBundle.message("category.name.states"), AllIcons.Hierarchy.Class, true);
-    public final static DiagramCategory VIEW =
+    public static final DiagramCategory VIEW =
       new DiagramCategory(AngularJSBundle.message("category.name.views"), AllIcons.Actions.Forward, true);
-    public final static DiagramCategory TEMPLATE =
+    public static final DiagramCategory TEMPLATE =
       new DiagramCategory(AngularJSBundle.message("category.name.templates"), AllIcons.Actions.EditSource, true);
-    public final static DiagramCategory TEMPLATE_PLACEHOLDER = new DiagramCategory(
+    public static final DiagramCategory TEMPLATE_PLACEHOLDER = new DiagramCategory(
       AngularJSBundle.message("category.name.templateplaceholders"), AllIcons.Actions.Unselectall, true);
-    public final static DiagramCategory TOP_LEVEL_TEMPLATE =
+    public static final DiagramCategory TOP_LEVEL_TEMPLATE =
       new DiagramCategory(AngularJSBundle.message("category.name.topleveltemplate"), AllIcons.Actions.EditSource, true);
   }
 

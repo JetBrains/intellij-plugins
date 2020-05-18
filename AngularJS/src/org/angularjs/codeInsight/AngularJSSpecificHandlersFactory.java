@@ -9,9 +9,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public class AngularJSSpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
-  @NotNull
   @Override
-  public ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
+  public @NotNull ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(
     JSReferenceExpressionImpl referenceExpression, boolean ignorePerformanceLimits) {
     return new AngularJSReferenceExpressionResolver(referenceExpression, ignorePerformanceLimits);
   }

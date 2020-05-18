@@ -15,12 +15,11 @@ public class Angular2TypeEvaluationHelper extends TypeScriptTypeEvaluationHelper
 
   static final JSTypeEvaluationHelper INSTANCE = new Angular2TypeEvaluationHelper();
 
-  @Nullable
   @Override
-  public JSType getTypeFromTypeGuard(@NotNull PsiElement namedElement,
-                                     @Nullable JSReferenceExpression expression,
-                                     @Nullable JSType type,
-                                     @Nullable PsiElement resolvedElement) {
+  public @Nullable JSType getTypeFromTypeGuard(@NotNull PsiElement namedElement,
+                                               @Nullable JSReferenceExpression expression,
+                                               @Nullable JSType type,
+                                               @Nullable PsiElement resolvedElement) {
     // Angular template syntax doesn't support type guards, so we need to remove strictness from union types
     JSType optimized = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
     if (optimized instanceof JSUnionType) {

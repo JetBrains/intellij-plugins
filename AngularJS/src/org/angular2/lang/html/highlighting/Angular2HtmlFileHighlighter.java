@@ -28,7 +28,8 @@ import static com.intellij.openapi.editor.XmlHighlighterColors.HTML_CODE;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static org.angular2.lang.html.highlighting.Angular2HtmlHighlighterColors.*;
-import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.*;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA;
+import static org.angular2.lang.html.highlighting.Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
@@ -100,9 +101,8 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     return mapToTsKeys(result, tokenType);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig,
                                              FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
   }
@@ -111,8 +111,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     return ContainerUtil.map2Array(tokenHighlights, TextAttributesKey.class, key -> getTsMappedKey(key, tokenType));
   }
 
-  @NotNull
-  private static TextAttributesKey getTsMappedKey(@NotNull TextAttributesKey key, @NotNull IElementType tokenType) {
+  private static @NotNull TextAttributesKey getTsMappedKey(@NotNull TextAttributesKey key, @NotNull IElementType tokenType) {
     return !key.getExternalName().startsWith("JS.") //NON-NLS
            ? key
            : ourTsKeyMap.computeIfAbsent(pair(key, tokenType), p -> {

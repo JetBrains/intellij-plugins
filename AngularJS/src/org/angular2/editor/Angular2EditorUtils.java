@@ -19,8 +19,7 @@ import static org.angular2.Angular2InjectionUtils.getElementAtCaretFromContext;
 
 public class Angular2EditorUtils {
 
-  @NotNull
-  static List<Angular2Directive> getDirectivesAtCaret(@NotNull DataContext context) {
+  static @NotNull List<Angular2Directive> getDirectivesAtCaret(@NotNull DataContext context) {
     PsiElement element = getElementAtCaretFromContext(context);
     List<Angular2Directive> directives = Collections.emptyList();
     if (element != null && element.getNode().getElementType() == XML_NAME) {
@@ -31,7 +30,8 @@ public class Angular2EditorUtils {
       if (descriptor != null) {
         directives = descriptor.getSourceDirectives();
       }
-    } else if (element instanceof XmlTag) {
+    }
+    else if (element instanceof XmlTag) {
       Angular2TagDescriptor descriptor = tryCast(((XmlTag)element).getDescriptor(), Angular2TagDescriptor.class);
       if (descriptor != null) {
         directives = descriptor.getSourceDirectives();

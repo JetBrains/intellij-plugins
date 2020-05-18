@@ -26,11 +26,10 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
       .forEach(completionResultsConsumer::addDescriptor);
   }
 
-  @Nullable
   @Override
-  public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
-                                                   @NotNull String attributeName,
-                                                   @NotNull Angular2AttributeNameParser.AttributeInfo info) {
+  public @Nullable Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
+                                                             @NotNull String attributeName,
+                                                             @NotNull Angular2AttributeNameParser.AttributeInfo info) {
     String attrName = StringUtil.toLowerCase(attributeName);
     return getAvailableNgContentAttrSelectorsStream(tag, new Angular2DeclarationsScope(tag))
       .filter(selector -> StringUtil.toLowerCase(selector.getName()).equals(attrName))
@@ -39,9 +38,8 @@ public class Angular2NgContentSelectorAttributesProvider implements Angular2Attr
       .orElse(null);
   }
 
-  @NotNull
   @Override
-  public Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+  public @NotNull Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
     return Collections.emptyList();
   }
 

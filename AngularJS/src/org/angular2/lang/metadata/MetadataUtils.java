@@ -16,32 +16,28 @@ import static com.intellij.util.ObjectUtils.tryCast;
 
 public class MetadataUtils {
 
-  @NotNull
-  public static Stream<JsonProperty> streamObjectProperty(@Nullable JsonProperty property) {
+  public static @NotNull Stream<JsonProperty> streamObjectProperty(@Nullable JsonProperty property) {
     if (property == null || !(property.getValue() instanceof JsonObject)) {
       return Stream.empty();
     }
     return ((JsonObject)property.getValue()).getPropertyList().stream();
   }
 
-  @Nullable
-  public static Pair<String, String> readStringProperty(@Nullable JsonProperty property) {
+  public static @Nullable Pair<String, String> readStringProperty(@Nullable JsonProperty property) {
     if (property != null && property.getValue() instanceof JsonStringLiteral) {
       return pair(property.getName(), ((JsonStringLiteral)property.getValue()).getValue());
     }
     return null;
   }
 
-  @Nullable
-  public static String readStringPropertyValue(@Nullable JsonProperty property) {
+  public static @Nullable String readStringPropertyValue(@Nullable JsonProperty property) {
     if (property != null && property.getValue() instanceof JsonStringLiteral) {
       return ((JsonStringLiteral)property.getValue()).getValue();
     }
     return null;
   }
 
-  @Nullable
-  public static <T extends JsonValue> T getPropertyValue(@Nullable JsonProperty property, Class<T> valueClass) {
+  public static @Nullable <T extends JsonValue> T getPropertyValue(@Nullable JsonProperty property, Class<T> valueClass) {
     return property != null ? tryCast(property.getValue(), valueClass) : null;
   }
 }

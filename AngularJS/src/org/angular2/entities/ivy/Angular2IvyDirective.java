@@ -39,9 +39,8 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
     super(entityDef);
   }
 
-  @NotNull
   @Override
-  public Angular2DirectiveSelector getSelector() {
+  public @NotNull Angular2DirectiveSelector getSelector() {
     return getLazyValue(IVY_SELECTOR, () -> {
       TypeScriptStringLiteralType element = myEntityDef.getSelectorElement();
       if (element != null) {
@@ -51,15 +50,13 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
     });
   }
 
-  @NotNull
   @Override
-  public List<String> getExportAsList() {
+  public @NotNull List<String> getExportAsList() {
     return getLazyValue(IVY_EXPORT_AS, () -> myEntityDef.getExportAsList());
   }
 
-  @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+  public @NotNull Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return getAttributes(myEntityDef);
   }
 
@@ -135,8 +132,7 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
     );
   }
 
-  @NotNull
-  private Angular2DirectiveProperties getPropertiesNoCache() {
+  private @NotNull Angular2DirectiveProperties getPropertiesNoCache() {
     Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 

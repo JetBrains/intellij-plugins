@@ -24,9 +24,8 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl
     super(elementType);
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return Angular2Language.INSTANCE;
   }
 
@@ -51,9 +50,8 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl
     return true;
   }
 
-  @Nullable
   @Override
-  public Character getQuoteChar() {
+  public @Nullable Character getQuoteChar() {
     return JSEmbeddedContentImpl.getQuoteChar(this);
   }
 

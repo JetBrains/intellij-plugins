@@ -31,9 +31,8 @@ public class AngularJSSyntaxHighlighter extends JSHighlighter {
     return super.getTokenHighlights(tokenType);
   }
 
-  @NotNull
   @Override
-  public Lexer getHighlightingLexer() {
+  public @NotNull Lexer getHighlightingLexer() {
     return new AngularJSLexer();
   }
 }

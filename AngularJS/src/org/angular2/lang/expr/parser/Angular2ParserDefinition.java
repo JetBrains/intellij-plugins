@@ -20,15 +20,13 @@ import org.jetbrains.annotations.NotNull;
 public class Angular2ParserDefinition extends JavascriptParserDefinition {
   public static final IFileElementType FILE = JSFileElementType.create(Angular2Language.INSTANCE);
 
-  @NotNull
   @Override
-  public Lexer createLexer(Project project) {
+  public @NotNull Lexer createLexer(Project project) {
     return new Angular2Lexer();
   }
 
-  @NotNull
   @Override
-  public PsiParser createParser(Project project) {
+  public @NotNull PsiParser createParser(Project project) {
     return new Angular2PsiParser();
   }
 
@@ -43,8 +41,7 @@ public class Angular2ParserDefinition extends JavascriptParserDefinition {
   }
 
   @Override
-  @NotNull
-  public PsiElement createElement(ASTNode node) {
+  public @NotNull PsiElement createElement(ASTNode node) {
     if (node.getElementType() == Angular2HtmlVarAttrTokenType.REFERENCE
         || node.getElementType() == Angular2HtmlVarAttrTokenType.LET) {
       return new XmlASTWrapperPsiElement(node);

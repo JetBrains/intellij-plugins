@@ -10,9 +10,8 @@ public class Angular2IvyPipeIndex extends Angular2IndexBase<TypeScriptClass> {
   public static final StubIndexKey<String, TypeScriptClass> KEY =
     StubIndexKey.createIndexKey("angular2.ivy.pipe.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, TypeScriptClass> getKey() {
+  public @NotNull StubIndexKey<String, TypeScriptClass> getKey() {
     return KEY;
   }
 }

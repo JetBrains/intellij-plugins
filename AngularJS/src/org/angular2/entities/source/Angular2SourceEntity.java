@@ -24,15 +24,13 @@ public abstract class Angular2SourceEntity extends Angular2SourceEntityBase {
     myImplicitElement = implicitElement;
   }
 
-  @NotNull
   @Override
-  public JSElement getNavigableElement() {
+  public @NotNull JSElement getNavigableElement() {
     return myDecorator;
   }
 
   @Override
-  @NotNull
-  public JSElement getSourceElement() {
+  public @NotNull JSElement getSourceElement() {
     // try to find a fresh implicit element
     return StreamEx.ofNullable(myDecorator.getIndexingData())
       .map(JSElementIndexingData::getImplicitElements)
@@ -44,9 +42,8 @@ public abstract class Angular2SourceEntity extends Angular2SourceEntityBase {
       .orElse(myImplicitElement);
   }
 
-  @NotNull
   @Override
-  public ES6Decorator getDecorator() {
+  public @NotNull ES6Decorator getDecorator() {
     return myDecorator;
   }
 

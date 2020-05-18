@@ -10,9 +10,8 @@ public class Angular2MetadataModuleIndex extends Angular2IndexBase<Angular2Metad
   public static final StubIndexKey<String, Angular2MetadataModule> KEY =
     StubIndexKey.createIndexKey("angular2.metadata.module.index");
 
-  @NotNull
   @Override
-  public StubIndexKey<String, Angular2MetadataModule> getKey() {
+  public @NotNull StubIndexKey<String, Angular2MetadataModule> getKey() {
     return KEY;
   }
 }

@@ -25,9 +25,8 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
   private final Function<? super Pair<String, Integer>, ? extends TextRange> myCreateRange;
   private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
     new AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>>() {
-      @NotNull
       @Override
-      protected List<Angular2DirectiveSimpleSelector> compute() {
+      protected @NotNull List<Angular2DirectiveSimpleSelector> compute() {
         if (myText == null) {
           return Collections.emptyList();
         }
@@ -41,9 +40,8 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     };
   private final AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>> mySimpleSelectorsWithPsi =
     new AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>>() {
-      @NotNull
       @Override
-      protected List<SimpleSelectorWithPsi> compute() {
+      protected @NotNull List<SimpleSelectorWithPsi> compute() {
         if (myText == null) {
           return Collections.emptyList();
         }
@@ -75,28 +73,24 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
   }
 
-  @NotNull
   @Override
-  public String getText() {
+  public @NotNull String getText() {
     //noinspection HardCodedStringLiteral
     return myText == null ? "<null>" : myText;
   }
 
-  @NotNull
   @Override
-  public List<Angular2DirectiveSimpleSelector> getSimpleSelectors() {
+  public @NotNull List<Angular2DirectiveSimpleSelector> getSimpleSelectors() {
     return mySimpleSelectors.getValue();
   }
 
-  @NotNull
   @Override
-  public List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi() {
+  public @NotNull List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi() {
     return mySimpleSelectorsWithPsi.getValue();
   }
 
-  @NotNull
   @Override
-  public Angular2DirectiveSelectorPsiElement getPsiElementForElement(@NotNull String elementName) {
+  public @NotNull Angular2DirectiveSelectorPsiElement getPsiElementForElement(@NotNull String elementName) {
     for (SimpleSelectorWithPsi selector : getSimpleSelectorsWithPsi()) {
       if (selector.getElement() != null && elementName.equalsIgnoreCase(selector.getElement().getName())) {
         return selector.getElement();
@@ -115,8 +109,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     return getText();
   }
 
-  @NotNull
-  protected Angular2DirectiveSelectorPsiElement convert(@NotNull Pair<String, Integer> range, boolean isElement) {
+  protected @NotNull Angular2DirectiveSelectorPsiElement convert(@NotNull Pair<String, Integer> range, boolean isElement) {
     return new Angular2DirectiveSelectorPsiElement(mySelectorElement, myCreateRange.apply(range), range.first, isElement);
   }
 
@@ -141,21 +134,18 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     }
 
-    @Nullable
     @Override
-    public Angular2DirectiveSelectorPsiElement getElement() {
+    public @Nullable Angular2DirectiveSelectorPsiElement getElement() {
       return myElement;
     }
 
-    @NotNull
     @Override
-    public List<Angular2DirectiveSelectorPsiElement> getAttributes() {
+    public @NotNull List<Angular2DirectiveSelectorPsiElement> getAttributes() {
       return myAttributes;
     }
 
-    @NotNull
     @Override
-    public List<SimpleSelectorWithPsi> getNotSelectors() {
+    public @NotNull List<SimpleSelectorWithPsi> getNotSelectors() {
       return myNotSelectors;
     }
   }

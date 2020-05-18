@@ -35,15 +35,13 @@ import static com.intellij.util.ObjectUtils.notNull;
 
 public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersFactory {
 
-  @NotNull
   @Override
-  public InspectionSuppressor getInspectionSuppressor() {
+  public @NotNull InspectionSuppressor getInspectionSuppressor() {
     return Angular2InspectionSuppressor.INSTANCE;
   }
 
-  @NotNull
   @Override
-  public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
+  public @NotNull JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
     return new TypeScriptReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
@@ -117,8 +115,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
     }
   }
 
-  @NotNull
-  private static SmartPsiElementPointer<JSReferenceExpression> createPointerFor(@NotNull JSReferenceExpression methodExpression) {
+  private static @NotNull SmartPsiElementPointer<JSReferenceExpression> createPointerFor(@NotNull JSReferenceExpression methodExpression) {
     return SmartPointerManager.getInstance(methodExpression.getProject()).createSmartPsiElementPointer(methodExpression);
   }
 
@@ -151,9 +148,8 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       return false;
     }
 
-    @NotNull
     @Override
-    protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
+    protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
       return Pair.create(myRefExpressionPointer.getElement(), psiElement.getLastChild());
     }
 
@@ -194,9 +190,8 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
       return false;
     }
 
-    @NotNull
     @Override
-    protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
+    protected @NotNull Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
       return Pair.create(myRefExpressionPointer.getElement(), psiElement.getLastChild());
     }
 

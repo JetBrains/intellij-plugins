@@ -39,9 +39,8 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
   private static final int STYLES_INDEX_START = 4;
   private static final int MODULE_INDEX = 5;
 
-  @NotNull
   @Override
-  public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
+  public @NotNull List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
     PsiFile file = psiElement.getContainingFile();
     if (file == null || !Angular2LangUtil.isAngular2Context(file)) {
       return Collections.emptyList();
@@ -140,9 +139,8 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       myName = name;
     }
 
-    @Nullable
     @Override
-    public String getCustomName() {
+    public @Nullable String getCustomName() {
       return myName;
     }
 

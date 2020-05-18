@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AngularJSDICompletionContributor extends CompletionContributor {
   @Override
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
+  public void fillCompletionVariants(final @NotNull CompletionParameters parameters, final @NotNull CompletionResultSet result) {
     if (AngularJSCompletionContributor.getElementLanguage(parameters).isKindOf(JavascriptLanguage.INSTANCE)) {
       final PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
       addDependencyInjectionVariants(result, parameters, ref, parameters.getPosition());
@@ -25,7 +25,8 @@ public class AngularJSDICompletionContributor extends CompletionContributor {
                                                      PsiReference ref,
                                                      PsiElement parent) {
     if (ref instanceof AngularJSDIReferencesProvider.AngularJSDIReference) {
-      AngularJSCompletionContributor.addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularSymbolIndex.KEY, parent.getProject()));
+      AngularJSCompletionContributor
+        .addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularSymbolIndex.KEY, parent.getProject()));
     }
   }
 }

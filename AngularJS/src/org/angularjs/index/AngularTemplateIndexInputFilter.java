@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis Ushakov
  */
 public class AngularTemplateIndexInputFilter extends DefaultFileTypeSpecificInputFilter {
-  public final static AngularTemplateIndexInputFilter INSTANCE = new AngularTemplateIndexInputFilter();
+  public static final AngularTemplateIndexInputFilter INSTANCE = new AngularTemplateIndexInputFilter();
 
   public AngularTemplateIndexInputFilter() {
     super(StdFileTypes.HTML, StdFileTypes.XHTML);

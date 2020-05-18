@@ -49,8 +49,7 @@ public class Angular2MetadataFunctionStub extends Angular2MetadataElementStub<An
     createMember(VALUE_OBJ, value);
   }
 
-  @Nullable
-  public Angular2MetadataElementStub<? extends Angular2MetadataElement> getFunctionValue() {
+  public @Nullable Angular2MetadataElementStub<? extends Angular2MetadataElement> getFunctionValue() {
     //noinspection unchecked
     return tryCast(findMember(VALUE_OBJ), Angular2MetadataElementStub.class);
   }

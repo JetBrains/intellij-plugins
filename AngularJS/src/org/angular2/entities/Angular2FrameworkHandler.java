@@ -47,5 +47,4 @@ public interface Angular2FrameworkHandler {
                                                  @NotNull Angular2Declaration declaration) {
     return false;
   }
-
 }

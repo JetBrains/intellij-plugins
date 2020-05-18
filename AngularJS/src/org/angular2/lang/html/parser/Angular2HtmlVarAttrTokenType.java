@@ -18,8 +18,8 @@ import java.util.function.Supplier;
 import static com.intellij.lang.javascript.JSStubElementTypes.VAR_STATEMENT;
 import static com.intellij.lang.javascript.JSTokenTypes.IDENTIFIER;
 import static com.intellij.psi.xml.XmlTokenType.XML_NAME;
-import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.REFERENCE_VARIABLE;
 import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.LET_VARIABLE;
+import static org.angular2.lang.html.stub.Angular2HtmlStubElementTypes.REFERENCE_VARIABLE;
 
 public class Angular2HtmlVarAttrTokenType extends Angular2EmbeddedContentTokenType {
 
@@ -40,9 +40,8 @@ public class Angular2HtmlVarAttrTokenType extends Angular2EmbeddedContentTokenTy
     myPrefixTokenParserConstructor = prefixTokenParserConstructor;
   }
 
-  @NotNull
   @Override
-  protected Lexer createLexer() {
+  protected @NotNull Lexer createLexer() {
     return new AbstractCustomLexer(ContainerUtil.newArrayList(
       myPrefixTokenParserConstructor.get(), new VarIdentTokenParser()));
   }

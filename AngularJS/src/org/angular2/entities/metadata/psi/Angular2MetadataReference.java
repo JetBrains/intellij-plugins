@@ -17,8 +17,7 @@ public class Angular2MetadataReference extends Angular2MetadataElement<Angular2M
     super(element);
   }
 
-  @Nullable
-  public Angular2MetadataElement resolve() {
+  public @Nullable Angular2MetadataElement resolve() {
     String moduleName = getStub().getModule();
     if (moduleName != null) {
       String elementName = getStub().getName();

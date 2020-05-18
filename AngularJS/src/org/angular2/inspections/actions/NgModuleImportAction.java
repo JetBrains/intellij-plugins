@@ -44,8 +44,7 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
   }
 
   @Override
-  @NotNull
-  public List<JSElement> getCandidates() {
+  public @NotNull List<JSElement> getCandidates() {
     if (myContext == null) {
       return Collections.emptyList();
     }
@@ -78,13 +77,12 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
       .toList();
   }
 
-  @NotNull
   @Override
-  protected List<JSElement> getFinalElements(@NotNull Project project,
-                                             @NotNull PsiFile file,
-                                             @NotNull List<JSElement> candidates,
-                                             @NotNull Collection<JSElement> elementsFromLibraries,
-                                             @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
+  protected @NotNull List<JSElement> getFinalElements(@NotNull Project project,
+                                                      @NotNull PsiFile file,
+                                                      @NotNull List<JSElement> candidates,
+                                                      @NotNull Collection<JSElement> elementsFromLibraries,
+                                                      @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
     if (!file.isValid() || project.isDisposed() || !project.isOpen()) {
       return ContainerUtil.emptyList();
     }

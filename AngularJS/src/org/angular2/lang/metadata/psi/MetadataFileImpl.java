@@ -44,9 +44,8 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
     return this;
   }
 
-  @NotNull
   @Override
-  public Language getLanguage() {
+  public @NotNull Language getLanguage() {
     return MetadataJsonLanguage.INSTANCE;
   }
 
@@ -57,8 +56,7 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
   }
 
   @Override
-  @NotNull
-  public StubTree getStubTree() {
+  public @NotNull StubTree getStubTree() {
     ApplicationManager.getApplication().assertReadAccessAllowed();
 
     StubTree stubTree = SoftReference.dereference(myStub);
@@ -88,9 +86,8 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
     return stubTree;
   }
 
-  @NotNull
   @Override
-  public StubbedSpine getStubbedSpine() {
+  public @NotNull StubbedSpine getStubbedSpine() {
     return getStubTree().getSpine();
   }
 

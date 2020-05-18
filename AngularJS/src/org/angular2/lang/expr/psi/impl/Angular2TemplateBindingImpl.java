@@ -26,11 +26,9 @@ import static com.intellij.util.containers.ContainerUtil.findInstance;
 
 public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angular2TemplateBinding {
 
-  @NotNull
-  private final String myKey;
+  private final @NotNull String myKey;
   private final boolean myVar;
-  @Nullable
-  private final String myName;
+  private final @Nullable String myName;
 
   public Angular2TemplateBindingImpl(@NotNull IElementType elementType, @NotNull String key, boolean isVar, @Nullable String name) {
     super(elementType);
@@ -49,21 +47,18 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     }
   }
 
-  @NotNull
   @Override
-  public String getKey() {
+  public @NotNull String getKey() {
     return myKey;
   }
 
-  @Nullable
   @Override
-  public Angular2TemplateBindingKey getKeyElement() {
+  public @Nullable Angular2TemplateBindingKey getKeyElement() {
     return findInstance(getChildren(), Angular2TemplateBindingKey.class);
   }
 
-  @Nullable
   @Override
-  public JSType getKeyJSType() {
+  public @Nullable JSType getKeyJSType() {
     if (!keyIsVar()) {
       Angular2TemplateBindings bindings = tryCast(getParent(), Angular2TemplateBindings.class);
       if (bindings != null) {
@@ -73,15 +68,13 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     return null;
   }
 
-  @Nullable
   @Override
-  public String getName() {
+  public @Nullable String getName() {
     return myName;
   }
 
-  @Nullable
   @Override
-  public JSVariable getVariableDefinition() {
+  public @Nullable JSVariable getVariableDefinition() {
     return doIfNotNull(findInstance(getChildren(), JSVarStatement.class),
                        s -> ArrayUtil.getFirstElement(s.getVariables()));
   }
@@ -91,9 +84,8 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     return myVar;
   }
 
-  @Nullable
   @Override
-  public JSExpression getExpression() {
+  public @Nullable JSExpression getExpression() {
     return doIfNotNull(find(getChildren(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS),
                             node -> node.getElementType() != Angular2ElementTypes.TEMPLATE_BINDING_KEY),
                        node -> node.getPsi(JSExpression.class));

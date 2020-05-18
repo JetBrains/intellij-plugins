@@ -18,15 +18,13 @@ public class Angular2IvyPipe extends Angular2IvyDeclaration<Angular2IvySymbolDef
     super(entityDef);
   }
 
-  @NotNull
   @Override
-  public String getName() {
+  public @NotNull String getName() {
     return notNull(myEntityDef.getName(), () -> Angular2Bundle.message("angular.description.unnamed"));
   }
 
-  @NotNull
   @Override
-  public Collection<? extends TypeScriptFunction> getTransformMethods() {
+  public @NotNull Collection<? extends TypeScriptFunction> getTransformMethods() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
       Angular2EntityUtils.getPipeTransformMethods(myClass), getClassModificationDependencies())
     );

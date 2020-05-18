@@ -40,9 +40,8 @@ public class XmlASTWrapperPsiElement extends ASTWrapperPsiElement implements Xml
     return getNode().getElementType();
   }
 
-  @Nullable
   @Override
-  public Character getQuoteChar() {
+  public @Nullable Character getQuoteChar() {
     return JSEmbeddedContentImpl.getQuoteChar(this);
   }
 }

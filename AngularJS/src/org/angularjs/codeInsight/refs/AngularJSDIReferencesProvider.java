@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
-* @author Dennis.Ushakov
-*/
+ * @author Dennis.Ushakov
+ */
 public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
   @Override
   public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return new PsiReference[] { new AngularJSDIReference((JSParameter)element) };
+    return new PsiReference[]{new AngularJSDIReference((JSParameter)element)};
   }
 
   public static class AngularJSDIReference extends AngularJSReferenceBase<JSParameter> {
@@ -26,9 +26,8 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
-    @Nullable
     @Override
-    public PsiElement resolveInner() {
+    public @Nullable PsiElement resolveInner() {
       final JSImplicitElement resolve = AngularIndexUtil.resolve(getElement().getProject(), AngularSymbolIndex.KEY, getCanonicalText());
       if (resolve != null) return resolve;
 

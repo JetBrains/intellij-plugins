@@ -29,26 +29,22 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Declaration> getDeclarations() {
+  public @NotNull Set<Angular2Declaration> getDeclarations() {
     return myModuleResolver.getDeclarations();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Module> getImports() {
+  public @NotNull Set<Angular2Module> getImports() {
     return myModuleResolver.getImports();
   }
 
   @Override
-  @NotNull
-  public Set<Angular2Entity> getExports() {
+  public @NotNull Set<Angular2Entity> getExports() {
     return myModuleResolver.getExports();
   }
 
-  @NotNull
   @Override
-  public Set<Angular2Declaration> getAllExportedDeclarations() {
+  public @NotNull Set<Angular2Declaration> getAllExportedDeclarations() {
     return myModuleResolver.getAllExportedDeclarations();
   }
 
@@ -72,10 +68,9 @@ public class Angular2IvyModule extends Angular2IvyEntity<Angular2IvySymbolDef.Mo
     return myModuleResolver.areDeclarationsFullyResolved();
   }
 
-  @NotNull
-  private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
-                                                                                           @NotNull String propertyName,
-                                                                                           @NotNull Class<T> symbolClazz) {
+  private static @NotNull <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull TypeScriptField fieldDef,
+                                                                                                    @NotNull String propertyName,
+                                                                                                    @NotNull Class<T> symbolClazz) {
     Angular2IvySymbolDef.Module moduleDef = tryCast(Angular2IvySymbolDef.get(fieldDef, false), Angular2IvySymbolDef.Module.class);
     List<TypeScriptTypeofType> types = moduleDef == null ? Collections.emptyList() : moduleDef.getTypesList(propertyName);
     if (types.isEmpty()) {

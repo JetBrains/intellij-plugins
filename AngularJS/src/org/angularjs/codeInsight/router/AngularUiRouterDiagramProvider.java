@@ -77,9 +77,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         }
       }
 
-      @Nullable
       @Override
-      public DiagramObject resolveElementByFQN(String fqn, Project project) {
+      public @Nullable DiagramObject resolveElementByFQN(String fqn, Project project) {
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fqn);
         if (file == null) {
           return null;
@@ -97,9 +96,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return ArrayUtil.toObjectArray(parent.getChildrenList());
       }
 
-      @Nullable
       @Override
-      public DiagramObject findInDataContext(DataContext context) {
+      public @Nullable DiagramObject findInDataContext(DataContext context) {
         //todo ?
         return null;
       }
@@ -114,9 +112,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return element.getName();
       }
 
-      @Nullable
       @Override
-      public SimpleColoredText getItemName(Object element, DiagramState presentation) {
+      public @Nullable SimpleColoredText getItemName(Object element, DiagramState presentation) {
         if (element instanceof DiagramObject) {
           return new SimpleColoredText(((DiagramObject)element).getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
@@ -158,23 +155,20 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       }
     };
     myColorManager = new DiagramColorManagerBase() {
-      @NotNull
       @Override
-      public Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
+      public @NotNull Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
         return getColor(builder, element);
       }
 
-      @NotNull
       @Override
-      public Color getNodeBackground(@NotNull DiagramBuilder builder,
-                                     @NotNull DiagramNode node,
-                                     Object element,
-                                     boolean selected) {
+      public @NotNull Color getNodeBackground(@NotNull DiagramBuilder builder,
+                                              @NotNull DiagramNode node,
+                                              Object element,
+                                              boolean selected) {
         return getColor(builder, element);
       }
 
-      @NotNull
-      private Color getColor(DiagramBuilder builder, Object nodeElement) {
+      private @NotNull Color getColor(DiagramBuilder builder, Object nodeElement) {
         if (nodeElement instanceof DiagramObject) {
           DiagramObject element = ((DiagramObject)nodeElement);
           if (Type.state.equals(element.getType())) {
@@ -236,9 +230,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return new AngularUiRouterDiagramModel(project, virtualFile, this, nodesBuilder.getAllNodes(), nodesBuilder.getEdges());
   }
 
-  @Nullable
   @Override
-  public DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
+  public @Nullable DiagramPresentationModel createPresentationModel(Project project, Graph2D graph) {
     return new DiagramPresentationModelImpl(graph, project, this) {
       @Override
       public boolean allowChangeVisibleCategories() {
@@ -247,9 +240,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
       private final Map<DiagramEdge, EdgeRealizer> myEdgeRealizers = new HashMap<>();
 
-      @NotNull
       @Override
-      public EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
+      public @NotNull EdgeRealizer getEdgeRealizer(DiagramEdge edge) {
         if (!(edge instanceof AngularUiRouterEdge)) return super.getEdgeRealizer(edge);
         if (myEdgeRealizers.containsKey(edge)) return myEdgeRealizers.get(edge);
         UmlGraphBuilder builder = (UmlGraphBuilder)graph.getDataProvider(DiagramDataKeys.GRAPH_BUILDER).get(null);
@@ -467,18 +459,16 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     return false;
   }
 
-  @NotNull
   @Override
-  public DiagramExtras<DiagramObject> getExtras() {
+  public @NotNull DiagramExtras<DiagramObject> getExtras() {
     return new DiagramExtras<DiagramObject>() {
       @Override
       public List<AnAction> getExtraActions() {
         return Collections.singletonList(new MyEditSourceAction());
       }
 
-      @Nullable
       @Override
-      public Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
+      public @Nullable Object getData(@NotNull String dataId, List<DiagramNode<DiagramObject>> list, DiagramBuilder builder) {
         if (CommonDataKeys.PSI_ELEMENT.is(dataId) && list.size() == 1) {
           final SmartPsiElementPointer target = list.get(0).getIdentifyingElement().getNavigationTarget();
           return target == null ? null : target.getElement();
@@ -489,9 +479,8 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return null;
       }
 
-      @NotNull
       @Override
-      public Layouter getCustomLayouter(GraphSettings settings, Project project) {
+      public @NotNull Layouter getCustomLayouter(GraphSettings settings, Project project) {
         final SmartOrganicLayouter layouter = settings.getOrganicLayouter();
         layouter.setNodeEdgeOverlapAvoided(true);
 
@@ -521,9 +510,11 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
         return layouter;
       }
 
-      @NotNull
       @Override
-      public JComponent createNodeComponent(DiagramNode<DiagramObject> node, DiagramBuilder builder, Point basePoint, JPanel wrapper) {
+      public @NotNull JComponent createNodeComponent(DiagramNode<DiagramObject> node,
+                                                     DiagramBuilder builder,
+                                                     Point basePoint,
+                                                     JPanel wrapper) {
         final DiagramNodeContainer container = new DiagramNodeContainer(node, builder, basePoint);
         if (!GraphViewUtil.isPrintMode()) {
           if (!node.getIdentifyingElement().getErrors().isEmpty()) {

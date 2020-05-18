@@ -27,7 +27,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
 
   @Override
-  public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
+  public void fillCompletionVariants(final @NotNull CompletionParameters parameters, final @NotNull CompletionResultSet result) {
     if (!getElementLanguage(parameters).is(AngularJSLanguage.INSTANCE)) return;
     if (AngularMessageFormatCompletion.messageFormatCompletion(parameters, result)) return;
     PsiReference ref = parameters.getPosition().getContainingFile().findReferenceAt(parameters.getOffset());
@@ -45,7 +45,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static boolean addControllerVariants(CompletionResultSet result, CompletionParameters parameters, PsiReference ref, PsiElement parent) {
+  private static boolean addControllerVariants(CompletionResultSet result,
+                                               CompletionParameters parameters,
+                                               PsiReference ref,
+                                               PsiElement parent) {
     if (AngularJSReferenceExpressionResolver.isAsControllerRef(ref, parent)) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularControllerIndex.KEY, parent.getProject()));
       return true;
@@ -53,7 +56,10 @@ public class AngularJSCompletionContributor extends CompletionContributor {
     return false;
   }
 
-  private static boolean addFilterVariants(final CompletionResultSet result, CompletionParameters parameters, PsiReference ref, PsiElement parent) {
+  private static boolean addFilterVariants(final CompletionResultSet result,
+                                           CompletionParameters parameters,
+                                           PsiReference ref,
+                                           PsiElement parent) {
     if (AngularJSFilterExpression.isFilterNameRef(ref, parent)) {
       addResults(result, parameters, AngularIndexUtil.getAllKeys(AngularFilterIndex.KEY, parent.getProject()));
       return true;
@@ -74,6 +80,6 @@ public class AngularJSCompletionContributor extends CompletionContributor {
   }
 
   static Language getElementLanguage(final CompletionParameters parameters) {
-    return ReadAction.compute(()->PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset()));
+    return ReadAction.compute(() -> PsiUtilCore.getLanguageAtOffset(parameters.getPosition().getContainingFile(), parameters.getOffset()));
   }
 }
