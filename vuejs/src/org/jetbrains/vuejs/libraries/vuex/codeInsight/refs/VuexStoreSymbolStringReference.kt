@@ -20,10 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveResult
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.libraries.vuex.VuexUtils.isNamespaceChild
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexModelManager
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexNamedSymbol
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreContext
-import org.jetbrains.vuejs.libraries.vuex.model.store.VuexStoreNamespace
+import org.jetbrains.vuejs.libraries.vuex.model.store.*
 
 class VuexStoreSymbolStringReference(element: PsiElement,
                                      rangeInElement: TextRange,
@@ -62,7 +59,16 @@ class VuexStoreSymbolStringReference(element: PsiElement,
   }
 
   override fun getUnresolvedMessagePattern(): String {
-    return if (!terminal || accessor === null) VueBundle.message("vuex.inspection.message.unresolved.namespace", value) else ""
+    return if (!terminal || accessor === null)
+      VueBundle.message("vuex.inspection.message.unresolved.namespace",
+                        VuexStoreContext.appendSegment(namespace.get(element), fullName))
+    else when (accessor) {
+      VuexContainer::actions -> VueBundle.message("vuex.inspection.message.unresolved.action", value)
+      VuexContainer::getters -> VueBundle.message("vuex.inspection.message.unresolved.getter", value)
+      VuexContainer::mutations -> VueBundle.message("vuex.inspection.message.unresolved.mutation", value)
+      VuexContainer::state -> VueBundle.message("vuex.inspection.message.unresolved.state", value)
+      else -> VueBundle.message("vuex.inspection.message.unresolved.symbol", value)
+    }
   }
 
   override fun getUnresolvedReferenceSeverity(): HighlightSeverity {
