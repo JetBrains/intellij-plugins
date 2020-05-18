@@ -207,6 +207,10 @@ public class AngularJSParser
     @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
       if (builder.getTokenType() == JSTokenTypes.OR) return 10;
+      if (builder.getTokenType() == JSTokenTypes.AS_KEYWORD) {
+        if (advance) builder.advanceLexer();
+        return 10;
+      }
       return super.getCurrentBinarySignPriority(allowIn, advance);
     }
 
