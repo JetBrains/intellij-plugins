@@ -12,11 +12,7 @@ To use it:
     Action” popup (Cmd/Ctrl-Shift-A)
   </li>
 </ul>
-<br/>To run Prettier on save, please configure and use 
-  <a href="https://prettier.io/docs/en/webstorm.html#running-prettier-on-save-using-file-watcher">File Watchers</a>.
-<br/>
-<br/>
-This plugin is compatible with the IDE versions starting from 2018.1.
+<br/>To run Prettier on save, tick the "Run on save for files" option in Preferences/Settings | Languages & Frameworks | JavaScript | Prettier.
 <br/>
 <br/>
 Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/WEB">issue tracker</a>.
