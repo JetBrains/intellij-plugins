@@ -172,7 +172,7 @@ class BindingsTypeResolver {
       .apply(element)
       .nonNullValues()
       .toMap((a, b) -> a);
-    MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
+    MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = new MultiMap<>();
     List<JSType> templateContextTypes = new SmartList<>();
     directives.forEach(directive -> {
       TypeScriptClass clazz = directive.getTypeScriptClass();
