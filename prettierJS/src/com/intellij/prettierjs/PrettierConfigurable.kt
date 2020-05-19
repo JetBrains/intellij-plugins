@@ -6,7 +6,10 @@ import com.intellij.javascript.nodejs.util.NodePackageField
 import com.intellij.openapi.options.BoundSearchableConfigurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.layout.*
+import java.nio.file.FileSystems
+import java.util.regex.PatternSyntaxException
 import javax.swing.JLabel
 
 class PrettierConfigurable(private val project: Project) : BoundSearchableConfigurable(
@@ -42,6 +45,15 @@ class PrettierConfigurable(private val project: Project) : BoundSearchableConfig
         textField({ prettierConfiguration.filesPattern }, { prettierConfiguration.filesPattern = it })
           .commentComponent(PrettierBundle.message("files.pattern.comment"))
           .enableIf(runOnSaveCheckBox.selected)
+          .withValidationOnInput {
+            try {
+              FileSystems.getDefault().getPathMatcher("glob:" + it.text)
+              null
+            }
+            catch (e: PatternSyntaxException) {
+              ValidationInfo(e.message?.lines()?.firstOrNull() ?: PrettierBundle.message("invalid.pattern"), it)
+            }
+          }
       }
     }
   }
