@@ -43,7 +43,7 @@ public class Angular2SuppressionsTest extends Angular2CodeInsightFixtureTestCase
 
     PsiFile after = myFixture.getPsiManager().findFile(myFixture.getTempDirFixture().getFile("template.after.html"));
     ExpectedHighlightingData data = new ExpectedHighlightingData(
-      myFixture.getDocument(after), true, true, false, after);
+      myFixture.getDocument(after), true, true, false);
     data.init();
     ((CodeInsightTestFixtureImpl)myFixture).collectAndCheckHighlighting(data);
   }

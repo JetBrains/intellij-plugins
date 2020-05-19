@@ -1104,7 +1104,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public void testSpellChecker() throws Exception {
     enableInspectionTool(new SpellCheckingInspection());
     configureByFile(getBasePath() + "/" + getTestName(false) + ".mxml");
-    ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile);
+    ExpectedHighlightingData expectedHighlightingData = new ExpectedHighlightingData(myEditor.getDocument(), true, true, false);
     Collection<HighlightInfo> infoCollection = checkHighlighting(expectedHighlightingData);
     assertEquals(1, countNonInformationHighlights(infoCollection));
     findAndInvokeActionWithExpectedCheck(RenameTo.getFixName(), "mxml", infoCollection);

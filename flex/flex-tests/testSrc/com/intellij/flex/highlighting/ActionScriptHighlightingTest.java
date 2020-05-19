@@ -2063,11 +2063,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
       FlexTestUtils.setSdk(e.getConfigurations(module2)[0], sdk2.get());
     });
 
-    checkHighlighting(new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile));
+    checkHighlighting(new ExpectedHighlightingData(myEditor.getDocument(), true, true, false));
 
     myFile = PsiManager.getInstance(myProject).findFile(fileFromModule2.get());
     myEditor = createEditor(fileFromModule2.get());
-    checkHighlighting(new ExpectedHighlightingData(myEditor.getDocument(), true, true, false, myFile));
+    checkHighlighting(new ExpectedHighlightingData(myEditor.getDocument(), true, true, false));
   }
 
   private VirtualFile copyFileToModule(Module module, String filePath) {
