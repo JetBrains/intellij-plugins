@@ -1,12 +1,26 @@
 package com.intellij.deno
 
+import com.intellij.deno.service.DenoTypeScriptService
+import com.intellij.lang.javascript.service.JSLanguageService
+import com.intellij.lang.javascript.service.JSLanguageServiceBase
+import com.intellij.lang.javascript.service.JSLanguageServiceProvider
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestRunner
+import com.intellij.openapi.editor.impl.DocumentImpl
+import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import com.intellij.util.containers.ContainerUtil
 import org.junit.runner.RunWith
 
 @RunWith(TypeScriptServiceTestRunner::class)
 class DenoTypeScriptServiceTest : TypeScriptServiceTestBase() {
   var before = false
+
+  override fun getService(): JSLanguageServiceBase {
+    val services = JSLanguageServiceProvider.getLanguageServices(project)
+    return ContainerUtil.find(services
+    ) { el: JSLanguageService? -> el is DenoTypeScriptService } as JSLanguageServiceBase
+  }
 
   override fun setUp() {
     super.setUp()
@@ -24,5 +38,21 @@ class DenoTypeScriptServiceTest : TypeScriptServiceTestBase() {
     myFixture.configureByText("foo.ts", "console.log(Deno)\n" +
                                         "console.log(<error>Deno1</error>)")
     checkHighlightingByOptions(false)
+  }
+
+  fun testDenoOpenCloseFile() {
+    val file = myFixture.configureByText("bar.ts", "export class Hello {}\n" +
+                                                   "UnknownName")
+    closeCurrentEditor()
+    myFixture.configureByText("foo.ts", "import {Hello} from './bar.ts';\n<error>UnknownName</error>")
+    checkHighlightingByOptions(false)
+    closeCurrentEditor()
+    myFixture.openFileInEditor(file.virtualFile)
+
+    val document = DocumentImpl("export class Hello {}\n<error>UnknownName</error>")
+    val data = ExpectedHighlightingData(document, false, false, false)
+    data.init()
+    (myFixture as CodeInsightTestFixtureImpl).collectAndCheckHighlighting(data)
+    myFixture.checkResult(document.text)
   }
 }
