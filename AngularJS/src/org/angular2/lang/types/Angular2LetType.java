@@ -30,16 +30,13 @@ public class Angular2LetType extends Angular2BaseType<Angular2HtmlAttrVariableIm
   }
 
   public Angular2LetType(@NotNull Angular2HtmlAttrVariableImpl variable) {
-    super(variable);
+    super(variable, Angular2HtmlAttrVariableImpl.class);
+    assert variable.getKind() == Angular2HtmlAttrVariable.Kind.LET : variable;
   }
 
   protected Angular2LetType(@NotNull JSTypeSource source) {
-    super(source);
-  }
-
-  @Override
-  protected void validateSourceElement(@NotNull Angular2HtmlAttrVariableImpl element) {
-    assert element.getKind() == Angular2HtmlAttrVariable.Kind.LET;
+    super(source, Angular2HtmlAttrVariableImpl.class);
+    assert getSourceElement().getKind() == Angular2HtmlAttrVariable.Kind.LET : getSourceElement();
   }
 
   @Override

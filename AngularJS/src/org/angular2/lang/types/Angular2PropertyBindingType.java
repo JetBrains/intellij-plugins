@@ -16,16 +16,11 @@ import static org.angular2.lang.html.psi.PropertyBindingType.PROPERTY;
 public class Angular2PropertyBindingType extends Angular2BaseType<XmlAttribute> {
 
   public Angular2PropertyBindingType(@NotNull XmlAttribute attribute) {
-    super(attribute);
+    super(attribute, XmlAttribute.class);
   }
 
   protected Angular2PropertyBindingType(@NotNull JSTypeSource source) {
-    super(source);
-  }
-
-  @Override
-  protected void validateSourceElement(@NotNull XmlAttribute element) {
-    // validated by casting
+    super(source, XmlAttribute.class);
   }
 
   @Override

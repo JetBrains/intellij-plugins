@@ -19,16 +19,11 @@ import static org.angular2.lang.types.Angular2TypeUtils.getEventVariableType;
 public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
 
   public Angular2EventType(@NotNull XmlAttribute attribute) {
-    super(attribute);
+    super(attribute, XmlAttribute.class);
   }
 
   protected Angular2EventType(@NotNull JSTypeSource source) {
-    super(source);
-  }
-
-  @Override
-  protected void validateSourceElement(@NotNull XmlAttribute element) {
-    // validated by casting
+    super(source, XmlAttribute.class);
   }
 
   @Override

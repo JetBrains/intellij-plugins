@@ -14,18 +14,13 @@ public class Angular2TemplateBindingType extends Angular2BaseType<Angular2Templa
   private final String myKey;
 
   public Angular2TemplateBindingType(@NotNull Angular2TemplateBindings attribute, @NotNull String key) {
-    super(attribute);
+    super(attribute, Angular2TemplateBindings.class);
     myKey = key;
   }
 
   protected Angular2TemplateBindingType(@NotNull JSTypeSource source, @NotNull String key) {
-    super(source);
+    super(source, Angular2TemplateBindings.class);
     myKey = key;
-  }
-
-  @Override
-  protected void validateSourceElement(@NotNull Angular2TemplateBindings element) {
-    // validated by casting
   }
 
   @Override

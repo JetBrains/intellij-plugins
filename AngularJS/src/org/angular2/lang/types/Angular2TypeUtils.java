@@ -51,11 +51,11 @@ public class Angular2TypeUtils {
     return JSCompositeTypeImpl.getCommonType(result, type.getSource(), false);
   }
 
-  public static JSType getTemplateBindingsContextType(Angular2TemplateBindings bindings) {
+  public static @Nullable JSType getTemplateBindingsContextType(@NotNull Angular2TemplateBindings bindings) {
     return BindingsTypeResolver.get(bindings).resolveTemplateContextType();
   }
 
-  public static JSType getNgTemplateTagContextType(@NotNull XmlTag tag) {
+  public static @Nullable JSType getNgTemplateTagContextType(@NotNull XmlTag tag) {
     return Angular2TemplateElementsScopeProvider.isTemplateTag(tag) ? getCachedValue(tag, () -> {
       JSType result = BindingsTypeResolver.get(tag).resolveTemplateContextType();
       if (result instanceof TypeScriptNeverJSTypeImpl) {

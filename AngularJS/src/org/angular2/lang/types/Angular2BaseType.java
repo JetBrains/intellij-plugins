@@ -4,6 +4,7 @@ package org.angular2.lang.types;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.JSTypeTextBuilder;
+import com.intellij.lang.javascript.psi.JSTypeWithIncompleteSubstitution;
 import com.intellij.lang.javascript.psi.types.JSCodeBasedType;
 import com.intellij.lang.javascript.psi.types.JSSimpleTypeBaseImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
@@ -15,25 +16,23 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTypeBaseImpl implements JSCodeBasedType {
+public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTypeBaseImpl
+  implements JSCodeBasedType,                                        JSTypeWithIncompleteSubstitution {
 
-  protected Angular2BaseType(@NotNull T source) {
-    this(JSTypeSourceFactory.createTypeSource(source, true));
+  protected Angular2BaseType(@NotNull T source, Class<T> sourceClass) {
+    this(JSTypeSourceFactory.createTypeSource(source, true), sourceClass);
   }
 
-  protected Angular2BaseType(@NotNull JSTypeSource source) {
+  protected Angular2BaseType(@NotNull JSTypeSource source, Class<T> sourceClass) {
     super(source);
     PsiElement sourceElement = source.getSourceElement();
     assert sourceElement != null;
-    //noinspection AbstractMethodCallInConstructor,unchecked
-    validateSourceElement((T)sourceElement);
+    sourceClass.cast(sourceElement);
   }
 
   protected abstract @Nullable String getTypeOfText();
 
   protected abstract @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context);
-
-  protected abstract void validateSourceElement(@NotNull T element);
 
   @Override
   public @NotNull T getSourceElement() {
@@ -51,6 +50,11 @@ public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTyp
   }
 
   @Override
+  public @NotNull JSType substituteCompletely() {
+    return this.substitute().substitute();
+  }
+
+  @Override
   protected boolean isEquivalentToWithSameClass(@NotNull JSType type, @Nullable ProcessingContext context, boolean allowResolve) {
     return type.getClass() == this.getClass()
            && Objects.equals(type.getSourceElement(), getSourceElement());
@@ -64,7 +68,7 @@ public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTyp
   @Override
   protected void buildTypeTextImpl(@NotNull TypeTextFormat format, @NotNull JSTypeTextBuilder builder) {
     if (format == TypeTextFormat.SIMPLE) {
-      builder.append("typeof#" + getTypeOfText());
+      builder.append("ngtypeof#" + getTypeOfText());
       return;
     }
     substitute().buildTypeText(format, builder);

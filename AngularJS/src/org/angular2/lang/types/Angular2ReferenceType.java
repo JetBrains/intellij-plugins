@@ -57,16 +57,13 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
   }
 
   public Angular2ReferenceType(@NotNull Angular2HtmlAttrVariableImpl variable) {
-    super(variable);
+    super(variable, Angular2HtmlAttrVariableImpl.class);
+    assert variable.getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE : variable;
   }
 
   protected Angular2ReferenceType(@NotNull JSTypeSource source) {
-    super(source);
-  }
-
-  @Override
-  protected void validateSourceElement(@NotNull Angular2HtmlAttrVariableImpl element) {
-    assert element.getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE;
+    super(source, Angular2HtmlAttrVariableImpl.class);
+    assert getSourceElement().getKind() == Angular2HtmlAttrVariable.Kind.REFERENCE : getSourceElement();
   }
 
   @Override
