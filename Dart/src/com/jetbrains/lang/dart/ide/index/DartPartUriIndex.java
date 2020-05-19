@@ -3,45 +3,40 @@ package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
-import com.intellij.util.io.EnumeratorStringDescriptor;
-import com.intellij.util.io.KeyDescriptor;
 import com.intellij.util.io.externalizer.StringCollectionExternalizer;
 import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DartPartUriIndex extends FileBasedIndexExtension<String, List<String>> {
-  public static final ID<String, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
-  private final DataIndexer<String, List<String>, FileContent> myDataIndexer = new MyDataIndexer();
+public class DartPartUriIndex extends SingleEntryFileBasedIndexExtension<List<String>> {
+  public static final ID<Integer, List<String>> DART_PATH_INDEX = ID.create("DartPathIndex");
 
   @NotNull
   @Override
-  public ID<String, List<String>> getName() {
+  public ID<Integer, List<String>> getName() {
     return DART_PATH_INDEX;
   }
 
   @Override
   public int getVersion() {
-    return DartIndexUtil.INDEX_VERSION;
+    return DartIndexUtil.INDEX_VERSION + 1;
   }
 
-  @NotNull
   @Override
-  public DataIndexer<String, List<String>, FileContent> getIndexer() {
-    return myDataIndexer;
-  }
-
-  @NotNull
-  @Override
-  public KeyDescriptor<String> getKeyDescriptor() {
-    return EnumeratorStringDescriptor.INSTANCE;
+  public @NotNull SingleEntryIndexer<List<String>> getIndexer() {
+    return new SingleEntryIndexer<List<String>>(false) {
+      @Nullable
+      @Override
+      protected List<String> computeValue(@NotNull FileContent inputData) {
+        return DartIndexUtil.indexFile(inputData).getPartUris();
+      }
+    };
   }
 
   @NotNull
@@ -56,25 +51,10 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
     return new DefaultFileTypeSpecificInputFilter(DartFileType.INSTANCE);
   }
 
-  @Override
-  public boolean dependsOnFileContent() {
-    return true;
-  }
-
+  @NotNull
   public static List<String> getPartUris(@NotNull final Project project, @NotNull final VirtualFile virtualFile) {
-    final List<String> result = new ArrayList<>();
-    for (List<String> list : FileBasedIndex.getInstance().getValues(DART_PATH_INDEX, virtualFile.getName(),
-                                                                    GlobalSearchScope.fileScope(project, virtualFile))) {
-      result.addAll(list);
-    }
-    return result;
-  }
-
-  private static class MyDataIndexer implements DataIndexer<String, List<String>, FileContent> {
-    @Override
-    @NotNull
-    public Map<String, List<String>> map(@NotNull final FileContent inputData) {
-      return Collections.singletonMap(inputData.getFileName(), DartIndexUtil.indexFile(inputData).getPartUris());
-    }
+    Map<Integer, List<String>> data = FileBasedIndex.getInstance().getFileData(DART_PATH_INDEX, virtualFile, project);
+    List<String> uris = ContainerUtil.getFirstItem(data.values());
+    return ContainerUtil.notNullize(uris);
   }
 }
