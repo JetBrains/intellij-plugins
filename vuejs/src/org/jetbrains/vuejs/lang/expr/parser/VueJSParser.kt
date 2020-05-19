@@ -6,16 +6,12 @@ import com.intellij.lang.ecmascript6.parsing.ES6ExpressionParser
 import com.intellij.lang.ecmascript6.parsing.ES6FunctionParser
 import com.intellij.lang.ecmascript6.parsing.ES6Parser
 import com.intellij.lang.ecmascript6.parsing.ES6StatementParser
-import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.JavaScriptBundle
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.parsing.JSPsiTypeParser
 import com.intellij.lang.javascript.parsing.JavaScriptParser
 import com.intellij.lang.javascript.psi.JSParameter
 import com.intellij.lang.javascript.psi.JSStubElementType
 import com.intellij.lang.javascript.psi.stubs.JSParameterStub
-import com.intellij.psi.css.impl.CssElementTypes.KEYWORDS
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.vuejs.VueBundle.message
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeNameParser.*
@@ -86,7 +82,8 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       while (!builder.eof()) {
         if (builder.tokenType === JSTokenTypes.SEMICOLON) {
           builder.advanceLexer()
-        } else if (!parseExpressionStatement()) {
+        }
+        else if (!parseExpressionStatement()) {
           builder.error(JavaScriptBundle.message("javascript.parser.message.expected.expression"))
           if (!builder.eof()) {
             builder.advanceLexer()
@@ -283,7 +280,8 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       while (builder.tokenType === JSTokenTypes.OR) {
         firstParam.done(FILTER_LEFT_SIDE_ARGUMENT)
         builder.advanceLexer()
-        if (builder.tokenType === JSTokenTypes.IDENTIFIER || KEYWORDS.contains(builder.tokenType)) {
+        if (builder.tokenType === JSTokenTypes.IDENTIFIER
+            || JSKeywordSets.ES6_IDENTIFIER_TOKENS_SET.contains(builder.tokenType)) {
           val pipeName = builder.mark()
           builder.advanceLexer()
           pipeName.done(FILTER_REFERENCE_EXPRESSION)
