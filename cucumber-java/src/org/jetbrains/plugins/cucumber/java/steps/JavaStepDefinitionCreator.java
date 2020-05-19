@@ -102,7 +102,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
     final TextRange range = new TextRange(1, regexpElement.getTextLength() - 1);
-    builder.replaceElement(regexpElement, range, regexpElement.getText().substring(range.getStartOffset(), range.getEndOffset()));
+    builder.replaceElement(regexpElement, range, range.substring(regexpElement.getText()));
 
     for (PsiParameter var : blockVars.getParameters()) {
       final PsiElement nameIdentifier = var.getNameIdentifier();
@@ -115,7 +115,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       final PsiElement firstStatement = body.getStatements()[0];
       final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
       builder.replaceElement(firstStatement, pendingRange,
-                             firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
+                             pendingRange.substring(firstStatement.getText()));
     }
 
     PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
