@@ -18,6 +18,35 @@ JSFile:test.js.v-bind:foo.expr
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
       VueJSFilterReferenceExpression
+        PsiElement(JS:GET_KEYWORD)('get')
+      VueJSFilterArgumentsList
+        PsiElement(JS:LPAR)('(')
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"bar"')
+        PsiElement(JS:RPAR)(')')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
+        PsiElement(JS:AWAIT_KEYWORD)('await')
+------
+JSFile:test.js.v-bind:foo.expr
+  VueJSEmbeddedExpression
+    VueJSFilterExpression
+      VueJSFilterLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)('"foo"')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      VueJSFilterReferenceExpression
         PsiElement(JS:IDENTIFIER)('lowercase')
 ------
 JSFile:test.js.v-bind:foo.expr
