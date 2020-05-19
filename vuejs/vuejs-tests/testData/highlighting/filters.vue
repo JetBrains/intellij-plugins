@@ -4,6 +4,7 @@
   <div :title="<weak_warning descr="Argument type number is not assignable to parameter type boolean">true | localFilter('str', 12)</weak_warning> | localFilter2('sss', 12)"></div>
   <div :title="true | <weak_warning descr="Filter function should accept at least one argument">badFilter</weak_warning>"></div>
   <div :title="12 | <weak_warning descr="Unresolved filter unknownFilter">unknownFilter</weak_warning>(123)"></div>
+  <div :title="'foo' | get<weak_warning descr="Invalid number of filter arguments, expected 1">()</weak_warning>"/>
 </template>
 
 <script lang="ts">
@@ -18,6 +19,9 @@
         return arg1 + arg2 + arg3
       },
       badFilter: function (): string {
+        return ""
+      },
+      get: (<warning descr="Unused parameter value">value</warning>: string, <warning descr="Unused parameter path">path</warning>: string) => {
         return ""
       }
     }
