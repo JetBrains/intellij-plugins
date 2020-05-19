@@ -4,6 +4,7 @@ package org.angular2.entities;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * Angular framework handler allows to tailor Angular plugin behaviour to properly support a particular framework.
  */
+@ApiStatus.Experimental
 public interface Angular2FrameworkHandler {
 
   ExtensionPointName<Angular2FrameworkHandler>
