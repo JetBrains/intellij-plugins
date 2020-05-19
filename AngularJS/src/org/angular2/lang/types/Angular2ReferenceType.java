@@ -5,6 +5,7 @@ import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
@@ -38,6 +39,7 @@ import static org.angular2.codeInsight.template.Angular2TemplateElementsScopePro
 import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 import static org.angular2.lang.Angular2LangUtil.ANGULAR_CORE_PACKAGE;
+import static org.angular2.lang.types.Angular2TypeUtils.getNgTemplateTagContextType;
 
 public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
@@ -69,8 +71,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
 
   @Override
   protected @Nullable String getTypeOfText() {
-    return doIfNotNull(PsiTreeUtil.findFirstParent(getSourceElement(), XmlAttribute.class::isInstance),
-                       attr -> ((XmlAttribute)attr).getName());
+    return doIfNotNull(PsiTreeUtil.getContextOfType(getSourceElement(), XmlAttribute.class), XmlAttribute::getName);
   }
 
   @Override
@@ -79,7 +80,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
   }
 
   @Override
-  protected @Nullable JSType resolveType() {
+  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
     Angular2HtmlReference reference = getReferenceDefinitionAttribute();
     if (reference == null) {
       return null;
@@ -99,7 +100,8 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
         .findFirst()
         .orElseGet(() -> hasExport ? null
                                    : isTemplateTag(tag)
-                                     ? getTemplateRefType(Angular2ComponentLocator.findComponentClass(reference))
+                                     ? getTemplateRefType(Angular2ComponentLocator.findComponentClass(tag),
+                                                          getNgTemplateTagContextType(tag))
                                      : getHtmlElementClassType(reference, tag.getName()));
     }
     return null;
@@ -110,7 +112,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
       getSourceElement(), Angular2HtmlReference.class::isInstance);
   }
 
-  private static @Nullable JSType getTemplateRefType(@Nullable PsiElement scope) {
+  private static @Nullable JSType getTemplateRefType(@Nullable PsiElement scope, @Nullable JSType contextType) {
     return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
         if (!(module instanceof JSElement)) continue;
@@ -127,7 +129,7 @@ public class Angular2ReferenceType extends Angular2BaseType<Angular2HtmlAttrVari
     }), templateRefClass -> {
       JSType baseType = templateRefClass.getJSType();
       return new JSGenericTypeImpl(baseType.getSource(), baseType,
-                                   JSAnyType.get(templateRefClass, true));
+                                   contextType != null ? contextType : JSAnyType.get(templateRefClass, true));
     });
   }
 }

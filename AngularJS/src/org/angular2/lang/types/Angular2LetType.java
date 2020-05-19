@@ -2,6 +2,9 @@
 package org.angular2.lang.types;
 
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeFactory;
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
@@ -9,12 +12,15 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
 import org.angular2.lang.html.psi.Angular2HtmlAttrVariable;
 import org.angular2.lang.html.psi.impl.Angular2HtmlAttrVariableImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.notNull;
+import static org.angular2.lang.Angular2LangUtil.$IMPLICIT;
 
 public class Angular2LetType extends Angular2BaseType<Angular2HtmlAttrVariableImpl> {
 
@@ -38,8 +44,7 @@ public class Angular2LetType extends Angular2BaseType<Angular2HtmlAttrVariableIm
 
   @Override
   protected @Nullable String getTypeOfText() {
-    return doIfNotNull(PsiTreeUtil.findFirstParent(getSourceElement(), XmlAttribute.class::isInstance),
-                       attr -> ((XmlAttribute)attr).getName());
+    return doIfNotNull(PsiTreeUtil.getContextOfType(getSourceElement(), XmlAttribute.class), XmlAttribute::getName);
   }
 
   @Override
@@ -48,7 +53,15 @@ public class Angular2LetType extends Angular2BaseType<Angular2HtmlAttrVariableIm
   }
 
   @Override
-  protected @Nullable JSType resolveType() {
-    return null;
+  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
+    XmlAttribute attribute = PsiTreeUtil.getContextOfType(getSourceElement(), XmlAttribute.class);
+    XmlTag tag = PsiTreeUtil.getContextOfType(getSourceElement(), XmlTag.class);
+    if (attribute == null || tag == null) {
+      return null;
+    }
+    String contextItemName = notNull(attribute.getValue(), $IMPLICIT);
+    JSType templateContext = Angular2TypeUtils.getNgTemplateTagContextType(tag);
+    return templateContext != null ? JSCompositeTypeFactory.createIndexedAccessType(
+      templateContext, new JSStringLiteralTypeImpl(contextItemName, false, getSource()), getSource()).substitute(context) : null;
   }
 }

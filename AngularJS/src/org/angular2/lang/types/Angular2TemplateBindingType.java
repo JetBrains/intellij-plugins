@@ -2,6 +2,7 @@
 package org.angular2.lang.types;
 
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.util.ProcessingContext;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -49,7 +50,7 @@ public class Angular2TemplateBindingType extends Angular2BaseType<Angular2Templa
   }
 
   @Override
-  protected @Nullable JSType resolveType() {
+  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
     return BindingsTypeResolver.get(getSourceElement()).resolveDirectiveInputType(myKey);
   }
 }

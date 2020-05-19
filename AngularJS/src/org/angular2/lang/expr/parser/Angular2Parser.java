@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Consumer;
 import org.angular2.lang.Angular2Bundle;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NonNls;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
@@ -91,8 +92,6 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
   public static void parseJS(PsiBuilder builder, IElementType root) {
     new Angular2Parser(builder).parseJS(root);
   }
-
-  @NonNls private static final String $IMPLICIT = "$implicit";
 
   private final boolean myIsAction;
   private final boolean myIsSimpleBinding;
@@ -218,7 +217,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
             name = parseTemplateBindingKey(false);
           }
           else {
-            name = $IMPLICIT;
+            name = Angular2LangUtil.$IMPLICIT;
           }
         }
         else if (builder.getTokenType() == AS_KEYWORD) {

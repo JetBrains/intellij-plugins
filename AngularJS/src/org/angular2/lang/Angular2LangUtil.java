@@ -31,6 +31,7 @@ public class Angular2LangUtil {
 
   @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
   @NonNls public static final String ANGULAR_CLI_PACKAGE = "@angular/cli";
+  @NonNls public static final String $IMPLICIT = "$implicit";
 
   @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_CACHE_KEY = new Key<>("angular2.isContext.cache");
   @NonNls private static final Key<Boolean> ANGULAR2_PREV_CONTEXT_KEY = new Key<>("angular2.isContext.prev");

@@ -17,26 +17,22 @@ type Contacts = Contact[];
 @Component({
     selector: 'my-app',
     template: `
-      <table>
-        <thead>
-        <tr>
-          <th style="width: 1%;text-align: left;">#</th>
-          <th style="width: 1%;text-align: left;">Username</th>
-          <th style="text-align: left;">Email</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let contact of contacts; index as i; trackBy: <error descr="Unresolved variable or type foo">foo</error>">
-            <td>{{i + 1}}</td>
-            <td>{{i.toExponential()}}</td>
-            <td>{{i.<error descr="Unresolved function or method big()">big</error>()}}</td>
-            <td>{{contact}}</td>
-            <td>{{contact.username}}</td>
-            <td>{{contact.<error descr="Unresolved variable foo">foo</error>}}</td>
-        </tr>
-        </tbody>
-      </table>
-    `
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 1%;text-align: left;">#</th>
+        <th style="width: 1%;text-align: left;">Username</th>
+        <th style="text-align: left;">Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor [ngForOf]="contacts" let-contact let-i="index">
+        <td>{{i + 1}}</td>
+        <td>{{contact.<caret>}}</td>
+      </ng-template>
+    </tbody>
+  </table>
+  `
 })
 export class AppComponent {
     public contacts: Contacts = [{

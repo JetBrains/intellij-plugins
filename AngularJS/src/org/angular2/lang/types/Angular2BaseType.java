@@ -31,7 +31,7 @@ public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTyp
 
   protected abstract @Nullable String getTypeOfText();
 
-  protected abstract @Nullable JSType resolveType();
+  protected abstract @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context);
 
   protected abstract void validateSourceElement(@NotNull T element);
 
@@ -43,7 +43,7 @@ public abstract class Angular2BaseType<T extends PsiElement> extends JSSimpleTyp
 
   @Override
   protected @Nullable JSType substituteImpl(@NotNull JSTypeSubstitutionContext context) {
-    JSType type = resolveType();
+    JSType type = resolveType(context);
     if (type != null) {
       context.add(type);
     }

@@ -2,6 +2,7 @@
 package org.angular2.lang.types;
 
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -38,7 +39,7 @@ public class Angular2PropertyBindingType extends Angular2BaseType<XmlAttribute> 
   }
 
   @Override
-  protected @Nullable JSType resolveType() {
+  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
     return BindingsTypeResolver.resolve(getSourceElement(),
                                         Angular2PropertyBindingType::isPropertyBindingAttribute,
                                         BindingsTypeResolver::resolveDirectiveInputType);

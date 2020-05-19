@@ -2,6 +2,7 @@
 package org.angular2.lang.types;
 
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.JSTypeSubstitutionContext;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.psi.xml.XmlAttribute;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
@@ -41,7 +42,7 @@ public class Angular2EventType extends Angular2BaseType<XmlAttribute> {
   }
 
   @Override
-  protected @Nullable JSType resolveType() {
+  protected @Nullable JSType resolveType(@NotNull JSTypeSubstitutionContext context) {
     XmlAttribute attribute = getSourceElement();
     Angular2AttributeDescriptor descriptor = tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
     if (descriptor != null && isEmpty(descriptor.getSourceDirectives())) {
