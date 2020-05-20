@@ -38,7 +38,7 @@ import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
 import javax.swing.text.StyleConstants
 
-class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
+class ModulesPanel(val learnToolWindow: LearnToolWindow?) : JPanel() {
 
   private val modulesPanel: JPanel = JPanel()
   private val module2linklabel = BidirectionalMap<Module, LinkLabel<Any>>()
@@ -198,7 +198,7 @@ class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
     modulesPanel.add(JButton().apply {
       action = object : AbstractAction() {
         override fun actionPerformed(actionEvent: ActionEvent) {
-          learnToolWindow.changeLanguage()
+          learnToolWindow?.changeLanguage()
         }
       }
       margin = JBUI.emptyInsets()

@@ -39,6 +39,8 @@
       implementation="training.statistic.IdeFeaturesTrainerModuleRuleValidator"/>
     <applicationService serviceImplementation="training.ui.welcomeScreen.recentProjects.IFTRecentProjectListActionProvider"/>
     <welcomeFrameProvider implementation="training.ui.welcomeScreen.recentProjects.IFTFlatWelcomeFrameProvider" order="first"/>
+    <welcomeTabFactory id="TutorialsWelcomeTab" implementation="training.ui.welcomeScreen.TutorialsWelcomeTabFactory" order="last"/>
+
     <applicationService
       serviceImplementation="training.learn.CourseManager"/>
     <applicationService
