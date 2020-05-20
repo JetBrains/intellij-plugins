@@ -40,20 +40,7 @@ class DenoConfigurable(private val project: Project) : Configurable {
   @Throws(ConfigurationException::class)
   override fun apply() {
     if (isModified) {
-      DenoSettings.getService(project).setUseDeno(myUseDeno.isSelected)
-
-      WriteAction.run(
-        ThrowableRunnable<ConfigurationException> {
-          TypeScriptCompilerService.restartServices(project)
-        })
-
-      ApplicationManager.getApplication().invokeLater(Runnable {
-        WriteAction.run(
-          ThrowableRunnable<ConfigurationException> {
-            ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(
-              EmptyRunnable.getInstance(), false, true)
-          })
-      }, project.disposed)
+      DenoSettings.getService(project).setUseDenoAndReload(myUseDeno.isSelected)
     }
   }
 }
