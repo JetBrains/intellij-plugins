@@ -2,7 +2,7 @@ package com.intellij.deno.modules
 
 import com.intellij.deno.DenoSettings
 import com.intellij.lang.ecmascript6.psi.impl.JSImportPathConfiguration
-import com.intellij.lang.javascript.DialectDetector
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.javascript.frameworks.modules.JSBaseModuleReferenceContributor
 import com.intellij.lang.javascript.modules.JSModuleNameInfo
@@ -16,7 +16,7 @@ import java.io.File
 
 class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
   override fun isApplicable(host: PsiElement): Boolean {
-    return DialectDetector.isTypeScript(host) && DenoSettings.getService(host.project).isUseDeno()
+    return DenoSettings.getService(host.project).isUseDeno()
   }
 
   override fun getReferences(unquotedRefText: String,
@@ -30,6 +30,10 @@ class DenoModuleReferenceContributor : JSBaseModuleReferenceContributor() {
   override fun getModuleInfo(configuration: JSImportPathConfiguration,
                              moduleFileOrDirectory: VirtualFile,
                              resolvedModuleFile: VirtualFile): JSModuleNameInfo? {
+    if (!TypeScriptUtil.isTypeScriptFile(resolvedModuleFile) ||
+       TypeScriptUtil.isDefinitionFile(resolvedModuleFile)
+    ) return null
+    
     val place = configuration.place
     var externalModuleName = VfsUtilCore.findRelativePath(place.containingFile.virtualFile, moduleFileOrDirectory, '/')
     if (externalModuleName == null) return null
