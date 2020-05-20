@@ -140,7 +140,7 @@ private class VuexMappedSourceComputedStateProperty(override val name: String,
     ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Property, false)
   }
 
-  override val jsType: JSType? get() = (source as? JSTypeInfoOwner)?.jsType
+  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 private class VuexMappedSourceComputedGetterProperty(override val name: String,
@@ -153,7 +153,7 @@ private class VuexMappedSourceComputedGetterProperty(override val name: String,
       } ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Property, false)
   }
 
-  override val jsType: JSType? get() = (source as? JSTypeInfoOwner)?.jsType
+  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 private class VuexMappedSourceMethod(override val name: String,
@@ -171,7 +171,7 @@ private class VuexMappedSourceMethod(override val name: String,
       } ?: VueImplicitElement(name, null, element, JSImplicitElement.Type.Function, false)
   }
 
-  override val jsType: JSType? get() = (source as? JSTypeInfoOwner)?.jsType
+  override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 }
 
 private fun resolveToVuexSymbol(source: JSElement, resolveState: Boolean): JSElement? {

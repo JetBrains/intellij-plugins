@@ -2,7 +2,7 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeInfoOwner;
+import com.intellij.lang.javascript.psi.JSTypeOwner;
 import com.intellij.openapi.util.NotNullComputable;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2DirectiveAttribute;
@@ -36,7 +36,7 @@ public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttr
 
   @Override
   public @Nullable JSType getType() {
-    return doIfNotNull(myParameterSupplier.get(), JSTypeInfoOwner::getJSType);
+    return doIfNotNull(myParameterSupplier.get(), JSTypeOwner::getJSType);
   }
 
   @Override

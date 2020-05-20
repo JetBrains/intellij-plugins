@@ -160,7 +160,7 @@ fun resolveElementTo(element: PsiElement?, vararg classes: KClass<out JSElement>
             // Try extract reference name from type
             ?: JSPsiImplUtils.getInitializerReference(cur)?.let { JSStubBasedPsiTreeUtil.resolveLocally(it, cur) }
             // Most expensive solution through substitution, works with function calls
-            ?: (element as? JSTypeInfoOwner)?.jsType?.substitute()?.sourceElement
+            ?: (element as? JSTypeOwner)?.jsType?.substitute()?.sourceElement
           )?.let { queue.addLast(it) }
         }
         is PsiPolyVariantReference -> cur.multiResolve(false)

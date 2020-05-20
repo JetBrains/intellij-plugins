@@ -144,7 +144,7 @@ class VueDecoratedComponentInfoProvider : VueContainerInfoProvider.VueDecoratedC
       : VueDecoratedProperty(name, member), VueComputedProperty {
 
       override val source: PsiElement?
-      override val jsType: JSType? get() = (source as? JSTypeInfoOwner)?.jsType
+      override val jsType: JSType? get() = (source as? JSTypeOwner)?.jsType
 
       init {
         val propOptionsType = getJSTypeFromPropOptions(propOptions)
