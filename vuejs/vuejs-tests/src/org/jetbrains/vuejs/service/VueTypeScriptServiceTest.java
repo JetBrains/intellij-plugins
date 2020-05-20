@@ -5,8 +5,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.lang.javascript.service.JSLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
+import com.intellij.testFramework.JSUnit38AssumeSupportRunner;
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase;
-import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestRunner;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.jetbrains.vuejs.lang.VueTestUtilKt.vueRelativeTestDataPath;
 
-@RunWith(TypeScriptServiceTestRunner.class)
+@RunWith(JSUnit38AssumeSupportRunner.class)
 public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   private static final String BASE_PATH = "/ts_ls_highlighting";
 
