@@ -11,30 +11,20 @@ import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.util.ProgramParametersConfigurator
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.javascript.debugger.CommandLineDebugConfigurator
-import com.intellij.javascript.debugger.DebugPortConfigurator
 import com.intellij.javascript.debugger.execution.DebuggableProcessState
 import com.intellij.javascript.nodejs.NodeCommandLineUtil
 import com.intellij.javascript.nodejs.debug.NodeDebugCommandLineConfigurator
 import com.intellij.javascript.nodejs.debug.NodeLocalDebuggableRunProfileState
-import com.intellij.javascript.nodejs.debug.createDebugPortString
 import com.intellij.openapi.actionSystem.LangDataKeys
-import com.jetbrains.nodeJs.NodeOptionsVariableDebugConfigurator
 import org.jetbrains.concurrency.Promise
 
 class DenoRunState(environment: ExecutionEnvironment, runConfiguration: DenoRunConfiguration) :
   NodeLocalDebuggableRunProfileState,
   DebuggableProcessState<DenoRunConfiguration>(runConfiguration, environment) {
 
-  override fun execute(configurator: CommandLineDebugConfigurator?): Promise<ExecutionResult> {
-    val commandLine = NodeCommandLineUtil.createCommandLine()
-    return startProcess(commandLine, configurator)
+  override fun execute(configurator: CommandLineDebugConfigurator?): Promise<ExecutionResult> =
+    startProcess(NodeCommandLineUtil.createCommandLine(), configurator)
       .then { DefaultExecutionResult(createConsole(it), it) }
-      .then {
-        val executionResult = it as DefaultExecutionResult
-
-        executionResult
-      }
-  }
 
   override fun createProcessHandler(commandLine: GeneralCommandLine, configurator: CommandLineDebugConfigurator?): ProcessHandler {
     val handler = NodeCommandLineUtil.createProcessHandler(commandLine, true, configurator)

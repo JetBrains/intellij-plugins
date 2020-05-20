@@ -13,18 +13,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.Icon
 
 class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), ItemPresentation {
-  override fun getSourceRoots(): Collection<VirtualFile> {
-    return libs
-  }
-
-  override fun getExcludeFileCondition(): Condition<VirtualFile>? {
-    return Condition {
-      if (it.isDirectory) return@Condition false
-      if (TypeScriptUtil.isDefinitionFile(it)) return@Condition false
-      val extension = FileUtil.getExtension(it.nameSequence)
-      
-      return@Condition extension.isNotEmpty() 
-    }
+  
+  override fun getExcludeFileCondition(): Condition<VirtualFile> = Condition {
+    !it.isDirectory
+    && !TypeScriptUtil.isDefinitionFile(it)
+    && FileUtil.getExtension(it.nameSequence).isNotEmpty()
   }
 
   override fun equals(other: Any?): Boolean {
@@ -37,27 +30,18 @@ class DenoLibrary(private val libs: List<VirtualFile>) : SyntheticLibrary(), Ite
     return true
   }
 
-  override fun getPresentableText(): String {
-    return "deno@libs"
-  }
+  override fun getSourceRoots(): Collection<VirtualFile> = libs
+  override fun getPresentableText() = "deno@libs"
+  override fun hashCode(): Int = libs.hashCode()
 
-  override fun getLocationString(): String? {
-    return null
-  }
-
-  override fun hashCode(): Int {
-    return libs.hashCode()
-  }
-
-  override fun getIcon(unused: Boolean): Icon? {
-    return null
-  }
+  override fun getLocationString(): String? = null
+  override fun getIcon(unused: Boolean): Icon? = null
 }
 
 class DenoLibraryProvider : AdditionalLibraryRootsProvider(), JSSyntheticLibraryProvider {
   override fun getAdditionalProjectLibraries(project: Project): Collection<SyntheticLibrary> {
     if (!DenoSettings.getService(project).isUseDeno()) return emptyList()
-    
+
     val libs = getLibs()
     if (libs.isEmpty()) return emptyList()
 

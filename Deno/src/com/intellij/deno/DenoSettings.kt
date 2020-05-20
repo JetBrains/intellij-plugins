@@ -20,7 +20,7 @@ class DenoSettings : PersistentStateComponent<DenoState> {
 
   private var state = DenoState()
 
-  override fun getState(): DenoState? {
+  override fun getState(): DenoState {
     return state
   }
 
