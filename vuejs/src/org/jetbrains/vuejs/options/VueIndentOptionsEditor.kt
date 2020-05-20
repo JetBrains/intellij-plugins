@@ -31,7 +31,9 @@ class VueIndentOptionsEditor : SmartIndentOptionsEditor() {
     myBlockSpecificIndentPanel.layout = BoxLayout(myBlockSpecificIndentPanel, BoxLayout.X_AXIS)
     myBlockSpecificIndentPanel.add(myBlockSpecificIndentRadioButton)
     myBlockSpecificIndentPanel.add(Box.createRigidArea(Dimension(10, 0)))
-    myBlockSpecificIndentPanel.add(ContextHelpLabel.create(message("options.indent.radio.block-specific.tooltip")))
+    myBlockSpecificIndentPanel.add(ContextHelpLabel.create(
+      message("options.indent.radio.block-specific.tooltip")
+        .replace("<", "&lt;")))
     add(myBlockSpecificIndentPanel)
     myUniformIndentRadioButton.addActionListener {
       myBlockSpecificIndentRadioButton.isSelected = !myUniformIndentRadioButton.isSelected
