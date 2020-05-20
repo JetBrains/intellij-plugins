@@ -38,7 +38,7 @@ import java.util.Map;
   name = "DartProblemsView",
   storages = @Storage(StoragePathMacros.WORKSPACE_FILE)
 )
-public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, @Nullable Disposable {
+public class DartProblemsView implements PersistentStateComponent<DartProblemsViewSettings>, Disposable {
 
   @NonNls public static final String TOOLWINDOW_ID = "Dart Analysis"; // the same as in plugin.xml, this is not a user-visible string
 
@@ -151,7 +151,7 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
-  public static DartProblemsView getInstance(@NotNull final Project project) {
+  public static @NotNull DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
   }
 

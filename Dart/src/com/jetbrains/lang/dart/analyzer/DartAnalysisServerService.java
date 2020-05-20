@@ -36,6 +36,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -163,6 +165,8 @@ public final class DartAnalysisServerService implements Disposable {
   @NotNull private final TObjectIntHashMap<String> myFilePathToErrorsHash = new TObjectIntHashMap<>();
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
+
+  private final @NotNull Condition<Object> myDisposedCondition = o -> Disposer.isDisposed(this);
 
   public static String getClientId() {
     return ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '-');
@@ -800,7 +804,7 @@ public final class DartAnalysisServerService implements Disposable {
   void updateCurrentFile() {
     GuiUtils.invokeLaterIfNeeded(() -> DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile()),
                                  ModalityState.NON_MODAL,
-                                 myProject.getDisposed());
+                                 myDisposedCondition);
   }
 
   public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
@@ -999,7 +1003,7 @@ public final class DartAnalysisServerService implements Disposable {
       myFolderPathsWithErrors.clear();
     }
 
-    if (!myProject.isDisposed() && myInitializationOnServerStartupDone) {
+    if (myInitializationOnServerStartupDone) {
       DartProblemsView.getInstance(myProject).clearAll();
     }
   }
@@ -1746,7 +1750,7 @@ public final class DartAnalysisServerService implements Disposable {
 
     server.analysis_reanalyze();
 
-    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myDisposedCondition);
   }
 
   private void analysis_setPriorityFiles() {
@@ -2037,7 +2041,7 @@ public final class DartAnalysisServerService implements Disposable {
                     problemsView.showErrorNotificationTerse(DartBundle.message("analysis.server.terminated"));
                   },
                   ModalityState.NON_MODAL,
-                  myProject.getDisposed()
+                  myDisposedCondition
                 );
 
                 stopServer();
@@ -2060,7 +2064,7 @@ public final class DartAnalysisServerService implements Disposable {
             problemsView.clearNotifications();
           },
           ModalityState.NON_MODAL,
-          myProject.getDisposed()
+          myDisposedCondition
         );
 
         // This must be done after myServer is set, and should be done each time the server starts.
@@ -2157,7 +2161,7 @@ public final class DartAnalysisServerService implements Disposable {
       myRootsHandler.onServerStopped();
 
       if (myProject.isOpen() && !myProject.isDisposed()) {
-        ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myProject.getDisposed());
+        ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL, myDisposedCondition);
       }
     }
   }
