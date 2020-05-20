@@ -304,7 +304,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testSpellChecker2() throws Exception {
-    runRenameSpellcheckerFixWithChooseVariant("xxix");
+    runRenameSpellcheckerFixWithChooseVariant("typo");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
