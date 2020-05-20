@@ -48,8 +48,11 @@ class DenoConfigurable(private val project: Project) : Configurable {
         })
 
       ApplicationManager.getApplication().invokeLater(Runnable {
-        ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(
-          EmptyRunnable.getInstance(), false, true)
+        WriteAction.run(
+          ThrowableRunnable<ConfigurationException> {
+            ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(
+              EmptyRunnable.getInstance(), false, true)
+          })
       }, project.disposed)
     }
   }
