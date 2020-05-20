@@ -3,7 +3,12 @@
   <name>Deno</name>
   <category>JavaScript Frameworks and Tools</category>
   <description><![CDATA[
-<p>Provides integration with <a href="https://deno.land/">Deno</a></p>
+<p>Support for <a href="https://deno.land/">Deno</a> projects.</p>
+<ul>
+<li>Coding assistance for Deno APIs and imports
+<li>Run files with Deno and debug them using the built-in visual debugger
+</ul>
+Enable Deno support for the current project in <i>Preferences | Languages & Frameworks | Deno</i>.
 ]]></description>
   
   <vendor>JetBrains</vendor>

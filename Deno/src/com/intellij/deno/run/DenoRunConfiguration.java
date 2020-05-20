@@ -26,6 +26,7 @@ import com.jetbrains.nodeJs.NodeJSDebuggableConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -46,7 +47,7 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
 
   @Override
   protected @NotNull String getInputFileTitle() {
-    return "";
+    return DenoBundle.message("deno.run.configuration.file");
   }
 
   @Override
@@ -75,6 +76,27 @@ public class DenoRunConfiguration extends DebuggableProcessRunConfigurationBase 
             inputPathLabel(DenoBundle.message("deno.run.configuration.file"))
               .programParametersLabel(DenoBundle.message("deno.run.configuration.arguments"))
               .exePathLabel(DenoBundle.message("deno.name"));
+          }
+
+          @Override
+          protected void addComponents() {
+            super.addComponents();
+            fixFieldsOrder();
+          }
+
+          private void fixFieldsOrder() {
+            Component[] components = getComponents();
+            Component file = components[0];
+            Component args = components[1];
+            Component exec = components[components.length -1];
+            removeAll();
+            add(exec);
+            add(args);
+            add(file);
+            for (Component component : components) {
+              if (component == file || component == exec || component == args) continue;
+              add(component);
+            }
           }
         };
         return panel;
