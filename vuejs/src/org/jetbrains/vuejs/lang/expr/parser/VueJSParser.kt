@@ -280,8 +280,7 @@ class VueJSParser(builder: PsiBuilder, private val isJavaScript: Boolean)
       while (builder.tokenType === JSTokenTypes.OR) {
         firstParam.done(FILTER_LEFT_SIDE_ARGUMENT)
         builder.advanceLexer()
-        if (builder.tokenType === JSTokenTypes.IDENTIFIER
-            || JSKeywordSets.ES6_IDENTIFIER_TOKENS_SET.contains(builder.tokenType)) {
+        if (isIdentifierToken(builder.tokenType)) {
           val pipeName = builder.mark()
           builder.advanceLexer()
           pipeName.done(FILTER_REFERENCE_EXPRESSION)
