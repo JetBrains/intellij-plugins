@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
@@ -6,11 +6,9 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ArrayUtil;
@@ -25,7 +23,6 @@ import java.util.List;
 public class DartSdk {
   public static final String DART_SDK_LIB_NAME = "Dart SDK";
   private static final String UNKNOWN_VERSION = "unknown";
-  private static final Key<CachedValue<DartSdk>> CACHED_DART_SDK_KEY = Key.create("CACHED_DART_SDK_KEY");
 
   private final @NotNull String myHomePath;
   private final @NotNull String myVersion;
@@ -50,27 +47,19 @@ public class DartSdk {
 
   @Nullable
   public static DartSdk getDartSdk(@NotNull final Project project) {
-    CachedValue<DartSdk> cachedValue = project.getUserData(CACHED_DART_SDK_KEY);
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      final DartSdk sdk = findDartSdkAmongLibraries(LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraries());
+      if (sdk == null) {
+        return new CachedValueProvider.Result<>(null, ProjectRootManager.getInstance(project));
+      }
 
-    if (cachedValue == null) {
-      cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
-        final DartSdk sdk = findDartSdkAmongLibraries(LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraries());
-        if (sdk == null) {
-          return new CachedValueProvider.Result<>(null, ProjectRootManager.getInstance(project));
-        }
+      List<Object> dependencies = new ArrayList<>(3);
+      dependencies.add(ProjectRootManager.getInstance(project));
+      ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
+      ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
 
-        List<Object> dependencies = new ArrayList<>(3);
-        dependencies.add(ProjectRootManager.getInstance(project));
-        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
-        ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
-
-        return new CachedValueProvider.Result<>(sdk, ArrayUtil.toObjectArray(dependencies));
-      }, false);
-
-      project.putUserData(CACHED_DART_SDK_KEY, cachedValue);
-    }
-
-    return cachedValue.getValue();
+      return new CachedValueProvider.Result<>(sdk, ArrayUtil.toObjectArray(dependencies));
+    });
   }
 
   @Nullable
