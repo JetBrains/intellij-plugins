@@ -1,8 +1,6 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
-import com.intellij.analysis.problemsView.AnalysisProblem;
-import com.intellij.analysis.problemsView.AnalysisProblemsPresentationHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -15,32 +13,42 @@ import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartProblemsPresentationHelper extends AnalysisProblemsPresentationHelper {
-  @NotNull private final Project myProject;
-  @NotNull private DartProblemsViewSettings mySettings;
+import javax.swing.*;
 
-  @Nullable private VirtualFile myCurrentFile;
+public class DartProblemsPresentationHelper {
+
+  private final @NotNull Project myProject;
+  private @NotNull DartProblemsViewSettings mySettings;
+
+  private @Nullable VirtualFile myCurrentFile;
   private boolean myDartPackageRootUpToDate;
-  @Nullable private VirtualFile myCurrentDartPackageRoot;
+  private @Nullable VirtualFile myCurrentDartPackageRoot;
   private boolean myContentRootUpToDate;
-  @Nullable private VirtualFile myCurrentContentRoot;
+  private @Nullable VirtualFile myCurrentContentRoot;
 
-  DartProblemsPresentationHelper(@NotNull final Project project) {
+  DartProblemsPresentationHelper(@NotNull Project project) {
     myProject = project;
     mySettings = new DartProblemsViewSettings(); // Start with default settings. Once actual settings are loaded `setSettings()` is called.
   }
 
-  public void setSettings(@NotNull final DartProblemsViewSettings settings) {
+  public void setSettings(@NotNull DartProblemsViewSettings settings) {
     mySettings = settings;
   }
 
-  @NotNull
-  public DartProblemsViewSettings getSettings() {
+  public @NotNull DartProblemsViewSettings getSettings() {
     return mySettings;
   }
 
-  @Override
-  public void resetAllFilters() {
+  RowFilter<DartProblemsTableModel, Integer> getRowFilter() {
+    return new RowFilter<DartProblemsTableModel, Integer>() {
+      @Override
+      public boolean include(final @NotNull Entry<? extends DartProblemsTableModel, ? extends Integer> entry) {
+        return shouldShowProblem(entry.getModel().getItem(entry.getIdentifier()));
+      }
+    };
+  }
+
+  void resetAllFilters() {
     mySettings.showErrors = DartProblemsViewSettings.SHOW_ERRORS_DEFAULT;
     mySettings.showWarnings = DartProblemsViewSettings.SHOW_WARNINGS_DEFAULT;
     mySettings.showHints = DartProblemsViewSettings.SHOW_HINTS_DEFAULT;
@@ -49,19 +57,18 @@ public class DartProblemsPresentationHelper extends AnalysisProblemsPresentation
     assert !areFiltersApplied();
   }
 
-  void updateFromFilterSettingsUI(@NotNull final DartProblemsFilterForm form) {
+  void updateFromFilterSettingsUI(@NotNull DartProblemsFilterForm form) {
     mySettings.showErrors = form.isShowErrors();
     mySettings.showWarnings = form.isShowWarnings();
     mySettings.showHints = form.isShowHints();
     mySettings.fileFilterMode = form.getFileFilterMode();
   }
 
-  void updateFromServerSettingsUI(@NotNull final DartAnalysisServerSettingsForm form) {
+  void updateFromServerSettingsUI(@NotNull DartAnalysisServerSettingsForm form) {
     mySettings.scopedAnalysisMode = form.getScopeAnalysisMode();
   }
 
-  @Override
-  public boolean areFiltersApplied() {
+  boolean areFiltersApplied() {
     if (mySettings.showErrors != DartProblemsViewSettings.SHOW_ERRORS_DEFAULT) return true;
     if (mySettings.showWarnings != DartProblemsViewSettings.SHOW_WARNINGS_DEFAULT) return true;
     if (mySettings.showHints != DartProblemsViewSettings.SHOW_HINTS_DEFAULT) return true;
@@ -70,7 +77,7 @@ public class DartProblemsPresentationHelper extends AnalysisProblemsPresentation
     return false;
   }
 
-  boolean setCurrentFile(@Nullable final VirtualFile file) {
+  boolean setCurrentFile(@Nullable VirtualFile file) {
     if (Comparing.equal(myCurrentFile, file)) {
       return false;
     }
@@ -82,59 +89,47 @@ public class DartProblemsPresentationHelper extends AnalysisProblemsPresentation
     }
   }
 
-  @Override
-  public boolean isAutoScrollToSource() {
+  boolean isAutoScrollToSource() {
     return mySettings.autoScrollToSource;
   }
 
-  @Override
-  public void setAutoScrollToSource(final boolean autoScroll) {
+  void setAutoScrollToSource(final boolean autoScroll) {
     mySettings.autoScrollToSource = autoScroll;
   }
 
-  @Override
-  public boolean isGroupBySeverity() {
+  boolean isGroupBySeverity() {
     return mySettings.groupBySeverity;
   }
 
-  @Override
-  public void setGroupBySeverity(final boolean groupBySeverity) {
+  void setGroupBySeverity(final boolean groupBySeverity) {
     mySettings.groupBySeverity = groupBySeverity;
   }
 
-  @Override
-  public boolean isShowErrors() {
+  boolean isShowErrors() {
     return mySettings.showErrors;
   }
 
-  @Override
-  public boolean isShowWarnings() {
+  boolean isShowWarnings() {
     return mySettings.showWarnings;
   }
 
-  @Override
-  public boolean isShowHints() {
+  boolean isShowHints() {
     return mySettings.showHints;
   }
 
-  @NotNull
   DartProblemsViewSettings.FileFilterMode getFileFilterMode() {
     return mySettings.fileFilterMode;
   }
 
-  @NotNull
   DartProblemsViewSettings.ScopedAnalysisMode getScopedAnalysisMode() {
     return mySettings.scopedAnalysisMode;
   }
 
-  @Override
-  @Nullable
-  public VirtualFile getCurrentFile() {
+  @Nullable VirtualFile getCurrentFile() {
     return myCurrentFile;
   }
 
-  @Override
-  public boolean shouldShowProblem(@NotNull final AnalysisProblem problem) {
+  boolean shouldShowProblem(@NotNull DartProblem problem) {
     if (!isShowErrors() && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!isShowWarnings() && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
     if (!isShowHints() && AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) return false;
@@ -205,9 +200,7 @@ public class DartProblemsPresentationHelper extends AnalysisProblemsPresentation
     myContentRootUpToDate = true;
   }
 
-  @Override
-  @NotNull
-  public String getFilterTypeText() {
+  public @NotNull String getFilterTypeText() {
     final StringBuilder builder = new StringBuilder();
 
     switch (getFileFilterMode()) {
