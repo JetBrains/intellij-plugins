@@ -11,18 +11,32 @@ import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.index.JSPackageIndex;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
+import com.intellij.lang.javascript.psi.impl.JSFileImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.rename.JSInplaceRenameHandler;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 import static com.intellij.codeInsight.TargetElementUtil.findTargetElement;
 
@@ -580,4 +594,44 @@ public class FlexRenameTest extends JSAbstractRenameTest {
                           .searchInCommentsAndStrings(searchInCommentsAndStrings));
     myFixture.checkResultByFile(fileNameAfter);
   }
+
+  @Override
+  protected PsiReference @NotNull [] findRenamedRefsToReferencedElementAtCaret() {
+    PsiElement object = findTarget();
+    assertNotNull(object);
+
+    PsiReference[] references =
+      ReferencesSearch.search(object, GlobalSearchScope.allScope(myFixture.getProject()), true).toArray(PsiReference.EMPTY_ARRAY);
+
+    if (object instanceof JSFileImpl) {
+      JSNamedElement element = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)object);
+      if (element != null) object = element;
+    }
+
+    PsiElement additionalTarget = null;
+
+    if (object instanceof JSClass) {
+      additionalTarget = ((JSClass)object).getConstructor();
+    }
+    else if (object instanceof JSFunction && ((JSFunction)object).isConstructor()) {
+      additionalTarget = object.getParent();
+    }
+
+    Set<PsiReference> uniquesSet = ContainerUtil.set(references);
+    if (additionalTarget != null) {
+      uniquesSet.addAll(ReferencesSearch.search(additionalTarget, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll());
+    }
+
+    if (object instanceof JSFunction) {
+      CommonProcessors.CollectProcessor<JSFunction> allFunctions =
+        new CommonProcessors.CollectProcessor<>(Collections.synchronizedList(new ArrayList<>()));
+      JSInheritanceUtil.iterateMethodsDown((JSFunction)object, allFunctions);
+      for (JSFunction function : allFunctions.getResults()) {
+        uniquesSet.addAll(ReferencesSearch.search(function, GlobalSearchScope.allScope(myFixture.getProject()), true).findAll());
+      }
+    }
+    references = uniquesSet.toArray(PsiReference.EMPTY_ARRAY);
+    return references;
+  }
+
 }
