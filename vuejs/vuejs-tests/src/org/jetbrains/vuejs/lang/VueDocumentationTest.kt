@@ -40,7 +40,7 @@ class VueDocumentationTest : BasePlatformTestCase() {
     documentationProvider as ExternalDocumentationProvider
     val urls = documentationProvider.getUrlFor(elementAtCaret, element)
     TestCase.assertNotNull(urls)
-    TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls))
+    TestCase.assertNull("$urls", documentationProvider.fetchExternalDocumentation(project, elementAtCaret, urls, false))
   }
 
 }
