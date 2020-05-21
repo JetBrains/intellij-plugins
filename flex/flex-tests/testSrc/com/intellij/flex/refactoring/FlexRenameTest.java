@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.execution.RunManager;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
@@ -22,6 +23,8 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.FileBasedIndex;
+
+import static com.intellij.codeInsight.TargetElementUtil.findTargetElement;
 
 public class FlexRenameTest extends JSAbstractRenameTest {
 
@@ -540,7 +543,8 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @Override
   protected PsiElement findTarget() {
-    return ObjectUtils.coalesce(super.findTarget(), myFixture.getFile());
+    PsiElement target = findTargetElement(myFixture.getEditor(), TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
+    return ObjectUtils.coalesce(target, myFixture.getFile());
   }
 
   @Override
