@@ -280,6 +280,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
         if (AnalysisErrorSeverity.INFO.equals(problem.getSeverity())) myHintCount++;
         updateProblemsCountAfterFilter(problem, +1);
       }
+    }
+
+    if (!problemsToAdd.isEmpty()) {
       addRows(problemsToAdd);
     }
 
