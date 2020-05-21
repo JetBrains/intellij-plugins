@@ -446,7 +446,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
         catch (e: ExecutionException) {
           // Do not log IOExceptions as errors, since they can appear because of HTTP communication
           if (e.cause is IOException) {
-            LOG.warn(e)
+            LOG.warn(e.message)
           }
           else {
             LOG.error(e)
