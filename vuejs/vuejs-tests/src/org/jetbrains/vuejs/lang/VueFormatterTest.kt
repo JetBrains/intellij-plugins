@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
@@ -106,6 +107,16 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
       it.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
       doTestFromFile("html")
+    }
+  }
+
+  fun testForceQuoteInCss() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(CssCodeStyleSettings::class.java).let {
+        it.ENFORCE_QUOTES_ON_FORMAT = true
+        it.USE_DOUBLE_QUOTES = false
+      }
+      doTestFromFile("vue")
     }
   }
 
