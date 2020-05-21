@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings
 import com.intellij.openapi.application.PathManager
 import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
@@ -73,6 +74,38 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
       it.getCustomSettings(VueCodeStyleSettings::class.java).INDENT_CHILDREN_OF_TOP_LEVEL = "template,script"
       doIndentationTest(it)
+    }
+  }
+
+  fun testHtmlUniformIndent() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+      it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
+      it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
+      doIndentationTest(it)
+    }
+  }
+
+  fun testPureHtmlUniformIndent() {
+    myFixture.configureDependencies()
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+      it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = false
+      it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = true
+      it.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
+      it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
+      it.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
+      doTestFromFile("html")
+    }
+  }
+
+  fun testPureHtmlPerLangIndent() {
+    myFixture.configureDependencies()
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) {
+      it.getCustomSettings(VueCodeStyleSettings::class.java).UNIFORM_INDENT = true
+      it.getCustomSettings(HtmlCodeStyleSettings::class.java).HTML_UNIFORM_INDENT = false
+      it.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
+      it.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
+      it.getLanguageIndentOptions(JavascriptLanguage.INSTANCE).INDENT_SIZE = 4
+      doTestFromFile("html")
     }
   }
 
