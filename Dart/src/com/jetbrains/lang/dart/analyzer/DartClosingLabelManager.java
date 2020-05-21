@@ -127,7 +127,7 @@ public class DartClosingLabelManager implements @NotNull Disposable {
       }
     };
 
-    ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, project.getDisposed());
+    ApplicationManager.getApplication().invokeLater(runnable, ModalityState.NON_MODAL, o -> Disposer.isDisposed(this));
   }
 
   private static void clearEditorInlays(@NotNull Editor editor) {
@@ -150,7 +150,9 @@ public class DartClosingLabelManager implements @NotNull Disposable {
   }
 
   @Override
-  public void dispose() {}
+  public void dispose() {
+    clearAllInlays();
+  }
 }
 
 class TextLabelCustomElementRenderer implements EditorCustomElementRenderer {
