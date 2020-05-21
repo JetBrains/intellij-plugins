@@ -109,6 +109,8 @@ class VueLexerHelper(private val handle: VueLexerHandle) {
           .filter { style.equals(it.id, ignoreCase = true) }
           .forEach { return it }
       }
+      // Vue CLI uses PostCSS internally - https://cli.vuejs.org/guide/css.html#postcss
+      // Make it default
       return if (style == null) Language.findLanguageByID("PostCSS") else null
     }
   }

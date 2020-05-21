@@ -34,6 +34,7 @@ import org.junit.runners.Suite
   VueIndexerTest::class,
   VueParserTest::class,
   VueCompletionTest::class,
+  VueCommenterTest::class,
   VueHighlightingTest::class,
   VueTypedHandlerTest::class,
   VueAttributeNameParserTest::class,
