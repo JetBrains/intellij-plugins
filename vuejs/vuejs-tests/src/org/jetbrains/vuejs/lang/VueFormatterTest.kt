@@ -120,6 +120,16 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
+  fun testForceQuoteInHtml() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(HtmlCodeStyleSettings::class.java).let {
+        it.HTML_ENFORCE_QUOTES = true
+        it.HTML_QUOTE_STYLE = CodeStyleSettings.QuoteStyle.Single
+      }
+      doTestFromFile("vue")
+    }
+  }
+
   private fun doIndentationTest(settings: CodeStyleSettings) {
     settings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
     settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2
