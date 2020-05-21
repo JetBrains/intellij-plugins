@@ -170,12 +170,11 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     String name = getTestName(false);
     myFixture.configureByFile(getBasePath() + name + ".mxml");
 
-    PsiElement target = findTarget();
     CodeInsightTestUtil.doInlineRename(
       new JSInplaceRenameHandler(),
       "creationCompleteHandler2",
       InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.getEditor(), myFixture.getFile()),
-      target
+      myFixture.getElementAtCaret()
     );
     myFixture.checkResultByFile((getBasePath() + name + "_after.mxml"));
   }
