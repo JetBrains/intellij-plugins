@@ -2,7 +2,6 @@
 package training.learn.lesson.general.refactorings
 
 import com.intellij.testGuiFramework.impl.jList
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -40,6 +39,4 @@ class ExtractVariableFromBubbleLesson(module: Module, lang: String, private val 
         "Press <strong>Enter</strong> to complete the refactoring."
       }
     }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

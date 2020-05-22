@@ -3,7 +3,6 @@ package training.learn.lesson.ruby.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -71,6 +70,4 @@ end
         }
       }
     }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

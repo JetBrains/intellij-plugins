@@ -3,7 +3,6 @@ package training.learn.lesson.general.refactorings
 
 import com.intellij.testGuiFramework.impl.button
 import training.commands.kotlin.TaskTestContext
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -71,6 +70,4 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
         }
       }
     }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

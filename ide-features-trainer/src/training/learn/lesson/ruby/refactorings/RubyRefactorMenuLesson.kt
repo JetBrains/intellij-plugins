@@ -8,7 +8,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import training.commands.kotlin.TaskTestContext
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -68,6 +67,4 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
 
     return barInDerived?.parentSymbol?.name == "Cat"
   }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

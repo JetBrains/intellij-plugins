@@ -335,7 +335,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
       override fun compute(): VirtualFile {
         val learnProject = CourseManager.instance.learnProject!!
 
-        val existedFile = lesson.existedFile
+        val existedFile = lesson.existedFile ?: lesson.module.primaryLanguage.projectSandboxRelativePath
         val manager = ProjectRootManager.getInstance(learnProject)
         if (existedFile != null) {
           val root = manager.contentRoots[0]

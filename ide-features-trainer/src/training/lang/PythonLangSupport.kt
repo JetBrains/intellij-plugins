@@ -66,7 +66,7 @@ class PythonLangSupport : AbstractLangSupport() {
     PythonSdkFlavor.getFlavor(sdk)?.getLanguageLevel(sdk)?.isAtLeast(LanguageLevel.PYTHON27) ?: false
 
   override fun blockProjectFileModification(project: Project, file: VirtualFile): Boolean {
-    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${sandboxFile}"
+    return file.path != "${project.basePath}${VfsUtilCore.VFS_SEPARATOR_CHAR}${projectSandboxRelativePath}"
   }
 
   override val installRemoteProject: ((File) -> Unit)? = { projectDirectory ->
@@ -84,7 +84,5 @@ class PythonLangSupport : AbstractLangSupport() {
     ZipUtil.unzipWithProgressSynchronously(null, "Unzip demo project", zipFile, projectDirectory, true)
   }
 
-  companion object {
-    const val sandboxFile: String = "sandbox.py"
-  }
+  override val projectSandboxRelativePath = "app/sandbox.rb"
 }

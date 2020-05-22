@@ -29,6 +29,11 @@ interface LangSupport {
   val projectResourcePath: String
   get() = "/learnProjects/${primaryLanguage.toLowerCase()}/$defaultProjectName"
 
+  /** Language can specify default sandbox-like file to be used for lessons with modifications but also with project support */
+  @JvmDefault
+  val projectSandboxRelativePath: String?
+    get() = null
+
   companion object {
     const val EP_NAME = "training.TrainingLangExtension"
   }

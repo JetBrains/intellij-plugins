@@ -13,7 +13,6 @@ import com.intellij.ui.tree.TreeVisitor
 import com.intellij.util.ui.tree.TreeUtil
 import org.jetbrains.annotations.Nullable
 import training.commands.kotlin.TaskTestContext
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -157,6 +156,4 @@ class PythonRenameLesson(module: Module) : KLesson("Rename", module, "Python") {
         TreeVisitor.Action.CONTINUE
     }).blockingGet(200)
   }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }

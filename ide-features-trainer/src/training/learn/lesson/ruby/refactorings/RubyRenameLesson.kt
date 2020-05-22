@@ -4,7 +4,6 @@ package training.learn.lesson.ruby.refactorings
 import com.intellij.testGuiFramework.impl.button
 import com.intellij.ui.treeStructure.Tree
 import training.commands.kotlin.TaskTestContext
-import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -73,6 +72,4 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
         }
       }
     }
-
-  override val existedFile = RubyLangSupport.sandboxFile
 }
