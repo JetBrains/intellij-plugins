@@ -30,6 +30,7 @@ Enable Deno support for the current project in <i>Preferences | Languages & Fram
     <runConfigurationProducer implementation="com.intellij.deno.run.DenoRunConfigurationProducer" />
 
     <annotator language="JavaScript" implementationClass="com.intellij.deno.inspection.DenoEditorNotificationAnnotator"/>
+    <completion.contributor language="JavaScript" implementationClass="com.intellij.deno.service.DenoTypeScriptServiceCompletionContributor"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript">
     <languageServiceProvider order="first" implementation="com.intellij.deno.service.DenoTypeScriptServiceProvider"/>
