@@ -2,8 +2,6 @@
 package training.learn.lesson.general.refactorings
 
 import com.intellij.testGuiFramework.impl.button
-import com.intellij.ui.ComponentUtil
-import com.intellij.util.ui.UIUtil
 import training.commands.kotlin.TaskTestContext
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
@@ -11,7 +9,6 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
 import javax.swing.JDialog
-import javax.swing.JTextPane
 
 class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val sample: LessonSample) : KLesson("Extract Method", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
@@ -28,9 +25,9 @@ class ExtractMethodCocktailSortLesson(module: Module, lang: String, private val 
 
         // Wait until the second dialog
         stateCheck {
-          val parentOfType = ComponentUtil.getParentOfType(JDialog::class.java, focusOwner)
-          // Only the second dialog has JTextPane. We do not need to check title
-          UIUtil.uiTraverser(parentOfType).traverse().filter(JTextPane::class.java).first() != null
+          Thread.currentThread().stackTrace.any {
+            it.className.contains("ExtractMethodHelper") && it.methodName == "replaceDuplicates"
+          }
         }
 
         test {
