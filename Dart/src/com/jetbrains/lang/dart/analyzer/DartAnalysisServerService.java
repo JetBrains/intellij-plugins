@@ -36,7 +36,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
@@ -162,7 +161,8 @@ public final class DartAnalysisServerService implements Disposable {
 
   @NotNull private final EvictingQueue<String> myDebugLog = EvictingQueue.create(DEBUG_LOG_CAPACITY);
 
-  private final @NotNull Condition<Object> myDisposedCondition = o -> Disposer.isDisposed(this);
+  private boolean myDisposed;
+  private final @NotNull Condition<?> myDisposedCondition = o -> myDisposed;
 
   public static String getClientId() {
     return ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '-');
@@ -739,7 +739,12 @@ public final class DartAnalysisServerService implements Disposable {
 
   @Override
   public void dispose() {
+    myDisposed = true;
     stopServer();
+  }
+
+  public @NotNull Condition<?> getDisposedCondition() {
+    return myDisposedCondition;
   }
 
   private void handleClosingLabelPreferenceChanged() {
