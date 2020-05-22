@@ -20,7 +20,6 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -242,7 +241,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
     }
   }
 
-  private static void showError(@NotNull @NlsContexts.NotificationContent String message) {
+  private static void showError(@NotNull String message) {
     Notification notification = PlatformioService.NOTIFICATION_GROUP.createNotification(
       ClionEmbeddedPlatformioBundle.message("project.init.failed"), null,
       message, NotificationType.WARNING);
