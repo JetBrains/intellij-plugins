@@ -12,7 +12,6 @@ import com.google.dart.server.internal.remote.RemoteAnalysisServerImpl;
 import com.google.dart.server.internal.remote.StdioServerSocket;
 import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonObject;
-import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
@@ -53,7 +52,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
-import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.fixes.DartQuickFix;
 import com.jetbrains.lang.dart.fixes.DartQuickFixListener;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
@@ -119,8 +117,6 @@ public final class DartAnalysisServerService implements Disposable {
 
   private static final int DEBUG_LOG_CAPACITY = 30;
   private static final int MAX_DEBUG_LOG_LINE_LENGTH = 200; // Saw one line while testing that was > 50k
-
-  private static boolean ourIntentionsRegistered;
 
   @NotNull private final Project myProject;
   private boolean myInitializationOnServerStartupDone;
@@ -2069,11 +2065,6 @@ public final class DartAnalysisServerService implements Disposable {
 
         // This must be done after myServer is set, and should be done each time the server starts.
         registerPostfixCompletionTemplates();
-
-        if (!ourIntentionsRegistered) {
-          ourIntentionsRegistered = true;
-          registerQuickAssistIntentions();
-        }
       }
       catch (Exception e) {
         LOG.warn("Failed to start Dart analysis server", e);
@@ -2273,39 +2264,6 @@ public final class DartAnalysisServerService implements Disposable {
 
   private void registerPostfixCompletionTemplates() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> DartPostfixTemplateProvider.initializeTemplates(this));
-  }
-
-  /**
-   * see {@link DartQuickAssistIntention}
-   */
-  private static void registerQuickAssistIntentions() {
-    final IntentionManager intentionManager = IntentionManager.getInstance();
-    final QuickAssistSet quickAssistSet = new QuickAssistSet();
-    int i = 0;
-
-    // a little moronic way to tell IntentionManager these intentions are all different
-    //@formatter:off
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    intentionManager.addAction(new DartQuickAssistIntention(quickAssistSet, i++) {/**/});
-    //@formatter:on
   }
 
   public interface CompletionSuggestionConsumer {

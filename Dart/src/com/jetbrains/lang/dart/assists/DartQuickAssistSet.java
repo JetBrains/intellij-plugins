@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.assists;
 
 import com.google.dart.server.utilities.general.ObjectUtilities;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
@@ -12,12 +13,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuickAssistSet {
+public class DartQuickAssistSet {
   private List<SourceChange> lastSourceChanges = new ArrayList<>();
   private long lastPsiModificationCount;
   private String lastFilePath;
   private int lastOffset;
   private int lastLength;
+
+  static @NotNull DartQuickAssistSet getInstance() {
+    return ServiceManager.getService(DartQuickAssistSet.class);
+  }
 
   public synchronized List<SourceChange> getQuickAssists(@NotNull final Editor editor, @NotNull final PsiFile psiFile) {
     final long psiModificationCount = psiFile.getManager().getModificationTracker().getModificationCount();
