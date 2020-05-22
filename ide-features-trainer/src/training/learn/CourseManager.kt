@@ -26,7 +26,7 @@ class CourseManager internal constructor() {
   private val allModules: MutableList<Module> = mutableListOf()
 
   val modules: List<Module>
-    get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
+    get() = LangManager.getInstance().getLangSupport()?.let { filterByLanguage(it) } ?: emptyList()
 
   init {
     initXmlModules()
@@ -39,13 +39,14 @@ class CourseManager internal constructor() {
   fun initXmlModules() {
     val trainingModules = TrainingModules.EP_NAME.extensions
     for (modules in trainingModules) {
-      val primaryLanguage = modules.language
+      val primaryLanguage = LangManager.getInstance().getLangSupportById(modules.language) ?:
+                            error("Cannot find primary language support: ${modules.language}")
       val classLoader = modules.loaderForClass
       for (module in modules.children) {
         val moduleFilename = module.xmlPath
-        val module = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
-                     ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-        allModules.add(module)
+        val xmlModule = XmlModule.initModule(moduleFilename, primaryLanguage, classLoader)
+                        ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+        allModules.add(xmlModule)
       }
     }
   }
@@ -121,26 +122,22 @@ class CourseManager internal constructor() {
     return nextModule
   }
 
-  fun calcLessonsForLanguage(langSupport: LangSupport): Int {
-    return ContainerUtil.concat(filterByLanguage(langSupport.primaryLanguage).map { m -> m.lessons }).size
+  fun calcLessonsForLanguage(primaryLangSupport: LangSupport): Int {
+    return ContainerUtil.concat(filterByLanguage(primaryLangSupport).map { m -> m.lessons }).size
   }
 
-  fun calcPassedLessonsForLanguage(langSupport: LangSupport): Int {
-    return filterByLanguage(langSupport.primaryLanguage)
+  fun calcPassedLessonsForLanguage(primaryLangSupport: LangSupport): Int {
+    return filterByLanguage(primaryLangSupport)
       .flatMap { m -> m.lessons }
       .filter { it.passed }
       .size
   }
 
-  private fun filterByLanguage(language: String): List<Module> {
-    return allModules.filter { m ->
-      m.primaryLanguage!!.equals(language, ignoreCase = true)
-    }
+  private fun filterByLanguage(primaryLangSupport: LangSupport): List<Module> {
+    return allModules.filter { it.primaryLanguage == primaryLangSupport }
   }
 
-  fun getModulesByLanguage(langSupport: LangSupport): List<Module> {
-    return filterByLanguage(langSupport.primaryLanguage)
-  }
+  fun getModulesByLanguage(primaryLangSupport: LangSupport): List<Module> = filterByLanguage(primaryLangSupport)
 
   companion object {
     val instance: CourseManager

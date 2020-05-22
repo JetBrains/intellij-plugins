@@ -4,6 +4,7 @@ package training.learn
 import com.intellij.openapi.diagnostic.Logger
 import org.jdom.Element
 import org.jdom.JDOMException
+import training.lang.LangSupport
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.interfaces.Lesson
@@ -27,7 +28,7 @@ import java.net.URISyntaxException
 class XmlModule(override val name: String,
                 moduleXmlPath: String,
                 private val root: Element,
-                override val primaryLanguage: String?,
+                override val primaryLanguage: LangSupport,
                 override val classLoader: ClassLoader) : Module {
 
   override val description: String?
@@ -174,7 +175,7 @@ class XmlModule(override val name: String,
   companion object {
 
     @Throws(BadModuleException::class, BadLessonException::class, JDOMException::class, IOException::class, URISyntaxException::class)
-    fun initModule(modulePath: String, primaryLanguage: String?, classLoader: ClassLoader): XmlModule? {
+    fun initModule(modulePath: String, primaryLanguage: LangSupport, classLoader: ClassLoader): XmlModule? {
       //load xml with lessons
 
       //Check DOM with XmlModule

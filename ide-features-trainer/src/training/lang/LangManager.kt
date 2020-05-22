@@ -19,7 +19,7 @@ import training.util.trainerPluginConfigName
 @State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
-  var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(
+  val supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(
     LangSupport.EP_NAME).extensions.toList().sortedBy { it.language }
 
   private var myState = State(null)
@@ -38,6 +38,10 @@ class LangManager : PersistentStateComponent<LangManager.State> {
 
   companion object {
     fun getInstance() = service<LangManager>()
+  }
+
+  fun getLangSupportById(languageId: String): LangSupport? {
+    return supportedLanguagesExtensions.singleOrNull { it.language == languageId }?.instance
   }
 
   fun isLangUndefined() = (myLangSupport == null)
