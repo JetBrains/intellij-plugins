@@ -13,6 +13,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings
 import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.jetbrains.plugins.jade.JadeLanguage
+import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
@@ -126,6 +127,18 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
         it.HTML_ENFORCE_QUOTES = true
         it.HTML_QUOTE_STYLE = CodeStyleSettings.QuoteStyle.Single
       }
+      doTestFromFile("vue")
+    }
+  }
+
+  fun testSass() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+        it.UNIFORM_INDENT = true
+        it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
+      }
+      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 1
       doTestFromFile("vue")
     }
   }
