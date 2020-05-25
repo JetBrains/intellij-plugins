@@ -22,11 +22,19 @@ object DenoUtil {
 
   fun getDenoExecutablePath() = detectDenoPaths().firstOrNull()
 
-  private fun detectDenoPaths(): List<String> =
-    (if (SystemInfo.isWindows) sequenceOf("deno.bat", "deno.cmd", "deno.exe") else sequenceOf("deno"))
+  private fun detectDenoPaths(): List<String> {
+    val list = (if (SystemInfo.isWindows) sequenceOf("deno.bat", "deno.cmd", "deno.exe") else sequenceOf("deno"))
       .mapNotNull(PathEnvironmentVariableUtil::findInPath)
       .map { it.absolutePath }
       .toList()
+    if (list.isNotEmpty()) return list
+
+    val userHome = FileUtil.toSystemIndependentName(SystemProperties.getUserHome())
+
+    val exec = if (SystemInfoRt.isWindows) "deno.exe" else "deno"
+    val path = "$userHome/.deno/bin/$exec"
+    return if (File(path).exists()) listOf(path) else emptyList()
+  }
 
   private fun getDenoDirPath(): String {
     val userHome = SystemProperties.getUserHome()
