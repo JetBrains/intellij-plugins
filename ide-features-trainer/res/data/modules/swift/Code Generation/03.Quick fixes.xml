@@ -52,7 +52,7 @@ class QuickFixes: NSObject {
     <MoveCaret position="6:17"/>
     <Try triggers="ShowIntentionActions">Press <action>ShowIntentionActions</action> and select <strong>Apply Fix-it</strong> to replace the unused variable with <code>_</code></Try>
     <Try triggers="CodeInspection.OnEditor">AppCode also integrates SourceKit as a separate inspection. This means you can run it on the whole file and fix all the problems at once if several fix-its are available. Press <action>CodeInspection.OnEditor</action>.</Try>
-    <Text>As you can see, we have three problems in this piece of code: two warnings and one error. Select <strong>Swift → SourceKit inspections</strong>, press <action>ShowIntentionActions</action> and select <strong>Apply Fix-it</strong> (or click the Apply Fix-it button on the right). This should correct all three problems.</Text>
+    <Text>As you can see, we have several problems in this piece of code. Let's fix some of them. Select <strong>Swift → SourceKit inspections</strong> and click the <strong>Apply Fix-it</strong> button on the right. This should correct all the problems in this group.</Text>
     <MoveCaret position="15:19"/>
     <Try triggers="ShowIntentionActions;EditorChooseLookupItem">Now press <action>EditorEscape</action> to return to the editor window, place the caret on the incorrectly spelled variable name, and then press <action>ShowIntentionActions</action>. Select <strong>Typo: Rename to...</strong>, choose the correct option, and then press <action>EditorEnter</action></Try>
     <MoveCaret position="15:41"/>

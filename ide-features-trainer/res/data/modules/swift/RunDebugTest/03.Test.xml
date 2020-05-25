@@ -32,6 +32,7 @@ class TestExample: UIViewController {
     <Try triggers="ToggleLineBreakpoint;DebugClass">Now let's debug our test. Toggle the line breakpoint by using <action>ToggleLineBreakpoint</action> and then debug the test with <action>DebugClass</action>.</Try>
     <Try triggers="Resume">Press <action>Resume</action> to continue execution.</Try>
     <Try triggers="Stop">Press <action>Stop</action> to stop debugging.</Try>
+    <Try triggers="GotoFile;LearnProjectTests.swift">Navigate back to <code>LearnProjectTests.swift</code> by pressing <action>GotoFile</action>.</Try>
     <MoveCaret position="18:97"/>
     <TypeText>
         XCTAssert(false)
