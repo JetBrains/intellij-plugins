@@ -2,9 +2,9 @@
 package training
 
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.LightPlatformTestCase
 
-class ActionsTest : UsefulTestCase() {
+class ActionsTest : LightPlatformTestCase() {
   fun testActions() {
     assertFalse(actionExists("com.intellij.ide.projectView.impl.ProjectViewImpl\$ManualOrderAction"))
     assertTrue(actionExists("com.intellij.ui.content.tabs.TabbedContentAction\$MyNextTabAction"))

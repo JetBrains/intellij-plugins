@@ -1,10 +1,10 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package training
 
-import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.LightPlatformTestCase
 import training.ui.Message
 
-class IconsTest : UsefulTestCase() {
+class IconsTest : LightPlatformTestCase() {
   fun testIcons() {
     //Removed icons
     assertNull(Message("AllIcons.General.Gear", Message.MessageType.ICON).toIcon())

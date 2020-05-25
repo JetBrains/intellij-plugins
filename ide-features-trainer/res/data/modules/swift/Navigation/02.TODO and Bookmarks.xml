@@ -1,4 +1,4 @@
-<xml type="Scenario" name="TODOs &amp; Bookmarks" id="swift.navigation.toolwindows" lang="Swift">
+<xml type="Scenario" name="TODOs &amp; Bookmarks" id="swift.navigation.bookmarks" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class Navigation: UITableViewController {
