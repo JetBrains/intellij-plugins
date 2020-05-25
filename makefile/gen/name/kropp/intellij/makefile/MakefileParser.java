@@ -133,48 +133,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('(' (condition-body|',')* ')') | condition-body condition-body?
+  // condition-parens | (condition-body condition-body?)
   public static boolean condition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "condition")) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, CONDITION, "<condition>");
-    r = condition_0(b, l + 1);
+    r = condition_parens(b, l + 1);
     if (!r) r = condition_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // '(' (condition-body|',')* ')'
-  private static boolean condition_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "condition_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, OPEN_PAREN);
-    r = r && condition_0_1(b, l + 1);
-    r = r && consumeToken(b, CLOSE_PAREN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (condition-body|',')*
-  private static boolean condition_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "condition_0_1")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!condition_0_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "condition_0_1", c)) break;
-    }
-    return true;
-  }
-
-  // condition-body|','
-  private static boolean condition_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "condition_0_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = condition_body(b, l + 1);
-    if (!r) r = consumeToken(b, COMMA);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -197,14 +163,54 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // variable-usage|function|string|identifier
+  // variable-usage|function|string|identifier|'='
   static boolean condition_body(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "condition_body")) return false;
     boolean r;
+    Marker m = enter_section_(b);
     r = variable_usage(b, l + 1);
     if (!r) r = function(b, l + 1);
     if (!r) r = string(b, l + 1);
     if (!r) r = identifier(b, l + 1);
+    if (!r) r = consumeToken(b, ASSIGN);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // '(' (condition-body|',')* ')'
+  static boolean condition_parens(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_parens")) return false;
+    if (!nextTokenIs(b, OPEN_PAREN)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = consumeToken(b, OPEN_PAREN);
+    p = r; // pin = 1
+    r = r && report_error_(b, condition_parens_1(b, l + 1));
+    r = p && consumeToken(b, CLOSE_PAREN) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // (condition-body|',')*
+  private static boolean condition_parens_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_parens_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!condition_parens_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "condition_parens_1", c)) break;
+    }
+    return true;
+  }
+
+  // condition-body|','
+  private static boolean condition_parens_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "condition_parens_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = condition_body(b, l + 1);
+    if (!r) r = consumeToken(b, COMMA);
+    exit_section_(b, m, null, r);
     return r;
   }
 

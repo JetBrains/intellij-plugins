@@ -9,6 +9,7 @@ class MakefileParserTest : ParsingTestCase("parser", "mk", MakefileParserDefinit
   fun testConditionalsInsideRecipe() = doTest(true)
   fun testConditionalVars() = doTest(true)
   fun testConditionalAfterRecipe() = doTest(true)
+  fun testConditionalWithParens() = doTest(true)
   fun testPrerequisites() = doTest(true)
   fun testMultipleTargets() = doTest(true)
   fun testDefine() = doTest(true)
