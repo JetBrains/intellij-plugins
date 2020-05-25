@@ -389,7 +389,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               .withLookupStrings(lookupNamesNoPrefix)
               .withPresentableText(lookupNamesNoPrefix.get(0) + "…" + (hidePrefix == null ? StringUtil.notNullize(suffix) : ""))
               .withIcon(AngularJSIcons.Angular2)
-              .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
+              .withInsertHandler((InsertionContext context, LookupElement item) -> {
                 if (suffix != null) {
                   new Angular2AttributeInsertHandler(false, () -> false, suffix)
                     .handleInsert(context, item);
