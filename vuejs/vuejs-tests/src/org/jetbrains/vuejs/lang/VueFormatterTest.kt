@@ -15,6 +15,7 @@ import com.intellij.psi.formatter.xml.HtmlCodeStyleSettings
 import com.jetbrains.plugins.jade.JadeLanguage
 import org.jetbrains.plugins.sass.SASSLanguage
 import org.jetbrains.plugins.scss.SCSSLanguage
+import org.jetbrains.plugins.stylus.StylusLanguage
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.lang.html.psi.formatter.VueCodeStyleSettings
 import java.nio.file.Paths
@@ -139,6 +140,18 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
       }
       styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
       styleSettings.getLanguageIndentOptions(SASSLanguage.INSTANCE).INDENT_SIZE = 1
+      doTestFromFile("vue")
+    }
+  }
+
+  fun testStylus() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+        it.UNIFORM_INDENT = true
+        it.INDENT_CHILDREN_OF_TOP_LEVEL = "style"
+      }
+      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      styleSettings.getLanguageIndentOptions(StylusLanguage.INSTANCE).INDENT_SIZE = 1
       doTestFromFile("vue")
     }
   }
