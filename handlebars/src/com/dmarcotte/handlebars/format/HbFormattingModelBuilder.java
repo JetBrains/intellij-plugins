@@ -319,7 +319,9 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
               //      but isn't really based on solid logic (why do these checks work?), so when there's inevitably a
               //      format-on-enter bug, this is the first bit of code to be suspicious of
               &&
-              (myNode.getElementType() != HbTokenTypes.STATEMENTS || myNode.getTreeNext() instanceof PsiErrorElement))) {
+              (myNode.getElementType() != HbTokenTypes.STATEMENTS
+               || newChildIndex != 0
+               || myNode.getTreeNext() instanceof PsiErrorElement))) {
         return new ChildAttributes(Indent.getNormalIndent(), null);
       }
 
