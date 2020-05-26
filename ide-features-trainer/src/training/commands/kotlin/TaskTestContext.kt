@@ -26,6 +26,10 @@ import javax.swing.JList
 
 class TaskTestContext(val task: TaskContext) {
 
+  data class TestScriptProperties (
+    val duration: Int = 6 //seconds
+  )
+
   fun type(text: String) {
     GuiTestUtil.typeText(text)
   }

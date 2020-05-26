@@ -73,7 +73,7 @@ class LearningLessonsAutoExecutor(val project: Project, private val progress: Pr
     TaskContext.inTestMode = true
     try {
       linkAtLearnPanel { ideFrameFixture.linkLabel(lesson.name).click() }
-      val passedStatus = lessonPromise.blockingGet(6, TimeUnit.SECONDS)
+      val passedStatus = lessonPromise.blockingGet(lesson.testScriptProperties.duration, TimeUnit.SECONDS)
       if (passedStatus == null || !passedStatus) {
         LOG.error("Can't pass lesson " + lesson.name)
       }
