@@ -268,7 +268,7 @@ Vue.options.delimiters = ['<%', '%>']
     val disposable = Disposer.newDisposable()
     var forbid = true
     VueContextProvider.VUE_CONTEXT_PROVIDER_EP
-      .getPoint(null)
+      .getPoint()
       .registerExtension(object : VueContextProvider {
         override fun isVueContext(directory: PsiDirectory): CachedValueProvider.Result<Boolean> {
           return CachedValueProvider.Result.create(false, ModificationTracker.NEVER_CHANGED)
