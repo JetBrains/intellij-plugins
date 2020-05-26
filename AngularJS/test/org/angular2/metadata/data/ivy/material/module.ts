@@ -1,6 +1,6 @@
 import {Component, NgModule} from "@angular/core"
 import {FormControl} from '@angular/forms';
-import {MatFormFieldModule, MatInputModule, MatTabsModule} from "@angular/material"
+import {MatFormFieldModule, MatInputModule, MatTabsModule, MatTableModule} from "@angular/material"
 
 
 @Component({
@@ -12,11 +12,15 @@ import {MatFormFieldModule, MatInputModule, MatTabsModule} from "@angular/materi
     <mat-form-field></mat-form-field>
     <error descr="More than one component is matched on this element: FooComponent (foo) and FooComponent2 (foo)"><foo></error></foo>
     <bar></bar>
+    <table mat-table>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
   `
 })
 export class MyComponent {
   selected = new FormControl(0);
-
+  displayedColumns = ['id', 'name'];
 }
 
 @Component({
@@ -45,7 +49,8 @@ export class FooComponent2 {
   imports: [
     MatInputModule,
     MatTabsModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatTableModule
   ]
 })
 export class MyModule {
