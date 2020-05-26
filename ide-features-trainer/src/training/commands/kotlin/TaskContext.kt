@@ -30,6 +30,7 @@ import training.ui.IncorrectLearningStateNotificationProvider
 import training.ui.LearningUiHighlightingManager
 import training.ui.LearningUiUtil
 import java.awt.Component
+import java.awt.Rectangle
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
@@ -231,11 +232,29 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         checkTree(it) != null
       }
       return@triggerByUiComponentAndHighlight {
-        LearningUiHighlightingManager.highlightJTreeItem(tree, { checkTree(tree) }, options)
+        LearningUiHighlightingManager.highlightJTreeItem(tree, options) {
+          checkTree(tree)
+        }
         tree
       }
     }
   }
+
+  inline fun <reified T: Component> triggerByPartOfComponent(highlightBorder: Boolean = true, highlightInside: Boolean = false, crossinline rectangle: (T) -> Rectangle?) {
+    val options = LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)
+    @Suppress("DEPRECATION")
+    triggerByUiComponentAndHighlight {
+      val delay = Timeout.timeout(500, TimeUnit.MILLISECONDS)
+      val whole = LearningUiUtil.findComponentWithTimeout(null, T::class.java, delay) {
+        rectangle(it) != null
+      }
+      return@triggerByUiComponentAndHighlight {
+        LearningUiHighlightingManager.highlightPartOfComponent(whole, options) { rectangle(it) }
+        whole
+      }
+    }
+  }
+
 
   fun triggerByListItemAndHighlight(highlightBorder: Boolean = true, highlightInside: Boolean = false, checkList: (item: Any) -> Boolean) {
     triggerByFoundListItemAndHighlight(LearningUiHighlightingManager.HighlightingOptions(highlightBorder, highlightInside)) { ui: JList<*> ->
@@ -253,7 +272,9 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
         index != -1 && it.visibleRowCount > index
       }
       return@triggerByUiComponentAndHighlight {
-        LearningUiHighlightingManager.highlightJListItem(list, { checkList(list) }, options)
+        LearningUiHighlightingManager.highlightJListItem(list, options) {
+          checkList(list)
+        }
         list
       }
     }

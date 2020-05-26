@@ -40,6 +40,7 @@ import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
 import training.project.ProjectUtils
 import training.ui.LearnToolWindowFactory
+import training.ui.LearningUiHighlightingManager
 import training.ui.UiManager
 import training.util.findLanguageByID
 import java.awt.FontFormatException
@@ -214,6 +215,7 @@ class OpenLessonAction(val lesson: Lesson) : AnAction(lesson.name) {
     val executor = LessonExecutor(lesson, textEditor.editor, projectWhereToStartLesson)
     val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson, executor)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, executor)
+    LearningUiHighlightingManager.clearHighlights()
     lesson.lessonContent(lessonContext)
     executor.processNextTask(0)
   }
