@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,6 +96,22 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   public void testFileDetectedByShebangLine() {
     doReformatFile("test", "");
+  }
+
+  public void testRunPrettierOnSave() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnSave = configuration.isRunOnSave();
+    configuration.setRunOnSave(true);
+    try {
+      myFixture.configureByText("foo.js", "var  a=''");
+      myFixture.type(' ');
+      myFixture.performEditorAction("SaveAll");
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
+      myFixture.checkResult("var a = \"\";\n");
+    }
+    finally {
+      configuration.setRunOnSave(origRunOnSave);
+    }
   }
 
   public void testRunPrettierOnCodeReformat() {
