@@ -103,6 +103,12 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     }
 
     @Override
+    protected boolean needReadActionToCreateState() {
+      // PrettierPostFormatProcessor runs under write action. Read action here is not needed and it would block the service startup
+      return false;
+    }
+
+    @Override
     protected JSLanguageServiceInitialState createState() {
       JSLanguageServiceInitialState state = new JSLanguageServiceInitialState();
       final File service = new File(JSLanguageServiceUtil.getPluginDirectory(this.getClass(), "prettierLanguageService"),

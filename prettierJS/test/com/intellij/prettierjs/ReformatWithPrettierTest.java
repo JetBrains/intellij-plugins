@@ -1,8 +1,10 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -93,6 +95,20 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
   public void testFileDetectedByShebangLine() {
     doReformatFile("test", "");
+  }
+
+  public void testRunPrettierOnCodeReformat() {
+    PrettierConfiguration configuration = PrettierConfiguration.getInstance(getProject());
+    boolean origRunOnReformat = configuration.isRunOnReformat();
+    configuration.setRunOnReformat(true);
+    try {
+      myFixture.configureByText("foo.js", "var  a=''");
+      myFixture.performEditorAction(IdeActions.ACTION_EDITOR_REFORMAT);
+      myFixture.checkResult("var a = \"\";\n");
+    }
+    finally {
+      configuration.setRunOnReformat(origRunOnReformat);
+    }
   }
 
   private void doReformatFile(final String extension) {

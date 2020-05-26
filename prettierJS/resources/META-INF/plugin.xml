@@ -41,6 +41,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
+    <postFormatProcessor implementation="com.intellij.prettierjs.PrettierPostFormatProcessor"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction" class="com.intellij.prettierjs.ReformatWithPrettierAction">

@@ -22,6 +22,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
   static class State {
     public boolean myRunOnSave = PRETTIER_ON_SAVE_DEFAULT;
+    public boolean myRunOnReformat = PRETTIER_ON_REFORMAT_DEFAULT;
     public @NotNull String myFilesPattern = PRETTIER_FILES_PATTERN_DEFAULT;
   }
 
@@ -32,6 +33,7 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
   @NonNls private static final String PRETTIER_FILES_PATTERN_PROPERTY = "prettier.files.pattern";
 
   private static final boolean PRETTIER_ON_SAVE_DEFAULT = false;
+  private static final boolean PRETTIER_ON_REFORMAT_DEFAULT = false;
   @NonNls private static final String PRETTIER_FILES_PATTERN_DEFAULT = "{**/*,*}.{js,ts,jsx,tsx}";
 
   private static final NodePackageDescriptor PKG_DESC = new NodePackageDescriptor(PrettierUtil.PACKAGE_NAME);
@@ -133,6 +135,14 @@ public final class PrettierConfiguration implements JSNpmLinterState<PrettierCon
 
     // TODO: remove the following line in 2020.3+. At the moment, let's be 2020.1-compatible and store these options in 2 places.
     PropertiesComponent.getInstance(myProject).setValue(PRETTIER_ON_SAVE_PROPERTY, runOnSave, PRETTIER_ON_SAVE_DEFAULT);
+  }
+
+  public boolean isRunOnReformat() {
+    return myState.myRunOnReformat;
+  }
+
+  public void setRunOnReformat(boolean runOnReformat) {
+    myState.myRunOnReformat = runOnReformat;
   }
 
   @NotNull

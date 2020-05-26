@@ -15,11 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
 public class PrettierSaveAction extends LinterSaveActionsManager.LinterSaveAction {
-  private static final ReformatWithPrettierAction.ErrorHandler ERROR_HANDLER = new ReformatWithPrettierAction.ErrorHandler() {
+  static final ReformatWithPrettierAction.ErrorHandler NOOP_ERROR_HANDLER = new ReformatWithPrettierAction.ErrorHandler() {
     @Override
     public void showError(@NotNull Project project, @Nullable Editor editor, @NotNull String text, @Nullable Runnable onLinkClick) {
       // No need to show any notification in case of 'Prettier on save' failure. Most likely the file is simply not syntactically valid at the moment.
@@ -36,31 +37,37 @@ public class PrettierSaveAction extends LinterSaveActionsManager.LinterSaveActio
     PrettierConfiguration prettierConfiguration = PrettierConfiguration.getInstance(project);
     if (!prettierConfiguration.isRunOnSave()) return;
 
-    final PathMatcher matcher;
-    try {
-      String glob = "glob:" + PrettierConfiguration.getInstance(project).getFilesPattern();
-      matcher = FileSystems.getDefault().getPathMatcher(glob);
-    }
-    catch (PatternSyntaxException ignore) {
-      return;
-    }
-
     FileDocumentManager manager = FileDocumentManager.getInstance();
-    ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
-
     List<VirtualFile> files = ContainerUtil.mapNotNull(documents, document -> {
-      VirtualFile file = manager.getFile(document);
-      if (file != null &&
-          file.isInLocalFileSystem() &&
-          fileIndex.isInContent(file) &&
-          matcher.matches(Paths.get(getPathToMatch(project, file)))) {
-        return file;
-      }
-      return null;
+      return manager.getFile(document);
     });
 
-    if (!files.isEmpty()) {
-      ReformatWithPrettierAction.processVirtualFiles(project, files, ERROR_HANDLER);
+    List<VirtualFile> matchingFiles = getFilesMatchingGlobPattern(project, prettierConfiguration.getFilesPattern(), files);
+
+    if (!matchingFiles.isEmpty()) {
+      ReformatWithPrettierAction.processVirtualFiles(project, matchingFiles, NOOP_ERROR_HANDLER);
+    }
+  }
+
+  public static @NotNull List<VirtualFile> getFilesMatchingGlobPattern(@NotNull Project project,
+                                                                       @NotNull String globPattern,
+                                                                       @NotNull List<VirtualFile> files) {
+    try {
+      String glob = "glob:" + globPattern;
+      PathMatcher matcher = FileSystems.getDefault().getPathMatcher(glob);
+      ProjectFileIndex fileIndex = ProjectFileIndex.getInstance(project);
+      return ContainerUtil.mapNotNull(files, file -> {
+        if (file != null &&
+            file.isInLocalFileSystem() &&
+            fileIndex.isInContent(file) &&
+            matcher.matches(Paths.get(getPathToMatch(project, file)))) {
+          return file;
+        }
+        return null;
+      });
+    }
+    catch (PatternSyntaxException ignore) {
+      return Collections.emptyList();
     }
   }
 
