@@ -4,11 +4,12 @@ import com.intellij.lang.Language;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.css.index.CssSupportedFileTypesProvider;
 import org.intellij.plugins.postcss.PostCssFileType;
 import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PostCssSupportedFileTypesProvider extends CssSupportedFileTypesProvider {
 
@@ -24,10 +25,10 @@ public class PostCssSupportedFileTypesProvider extends CssSupportedFileTypesProv
     return PostCssLanguage.INSTANCE;
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Lexer getIndexingLexer() {
-    return null;
+    return new PostCssHighlightingLexer(CssElementDescriptorFactory2.getInstance().getValueIdentifiers());
   }
 
   @NotNull
