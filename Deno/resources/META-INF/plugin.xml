@@ -8,7 +8,7 @@
 <li>Coding assistance for Deno APIs and imports
 <li>Run files with Deno and debug them using the built-in visual debugger
 </ul>
-Enable Deno support for the current project in <i>Preferences | Languages & Frameworks | Deno</i>.
+Enable Deno support for the current project in <i>Preferences | Languages \& Frameworks | Deno</i>.
 ]]></description>
   
   <vendor>JetBrains</vendor>
