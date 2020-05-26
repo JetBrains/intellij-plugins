@@ -149,10 +149,8 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
       if (aClass instanceof TypeScriptClass) {
         Angular2IvySymbolDef.Entity entityDef = Angular2IvySymbolDef.get((TypeScriptClass)aClass, true);
         if (entityDef instanceof Angular2IvySymbolDef.Directive) {
-          inputMap.putAll(((Angular2IvySymbolDef.Directive)entityDef)
-                            .readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP));
-          outputMap.putAll(((Angular2IvySymbolDef.Directive)entityDef)
-                             .readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP));
+          readMappingsInto((Angular2IvySymbolDef.Directive)entityDef, Angular2DecoratorUtil.INPUTS_PROP, inputMap);
+          readMappingsInto((Angular2IvySymbolDef.Directive)entityDef, Angular2DecoratorUtil.OUTPUTS_PROP, outputMap);
         }
       }
       return true;
@@ -176,6 +174,10 @@ public class Angular2IvyDirective extends Angular2IvyDeclaration<Angular2IvySymb
       output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
     return new Angular2DirectiveProperties(inputs.values(), outputs.values());
+  }
+
+  private static void readMappingsInto(Angular2IvySymbolDef.Directive directiveDef, String field, Map<String, String> target) {
+    directiveDef.readPropertyMappings(field).forEach((key, value) -> target.putIfAbsent(key, value));
   }
 
   private static void processProperty(@NotNull JSRecordType.PropertySignature property,
