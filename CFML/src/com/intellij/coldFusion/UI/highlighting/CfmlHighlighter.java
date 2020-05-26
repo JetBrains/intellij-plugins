@@ -6,6 +6,7 @@ import com.intellij.coldFusion.model.lexer.CfmlLexer;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
+import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.custom.CustomHighlighterColors;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -15,7 +16,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.ex.util.LayerDescriptor;
 import com.intellij.openapi.editor.ex.util.LayeredLexerEditorHighlighter;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
@@ -36,7 +36,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
                          @NotNull final EditorColorsScheme colors) {
     super(new CfmlFileHighlighter(project), colors);
     registerLayer(CfmlElementTypes.TEMPLATE_TEXT, new LayerDescriptor(
-      SyntaxHighlighterFactory.getSyntaxHighlighter(StdFileTypes.HTML, project, virtualFile), ""));
+      SyntaxHighlighterFactory.getSyntaxHighlighter(HtmlFileType.INSTANCE, project, virtualFile), ""));
   }
 
   static class CfmlFileHighlighter extends SyntaxHighlighterBase {

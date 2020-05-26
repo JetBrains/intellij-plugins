@@ -1,6 +1,7 @@
 package org.angularjs.index;
 
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.ide.highlighter.XHtmlFileType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
@@ -13,7 +14,7 @@ public class AngularTemplateIndexInputFilter extends DefaultFileTypeSpecificInpu
   public static final AngularTemplateIndexInputFilter INSTANCE = new AngularTemplateIndexInputFilter();
 
   public AngularTemplateIndexInputFilter() {
-    super(StdFileTypes.HTML, StdFileTypes.XHTML);
+    super(HtmlFileType.INSTANCE, XHtmlFileType.INSTANCE);
   }
 
   @Override
