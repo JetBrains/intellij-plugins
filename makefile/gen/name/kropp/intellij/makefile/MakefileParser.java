@@ -1,15 +1,15 @@
 // This is a generated file. Not intended for manual editing.
 package name.kropp.intellij.makefile;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.LightPsiParser;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
-
-import static name.kropp.intellij.makefile.MakefileParserUtil.*;
 import static name.kropp.intellij.makefile.psi.MakefileTypes.*;
+import static name.kropp.intellij.makefile.MakefileParserUtil.*;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
+import com.intellij.lang.LightPsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class MakefileParser implements PsiParser, LightPsiParser {
@@ -63,14 +63,12 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   static boolean assignment(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignment")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, ASSIGN);
     if (!r) r = consumeToken(b, ":=");
     if (!r) r = consumeToken(b, "::=");
     if (!r) r = consumeToken(b, "?=");
     if (!r) r = consumeToken(b, "!=");
     if (!r) r = consumeToken(b, "+=");
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -302,12 +300,10 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   static boolean conditional_keyword(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "conditional_keyword")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_IFEQ);
     if (!r) r = consumeToken(b, KEYWORD_IFNEQ);
     if (!r) r = consumeToken(b, KEYWORD_IFDEF);
     if (!r) r = consumeToken(b, KEYWORD_IFNDEF);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -638,10 +634,8 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean function_recover_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "function_recover_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, CLOSE_PAREN);
     if (!r) r = consumeToken(b, EOL);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -741,11 +735,9 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   private static boolean include_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "include_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, KEYWORD_INCLUDE);
     if (!r) r = consumeToken(b, "-include");
     if (!r) r = consumeToken(b, "sinclude");
-    exit_section_(b, m, null, r);
     return r;
   }
 

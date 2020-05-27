@@ -44,12 +44,14 @@ CHARS = [0-9a-zA-Z.!\-?%@/_\[\]+~*\^&+<>]
 %%
 
 <SQSTRING> {
-  "'" {  yybegin(YYINITIAL); return QUOTE; }
+  "'"  {  yybegin(YYINITIAL); return QUOTE; }
+  "\"" { return CHARS; }
   "#"+ { return CHARS; }
 }
 
 <DQSTRING> {
   "\"" {  yybegin(YYINITIAL); return DOUBLEQUOTE; }
+  "'"  {  return CHARS; }
   "#"+ { return CHARS; }
 }
 
