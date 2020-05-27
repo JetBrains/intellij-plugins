@@ -136,15 +136,15 @@ public class IntellijJavaFieldTest extends BaseTestCase {
         assertFalse(new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setValid(false)).isValid());
     }
 
+    @SuppressWarnings({"SimplifiedTestNGAssertion", "EqualsBetweenInconvertibleTypes", "ConstantConditions"})
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
-    public void equals(IdeaProjectTestFixture fixture) {
+    public void testEquals(IdeaProjectTestFixture fixture) {
         IntellijJavaField field1 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
         IntellijJavaField field2 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field2"));
         IntellijJavaField field3 = new IntellijJavaField(fixture.getModule(), new PsiFieldMock().setMockName("field1"));
 
-        assertNotEquals(field1, null);
-
-        assertNotEquals(field1, "");
+        assertFalse(field1.equals(null));
+        assertFalse(field1.equals(""));
 
         assertNotEquals(field2, field1);
 
