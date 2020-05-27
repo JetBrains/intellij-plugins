@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.*
 
 plugins {
-  kotlin("jvm") version "1.3.61"
+  kotlin("jvm") version "1.3.72"
   id("org.jetbrains.intellij") version "0.4.17"
 }
 
 group = "name.kropp.intellij"
-version = "3.0.1"
+version = "3.1.1"
 
 repositories {
   mavenCentral()
@@ -38,7 +38,5 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-//  api(kotlin("stdlib-jdk8"))
-
   testImplementation("org.hamcrest", "hamcrest", "2.2")
 }

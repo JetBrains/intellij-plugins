@@ -9,9 +9,8 @@ Support for editing and running UNIX Makefiles
     ]]></description>
 
   <change-notes><![CDATA[
-Added variable completion.
-Improved parsing resolves many reported highlighting issues, parser now also recovers better.
-Eliminated many deprecated IntelliJ API usages.
+Improved variable parsing and completion inside strings and variable values.
+Eliminated deprecated IntelliJ API usages.
 ]]></change-notes>
 
   <idea-version since-build="201.3119"/>
