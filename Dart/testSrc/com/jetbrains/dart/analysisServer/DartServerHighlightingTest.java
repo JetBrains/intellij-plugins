@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -258,22 +259,18 @@ public class DartServerHighlightingTest extends CodeInsightFixtureTestCase {
     final VirtualFile file = getFile().getVirtualFile();
 
     final List<DartNavigationRegion> regions = service.getNavigation(file);
-    checkRegions(regions,
-                 TextRange.create(0, 3),
-                 TextRange.create(4, 5),
-                 TextRange.create(11, 14),
-                 TextRange.create(15, 16),
-                 TextRange.create(19, 20));
+    TextRange[] ranges = {
+      TextRange.create(0, 3),
+      TextRange.create(4, 5),
+      TextRange.create(11, 14),
+      TextRange.create(15, 16),
+      TextRange.create(19, 20)};
+    checkRegions(regions, ranges);
     assertEquals(4, regions.get(4).getTargets().get(0).getOffset(getProject(), file));
 
     getEditor().getCaretModel().moveToOffset(0);
     myFixture.type("foo \b");
-    checkRegions(regions,
-                 TextRange.create(0 + 3, 3 + 3),
-                 TextRange.create(4 + 3, 5 + 3),
-                 TextRange.create(11 + 3, 14 + 3),
-                 TextRange.create(15 + 3, 16 + 3),
-                 TextRange.create(19 + 3, 20 + 3));
+    checkRegions(regions, ContainerUtil.map2Array(ranges, TextRange.class, range -> range.shiftRight(3)));
     assertEquals(4 + 3, regions.get(4).getTargets().get(0).getOffset(getProject(), file));
   }
 
