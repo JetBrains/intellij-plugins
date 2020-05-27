@@ -33,7 +33,7 @@ $ ./gradlew buildPlugin
 
 Plugin zip file will be created in `build/distributions`
 
-To test plugin in IDE run `./gradlew runIdea`
+To test plugin in IDE run `./gradlew runIde`
 
 #### Grammar modifications
 
