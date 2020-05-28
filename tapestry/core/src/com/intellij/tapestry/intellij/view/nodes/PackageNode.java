@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.view.nodes;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
 import com.intellij.tapestry.core.TapestryProject;
@@ -93,7 +93,7 @@ public class PackageNode extends TapestryNode {
                 children.add(new FileNode(psiFile, _module, _treeBuilder));
             }
 
-            if (psiFile.getFileType().equals(StdFileTypes.PROPERTIES) && !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
+            if (psiFile.getFileType().equals(PropertiesFileType.INSTANCE) && !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
                 children.add(new FileNode(psiFile, _module, _treeBuilder));
             }
         }
