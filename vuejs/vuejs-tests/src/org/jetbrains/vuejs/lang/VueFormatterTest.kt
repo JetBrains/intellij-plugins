@@ -156,6 +156,18 @@ class VueFormatterTest : JavaScriptFormatterTestBase() {
     }
   }
 
+  fun testInjections() {
+    JSTestUtils.testWithTempCodeStyleSettings<Throwable>(project) { styleSettings ->
+      styleSettings.getCustomSettings(VueCodeStyleSettings::class.java).let {
+        it.UNIFORM_INDENT = true
+        it.INDENT_CHILDREN_OF_TOP_LEVEL = "template"
+      }
+      styleSettings.getCommonSettings(JavascriptLanguage.INSTANCE).SPACE_AROUND_ADDITIVE_OPERATORS = false
+      styleSettings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 2
+      doTestFromFile("vue")
+    }
+  }
+
   private fun doIndentationTest(settings: CodeStyleSettings) {
     settings.getLanguageIndentOptions(VueLanguage.INSTANCE).INDENT_SIZE = 1
     settings.getLanguageIndentOptions(HTMLLanguage.INSTANCE).INDENT_SIZE = 2

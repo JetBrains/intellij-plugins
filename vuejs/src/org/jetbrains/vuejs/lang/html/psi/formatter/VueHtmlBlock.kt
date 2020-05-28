@@ -33,8 +33,8 @@ class VueHtmlBlock(node: ASTNode,
                            isPreserveSpace)
   }
 
-  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlBlock {
-    return VueHtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, null, isPreserveSpace)
+  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock {
+    return VueHtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
   }
 
   override fun useMyFormatter(myLanguage: Language, childLanguage: Language, childPsi: PsiElement): Boolean {

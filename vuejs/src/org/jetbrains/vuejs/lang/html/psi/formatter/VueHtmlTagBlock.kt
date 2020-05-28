@@ -5,11 +5,12 @@ import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.lang.Language
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.formatter.xml.XmlBlock
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy
+import com.intellij.psi.formatter.xml.XmlInjectedLanguageBlockBuilder
 import com.intellij.psi.formatter.xml.XmlTagBlock
-import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import java.util.*
 
@@ -30,8 +31,8 @@ class VueHtmlTagBlock(node: ASTNode,
                            isPreserveSpace)
   }
 
-  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?): XmlBlock {
-    return VueHtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, null, isPreserveSpace)
+  override fun createSimpleChild(child: ASTNode, indent: Indent?, wrap: Wrap?, alignment: Alignment?, range: TextRange?): XmlBlock {
+    return VueHtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace)
   }
 
   override fun createSyntheticBlock(localResult: ArrayList<Block>, childrenIndent: Indent?): Block {

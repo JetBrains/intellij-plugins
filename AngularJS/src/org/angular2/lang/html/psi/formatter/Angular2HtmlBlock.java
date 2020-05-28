@@ -14,6 +14,8 @@ import com.intellij.psi.formatter.xml.XmlTagBlock;
 import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.lang.html.psi.formatter.Angular2HtmlTagBlock.isAngular2AttributeElementType;
 
@@ -33,8 +35,9 @@ public class Angular2HtmlBlock extends XmlBlock {
   }
 
   @Override
-  protected XmlBlock createSimpleChild(ASTNode child, Indent indent, Wrap wrap, Alignment alignment) {
-    return new Angular2HtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, null, isPreserveSpace());
+  protected @NotNull XmlBlock createSimpleChild(@NotNull ASTNode child, @Nullable Indent indent,
+                                                @Nullable Wrap wrap, @Nullable Alignment alignment, @Nullable TextRange range) {
+    return new Angular2HtmlBlock(child, wrap, alignment, myXmlFormattingPolicy, indent, range, isPreserveSpace());
   }
 
   @Override
