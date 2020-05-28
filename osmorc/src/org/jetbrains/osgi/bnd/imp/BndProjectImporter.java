@@ -430,7 +430,7 @@ public final class BndProjectImporter {
           throw new IllegalArgumentException("Unknown module '" + name + "'");
         }
         entry = (ModuleOrderEntry)ContainerUtil.find(
-          rootModel.getOrderEntries(), e -> e instanceof ModuleOrderEntry && ((ModuleOrderEntry)e).getModule() == module);
+          rootModel.getOrderEntries(), e -> e instanceof ModuleOrderEntry && ((ModuleOrderEntry)e).getModuleName().equals(name));
         if (entry == null) {
           entry = rootModel.addModuleOrderEntry(module);
         }
