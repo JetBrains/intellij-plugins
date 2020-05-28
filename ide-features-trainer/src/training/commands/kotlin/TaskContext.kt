@@ -170,10 +170,10 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
     return result
   }
 
-  fun addFutureStep(p: CompletableFuture<Boolean>.() -> Unit) {
+  fun addFutureStep(p: DoneStepContext.() -> Unit) {
     val future: CompletableFuture<Boolean> = CompletableFuture()
     addStep(future)
-    p.invoke(future)
+    p.invoke(DoneStepContext(future))
   }
 
   fun addStep(step: CompletableFuture<Boolean>) {
@@ -332,6 +332,15 @@ class TaskContext(private val lessonExecutor: LessonExecutor,
 
   fun code(sourceSample: String): String {
     return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
+  }
+
+  class DoneStepContext(val future: CompletableFuture<Boolean>) {
+    fun completeStep() {
+      assert(ApplicationManager.getApplication().isDispatchThread)
+      if (!future.isDone && !future.isCancelled) {
+        future.complete(true)
+      }
+    }
   }
 
   companion object {
