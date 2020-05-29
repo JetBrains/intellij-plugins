@@ -9,105 +9,99 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 
 public class DeviceTreeNode implements TreeNode {
 
-  private final DeviceTreeNode parent;
-  private final String name;
-  private final TYPE type;
-  private final String[] cliKeys;
-  private List<DeviceTreeNode> children = Collections.emptyList();
+  private final DeviceTreeNode myParent;
+  private final String myName;
+  private final TYPE myType;
+  private final BoardInfo myBoardInfo;
+  private List<DeviceTreeNode> myChildren = Collections.emptyList();
 
-  public DeviceTreeNode(@Nullable DeviceTreeNode parent, @NotNull TYPE type, @NotNull String name, @NotNull String... cliKeys) {
-    this.parent = parent;
-    this.name = name;
-    this.type = type;
-    this.cliKeys = cliKeys;
+  public DeviceTreeNode(@Nullable DeviceTreeNode parent, @NotNull TYPE type, @NotNull String name, @NotNull BoardInfo boardInfo) {
+    this.myParent = parent;
+    this.myName = name;
+    this.myType = type;
+    this.myBoardInfo = boardInfo;
   }
 
   @Override
   @NotNull
   public DeviceTreeNode getChildAt(int childIndex) {
-    return children.get(childIndex);
+    return myChildren.get(childIndex);
   }
 
   @Override
   public int getChildCount() {
-    return children.size();
+    return myChildren.size();
   }
 
   @NotNull
   public String getName() {
-    return name;
+    return myName;
   }
 
   @NotNull
-  public String[] getCliKeys() {
-    return cliKeys;
+  public BoardInfo getBoardInfo() {
+    return myBoardInfo;
   }
 
   @Override
   @Nullable
   public DeviceTreeNode getParent() {
-    return parent;
-  }
-
-  @NotNull
-  public List<DeviceTreeNode> getChildren() {
-    return children;
+    return myParent;
   }
 
   public void setChildren(@NotNull List<DeviceTreeNode> children) {
-    this.children = children;
+    this.myChildren = children;
   }
 
   @Override
   public boolean getAllowsChildren() {
-    return !children.isEmpty();
+    return !myChildren.isEmpty();
   }
 
   @Override
   public int getIndex(@NotNull TreeNode node) {
-    //noinspection SuspiciousMethodCalls
-    return children.indexOf(node);
+    return myChildren.indexOf(node);
   }
 
   @Override
   public boolean isLeaf() {
-    return children.isEmpty();
+    return myChildren.isEmpty();
   }
 
   @TestOnly
-  public boolean hasSameValues(@NotNull String name, @NotNull TYPE type, @NotNull String... cliKeys) {
-    if (!name.equals(this.name)) return false;
-    if (!type.equals(this.type)) return false;
-    return Arrays.equals(cliKeys, this.cliKeys);
+  public boolean hasSameValues(@NotNull String name, @NotNull TYPE type, @NotNull BoardInfo boardInfo) {
+    if (!name.equals(this.myName)) return false;
+    if (!type.equals(this.myType)) return false;
+    return Objects.equals(boardInfo, this.myBoardInfo);
   }
 
   @Override
   @NotNull
   public Enumeration<DeviceTreeNode> children() {
-    return Collections.enumeration(children);
+    return Collections.enumeration(myChildren);
   }
 
   @NotNull
   public DeviceTreeNode add(DeviceTreeNode child) {
-    if (children.isEmpty()) {
-      children = new SmartList<>(child);
+    if (myChildren.isEmpty()) {
+      myChildren = new SmartList<>(child);
     }
     else {
-      children.add(child);
+      myChildren.add(child);
     }
     return child;
   }
 
   @NotNull
   public TYPE getType() {
-    return type;
+    return myType;
   }
 
   public enum TYPE {

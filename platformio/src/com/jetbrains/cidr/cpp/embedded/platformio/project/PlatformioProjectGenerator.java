@@ -15,6 +15,8 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -52,16 +54,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.jetbrains.cidr.cpp.embedded.stm32cubemx.CMakeSTM32CubeMXProjectGenerator.EMBEDDED_PROJECTS_GROUP_NAME;
 
-public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String[]>> implements CustomStepProjectGenerator<Ref<String[]>> {
+public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<BoardInfo>>
+  implements CustomStepProjectGenerator<Ref<BoardInfo>> {
 
   @Override
-  public AbstractActionWithPanel createStep(DirectoryProjectGenerator<Ref<String[]>> projectGenerator,
-                                            AbstractNewProjectStep.AbstractCallback<Ref<String[]>> callback) {
+  public AbstractActionWithPanel createStep(DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
+                                            AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
     return new PlatformioProjectSettingsStep(projectGenerator, callback);
   }
 
@@ -90,26 +92,26 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
 
   @NotNull
   @Override
-  public ProjectGeneratorPeer<Ref<String[]>> createPeer() {
-    return new GeneratorPeerImpl<>(new Ref<>(null), new JPanel());
+  public ProjectGeneratorPeer<Ref<BoardInfo>> createPeer() {
+    return new GeneratorPeerImpl<>(new Ref<>(BoardInfo.EMPTY), new JPanel());
   }
 
   @Override
   public void generateProject(@NotNull Project project,
                               @NotNull VirtualFile baseDir,
-                              @NotNull Ref<String[]> settings,
+                              @NotNull Ref<@NotNull BoardInfo> settings,
                               @NotNull Module module) {
     StringBuilder pioCmdLineTail = new StringBuilder();
-    for (String s : settings.get()) {
+    for (String s : settings.get().getParameters()) {
       pioCmdLineTail.append(' ').append(s);
     }
-    doGenerateProject(project, baseDir, pioCmdLineTail, true);
+    doGenerateProject(project, baseDir, pioCmdLineTail, settings.get().getTemplate());
   }
 
   public void doGenerateProject(@NotNull Project project,
                                 @NotNull VirtualFile baseDir,
                                 @NotNull CharSequence pioCmdLineTail,
-                                boolean generateMain) {
+                                @NotNull SourceTemplate template) {
   /* This method starts multi-stage process
      1. PlatformIO utility is started asynchronously under progress indicator
      2. When it's done, another asynchronous code writes empty source code stub if no main.c or main.cpp is generated
@@ -149,7 +151,7 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
         public void onFinished() {
           if (success.get()) {
             // Phase 2 started
-            WriteAction.run(() -> finishFileStructure(project, baseDir, generateMain));
+            WriteAction.run(() -> finishFileStructure(project, baseDir, template));
           }
         }
       }.queue(); // Phase 1 started
@@ -157,20 +159,25 @@ public class PlatformioProjectGenerator extends CLionProjectGenerator<Ref<String
   }
 
   private void finishFileStructure(@NotNull Project project,
-                                   @NotNull VirtualFile baseDir, boolean generateMain) {
+                                   @NotNull VirtualFile baseDir,
+                                   @NotNull SourceTemplate template) {
     baseDir.refresh(false, true);
-    if (generateMain) {
+    if (template != SourceTemplate.NONE) {
       VirtualFile srcFolder = baseDir.findChild("src");
       if (srcFolder == null || !srcFolder.isDirectory()) {
         showError(ClionEmbeddedPlatformioBundle.message("src.not.found"));
         return;
       }
-      if (srcFolder.findChild("main.cpp") == null) {
+      if (srcFolder.findChild("main.cpp") == null && srcFolder.findChild("main.c") == null) {
         try {
-          VirtualFile mainC = srcFolder.findOrCreateChildData(this, "main.c");
-          if (mainC.getLength() == 0) {
-            mainC.setBinaryContent(ClionEmbeddedPlatformioBundle.message("write.your.code.here").getBytes(StandardCharsets.US_ASCII));
-          }
+          VirtualFile virtualFile = srcFolder.createChildData(this, template.getFileName());
+          virtualFile.setBinaryContent(template.getContent());
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (!project.isDisposed()) {
+              OpenFileDescriptor descriptor = new OpenFileDescriptor(project, virtualFile);
+              FileEditorManager.getInstance(project).openEditor(descriptor, true);
+            }
+          });
         }
         catch (IOException e) {
           showError(ExceptionUtil.getThrowableText(e));
