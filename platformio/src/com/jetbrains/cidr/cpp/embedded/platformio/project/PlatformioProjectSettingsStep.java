@@ -22,7 +22,6 @@ import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ui.components.BorderLayoutPanel;
 import com.jetbrains.cidr.cpp.embedded.platformio.ClionEmbeddedPlatformioBundle;
@@ -33,14 +32,13 @@ import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<String[]>> {
-
+public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<BoardInfo>> {
   private final Tree myTree;
 
-  public PlatformioProjectSettingsStep(DirectoryProjectGenerator<Ref<String[]>> projectGenerator,
-                                       AbstractNewProjectStep.AbstractCallback<Ref<String[]>> callback) {
+  public PlatformioProjectSettingsStep(DirectoryProjectGenerator<Ref<BoardInfo>> projectGenerator,
+                                       AbstractNewProjectStep.AbstractCallback<Ref<BoardInfo>> callback) {
     super(projectGenerator, callback);
-    myTree = new Tree(new DefaultTreeModel(new DeviceTreeNode(null, DeviceTreeNode.TYPE.ROOT, "")));
+    myTree = new Tree(new DefaultTreeModel(new DeviceTreeNode(null, DeviceTreeNode.TYPE.ROOT, "", BoardInfo.EMPTY)));
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
       @Override
       public void customizeCellRenderer(@NotNull JTree tree,
@@ -61,11 +59,14 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
 
     myTree.addTreeSelectionListener(e -> {
       TreePath selectionPath = e.getNewLeadSelectionPath();
-      String[] cmdParameter = ArrayUtil.EMPTY_STRING_ARRAY;
+      BoardInfo boardInfo;
       if (selectionPath != null) {
-        cmdParameter = ((DeviceTreeNode)selectionPath.getLastPathComponent()).getCliKeys();
+        boardInfo = ((DeviceTreeNode)selectionPath.getLastPathComponent()).getBoardInfo();
       }
-      userSelected(cmdParameter);
+      else {
+        boardInfo = BoardInfo.EMPTY;
+      }
+      userSelected(boardInfo);
     });
     new TreeSpeedSearch(myTree, DeviceTreeNode::searchText, true);
   }
@@ -147,16 +148,16 @@ public class PlatformioProjectSettingsStep extends ProjectSettingsStepBase<Ref<S
     return panel;
   }
 
-  private void userSelected(String[] newCmdParameter) {
-    getPeer().getSettings().set(newCmdParameter);
+  private void userSelected(@NotNull BoardInfo boardInfo) {
+    getPeer().getSettings().set(boardInfo);
     checkValid();
   }
 
   @Override
   public boolean checkValid() {
     if (!super.checkValid()) return false;
-    Ref<String[]> settings = getPeer().getSettings();
-    if (settings.isNull() || settings.get().length == 0) {
+    BoardInfo settings = getPeer().getSettings().get();
+    if (settings.getParameters().length == 0) {
       setWarningText(ClionEmbeddedPlatformioBundle.message("please.select.target"));
       return false;
     }

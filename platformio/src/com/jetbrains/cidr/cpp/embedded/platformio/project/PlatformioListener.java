@@ -56,7 +56,7 @@ public class PlatformioListener implements AsyncFileListener, StartupActivity {
           ClionEmbeddedPlatformioBundle.message("cmake.to.create.confirmation.title"), null) == Messages.YES;
         if (confirmCMakeCreate) {
           PlatformioProjectGenerator generator = new PlatformioProjectGenerator();
-          platformioNonCmakeRoots.forEach(root -> generator.doGenerateProject(project, root, "", false));
+          platformioNonCmakeRoots.forEach(root -> generator.doGenerateProject(project, root, "", SourceTemplate.NONE));
         }
       }
     }
