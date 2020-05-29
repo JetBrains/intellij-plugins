@@ -167,6 +167,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkWeHaveInCompletion(lookupElements, "true", "null", "new");
   }
 
+  @JSTestOptions(selectLookupItem = 0)
   public void testKeywordsInContext4() {
     defaultTest();
   }
