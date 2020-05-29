@@ -47,7 +47,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
       else {
         GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(stepFile.getResolveScope(),
                                                                                   GroovyFileType.getGroovyEnabledFileTypes());
-        PsiFile[] files = CacheManager.SERVICE.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
+        PsiFile[] files = CacheManager.getInstance(place.getProject()).getFilesWithWord("World", UsageSearchContext.IN_CODE, scope, true);
         for (PsiFile file : files) {
           if (file instanceof GroovyFile) {
             final PsiType type = getWorldType((GroovyFile)file);
