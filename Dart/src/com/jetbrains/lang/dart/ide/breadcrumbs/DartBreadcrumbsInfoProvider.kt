@@ -3,9 +3,12 @@ package com.jetbrains.lang.dart.ide.breadcrumbs
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.siblings
+import com.intellij.psi.util.skipTokens
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
+import com.intellij.util.castSafelyTo
 import com.jetbrains.lang.dart.DartLanguage
 import com.jetbrains.lang.dart.psi.*
 
@@ -28,7 +31,9 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
       NewHelper,
       //NamedArgumentHelper,
       ClosureHelper,
-      KeyValueHelper
+      KeyValueHelper,
+      AssignmentHelper,
+      VarInitHelper
     )
   }
 
@@ -96,6 +101,18 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   //  }
   //}
 
+  private object AssignmentHelper : Helper<DartAssignExpression>(DartAssignExpression::class.java) {
+    override fun getPresentation(e: DartAssignExpression): String {
+      return e.expressionList.firstOrNull()?.text ?: "assignment"
+    }
+  }
+
+  private object VarInitHelper : Helper<DartVarInit>(DartVarInit::class.java) {
+    override fun getPresentation(e: DartVarInit): String {
+      return e.prevNonWhitespaceSibling()?.castSafelyTo<DartReferenceExpression>()?.text ?: "assignment"
+    }
+  }
+
   private object ForHelper : Helper<DartForInPart>(DartForInPart::class.java) {
     override fun getPresentation(e: DartForInPart): String {
       //val parent = e.parent
@@ -130,8 +147,7 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
 
     override fun accept(e: DartCallExpression): Boolean {
       val name = getName(e)
-      // todo handle "_"/"$" prefixes
-      return name.isNotEmpty() && name[0].isUpperCase()
+      return name.looksLikeDartClassName()
     }
 
     override fun getPresentation(e: DartCallExpression): String {
@@ -192,37 +208,39 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
     override fun getPresentation(e: DartFunctionExpression): String {
       val parent = e.parent
       if (parent is DartNamedArgument || parent is DartArgumentList) {
+        val parameterDescription = when (parent) {
+          is DartNamedArgument -> "${parent.parameterReferenceExpression.text}=>"
+          else -> "=>"
+        }
 
-        var callTargetName: String? = null
-        val call = PsiTreeUtil.findFirstParent(e) { element -> element is DartCallExpression || element is DartNewExpression }
-        if (call is DartCallExpression) {
-          val callTargetExpression = call.expression
-          if (callTargetExpression is DartReference) {
-            val callTarget = callTargetExpression.resolve()
-            if (callTarget is DartNamedElement) {
-              callTargetName = callTarget.name
+        val alreadyHasBreadcrumbForConstructor = true
+
+        val callExpression = PsiTreeUtil.findFirstParent(e) { it is DartCallExpression || it is DartNewExpression }
+        val callTargetName = when (callExpression) {
+          is DartNewExpression ->
+            (if (alreadyHasBreadcrumbForConstructor) "" else callExpression.type?.referenceExpression?.text)
+            ?: "<constructor>"
+          else -> {
+            val unresolvedReference = callExpression
+              ?.castSafelyTo<DartCallExpression>()?.expression
+              ?.castSafelyTo<DartReference>()
+            val reference = unresolvedReference?.resolve()
+            if (alreadyHasBreadcrumbForConstructor && reference?.parent.castSafelyTo<DartComponent>()?.isConstructor == true) {
+              ""
+            }
+            else {
+              // Resolve this so we don't get just the method name
+              // and not its target, preceding chained accesses, etc.
+              reference?.castSafelyTo<DartNamedElement>()?.name
+              // If that isn't available (e.g., no analysis server) fall back to the whole expression.
+              ?: unresolvedReference?.text
+              ?: "<call>"
             }
           }
         }
 
-        var parameterDescription = ""
-        if (parent is DartNamedArgument) {
-          parameterDescription = "${parent.parameterReferenceExpression.text}: "
-        } else if (parent is DartArgumentList) {
-          val index = parent.expressionList.indexOf(e);
-          if (index > 0) {
-            parameterDescription = ",".repeat(index) + " ";
-          }
-        }
 
-        if (callTargetName != null) {
-          //if (!HELPERS.contains(NamedArgumentHelper) && parameterName != null) {
-            return "$callTargetName($parameterDescription<closure>)"
-          //}
-          //else {
-          //  "$callTargetName(<closure>)"
-          //}
-        }
+        return if (callTargetName == "") parameterDescription else "$callTargetName($parameterDescription)"
       } else if (parent is DartVarInit) {
         val reference = parent
           .siblings(forward = false)
@@ -230,12 +248,11 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
           .firstOrNull()
         if (reference != null) {
           val name = reference.canonicalText
-          return "$name = <closure>"
+          return "$name=>"
         }
       }
 
-
-      return "<closure>"
+      return "=>"
     }
   }
 
@@ -244,3 +261,10 @@ class DartBreadcrumbsInfoProvider : BreadcrumbsProvider {
   }
 }
 
+fun String.looksLikeDartClassName(): Boolean  {
+  return Regex("^[_$]*[A-Z]").containsMatchIn(this)
+}
+
+fun PsiElement.prevNonWhitespaceSibling(): PsiElement? {
+  return siblings(forward = false).drop(1).skipTokens(TokenSet.WHITE_SPACE).firstOrNull()
+}
